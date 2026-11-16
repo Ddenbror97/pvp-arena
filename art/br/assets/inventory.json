@@ -143887,6 +143887,145 @@
    ],
    "over_budget": true,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:bcd03f021ca1465c974862ec401c324a",
+   "title": "car",
+   "author": "Lodgelus",
+   "author_url": "https://sketchfab.com/lodgelus",
+   "source": "https://sketchfab.com/3d-models/car-bcd03f021ca1465c974862ec401c324a",
+   "uid": "bcd03f021ca1465c974862ec401c324a",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/ddd46d11-car.zip",
+     "sha256": "f93323afeac5fb7674efe202239d86ba09717f28b9a62cf06fc82f779afcc8b8",
+     "size": 95260,
+     "mtime": "2026-11-16T19:13:33-03:00",
+     "batch": "2026-11-16",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-16",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4739,
+    "verts": 5978,
+    "draws": 16,
+    "unique_tris": 4739,
+    "meshes": 16,
+    "primitives": 16,
+    "materials": 8,
+    "materials_used": 8,
+    "nodes": 24,
+    "mesh_nodes": 16,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.951,
+     2.993,
+     9.838
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "4f96ce5961b64d6092a6341599222fa6.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 3411,
+    "top_pieces": [
+     {
+      "name": "CarBody",
+      "tris": 3411,
+      "draws": 8,
+      "size_m": [
+       3.951,
+       2.469,
+       9.838
+      ]
+     },
+     {
+      "name": "LeftRearTire",
+      "tris": 332,
+      "draws": 2,
+      "size_m": [
+       0.536,
+       1.539,
+       1.501
+      ]
+     },
+     {
+      "name": "LeftFrontTire",
+      "tris": 332,
+      "draws": 2,
+      "size_m": [
+       0.401,
+       1.488,
+       1.451
+      ]
+     },
+     {
+      "name": "RightFrontTire",
+      "tris": 332,
+      "draws": 2,
+      "size_m": [
+       0.401,
+       1.488,
+       1.451
+      ]
+     },
+     {
+      "name": "LeftRearTire.001",
+      "tris": 332,
+      "draws": 2,
+      "size_m": [
+       0.536,
+       1.539,
+       1.501
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_clearcoat",
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 16"
+   ],
+   "actions": [
+    "atlas materials (16 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
   }
  ],
  "unparseable": [
