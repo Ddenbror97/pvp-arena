@@ -55,6 +55,10 @@ type BenchView = { pos: number[]; look: number[]; lookAgl?: boolean; aloft?: boo
     gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
   };
   const median = (a: number[]) => [...a].sort((x, y) => x - y)[a.length >> 1]!;
+  // The GPU's own time for a batch (timer queries), where the browser offers them: the frame
+  // time above is CPU-bound on a fast card and hides what the GPU saves.
+  const timer = gl.getExtension("EXT_disjoint_timer_query_webgl2");
+  const pending: Array<[string, WebGLQuery]> = [];
   const out: Record<string, unknown> = {};
   for (const [name, v] of Object.entries(views)) {
     const g = ex.groundAt;
@@ -68,9 +72,15 @@ type BenchView = { pos: number[]; look: number[]; lookAgl?: boolean; aloft?: boo
     sync();
     const frame: number[] = [],
       cpu: number[] = [];
-    for (let b = 0; b < 12; b++) {
+    for (let b = 0; b < 16; b++) {
       const t0 = performance.now();
+      const q = timer ? gl.createQuery() : null;
+      if (q) gl.beginQuery(timer.TIME_ELAPSED_EXT, q);
       for (let k = 0; k < 10; k++) draw();
+      if (q) {
+        gl.endQuery(timer.TIME_ELAPSED_EXT);
+        pending.push([name, q]);
+      }
       const t1 = performance.now();
       sync();
       const t2 = performance.now();
@@ -86,7 +96,24 @@ type BenchView = { pos: number[]; look: number[]; lookAgl?: boolean; aloft?: boo
     };
     await new Promise((r) => setTimeout(r, 0));
   }
+  // Collect the queries (they finish a few frames later).
+  const gpuMs: Record<string, number[]> = {};
+  for (let wait = 0; wait < 40 && pending.length; wait++) {
+    await new Promise((r) => setTimeout(r, 50));
+    gl.flush();
+    for (let i = pending.length - 1; i >= 0; i--) {
+      const [name, q] = pending[i]!;
+      if (!gl.getQueryParameter(q, gl.QUERY_RESULT_AVAILABLE)) continue;
+      if (!gl.getParameter(timer.GPU_DISJOINT_EXT))
+        (gpuMs[name] ??= []).push((gl.getQueryParameter(q, gl.QUERY_RESULT) as number) / 1e7);
+      gl.deleteQuery(q);
+      pending.splice(i, 1);
+    }
+  }
+  for (const [name, list] of Object.entries(gpuMs))
+    (out[name] as Record<string, unknown>)["gpu"] = [+median(list).toFixed(2), +Math.min(...list).toFixed(2), list.length];
   return {
+    timer: !!timer,
     gpu: info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : "unknown",
     size: [gl.drawingBufferWidth, gl.drawingBufferHeight],
     depth: sceneTarget ? "reversed" : "log",
