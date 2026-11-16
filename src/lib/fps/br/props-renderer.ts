@@ -6,6 +6,13 @@ import { createBuildingDetail, DETAIL_CLASSES } from "./building-detail";
 import { applyInteriorStyle, INTERIOR_STYLE } from "./interior-style";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { Placement } from "./layout";
+import {
+  createFarBuildings,
+  FAR_BUILDINGS,
+  proxyShape,
+  type FarBuildings,
+  type ProxyShape,
+} from "./far-buildings";
 
 /**
  * Instanced buildings and props for Project Island. Placement comes from layout.ts (shared with
@@ -77,6 +84,15 @@ export const RINGS: Record<string, [number, number, number]> = {
   yard: [35, 140, 500],
 };
 const RESELECT = 8;
+/**
+ * A placement steps to a coarser LOD only once the camera is this much past the ring it
+ * crossed; it steps to a finer one at the ring itself (render audit 2026-11-15). Without the
+ * margin a house 100 m away changed between its full and its facade model every time the
+ * player crossed that distance, and a player moving along it saw the house flip back and
+ * forth. Only between LODs: where a model ends (its far ring) is unchanged, and so is where
+ * its proxy takes over (far-buildings.ts).
+ */
+export const LOD_HYSTERESIS = 1.08;
 /**
  * A LOD's textures go to the GPU while it is still this many times its distance away (owner,
  * 2026-11-11: "when entering some buildings it can lag, when entering rooms/doors"). Everything
@@ -160,6 +176,8 @@ type ModelState = {
   base: [number, number, number];
   fixed: boolean;
   lods: Array<LodMeshes | null | "loading">;
+  /** The LOD each placement's distance last chose (-1: none), for LOD_HYSTERESIS. */
+  level: Int8Array;
 };
 
 export type PropsControls = {
@@ -180,6 +198,9 @@ export type PropsControls = {
     draws: number;
     triangles: number;
     loadedFiles: number;
+    /** The proxies beyond the far rings (far-buildings.ts): buildings and triangles in the mesh. */
+    farBuildings: number;
+    farTriangles: number;
     /** Largest triangle contributors this frame: "model.lodN" → triangles. */
     top: Record<string, number>;
   };
@@ -261,10 +282,15 @@ export function createProps(
       base: ring,
       fixed: FIXED_RINGS.has(cls),
       lods: m.lods.map(() => null),
+      level: new Int8Array(byModel.get(id)!.length).fill(-1),
     });
   }
   let loadedFiles = 0;
   let stopped = false;
+  const FAR_CLASSES = new Set<string>(FAR_BUILDINGS.classes);
+  const farShapes = new Map<string, ProxyShape | null>();
+  let farBuildings: FarBuildings | null = null;
+  let detailScale = 1;
   const warmQueue: THREE.Texture[] = [];
   const warmQueued = new WeakSet<object>();
   /** Queue the textures of `lod` (once). */
@@ -313,6 +339,9 @@ export function createProps(
       return;
     }
     gltf.scene.updateMatrixWorld(true);
+    // The model's proxy beyond its far ring, cut from its far LOD (far-buildings.ts).
+    if (level === state.lods.length - 1 && FAR_CLASSES.has(state.cls))
+      farShapes.set(state.id, proxyShape(gltf.scene));
     sharpenMaterials(gltf.scene);
     const meshes: THREE.InstancedMesh[] = [];
     const local: THREE.Matrix4[] = [];
@@ -448,6 +477,16 @@ export function createProps(
       preload ? s.lods.map((_, level) => load(s, level)) : [load(s, s.lods.length - 1)],
     ),
   ).then(() => {
+    if (stopped) return;
+    // Every building beyond its far ring, as one mesh (the far LODs are all in by now).
+    farBuildings = createFarBuildings(
+      placements,
+      (id) => farShapes.get(id),
+      (id) => states.get(id)!.base[2],
+      MIN_FAR,
+    );
+    farBuildings.setRingScale(detailScale);
+    root.add(farBuildings.mesh);
     if (preload) batchFarLods();
   });
   /** Where the last pass started (the camera then). */
@@ -519,6 +558,9 @@ export function createProps(
     const r0 = state.ring[0] ** 2,
       r1 = mid ** 2,
       r2 = state.ring[2] ** 2;
+    // Past a ring by less than the margin: the nearer LOD it had stays (never past the far ring).
+    const hold = [Math.min(r2, r0 * LOD_HYSTERESIS ** 2), Math.min(r2, r1 * LOD_HYSTERESIS ** 2)];
+    const chosen = state.level;
     const w0 = (state.ring[0] * WARM_AHEAD) ** 2,
       w1 = (mid * WARM_AHEAD) ** 2;
     for (let i = 0; i < list.length; i++) {
@@ -528,6 +570,9 @@ export function createProps(
         dz = p.z - pass.z;
       const d2 = dx * dx + dy * dy + dz * dz;
       let level = d2 <= r0 ? 0 : d2 <= r1 ? 1 : d2 <= r2 ? 2 : -1;
+      const was = chosen[i]!;
+      if (was >= 0 && was < 2 && level > was && d2 <= hold[was]!) level = was;
+      chosen[i] = level;
       // Approaching a nearer LOD: its textures go up ahead of it.
       if (level !== 0 && d2 <= w1) {
         const near = state.lods[d2 <= w0 ? 0 : 1];
@@ -610,6 +655,8 @@ export function createProps(
     ready,
     setDetailScale(k) {
       const scale = Math.max(0.5, Math.min(2, k));
+      detailScale = scale;
+      farBuildings?.setRingScale(scale);
       for (const st of states.values()) if (!st.fixed) st.ring = scaleRing(st.base, scale);
       dirty = true;
     },
@@ -663,11 +710,20 @@ export function createProps(
       // A batch is one multi-draw call (WebGL multi-draw; three falls back to one per range).
       for (const b of batches) if (b.visible) draws++;
       per.sort((a, b) => b[1] - a[1]);
-      return { instances, draws, triangles, loadedFiles, top: Object.fromEntries(per.slice(0, 6)) };
+      return {
+        instances,
+        draws,
+        triangles,
+        loadedFiles,
+        farBuildings: farBuildings?.buildings ?? 0,
+        farTriangles: farBuildings?.triangles ?? 0,
+        top: Object.fromEntries(per.slice(0, 6)),
+      };
     },
     dispose() {
       stopped = true;
       grain?.dispose();
+      farBuildings?.dispose();
       for (const b of batches) {
         (b.material as THREE.Material).dispose();
         b.dispose();

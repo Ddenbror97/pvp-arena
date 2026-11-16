@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { biasLogDepth, LOG_BIAS } from "./depth-bias";
 import { PERK_EFFECT } from "./perks";
 
 /**
@@ -39,6 +40,8 @@ export function createTrackerRenderer(scene: THREE.Object3D) {
     polygonOffsetUnits: -2,
     fog: false,
   });
+  // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
+  biasLogDepth(material, LOG_BIAS.tracker);
   const mesh = new THREE.InstancedMesh(geometry, material, T.max);
   mesh.count = 0;
   mesh.frustumCulled = false;
