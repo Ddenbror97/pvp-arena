@@ -758,6 +758,7 @@ export function createBrArena(
   let rappelRopes: ReturnType<typeof createRappelRopes> | null = null;
   let rappelHere: RappelSite | null = null;
   let rappelAsked = 0;
+  const rappelAskedAt: [number, number, number, number] = [NaN, 0, 0, 0];
   /** Each rappel as last heard (seat, −1 yours): the stage, how far into it, and the height
    * the last boot went on the wall at. Its sounds play once each as the descent passes them. */
   const rappelHeard = new Map<number, { stage: string; of: number; y: number }>();
@@ -3858,10 +3859,23 @@ export function createBrArena(
     // rope down it. Asked five times a second, standing still on a roof.
     if (now - rappelAsked > 200) {
       rappelAsked = now;
-      rappelHere =
-        island && body.phase === "ground" && body.grounded && !car && !kit?.dead
-          ? rappelSite(solid(), body.x, body.y, body.z, yaw)
-          : null;
+      const can = !!island && body.phase === "ground" && body.grounded && !car && !kit?.dead;
+      // (Not asked again where nothing has changed: standing at an edge costs nothing.)
+      if (!can) {
+        rappelHere = null;
+        rappelAskedAt[0] = NaN;
+      } else if (
+        !(Math.abs(body.x - rappelAskedAt[0]) <= 0.04) ||
+        Math.abs(body.y - rappelAskedAt[1]) > 0.04 ||
+        Math.abs(body.z - rappelAskedAt[2]) > 0.04 ||
+        Math.abs(yaw - rappelAskedAt[3]) > 0.04
+      ) {
+        rappelAskedAt[0] = body.x;
+        rappelAskedAt[1] = body.y;
+        rappelAskedAt[2] = body.z;
+        rappelAskedAt[3] = yaw;
+        rappelHere = rappelSite(solid(), body.x, body.y, body.z, yaw, undefined, true);
+      }
     }
     if (loot && !prompt && rappelHere && body.phase === "ground" && !car && !kit?.dead)
       prompt = {

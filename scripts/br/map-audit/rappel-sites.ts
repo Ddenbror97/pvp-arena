@@ -35,8 +35,11 @@ const sample = arg("why");
 const lowest = Number(arg("roof") ?? 2.4);
 let shown = 0;
 // What the question costs (the client asks it five times a second on a roof; the server on E).
+const quicks: number[] = [];
 let askedMs = 0,
-  worstMs = 0;
+  worstMs = 0,
+  quickMs = 0,
+  worstQuick = 0;
 let roofs = 0,
   tried = 0;
 const b = world.boxes;
@@ -72,6 +75,13 @@ for (let i = 0; i < b.length / 6; i++) {
     const ms = performance.now() - t0;
     askedMs += ms;
     if (ms > worstMs) worstMs = ms;
+    // (As the prompt asks it: whether, and how far down.)
+    const t1 = performance.now();
+    rappelSite(world, x, y1, z, yaw, undefined, true);
+    const quick = performance.now() - t1;
+    quickMs += quick;
+    quicks.push(quick);
+    if (quick > worstQuick) worstQuick = quick;
     if (site) stands.push({ x, y: y1, z, yaw, site });
     else {
       refused[why.reason ?? "?"] = (refused[why.reason ?? "?"] ?? 0) + 1;
@@ -86,8 +96,12 @@ console.log(
   `${roofs} roof boxes, ${tried} edges stood at, ${stands.length} with a rope down: drop median ${q(0.5).toFixed(1)} m, p90 ${q(0.9).toFixed(1)}, highest ${q(1).toFixed(1)}; with a parapet ${stands.filter((s) => s.site.top - s.site.roof > 0.2).length}`,
 );
 console.log("no rope:", JSON.stringify(refused));
+quicks.sort((a, c) => a - c);
 console.log(
-  `asking: ${(askedMs / Math.max(1, tried)).toFixed(3)} ms an edge on average, ${worstMs.toFixed(2)} ms the slowest`,
+  `the prompt's question: p99 ${quicks[Math.floor(quicks.length * 0.99)]!.toFixed(3)} ms, p99.9 ${quicks[Math.floor(quicks.length * 0.999)]!.toFixed(3)} ms, over 1 ms: ${quicks.filter((q) => q > 1).length} of ${quicks.length}`,
+);
+console.log(
+  `asking: ${(askedMs / Math.max(1, tried)).toFixed(3)} ms an edge on average, ${worstMs.toFixed(2)} ms the slowest (the server, on E); the prompt's: ${(quickMs / Math.max(1, tried)).toFixed(3)} ms, ${worstQuick.toFixed(2)} ms the slowest`,
 );
 const hist = [2.5, 3, 3.5, 4.5, 6, 9, 15, 30, 200].map((hi, i, a) => {
   const lo = a[i - 1] ?? 0;

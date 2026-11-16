@@ -159,7 +159,7 @@ function wallPoint(st: RappelSite, out: number, side: number, into: { x: number;
  * with the edge or set back a little under it.
  */
 const WALL_IN = [0.06, 0.16, 0.3] as const;
-/** How much of the way down has to be wall (sampled every 0.45 m from just under the edge). */
+/** How much of the way down has to be wall (sampled from just under the edge to the floor). */
 const WALL_SHARE = 0.3;
 /** Whether a point is inside a collision box (a wall's body). */
 const solid = (world: StaticWorld, x: number, y: number, z: number) =>
@@ -210,7 +210,8 @@ function column(
   // but its floors; a roof on posts with nothing under it is not a wall.
   let have = 0,
     all = 0;
-  for (let y = top - 0.35; y > land + 0.3; y -= 0.45) {
+  // (Every 0.45 m for the first of it, where the boots go over; every 0.9 m below.)
+  for (let y = top - 0.35; y > land + 0.3; y -= all < 8 ? 0.45 : 0.9) {
     all++;
     let wall = false;
     for (const depth of WALL_IN) {
@@ -238,6 +239,8 @@ export function rappelSite(
   z: number,
   yaw: number,
   why?: RappelWhy,
+  /** Only whether there is one and how far down it goes (the prompt): no room either side. */
+  quick = false,
 ): RappelSite | null {
   if (why) why.reason = "ground";
   // On a building: the support under the feet is a box's top, clear of the terrain.
@@ -297,6 +300,7 @@ export function rappelSite(
     // Either side of the rope: as far as the same wall goes on, clear, down to the same floor.
     const reach = (sign: number) => {
       let far = 0;
+      if (quick) return 0;
       for (let d = 0.35; d <= RAPPEL.sideMax + 1e-6; d += 0.35) {
         const l = column(world, dir, wall, line + sign * d, top);
         if (l === null || Math.abs(l - land) > 0.3) break;
@@ -407,7 +411,8 @@ function overEdge(
   out.z = z + (pt.z - z) * over;
   // Up onto the edge while coming to it, down the wall once the hips are past it.
   const lip = st.top - sy;
-  const up = lip > 0.05 ? ease((k - 0.2) / 0.3) : 0;
+  // (A wall round the roof is climbed first, before the body reaches it: not walked through.)
+  const up = lip > 0.05 ? ease((k - 0.03) / 0.2) : 0;
   const down = ease((k - 0.52) / 0.48);
   out.y = sy + lip * up + (st.top - RAPPEL.hip - RAPPEL.sTop - (sy + lip * up)) * down;
   return out;

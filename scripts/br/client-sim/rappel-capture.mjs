@@ -9,6 +9,7 @@
  *
  *   node scripts/br/client-sim/rappel-capture.mjs [outDir] [--chromium=/path] [--size=1280x720]
  *   RAPPEL_STAND=tall|mid|parapet|low   RAPPEL_REMOTE=1 (only the other player's)
+ *   RAPPEL_QUICK=1 (no orbit, no held hop)   RAPPEL_REPEAT=1 (they rappel twice more: nothing kept)
  */
 /** Roof edges from the map audit (scripts/br/map-audit/rappel-sites.ts --poi=downtown --list). */
 const STANDS = {
@@ -330,6 +331,31 @@ await wait(SETTLE);
   await lookAtOther();
   await wait(4000);
   await shot("e8-other-landed");
+}
+if (process.env.RAPPEL_REPEAT) {
+  // Down the wall again (nothing held): what is left behind by a rappel is left once, not
+  // once per rappel (the rope's pool, the clip's binding).
+  for (let round = 2; round <= 3; round++) {
+    await page.evaluate(
+      (s) => window.sim.rappelStand("other", s.at[0], s.at[1], s.at[2], s.yaw, 4.2, 2.6),
+      mine,
+    );
+    await wait(4000);
+    await page.evaluate(() => window.sim.rappelOther());
+    await until((s) => s.otherPhase === "rappel", "the other on the rope again", 60000);
+    await until((s) => s.otherPhase === "ground", "the other landed again", 180000);
+    await lookUp();
+    await wait(SETTLE);
+    cost[`watchingAfter${round}`] = await drawn();
+  }
+  console.log("cost", JSON.stringify(cost));
+  check(
+    "nothing more is kept after a second and a third rappel",
+    cost.watchingAfter3.geometries === cost.watchingAfter2.geometries &&
+      cost.watchingAfter3.textures === cost.watchingAfter2.textures &&
+      cost.watchingAfter3.programs === cost.watchingAfter2.programs,
+    cost,
+  );
 }
 check("no page errors", errors.length === 0, errors.slice(0, 5));
 fs.writeFileSync(
