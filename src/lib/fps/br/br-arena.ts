@@ -614,6 +614,13 @@ export function createBrArena(
   // pass is not free, and not with the offscreen scene target (its own present pass).
   const sharpen =
     !sceneTarget && tier.tier !== "low" && sharpenWanted() ? createSharpen(renderer) : null;
+  // EXPERIMENTAL: on the reversed-Z path the same sharpening is done in its present pass.
+  const sharpenPresent = () =>
+    tier.tier !== "low" && sharpenWanted()
+      ? brResolutionScale(budget.scale) < 1
+        ? SHARPEN.scaledStrength
+        : SHARPEN.strength
+      : 0;
   const sharpenScene = () =>
     sharpen?.apply(brResolutionScale(budget.scale) < 1 ? SHARPEN.scaledStrength : SHARPEN.strength);
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
@@ -1228,6 +1235,13 @@ export function createBrArena(
     island = loaded;
     scene.add(island.root);
     island.root.updateMatrixWorld(true);
+    // On the reversed-Z path (the default where supported), the draw order its early depth
+    // test needs.
+    // (The sky stays last: a group's order comes before its meshes' own.)
+    if (sceneTarget) {
+      island.setEarlyDepthOrder(true);
+      atmosphere.root.renderOrder = 1000;
+    }
     island.setViewDistance(view.trees, view.detail);
     applyGroundRange();
     loot = createLootRenderer(scene, island.loader, base);
@@ -2218,7 +2232,7 @@ export function createBrArena(
         updateSceneRoots(scene, island.root);
         renderer.render(scene, camera);
         sharpenScene();
-        sceneTarget?.present();
+        sceneTarget?.present(sharpenPresent());
       }
       return;
     }
@@ -3985,7 +3999,7 @@ export function createBrArena(
       camera,
       !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead || rappelBlend > 0.05,
     );
-    sceneTarget?.present();
+    sceneTarget?.present(sharpenPresent());
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
     // few seconds after opening, while late models such as worn gear finish loading).
     if (inventoryOpen && figure && kit) {

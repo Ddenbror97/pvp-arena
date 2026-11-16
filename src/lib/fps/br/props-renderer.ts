@@ -189,6 +189,11 @@ export type PropsControls = {
   /** View distance: detail and draw distances of the non-cover classes × `k` (0.7–1.6). */
   setDetailScale: (k: number) => void;
   /**
+   * EXPERIMENTAL (early depth test, reversed-Z only): draw the near LODs before the middle and
+   * far ones, so what stands in front is drawn first and hides the rest before it is shaded.
+   */
+  setNearFirst: (on: boolean) => void;
+  /**
    * Upload the textures of the LODs about to come into use, a few a frame within `budgetMs`
    * (see WARM_AHEAD). Call once a frame before rendering.
    */
@@ -291,6 +296,7 @@ export function createProps(
   const farShapes = new Map<string, ProxyShape | null>();
   let farBuildings: FarBuildings | null = null;
   let detailScale = 1;
+  let nearFirst = false;
   const warmQueue: THREE.Texture[] = [];
   const warmQueued = new WeakSet<object>();
   /** Queue the textures of `lod` (once). */
@@ -400,6 +406,8 @@ export function createProps(
       }
       const im = new THREE.InstancedMesh(mesh.geometry, mesh.material, capacity);
       im.name = `${state.id}.lod${level}`;
+      im.userData["lod"] = level;
+      im.renderOrder = nearFirst ? level : 0;
       im.count = 0;
       // Culled against the view by one sphere round the instances it draws now (selectModel).
       im.boundingSphere = new THREE.Sphere(new THREE.Vector3(), -1);
@@ -653,6 +661,11 @@ export function createProps(
   return {
     root,
     ready,
+    setNearFirst(on) {
+      nearFirst = on;
+      for (const c of root.children)
+        c.renderOrder = on ? ((c.userData["lod"] as number | undefined) ?? 3) : 0;
+    },
     setDetailScale(k) {
       const scale = Math.max(0.5, Math.min(2, k));
       detailScale = scale;

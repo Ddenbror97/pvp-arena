@@ -50,9 +50,9 @@ declare global {
 
 const base = new URL(".", location.href).href;
 
-// Depth as in the arena: logarithmic by default, ?depth=reversed for the opt-in (scene-target.ts).
+// Depth as in the arena: reversed-Z where supported, ?depth=log for logarithmic (scene-target.ts).
 const reversedDepth = wantReversedDepth(
-  new URLSearchParams(location.search).get("depth") === "reversed",
+  new URLSearchParams(location.search).get("depth") !== "log",
 );
 // Hardware tier (quality-tier.ts): standard here unless ?tier=low (or ?tier=auto to detect).
 const tierParam = new URLSearchParams(location.search).get("tier");
@@ -125,6 +125,11 @@ const ready = (async () => {
   islandScene.setGrassRange(
     new URLSearchParams(location.search).get("grass") === "0" ? 0 : GRASS_RANGE[tier],
   );
+  // EXPERIMENTAL: as the arena, the early-depth draw order with ?depth=reversed (?order=0: off).
+  if (sceneTarget && new URLSearchParams(location.search).get("order") !== "0") {
+    islandScene.setEarlyDepthOrder(true);
+    atmosphere.root.renderOrder = 1000;
+  }
   scene.add(islandScene.root);
   meta = islandScene.meta;
   const hf = islandScene.hf;
@@ -166,7 +171,9 @@ function draw() {
   const calls = renderer.info.render.calls,
     triangles = renderer.info.render.triangles;
   sharpen?.apply();
-  sceneTarget?.present();
+  sceneTarget?.present(
+    tier !== "low" && new URLSearchParams(location.search).get("sharpen") !== "off" ? 0.4 : 0,
+  );
   gpu.end();
   return {
     ...(islandScene.stats() as Record<string, number>),

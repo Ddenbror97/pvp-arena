@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { SHARPEN } from "./sharpen";
 
 /**
  * Depth for a 14 km world with a 10 cm near plane, without logarithmic depth (2026-11-09).
@@ -19,23 +20,32 @@ import * as THREE from "three";
  * Firefox); elsewhere `reversedDepthSupported()` is false and the arena keeps logarithmic
  * depth on the canvas, unchanged.
  *
- * OPT-IN for now (`wantReversedDepth`): it changes the far haze. three mixes fog after tone
- * mapping and sRGB encoding when drawing to the canvas, so far geometry never quite reaches
- * the background haze (a band at the horizon; the distant sea stays deep blue). Here fog is
- * mixed in linear light before tone mapping, as intended, so the far field fades fully into
- * the haze and reads hazier. The owner decides the look (and may retune the fog) after an
- * A/B on a real GPU: localStorage "br-depth" = "reversed", or ?depth=reversed in the explorer.
+ * THE DEFAULT since 2026-11-16, where the browser supports it. Measured on the owner's laptop
+ * with the early-depth draw order (island-scene.ts setEarlyDepthOrder) and the sharpening in
+ * the present pass, world only, 1632 × 918, 4× MSAA: GPU time per frame fell 23–50 % on foot
+ * on the RTX 2050, and the whole frame fell from 40–65 ms to 16–30 ms on the Intel UHD chip
+ * (claude/br-gpu-bench-early-depth-2026-11-16.md). Without that draw order it gains nothing:
+ * the ground's shader is the dearest and three draws it first.
+ *
+ * It changes the far haze slightly. three mixes fog after tone mapping and sRGB encoding when
+ * drawing to the canvas, so far geometry never quite reaches the background haze; here fog is
+ * mixed in linear light before tone mapping, so the far field fades fully into the haze
+ * (captures: the horizon band is 1–3 of 255 brighter). The weapon is sharpened with the rest
+ * of the frame here (on the canvas path it is drawn after the sharpen).
+ *
+ * Back to logarithmic depth for one browser: localStorage "br-depth" = "log" (explorer:
+ * ?depth=log).
  */
 export function wantReversedDepth(optIn: boolean): boolean {
   return optIn && reversedDepthSupported();
 }
 
-/** The game's opt-in (localStorage "br-depth" = "reversed"); never throws. */
+/** The game's choice: reversed-Z unless localStorage "br-depth" = "log"; never throws. */
 export function reversedDepthOptIn(): boolean {
   try {
-    return localStorage.getItem("br-depth") === "reversed";
+    return localStorage.getItem("br-depth") !== "log";
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -61,8 +71,13 @@ export function reversedDepthSupported(): boolean {
 export type SceneTarget = {
   /** Match the canvas' drawing buffer (call after renderer.setSize / setPixelRatio). */
   resize: () => void;
-  /** Tone-map the frame onto the canvas; the scene target stays bound for the next frame. */
-  present: () => void;
+  /**
+   * Tone-map the frame onto the canvas; the scene target stays bound for the next frame.
+   * `sharpen`: the strength of sharpen.ts' pass, done here in the same pass (0: none). The
+   * default path sharpens the finished canvas; without this the reversed-Z picture was the
+   * softer of the two (EXPERIMENTAL, render audit 2026-11-15).
+   */
+  present: (sharpen?: number) => void;
   dispose: () => void;
 };
 
@@ -89,7 +104,11 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
 
   const material = new THREE.ShaderMaterial({
     name: "br-present",
-    uniforms: { tScene: { value: target.texture } },
+    uniforms: {
+      tScene: { value: target.texture },
+      uTexel: { value: new THREE.Vector2(1, 1) },
+      uSharpen: { value: 0 },
+    },
     vertexShader: /* glsl */ `
       varying vec2 vUv;
       void main() {
@@ -98,11 +117,30 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
       }`,
     fragmentShader: /* glsl */ `
       uniform sampler2D tScene;
+      uniform vec2 uTexel;
+      uniform float uSharpen;
       varying vec2 vUv;
+      // A pixel as the canvas shows it: tone-mapped and encoded (sharpen.ts works on that).
+      vec3 shown(vec2 uv) {
+        vec4 c = texture2D(tScene, uv);
+        #ifdef TONE_MAPPING
+          c.rgb = toneMapping(c.rgb);
+        #endif
+        return linearToOutputTexel(c).rgb;
+      }
       void main() {
-        gl_FragColor = texture2D(tScene, vUv);
-        #include <tonemapping_fragment>
-        #include <colorspace_fragment>
+        vec3 c = shown(vUv);
+        if (uSharpen > 0.0) {
+          vec3 n = shown(vUv + vec2(0.0, uTexel.y));
+          vec3 s = shown(vUv - vec2(0.0, uTexel.y));
+          vec3 e = shown(vUv + vec2(uTexel.x, 0.0));
+          vec3 w = shown(vUv - vec2(uTexel.x, 0.0));
+          vec3 lo = min(c, min(min(n, s), min(e, w)));
+          vec3 hi = max(c, max(max(n, s), max(e, w)));
+          vec3 margin = (hi - lo) * ${SHARPEN.overshoot.toFixed(2)};
+          c = clamp(c + uSharpen * (4.0 * c - n - s - e - w), lo - margin, hi + margin);
+        }
+        gl_FragColor = vec4(c, 1.0);
       }`,
     depthTest: false,
     depthWrite: false,
@@ -121,6 +159,7 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
       h = Math.max(1, size.y);
     if (target.width === w && target.height === h) return;
     target.setSize(w, h);
+    material.uniforms["uTexel"]!.value.set(1 / w, 1 / h);
     // setSize frees the framebuffer; binding again rebuilds it (three tracks the target as
     // bound, so without this the next frame would draw into a deleted framebuffer: black).
     if (renderer.getRenderTarget() === target) renderer.setRenderTarget(target);
@@ -130,7 +169,8 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
 
   return {
     resize,
-    present() {
+    present(sharpen = 0) {
+      material.uniforms["uSharpen"]!.value = sharpen;
       renderer.setRenderTarget(null);
       renderer.render(presentScene, presentCamera);
       renderer.setRenderTarget(target);

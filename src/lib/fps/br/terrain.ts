@@ -81,6 +81,11 @@ export type TerrainControls = {
    * caller owns it) and the distance (m) the trees themselves are drawn to.
    */
   setFarForest: (cover: THREE.Texture | null, treeRing: number) => void;
+  /**
+   * EXPERIMENTAL (early depth test, reversed-Z only): draw the patches nearest first, so a
+   * hill hides the ground behind it before that ground is shaded.
+   */
+  setFrontToBack: (on: boolean) => void;
   /** One ground layer for other surfaces (the road meshes' asphalt), once loaded. */
   groundLayer: (id: (typeof GROUND_LAYERS)[number]) => GroundLayer | null;
   dispose: () => void;
@@ -872,6 +877,10 @@ export function createTerrain(
     return frustum.intersectsBox(box);
   };
   let count = 0;
+  let frontToBack = false;
+  const order = new Uint16Array(4096),
+    key = new Float32Array(4096),
+    sorted = new Float32Array(4 * 4096);
 
   return {
     root,
@@ -893,6 +902,22 @@ export function createTerrain(
         patchAttr.array as Float32Array,
         visible,
       );
+      if (frontToBack && count > 1) {
+        const arr = patchAttr.array as Float32Array;
+        const half = TERRAIN.patch / 2;
+        for (let i = 0; i < count; i++) {
+          const s = arr[i * 4 + 2]!;
+          order[i] = i;
+          key[i] = Math.hypot(
+            (arr[i * 4]! + half * s) * hf.spacing - WORLD_HALF - cam.x,
+            (arr[i * 4 + 1]! + half * s) * hf.spacing - WORLD_HALF - cam.z,
+          );
+        }
+        order.subarray(0, count).sort((a, b) => key[a]! - key[b]!);
+        for (let i = 0; i < count; i++)
+          sorted.set(arr.subarray(order[i]! * 4, order[i]! * 4 + 4), i * 4);
+        arr.set(sorted.subarray(0, count * 4));
+      }
       geometry.instanceCount = count;
       patchAttr.addUpdateRange(0, count * 4);
       patchAttr.needsUpdate = true;
@@ -968,6 +993,9 @@ export function createTerrain(
     },
     setGroundLite(on) {
       uniforms.uGroundLite.value = on ? 1 : 0;
+    },
+    setFrontToBack(on) {
+      frontToBack = on;
     },
     setFarForest(cover, treeRing) {
       uniforms.uCanopy.value = cover ?? placeholderCover;
