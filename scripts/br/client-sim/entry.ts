@@ -29,6 +29,7 @@ import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
 import { ZIP_HEADING, ZIP_STAND, ZIPLINES, zipLanding } from "../../../src/lib/fps/br/zipline";
 import { climbPoint, ladders } from "../../../src/lib/fps/br/ladders";
 import { lifts } from "../../../src/lib/fps/br/lifts";
+import { HOP_MS, RAPPEL, stepRappel, type RappelState } from "../../../src/lib/fps/br/rappel";
 import { SNAPSHOT_INTERVAL_MS } from "../../../src/lib/fps/network";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 
@@ -95,6 +96,27 @@ declare global {
       /** Rope check only: how far up the rope you (or the other player) are (m; -1 off it). */
       ropeS?: (who?: "me" | "other") => number;
       ropeNearTop?: (below?: number) => number;
+      /** Rappel check only: you (or the other player, you watching from the ground `watch` m
+       * out from the wall and `along` m along it) at a roof's edge, facing out over it. */
+      rappelStand?: (
+        who: "me" | "other",
+        x: number,
+        y: number,
+        z: number,
+        yaw: number,
+        watch?: number,
+        along?: number,
+      ) => void;
+      /** Rappel check only: the other player throws their rope (E). */
+      rappelOther?: () => void;
+      /** Rappel check only: your (or their) rope's state, null off it. */
+      rappel?: (who?: "me" | "other") => RappelState | null;
+      /** Rappel check only: hold a rope at a moment (software WebGL draws a frame a second
+       * while the in-page server keeps time): the stage and how far into it (0..1; hanging:
+       * `of` of a hop, −1 braced on the wall), `s` m below the edge when hanging. null lets go. */
+      rappelHold?: (
+        hold: { who: "me" | "other"; stage: RappelState["stage"]; of: number; s?: number } | null,
+      ) => void;
       /** Inventory check only: a helmet, vest and backpack of `level` (1–3), worn. */
       giveGear?: (level: number) => void;
       /** Shader check only: you throw a grenade of this type at your feet. */
@@ -189,6 +211,25 @@ const ready = (async () => {
     const held = state.seats[me]!.body;
     if (zipHold !== null && held.phase === "zip" && held.zip) held.zip.ms = zipHold - TICK_MS;
     stepBrMatch(state, world, meta, inputs, clock, TICK_MS, acts);
+    if (rappelHold) {
+      const hb = state.seats[rappelHold.who === "me" ? me : other]!.body;
+      const st = hb.phase === "rappel" ? hb.rappel : undefined;
+      if (st) {
+        const h = rappelHold;
+        st.stage = h.stage;
+        if (h.stage === "hang") {
+          if (h.s !== undefined) st.s = st.from = h.s;
+          st.hop = h.of < 0 ? -1 : h.of * HOP_MS;
+          if (h.of < 0) st.from = st.s;
+        } else
+          st.t =
+            h.of *
+            (h.stage === "on" ? RAPPEL.onMs : h.stage === "up" ? RAPPEL.upMs : RAPPEL.landMs);
+        // (Where that moment has the body: a step of no time. Braced on the wall, S held
+        // keeps it from starting the next hop.)
+        stepRappel(world, hb, h.stage === "hang" && h.of < 0 ? -1 : 0, 0, 0);
+      }
+    }
     // ?immortal=1: long checks (the climbing rope at software WebGL's pace) outlast the zone;
     // both players are kept alive in the gas.
     if (params.get("immortal")) for (const seat of [me, other]) state.seats[seat]!.kit.hp = 100;
@@ -292,6 +333,44 @@ const ready = (async () => {
   };
   const otherActs: BrAct[] = [];
   let zipHold: number | null = null;
+  let rappelHold: Parameters<NonNullable<typeof window.sim.rappelHold>>[0] = null;
+  window.sim.rappelHold = (h) => {
+    rappelHold = h;
+  };
+  window.sim.rappel = (who = "me") => {
+    const b = state.seats[who === "me" ? me : other]!.body;
+    return b.phase === "rappel" && b.rappel ? { ...b.rappel } : null;
+  };
+  window.sim.rappelStand = (who, x, y, z, yaw, watch = 7, along = 0) => {
+    const b = state.seats[me]!.body,
+      o = state.seats[other]!.body;
+    mirroring = false;
+    mirror = null;
+    rappelHold = null;
+    for (const body of [b, o]) {
+      delete body.rappel;
+      delete body.ladder;
+      stop(body);
+    }
+    const fx = -Math.sin(yaw),
+      fz = -Math.cos(yaw);
+    const stander = who === "me" ? b : o,
+      watcher = who === "me" ? o : b;
+    Object.assign(stander, { phase: "ground", grounded: true, x, y, z });
+    // The watcher: out from the wall on the ground below (far off when it is you on the roof).
+    const d = who === "me" ? 60 : watch;
+    Object.assign(watcher, {
+      phase: "ground",
+      grounded: true,
+      x: x + fx * (d + 1) - fz * along,
+      z: z + fz * (d + 1) + fx * along,
+    });
+    watcher.y = world.supportAt(watcher.x, watcher.z, 0.35, hf.heightAt(watcher.x, watcher.z) + 2);
+    if (who === "other") mirror = { seq: 1, forward: 0, strafe: 0, yaw };
+  };
+  window.sim.rappelOther = () => {
+    otherActs.push({ act: "rappel" });
+  };
   const stop = (b: { vx: number; vz: number; velocityY: number }) => {
     b.vx = b.vz = b.velocityY = 0;
   };
@@ -592,6 +671,7 @@ const ready = (async () => {
           fov: Math.round(cam.fov),
           blend: (arena.debug().view as { zipBlend: number }).zipBlend,
           ropeBlend: (arena.debug().view as { ropeBlend: number }).ropeBlend,
+          rappelBlend: (arena.debug().view as { rappelBlend: number }).rappelBlend,
         };
       })(),
       predicted: { phase: p.phase, x: p.x, y: p.y, z: p.z },

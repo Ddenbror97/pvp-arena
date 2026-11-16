@@ -585,20 +585,58 @@ export function rappelRow(st: RappelState): number[] {
   ];
 }
 
+/** A body on the rope as it is drawn: the wall, the stage and how far into it. */
+export type RappelSeen = {
+  dir: RappelDir;
+  wall: number;
+  line: number;
+  top: number;
+  land: number;
+  stage: RappelState["stage"];
+  /** 0..1 of the stage; hanging: of the hop under way, 0 on the wall. */
+  of: number;
+};
+
+/** One's own rope as it is drawn (what others get from rappelRow), into `into`. */
+export function rappelSeen(st: RappelState, into: RappelSeen): RappelSeen {
+  into.dir = st.dir;
+  into.wall = st.wall;
+  into.line = st.line;
+  into.top = st.top;
+  into.land = st.land;
+  into.stage = st.stage;
+  const of =
+    st.stage === "on"
+      ? st.t / RAPPEL.onMs
+      : st.stage === "land"
+        ? st.t / RAPPEL.landMs
+        : st.stage === "up"
+          ? st.t / RAPPEL.upMs
+          : st.hop >= 0
+            ? Math.max(0.001, st.hop / HOP_MS)
+            : 0;
+  into.of = Math.max(0, Math.min(1, of));
+  return into;
+}
+
 /** What a row's rope fields say (rappelRow), or null when they are not a rope's. */
-export function readRappelRow(row: readonly number[], at: number) {
+export function readRappelRow(
+  row: readonly number[],
+  at: number,
+  into?: RappelSeen,
+): RappelSeen | null {
   const dir = row[at],
     code = row[at + 5];
   if (dir === undefined || code === undefined || !(dir >= 0 && dir <= 3)) return null;
   const stage = (["on", "hang", "land", "up"] as const)[Math.floor(code / 1000)];
   if (!stage) return null;
-  return {
-    dir: dir as RappelDir,
-    wall: row[at + 1]!,
-    line: row[at + 2]!,
-    top: row[at + 3]!,
-    land: row[at + 4]!,
-    stage,
-    of: (code % 1000) / 999,
-  };
+  const seen = into ?? ({} as RappelSeen);
+  seen.dir = dir as RappelDir;
+  seen.wall = row[at + 1]!;
+  seen.line = row[at + 2]!;
+  seen.top = row[at + 3]!;
+  seen.land = row[at + 4]!;
+  seen.stage = stage;
+  seen.of = (code % 1000) / 999;
+  return seen;
 }

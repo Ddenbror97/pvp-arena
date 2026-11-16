@@ -534,12 +534,14 @@ scene.frame_start, scene.frame_end = 1, FRAMES
 
 
 # ---------------------------------------------------------------- sampling and export
+# Blender → the character's root in the game (death-clip.ts: x right, y up, the body facing −z).
+# Here the character faces −y with its left at +x, z up.
 def to_game_v(v):
-    return [round(v.x, 4), round(v.z, 4), round(-v.y, 4)]
+    return [round(-v.x, 4), round(v.z, 4), round(v.y, 4)]
 
 
 def to_game_q(q):
-    return [round(q.x, 4), round(q.z, 4), round(-q.y, 4), round(q.w, 4)]
+    return [round(-q.x, 4), round(q.z, 4), round(q.y, 4), round(q.w, 4)]
 
 
 def sample(frame):
@@ -574,6 +576,8 @@ def export():
         "source": "art/blender/rappel/build_rappel.py (authored in Blender on the police character's joints)",
         "fps": FPS,
         "unit": round(UNIT, 4),
+        # The ankle joint over the sole, in hip heights: where a boot flat on the wall has it.
+        "ankle": round(ANKLE / UNIT, 4),
         "bones": BONES,
         "restDir": [to_game_v((J[CHILD[b]] - J[b]).normalized()) for b in BONES],
         "clips": {},
