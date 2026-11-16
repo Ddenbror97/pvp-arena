@@ -49,8 +49,9 @@ const fireMode = (w: WeaponDef) => (!w.recoil ? "BOLT" : w.semiAuto ? "SEMI" : "
 
 /**
  * Bottom-left survival status (health bar, armour pieces), bottom-centre hotbar, bottom-right
- * weapon and ammunition (the magazine dominant, reserve and fire mode small), and a short
- * weapon-switch card when the active weapon changes. Owner's UI spec §2, §6.
+ * weapon and ammunition (the magazine dominant, reserve and fire mode small). Owner's UI spec
+ * §2, §6. (No weapon-switch card: owner, 2026-11-16, "remove the overlay window with the weapon
+ * player switch to, no need looks old ux"; the hotbar and the ammo panel already show it.)
  */
 /**
  * Hotbar silhouettes (original), in hotbar order: a rifle outline for empty gun slots, a pistol
@@ -77,25 +78,6 @@ export function tabletReady(t: BrKitView["tablet"]): boolean {
 export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: string }) {
   const kit = hud.kit;
   const car = hud.vehicle;
-  // Weapon switch card: shown for 1.4 s when the active slot or its weapon changes (the
-  // Karambit, 4, whenever no gun is drawn; not on the first loadout).
-  const active = !kit
-    ? ""
-    : kit.active >= 0
-      ? `${kit.active}:${kit.guns[kit.active]?.item ?? ""}`
-      : "knife";
-  const [switched, setSwitched] = useState<{ key: string; at: number } | null>(null);
-  const lastActive = useRef(active);
-  useEffect(() => {
-    if (active && lastActive.current && active !== lastActive.current)
-      setSwitched({ key: active, at: performance.now() });
-    lastActive.current = active;
-  }, [active]);
-  useEffect(() => {
-    if (!switched) return;
-    const t = setTimeout(() => setSwitched(null), 1400);
-    return () => clearTimeout(t);
-  }, [switched]);
   if (!kit || !hud.onFoot) return null;
   const hp = Math.ceil(kit.hp);
   const hpTone = kit.hp > 60 ? "#e9eef0" : kit.hp > 30 ? "#f0c24b" : "#ff5a4e";
@@ -142,8 +124,6 @@ export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: str
       on: kit.heal?.item === "bandage",
     },
   ];
-  const switchGun = switched && gun && gd;
-  const switchKnife = switched?.key === "knife" && kit.active === -1;
   // Worn armour in the HUD's small caps ("HELMET 2 · VEST 1 · PLATES 2"), as 5v5 shows KEVLAR.
   const lvl = (w: { item: string } | null) => (w ? (def(w.item) as { level?: number }).level : 0);
   const plates = kit.plates.filter(Boolean).length;
@@ -266,24 +246,6 @@ export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: str
         </div>
       </footer>
       {car && <BrSpeedometer car={car} />}
-      {switchGun && (
-        <div className="br-switch" key={switched.key} role="status">
-          <kbd>{kit.active + 1}</kbd>
-          <BrGunGlyph item={gun.item} />
-          <b>{gd.name}</b>
-          <small>
-            {mag} / {reserve}
-          </small>
-        </div>
-      )}
-      {switchKnife && (
-        <div className="br-switch" key="knife" role="status">
-          <kbd>4</kbd>
-          <WeaponIcon weapon="knife" />
-          <b>Karambit</b>
-          <small>SLASH · STAB · F INSPECT</small>
-        </div>
-      )}
     </>
   );
 }
@@ -299,6 +261,10 @@ export function BrCentre({
   const showHit = hit && now - hit.at < 220;
   const action = hud.heal;
   const aimed = hud.aim > 0.6;
+  // What E does, unless the name already says it ("Open door", "Close door").
+  const act = hud.prompt ? promptAction(hud.prompt) : "";
+  const actShown =
+    act && hud.prompt && !hud.prompt.name.toLowerCase().startsWith(act.toLowerCase()) ? act : "";
   return (
     <>
       {!hud.scope && hud.onFoot && !hud.vehicle && !aimed && (
@@ -326,12 +292,18 @@ export function BrCentre({
         >
           <kbd className="br-prompt-key">E</kbd>
           <div className="br-prompt-body">
-            <span className="br-prompt-act">{promptAction(hud.prompt)}</span>
             <span className="br-prompt-name">
               {hud.prompt.name}
               {hud.prompt.rarity && <i>{hud.prompt.rarity}</i>}
             </span>
-            {hud.prompt.detail && <small>{hud.prompt.detail}</small>}
+            {(actShown || hud.prompt.detail) && (
+              <span className="br-prompt-act">
+                {actShown}
+                {hud.prompt.detail && (
+                  <small className={actShown ? "" : "solo"}>{hud.prompt.detail}</small>
+                )}
+              </span>
+            )}
           </div>
         </div>
       )}
@@ -605,36 +577,42 @@ export function BrTopStatus({ hud }: { hud: BrHud }) {
 
 /**
  * The supply drop alert (owner, 2026-11-13: "when air drops is about to happen add a clean
- * alert to the players screen"): one slim card under the match status while a crate is coming,
- * falling and for a moment after it lands; where (map grid) and how far.
+ * alert to the players screen"; 2026-11-16: "upgrade the airdrop design to more clean/mordern"):
+ * one card under the match status while a crate is coming, falling and for a moment after it
+ * lands. An icon tile, the stage, where (map grid) and how far, the countdown on the right and a
+ * thin bar along the bottom filling through the stage.
  */
 export function BrAirdropAlert({ hud }: { hud: BrHud }) {
   const a = hud.airdrop;
   if (!a) return null;
-  const title =
-    a.stage === "incoming"
-      ? "Supply drop incoming"
-      : a.stage === "falling"
-        ? "Supply drop falling"
-        : "Supply drop landed";
-  const when =
-    a.stage === "incoming"
-      ? `in ${a.seconds}s`
-      : a.stage === "falling"
-        ? `lands in ${a.seconds}s`
-        : "green smoke";
+  const title = a.stage === "incoming" ? "Incoming" : a.stage === "falling" ? "Falling" : "Landed";
   return (
-    <div className={`br-airdrop is-${a.stage}`} role="status">
-      <svg viewBox="0 0 24 24" aria-hidden>
-        <path d="M12 2C6.5 2 2.5 5.6 2 10h20c-.5-4.4-4.5-8-10-8zM3 10l7 8M21 10l-7 8M12 10v8" />
-        <rect x="8.5" y="17" width="7" height="5" rx="0.8" />
-      </svg>
-      <div>
+    <div
+      className={`br-airdrop is-${a.stage}`}
+      role="status"
+      aria-label={`Supply drop ${title.toLowerCase()}, ${a.grid}, ${Math.round(a.dist)} metres`}
+    >
+      <span className="br-airdrop-icon" aria-hidden>
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.5 2 2.5 5.6 2 10h20c-.5-4.4-4.5-8-10-8zM3 10l7 8M21 10l-7 8M12 10v8" />
+          <rect x="8.5" y="17" width="7" height="5" rx="0.8" />
+        </svg>
+      </span>
+      <div className="br-airdrop-body">
+        <small>Supply drop</small>
         <b>{title}</b>
         <span>
-          {a.grid} · {Math.round(a.dist / 10) * 10} m · {when}
+          <i>{a.grid}</i>
+          {Math.round(a.dist / 10) * 10} m{a.stage === "landed" ? " · green smoke" : ""}
         </span>
       </div>
+      {a.stage !== "landed" && (
+        <strong className="br-airdrop-time">
+          {a.seconds}
+          <small>s</small>
+        </strong>
+      )}
+      <em className="br-airdrop-bar" style={{ transform: `scaleX(${a.progress})` }} aria-hidden />
     </div>
   );
 }

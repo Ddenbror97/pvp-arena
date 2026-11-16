@@ -278,9 +278,16 @@ function keep() {
               [Math.max(zr[0], h[3]), zr[1]],
             ].filter(([p, q]) => q - p > 1e-3)
           : [zr];
+        // Above the ground the courtyard edge is behind the arcade's arch heads: not drawn.
         for (const [p, q] of parts)
           k.box([a, y - SLAB, p, b, y, q], m, roof ? T.roof : T.floor, {
-            skip: ground ? ["bottom"] : [],
+            skip: ground
+              ? ["bottom"]
+              : s > 0 && p === zr[0]
+                ? ["z0"]
+                : s < 0 && q === zr[1]
+                  ? ["z1"]
+                  : [],
           });
       }
       if (roof)
@@ -353,17 +360,21 @@ function keep() {
         }
       }
       // The arcade: a pier at each bay's edge, an arch head over each opening, a parapet on
-      // the upper floors (1.05 m, solid: never fall into the courtyard by accident).
+      // the upper floors (1.05 m, solid: never fall into the courtyard by accident). The arch
+      // heads and piers reach SLAB above the next floor; what stands on them (the next floor's
+      // piers and parapet) starts there, not inside them: overlapping boxes share faces, which
+      // z-fight along the courtyard (owner, 2026-11-16; fix_keep_arcade.mjs patched the LODs).
       const za0 = s > 0 ? RC : -RA,
         za1 = s > 0 ? RA : -RC;
+      const base = L > 0 ? y0 + SLAB : y0;
       for (let i = 0; i <= BAYS; i++) {
         const x = -HL + i * BW;
-        k.box([x - 0.4, y0, za0, x + 0.4, y1 + SLAB, za1], "stone", T.stone);
+        k.box([x - 0.4, base, za0, x + 0.4, y1 + SLAB, za1], "stone", T.stone);
       }
       for (let i = 0; i < BAYS; i++) {
         const [a, b] = bayX(i);
         k.box([a + 0.4, y0 + 3.3, za0, b - 0.4, y1 + SLAB, za1], "stone", T.stone);
-        if (L > 0) k.box([a + 0.4, y0, za0, b - 0.4, y0 + 1.05, za1], "stone", T.stone);
+        if (L > 0) k.box([a + 0.4, base, za0, b - 0.4, y0 + 1.05, za1], "stone", T.stone);
       }
     }
     // Rounded ends: the gallery wall (a doorway each segment), the arcade, a wall across the
@@ -391,7 +402,12 @@ function keep() {
         // Arcade: piers at the joints (one per joint, the straight sides' end piers at ±90°).
         if (s > 0) {
           const c = endPt(e, (RC + RA) / 2, a0);
-          k.box([c[0] - 0.4, y0, c[1] - 0.4, c[0] + 0.4, y1 + SLAB, c[1] + 0.4], "stone", T.stone);
+          const base = L > 0 ? y0 + SLAB : y0;
+          k.box(
+            [c[0] - 0.4, base, c[1] - 0.4, c[0] + 0.4, y1 + SLAB, c[1] + 0.4],
+            "stone",
+            T.stone,
+          );
         }
         const pa = endPt(e, (RC + RA) / 2, a0),
           qa = endPt(e, (RC + RA) / 2, a1);
@@ -404,7 +420,7 @@ function keep() {
             PA,
             QA,
             RA - RC,
-            y0,
+            y0 + SLAB,
             y0 + 1.05,
             [
               [-1, 0.45, 0, 99],
@@ -523,13 +539,13 @@ function keep() {
     }
   // The courtyard's parapet on the roof (inner edge), 1.1 m.
   for (const s of [1, -1])
-    k.box([-HL, ROOF, s > 0 ? RC : -RA, HL, ROOF + 1.1, s > 0 ? RA : -RC], "stone", T.stone);
+    k.box([-HL, ROOF + SLAB, s > 0 ? RC : -RA, HL, ROOF + 1.1, s > 0 ? RA : -RC], "stone", T.stone);
   for (const e of [1, -1])
     for (let s = 0; s < SEG; s++) {
       const p = endPt(e, (RC + RA) / 2, segAngle(s)),
         q = endPt(e, (RC + RA) / 2, segAngle(s + 1));
       const [P, Q] = e > 0 ? [q, p] : [p, q];
-      slabHoles(k, P, Q, RA - RC, ROOF, ROOF + 1.1, [], "stone", T.stone, { ext: 0.1 });
+      slabHoles(k, P, Q, RA - RC, ROOF + SLAB, ROOF + 1.1, [], "stone", T.stone, { ext: 0.1 });
     }
 
   // ------------------------------------------------------------------------------ the rooms

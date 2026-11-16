@@ -327,6 +327,8 @@ export type BrHud = {
   airdrop: {
     stage: "incoming" | "falling" | "landed";
     seconds: number;
+    /** How far through its stage (0 → 1): the warning, then the fall. */
+    progress: number;
     grid: string;
     dist: number;
   } | null;
@@ -4179,6 +4181,12 @@ export function createBrArena(
                 0,
                 Math.ceil(((stage === "incoming" ? d[4]! : d[5]!) - server) / 1000),
               ),
+              progress:
+                stage === "incoming"
+                  ? Math.min(1, Math.max(0, 1 - (d[4]! - server) / AIRDROP.warnMs))
+                  : stage === "falling"
+                    ? Math.min(1, Math.max(0, (server - d[4]!) / Math.max(1, d[5]! - d[4]!)))
+                    : 1,
               grid: gridRefAt(d[1]!, d[2]!),
               dist: Math.hypot(d[1]! - body.x, d[2]! - body.z),
             } as const;

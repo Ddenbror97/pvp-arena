@@ -3827,13 +3827,16 @@ function blackwater(poi: Poi, out: Placement[], ctx: Context) {
   for (let i = 0; i < 3; i++) at("grave-row", -180 + i * 6, 52, 0);
 
   // Searchlights: on the keep's battlements at both rounded ends and over each gate, on the
-  // watchtower's roof; old cannons on the ends' battlements, pointing out.
+  // watchtower's roof; old cannons on the ends' battlements, pointing out. Each cannon sits in
+  // the middle crenel of the end wall's segment beside the tip (15° off the axis), its muzzle
+  // short of the parapet (owner, 2026-11-16: "the cannon on the top of the prison stands in the
+  // wall, move it abit"; at ±50° it pointed 45° into the wall and the barrel went through).
   const roofY = BW.roof;
   for (const e of [-1, 1]) {
     const tip = kx + e * (BW.HL + BW.RO - 3.2);
     moat("bw-searchlight", tip, kz, e > 0 ? 1 : 3, roofY);
-    for (const a of [-50, 50]) {
-      const r = BW.RO - 2.6;
+    for (const a of [-15, 15]) {
+      const r = BW.RO - 3.75;
       const ax = kx + e * (BW.HL + r * Math.cos((a * Math.PI) / 180)),
         az = kz + r * Math.sin((a * Math.PI) / 180);
       moat(
