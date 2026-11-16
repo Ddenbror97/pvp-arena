@@ -305,13 +305,6 @@
       "use": "superstore lot and aisles"
     },
     {
-      "id": "store-shelves",
-      "key": "sf:8406794ee19b4af49e0ccc02d1132915",
-      "class": "prop",
-      "collision": "solid",
-      "use": "superstore aisles (cover)"
-    },
-    {
       "id": "warehouse-rack",
       "key": "sf:788cc9b477684951934ff8b1ebb978e1",
       "class": "small",
@@ -5407,36 +5400,6 @@
       "use": "Stadium (2026-11-13): seat blocks"
     },
     {
-      "id": "grandstand",
-      "key": "sf:8b1d8eed69c0405882e50e9099090dc0",
-      "class": "hero",
-      "fit": {
-        "max": 42
-      },
-      "collision": "voxel",
-      "use": "Stadium (2026-11-13): grandstands along the pitch (cover, height)"
-    },
-    {
-      "id": "tribune",
-      "key": "sf:9745757584ef46b7be11235af84225a9",
-      "class": "structure",
-      "fit": {
-        "max": 20
-      },
-      "collision": "voxel",
-      "use": "Stadium (2026-11-13): end-stand tribunes"
-    },
-    {
-      "id": "scoreboard",
-      "key": "sf:a69de1385cde43cda5de7b40b4451694",
-      "class": "structure",
-      "fit": {
-        "y": 7
-      },
-      "collision": "voxel",
-      "use": "Stadium (2026-11-13): the scoreboard behind the goal"
-    },
-    {
       "id": "score-hut",
       "key": "sf:2c0b204bed9c44e39e5c97f8dd63583f",
       "class": "structure",
@@ -5455,17 +5418,6 @@
       },
       "collision": "voxel",
       "use": "Stadium (2026-11-13): the goals on the pitch"
-    },
-    {
-      "id": "turnstile",
-      "key": "sf:b0fb9ddd343544a681ae108591bf0277",
-      "class": "small",
-      "fit": {
-        "y": 1.1
-      },
-      "collision": "solid",
-      "ring": "detail",
-      "use": "Stadium (2026-11-13): turnstiles at the gates"
     },
     {
       "id": "ticket-booth",
@@ -5716,28 +5668,6 @@
       "use": "Stadium (2026-11-13): the pitch's markings"
     },
     {
-      "id": "turnstile-tall",
-      "key": "sf:993581a938ff4bd0aff70b77f3278b81",
-      "class": "prop",
-      "fit": {
-        "y": 2.3
-      },
-      "collision": "solid",
-      "use": "Arena District (2026-11-14): full-height turnstiles at the arena gates",
-      "ring": "clutter"
-    },
-    {
-      "id": "turnstile-low",
-      "key": "sf:12536f966f9048dcba7e33fa08d9d6b5",
-      "class": "small",
-      "fit": {
-        "y": 1.05
-      },
-      "collision": "solid",
-      "use": "Arena District (2026-11-14): ticket barriers in the arena gates",
-      "ring": "detail"
-    },
-    {
       "id": "metal-detector",
       "key": "sf:e05f5f48b3eb4fa88fc5c7548a3a324a",
       "class": "small",
@@ -5835,17 +5765,6 @@
       "ring": "detail"
     },
     {
-      "id": "trash-cans",
-      "key": "sf:3836ff67877248c2a820e6a969984aac",
-      "class": "small",
-      "fit": {
-        "y": 1
-      },
-      "collision": "solid",
-      "use": "Arena District (2026-11-14): bins in the concourses and on the plazas",
-      "ring": "detail"
-    },
-    {
       "id": "escalator",
       "key": "sf:d1706d72bf7943ab9bd7f48f18cb591e",
       "class": "structure",
@@ -5854,28 +5773,6 @@
       },
       "collision": "none",
       "use": "Arena District (2026-11-14): the arena's escalators (ridden on the arena model's own steps)",
-      "ring": "fitout"
-    },
-    {
-      "id": "glass-balustrade",
-      "key": "sf:67b3670cf9af4b7fa1127a5b69c552bb",
-      "class": "small",
-      "fit": {
-        "y": 1.05
-      },
-      "collision": "none",
-      "use": "Arena District (2026-11-14): glass railings on the VIP terraces (the arena model's rails collide)",
-      "ring": "fitout"
-    },
-    {
-      "id": "toilet",
-      "key": "sf:7082a1c21601433d968ea83d33a40c00",
-      "class": "small",
-      "fit": {
-        "y": 0.8
-      },
-      "collision": "solid",
-      "use": "Arena District (2026-11-14): the arena's toilets",
       "ring": "fitout"
     },
     {
@@ -6012,29 +5909,6 @@
       },
       "collision": "none",
       "use": "Arena District (2026-11-14): balls on the pitch and in the changing rooms",
-      "ring": "detail"
-    },
-    {
-      "id": "vent-duct",
-      "key": "sf:34b5be84762f40cb9e5f5f672bbb6728",
-      "class": "small",
-      "fit": {
-        "max": 6
-      },
-      "collision": "none",
-      "use": "Arena District (2026-11-14): ducts under the concourse ceilings",
-      "ring": "fitout"
-    },
-    {
-      "id": "electric-box",
-      "key": "sf:e5a058d5210448e5b2640cdb3fbcb163",
-      "class": "small",
-      "fit": {
-        "y": 0.6
-      },
-      "collision": "none",
-      "use": "Arena District (2026-11-14): switch boxes on the service walls",
-      "piece": "modular-box-01",
       "ring": "detail"
     },
     {
@@ -6414,18 +6288,6 @@
       "use": "Blackwater Prison (2026-11-14): interrogation and office chairs"
     },
     {
-      "id": "bw-bin",
-      "key": "sf:e3865c02170e43aba21d0c9d26904677",
-      "piece": "trashcan",
-      "class": "small",
-      "fit": {
-        "y": 0.5
-      },
-      "collision": "none",
-      "ring": "detail",
-      "use": "Blackwater Prison (2026-11-14): waste bins"
-    },
-    {
       "id": "bw-wash-sink",
       "key": "sf:8e13a866ee184bed95bb5b59ddee62cd",
       "piece": "BathroomSink_LP_11",
@@ -6468,18 +6330,6 @@
       "ring": "detail",
       "texture": 256,
       "use": "Blackwater Prison (2026-11-14): mop buckets"
-    },
-    {
-      "id": "bw-barber",
-      "key": "sf:413636af429d481daf9a8acf24a058db",
-      "class": "small",
-      "fit": {
-        "y": 1.1
-      },
-      "collision": "solid",
-      "ring": "fitout",
-      "texture": 512,
-      "use": "Blackwater Prison (2026-11-14): the barber's chair"
     },
     {
       "id": "bw-pew",
@@ -6530,19 +6380,6 @@
       "use": "Blackwater Prison (2026-11-14): security cameras on brackets"
     },
     {
-      "id": "bw-keypad",
-      "key": "sf:dfbf3ebd9b774babbec99989f34df691",
-      "piece": "Access_Panel:Access_Panel",
-      "class": "small",
-      "fit": {
-        "max": 0.25
-      },
-      "collision": "none",
-      "ring": "detail",
-      "texture": 256,
-      "use": "Blackwater Prison (2026-11-14): keypads by the doors"
-    },
-    {
       "id": "bw-gun-wall",
       "key": "sf:574a113d1c7f4010afbb8c8511498a8e",
       "class": "small",
@@ -6584,17 +6421,6 @@
         600
       ],
       "use": "Blackwater Prison (2026-11-14): armoury: lockers and the vault door"
-    },
-    {
-      "id": "bw-wall-lamp",
-      "key": "sf:4c50439bcbc247629fe2194862d7acc9",
-      "class": "small",
-      "fit": {
-        "max": 0.35
-      },
-      "collision": "none",
-      "ring": "detail",
-      "use": "Blackwater Prison (2026-11-14): bulkhead lamps on the walls"
     },
     {
       "id": "bw-ceiling-lamp",
@@ -7732,6 +7558,86 @@
       "key": "sf:6b71f24a55e242c5be8c77bc296098d1",
       "title": "Blackwater Prison (2026-11-14, the yard): the security gate in the sally port",
       "reason": "Blackwater Prison review (2026-11-14): only the posts render, the gate's panels are missing"
+    },
+    {
+      "key": "sf:8406794ee19b4af49e0ccc02d1132915",
+      "title": "store-shelves (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: superstore aisles (cover)"
+    },
+    {
+      "key": "sf:8b1d8eed69c0405882e50e9099090dc0",
+      "title": "grandstand (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Stadium (2026-11-13): grandstands along the pitch (cover, height)"
+    },
+    {
+      "key": "sf:9745757584ef46b7be11235af84225a9",
+      "title": "tribune (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Stadium (2026-11-13): end-stand tribunes"
+    },
+    {
+      "key": "sf:a69de1385cde43cda5de7b40b4451694",
+      "title": "scoreboard (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Stadium (2026-11-13): the scoreboard behind the goal"
+    },
+    {
+      "key": "sf:b0fb9ddd343544a681ae108591bf0277",
+      "title": "turnstile (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Stadium (2026-11-13): turnstiles at the gates"
+    },
+    {
+      "key": "sf:993581a938ff4bd0aff70b77f3278b81",
+      "title": "turnstile-tall (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Arena District (2026-11-14): full-height turnstiles at the arena gates"
+    },
+    {
+      "key": "sf:12536f966f9048dcba7e33fa08d9d6b5",
+      "title": "turnstile-low (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Arena District (2026-11-14): ticket barriers in the arena gates"
+    },
+    {
+      "key": "sf:3836ff67877248c2a820e6a969984aac",
+      "title": "trash-cans (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Arena District (2026-11-14): bins in the concourses and on the plazas"
+    },
+    {
+      "key": "sf:67b3670cf9af4b7fa1127a5b69c552bb",
+      "title": "glass-balustrade (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Arena District (2026-11-14): glass railings on the VIP terraces (the arena model's rails collide)"
+    },
+    {
+      "key": "sf:7082a1c21601433d968ea83d33a40c00",
+      "title": "toilet (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Arena District (2026-11-14): the arena's toilets"
+    },
+    {
+      "key": "sf:34b5be84762f40cb9e5f5f672bbb6728",
+      "title": "vent-duct (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Arena District (2026-11-14): ducts under the concourse ceilings"
+    },
+    {
+      "key": "sf:e5a058d5210448e5b2640cdb3fbcb163",
+      "title": "electric-box (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Arena District (2026-11-14): switch boxes on the service walls"
+    },
+    {
+      "key": "sf:e3865c02170e43aba21d0c9d26904677",
+      "title": "bw-bin (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Blackwater Prison (2026-11-14): waste bins"
+    },
+    {
+      "key": "sf:413636af429d481daf9a8acf24a058db",
+      "title": "bw-barber (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Blackwater Prison (2026-11-14): the barber's chair"
+    },
+    {
+      "key": "sf:dfbf3ebd9b774babbec99989f34df691",
+      "title": "bw-keypad (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Blackwater Prison (2026-11-14): keypads by the doors"
+    },
+    {
+      "key": "sf:4c50439bcbc247629fe2194862d7acc9",
+      "title": "bw-wall-lamp (removed 2026-11-16)",
+      "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Blackwater Prison (2026-11-14): bulkhead lamps on the walls"
     }
   ]
 }

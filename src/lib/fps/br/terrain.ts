@@ -878,9 +878,13 @@ export function createTerrain(
   };
   let count = 0;
   let frontToBack = false;
-  const order = new Uint16Array(4096),
-    key = new Float32Array(4096),
+  // Nearest first without a comparator: each patch's distance (in decimetres, 20 bits) above
+  // its index (12 bits) in one number, sorted natively. A comparator is called back for every
+  // comparison and its result goes onto the heap: ten times the time and some 30 kB of garbage
+  // a frame, measured 2026-11-16.
+  const packed = new Uint32Array(4096),
     sorted = new Float32Array(4 * 4096);
+  let ordered = packed.subarray(0, 0);
 
   return {
     root,
@@ -907,16 +911,21 @@ export function createTerrain(
         const half = TERRAIN.patch / 2;
         for (let i = 0; i < count; i++) {
           const s = arr[i * 4 + 2]!;
-          order[i] = i;
-          key[i] = Math.hypot(
-            (arr[i * 4]! + half * s) * hf.spacing - WORLD_HALF - cam.x,
-            (arr[i * 4 + 1]! + half * s) * hf.spacing - WORLD_HALF - cam.z,
-          );
+          const dx = (arr[i * 4]! + half * s) * hf.spacing - WORLD_HALF - cam.x,
+            dz = (arr[i * 4 + 1]! + half * s) * hf.spacing - WORLD_HALF - cam.z;
+          packed[i] = Math.min(0xfffff, Math.round(Math.sqrt(dx * dx + dz * dz) * 10)) * 4096 + i;
         }
-        order.subarray(0, count).sort((a, b) => key[a]! - key[b]!);
-        for (let i = 0; i < count; i++)
-          sorted.set(arr.subarray(order[i]! * 4, order[i]! * 4 + 4), i * 4);
-        arr.set(sorted.subarray(0, count * 4));
+        if (ordered.length !== count) ordered = packed.subarray(0, count);
+        ordered.sort();
+        for (let i = 0; i < count; i++) {
+          const from = (packed[i]! & 0xfff) * 4,
+            to = i * 4;
+          sorted[to] = arr[from]!;
+          sorted[to + 1] = arr[from + 1]!;
+          sorted[to + 2] = arr[from + 2]!;
+          sorted[to + 3] = arr[from + 3]!;
+        }
+        for (let i = 0, n4 = count * 4; i < n4; i++) arr[i] = sorted[i]!;
       }
       geometry.instanceCount = count;
       patchAttr.addUpdateRange(0, count * 4);

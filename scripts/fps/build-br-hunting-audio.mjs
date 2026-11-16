@@ -8,7 +8,7 @@
  *    0.45 s, levelled 1.6 dB down (about −17 LUFS integrated, peak about −1 dBFS): a notch under
  *    the AWP's report. No EQ, pitch change or effects.
  *
- * Silenced, the rifle fires the AWP's silenced shot (br-awp-silenced-v3.wav; owner, 2026-11-13).
+ * Silenced, the rifle fires the AWP's silenced shot (br-sniper-silenced-v1.wav, br-audio.ts).
  *
  *   node scripts/fps/build-br-hunting-audio.mjs
  */

@@ -242,6 +242,31 @@ function paintedVertices(geometry: THREE.BufferGeometry) {
   return false;
 }
 
+/**
+ * A blended two-sided material (the bushes' leaf cards) as the two passes three draws it in:
+ * back faces, then front. three does that itself, by switching the one material's side twice a
+ * frame and marking it changed each time, so its shader program was looked up again twice a
+ * frame for every such mesh in view: 6 to 12 lookups and about 47 kB of garbage a frame near
+ * bushes (cleanup 2026-11-16). Two one-sided materials that never change draw the same two
+ * passes in the same order (the back mesh is made first, and the two sort alike otherwise).
+ * Any other material is returned as it is.
+ */
+export function twoPasses(material: THREE.Material | THREE.Material[]) {
+  if (
+    Array.isArray(material) ||
+    !material.transparent ||
+    material.side !== THREE.DoubleSide ||
+    material.forceSinglePass
+  )
+    return [material];
+  const back = material.clone();
+  back.onBeforeCompile = material.onBeforeCompile;
+  back.customProgramCacheKey = material.customProgramCacheKey;
+  back.side = THREE.BackSide;
+  material.side = THREE.FrontSide;
+  return [back, material];
+}
+
 export function createProps(
   placements: Placement[],
   manifest: ModelManifest,
@@ -356,7 +381,6 @@ export function createProps(
     gltf.scene.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
-      local.push(mesh.matrixWorld.clone());
       // Double-sided surfaces stored twice z-fight (flicker as the camera turns).
       for (const m of Array.isArray(mesh.material) ? [] : [mesh.material])
         dropDuplicateFaces(mesh.geometry, m);
@@ -404,22 +428,25 @@ export function createProps(
         else facade.color.set(0x8a8a84);
         facade.needsUpdate = true;
       }
-      const im = new THREE.InstancedMesh(mesh.geometry, mesh.material, capacity);
-      im.name = `${state.id}.lod${level}`;
-      im.userData["lod"] = level;
-      im.renderOrder = nearFirst ? level : 0;
-      im.count = 0;
-      // Culled against the view by one sphere round the instances it draws now (selectModel).
-      im.boundingSphere = new THREE.Sphere(new THREE.Vector3(), -1);
       mesh.geometry.computeBoundingBox();
       extent
         .copy(mesh.geometry.boundingBox!)
         .applyMatrix4(mesh.matrixWorld)
         .getBoundingSphere(ball);
       reach = Math.max(reach, ball.center.length() + ball.radius);
-      im.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      root.add(im);
-      meshes.push(im);
+      for (const material of twoPasses(mesh.material)) {
+        const im = new THREE.InstancedMesh(mesh.geometry, material, capacity);
+        im.name = `${state.id}.lod${level}`;
+        im.userData["lod"] = level;
+        im.renderOrder = nearFirst ? level : 0;
+        im.count = 0;
+        // Culled against the view by one sphere round the instances it draws now (selectModel).
+        im.boundingSphere = new THREE.Sphere(new THREE.Vector3(), -1);
+        im.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        root.add(im);
+        meshes.push(im);
+        local.push(mesh.matrixWorld.clone());
+      }
     });
     state.lods[level] = {
       meshes,

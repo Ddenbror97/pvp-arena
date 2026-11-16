@@ -9,6 +9,7 @@
 import * as THREE from "three";
 import { createBrArena } from "../../../src/lib/fps/br/br-arena";
 import { retainedAuthoredAssets } from "../../../src/lib/fps/authored-assets";
+import { litLookup } from "../../../src/lib/fps/shared-release";
 
 const base = location.origin + "/";
 const host = document.createElement("div");
@@ -114,7 +115,13 @@ async function cycle() {
   env.dispose();
   light.shadow.map?.dispose();
   const floor = { ...probe.info.memory };
+  // The probe lets go as the arena does (shared-release.ts), and its context too: left to the
+  // collector it stays alive across cycles, and a long run would reach the browser's cap on
+  // live contexts.
+  const lookup = litLookup(probe, ps);
   probe.dispose();
+  lookup?.dispose();
+  probe.forceContextLoss();
   const result = {
     floor,
     geometries: before.geometries,

@@ -45,7 +45,6 @@ import {
 } from "../buy";
 import { DEAGLE, deagleSpread, giveDeagle } from "../sidearm";
 import {
-  AWP,
   awpDamage,
   awpSpeedFraction,
   awpSpread,

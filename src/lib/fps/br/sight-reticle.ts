@@ -205,6 +205,15 @@ const glass = new THREE.MeshBasicMaterial({
   depthWrite: false,
   toneMapped: false,
 });
+/**
+ * A renderer that is going away hands the sights' shared glass and pictures back
+ * (shared-release.ts): they stay as they are for the next match, which uploads them again.
+ */
+export function releaseSightLook() {
+  glass.dispose();
+  lensTexture?.dispose();
+  for (const texture of textures.values()) texture.dispose();
+}
 
 /**
  * Each sight's glass, in multiples of its reticle quad: width, height, centre height above the

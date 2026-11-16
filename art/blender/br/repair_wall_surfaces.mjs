@@ -13,6 +13,7 @@ import {
 } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder, MeshoptSimplifier } from "meshoptimizer";
 import { resolveCoplanarSurfaces } from "./coplanar-surfaces.mjs";
+import { modelFile } from "./model-files.mjs";
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready, MeshoptSimplifier.ready]);
 const io = new NodeIO()
   .registerExtensions(ALL_EXTENSIONS)
@@ -40,7 +41,7 @@ for (const [id, model] of Object.entries(manifest.models)) {
   )
     continue;
   for (const [level, lod] of model.lods.entries()) {
-    const doc = await io.read("public" + lod.file);
+    const doc = await io.read(modelFile(lod.file));
     await doc.transform(dequantize());
     const root = doc.getRoot(),
       nodes = [...root.listNodes()],

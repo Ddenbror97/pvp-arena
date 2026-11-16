@@ -25,6 +25,7 @@ import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { dequantize, meshopt, prune, unweld, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
+import { modelFile } from "./model-files.mjs";
 
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO()
@@ -69,7 +70,7 @@ const report = [];
 for (const [id, model] of Object.entries(manifest.models)) {
   if (!CLASSES.has(model.class)) continue;
   for (const [level, lod] of model.lods.entries()) {
-    const doc = await io.read("public" + lod.file);
+    const doc = await io.read(modelFile(lod.file));
     await doc.transform(dequantize(), unweld());
     const root = doc.getRoot();
     // Triangles of every primitive in model space (node transforms applied for the test only).

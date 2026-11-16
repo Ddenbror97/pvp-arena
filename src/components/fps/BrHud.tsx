@@ -16,7 +16,7 @@ import {
   type WeaponId,
 } from "@/lib/fps/br/items";
 import { BR_RULES, type BrKitView } from "@/lib/fps/br/match";
-import { PERK_IDS, PERKS, type PerkId } from "@/lib/fps/br/perks";
+import { PERKS } from "@/lib/fps/br/perks";
 
 /**
  * Battle royale HUD and inventory (LOOT-SPEC §12–17): survival status, hotbar, ammunition,

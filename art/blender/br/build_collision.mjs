@@ -20,6 +20,7 @@ import { fileURLToPath } from "node:url";
 import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { MeshoptDecoder } from "meshoptimizer";
+import { modelFile } from "./model-files.mjs";
 
 /** 0.3 m: stairs voxelise into risers below the 0.35 m step height, so they stay climbable. */
 const VOXEL = 0.3;
@@ -172,7 +173,7 @@ export async function buildCollision(only = process.env.ONLY?.split(",").filter(
       console.log(`${a.id.padEnd(18)} boxes  ${out.models[a.id].length} boxes`);
       continue;
     }
-    const tris = await triangles(path.join(REPO, "public", m.lods[0].file));
+    const tris = await triangles(modelFile(m.lods[0].file));
     if (mode === "solid") {
       const min = [Infinity, Infinity, Infinity],
         max = [-Infinity, -Infinity, -Infinity];

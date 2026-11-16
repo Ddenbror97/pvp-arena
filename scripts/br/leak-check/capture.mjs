@@ -3,11 +3,12 @@
  * on headless Chromium, disposes it, and repeats. After each teardown the renderer must track
  * no geometry and no texture beyond three.js's own floor, and the counts while mounted must
  * not grow cycle to cycle. Anything uploaded during the match that the teardown never disposed
- * is named.
+ * is named. (What the whole page shares is handed back at teardown: src/lib/fps/shared-release.ts.)
  *
- *   node scripts/br/leak-check/capture.mjs [--cycles=3] [--chromium=/path] [--reversed] [--retained]
+ *   node scripts/br/leak-check/capture.mjs [--cycles=3] [--chromium=/path] [--log] [--retained]
  *
- * --reversed runs the opt-in reversed-Z path (scene-target.ts) instead of logarithmic depth.
+ * --log runs the logarithmic-depth fallback instead of the default reversed-Z path
+ * (scene-target.ts).
  * --tier=low runs the low hardware tier (quality-tier.ts); the default pins "standard", since
  * the software renderer here would otherwise be detected as low.
  *
