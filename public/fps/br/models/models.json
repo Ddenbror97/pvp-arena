@@ -8076,11 +8076,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/cessna310.lod0.glb",
+     "file": "/fps/br/models/cessna310.livery-v1.lod0.glb",
      "tris": 3971,
      "draws": 4,
      "textureMB": 5.67,
-     "kB": 47,
+     "kB": 46,
      "size": [
       11.3,
       3.26,
@@ -8088,11 +8088,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/cessna310.lod1.glb",
+     "file": "/fps/br/models/cessna310.livery-v1.lod1.glb",
      "tris": 2797,
      "draws": 4,
      "textureMB": 1.67,
-     "kB": 37,
+     "kB": 35,
      "size": [
       11.3,
       3.26,
@@ -8100,11 +8100,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/cessna310.lod2.glb",
+     "file": "/fps/br/models/cessna310.livery-v1.lod2.glb",
      "tris": 796,
      "draws": 1,
      "textureMB": 0,
-     "kB": 5,
+     "kB": 6,
      "size": [
       11.3,
       3.26,
