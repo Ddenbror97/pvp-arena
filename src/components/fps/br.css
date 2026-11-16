@@ -1257,8 +1257,7 @@
 }
 
 /* ---- bottom centre: hotbar */
-.br-inventory kbd,
-.br-switch kbd {
+.br-inventory kbd {
   display: inline-block;
   min-width: 16px;
   padding: 1px 4px;
@@ -1275,47 +1274,6 @@
 @keyframes br-pulse {
   to {
     opacity: 0.45;
-  }
-}
-
-/* ---- weapon switch card */
-.br-switch {
-  position: absolute;
-  left: 50%;
-  bottom: 74px;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 12px;
-  border-radius: var(--hud-radius);
-  background: var(--hud-bg);
-  color: var(--hud-text);
-  font-size: 12px;
-  pointer-events: none;
-  animation: br-switch 1.4s ease-out forwards;
-}
-.br-switch .bomb-weapon-icon {
-  width: 64px;
-  height: 22px;
-  fill: currentColor;
-}
-.br-switch small {
-  color: var(--hud-dim);
-  font-variant-numeric: tabular-nums;
-}
-@keyframes br-switch {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 6px);
-  }
-  12%,
-  75% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-  100% {
-    opacity: 0;
   }
 }
 
@@ -2403,15 +2361,13 @@ button.br-inv-cell:hover {
   opacity: 0.3;
 }
 /* Cards that sat at the old hotbar's height move above the bottom HUD. */
-.br-switch {
-  bottom: 118px;
-}
 .br-game .br-hint {
   bottom: 112px;
 }
-/* The E prompt (owner, 2026-11-13: "more clean/modern"): a key cap and a short card above the
-   bottom HUD: the action in small caps, the item's name with its rarity tag, then the detail.
-   No blur (a backdrop filter is a full-screen pass every frame). */
+/* The E prompt (owner, 2026-11-13 and 2026-11-16: "upgrade the E interact window to more
+   mordern/clean"): a light key cap, then the thing's name (with its rarity tag) over a dim line
+   saying what E does and the detail. A rarity-coloured dot rides the key's corner. No blur (a
+   backdrop filter is a full-screen pass every frame). */
 .br-prompt {
   position: absolute;
   left: 50%;
@@ -2419,85 +2375,101 @@ button.br-inv-cell:hover {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 10px;
-  max-width: min(360px, calc(100vw - 32px));
-  padding: 8px 14px 8px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  background:
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--rar, #c8d0d4) 16%, transparent),
-      transparent 55%
-    ),
-    rgba(10, 13, 16, 0.78);
+  gap: 12px;
+  max-width: min(380px, calc(100vw - 32px));
+  padding: 7px 16px 7px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(22, 26, 31, 0.86), rgba(12, 15, 18, 0.86));
   box-shadow:
-    inset 2px 0 0 var(--rar, #c8d0d4),
-    0 6px 18px rgba(0, 0, 0, 0.28);
-  color: #eef2f4;
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 10px 28px rgba(0, 0, 0, 0.32);
+  color: #f2f5f7;
   font-family: var(--hud-font);
   pointer-events: none;
-  animation: br-prompt-in 120ms ease-out;
+  animation: br-prompt-in 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 @keyframes br-prompt-in {
   from {
     opacity: 0;
-    transform: translate(-50%, 4px);
+    transform: translate(-50%, 6px) scale(0.98);
   }
 }
 .br-prompt .br-prompt-key {
-  display: block;
+  position: relative;
+  display: grid;
+  place-items: center;
   flex: none;
   box-sizing: border-box;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   padding: 0;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-bottom-width: 3px;
-  border-radius: 7px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
-  color: #fff;
-  font: 800 14px/26px var(--hud-font);
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #ffffff, #dfe4e8);
+  box-shadow:
+    0 2px 0 #9aa3aa,
+    0 4px 10px rgba(0, 0, 0, 0.3);
+  color: #11161a;
+  font: 800 15px/1 var(--hud-font);
+}
+.br-prompt .br-prompt-key::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #12161a;
+  border-radius: 50%;
+  background: var(--rar, #c8d0d4);
 }
 .br-prompt-body {
   display: grid;
-  gap: 1px;
+  gap: 2px;
   min-width: 0;
-}
-.br-prompt-act {
-  color: var(--rar, #c8d0d4);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 .br-prompt-name {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 14px;
+  gap: 8px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1.2;
+  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 .br-prompt-name i {
-  padding: 1px 5px;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--rar, #c8d0d4) 22%, transparent);
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rar, #c8d0d4) 20%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rar, #c8d0d4) 45%, transparent);
   color: var(--rar, #c8d0d4);
-  font-size: 9px;
+  font-size: 9.5px;
   font-style: normal;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.br-prompt-body small {
+.br-prompt-act {
   overflow: hidden;
-  color: rgba(238, 242, 244, 0.62);
-  font-size: 11px;
+  color: rgba(242, 245, 247, 0.62);
+  font-size: 12px;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.br-prompt-act small {
+  font-size: inherit;
+  font-weight: 500;
+}
+.br-prompt-act small::before {
+  content: "·";
+  margin: 0 6px;
+  opacity: 0.6;
+}
+.br-prompt-act small.solo::before {
+  content: none;
 }
 @media (max-width: 1100px) {
   .br-bottom .duel-health,
@@ -2530,7 +2502,7 @@ button.br-inv-cell:hover {
 .br-bottom .duel-health > div {
   width: 180px;
 }
-/* Our guns' silhouettes (hotbar, switch card, kill feed). */
+/* Our guns' silhouettes (hotbar, kill feed). */
 .br-gun-glyph {
   display: block;
   height: 22px;
@@ -2542,10 +2514,6 @@ button.br-inv-cell:hover {
 }
 .br-slot-hud.is-drawn .br-gun-glyph {
   filter: brightness(0) invert(0.95) drop-shadow(0 0 4px #b76dffaa);
-}
-.br-switch .br-gun-glyph {
-  height: 30px;
-  max-width: 96px;
 }
 .br-killfeed .br-gun-glyph {
   height: 16px;
@@ -2888,71 +2856,145 @@ button.br-inv-cell:hover {
 .br-game .duel-loading-status {
   margin-bottom: 8px;
 }
-/* The supply drop alert: one slim card under the match status, the drop smoke's green. */
+/* The supply drop alert (owner, 2026-11-16: "more clean/mordern"): one card under the match
+   status. An icon tile in the drop smoke's green, "SUPPLY DROP" over the stage, the grid chip
+   and distance, the countdown on the right, a thin bar filling along the bottom edge. */
 .br-airdrop {
+  --drop: #6ee78c;
   position: absolute;
   left: 50%;
-  top: 104px;
+  top: 100px;
   transform: translateX(-50%);
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 7px 14px 7px 10px;
-  border: 1px solid rgba(110, 231, 140, 0.45);
-  border-radius: 8px;
-  background: rgba(9, 14, 11, 0.62);
-  color: var(--hud-text, #eef2f4);
+  gap: 12px;
+  min-width: 260px;
+  padding: 8px 16px 10px 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(110, 231, 140, 0.16), transparent 55%),
+    linear-gradient(180deg, rgba(20, 26, 23, 0.86), rgba(10, 14, 12, 0.86));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 10px 28px rgba(0, 0, 0, 0.32);
+  color: #f2f5f7;
   font-family: var(--hud-font, system-ui, sans-serif);
   pointer-events: none;
-  animation: br-airdrop-in 0.3s ease-out;
+  animation: br-airdrop-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.br-airdrop svg {
-  width: 24px;
-  height: 24px;
-  flex: none;
-  fill: none;
-  stroke: #6ee78c;
-  stroke-width: 1.6;
-  stroke-linejoin: round;
-}
-.br-airdrop div {
+.br-airdrop-icon {
   display: grid;
-  gap: 2px;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(110, 231, 140, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(110, 231, 140, 0.35);
 }
-.br-airdrop b {
-  color: #6ee78c;
-  font-size: 12px;
+.br-airdrop-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--drop);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.br-airdrop-body {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.br-airdrop-body small {
+  color: var(--drop);
+  font-size: 9.5px;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
-.br-airdrop span {
-  color: var(--hud-dim, rgba(238, 242, 244, 0.6));
+.br-airdrop-body b {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.br-airdrop-body span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(242, 245, 247, 0.62);
   font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-.br-airdrop.is-incoming {
-  animation:
-    br-airdrop-in 0.3s ease-out,
-    br-airdrop-pulse 1.6s ease-in-out 0.3s infinite;
+.br-airdrop-body span i {
+  padding: 0 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #f2f5f7;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 17px;
+}
+.br-airdrop-time {
+  flex: none;
+  min-width: 44px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.br-airdrop-time small {
+  margin-left: 1px;
+  color: rgba(242, 245, 247, 0.55);
+  font-size: 13px;
+  font-weight: 700;
+}
+.br-airdrop-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(110, 231, 140, 0.55), var(--drop));
+  transform-origin: left center;
+  transition: transform 1s linear;
+}
+.br-airdrop.is-incoming .br-airdrop-icon {
+  animation: br-airdrop-pulse 1.6s ease-in-out infinite;
+}
+.br-airdrop.is-landed .br-airdrop-bar {
+  opacity: 0.5;
 }
 @keyframes br-airdrop-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -6px);
+    transform: translate(-50%, -8px) scale(0.98);
   }
 }
 @keyframes br-airdrop-pulse {
   50% {
-    border-color: rgba(110, 231, 140, 0.9);
+    box-shadow:
+      inset 0 0 0 1px rgba(110, 231, 140, 0.8),
+      0 0 14px rgba(110, 231, 140, 0.35);
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .br-airdrop,
-  .br-airdrop.is-incoming {
+  .br-airdrop.is-incoming .br-airdrop-icon {
     animation: none;
+  }
+  .br-airdrop-bar {
+    transition: none;
   }
 }
 
