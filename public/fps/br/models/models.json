@@ -800,11 +800,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/apartment.walls-v1.lod2.glb",
-     "tris": 147,
+     "file": "/fps/br/models/apartment.far-v2.lod2.glb",
+     "tris": 402,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 7,
      "size": [
       20,
       19.2,
