@@ -113,6 +113,11 @@ export type VegetationControls = {
   update: (camera: THREE.PerspectiveCamera) => void;
   /** Trees drawn out to here (m; never under VEGETATION_VIEW.viewDistance, the cover range). */
   setViewDistance: (m: number) => void;
+  /**
+   * Thin the far trees out over the last stretch of the ring, from `from` (a share of its
+   * length; 0: off). Only with the ground's painted canopy beyond it (far-forest.ts).
+   */
+  setFarFade: (from: number) => void;
   stats: () => {
     trees: number;
     /** Trees drawn as models this frame (in view), and of those the full models. */
@@ -151,22 +156,30 @@ function instanceShader(
      * model's height (m), `strength` how much darker the lowest leaves are.
      */
     crown?: { height: number; strength: number } | null;
+    /**
+     * The far form only: the distances (m) over which it thins out at the end of the tree
+     * ring, where the ground's painted canopy takes over (far-forest.ts). A uniform, because
+     * the ring's length follows the view distance.
+     */
+    farOut?: { value: THREE.Vector2 } | null;
   } = {},
 ) {
   const { alphaMipScale = 0, alphaTexSize = 256, upNormal = false, leaf = null, crown = null } = o;
+  const farOut = o.farOut ?? null;
   // The form's fade, readable by tests (the shader does the same sums: fadeShare).
   material.userData["treeFade"] = { centre: camera, fade };
   const band = (b: [number, number] | null, none: string) =>
     b ? `clamp((treeDistance - ${b[0].toFixed(2)}) / ${(b[1] - b[0]).toFixed(2)}, 0.0, 1.0)` : none;
   material.onBeforeCompile = (shader) => {
     shader.uniforms["uTreeCamera"] = camera;
+    if (farOut) shader.uniforms["uTreeFarOut"] = farOut;
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
         `#include <common>
         attribute vec4 aTreeA; // x, ground y, z, scale
         attribute vec2 aTreeB; // yaw (0..1), tint
-        uniform vec3 uTreeCamera;
+        uniform vec3 uTreeCamera;${farOut ? "\n        uniform vec2 uTreeFarOut;" : ""}
         // The share of the dither this form draws: [x, y) (fadeShare).
         flat varying vec2 vTreeFade;
         varying float vTreeTint;
@@ -198,7 +211,7 @@ function instanceShader(
         }
         // From the camera to the tree's foot: from the air a forest is impostors, as it should be.
         float treeDistance = distance(aTreeA.xyz, uTreeCamera);
-        vTreeFade = vec2(${band(fade.out, "0.0")}, ${band(fade.in, "1.0")});
+        vTreeFade = vec2(${farOut ? "clamp((treeDistance - uTreeFarOut.x) / (uTreeFarOut.y - uTreeFarOut.x), 0.0, 1.0)" : band(fade.out, "0.0")}, ${band(fade.in, "1.0")});
         // Nothing of it to draw at this distance: no triangles either.
         if (vTreeFade.x >= vTreeFade.y) transformed = vec3(0.0);`,
       );
@@ -273,7 +286,7 @@ function instanceShader(
         #include <alphatest_fragment>`,
       );
   };
-  material.customProgramCacheKey = () => `br-trees-${key}`;
+  material.customProgramCacheKey = () => `br-trees-${key}${farOut ? "-out" : ""}`;
 }
 
 const instanced = (
@@ -438,6 +451,9 @@ export function createVegetation(
   root.name = "br-vegetation";
   // Where the camera is this frame: every form fades by its trees' distance from here.
   const cameraUniform = { value: new THREE.Vector3(Infinity, 0, Infinity) };
+  // Where the far form thins out (off until the ground paints the forest beyond: setFarFade).
+  const farOut = { value: new THREE.Vector2(1e9, 2e9) };
+  let farFade = 0;
   const owned: THREE.Material[] = [];
   const ownedGeometry: THREE.BufferGeometry[] = [];
   const { detailDistance, nearDistance } = VEGETATION_VIEW;
@@ -556,8 +572,9 @@ export function createVegetation(
             leaf: LEAF_COLOUR[species],
             // The bake already carries some of the crown's shading: half as strong.
             crown: { height: assets.impostors[s]!.height, strength: 0.2 },
+            farOut,
           }
-        : {},
+        : { farOut },
     );
     owned.push(material);
     ownedGeometry.push(base);
@@ -662,8 +679,14 @@ export function createVegetation(
   let treeView: number = VEGETATION_VIEW.viewDistance;
   return {
     root,
+    setFarFade(from) {
+      farFade = from;
+      if (from > 0) farOut.value.set(treeView * from, treeView);
+      else farOut.value.set(1e9, 2e9);
+    },
     setViewDistance(m) {
       treeView = Math.max(VEGETATION_VIEW.viewDistance, Math.min(4000, m));
+      if (farFade > 0) farOut.value.set(treeView * farFade, treeView);
       stale = true;
       // Every cell the view can reach stays generated: with fewer kept than a long view
       // holds, walking made the same cells over and over (30 to 40 ms frames at the longest).

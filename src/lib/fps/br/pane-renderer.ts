@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { biasLogDepth, LOG_BIAS } from "./depth-bias";
 import type { PaneSet } from "./panes";
 
 /**
@@ -27,6 +28,9 @@ export function createPaneRenderer(scene: THREE.Scene, set: PaneSet) {
     }),
     Math.max(1, n),
   );
+  // Under the default logarithmic depth that offset does nothing (depth-bias.ts): this is the
+  // pull that takes effect there.
+  biasLogDepth(glass.material, LOG_BIAS.pane);
   glass.count = n;
   glass.renderOrder = 1;
   const m = new THREE.Matrix4();

@@ -11,7 +11,10 @@ describe("AK-derived AWP reload recordings", () => {
     let shotEnergy = 0;
     for (let i = 0; i < count; i++) shotEnergy += shot.readInt16LE(44 + i * 2) ** 2;
     let strongest = 0;
-    for (const [from, to] of [[2.44, 2.52], [2.70, 2.80]] as const) {
+    for (const [from, to] of [
+      [2.44, 2.52],
+      [2.7, 2.8],
+    ] as const) {
       for (let start = Math.round(from * 48000); start < to * 48000; start++) {
         let dot = 0,
           energy = 0;

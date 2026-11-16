@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { biasLogDepth, LOG_BIAS } from "./depth-bias";
 import { STILL_WATER } from "./drop";
 import { WAVES_SWELL_AT_S, WAVES_SWELL_S, waterClock } from "./water-clock";
 import { SKY_GLSL, skyUniforms, sunLook, type SunLook } from "./sun";
@@ -380,6 +381,8 @@ export function createWater(
       );
   };
   material.customProgramCacheKey = () => `br-water-v8-${ground ? "depth" : "flat"}`;
+  // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
+  biasLogDepth(material, LOG_BIAS.water);
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-water";
   // The waves' clock (seconds, wrapped so the shader's floats stay precise).
