@@ -512,7 +512,34 @@ function block(spec) {
     B([U0 - 0.06, y - 0.45, V0, U0, y - 0.05, -V0], K.accent, { collide: false });
     B([-U0, y - 0.45, V0, -U0 + 0.06, y - 0.05, -V0], K.accent, { collide: false });
   }
-  B([U0 - 0.04, 0, V0 - 0.04, -U0 + 0.04, 0.6, -V0 + 0.04], K.plinth, { collide: false });
+  // The plinth band round the outside (0.6 m, 4 cm proud), open at each ground-floor door. (It
+  // was one box under the whole block: its faces crossed the foot of every door and its top
+  // filled the inside at 0.6 m, so each door looked like a step up; owner, 2026-11-16: "its a
+  // height to enter the new hospital buildings at the door".)
+  const spans = (a0, a1, face) => {
+    let out = [[Math.min(a0, a1), Math.max(a0, a1)]];
+    for (const [fc, at] of spec.doors ?? []) {
+      if (fc !== face) continue;
+      const [g0, g1] = [at - DOOR / 2, at + DOOR / 2];
+      out = out.flatMap(([a, b]) =>
+        g1 <= a || g0 >= b
+          ? [[a, b]]
+          : [
+              [a, g0],
+              [g1, b],
+            ].filter(([p, q]) => q - p > 1e-3),
+      );
+    }
+    return out;
+  };
+  for (const [a, b] of spans(V0 - 0.04, -V0 + 0.04, "u-"))
+    B([U0 - 0.04, 0, a, U0, 0.6, b], K.plinth, { collide: false });
+  for (const [a, b] of spans(V0 - 0.04, -V0 + 0.04, "u+"))
+    B([-U0, 0, a, -U0 + 0.04, 0.6, b], K.plinth, { collide: false });
+  for (const [a, b] of spans(U0, -U0, "v+"))
+    B([a, 0, -V0, b, 0.6, -V0 + 0.04], K.plinth, { collide: false });
+  for (const [a, b] of spans(U0, -U0, "v-"))
+    B([a, 0, V0 - 0.04, b, 0.6, V0], K.plinth, { collide: false });
   // Roof stair house over the roof core, its door onto the roof towards the core's free half.
   for (const c of cores.filter((q) => q.roof)) {
     const s = c.s;
