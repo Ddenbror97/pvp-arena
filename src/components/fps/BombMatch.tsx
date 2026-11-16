@@ -38,6 +38,7 @@ import { bombMap, isBombMapId, type BombMapId } from "@/lib/fps/bomb/maps";
 import type { ArenaLoadProgress } from "@/lib/fps/loading";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
 import { BombMinimap } from "./BombMinimap";
+import { minimapArrow } from "@/lib/fps/bomb/hud";
 import { bombStepGain } from "@/lib/fps/bomb/footstep-gain";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
 import {
@@ -85,7 +86,9 @@ export function BombMatch() {
     sound = useRef<CombatAudio | null>(null),
     latest = useRef<BombView | null>(null),
     serverOffset = useRef(0),
-    spectateWanted = useRef<number | null>(null);
+    spectateWanted = useRef<number | null>(null),
+    /** Your minimap arrow, moved every frame from where the game draws you (BombMinimap). */
+    minimapYou = useRef<SVGPathElement>(null);
   /** The match's map: from the room's welcome, and every snapshot (a new match may draw another). */
   const [mapId, setMapId] = useState<BombMapId | null>(() => preparedBombMap(userId));
   const [view, setView] = useState<BombView | null>(null),
@@ -295,6 +298,8 @@ export function BombMatch() {
                 else sound.current?.cancelReload();
               },
               onScope: (entering) => sound.current?.zoom(entering),
+              onSelfPose: (x, z, yaw) =>
+                minimapYou.current?.setAttribute("transform", minimapArrow(x, z, yaw)),
               onGrenadeSound: (cue, o) => sound.current?.grenade(cue, o),
               onC4Cue: (name) => {
                 const kind = name.startsWith("press:")
@@ -823,7 +828,7 @@ export function BombMatch() {
         <i />
         <i />
       </div>
-      {view && !showLoading && <BombMinimap view={view} />}
+      {view && !showLoading && <BombMinimap view={view} arrow={minimapYou} />}
       <div className="bomb-killfeed" aria-live="polite">
         {kills.map((k) => (
           <p key={k.id} className={k.mine ? "mine" : ""}>

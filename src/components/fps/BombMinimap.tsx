@@ -1,5 +1,6 @@
-import { memo, type ReactElement } from "react";
+import { memo, type ReactElement, type Ref } from "react";
 import { bombMap, minimapSolids, type BombMap, type BombMapId } from "@/lib/fps/bomb/maps";
+import { minimapArrow } from "@/lib/fps/bomb/hud";
 import type { BombView } from "@/lib/fps/bomb/snapshot";
 
 /** Floor shade per height band (multi-level maps): tunnel, lowland, market, catwalk, upper town. */
@@ -43,7 +44,18 @@ function geometryOf(m: BombMap) {
   geometryCache.set(m.id, g);
   return g;
 }
-export const BombMinimap = memo(function BombMinimap({ view }: { view: BombView }) {
+/**
+ * `arrow`: the match moves your arrow itself every frame from where the game draws you
+ * (owner, 2026-11-16: "the mini map updates without delay/lag [while] the character is turning/
+ * moving"); then this render leaves its transform alone. Without it, the snapshot's (~120 ms).
+ */
+export const BombMinimap = memo(function BombMinimap({
+  view,
+  arrow,
+}: {
+  view: BombView;
+  arrow?: Ref<SVGPathElement>;
+}) {
   const m = bombMap(view.mapId);
   const hw = m.map.arena.width / 2,
     hd = m.map.arena.depth / 2;
@@ -114,9 +126,10 @@ export const BombMinimap = memo(function BombMinimap({ view }: { view: BombView 
           ))}
         {view.self.hp > 0 && (
           <path
+            ref={arrow}
             data-you="true"
             d="M 0 -2.4 L -1.5 1.6 L 0 .8 L 1.5 1.6 Z"
-            transform={`translate(${view.self.x} ${view.self.z}) rotate(${(-view.self.yaw * 180) / Math.PI})`}
+            transform={arrow ? undefined : minimapArrow(view.self.x, view.self.z, view.self.yaw)}
             fill="#fff"
             stroke="#131d2c"
             strokeWidth=".5"

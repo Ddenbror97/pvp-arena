@@ -191,3 +191,7 @@ export function beepInterval(msLeft: number) {
   const f = Math.max(0, Math.min(1, msLeft / BOMB_RULES.bombMs));
   return 150 + f * 850;
 }
+
+/** The minimap's arrow for you: its transform at a position and facing (metres; the game's yaw). */
+export const minimapArrow = (x: number, z: number, yaw: number) =>
+  `translate(${x.toFixed(2)} ${z.toFixed(2)}) rotate(${((-yaw * 180) / Math.PI).toFixed(1)})`;
