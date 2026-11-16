@@ -64,6 +64,9 @@ export function createStructures(
 
 /** The roads' rise over far ground (m): none within `from`, then `perMetre` of the distance. */
 export const ROAD_LIFT = { from: 400, perMetre: 0.0016, max: 8 } as const;
+/** The road skirts' feet: this far below the ground at the edge (m), and their colour (linear). */
+const SKIRT_DEPTH = 0.4;
+const SKIRT_COLOUR: [number, number, number] = [0.12, 0.12, 0.125];
 
 type RoadUniforms = {
   uGroundA: { value: THREE.DataArrayTexture };
@@ -370,6 +373,8 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   }
   // Roads: asphalt ribbons along the centrelines, following the (road-smoothed) terrain.
   const road: [number, number, number] = [0.2, 0.2, 0.21];
+  /** Each road quad's two edge skirts (corners a, b along the edge, then the feet c, d). */
+  const skirts: Array<[number[], number[], number[], number[]]> = [];
   // (Plus the roads onto the bridges: bridges.ts bridgeApproaches.)
   for (const r of [...meta.roads, ...bridgeApproaches(meta)]) {
     const half = r.width / 2;
@@ -410,6 +415,18 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
           return [x, h + lift, z];
         };
         pushQuad(pos, col, p(t0, half), p(t1, half), p(t1, -half), p(t0, -half), road);
+        // A skirt down each edge into the ground (owner, 2026-11-16: "asphalt roads need to lay
+        // correctly on the ground, it's a wide gap under it on most roads", and the white flicker
+        // along road edges). Past ROAD_LIFT.from the vertex shader lifts the road with distance
+        // (a metre at 1 km), and from the ground the lifted edge showed the lit ground under it:
+        // a gap up close, a sliver flickering white farther off. The skirt's top is the road's
+        // edge (lifted with it); its foot is never lifted and stands below the ground there.
+        for (const side of [half, -half]) {
+          const a = p(t0, side),
+            b = p(t1, side);
+          const foot = Math.min(ground(t0, side), ground(t1, side)) - SKIRT_DEPTH;
+          skirts.push([a, b, [b[0]!, foot, b[2]!], [a[0]!, foot, a[2]!]]);
+        }
       }
       // Round joint where the road bends (over ~10°): a small fan fills the notch between the
       // two segments. Gentle curves need none (keeps the road mesh small).
@@ -453,13 +470,21 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
     const v = (i: number) => [c[i]!, lotY(c[i]!, c[i + 1]!), c[i + 1]!];
     pushQuad(pos, col, v(0), v(2), v(4), v(6), road);
   }
+  // The skirts last: `skirt` 1 marks their feet, which the vertex shader does not lift.
+  const skirt = new Array<number>(pos.length / 3).fill(0);
+  for (const [a, b, c, d] of skirts) {
+    pushQuad(pos, col, a, b, c, d, SKIRT_COLOUR);
+    skirt.push(0, 0, 1, 0, 1, 1);
+  }
+  skirts.length = 0;
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+  g.setAttribute("skirt", new THREE.Float32BufferAttribute(skirt, 1));
   g.computeVertexNormals();
   // The attributes hold copies. Emptied, because the material's onBeforeCompile below closes
   // over this function's scope and would keep both lists (34 MB of numbers) for the whole match.
-  pos.length = col.length = 0;
+  pos.length = col.length = skirt.length = 0;
   const material = new THREE.MeshStandardMaterial({
     vertexColors: true,
     roughness: 0.95,
@@ -484,7 +509,10 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader
-      .replace("#include <common>", "#include <common>\nvarying vec3 vRoadWorld;")
+      .replace(
+        "#include <common>",
+        "#include <common>\nvarying vec3 vRoadWorld;\nattribute float skirt;",
+      )
       // Far ground is drawn from every 2nd, 4th or 8th height sample (terrain.ts CDLOD) and
       // rises over a road laid 8 cm above the full heightfield: 1.7 % of the road surface at
       // 0.9–1.8 km and 5.4 % at 1.8–3.7 km was under it, as breaks in the roads from the air
@@ -493,7 +521,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
       .replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
-        transformed.y += clamp((distance(transformed, cameraPosition) - ${ROAD_LIFT.from.toFixed(1)}) * ${ROAD_LIFT.perMetre.toFixed(5)}, 0.0, ${ROAD_LIFT.max.toFixed(1)});`,
+        transformed.y += (1.0 - skirt) * clamp((distance(transformed, cameraPosition) - ${ROAD_LIFT.from.toFixed(1)}) * ${ROAD_LIFT.perMetre.toFixed(5)}, 0.0, ${ROAD_LIFT.max.toFixed(1)});`,
       )
       .replace(
         "#include <worldpos_vertex>",
@@ -554,7 +582,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
         }`,
       );
   };
-  material.customProgramCacheKey = () => "br-roads-v5";
+  material.customProgramCacheKey = () => "br-roads-v6";
   // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
   biasLogDepth(material, LOG_BIAS.road);
   const mesh = new THREE.Mesh(g, material);
