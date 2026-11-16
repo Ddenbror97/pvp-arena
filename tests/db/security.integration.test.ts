@@ -810,6 +810,8 @@ d("live database permissions (read-only catalog checks)", () => {
       "fps_ac_admin_player(uuid)",
       "fps_ac_admin_act(text,uuid,text,integer,text)",
       "fps_ac_admin_config(text,boolean,text)",
+      // The admin console's live-calibration view (20261115034727): admin role and step-up inside.
+      "fps_ac_admin_calibration(uuid)",
     ];
     const executable = async (role: string) => {
       const rows = await sql.begin(async (tx) => {
