@@ -1172,6 +1172,12 @@ export function createBrArena(
     island = loaded;
     scene.add(island.root);
     island.root.updateMatrixWorld(true);
+    // EXPERIMENTAL: with the opt-in reversed-Z path, the draw order its early depth test needs.
+    // (The sky stays last: a group's order comes before its meshes' own.)
+    if (sceneTarget) {
+      island.setEarlyDepthOrder(true);
+      atmosphere.root.renderOrder = 1000;
+    }
     island.setViewDistance(view.trees, view.detail);
     applyGroundRange();
     loot = createLootRenderer(scene, island.loader, base);

@@ -125,6 +125,9 @@ const ready = (async () => {
   islandScene.setGrassRange(
     new URLSearchParams(location.search).get("grass") === "0" ? 0 : GRASS_RANGE[tier],
   );
+  // EXPERIMENTAL: as the arena, the early-depth draw order with ?depth=reversed (?order=0: off).
+  if (sceneTarget && new URLSearchParams(location.search).get("order") !== "0")
+    (islandScene.setEarlyDepthOrder(true), (atmosphere.root.renderOrder = 1000));
   scene.add(islandScene.root);
   meta = islandScene.meta;
   const hf = islandScene.hf;

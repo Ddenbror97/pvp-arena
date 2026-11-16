@@ -48,6 +48,16 @@ export type IslandScene = {
    * detail distances of buildings and far scenery scaled by `detail` (cover classes unchanged).
    */
   setViewDistance(trees: number, detail: number): void;
+  /**
+   * EXPERIMENTAL, for the reversed-Z path only (scene-target.ts), where the GPU's early depth
+   * test works: roads, buildings and props first (near LODs before far ones), then trees and
+   * grass, the water, and the ground last with its patches front to back. The ground's shader
+   * is the dearest in the game and by three's default order it is drawn first, so nothing
+   * could ever hide it (render audit 2026-11-15: counted per pixel, the ground's shaded
+   * fragments fall by 43–78 % on foot with this order and by nothing without it). Under
+   * logarithmic depth the order changes no cost and is left as it was.
+   */
+  setEarlyDepthOrder(on: boolean): void;
   /** Ground grass drawn within this distance (m; 0 off). Grass is cosmetic (grass.ts). */
   setGrassRange(m: number): void;
   /** Upload the textures of the buildings and props about to be drawn near (a few a frame). */
@@ -285,6 +295,16 @@ export async function loadIslandScene(
     footstepSurface: createBrFootstepSurface(hf, cover, island.layout, collision, meta),
     setGrassRange(m) {
       grass?.setRange(m);
+    },
+    setEarlyDepthOrder(on) {
+      // (A Group's renderOrder orders everything under it before the meshes' own.)
+      structures.root.renderOrder = lines.root.renderOrder = props.root.renderOrder = 0;
+      props.setNearFirst(on);
+      vegetation.root.renderOrder = on ? 4 : 0;
+      if (grass) grass.root.renderOrder = on ? 5 : 0;
+      water.root.renderOrder = on ? 6 : 0;
+      terrain.root.renderOrder = on ? 7 : 0;
+      terrain.setFrontToBack(on);
     },
     setViewDistance(trees, detail) {
       vegetation.setViewDistance(trees);
