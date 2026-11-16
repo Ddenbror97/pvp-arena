@@ -1,6 +1,8 @@
 import { BOMB_RULES, type Group, type Team } from "./rules";
 import { bombMap, bombsiteIn } from "./maps";
 import type { BombView, PublicPlayer } from "./snapshot";
+import { boltAction, type Primary } from "../primary";
+import type { Weapon } from "../protocol";
 
 /** Pure HUD derivations from one per-recipient snapshot (unit-tested; no DOM, no clock reads). */
 
@@ -9,6 +11,15 @@ export const myPlayer = (view: BombView) => view.players[view.you]!;
 export const myTeam = (view: BombView) => myPlayer(view).team;
 export const myGroup = (view: BombView) => myPlayer(view).group;
 export const otherGroup = (group: Group): Group => (group === "alpha" ? "bravo" : "alpha");
+
+/**
+ * Snipers have no hip crosshair (as in CS): the scope's reticle is their sight. That holds only
+ * while the sniper itself is in hand. With a grenade, the pistol or the knife out the crosshair
+ * shows as it does for every other primary (owner, 2026-11-16: "when using sniper, there is no
+ * crosshair for the grenades"; the HUD hid it whenever the primary was a sniper).
+ */
+export const sniperHidesCrosshair = (primary: Primary, held: Weapon, grenadeUp: boolean) =>
+  boltAction(primary) && held === "rifle" && !grenadeUp;
 
 const mmss = (ms: number) => {
   const s = Math.max(0, Math.ceil(ms / 1000));

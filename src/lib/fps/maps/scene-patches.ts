@@ -27,6 +27,16 @@ export type ScenePatches = {
   }>;
   /** Nodes of the scene not to draw (a model that came out broken). */
   readonly hide?: readonly string[];
+  /**
+   * Faces to leave out: a wall the build drew across a way through (nothing solid behind it, so
+   * players walk through what looks like a dead end). Every triangle of `node` in one of
+   * `materials` that lies wholly inside `box` (x0, x1, y0, y1, z0, z1; metres, map space).
+   */
+  readonly open?: ReadonlyArray<{
+    readonly node: string;
+    readonly materials: readonly string[];
+    readonly box: readonly [number, number, number, number, number, number];
+  }>;
 };
 
 const INSET = 0.01;
@@ -79,6 +89,41 @@ function boxGeometry(lo: THREE.Vector3, hi: THREE.Vector3, tile: number) {
 }
 
 /**
+ * `geometry` without the triangles that lie wholly inside `box` once placed by `matrix`, or null
+ * when none do. The copy shares the source's vertex data; only the index is its own.
+ */
+export function withoutFaces(
+  geometry: THREE.BufferGeometry,
+  matrix: THREE.Matrix4,
+  box: readonly [number, number, number, number, number, number],
+) {
+  const position = geometry.getAttribute("position");
+  const index = geometry.index;
+  const count = index ? index.count : position.count;
+  const [x0, x1, y0, y1, z0, z1] = box;
+  const p = new THREE.Vector3();
+  const inside = (v: number) => {
+    p.fromBufferAttribute(position, v).applyMatrix4(matrix);
+    return p.x >= x0 && p.x <= x1 && p.y >= y0 && p.y <= y1 && p.z >= z0 && p.z <= z1;
+  };
+  const kept: number[] = [];
+  for (let i = 0; i + 2 < count; i += 3) {
+    const [a, b, c] = index
+      ? [index.getX(i), index.getX(i + 1), index.getX(i + 2)]
+      : [i, i + 1, i + 2];
+    if (!(inside(a) && inside(b) && inside(c))) kept.push(a, b, c);
+  }
+  if (kept.length === count) return null;
+  const open = new THREE.BufferGeometry();
+  for (const [name, attribute] of Object.entries(geometry.attributes))
+    open.setAttribute(name, attribute);
+  open.setIndex(kept);
+  open.boundingBox = geometry.boundingBox?.clone() ?? null;
+  open.boundingSphere = geometry.boundingSphere?.clone() ?? null;
+  return open;
+}
+
+/**
  * Apply `patches` to a loaded map scene. Returns what was made, for the caller to dispose.
  */
 export function applyScenePatches(
@@ -96,6 +141,25 @@ export function applyScenePatches(
   for (const name of patches.hide ?? []) {
     const node = root.getObjectByName(name);
     if (node) node.visible = false;
+  }
+  if (patches.open?.length) {
+    root.updateMatrixWorld(true);
+    const toMap = root.matrixWorld.clone().invert();
+    for (const o of patches.open)
+      root.getObjectByName(o.node)?.traverse((child) => {
+        const mesh = child as THREE.Mesh;
+        // (A multi-material mesh draws by index ranges: not something this map's build makes.)
+        if (!mesh.isMesh || Array.isArray(mesh.material) || mesh.geometry.groups.length) return;
+        if (!o.materials.includes(mesh.material.name)) return;
+        const open = withoutFaces(
+          mesh.geometry,
+          new THREE.Matrix4().multiplyMatrices(toMap, mesh.matrixWorld),
+          o.box,
+        );
+        if (!open) return;
+        mesh.geometry = open;
+        made.geometries.push(open);
+      });
   }
   const solid = (id: string) => solids.find((s) => s.id === id);
   const plain = new Map<string, THREE.Material>();
