@@ -2,7 +2,8 @@
  * Map audit: the roof edges a rope can be thrown from (rappel.ts rappelSite). Every collision
  * box whose top is a roof (well over the ground, wide enough to stand on) is tried at the
  * middle of each of its four edges, from a stand half a metre in, facing out.
- *   npx tsx scripts/br/map-audit/rappel-sites.ts [--near=x,z,r] [--list=20]
+ *   npx tsx scripts/br/map-audit/rappel-sites.ts [--near=x,z,r | --poi=id] [--list=20] [--roof=2.4] [--why=blocked]
+ * (--roof: the lowest roof over the ground tried; --why: a few of the edges refused for a reason.)
  */
 import { readFileSync } from "node:fs";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
@@ -22,10 +23,17 @@ const cover = await decodeLandCover(buf(`public${WORLD_ASSETS.landcover}`));
 const island = buildIsland(hf, cover, meta, collision);
 const world = island.solid;
 const arg = (name: string) => process.argv.find((a) => a.startsWith(`--${name}=`))?.split("=")[1];
-const near = arg("near")?.split(",").map(Number);
+const poi = (meta.pois as Array<{ id: string; x: number; z: number }>).find(
+  (p) => p.id === arg("poi"),
+);
+const near = poi ? [poi.x, poi.z, 300] : arg("near")?.split(",").map(Number);
 
 export type Stand = { x: number; y: number; z: number; yaw: number; site: RappelSite };
 const stands: Stand[] = [];
+const refused: Record<string, number> = {};
+const sample = arg("why");
+const lowest = Number(arg("roof") ?? 2.4);
+let shown = 0;
 let roofs = 0,
   tried = 0;
 const b = world.boxes;
@@ -40,7 +48,7 @@ for (let i = 0; i < b.length / 6; i++) {
   const cx = (x0 + x1) / 2,
     cz = (z0 + z1) / 2;
   if (near && Math.hypot(cx - near[0]!, cz - near[1]!) > near[2]!) continue;
-  if (y1 - hf.heightAt(cx, cz) < 4.5) continue;
+  if (y1 - hf.heightAt(cx, cz) < lowest) continue;
   roofs++;
   // Facing: yaw with forward = (−sin, −cos).
   for (const [nx, nz, yaw] of [
@@ -55,8 +63,14 @@ for (let i = 0; i < b.length / 6; i++) {
     if (Math.abs(world.supportAt(x, z, 0.3, y1 + 0.05) - y1) > 0.01) continue;
     if (world.blocked(x, y1 + 0.02, z, 1.8, 0.3)) continue;
     tried++;
-    const site = rappelSite(world, x, y1, z, yaw);
+    const why: { reason?: string } = {};
+    const site = rappelSite(world, x, y1, z, yaw, why);
     if (site) stands.push({ x, y: y1, z, yaw, site });
+    else {
+      refused[why.reason ?? "?"] = (refused[why.reason ?? "?"] ?? 0) + 1;
+      if (sample === why.reason && shown++ < 12)
+        console.log(JSON.stringify({ at: [+x.toFixed(2), +y1.toFixed(2), +z.toFixed(2)], yaw }));
+    }
   }
 }
 const drops = stands.map((s) => rappelDrop(s.site)).sort((a, c) => a - c);
@@ -64,6 +78,12 @@ const q = (p: number) => drops[Math.min(drops.length - 1, Math.floor(drops.lengt
 console.log(
   `${roofs} roof boxes, ${tried} edges stood at, ${stands.length} with a rope down: drop median ${q(0.5).toFixed(1)} m, p90 ${q(0.9).toFixed(1)}, highest ${q(1).toFixed(1)}; with a parapet ${stands.filter((s) => s.site.top - s.site.roof > 0.2).length}`,
 );
+console.log("no rope:", JSON.stringify(refused));
+const hist = [2.5, 3, 3.5, 4.5, 6, 9, 15, 30, 200].map((hi, i, a) => {
+  const lo = a[i - 1] ?? 0;
+  return `${lo}-${hi} m: ${drops.filter((d) => d >= lo && d < hi).length}`;
+});
+console.log("drops:", hist.join(", "));
 const pois = (meta.pois as Array<{ id: string; x: number; z: number }>).map((p) => ({
   id: p.id,
   n: stands.filter((s) => Math.hypot(s.x - p.x, s.z - p.z) < 450).length,

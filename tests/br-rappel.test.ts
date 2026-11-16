@@ -288,10 +288,13 @@ describe("the descent", () => {
     if (narrow) {
       const n = hang(narrow);
       const at = () => (rappelNormal(narrow.site.dir)[0] ? n.z : n.x) - narrow.site.line;
-      for (let i = 0; i < 40; i++) step(n, 0, narrow.site.sideMax === 0 ? 1 : -1);
-      for (let i = 0; i < 40; i++) step(n, 0, narrow.site.sideMax === 0 ? -1 : 1);
-      expect(at()).toBeGreaterThanOrEqual(narrow.site.sideMin - 1e-9);
-      expect(at()).toBeLessThanOrEqual(narrow.site.sideMax + 1e-9);
+      // (All the way down it: a short wall is soon descended, and then it is walking.)
+      for (let i = 0; i < 80 && n.phase === "rappel"; i++) {
+        step(n, 0, (i < 40) === (narrow.site.sideMax === 0) ? 1 : -1);
+        if (n.phase !== "rappel") break;
+        expect(at()).toBeGreaterThanOrEqual(narrow.site.sideMin - 1e-9);
+        expect(at()).toBeLessThanOrEqual(narrow.site.sideMax + 1e-9);
+      }
     }
   });
 

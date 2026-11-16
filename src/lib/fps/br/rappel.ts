@@ -31,7 +31,7 @@ export const RAPPEL = {
   /** E reach: the roof's edge is within this of the feet, the way the player faces (m). */
   reach: 1.4,
   /** The wall under the edge is at least this high, and at most this (m of rope). */
-  minDrop: 3.5,
+  minDrop: 2.6,
   maxDrop: 150,
   /** A wall round the roof up to this high over the feet is climbed over (m). */
   parapet: 1.3,
@@ -154,6 +154,13 @@ function wallPoint(st: RappelSite, out: number, side: number, into: { x: number;
   return into;
 }
 
+/**
+ * How far behind the roof's edge a wall is looked for (m): walls are as thin as 0.2 m, flush
+ * with the edge or set back a little under it.
+ */
+const WALL_IN = [0.06, 0.16, 0.3] as const;
+/** How much of the way down has to be wall (sampled every 0.45 m from just under the edge). */
+const WALL_SHARE = 0.3;
 /** Whether a point is inside a collision box (a wall's body). */
 const solid = (world: StaticWorld, x: number, y: number, z: number) =>
   world.blocked(x, y, z, 0.04, 0.02);
@@ -162,6 +169,9 @@ const solid = (world: StaticWorld, x: number, y: number, z: number) =>
 export const rappelEnd = (st: RappelSite) => st.top - st.land - RAPPEL.landHang;
 /** The length of rope from the edge to the floor (m). */
 export const rappelDrop = (st: RappelSite) => st.top - st.land;
+
+/** Why a place has no rope down (the map audit's count of them; not shown to players). */
+export type RappelWhy = { reason?: string };
 
 /**
  * The wall under one line of a roof's edge: the floor at its bottom when a body can go down it
@@ -174,7 +184,12 @@ function column(
   wall: number,
   line: number,
   top: number,
+  why?: RappelWhy,
 ): number | null {
+  const no = (reason: string) => {
+    if (why) why.reason = reason;
+    return null;
+  };
   const [nx, nz] = NORMALS[dir]!;
   const at = (out: number): [number, number] =>
     nx !== 0 ? [wall + nx * out, line] : [line, wall + nz * out];
@@ -182,24 +197,33 @@ function column(
   const [bx, bz] = at(RAPPEL.standOff);
   const land = world.supportAt(bx, bz, 0.35, top - 1);
   const drop = top - land;
-  if (drop < RAPPEL.minDrop || drop > RAPPEL.maxDrop) return null;
+  if (drop < RAPPEL.minDrop) return no("low");
+  if (drop > RAPPEL.maxDrop) return no("high");
   // Nothing in the way of the body or of a hop out from the wall, from the floor to the edge.
   for (const out of [RAPPEL.standOff, RAPPEL.standOff + RAPPEL.out * (1 + RAPPEL.vary)]) {
     const [cx, cz] = at(out);
     for (let y = land + 0.25; y < top - 0.2; y += 1.7)
-      if (world.blocked(cx, y, cz, Math.min(1.8, top - 0.1 - y), 0.38)) return null;
+      if (world.blocked(cx, y, cz, Math.min(1.8, top - 0.1 - y), 0.38)) return no("blocked");
   }
-  // A wall behind it: under the edge for certain, and most of the way down (windows and
-  // doorways are gaps in it; an overhang with nothing under it is not a wall).
-  const [ix, iz] = at(-0.2);
+  // A wall behind it: under the edge for certain (where the boots go over it and brace), and
+  // enough of the way down. Windows and doorways are gaps in it, and a glass front is all gap
+  // but its floors; a roof on posts with nothing under it is not a wall.
   let have = 0,
     all = 0;
-  for (let y = top - 0.35; y > land + 0.3; y -= 0.9) {
+  for (let y = top - 0.35; y > land + 0.3; y -= 0.45) {
     all++;
-    if (solid(world, ix, y, iz)) have++;
-    else if (all <= 2) return null;
+    let wall = false;
+    for (const depth of WALL_IN) {
+      const [ix, iz] = at(-depth);
+      if (solid(world, ix, y, iz)) {
+        wall = true;
+        break;
+      }
+    }
+    if (wall) have++;
+    else if (all <= 2) return no("overhang");
   }
-  return all > 0 && have / all >= 0.6 ? land : null;
+  return all > 0 && have / all >= WALL_SHARE ? land : no("open");
 }
 
 /**
@@ -213,7 +237,9 @@ export function rappelSite(
   y: number,
   z: number,
   yaw: number,
+  why?: RappelWhy,
 ): RappelSite | null {
+  if (why) why.reason = "ground";
   // On a building: the support under the feet is a box's top, clear of the terrain.
   const under = world.supportAt(x, z, 0.3, y + 0.05);
   if (Math.abs(under - y) > 0.2 || under - world.hf.heightAt(x, z) < 1.5) return null;
@@ -224,6 +250,7 @@ export function rappelSite(
     .map((dir) => ({ dir, dot: NORMALS[dir]![0] * fx + NORMALS[dir]![1] * fz }))
     .filter((d) => d.dot > 0.45)
     .sort((a, b) => b.dot - a.dot);
+  if (why) why.reason = "edge";
   for (const { dir } of order) {
     const [nx, nz] = NORMALS[dir]!;
     // Out from the feet to where the support falls away (over a low wall round the roof).
@@ -233,13 +260,20 @@ export function rappelSite(
       const px = x + nx * e,
         pz = z + nz * e;
       // A wall taller than a parapet stands in the way.
-      if (world.blocked(px, y + RAPPEL.parapet + 0.05, pz, 0.5, 0.03)) break;
+      if (world.blocked(px, y + RAPPEL.parapet + 0.05, pz, 0.5, 0.03)) {
+        if (why) why.reason = "edge:wall";
+        break;
+      }
       const sup = world.supportAt(px, pz, 0.03, y + RAPPEL.parapet);
       if (sup < y - RAPPEL.minDrop + 0.5) {
         outside = e;
         break;
       }
-      if (sup < y - 0.45) break; // a step down that is no drop: not an edge to rappel from
+      if (sup < y - 0.45) {
+        // A step down that is no drop: not an edge to rappel from.
+        if (why) why.reason = "edge:step";
+        break;
+      }
       inside = e;
     }
     if (outside < 0) continue;
@@ -258,7 +292,7 @@ export function rappelSite(
       0.02,
       y + RAPPEL.parapet,
     );
-    const land = column(world, dir, wall, line, top);
+    const land = column(world, dir, wall, line, top, why);
     if (land === null) continue;
     // Either side of the rope: as far as the same wall goes on, clear, down to the same floor.
     const reach = (sign: number) => {
