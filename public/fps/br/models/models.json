@@ -72,11 +72,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/a320.lod0.glb",
-     "tris": 15451,
+     "file": "/fps/br/models/a320.hull-v1.lod0.glb",
+     "tris": 17612,
      "draws": 3,
      "textureMB": 4,
-     "kB": 425,
+     "kB": 451,
      "size": [
       34.15,
       12.31,
@@ -84,8 +84,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/a320.lod1.glb",
-     "tris": 2708,
+     "file": "/fps/br/models/a320.hull-v1.lod1.glb",
+     "tris": 2680,
      "draws": 1,
      "textureMB": 0,
      "kB": 12,
@@ -96,8 +96,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/a320.lod2.glb",
-     "tris": 772,
+     "file": "/fps/br/models/a320.hull-v1.lod2.glb",
+     "tris": 741,
      "draws": 1,
      "textureMB": 0,
      "kB": 5,

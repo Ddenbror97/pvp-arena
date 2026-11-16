@@ -927,14 +927,18 @@ for (const side of ALL_SIDES) {
     box([x0, ROOF - 0.9, z0, x1, ROOF - 0.1, z1], K.lamp, { collide: false, lod: 1 });
   }
 }
-// Lit underside of the roof.
+// Lit underside of the roof, 8.5 cm under the slab (owner, 2026-11-16: "the arena roof is still
+// flackering black on the inside of the roof"). It was 1 cm under: publish stores positions in
+// steps of about 1.1 cm on a model this size (meshopt's default quantisation over 186 m), so the
+// lit ceiling and the slab's dark bottom came out on the same plane and fought. Keep any gap
+// under a down-facing face here several of those steps wide.
 for (const r of [
   [-ROOF_IN, RIN_Z, ROOF_IN, OZ + WALL + 0.6],
   [-ROOF_IN, -OZ - WALL - 0.6, ROOF_IN, -RIN_Z],
   [ROOF_IN, -OZ - WALL - 0.6, OX + WALL + 0.6, OZ + WALL + 0.6],
   [-OX - WALL - 0.6, -OZ - WALL - 0.6, -ROOF_IN, OZ + WALL + 0.6],
 ])
-  k.ceiling(r[0], ROOF - 0.01, r[1], r[2], r[3], K.ceiling, { lod: 1 });
+  k.ceiling(r[0], ROOF - 0.085, r[1], r[2], r[3], K.ceiling, { lod: 1 });
 // The catwalk ring under the leading edge (walking level CAT), railings both sides, hangers.
 const CZ = CAT_IN - (UX - UZ);
 ring(CAT_IN, CZ, CAT_IN + CAT_W, CZ + CAT_W, CAT - 0.2, CAT, K.steel);

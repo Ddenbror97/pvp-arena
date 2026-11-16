@@ -29,6 +29,7 @@ import path from "node:path";
 import { NodeIO, ImageUtils, Logger } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import {
+  cloneDocument,
   compactPrimitive,
   dedup,
   join,
@@ -510,7 +511,7 @@ for (const item of work) {
 
   const lods = [];
   for (const [level, lod] of kit.lods.entries()) {
-    const doc = await io.read(file);
+    let doc = await io.read(file);
     await clean(doc);
     // `noEmissive`: a baked glow map that would light the whole model white in the open world.
     if (item.noEmissive)
@@ -555,6 +556,11 @@ for (const item of work) {
     // Foliage is made of separate leaf cards: never prune them away (the canopy would thin out).
     // `permissive` per asset: scanned rocks and ruins are cut into UV islands whose seams stop the
     // reduction early; collapsing across them keeps the texture instead of a flat silhouette.
+    // The mesh before the textured reduction: if that misses the budget, the silhouette below
+    // starts from this, not from what the reduction left. At its highest errors the textured
+    // pass tears off whole panels it cannot collapse cleanly across the UV seams (the A320's
+    // upper fuselage, 2026-11-16: a 9 m hole in every LOD) and still falls short.
+    const intact = keepTextures ? null : cloneDocument(doc);
     reduce(doc, target, { prune: !keepTextures, permissive: item.permissive });
     // Seams (UV and normal splits) stop the seam-respecting reduction early. If it misses the
     // budget by more than half (LOD0: double), or for the farthest LOD, rebuild as an
@@ -564,6 +570,7 @@ for (const item of work) {
       !keepTextures &&
       (level === kit.lods.length - 1 || triangles(doc) > target * (level === 0 ? 2 : 1.5))
     ) {
+      if (intact) doc = intact;
       await flatten(doc, 0, true);
       await doc.transform(join({ keepNamed: false }), prune());
       reduce(doc, target);

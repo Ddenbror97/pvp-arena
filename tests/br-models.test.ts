@@ -16,7 +16,7 @@ type Lod = {
 };
 const kit = JSON.parse(readFileSync("art/br/assets/kit.json", "utf8")) as {
   budgets: Record<string, { tris: number; draws: number; textureMB: number }>;
-  assets: Array<{ id: string; class: string; procedural?: string }>;
+  assets: Array<{ id: string; class: string; procedural?: string; lodTris?: Array<number | null> }>;
 };
 const manifest = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")) as {
   models: Record<
@@ -48,8 +48,10 @@ describe("Project Island models", () => {
       const m = manifest.models[a.id]!;
       const budget = kit.budgets[a.class]!;
       const [l0, l1, l2] = m.lods as [Lod, Lod, Lod];
-      // LOD0 may exceed the triangle target by up to 2× before it is rebuilt as a silhouette.
-      expect(l0.tris, a.id).toBeLessThanOrEqual(budget.tris * 2);
+      // LOD0 may exceed the triangle target by up to 2× before it is rebuilt as a silhouette,
+      // or reach the asset's own `lodTris` (the A320, kept whole: its reduction tore the hull).
+      const lod0Cap = Math.max(budget.tris * 2, a.lodTris?.[0] ?? 0);
+      expect(l0.tris, a.id).toBeLessThanOrEqual(lod0Cap);
       expect(l0.draws, a.id).toBeLessThanOrEqual(budget.draws + 1);
       expect(l0.textureMB, a.id).toBeLessThanOrEqual(budget.textureMB + 0.01);
       expect(l1.tris, a.id).toBeLessThanOrEqual(l0.tris);

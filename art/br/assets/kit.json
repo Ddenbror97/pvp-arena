@@ -7038,7 +7038,12 @@
       "collision": "voxel",
       "use": "Locations upgrade (2026-11-15): airliner at the airfield terminal's gate (landmark)",
       "ring": "hero",
-      "texture": 512
+      "texture": 512,
+      "lodTris": [
+        20000,
+        null,
+        null
+      ]
     },
     {
       "id": "air-hangar",
