@@ -2,6 +2,13 @@ import * as THREE from "three";
 import { bindDeathClip, deathClipMs, loadDeathClip } from "./death-clip";
 import { bindSwimClip, loadSwimClip, swimClipReady } from "./swim-clip";
 import { bindLadderClip, ladderClipReady, loadLadderClip } from "./ladder-clip";
+import {
+  bindRappelClip,
+  loadRappelClip,
+  rappelClipReady,
+  type RappelClipName,
+  type RappelContacts,
+} from "./rappel-clip";
 import { ropeClimbPose, ropeClimbPoseBuffer, type RopeRig } from "./rope-climb";
 import { Gait, loadLocomotion } from "./locomotion";
 import type { Seat, Weapon } from "./protocol";
@@ -100,6 +107,25 @@ type Motion = {
    * in front of the rope's line the rock is there (m). Pass `primary: "none"`.
    */
   rope?: { cycles: number; wall: number } | undefined;
+  /**
+   * Rappelling down a wall (BR rappel.ts): the clips (rappel-clip.ts) drive the whole body,
+   * `ms` into `clip`, blended `mix` of the way to `ms2` into `clip2`. The caller puts the root at
+   * the body's point, upright, its −z into the wall; `wall` is how far in front of it the wall's
+   * face is (m) and `lip` where the rope comes over the roof's edge (character space). A boot
+   * the clip has on the wall is held on that face, the guide hand on the rope's line from the
+   * edge to the harness; where the rope then runs is `rappelRope`. Pass `primary: "none"`.
+   */
+  rappel?:
+    | {
+        clip: RappelClipName;
+        ms: number;
+        clip2: RappelClipName | null;
+        ms2: number;
+        mix: number;
+        wall: number;
+        lip: [number, number, number];
+      }
+    | undefined;
   seated?:
     | {
         drop: number;
@@ -426,6 +452,21 @@ export function createCharacter(
   let swimRig: ReturnType<typeof bindSwimClip> = null;
   /** The climb bound to this rig (ladder-clip.ts) on the first ladder. */
   let ladderRig: ReturnType<typeof bindLadderClip> = null;
+  /** The rappel bound to this rig (rappel-clip.ts) on the first rope down a wall, what its
+   * frame says of the boots and hands, and where the rope runs through this body (world). */
+  let rappelRig: ReturnType<typeof bindRappelClip> = null;
+  const rappelContacts: RappelContacts = { plantL: 0, plantR: 0, gripL: 0, gripR: 0 };
+  const rappelRope = {
+    /** False until a rappel has been posed. */
+    set: false,
+    /** The guide hand's grip, the harness's device and the brake hand's grip (world). */
+    guide: new THREE.Vector3(),
+    device: new THREE.Vector3(),
+    brake: new THREE.Vector3(),
+    /** How firmly each hand has the rope (0..1). */
+    gripL: 0,
+    gripR: 0,
+  };
   /** The rig's measures for the rope climb (rope-climb.ts), the pose worked out last, and held
    * still on the rope: the last phase, how long it has not changed (ms) and the settled pose's
    * weight. */
@@ -688,6 +729,117 @@ export function createCharacter(
    * reach, the arms solved to the grips on the rope and the fists closed round it, the legs
    * solved to the steps on the rock and the soles flat on it. Everything is posed from rest.
    */
+  const rapA = new THREE.Vector3(),
+    rapB = new THREE.Vector3(),
+    rapC = new THREE.Vector3(),
+    rapLip = new THREE.Vector3(),
+    rapQ = new THREE.Quaternion(),
+    rapQ2 = new THREE.Quaternion();
+  /**
+   * The rappel on this rig: the clips' pose, then the contacts the clip only says should hold.
+   * A boot on the wall is put on the wall's face (the rigs' legs differ, and the body's point
+   * moves as the server moves it), its sole kept as keyed; the guide hand is put on the rope's
+   * straight line from the roof's edge to the harness, and both fists turned to hold it.
+   */
+  const poseRappel = (r: NonNullable<Motion["rappel"]>) => {
+    const rig = rappelRig!;
+    body.position.set(baseX, baseY, baseZ);
+    root.updateWorldMatrix(true, true);
+    rig.apply(r.clip, r.ms, r.clip2, r.ms2, r.mix, rappelContacts);
+    const c = rappelContacts;
+    for (const side of sides) {
+      const plant = side === "Left" ? c.plantL : c.plantR;
+      if (plant < 0.02) continue;
+      const upper = bones.get(side + "UpLeg")!,
+        shin = bones.get(side + "Leg")!,
+        ankle = bones.get(side + "Foot")!;
+      // The ankle to the wall's face (off it by the sole's height), the knee where it was.
+      rotation(ankle, rapQ);
+      target.setFromMatrixPosition(ankle.matrixWorld);
+      root.worldToLocal(target);
+      target.z += (-r.wall + rig.ankle - target.z) * plant;
+      root.localToWorld(target);
+      bend
+        .setFromMatrixPosition(shin.matrixWorld)
+        .sub(rapA.setFromMatrixPosition(upper.matrixWorld));
+      limb(upper, shin, ankle, target, bend);
+      limb(upper, shin, ankle, target, bend);
+      rotation(ankle.parent!, parentQ).invert();
+      ankle.quaternion.copy(parentQ.multiply(rapQ));
+      ankle.updateWorldMatrix(false, true);
+    }
+    // The rope through the body: over the edge, down to the device on the harness (in front
+    // of the belt), then out to the brake hand at the hip.
+    const out = rappelRope;
+    out.set = true;
+    out.gripL = c.gripL;
+    out.gripR = c.gripR;
+    root.localToWorld(rapLip.set(r.lip[0], r.lip[1], r.lip[2]));
+    const hipsBone = bones.get("Hips")!;
+    out.device.setFromMatrixPosition(hipsBone.matrixWorld);
+    root.worldToLocal(out.device);
+    out.device.y += 0.05;
+    out.device.z -= 0.17;
+    root.localToWorld(out.device);
+    for (const side of sides) {
+      const left = side === "Left";
+      const grip = left ? c.gripL : c.gripR;
+      const upper = bones.get(side + "Arm")!,
+        fore = bones.get(side + "ForeArm")!,
+        wrist = bones.get(side + "Hand")!;
+      const at = left ? out.guide : out.brake;
+      // The rope's way through this hand: up to the edge (the guide), up to the device (the
+      // brake).
+      rapA.setFromMatrixPosition(wrist.matrixWorld);
+      if (left) ropeZ.copy(rapLip).sub(out.device).normalize();
+      else ropeZ.copy(out.device).sub(rapA).normalize();
+      // The hand lies along the forearm, across the rope.
+      rapB.setFromMatrixPosition(fore.matrixWorld);
+      ropeX.copy(rapA).sub(rapB).normalize();
+      ropeX.addScaledVector(ropeZ, -ropeX.dot(ropeZ));
+      if (ropeX.lengthSq() < 1e-4) ropeX.set(1, 0, 0).transformDirection(root.matrixWorld);
+      ropeX.normalize();
+      if (grip > 0.02) {
+        if (left) {
+          // On the line from the device to the edge, at the height the clip has the hand.
+          rapC.copy(rapA).addScaledVector(ropeX, 0.085).sub(out.device);
+          const along = THREE.MathUtils.clamp(rapC.dot(ropeZ), 0.12, 0.75);
+          rapC.copy(out.device).addScaledVector(ropeZ, along);
+          // (The wrist is behind the grip along the hand.)
+          target
+            .copy(rapC)
+            .addScaledVector(ropeX, -0.085)
+            .lerp(rapA, 1 - grip);
+          bend
+            .setFromMatrixPosition(fore.matrixWorld)
+            .sub(rapB.setFromMatrixPosition(upper.matrixWorld));
+          limb(upper, fore, wrist, target, bend);
+          limb(upper, fore, wrist, target, bend);
+          rapA.setFromMatrixPosition(wrist.matrixWorld);
+        }
+        // The fist round the rope: the knuckles' line along it, the thumb's side up it.
+        rapC.copy(ropeX);
+        if (!left) rapC.negate();
+        ropeY.crossVectors(ropeZ, rapC).normalize();
+        rapB.crossVectors(rapC, ropeY).normalize();
+        worldQ.setFromRotationMatrix(ropeM.makeBasis(rapC, ropeY, rapB)).multiply(knuckles[side]);
+        rotation(wrist, rapQ2);
+        rapQ2.slerp(worldQ, grip);
+        rotation(wrist.parent!, parentQ).invert();
+        wrist.quaternion.copy(parentQ.multiply(rapQ2));
+        wrist.updateWorldMatrix(false, true);
+      }
+      // Where the rope is in this hand: the middle of the fist.
+      at.copy(rapA).addScaledVector(ropeX, 0.085);
+    }
+    for (const g of gripPoses)
+      g.bone.quaternion.slerpQuaternions(
+        g.open,
+        g.fist,
+        0.15 + 0.85 * (g.left ? c.gripL : c.gripR),
+      );
+    root.updateWorldMatrix(true, true);
+  };
   const poseRope = (rope: NonNullable<Motion["rope"]>, dt: number) => {
     const rig = ropeRig!;
     // Held still for a moment: the free hand and foot come to the rope and the rock.
@@ -807,6 +959,8 @@ export function createCharacter(
     },
     /** The rope climb as last posed (rope-climb.ts) and the rig's measures it is fitted to: for
      * the pose check (scripts/fps/rope-check). Null before the rig has loaded. */
+    /** Where the rope runs through this body on a rappel, as last posed (world). */
+    rappelRope,
     get ropeClimb() {
       return ropeRig ? { rig: ropeRig, pose: ropePose } : null;
     },
@@ -918,6 +1072,12 @@ export function createCharacter(
           ladderRig = bindLadderClip(root, bones, gait.legLength, motion.ladder!.standOff);
       }
       const roping = alive && !!motion.rope && motion.death === undefined;
+      const rappelling = alive && !!motion.rappel && motion.death === undefined;
+      if (rappelling) {
+        void loadRappelClip();
+        if (!rappelRig && gait && rappelClipReady())
+          rappelRig = bindRappelClip(root, bones, gait.legLength);
+      }
       // Mixamo gait (locomotion.ts) on foot; the procedural stride in the air, seated, dead or
       // before the clips load.
       const walking =
@@ -925,6 +1085,7 @@ export function createCharacter(
         !swimming &&
         !climbing &&
         !roping &&
+        !rappelling &&
         !motion.seated &&
         !motion.canopy &&
         !motion.zip &&
@@ -1269,6 +1430,9 @@ export function createCharacter(
       } else if (roping && ropeRig) {
         // Hand over hand up the rope, the feet walking up the rock face.
         poseRope(motion.rope!, dt);
+      } else if (rappelling && rappelRig) {
+        // Down a wall on a rope: braced on it, hopping down it (rappel-clip.ts).
+        poseRappel(motion.rappel!);
       } else if (swimming && swimRig) {
         // The stroke drives the whole body (arms, legs and the hips' place in the water).
         swimRig.apply(swimMs);

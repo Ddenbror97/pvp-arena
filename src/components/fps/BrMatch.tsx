@@ -605,7 +605,8 @@ export function BrMatch() {
         hud.myPhase !== "ground" &&
         hud.myPhase !== "swim" &&
         hud.myPhase !== "plane" &&
-        hud.myPhase !== "ladder" && (
+        hud.myPhase !== "ladder" &&
+        hud.myPhase !== "rappel" && (
           <div className="br-altimeter" aria-live="off">
             <b>{Math.round(hud.agl)} m</b>
             <small>{Math.round(hud.speedKmh)} km/h</small>
@@ -657,6 +658,8 @@ function hint(h: BrHud, b: BrBinds) {
       return h.onRope
         ? `${k("forward")}: climb up · ${k("back")}: climb down · ${k("interact")}: let go (steps off at either end) · mouse: camera`
         : `${k("forward")}: climb up · ${k("back")}: climb down · ${k("jump")}: let go`;
+    case "rappel":
+      return `The rope takes you down · ${k("back")}: climb back up · ${k("left")}/${k("right")}: along the wall · ${k("interact")}: let go near the ground · mouse: camera`;
     case "lift":
       return "The doors are shut: the lift takes you to your floor";
     case "zip":

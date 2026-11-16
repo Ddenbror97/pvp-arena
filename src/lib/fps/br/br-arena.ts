@@ -96,6 +96,19 @@ import {
 } from "./zipline";
 import { createZiplineRenderer, type ZipRiderView } from "./zipline-renderer";
 import { createRopeRenderer, type RopeClimberView } from "./rope-renderer";
+import {
+  rappelDrop,
+  rappelNormal,
+  rappelSeen,
+  rappelSite,
+  readRappelRow,
+  type RappelSeen,
+  type RappelSite,
+  type RappelState,
+} from "./rappel";
+import { createRappelRopes } from "./rappel-rope";
+import { poseRappelFigure, rappelFigure } from "./rappel-view";
+import { loadRappelClip } from "../rappel-clip";
 import { ROPE, ropeS, ropeTangent } from "./rope";
 import { ROPE_CLIMB } from "../rope-climb";
 import {
@@ -186,6 +199,8 @@ export type BrView = {
     zipLine?: number;
     /** On a ladder: how far up and any step on or off (ladders.ts). */
     ladder?: LadderState;
+    /** On a rope down a wall: the wall and how far down it (rappel.ts). */
+    rappel?: RappelState;
     /** In a lift: which, between which stops, how far into the ride (lifts.ts). */
     lift?: LiftState;
     seq: number;
@@ -237,9 +252,9 @@ export type BrView = {
 export type BrPrompt = {
   /**
    * What E does: pick an item up, get into a vehicle, get out, open or close a door, take the
-   * zip-line at Iron Peaks, get on a ladder.
+   * zip-line at Iron Peaks, get on a ladder, throw a rope down a wall from its roof's edge.
    */
-  kind?: "item" | "enter" | "exit" | "door" | "zip" | "ladder" | "lift" | "crate";
+  kind?: "item" | "enter" | "exit" | "door" | "zip" | "ladder" | "lift" | "crate" | "rappel";
   id: number;
   name: string;
   rarity: string;
@@ -461,7 +476,15 @@ export type BrArenaControls = {
     standIns: number;
     renderer: unknown;
     /** The view camera and your own character's root (diagnostics). */
-    view?: { camera: unknown; me: unknown; zipBlend: number; ropeBlend: number };
+    view?: {
+      camera: unknown;
+      me: unknown;
+      zipBlend: number;
+      ropeBlend: number;
+      rappelBlend: number;
+      rappelRopes: number;
+      others: unknown[];
+    };
     scene: unknown;
   };
   /** Point the camera (headless checks). */
@@ -726,6 +749,28 @@ export function createBrArena(
    */
   let ropeBlend = 0;
   let ropeCamSet = false;
+  /**
+   * The rappel (rappel.ts): the same blend for its camera (above you and out from the wall,
+   * looking down the descent), your figure on the wall, the ropes drawn (yours and others'),
+   * and the roof's edge the prompt found (asked a few times a second, not every frame).
+   */
+  let rappelBlend = 0;
+  let rappelCamSet = false;
+  let rappelAt = 0;
+  const rappelCam = new THREE.Vector3();
+  const rappelLook = new THREE.Vector3();
+  const myRappel = rappelFigure();
+  const myRappelMotion = { rappel: myRappel.motion, primary: "none", weapon: "rifle" } as const;
+  const mySeen = {} as RappelSeen;
+  let rappelRopes: ReturnType<typeof createRappelRopes> | null = null;
+  let rappelHere: RappelSite | null = null;
+  let rappelAsked = 0;
+  const rappelAskedAt: [number, number, number, number] = [NaN, 0, 0, 0];
+  /** Each rappel as last heard (seat, −1 yours): the stage, how far into it, and the height
+   * the last boot went on the wall at. Its sounds play once each as the descent passes them. */
+  const rappelHeard = new Map<number, { stage: string; of: number; y: number }>();
+  const rappelAtBuf: [number, number, number] = [0, 0, 0];
+  const myHeard = {} as RappelSeen;
   const ropeCam = new THREE.Vector3();
   const ropeFpPos = new THREE.Vector3();
   const ropeFpQ = new THREE.Quaternion();
@@ -940,7 +985,9 @@ export function createBrArena(
   const weaponKit = createWeaponKit();
   const plain = new THREE.MeshStandardMaterial({ color: 0x3a3833, roughness: 0.8 });
   const actors = Array.from({ length: CHARACTERS }, (_, i) => {
-    const a = createCharacter(i % 2 ? "B" : "A", plain, weaponKit, {
+    // (Checks only: `__brActorsFrom = "B"` gives the first other player the terrorist.)
+    const first = (globalThis as { __brActorsFrom?: string }).__brActorsFrom === "B" ? 1 : 0;
+    const a = createCharacter((i + first) % 2 ? "B" : "A", plain, weaponKit, {
       worldRifle: true,
       bothRifles: true,
       // Helmets are loot in the battle royale: the officer's own one is left off.
@@ -949,7 +996,14 @@ export function createBrArena(
     });
     a.root.visible = false;
     scene.add(a.root);
-    return { actor: a, seat: -1, deadAt: 0 };
+    const rappel = rappelFigure();
+    return {
+      actor: a,
+      seat: -1,
+      deadAt: 0,
+      rappel,
+      rappelMotion: { rappel: rappel.motion, primary: "none", weapon: "rifle" } as const,
+    };
   });
   // Your own operator, seen from behind in freefall (and under the canopy in the third-person
   // view, V); first person on foot and, by default, under the canopy.
@@ -1170,6 +1224,8 @@ export function createBrArena(
   let zipLandYs: number[] = [];
 
   const downloads = new AbortController();
+  // The rappel's animation (rappel-clip.ts): in before the first rope is thrown.
+  void loadRappelClip();
   const ready = (async () => {
     const loaded = await loadIslandScene(base, progress, downloads.signal);
     if (disposed) {
@@ -1494,6 +1550,52 @@ export function createBrArena(
   const onRope = () =>
     body.phase === "ladder" && !!island && !!ladders(island.hf)[body.ladder?.id ?? -1]?.rope;
   const sendAct = (a: BrAct) => send?.(JSON.stringify({ v: 1, type: "br-act", ...a }));
+  const myRopeHeard = () =>
+    body.phase === "rappel" && body.rappel && !kit?.dead ? rappelSeen(body.rappel, myHeard) : null;
+  /** A rappel's sounds as its descent passes them (`at` null: yours, centred). */
+  const rappelSound = (
+    key: number,
+    seen: RappelSeen | null,
+    at: [number, number, number] | null,
+    y: number,
+  ) => {
+    if (!seen) {
+      if (rappelHeard.has(key)) rappelHeard.delete(key);
+      return;
+    }
+    let h = rappelHeard.get(key);
+    if (!h) {
+      h = { stage: seen.stage, of: seen.of, y };
+      rappelHeard.set(key, h);
+      return;
+    }
+    const from = h.stage === seen.stage && seen.of >= h.of ? h.of : 0;
+    const passed = (mark: number) => from < mark && seen.of >= mark;
+    const boot = () => {
+      if (!island) return;
+      if (at) audio.step(island.footstepSurface(at[0], at[1], at[2]), at);
+      else audio.step(island.footstepSurface(body.x, body.y, body.z), null);
+    };
+    if (seen.stage === "on") {
+      if (passed(0.36)) audio.ropeGrab(at, 0.6);
+      if (passed(0.66) || passed(0.92)) boot();
+    } else if (seen.stage === "up") {
+      if (passed(0.2) || passed(0.55)) boot();
+    } else if (seen.stage === "land") {
+      if (passed(0.6)) boot();
+    } else if (seen.of > 0) {
+      if (passed(0.15)) audio.rappelZip(at);
+      if (passed(0.8)) boot();
+      h.y = y;
+    } else if (Math.abs(y - h.y) > RAPPEL_STEP_M) {
+      // Walking on the wall (up it, or the last of the rope down): a boot every step.
+      h.y = y;
+      boot();
+      audio.ropeGrab(at, 0.4);
+    }
+    h.stage = seen.stage;
+    h.of = seen.of;
+  };
 
   function selectNade() {
     if (!onFoot()) return;
@@ -1583,6 +1685,9 @@ export function createBrArena(
     // On the climbing rope E lets go (stepping off within a stride of either end): the server
     // decides (ladders.ts ropeRelease).
     if (interactPressed && body.phase === "ladder" && onRope()) sendAct({ act: "ladder" });
+    // On a rope down a wall E lets go where that is safe (a short drop from the floor, or
+    // back over the edge at the top): the server decides (rappel.ts rappelRelease).
+    else if (interactPressed && body.phase === "rappel") sendAct({ act: "rappel" });
     else if (interactPressed && prompt) {
       if (prompt.kind === "exit") sendAct({ act: "exit" });
       else if (prompt.kind === "enter") sendAct({ act: "enter", id: prompt.id });
@@ -1591,6 +1696,9 @@ export function createBrArena(
         if (onFoot() && body.phase === "ground") sendAct({ act: "zip" });
       } else if (prompt.kind === "ladder") {
         if (onFoot() && body.phase === "ground") sendAct({ act: "ladder" });
+      } else if (prompt.kind === "rappel") {
+        // Once per press: the server finds the edge again itself and starts the descent.
+        if (onFoot() && body.phase === "ground") sendAct({ act: "rappel" });
       } else if (prompt.kind === "lift") {
         // The server checks you stand in the cab or at its door and starts the ride.
         if (onFoot() && body.phase === "ground" && prompt.id >= 0)
@@ -1986,6 +2094,12 @@ export function createBrArena(
         ...(y.ladder.from ? { from: [...y.ladder.from] as [number, number, number] } : {}),
       };
     else delete body.ladder;
+    if (y.rappel)
+      body.rappel = {
+        ...y.rappel,
+        ...(y.rappel.stood ? { stood: [...y.rappel.stood] as [number, number, number] } : {}),
+      };
+    else delete body.rappel;
     if (y.lift) body.lift = { ...y.lift };
     else delete body.lift;
     while (pending.length && pending[0]!.seq <= y.seq) pending.shift();
@@ -2095,6 +2209,9 @@ export function createBrArena(
     gear: number;
     /** The vehicle they drive, or −1. */
     vehicle: number;
+    /** On a rope down a wall (phase "rappel"): the wall and the stage, from their row. */
+    rappel: RappelSeen | null;
+    rappelSeen: RappelSeen;
     d: number;
     priority: number;
   };
@@ -2327,6 +2444,8 @@ export function createBrArena(
             muzzle: -1,
             gear: 0,
             vehicle: -1,
+            rappel: null,
+            rappelSeen: {} as RappelSeen,
             d: 0,
             priority: 0,
           };
@@ -2357,6 +2476,22 @@ export function createBrArena(
         pose.muzzle = state[10] ?? -1;
         pose.gear = state[11] ?? 0;
         pose.vehicle = state[8] ?? -1;
+        pose.rappel = pose.phase === "rappel" ? readRappelRow(state, 12, pose.rappelSeen) : null;
+        if (pose.rappel && t < b.at) {
+          // Between two rows of the same stage the hop (or the stage) runs on smoothly.
+          const cb = rb[17],
+            ca = ra[17];
+          if (
+            cb !== undefined &&
+            ca !== undefined &&
+            Math.floor(cb / 1000) === Math.floor(ca / 1000)
+          ) {
+            const fa = (ca % 1000) / 999,
+              fb = (cb % 1000) / 999;
+            if (fb >= fa && (fa > 0 || pose.rappel.stage !== "hang"))
+              pose.rappel.of = fa + (fb - fa) * k;
+          }
+        }
         pose.d = pos.distanceToSquared(camera.position);
         const facing =
           pose.d > 0
@@ -2460,6 +2595,7 @@ export function createBrArena(
     }
     for (let i = fullCanopies; i < canopyPool.length; i++) canopyPool[i]!.root.visible = false;
     farCanopies?.end();
+    rappelRopes?.begin();
     for (const o of others) {
       let slot = near.has(o.seat) ? actors.find((s) => s.seat === o.seat) : undefined;
       if (o.occluded) continue;
@@ -2467,12 +2603,14 @@ export function createBrArena(
         slot = actors.find((s) => s.seat === -1);
         if (slot) {
           slot.seat = o.seat;
+          slot.rappel.on = false;
           slot.actor.resetMotion();
         }
       }
       if (slot) {
         const root = slot.actor.root;
         root.visible = true;
+        if (!o.rappel) slot.rappel.on = false;
         // Driving: sat in the seat, hands on the wheel or the bars (no gun).
         const seated =
           o.vehicle >= 0 && o.phase === "ground" ? vehiclesFx?.seatRider(o.vehicle, root) : null;
@@ -2505,6 +2643,27 @@ export function createBrArena(
             weapon: "rifle",
           });
           fitCharacterGear(slot.actor, o.gear);
+          continue;
+        }
+        // On a rope down a wall: over the edge, braced on it, hopping down it, landing
+        // (rappel-view.ts), and their rope.
+        if (o.rappel) {
+          poseRappelFigure(
+            slot.rappel,
+            o.rappel,
+            o.pos.x,
+            o.pos.y,
+            o.pos.z,
+            o.yaw,
+            now,
+            dtMs,
+            root,
+            island ? solid() : null,
+          );
+          slot.actor.update(dtMs, now, 0, true, false, slot.rappelMotion);
+          fitCharacterGear(slot.actor, o.gear);
+          rappelRopes ??= createRappelRopes(scene);
+          if (o.d < 220 * 220) rappelRopes.draw(slot.rappel, slot.actor.rappelRope, now);
           continue;
         }
         // On a ladder: the climb (ladder-clip.ts), its phase the height they have climbed; stepping
@@ -2830,9 +2989,32 @@ export function createBrArena(
         : Math.max(0, ropeBlend - dtMs / ROPE_VIEW_BACK_MS);
     if (!roping && ropeBlend === 0) ropeCamSet = false;
     const ropeShow = ropeBlend > 0.25 && !zipShow;
+    // On a rope down a wall: third person from above (owner, 2026-11-15: "the view should be
+    // above the player character to see the descent"), eased in as you take the rope and back
+    // to your own eyes once you stand on the floor (or on the roof again).
+    const myRope = body.phase === "rappel" && !kit?.dead ? viewPose.body.rappel : undefined;
+    if (myRope && !rappelAt) rappelAt = now;
+    if (!myRope) rappelAt = 0;
+    rappelBlend = myRope
+      ? Math.min(1, rappelBlend + dtMs / 500)
+      : Math.max(0, rappelBlend - dtMs / RAPPEL_VIEW_BACK_MS);
+    if (!myRope && rappelBlend === 0) {
+      rappelCamSet = false;
+      myRappel.on = false;
+    }
+    const rappelShow = (!!myRope || (myRappel.on && rappelBlend > 0.25)) && !airborne;
+    if (myRope && now - rappelAt < 1300) {
+      // Taking the rope: the view swings round behind you (out from the wall) and levels, so
+      // the orbit settles on its default, above you looking down the wall (the mouse moves it).
+      const [wx, wz] = rappelNormal(myRope.dir);
+      const wallYaw = Math.atan2(wx, wz);
+      const e = 1 - Math.exp(-dtMs / 160);
+      yaw += Math.atan2(Math.sin(wallYaw - yaw), Math.cos(wallYaw - yaw)) * e;
+      pitch += (0 - pitch) * e;
+    }
     // Driving: your operator sat in the seat (the camera is always third person there).
     const mySeated = car ? (vehiclesFx?.seatRider(car.id, me.root) ?? null) : null;
-    me.root.visible = (airborne && !canopyFp) || !!mySeated || zipShow || ropeShow;
+    me.root.visible = (airborne && !canopyFp) || !!mySeated || zipShow || ropeShow || rappelShow;
     if (mySeated) {
       me.update(dtMs, now, 0, true, false, { seated: mySeated, primary: "none", weapon: "rifle" });
       if (kit) fitCharacterGear(me, figureState(kit).gear);
@@ -2859,6 +3041,30 @@ export function createBrArena(
         });
       }
       if (kit) fitCharacterGear(me, figureState(kit).gear);
+    } else if (rappelShow) {
+      // Yours: the same figure others see of you, from your own predicted place. After the
+      // landing (and back on the roof) it stands as the clip left it while the view comes in.
+      if (myRope) {
+        poseRappelFigure(
+          myRappel,
+          rappelSeen(myRope, mySeen),
+          px,
+          py,
+          pz,
+          myRappel.on ? myRappel.startYaw : yaw,
+          now,
+          dtMs,
+          me.root,
+          island ? solid() : null,
+        );
+      } else me.root.position.set(px, py, pz);
+      me.update(dtMs, now, 0, true, false, myRappelMotion);
+      me.root.updateMatrixWorld(true);
+      if (kit) fitCharacterGear(me, figureState(kit).gear);
+      if (myRope) {
+        rappelRopes ??= createRappelRopes(scene);
+        rappelRopes.draw(myRappel, me.rappelRope, now);
+      }
     } else if (ropeShow && !airborne) {
       me.root.position.set(px, py, pz);
       const st = viewPose.body.ladder;
@@ -3161,6 +3367,55 @@ export function createBrArena(
       );
       // At the chest (a touch up the rope): the climber in the middle, the way up above.
       camera.lookAt(forward.set(0, 0.2, 0).applyQuaternion(ropeUp).add(ropePivot));
+      camera.position.lerpVectors(ropeFpPos, camera.position, k);
+      camera.quaternion.copy(ropeFpQ.slerp(camera.quaternion, k));
+    }
+    rappelRopes?.end();
+    if (rappelBlend > 0 && !car && island && myRappel.on) {
+      // The rappel's camera: above you and out from the wall, looking down past you at the
+      // wall below and the floor you are going to (2.4 m out, 3.1 m up by default). The mouse
+      // orbits it (round to either side, lower behind you, or right overhead); it never
+      // changes the descent. It follows each hop with a little give, comes in where a wall or
+      // a neighbouring building is in the way, and blends from and back to your own eyes.
+      const k = rappelBlend * rappelBlend * (3 - 2 * rappelBlend);
+      ropeFpPos.copy(camera.position);
+      ropeFpQ.copy(camera.quaternion);
+      ropePivot.set(shown.x, shown.y + 1.15, shown.z);
+      const dist = 3.9;
+      let tilt = Math.max(0.12, Math.min(1.42, 0.9 - pitch * 0.9));
+      let ox = 0,
+        oy = 0,
+        oz = 0;
+      const clear = (x: number, y: number, z: number) =>
+        y > solid().hf.heightAt(x, z) + 0.6 && !solid().blocked(x, y - 0.25, z, 0.5, 0.25);
+      search: for (let lift = 0; lift < 5; lift++) {
+        for (let r = dist; r >= 1.4; r *= 0.84) {
+          ox = Math.sin(yaw) * Math.cos(tilt) * r;
+          oy = Math.sin(tilt) * r;
+          oz = Math.cos(yaw) * Math.cos(tilt) * r;
+          if (clear(ropePivot.x + ox, ropePivot.y + oy, ropePivot.z + oz)) break search;
+        }
+        // No room at this height: higher, over whatever is behind you.
+        tilt = Math.min(1.42, tilt + 0.16);
+      }
+      if (!rappelCamSet) {
+        rappelCam.set(0, 0.45, 0);
+        rappelLook.copy(ropePivot);
+      }
+      rappelCamSet = true;
+      rappelCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 150));
+      // (The point looked at trails the body a little: a hop is seen as a hop, the body
+      // dropping in the frame and the view catching it up.)
+      rappelLook.lerp(ropePivot, 1 - Math.exp(-dtMs / 90));
+      const cx = rappelLook.x + rappelCam.x,
+        cz = rappelLook.z + rappelCam.z;
+      camera.position.set(
+        cx,
+        Math.max(rappelLook.y + rappelCam.y, solid().hf.heightAt(cx, cz) + 0.6),
+        cz,
+      );
+      // Past the body, down the wall: you in the upper middle, the way down below you.
+      camera.lookAt(forward.set(rappelLook.x, rappelLook.y - 0.55, rappelLook.z));
       camera.position.lerpVectors(ropeFpPos, camera.position, k);
       camera.quaternion.copy(ropeFpQ.slerp(camera.quaternion, k));
     }
@@ -3614,6 +3869,37 @@ export function createBrArena(
         }
       }
     }
+    // At a roof's edge with a wall under it (rappel.ts rappelSite, the server's own check): a
+    // rope down it. Asked five times a second, standing still on a roof.
+    if (now - rappelAsked > 200) {
+      rappelAsked = now;
+      const can = !!island && body.phase === "ground" && body.grounded && !car && !kit?.dead;
+      // (Not asked again where nothing has changed: standing at an edge costs nothing.)
+      if (!can) {
+        rappelHere = null;
+        rappelAskedAt[0] = NaN;
+      } else if (
+        !(Math.abs(body.x - rappelAskedAt[0]) <= 0.04) ||
+        Math.abs(body.y - rappelAskedAt[1]) > 0.04 ||
+        Math.abs(body.z - rappelAskedAt[2]) > 0.04 ||
+        Math.abs(yaw - rappelAskedAt[3]) > 0.04
+      ) {
+        rappelAskedAt[0] = body.x;
+        rappelAskedAt[1] = body.y;
+        rappelAskedAt[2] = body.z;
+        rappelAskedAt[3] = yaw;
+        rappelHere = rappelSite(solid(), body.x, body.y, body.z, yaw, undefined, true);
+      }
+    }
+    if (loot && !prompt && rappelHere && body.phase === "ground" && !car && !kit?.dead)
+      prompt = {
+        kind: "rappel",
+        id: 0,
+        name: "Rope",
+        rarity: "",
+        color: "#b9c4cc",
+        detail: `Down the wall to the ground · ${Math.round(rappelDrop(rappelHere))} m`,
+      };
     audio.setListener(camera.position.x, camera.position.y, camera.position.z, yaw);
     if (
       strides.advance(
@@ -3675,6 +3961,20 @@ export function createBrArena(
       const c = climbAt(island.hf, o.pos.x, o.pos.y, o.pos.z);
       rungStep(o.seat, c?.s ?? null, [o.pos.x, o.pos.y, o.pos.z], !!c?.ladder.rope);
     }
+    // On a rappel: the rope taken at the edge, the boots on the wall, the rope running through
+    // the device in each hop (the owner's recording), the boots meeting the wall again, and
+    // the floor. Yours from your own descent, others' at them from their rows.
+    rappelSound(-1, myRopeHeard(), null, body.y);
+    for (const o of others) {
+      if (!o.rappel || o.d > 38 * 38) {
+        if (rappelHeard.has(o.seat)) rappelHeard.delete(o.seat);
+        continue;
+      }
+      rappelAtBuf[0] = o.pos.x;
+      rappelAtBuf[1] = o.pos.y;
+      rappelAtBuf[2] = o.pos.z;
+      rappelSound(o.seat, o.rappel, rappelAtBuf, o.pos.y);
+    }
     for (const o of others) {
       if (o.d > (o.soft ? (36 * PERK_EFFECT.stepRadius) ** 2 : 36 * 36)) continue;
       const grounded =
@@ -3695,7 +3995,10 @@ export function createBrArena(
     drawn.calls = sceneCalls;
     drawn.triangles = sceneTriangles;
     sharpenScene();
-    viewmodel?.render(camera, !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead);
+    viewmodel?.render(
+      camera,
+      !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead || rappelBlend > 0.05,
+    );
     sceneTarget?.present(sharpenPresent());
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
     // few seconds after opening, while late models such as worn gear finish loading).
@@ -4010,7 +4313,16 @@ export function createBrArena(
         /** The renderer and scene themselves, for diagnostics (scripts/br/leak-check). */
         renderer: renderer as unknown,
         scene: scene as unknown,
-        view: { camera: camera as unknown, me: me.root as unknown, zipBlend, ropeBlend },
+        view: {
+          camera: camera as unknown,
+          me: me.root as unknown,
+          zipBlend,
+          ropeBlend,
+          rappelBlend,
+          /** Ropes drawn for rappels this frame, and the nearest other figures' roots. */
+          rappelRopes: rappelRopes?.drawn ?? 0,
+          others: actors.filter((a) => a.seat >= 0).map((a) => a.actor.root as unknown),
+        },
       };
     },
     look(y, p) {
@@ -4049,6 +4361,7 @@ export function createBrArena(
       paneFx?.dispose();
       trackFx?.dispose();
       ropeFx?.dispose();
+      rappelRopes?.dispose();
       nadeFx.dispose();
       dropSmoke.dispose();
       viewmodel?.dispose();
@@ -4115,6 +4428,10 @@ export function createBrArena(
  * last of a zip-line ride (its brake's end and the drop onto the platform), and of the step
  * off a climbing rope. */
 const ZIP_VIEW_BACK_MS = 800;
+/** Walking on the wall on a rappel: a boot's sound every this much height (m). */
+const RAPPEL_STEP_M = 0.45;
+/** Off the rappel's rope: the view is back in your own eyes this long after (ms). */
+const RAPPEL_VIEW_BACK_MS = 420;
 const ROPE_VIEW_BACK_MS = 550;
 const wallP = new THREE.Vector3(),
   wallZ = new THREE.Vector3();

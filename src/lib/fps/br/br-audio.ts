@@ -51,6 +51,7 @@ const FILES: Record<
   | "zipGlide"
   | "ladderSteps"
   | "ropeGrabs"
+  | "rappelZips"
   | "door"
   | "glass"
   | "pickup"
@@ -131,10 +132,16 @@ const FILES: Record<
   // hand closing on the rope and the rope's creak under the pull), each levelled, in 0.45 s
   // slots after a 0.1 s lead-in (ROPE_GRABS).
   ropeGrabs: "br-rope-grabs-v1.mp3",
+  // The owner's recording of a rope descent (2026-11-15, "Desend_building_rope_sound.mp3",
+  // ATTRIBUTION.md): five of its runs of rope (the rope running through the device as the
+  // body drops), each levelled, in 0.9 s slots after a 0.1 s lead-in (RAPPEL_ZIPS).
+  rappelZips: "br-rappel-zips-v1.mp3",
 };
 
 /** The rope grabs' slots in their file (s). */
 const ROPE_GRABS = { pad: 0.1, slot: 0.45, count: 7 } as const;
+/** The rappel's runs of rope: their slots in their file (s). */
+const RAPPEL_ZIPS = { pad: 0.1, slot: 0.9, count: 5, length: 0.8 } as const;
 /** The ladder contacts' slots in their file (s). */
 const LADDER_STEPS = { pad: 0.1, slot: 0.35, count: 10 } as const;
 
@@ -192,6 +199,7 @@ export function createBrAudio(base: string) {
   let stepVariant = 0;
   let ladderVariant = 0;
   let ropeVariant = 0;
+  let zipVariant = 0;
   let shellVariant = 0;
   const buffers = new Map<string, AudioBuffer>();
   const loading = new Map<string, Promise<void>>();
@@ -401,6 +409,17 @@ export function createBrAudio(base: string) {
       play("ropeGrabs", at, 34, (at ? 0.75 : 0.5) * level * (i % 2 ? 0.88 : 1), false, {
         offset: ROPE_GRABS.pad + slot * ROPE_GRABS.slot,
         duration: ROPE_GRABS.slot,
+      });
+    },
+    /**
+     * A wall jump on a rappel (own: centred; others': at them): the rope running through the
+     * device as the body drops, a different run each time. Played as the boots leave the wall.
+     */
+    rappelZip(at: [number, number, number] | null) {
+      const slot = (zipVariant++ * 2) % RAPPEL_ZIPS.count;
+      play("rappelZips", at, 38, at ? 0.7 : 0.5, false, {
+        offset: RAPPEL_ZIPS.pad + slot * RAPPEL_ZIPS.slot,
+        duration: RAPPEL_ZIPS.length,
       });
     },
     /** Taking hold of the zip-line's handle (own: centred; others': at them). */

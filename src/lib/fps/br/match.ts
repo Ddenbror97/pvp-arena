@@ -14,6 +14,14 @@ import { fallDamage, holdAtLedge } from "./movement";
 import { applyBrAct, layDown, type ActEvent, type BrAct } from "./actions";
 import { dropFromZip, zipFree, zipLineAt } from "./zipline";
 import { dropFromLadder, LADDER, ladderReachable, ropeRelease, startClimb } from "./ladders";
+import {
+  dropFromRappel,
+  RAPPEL,
+  rappelRelease,
+  rappelRow,
+  rappelSite,
+  startRappel,
+} from "./rappel";
 import { liftCall, lifts, startRide } from "./lifts";
 import { panesOf, withPanes } from "./panes";
 import {
@@ -159,7 +167,8 @@ export const BR_RULES = {
 export type BrPhase = "waiting" | "starting" | "plane" | "active" | "ending" | "completed";
 /**
  * Player rows in a view: [seat, x, y, z, phase code]; phase codes follow PHASE_CODES. Code 5 is
- * "eliminated" (rows test it first), so the zip-line is 6, a ladder 7 and a lift 8.
+ * "eliminated" (rows test it first), so the zip-line is 6, a ladder 7, a lift 8 and a rope down
+ * a wall 9 (its row carries the wall after the usual fields: rappel.ts rappelRow).
  */
 export const PHASE_CODES: readonly DropPhase[] = [
   "plane",
@@ -171,6 +180,7 @@ export const PHASE_CODES: readonly DropPhase[] = [
   "zip",
   "ladder",
   "lift",
+  "rappel",
 ];
 
 export type BrSeat = Fighter & {
@@ -781,7 +791,7 @@ export function stepBrMatch(
     // Bots on foot (just landed or playing) stop at ledges a fall would hurt from.
     if (s.bot && input && s.body.phase === "ground")
       input = { ...holdAtLedge(world, s.body, input), plain: true };
-    const climbing = s.body.phase === "ladder";
+    const climbing = s.body.phase === "ladder" || s.body.phase === "rappel";
     const change = stepDrop(world, meta, state.route, s.body, input, planeMs, dtMs);
     if (change) state.events.push({ seat: s.seat, phase: change });
     if (climbing && change) s.ladderOffAt = now;
@@ -878,6 +888,7 @@ export function stepBrMatch(
         s.body.phase === "swim" ||
         s.body.phase === "zip" ||
         s.body.phase === "ladder" ||
+        s.body.phase === "rappel" ||
         s.body.phase === "lift",
     )
   )
@@ -1067,9 +1078,18 @@ function stepHands(
   // E on the climbing rope: step off at an end, let go anywhere else (ladders.ts ropeRelease).
   if (s.body.phase === "ladder" && acts.some((a) => a.act === "ladder"))
     state.combat.push(ropeLetGo(state, world, s, now));
-  // On the zip-line both hands hold the handle, on a ladder the rungs; in a lift the doors are
-  // shut: no actions until off.
-  if (s.body.phase === "zip" || s.body.phase === "ladder" || s.body.phase === "lift") return;
+  // E on a rope down a wall: let go where that is safe (rappel.ts rappelRelease).
+  if (s.body.phase === "rappel" && acts.some((a) => a.act === "rappel"))
+    state.combat.push(rappelLetGo(s));
+  // On the zip-line both hands hold the handle, on a ladder the rungs, on a rope the rope; in a
+  // lift the doors are shut: no actions until off.
+  if (
+    s.body.phase === "zip" ||
+    s.body.phase === "ladder" ||
+    s.body.phase === "rappel" ||
+    s.body.phase === "lift"
+  )
+    return;
   for (const a of acts.slice(0, 4))
     state.combat.push(
       a.act === "throw"
@@ -1082,14 +1102,16 @@ function stepHands(
               ? zipAct(state, s, now)
               : a.act === "ladder"
                 ? ladderAct(state, world, s, now)
-                : a.act === "lift"
-                  ? liftAct(state, world, s, a)
-                  : applyBrAct(s, a, state.loot, world, now),
+                : a.act === "rappel"
+                  ? rappelAct(state, world, s, now)
+                  : a.act === "lift"
+                    ? liftAct(state, world, s, a)
+                    : applyBrAct(s, a, state.loot, world, now),
     );
   // Took the handle (or a ladder, a lift) this tick: nothing else (no shot or reload as it
   // starts).
   const took = s.body.phase as DropPhase;
-  if (took === "zip" || took === "ladder" || took === "lift") return;
+  if (took === "zip" || took === "ladder" || took === "rappel" || took === "lift") return;
   if (s.vehicle !== undefined) return; // driving: no weapons until out
   const onFoot = s.body.phase === "ground" || s.body.phase === "swim";
   if (!onFoot) return;
@@ -1199,6 +1221,12 @@ function dropGear(state: BrMatchState, world: StaticWorld, victim: BrSeat) {
   // Eliminated on a ladder: down to the foot of it (or the floor below).
   if (victim.body.phase === "ladder") {
     dropFromLadder(world, victim.body);
+    victim.body.phase = "ground";
+    victim.body.grounded = true;
+  }
+  // On a rope down a wall: to the floor under it.
+  if (victim.body.phase === "rappel") {
+    dropFromRappel(world, victim.body);
     victim.body.phase = "ground";
     victim.body.grounded = true;
   }
@@ -1415,6 +1443,49 @@ function ropeLetGo(state: BrMatchState, world: StaticWorld, s: BrSeat, now: numb
     state.events.push({ seat: s.seat, phase: "ground" });
   }
   return res(true);
+}
+
+/**
+ * E at a roof's edge (owner, 2026-11-15: "close to the wall the interact window pops up … and
+ * the descend start"): a rope is thrown where the player stands when the server's own state has
+ * them alive, on foot on a roof, facing an edge within reach with a clear wall under it
+ * (rappel.ts rappelSite: the same function the client's prompt asks). The descent is the body's
+ * (drop.ts phase "rappel"). Healing, reloading and aiming stop; the gun goes on the back.
+ */
+function rappelAct(state: BrMatchState, world: StaticWorld, s: BrSeat, now: number): ActEvent {
+  const res = (ok: boolean, reason?: string): ActEvent => ({
+    type: "act",
+    seat: s.seat,
+    act: "rappel",
+    ok,
+    ...(reason ? { reason } : {}),
+  });
+  const b = s.body;
+  if (s.dead || s.vehicle !== undefined || b.phase !== "ground" || !b.grounded)
+    return res(false, "Not here");
+  // Just off one: a held or repeated E does not put you straight back on.
+  if (now - (s.ladderOffAt ?? -Infinity) < RAPPEL.againMs) return res(false, "Not yet");
+  const site = rappelSite(world, b.x, b.y, b.z, s.yaw);
+  if (!site) return res(false, "No clear wall");
+  startRappel(b, site);
+  b.phase = "rappel";
+  b.grounded = false;
+  b.crouched = false;
+  b.velocityY = b.vx = b.vz = 0;
+  const h = s.hands;
+  h.heal = null;
+  h.reloadUntil = 0;
+  h.aimSince = 0;
+  h.triggerDown = false;
+  s.kitVersion++;
+  state.events.push({ seat: s.seat, phase: "rappel" });
+  return res(true);
+}
+
+/** E on the rope: onto the floor near the bottom, back over the edge at the top, else no. */
+function rappelLetGo(s: BrSeat): ActEvent {
+  const ok = !s.dead && rappelRelease(s.body) !== null;
+  return { type: "act", seat: s.seat, act: "rappel", ok, ...(ok ? {} : { reason: "Not safe" }) };
 }
 
 /** E at a vehicle: in (validated: near, alive, free seat, not destroyed) or out (a free spot). */
@@ -1753,6 +1824,7 @@ const PHASE_CODE: Record<DropPhase, number> = {
   zip: 6,
   ladder: 7,
   lift: 8,
+  rappel: 9,
 };
 
 /**
@@ -2357,6 +2429,8 @@ function playerRow(s: BrSeat) {
     wornLevel(s.kit.armour.helmet?.item) +
       4 * wornLevel(s.kit.armour.vest?.item) +
       16 * wornLevel(s.kit.backpack),
+    // On a rope down a wall: the wall and how far into the stage or the hop (rappel.ts).
+    ...(!s.dead && b.phase === "rappel" && b.rappel ? rappelRow(b.rappel) : []),
   ];
 }
 
@@ -2565,6 +2639,7 @@ export function brViewFor(
       ...(me.body.zip ? { zip: me.body.zip.ms } : {}),
       ...(me.body.zip?.id ? { zipLine: me.body.zip.id } : {}),
       ...(me.body.ladder ? { ladder: { ...me.body.ladder } } : {}),
+      ...(me.body.rappel ? { rappel: { ...me.body.rappel } } : {}),
       ...(me.body.lift ? { lift: { ...me.body.lift } } : {}),
       seq: me.seq,
       recoil: {
