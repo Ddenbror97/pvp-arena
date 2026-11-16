@@ -328,6 +328,18 @@ src/lib/fps/br/rope.ts):
   lead-in (`ROPE_GRABS` in br-audio.ts),
   mono 48 kHz, MP3 at 96 kb/s. One plays each time a hand closes on the rope.
 
+### Rappel (2026-11-15)
+
+The owner's supplied recording, battle royale only (a rope down a wall from its roof's edge,
+src/lib/fps/br/rappel.ts):
+
+- `br-rappel-zips-v1.mp3` ("Desend_building_rope_sound.mp3", 18.6 s): five of its runs of rope
+  (from 0:01.75, 0:04.05, 0:11.00, 0:13.30, 0:14.90), each 0.8 s with a 30 ms fade in and a
+  250 ms fade out, levelled to a -4 dBFS peak (the recording is quiet: +10 to +12 dB), in 0.9 s
+  slots after a 0.1 s lead-in (`RAPPEL_ZIPS` in br-audio.ts), mono 48 kHz, MP3 at 96 kb/s. One
+  plays with each wall jump, as the boots leave the wall. The runs were chosen by the
+  recording's loudness over time, not by ear.
+
 ### Ladder (2026-11-11)
 
 The owner's supplied recording, battle royale only (the Iron Peaks watchtower's ladder,

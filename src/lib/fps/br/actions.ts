@@ -44,6 +44,8 @@ export type BrAct =
   | { act: "zip" }
   /** Get on a ladder at its foot or its top exit (ladders.ts). */
   | { act: "ladder" }
+  /** Throw a rope over the roof's edge and go down the wall on it; on it, let go (rappel.ts). */
+  | { act: "rappel" }
   /** A floor button in a lift's cab: ride to that stop (lifts.ts, index from the bottom). */
   | { act: "lift"; floor: number }
   | ({ act: "perk" } & PerkOp);
@@ -63,6 +65,7 @@ const KEYS: Record<BrAct["act"], readonly string[]> = {
   door: ["id"],
   zip: [],
   ladder: [],
+  rappel: [],
   lift: ["floor"],
   perk: ["op", "perk", "slot"],
 };
@@ -136,6 +139,8 @@ export function validateBrAct(raw: unknown): BrAct | null {
       return { act: "zip" };
     case "ladder":
       return { act: "ladder" };
+    case "rappel":
+      return { act: "rappel" };
     case "lift":
       return int(r.floor, 0, 63) ? { act: "lift", floor: r.floor as number } : null;
     case "door":
@@ -307,6 +312,7 @@ export function applyBrAct(
     case "door":
     case "zip":
     case "ladder":
+    case "rappel":
     case "lift":
       return res(false, "Not here"); // handled by the match (grenades in flight, vehicles)
     case "cancel": {

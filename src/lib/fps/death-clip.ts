@@ -63,21 +63,17 @@ export function bindDeathClip(
 }
 
 /**
- * Bind any baked clip to a rig (the death above, the swim in swim-clip.ts). `loop`: the clip
- * repeats (its last frame runs into its first) and its hips are an offset round `hipsAt`
- * (root space, m) instead of a path from where the body stood.
+ * Per driven bone of a baked clip: the rig's rest rotation in root space, pre-turned onto the
+ * clip's rest direction (a bone whose child is missing keeps its own rest direction). Made with
+ * the rig's bones at rest.
  */
-export function bindPoseClip(
-  d: PoseClipData,
+export function poseClipDrive(
+  d: { bones: string[]; restDir: number[][] },
   root: THREE.Object3D,
   bones: Map<string, THREE.Bone>,
-  unit: number,
-  loop: { hipsAt: [number, number, number] } | null = null,
 ) {
   root.updateWorldMatrix(true, true);
   const toRoot = root.getWorldQuaternion(new THREE.Quaternion()).invert();
-  const hips = bones.get("Hips");
-  if (!hips) return null;
   const children: Record<string, string> = {
     Hips: "Spine",
     Spine: "Spine1",
@@ -95,9 +91,7 @@ export function bindPoseClip(
     children[s + "Leg"] = s + "Foot";
     children[s + "Foot"] = s + "ToeBase";
   }
-  // Per driven bone: the rig's rest rotation in root space, pre-turned onto the clip's rest
-  // direction (a bone whose child is missing keeps its own rest direction).
-  const drive = d.bones.flatMap((name, i) => {
+  return d.bones.flatMap((name, i) => {
     const bone = bones.get(name);
     if (!bone) return [];
     const base = toRoot.clone().multiply(bone.getWorldQuaternion(new THREE.Quaternion()));
@@ -112,6 +106,23 @@ export function bindPoseClip(
     }
     return [{ bone, index: i, base }];
   });
+}
+
+/**
+ * Bind any baked clip to a rig (the death above, the swim in swim-clip.ts). `loop`: the clip
+ * repeats (its last frame runs into its first) and its hips are an offset round `hipsAt`
+ * (root space, m) instead of a path from where the body stood.
+ */
+export function bindPoseClip(
+  d: PoseClipData,
+  root: THREE.Object3D,
+  bones: Map<string, THREE.Bone>,
+  unit: number,
+  loop: { hipsAt: [number, number, number] } | null = null,
+) {
+  const hips = bones.get("Hips");
+  if (!hips) return null;
+  const drive = poseClipDrive(d, root, bones);
   const start = d.hips[0]!;
   return {
     /** Pose the rig `ms` into the animation (held at its last frame after it). */

@@ -362,6 +362,8 @@ function promptAction(p: BrPrompt) {
       return p.name.startsWith("Close") ? "Close" : "Open";
     case "crate":
       return "Open";
+    case "rappel":
+      return "Rappel down";
     case "ladder":
       return p.detail.startsWith("Down")
         ? "Climb down"

@@ -76,7 +76,8 @@ function Harness() {
       {hud.myPhase !== "ground" &&
         hud.myPhase !== "swim" &&
         hud.myPhase !== "plane" &&
-        hud.myPhase !== "ladder" && (
+        hud.myPhase !== "ladder" &&
+        hud.myPhase !== "rappel" && (
           <div className="br-altimeter">
             <b>{Math.round(hud.agl)} m</b>
             <small>{Math.round(hud.speedKmh)} km/h</small>
