@@ -78,6 +78,7 @@ import { deathPose, deathSupport } from "../death-presentation";
 import { BOMB_RULES, SLOT_COUNT, type BombInput, type Team } from "./rules";
 import { bombMap, type BombMapId } from "./maps";
 import type { BombView, PublicPlayer } from "./snapshot";
+import { sniperHidesCrosshair } from "./hud";
 import { warmPrograms } from "../program-warmup";
 import { createOperatorGunBatch } from "../operator-gun-batch";
 import { SpectatorPlayback, spectatorGrenade } from "./spectator";
@@ -98,6 +99,8 @@ import { AwpScope } from "../awp-scope";
 import { createGrenadeClient } from "../grenades/grenade-client";
 import type { GrenadeCue } from "../audio";
 import type { GrenadeType, ThrowKind } from "../grenades/rules";
+import { releaseSharedRifleTextures } from "../rifle-materials";
+import { litLookup } from "../shared-release";
 
 /** The 1v1 renderer's camera and rifle framing (copied, not imported: that module is large). */
 const WORLD_FOV = 70;
@@ -1239,7 +1242,9 @@ export function mountBombArena(
       camera.fov = fov;
       camera.updateProjectionMatrix();
     }
-    const awpHud = !!own && boltAction(primaryOf(own));
+    const awpHud =
+      !!own &&
+      sniperHidesCrosshair(primaryOf(own), heldWeapon, watched ? !!watched.nade : grenades.up);
     if (awpHud !== lastAwpHud && host.parentElement) {
       lastAwpHud = awpHud;
       host.parentElement.dataset["awp"] = awpHud ? "1" : "";
@@ -1898,6 +1903,8 @@ export function mountBombArena(
     },
     dispose() {
       stopped = true;
+      // (While the scene is whole: three's shared lookup texture, handed back at the end.)
+      const lookup = litLookup(renderer, scene);
       perf.dispose();
       cancelAnimationFrame(animation);
       observer.disconnect();
@@ -1959,6 +1966,10 @@ export function mountBombArena(
       gunBatch.dispose();
       for (const actor of allActors) actor.dispose();
       overlay.remove();
+      // What the whole page shares, handed back so this renderer no longer listens on it and
+      // can be collected once the match is over (shared-release.ts).
+      releaseSharedRifleTextures();
+      lookup?.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();

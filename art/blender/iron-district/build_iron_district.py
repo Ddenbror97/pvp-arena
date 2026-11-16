@@ -572,6 +572,12 @@ def dress_fill(s):
                 continue
             x, z = f.P((u0 + u1) / 2, 0, 0)[0], f.P((u0 + u1) / 2, 0, 0)[2]
             if base < 0.5 and cap <= TUN_CEIL + 0.01:
+                # NEXT REBUILD: tunnel_wall() always draws to TUN_CEIL, whatever `cap` is. Under
+                # the tunnel pocket (fill-23, 1.2 m high, north face at z = 10) that put a full
+                # brick wall and its pipes across the tun-exit risers: a dead end to look at, and
+                # nothing to stop you. The game leaves those faces out at load
+                # (IRON_DISTRICT_DEFINITION.presentation.patches.open); draw the face only up to
+                # `cap` here, and not where stairs stand against it, then drop that patch.
                 tunnel_wall(f, u0, u1, "Tunnel")
                 continue
             area = area_at(x, z, base + 0.2)

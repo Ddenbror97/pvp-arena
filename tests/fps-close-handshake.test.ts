@@ -13,9 +13,16 @@ describe("Durable Object peer close replies", () => {
         close: vi.fn(),
         deserializeAttachment: () => ({ seat: "A" }),
       };
-      const room = { ctx: { getWebSockets: () => [] }, absent: { A: null }, inputs: { A: [1] } };
+      const room = {
+        ctx: { getWebSockets: () => [] },
+        absent: { A: null },
+        inputs: { A: [1] },
+        // The room saves its anti-cheat calibration when a seat's last socket leaves.
+        checkpointAim: vi.fn(),
+      };
       DuelRoom.prototype.webSocketClose.call(room as never, socket as never, received);
       expect(socket.close).toHaveBeenCalledWith(expected, "Connection closed");
+      expect(room.checkpointAim).toHaveBeenCalledWith("leave");
       expect(room.inputs.A).toEqual([]);
       expect(room.absent.A).toBeTypeOf("number");
     }

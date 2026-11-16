@@ -9,6 +9,7 @@ import {
   objective,
   roundBanner,
   scoreboard,
+  sniperHidesCrosshair,
 } from "../src/lib/fps/bomb/hud";
 import { TICK_MS } from "../src/lib/fps/simulation";
 
@@ -117,5 +118,23 @@ describe("Bomb Defusal HUD", () => {
     expect(v.self.slot).toBe(3);
     expect(v.self.lastSeq).toBe(s.players[3]!.lastSeq);
     expect((v.self as { damageTo?: unknown }).damageTo).toBeUndefined();
+  });
+});
+
+describe("the crosshair with a sniper as the primary", () => {
+  it("is hidden only while the sniper itself is in hand", () => {
+    for (const sniper of ["awp", "hunting"] as const) {
+      expect(sniperHidesCrosshair(sniper, "rifle", false)).toBe(true);
+      // A grenade drawn (key 4), the pistol, the knife: the crosshair shows, as for any rifle.
+      expect(sniperHidesCrosshair(sniper, "rifle", true)).toBe(false);
+      expect(sniperHidesCrosshair(sniper, "grenade", false)).toBe(false);
+      expect(sniperHidesCrosshair(sniper, "sidearm", false)).toBe(false);
+      expect(sniperHidesCrosshair(sniper, "knife", false)).toBe(false);
+    }
+  });
+  it("never hides it for the other primaries", () => {
+    for (const primary of ["rifle", "mp5", "spas12"] as const)
+      for (const held of ["rifle", "grenade", "sidearm", "knife"] as const)
+        expect(sniperHidesCrosshair(primary, held, false)).toBe(false);
   });
 });

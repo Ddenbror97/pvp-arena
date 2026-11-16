@@ -129,11 +129,14 @@ export function nodeBox(
   return out;
 }
 
+// (Math.sqrt, not Math.hypot: this runs for every node visited every frame, and V8 neither
+// inlines hypot nor keeps its result off the heap: 14 times the time and 16 bytes of garbage a
+// call, measured 2026-11-16.)
 const boxDistance = (b: Float64Array, x: number, y: number, z: number) => {
   const dx = Math.max(b[0]! - x, 0, x - b[3]!),
     dy = Math.max(b[1]! - y, 0, y - b[4]!),
     dz = Math.max(b[2]! - z, 0, z - b[5]!);
-  return Math.hypot(dx, dy, dz);
+  return Math.sqrt(dx * dx + dy * dy + dz * dz);
 };
 
 /**

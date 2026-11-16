@@ -391,7 +391,12 @@ const rigs = new WeakMap<THREE.Object3D, Rig>();
  */
 type Fitted = { rig: Rig; helmetFit: unknown; torsoFit: unknown };
 const fitted = new Map<string, Fitted>();
-/** Forget the measured fits (when the loaded gear models change; tests). */
+/**
+ * Forget the measured fits when an arena is disposed. The fitted pieces are bound to the bones
+ * of the first character of each kind, so the fits kept that character alive for the life of
+ * the page, and through its materials the renderer that drew it (shared-release.ts). The next
+ * arena measures again behind its loading screen, as the first did.
+ */
 export function resetCharacterGearFits() {
   fitted.clear();
 }

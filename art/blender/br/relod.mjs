@@ -36,6 +36,7 @@ import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { compactPrimitive, meshopt, prune, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
+import { modelFile } from "./model-files.mjs";
 
 // The game's meshoptimizer (1.x) for the simplifier: `Permissive` and the current sloppy mode.
 const { MeshoptSimplifier } = await import(
@@ -176,7 +177,7 @@ for (const [id, plan] of Object.entries(PLAN)) {
   )) {
     const level = Number(key);
     const source = model.lods[from ?? level];
-    const doc = await io.read(path.join("public", source.file));
+    const doc = await io.read(modelFile(source.file));
     const before = triangles(doc);
     // Join the vertices that are the same point with the same UV, normal and colour (many models
     // arrive with every face on its own vertices, and edge collapse stops at every such join).

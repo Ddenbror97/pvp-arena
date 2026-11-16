@@ -628,7 +628,9 @@ export function createVegetation(
       for (let ci = cellOf(cam.x - r); ci <= cellOf(cam.x + r); ci++) {
         const t = cellTrees(world, ci, cj);
         for (let k = 0; k < t.length; k += TREE_STRIDE) {
-          if (Math.hypot(t[k]! - cam.x, t[k + 2]! - cam.z) >= r) continue;
+          const tx = t[k]! - cam.x,
+            tz = t[k + 2]! - cam.z;
+          if (tx * tx + tz * tz >= r * r) continue;
           if ((gathered + 1) * TREE_STRIDE > near.length) {
             const grown = new Float32Array(near.length * 2);
             grown.set(near);
@@ -652,7 +654,12 @@ export function createVegetation(
     inView = inDetail = 0;
     for (let i = 0; i < gathered; i++) {
       const k = i * TREE_STRIDE;
-      const d = Math.hypot(near[k]! - cam.x, near[k + 1]! - cam.y, near[k + 2]! - cam.z);
+      // (Math.sqrt, not Math.hypot: once for every gathered tree every frame; see
+      // terrain-lod.ts boxDistance.)
+      const dx = near[k]! - cam.x,
+        dy = near[k + 1]! - cam.y,
+        dz = near[k + 2]! - cam.z;
+      const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
       if (d >= lightEnd) continue;
       const s = near[k + 5]!,
         scale = near[k + 3]!;

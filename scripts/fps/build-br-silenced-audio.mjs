@@ -118,13 +118,6 @@ silenced("br-ak47-silenced-v3.wav", read(DIR + "ak47-reference-v1.wav"), {
   seconds: 0.32,
   peak: 0.6,
 });
-silenced("br-awp-silenced-v3.wav", read(DIR + "awp-shot-v2.wav"), {
-  speed: 0.78,
-  body: 0.42,
-  bodyHz: 480,
-  bodyMs: 70,
-  tailMs: 120,
-  seconds: 0.5,
-  peak: 0.66,
-});
-// The Hunting Rifle fires the AWP's silenced shot (owner, 2026-11-13; br-audio.ts).
+// The snipers' silenced shot is the owner's recording since 2026-11-14
+// (build-br-sniper-silenced-audio.mjs, br-sniper-silenced-v1.wav): the synthesized
+// br-awp-silenced-v3.wav this script used to write is gone.

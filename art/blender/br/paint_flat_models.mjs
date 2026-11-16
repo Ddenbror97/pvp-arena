@@ -22,6 +22,7 @@ import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { dequantize, meshopt, prune, unweld, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
+import { modelFile } from "./model-files.mjs";
 
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO()
@@ -109,7 +110,7 @@ for (const [id, rule] of Object.entries(RULES)) {
   const model = manifest.models[id];
   if (!model) throw Error("no model " + id);
   for (const [level, lod] of model.lods.entries()) {
-    const src = "public" + lod.file;
+    const src = modelFile(lod.file);
     const doc = await io.read(src);
     await doc.transform(dequantize(), unweld());
     const root = doc.getRoot();

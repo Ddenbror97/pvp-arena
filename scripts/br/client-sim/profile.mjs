@@ -4,7 +4,7 @@
  * Writes outDir/client.cpuprofile and outDir/alloc.json (allocated bytes by function).
  * SwiftShader draws on the CPU, so GL calls dominate the wall time; the JS side is what to read.
  *
- *   node scripts/br/client-sim/profile.mjs [outDir] [--chromium=/path] [--seconds=40] [--no-draw]
+ *   node scripts/br/client-sim/profile.mjs [outDir] [--chromium=/path] [--seconds=40] [--no-draw] [--log]
  *   node scripts/br/client-sim/profile.mjs [outDir] [--chromium=/path] --startup
  *
  * `--startup` profiles loading instead: from the page's first script to the match's plane, then
@@ -21,6 +21,10 @@
  * only a few times a second, so even without the drawing the loop ran cold, a few frames a second
  * (audit 2026-11-12: "could not be measured"). Unpaced, the profile's time under `frame` divided
  * by the frames counted is the script cost of one frame, compiled as in a player's browser.
+ * The in-page match steps once per timer turn and counts down 60 s before the plane. On a
+ * machine with two cores the software renderer leaves the page's timers one or two turns a
+ * second, and the plane does not come within the wait (seen 2026-11-16): run this where the page
+ * keeps its timers, or on a GPU.
  * `--scene=<name>` picks where: `knife` (open ground, one figure, the default), `crowd` (the
  * match's start: the lobby island with every player near), `loot` (a looted building).
  */
@@ -103,6 +107,10 @@ const browser = await chromium.launch({
   ],
 });
 const page = await browser.newPage({ viewport: { width: 960, height: 540 } });
+// Reversed-Z is the default where supported (2026-11-16); --log profiles the logarithmic-depth
+// fallback instead.
+if (process.argv.includes("--log"))
+  await page.addInitScript(() => localStorage.setItem("br-depth", "log"));
 const noDraw = process.argv.includes("--no-draw");
 const unpaced = noDraw && process.argv.includes("--unpaced");
 const sceneName = process.argv.find((a) => a.startsWith("--scene="))?.slice(8) ?? "knife";

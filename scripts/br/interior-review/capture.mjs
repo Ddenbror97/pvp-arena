@@ -14,6 +14,7 @@ import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { chromium } from "playwright";
+import { storedFile } from "../../../art/blender/br/model-files.mjs";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
 const args = process.argv.slice(2);
@@ -40,8 +41,9 @@ const server = http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split("?")[0]);
   if (url === "/") return res.end(html);
   if (url === "/r.js") return res.writeHead(200, { "content-type": "text/javascript" }).end(js);
-  const file = path.join(ROOT, "public", url);
-  if (!file.startsWith(path.join(ROOT, "public")) || !fs.existsSync(file))
+  // (A base file the tools keep out of the deploy: art/blender/br/model-files.mjs.)
+  const file = storedFile(url) ?? path.join(ROOT, "public", url);
+  if (!(file.startsWith(path.join(ROOT, "public")) || storedFile(url)) || !fs.existsSync(file))
     return res.writeHead(404).end();
   fs.createReadStream(file).pipe(res);
 });

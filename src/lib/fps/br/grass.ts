@@ -137,6 +137,11 @@ const REBUILD_MAX = 10;
 const LATE_MS = 250;
 /** The refinement steps (share of clumps a cell holds). */
 const LEVELS = [FLOOR + 0.015, 0.1, 0.25, 0.55, 1] as const;
+/**
+ * Distance on the ground plane. (Math.sqrt, not Math.hypot: the cells' distances are worked out
+ * every frame, a few thousand of them; see terrain-lod.ts boxDistance.)
+ */
+const flat = (dx: number, dz: number) => Math.sqrt(dx * dx + dz * dz);
 
 /** Where every clump still stands (m), for a range. */
 export const grassNear = (range: number) => range * NEAR_SHARE;
@@ -573,7 +578,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       // The camera's speed, for how far ahead to scatter.
       const at = performance.now();
       if (!Number.isNaN(lastX) && at > lastAt) {
-        const v = Math.hypot(cam.x - lastX, cam.z - lastZ) / ((at - lastAt) / 1000);
+        const v = flat(cam.x - lastX, cam.z - lastZ) / ((at - lastAt) / 1000);
         // (A teleport or a respawn is not a speed.)
         if (v < 80) speed += (v - speed) * Math.min(1, (at - lastAt) / 400);
       }
@@ -584,7 +589,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       const nearAll = uniforms.uNear.value;
       const cx = Math.floor(cam.x / GRASS.cell),
         cz = Math.floor(cam.z / GRASS.cell);
-      if (Math.hypot(cam.x - builtX, cam.z - builtZ) > slack) dirty = true;
+      if (flat(cam.x - builtX, cam.z - builtZ) > slack) dirty = true;
       if (cx !== lastCx || cz !== lastCz || r !== lastRange) {
         // (A new range is drawn at once; a new cell underfoot changes nothing that is drawn:
         // the buffers hold everything within the camera's reach until its next rebuild.)
@@ -598,7 +603,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
           for (let i = -n; i <= n; i++) {
             const x = (cx + i + 0.5) * GRASS.cell,
               z = (cz + j + 0.5) * GRASS.cell;
-            const d = Math.hypot(x - cam.x, z - cam.z);
+            const d = flat(x - cam.x, z - cam.z);
             const near = Math.max(0, d - GRASS.cell * 0.71);
             if (near >= r + ahead) continue;
             // As fine as it will need to be by the time the camera is `ahead` m nearer.
@@ -619,7 +624,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         if (cells.size > wanted.length * 1.5)
           for (const [k, c] of cells)
             if (
-              Math.hypot((c.cx + 0.5) * GRASS.cell - cam.x, (c.cz + 0.5) * GRASS.cell - cam.z) >
+              flat((c.cx + 0.5) * GRASS.cell - cam.x, (c.cz + 0.5) * GRASS.cell - cam.z) >
               r + ahead + 48
             )
               cells.delete(k);
@@ -645,7 +650,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
       let made = 0;
       // (Distances from where the camera is now, not where it was when the set was made.)
       for (const w of wanted)
-        w.d = Math.hypot((w.cx + 0.5) * GRASS.cell - cam.x, (w.cz + 0.5) * GRASS.cell - cam.z);
+        w.d = flat((w.cx + 0.5) * GRASS.cell - cam.x, (w.cz + 0.5) * GRASS.cell - cam.z);
       for (const w of wanted) {
         const near = w.d - GRASS.cell * 0.71;
         const must = near <= nearAll + REBUILD_MAX;

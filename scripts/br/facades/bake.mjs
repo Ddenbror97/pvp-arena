@@ -12,6 +12,7 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { chromium } from "playwright";
+import { storedFile } from "../../../art/blender/br/model-files.mjs";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
 const revision = process.argv.slice(2).find((a) => !a.startsWith("--")) ?? "facades-v1";
@@ -31,8 +32,9 @@ const server = http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split("?")[0]);
   if (url === "/") return res.end('<!doctype html><script type="module" src="/bake.js"></script>');
   if (url === "/bake.js") return res.writeHead(200, { "content-type": "text/javascript" }).end(js);
-  const file = path.join(root, "public", url);
-  if (!file.startsWith(path.join(root, "public")) || !fs.existsSync(file))
+  // (A base file the tools keep out of the deploy: art/blender/br/model-files.mjs.)
+  const file = storedFile(url) ?? path.join(root, "public", url);
+  if (!(file.startsWith(path.join(root, "public")) || storedFile(url)) || !fs.existsSync(file))
     return res.writeHead(404).end();
   fs.createReadStream(file).pipe(res);
 });

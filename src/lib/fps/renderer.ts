@@ -92,6 +92,8 @@ import { AwpScope } from "./awp-scope";
 import { createGrenadeClient } from "./grenades/grenade-client";
 import type { GrenadeCue } from "./audio";
 import { throwKindOf, type GrenadeType, type ThrowKind } from "./grenades/rules";
+import { releaseSharedRifleTextures } from "./rifle-materials";
+import { litLookup } from "./shared-release";
 
 /**
  * World camera vertical FOV. 70° ≈ 102° horizontal at 16:9 — between CS:GO (≈106°) and COD
@@ -1855,6 +1857,8 @@ export function mountArena(
     },
     lock: () => capturePointer(renderer.domElement),
     dispose() {
+      // (While the scene is whole: three's shared lookup texture, handed back at the end.)
+      const lookup = litLookup(renderer, scene);
       stopped = true;
       perf.dispose();
       cancelAnimationFrame(animation);
@@ -1908,6 +1912,10 @@ export function mountArena(
       blood.dispose();
       characters.A.dispose();
       characters.B.dispose();
+      // What the whole page shares, handed back so this renderer no longer listens on it and
+      // can be collected once the match is over (shared-release.ts).
+      releaseSharedRifleTextures();
+      lookup?.dispose();
       renderer.dispose();
       // Each mount owns its context. Release the native drawing buffers on SPA
       // navigation rather than waiting for the browser's context/GC limit.

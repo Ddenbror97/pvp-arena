@@ -23,6 +23,7 @@ import { Document, NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { meshopt, prune, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
+import { modelFile } from "./model-files.mjs";
 
 const REPO = process.cwd();
 const MODELS = path.join(REPO, "public/fps/br/models");
@@ -117,7 +118,7 @@ function bounds(prims) {
 const manifest = JSON.parse(fs.readFileSync(path.join(MODELS, manifestIn), "utf8"));
 const flat = (f) => {
   // A LOD file the pipeline wrote as an untextured single-material silhouette.
-  const b = fs.readFileSync(path.join(REPO, "public", f));
+  const b = fs.readFileSync(modelFile(f));
   const json = JSON.parse(b.subarray(20, 20 + b.readUInt32LE(12)).toString("utf8"));
   return (
     !json.textures?.length &&
@@ -137,8 +138,8 @@ const rects = [];
 const layout = { revision, views: VIEWS, gutter: GUTTER, models: {} };
 const loaded = new Map();
 for (const [id, m] of chosen) {
-  const lod0 = await read(path.join(REPO, "public", m.lods[0].file));
-  const lod1 = await read(path.join(REPO, "public", m.lods[1].file));
+  const lod0 = await read(modelFile(m.lods[0].file));
+  const lod1 = await read(modelFile(m.lods[1].file));
   // The silhouette may poke a little outside the near model: bounds of both.
   const b = bounds([...lod0.prims, ...lod1.prims]);
   loaded.set(id, { lod1, b });

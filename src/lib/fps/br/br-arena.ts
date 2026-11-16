@@ -142,6 +142,7 @@ import {
   gearModelObjects,
   gearModelsReady,
   loadGearModels,
+  resetCharacterGearFits,
 } from "./character-gear";
 import { createOperatorFigure } from "./operator-figure";
 import { createOperatorGunBatch } from "../operator-gun-batch";
@@ -161,7 +162,9 @@ import { LocalGrenadeHands } from "../grenades/grenade-timeline";
 import { createWeaponKit } from "../weapon";
 import { TICK_MS } from "../simulation";
 import { KNIFE } from "../combat";
-import { AWP } from "../primary";
+import { releaseSharedRifleTextures } from "../rifle-materials";
+import { litLookup } from "../shared-release";
+import { releaseSightLook } from "./sight-reticle";
 
 /**
  * The battle royale client (PLAN §7 Phase 2, LOOT-SPEC): Project Island, the plane, the local
@@ -2504,7 +2507,9 @@ export function createBrArena(
         others.push(pose);
       }
     }
-    others.sort((x, y) => x.priority - y.priority);
+    // (−1, 0 or 1, not the difference: a comparator's fractional result goes onto the heap for
+    // every comparison, every frame.)
+    others.sort((x, y) => (x.priority < y.priority ? -1 : x.priority > y.priority ? 1 : 0));
     visible = 0;
     // Characters for the nearest; a seat keeps its actor while it stays near (no flicker).
     near.clear();
@@ -4336,6 +4341,8 @@ export function createBrArena(
       downloads.abort();
       clearTimeout(viewTimer);
       disposed = true;
+      // (While the scene is whole: three's shared lookup texture, handed back at the end.)
+      const lookup = litLookup(renderer, scene);
       mapBuild?.dispose();
       if (mapBlobUrl) URL.revokeObjectURL(mapBlobUrl);
       removeEventListener("keydown", keyDown);
@@ -4408,6 +4415,12 @@ export function createBrArena(
       sun.shadow.map?.dispose();
       sceneTarget?.dispose();
       sharpen?.dispose();
+      // What the whole page shares, handed back so this renderer no longer listens on it and
+      // can be collected once the match is over (shared-release.ts).
+      releaseSharedRifleTextures();
+      releaseSightLook();
+      lookup?.dispose();
+      resetCharacterGearFits();
       if (!graphicsLost) recordBrSession(tier.tier, floorMs / 1000, playedMs / 1000);
       scene.clear();
       // What the renderer still tracks after every owner has let go: 0 geometries and 0

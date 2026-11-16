@@ -160,7 +160,7 @@ battle royale have incorrect sound for silencer. use this for both"), kept as re
 3 s of silence), mono 48 kHz, 0.95 s with the tail faded over the last 0.25 s, raised 3 dB with a
 limiter at −1 dBFS on the first crack. No EQ, pitch or effects
 (`node scripts/fps/build-br-sniper-silenced-audio.mjs`). The AWP and the Hunting Rifle both fire
-it with a Silencer; `br-awp-silenced-v3.wav` remains for cached clients.
+it with a Silencer.
 
 ## Battle royale parachute
 
@@ -291,6 +291,12 @@ seam, levelled to −24 dBFS RMS, and stored between copies of its own last and 
 `br-awp-silenced-v2.wav` (replaced by the v3 files of build-br-silenced-audio.mjs) and
 `awp-reload-v2.wav` (the battle royale now uses the 1v1/5v5 `awp-reload-tactical-v3.wav` and
 `awp-reload-empty-v3.wav`) are no longer shipped. Their rows above describe how they were made.
+
+### Removed superseded files (cleanup 2026-11-16)
+
+`br-awp-silenced-v3.wav` (the snipers' silenced shot is `br-sniper-silenced-v1.wav` since
+2026-11-14) and `awp-reload-tactical-v3.wav` / `awp-reload-empty-v3.wav` (replaced by the v4
+files of build-awp-reload-audio.mjs) are no longer shipped.
 
 ### Zip-line (2026-11-11)
 

@@ -76,6 +76,16 @@ export const IRON_DISTRICT_DEFINITION: MapDefinition = {
       ].map((solid) => ({ solid, material: "plaster", from: 3.3 })),
       rim: [{ solid: "b-fountain", material: "sandstone", rim: 0.3 }],
       hide: ["fountain"],
+      // The tunnel's end wall and the pipes on it, drawn across its way out: the four risers
+      // up into the pocket (tun-exit, z 9.8..11) pass straight through that plane, and from
+      // either side it read as a dead end (owner, 2026-11-16).
+      open: [
+        {
+          node: "Tunnel",
+          materials: ["brick-tun", "concrete-tun", "pipe", "metal"],
+          box: [11.9, 15.1, -0.1, 3.3, 9.95, 10.25],
+        },
+      ],
     },
   },
 };

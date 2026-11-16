@@ -44,6 +44,7 @@ import {
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 import { triangles, voxelBoxes } from "./build_collision.mjs";
 import { cutPrimitive } from "./mesh-cut.mjs";
+import { modelFile } from "./model-files.mjs";
 
 const [FROM, TO] = process.argv.slice(2);
 if (!FROM || !TO) throw new Error("usage: restore_stair_sides.mjs <from-revision> <to-revision>");
@@ -102,7 +103,7 @@ const report = {};
 for (const [id, access] of latest) {
   const stairs = access.stairs ?? [];
   if (!stairs.length || !collision.models[id] || !manifest.models[id]) continue;
-  const tris = await triangles(path.join("public", manifest.models[id].lods[0].file));
+  const tris = await triangles(modelFile(manifest.models[id].lods[0].file));
   // What repair_building_access.mjs cleared round each flight.
   const envelopes = stairs.map((s) => {
     const b = s.bounds;
@@ -205,7 +206,7 @@ for (const [id, cuts] of Object.entries(MESH_CUTS)) {
   const m = manifest.models[id];
   for (let lod = 0; lod < m.lods.length; lod++) {
     const input = m.lods[lod];
-    const doc = await io.read(path.join("public", input.file));
+    const doc = await io.read(modelFile(input.file));
     await doc.transform(dequantize());
     const root = doc.getRoot(),
       scene = root.listScenes()[0],

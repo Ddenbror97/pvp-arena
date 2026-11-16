@@ -27,7 +27,9 @@ const photoBase = process.env.PHOTO_BASE
   : null;
 const photoSource = (model: string, m: (typeof manifest)["models"][string]) => {
   const file = (originals.models[model] ?? m).lods[0]!.file;
-  if (existsSync(`public${file}`) || !photoBase?.models[model]) return file;
+  // (The originals are kept out of the deploy: art/blender/br/model-files.mjs.)
+  const stored = `art/br/models-base/${file.split("/").pop()}`;
+  if (existsSync(`public${file}`) || existsSync(stored) || !photoBase?.models[model]) return file;
   return photoBase.models[model]!.lods[0]!.file;
 };
 type Spec = {

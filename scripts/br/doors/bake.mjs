@@ -24,6 +24,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { chromium } from "playwright";
+import { storedFile } from "../../../art/blender/br/model-files.mjs";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const OUT = path.join(ROOT, "public/fps/br/models");
@@ -62,8 +63,9 @@ fs.writeFileSync(
 );
 const server = http.createServer((req, res) => {
   const u = decodeURIComponent(req.url.split("?")[0]);
+  // (A base file the tools keep out of the deploy: art/blender/br/model-files.mjs.)
   const f = u.startsWith("/fps/")
-    ? path.join(ROOT, "public", u)
+    ? (storedFile(u) ?? path.join(ROOT, "public", u))
     : path.join(tmp, u === "/" ? "index.html" : u);
   if (!fs.existsSync(f)) return res.writeHead(404).end();
   res.writeHead(200, {

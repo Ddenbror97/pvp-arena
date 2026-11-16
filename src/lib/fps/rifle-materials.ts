@@ -67,6 +67,14 @@ let cache: Map<string, THREE.Texture> | undefined;
  * and intentionally outlive any one arena; lifecycle tests account for them.
  */
 export const sharedRifleTextureCount = () => cache?.size ?? 0;
+/**
+ * A renderer that is going away hands the finish textures back (shared-release.ts): they keep
+ * their pictures and the next renderer uploads them again, but the old renderer no longer
+ * listens on them, so it can be collected.
+ */
+export function releaseSharedRifleTextures() {
+  for (const texture of cache?.values() ?? []) texture.dispose();
+}
 function memo(name: string, make: () => THREE.Texture) {
   cache ??= new Map();
   let texture = cache.get(name);

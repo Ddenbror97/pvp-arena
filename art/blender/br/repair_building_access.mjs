@@ -14,6 +14,7 @@ import {
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 import { triangles, voxelBoxes } from "./build_collision.mjs";
 import { cutPrimitive } from "./mesh-cut.mjs";
+import { modelFile } from "./model-files.mjs";
 
 const spec = JSON.parse(fs.readFileSync(process.argv[2] ?? "art/br/building-access.json", "utf8"));
 const dir = "public/fps/br/models";
@@ -244,7 +245,7 @@ for (const [id, access] of Object.entries(spec.models)) {
     // `keepFacade`: the facade-atlas mid LOD stays as it is (what is drawn here is too small to
     // see at its distance, and the atlas LOD is one material).
     if (access.keepFacade && input.facade) continue;
-    const doc = await io.read(path.join("public", input.file));
+    const doc = await io.read(modelFile(input.file));
     // Transform floating-point normals, not the source's packed normalized integers.
     await doc.transform(dequantize());
     const root = doc.getRoot(),
@@ -331,7 +332,7 @@ for (const [id, access] of Object.entries(spec.models)) {
       kB: Math.round(fs.statSync(path.join("public", file)).size / 1024),
     };
   }
-  const tris = await triangles(path.join("public", m.lods[0].file));
+  const tris = await triangles(modelFile(m.lods[0].file));
   const exactFloors = [...access.floors, ...groupBoxes];
   const sampled = tris.filter(
     (t) =>

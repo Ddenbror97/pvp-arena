@@ -677,5 +677,3 @@ Before using any new access route, verify the title and domain, check the requir
     ],
   }),
 ];
-
-export const BATTLE_ROYALE_GUIDE_SLUGS = BATTLE_ROYALE_GUIDES.map((guide) => guide.slug);

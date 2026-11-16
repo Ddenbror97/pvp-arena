@@ -126,8 +126,8 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/abandoned-building.lod0.glb",
-     "tris": 8174,
+     "file": "/fps/br/models/abandoned-building.walls-v1.lod0.glb",
+     "tris": 9164,
      "draws": 2,
      "textureMB": 8,
      "kB": 344,
@@ -138,20 +138,21 @@
      ]
     },
     {
-     "file": "/fps/br/models/abandoned-building.lod1.glb",
-     "tris": 1800,
+     "file": "/fps/br/models/abandoned-building.facades-v1.lod1.glb",
+     "tris": 1749,
      "draws": 1,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 20,
      "size": [
       5.36,
       13,
       7.37
-     ]
+     ],
+     "facade": true
     },
     {
-     "file": "/fps/br/models/abandoned-building.lod2.glb",
-     "tris": 448,
+     "file": "/fps/br/models/abandoned-building.walls-v1.lod2.glb",
+     "tris": 424,
      "draws": 1,
      "textureMB": 0,
      "kB": 4,
@@ -192,7 +193,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/abbey-ruins.lod1.glb",
+     "file": "/fps/br/models/abbey-ruins.zfix-v1.lod1.glb",
      "tris": 2600,
      "draws": 1,
      "textureMB": 0.33,
@@ -409,11 +410,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/air-raid-bunker.lod1.glb",
+     "file": "/fps/br/models/air-raid-bunker.zfix-v1.lod0.glb",
      "tris": 898,
      "draws": 3,
      "textureMB": 0.67,
-     "kB": 60,
+     "kB": 59,
      "size": [
       5.99,
       3.65,
@@ -421,11 +422,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/air-raid-bunker.lod2.glb",
+     "file": "/fps/br/models/air-raid-bunker.zfix-v3.lod2.glb",
      "tris": 392,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 4,
      "size": [
       5.99,
       3.65,
@@ -775,11 +776,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/apartment.lod0.glb",
-     "tris": 4284,
-     "draws": 1,
+     "file": "/fps/br/models/apartment.int-v1.lod0.glb",
+     "tris": 4633,
+     "draws": 3,
      "textureMB": 0,
-     "kB": 51,
+     "kB": 45,
      "size": [
       20,
       19.2,
@@ -787,11 +788,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/apartment.lod1.glb",
-     "tris": 1464,
+     "file": "/fps/br/models/apartment.walls-v1.lod1.glb",
+     "tris": 1525,
      "draws": 1,
      "textureMB": 0,
-     "kB": 16,
+     "kB": 15,
      "size": [
       20,
       19.2,
@@ -799,8 +800,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/apartment.lod2.glb",
-     "tris": 144,
+     "file": "/fps/br/models/apartment.walls-v1.lod2.glb",
+     "tris": 147,
      "draws": 1,
      "textureMB": 0,
      "kB": 4,
@@ -895,7 +896,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/archery-target.lod1.glb",
+     "file": "/fps/br/models/archery-target.lod0.glb",
      "tris": 132,
      "draws": 1,
      "textureMB": 0,
@@ -1111,11 +1112,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/army-tent.lod1.glb",
+     "file": "/fps/br/models/army-tent.zfix-v3.lod1.glb",
      "tris": 1400,
      "draws": 1,
      "textureMB": 0,
-     "kB": 15,
+     "kB": 24,
      "size": [
       7.5,
       3.13,
@@ -1123,11 +1124,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/army-tent.lod2.glb",
+     "file": "/fps/br/models/army-tent.paint-v1.lod2.glb",
      "tris": 400,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 7,
      "size": [
       7.5,
       3.13,
@@ -1153,11 +1154,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/atc-tower.lod0.glb",
-     "tris": 5178,
+     "file": "/fps/br/models/atc-tower.walls-v1.lod0.glb",
+     "tris": 5412,
      "draws": 1,
      "textureMB": 5.33,
-     "kB": 190,
+     "kB": 184,
      "size": [
       8.16,
       32,
@@ -1165,11 +1166,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/atc-tower.lod1.glb",
-     "tris": 2938,
+     "file": "/fps/br/models/atc-tower.walls-v1.lod1.glb",
+     "tris": 3141,
      "draws": 1,
      "textureMB": 1.33,
-     "kB": 89,
+     "kB": 85,
      "size": [
       8.16,
       32,
@@ -1177,8 +1178,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/atc-tower.lod2.glb",
-     "tris": 998,
+     "file": "/fps/br/models/atc-tower.walls-v1.lod2.glb",
+     "tris": 1020,
      "draws": 1,
      "textureMB": 0,
      "kB": 6,
@@ -1639,39 +1640,40 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/barn.lod0.glb",
-     "tris": 10364,
+     "file": "/fps/br/models/barn.zfix-v1.lod0.glb",
+     "tris": 10888,
      "draws": 5,
      "textureMB": 1.5,
-     "kB": 363,
+     "kB": 247,
      "size": [
-      18.83,
-      11.19,
-      18.83
+      13.579,
+      11.189,
+      12.413
      ]
     },
     {
-     "file": "/fps/br/models/barn.lod1.glb",
-     "tris": 2368,
+     "file": "/fps/br/models/barn.facades-v1.lod1.glb",
+     "tris": 2454,
      "draws": 1,
      "textureMB": 0,
-     "kB": 13,
+     "kB": 33,
      "size": [
-      18.83,
-      11.19,
-      18.83
-     ]
+      13.58,
+      11.189,
+      12.413
+     ],
+     "facade": true
     },
     {
-     "file": "/fps/br/models/barn.lod2.glb",
-     "tris": 496,
+     "file": "/fps/br/models/barn.zfix-v1.lod2.glb",
+     "tris": 555,
      "draws": 1,
      "textureMB": 0,
      "kB": 5,
      "size": [
-      18.83,
-      11.19,
-      18.83
+      13.498,
+      11.188,
+      12.396
      ]
     }
    ]
@@ -1693,39 +1695,40 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/barracks.lod0.glb",
-     "tris": 10604,
+     "file": "/fps/br/models/barracks.zfix-v1.lod0.glb",
+     "tris": 10769,
      "draws": 6,
      "textureMB": 5.33,
-     "kB": 302,
+     "kB": 200,
      "size": [
-      11.75,
-      5.99,
-      19.58
+      11.753,
+      5.964,
+      20.992
      ]
     },
     {
-     "file": "/fps/br/models/barracks.lod1.glb",
-     "tris": 3481,
+     "file": "/fps/br/models/barracks.zfix-v1.lod1.glb",
+     "tris": 4088,
      "draws": 1,
      "textureMB": 0,
-     "kB": 99,
+     "kB": 45,
      "size": [
-      11.75,
-      5.99,
-      19.58
-     ]
+      11.752,
+      5.963,
+      20.899
+     ],
+     "facade": true
     },
     {
-     "file": "/fps/br/models/barracks.lod2.glb",
-     "tris": 1022,
+     "file": "/fps/br/models/barracks.walls-v2.lod2.glb",
+     "tris": 1334,
      "draws": 1,
      "textureMB": 0,
-     "kB": 89,
+     "kB": 9,
      "size": [
-      11.75,
-      5.99,
-      19.58
+      11.752,
+      5.958,
+      20.899
      ]
     }
    ]
@@ -2787,7 +2790,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/boat-wreck.lod1.glb",
+     "file": "/fps/br/models/boat-wreck.lod0.glb",
      "tris": 2096,
      "draws": 1,
      "textureMB": 0,
@@ -2799,7 +2802,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/boat-wreck.lod2.glb",
+     "file": "/fps/br/models/boat-wreck.lod0.glb",
      "tris": 2096,
      "draws": 1,
      "textureMB": 0,
@@ -3004,7 +3007,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/boulder-field.lod1.glb",
+     "file": "/fps/br/models/boulder-field.zfix-v1.lod1.glb",
      "tris": 2579,
      "draws": 2,
      "textureMB": 0.33,
@@ -3016,7 +3019,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/boulder-field.lod2.glb",
+     "file": "/fps/br/models/boulder-field.zfix-v1.lod2.glb",
      "tris": 799,
      "draws": 1,
      "textureMB": 0,
@@ -3477,39 +3480,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/brick-shop.lod0.glb",
-     "tris": 2946,
-     "draws": 1,
+     "file": "/fps/br/models/brick-shop.int-v1.lod0.glb",
+     "tris": 3082,
+     "draws": 3,
      "textureMB": 5.33,
-     "kB": 195,
+     "kB": 186,
      "size": [
-      24.23,
+      24.228,
       9.61,
-      7.24
+      7.244
      ]
     },
     {
-     "file": "/fps/br/models/brick-shop.lod1.glb",
-     "tris": 2946,
-     "draws": 1,
+     "file": "/fps/br/models/brick-shop.lod-v1.lod1.glb",
+     "tris": 1585,
+     "draws": 3,
      "textureMB": 1.33,
-     "kB": 97,
+     "kB": 69,
      "size": [
-      24.23,
+      24.228,
       9.61,
-      7.24
+      7.244
      ]
     },
     {
-     "file": "/fps/br/models/brick-shop.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/brick-shop.lod-v1.lod2.glb",
+     "tris": 194,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 3,
      "size": [
-      24.23,
+      24.228,
       9.61,
-      7.24
+      7.244
      ]
     }
    ]
@@ -3531,38 +3534,38 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/brick-substation.lod0.glb",
-     "tris": 2492,
-     "draws": 1,
+     "file": "/fps/br/models/brick-substation.zfix-v1.lod0.glb",
+     "tris": 2725,
+     "draws": 2,
      "textureMB": 1.33,
-     "kB": 92,
+     "kB": 95,
      "size": [
-      7.1,
-      6.16,
+      7.104,
+      6.158,
       10.5
      ]
     },
     {
-     "file": "/fps/br/models/brick-substation.lod1.glb",
-     "tris": 2492,
-     "draws": 1,
+     "file": "/fps/br/models/brick-substation.access-v6.lod1.glb",
+     "tris": 2645,
+     "draws": 2,
      "textureMB": 0.33,
-     "kB": 57,
+     "kB": 60,
      "size": [
-      7.1,
-      6.16,
+      7.104,
+      6.158,
       10.5
      ]
     },
     {
-     "file": "/fps/br/models/brick-substation.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/brick-substation.access-v6.lod2.glb",
+     "tris": 1096,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 7,
      "size": [
-      7.1,
-      6.16,
+      7.103,
+      6.158,
       10.5
      ]
     }
@@ -3855,11 +3858,11 @@
    "sourceTris": 840,
    "lods": [
     {
-     "file": "/fps/br/models/bungalow.lod0.glb",
-     "tris": 840,
-     "draws": 1,
+     "file": "/fps/br/models/bungalow.int-v1.lod0.glb",
+     "tris": 970,
+     "draws": 3,
      "textureMB": 0,
-     "kB": 12,
+     "kB": 15,
      "size": [
       11.2,
       3.8,
@@ -3867,11 +3870,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/bungalow.lod1.glb",
-     "tris": 516,
+     "file": "/fps/br/models/bungalow.walls-v1.lod1.glb",
+     "tris": 599,
      "draws": 1,
      "textureMB": 0,
-     "kB": 7,
+     "kB": 8,
      "size": [
       11.2,
       3.8,
@@ -4432,60 +4435,6 @@
     }
    ]
   },
-  "bw-barber": {
-   "title": "1960s Barber Chair",
-   "author": "MarcXR",
-   "source": "https://sketchfab.com/3d-models/1960s-barber-chair-413636af429d481daf9a8acf24a058db",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "fitout",
-   "use": "Blackwater Prison (2026-11-14): the barber's chair",
-   "scale": 1.443251,
-   "sourceTris": 3265,
-   "size": [
-    0.7,
-    1.1,
-    1.01
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/bw-barber.lod0.glb",
-     "tris": 600,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 4,
-     "size": [
-      0.7,
-      1.1,
-      1.01
-     ]
-    },
-    {
-     "file": "/fps/br/models/bw-barber.lod1.glb",
-     "tris": 206,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 3,
-     "size": [
-      0.7,
-      1.1,
-      1.01
-     ]
-    },
-    {
-     "file": "/fps/br/models/bw-barber.lod2.glb",
-     "tris": 56,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      0.7,
-      1.1,
-      1.01
-     ]
-    }
-   ]
-  },
   "bw-bench": {
    "title": "Metal Bench",
    "author": "JanStano",
@@ -4536,60 +4485,6 @@
       0.83,
       1.19,
       2
-     ]
-    }
-   ]
-  },
-  "bw-bin": {
-   "title": "GAME READY INTERROGATION ROOM PACK",
-   "author": "oxxycodone",
-   "source": "https://sketchfab.com/3d-models/game-ready-interrogation-room-pack-e3865c02170e43aba21d0c9d26904677",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "detail",
-   "use": "Blackwater Prison (2026-11-14): waste bins",
-   "scale": 1.030928,
-   "sourceTris": 604,
-   "size": [
-    0.46,
-    0.5,
-    0.46
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/bw-bin.lod0.glb",
-     "tris": 604,
-     "draws": 1,
-     "textureMB": 0.33,
-     "kB": 19,
-     "size": [
-      0.46,
-      0.5,
-      0.46
-     ]
-    },
-    {
-     "file": "/fps/br/models/bw-bin.lod1.glb",
-     "tris": 144,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 3,
-     "size": [
-      0.46,
-      0.5,
-      0.46
-     ]
-    },
-    {
-     "file": "/fps/br/models/bw-bin.lod2.glb",
-     "tris": 44,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      0.46,
-      0.5,
-      0.46
      ]
     }
    ]
@@ -5434,7 +5329,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bw-gun-wall.lod1.glb",
+     "file": "/fps/br/models/bw-gun-wall.lod0.glb",
      "tris": 44,
      "draws": 1,
      "textureMB": 0,
@@ -5500,7 +5395,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bw-hall-door.lod2.glb",
+     "file": "/fps/br/models/bw-hall-door.lod1.glb",
      "tris": 238,
      "draws": 1,
      "textureMB": 0,
@@ -5618,60 +5513,6 @@
       110,
       21.7,
       55
-     ]
-    }
-   ]
-  },
-  "bw-keypad": {
-   "title": "CCTV and keypad access Panel",
-   "author": "Duane's Mind",
-   "source": "https://sketchfab.com/3d-models/cctv-and-keypad-access-panel-dfbf3ebd9b774babbec99989f34df691",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "detail",
-   "use": "Blackwater Prison (2026-11-14): keypads by the doors",
-   "scale": 1.552386,
-   "sourceTris": 72,
-   "size": [
-    0.24,
-    0.38,
-    0.25
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/bw-keypad.lod0.glb",
-     "tris": 72,
-     "draws": 1,
-     "textureMB": 0.33,
-     "kB": 16,
-     "size": [
-      0.24,
-      0.38,
-      0.25
-     ]
-    },
-    {
-     "file": "/fps/br/models/bw-keypad.lod1.glb",
-     "tris": 72,
-     "draws": 1,
-     "textureMB": 0.08,
-     "kB": 8,
-     "size": [
-      0.24,
-      0.38,
-      0.25
-     ]
-    },
-    {
-     "file": "/fps/br/models/bw-keypad.lod2.glb",
-     "tris": 60,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      0.24,
-      0.38,
-      0.25
      ]
     }
    ]
@@ -6813,60 +6654,6 @@
     }
    ]
   },
-  "bw-wall-lamp": {
-   "title": "Industrial Bulkhead Wall Lamp Lowpoly",
-   "author": "iwanPlays",
-   "source": "https://sketchfab.com/3d-models/industrial-bulkhead-wall-lamp-lowpoly-4c50439bcbc247629fe2194862d7acc9",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "detail",
-   "use": "Blackwater Prison (2026-11-14): bulkhead lamps on the walls",
-   "scale": 0.001661,
-   "sourceTris": 232,
-   "size": [
-    0.35,
-    0.57,
-    0.19
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/bw-wall-lamp.lod0.glb",
-     "tris": 232,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 6,
-     "size": [
-      0.35,
-      0.57,
-      0.19
-     ]
-    },
-    {
-     "file": "/fps/br/models/bw-wall-lamp.lod1.glb",
-     "tris": 232,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 6,
-     "size": [
-      0.35,
-      0.57,
-      0.19
-     ]
-    },
-    {
-     "file": "/fps/br/models/bw-wall-lamp.lod2.glb",
-     "tris": 60,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 3,
-     "size": [
-      0.35,
-      0.57,
-      0.19
-     ]
-    }
-   ]
-  },
   "bw-wash-sink": {
    "title": "Shower Room - Assets",
    "author": "SeverDoes3D",
@@ -6938,39 +6725,40 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/cabin.lod0.glb",
-     "tris": 4404,
-     "draws": 1,
+     "file": "/fps/br/models/cabin.int-v1.lod0.glb",
+     "tris": 4369,
+     "draws": 2,
      "textureMB": 1.33,
-     "kB": 118,
+     "kB": 120,
      "size": [
       7.62,
-      8.16,
-      9
+      8.158,
+      9.7
      ]
     },
     {
-     "file": "/fps/br/models/cabin.lod1.glb",
-     "tris": 1200,
+     "file": "/fps/br/models/cabin.facades-v1.lod1.glb",
+     "tris": 1733,
      "draws": 1,
      "textureMB": 0,
-     "kB": 9,
+     "kB": 25,
      "size": [
       7.62,
-      8.16,
-      9
-     ]
+      8.157,
+      9.699
+     ],
+     "facade": true
     },
     {
-     "file": "/fps/br/models/cabin.lod2.glb",
-     "tris": 300,
+     "file": "/fps/br/models/cabin.walls-v2.lod2.glb",
+     "tris": 471,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 5,
      "size": [
-      7.62,
-      8.16,
-      9
+      7.492,
+      8.105,
+      9.613
      ]
     }
    ]
@@ -7154,39 +6942,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/camp-cabin.lod0.glb",
-     "tris": 718,
+     "file": "/fps/br/models/camp-cabin.zfix-v3.lod0.glb",
+     "tris": 1005,
      "draws": 5,
      "textureMB": 5.33,
-     "kB": 86,
+     "kB": 89,
      "size": [
       10.5,
-      7.8,
-      9.18
+      7.798,
+      9.177
      ]
     },
     {
-     "file": "/fps/br/models/camp-cabin.lod1.glb",
-     "tris": 718,
+     "file": "/fps/br/models/camp-cabin.zfix-v3.lod1.glb",
+     "tris": 863,
      "draws": 5,
      "textureMB": 1.33,
-     "kB": 40,
+     "kB": 41,
      "size": [
       10.5,
-      7.8,
-      9.18
+      7.798,
+      9.177
      ]
     },
     {
-     "file": "/fps/br/models/camp-cabin.lod2.glb",
-     "tris": 718,
+     "file": "/fps/br/models/camp-cabin.zfix-v3.lod2.glb",
+     "tris": 863,
      "draws": 1,
      "textureMB": 0,
-     "kB": 5,
+     "kB": 6,
      "size": [
       10.5,
-      7.8,
-      9.18
+      7.798,
+      9.177
      ]
     }
    ]
@@ -7220,7 +7008,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/camp-dock.lod1.glb",
+     "file": "/fps/br/models/camp-dock.lod0.glb",
      "tris": 1872,
      "draws": 1,
      "textureMB": 0,
@@ -8504,39 +8292,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/chapel.lod0.glb",
-     "tris": 3104,
-     "draws": 4,
+     "file": "/fps/br/models/chapel.access-v6.lod0.glb",
+     "tris": 3242,
+     "draws": 5,
      "textureMB": 5.33,
-     "kB": 194,
+     "kB": 186,
      "size": [
       12,
-      9.75,
-      6.79
+      9.748,
+      6.785
      ]
     },
     {
-     "file": "/fps/br/models/chapel.lod1.glb",
-     "tris": 3104,
-     "draws": 4,
+     "file": "/fps/br/models/chapel.access-v6.lod1.glb",
+     "tris": 3162,
+     "draws": 5,
      "textureMB": 1.33,
-     "kB": 110,
+     "kB": 101,
      "size": [
       12,
-      9.75,
-      6.79
+      9.748,
+      6.785
      ]
     },
     {
-     "file": "/fps/br/models/chapel.lod2.glb",
-     "tris": 1051,
+     "file": "/fps/br/models/chapel.zfix-v1.lod2.glb",
+     "tris": 1105,
      "draws": 1,
      "textureMB": 0,
      "kB": 7,
      "size": [
       12,
-      9.75,
-      6.79
+      9.672,
+      6.785
      ]
     }
    ]
@@ -8773,39 +8561,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/church.lod0.glb",
-     "tris": 708,
-     "draws": 1,
+     "file": "/fps/br/models/church.walls-v2.lod0.glb",
+     "tris": 1023,
+     "draws": 2,
      "textureMB": 5.33,
-     "kB": 221,
+     "kB": 225,
      "size": [
-      8.52,
+      8.523,
       16,
-      10.38
+      10.69
      ]
     },
     {
-     "file": "/fps/br/models/church.lod1.glb",
-     "tris": 708,
-     "draws": 1,
+     "file": "/fps/br/models/church.walls-v2.lod1.glb",
+     "tris": 955,
+     "draws": 2,
      "textureMB": 1.33,
-     "kB": 68,
+     "kB": 71,
      "size": [
-      8.52,
+      8.523,
       16,
-      10.38
+      10.69
      ]
     },
     {
-     "file": "/fps/br/models/church.lod2.glb",
-     "tris": 708,
+     "file": "/fps/br/models/church.walls-v2.lod2.glb",
+     "tris": 953,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 7,
      "size": [
-      8.52,
+      8.523,
       16,
-      10.38
+      10.691
      ]
     }
    ]
@@ -8839,7 +8627,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/church-ruins.lod1.glb",
+     "file": "/fps/br/models/church-ruins.zfix-v1.lod1.glb",
      "tris": 2938,
      "draws": 3,
      "textureMB": 0.67,
@@ -8851,7 +8639,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/church-ruins.lod2.glb",
+     "file": "/fps/br/models/church-ruins.zfix-v3.lod2.glb",
      "tris": 2061,
      "draws": 1,
      "textureMB": 0,
@@ -9013,7 +8801,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/closet.lod2.glb",
+     "file": "/fps/br/models/closet.lod1.glb",
      "tris": 499,
      "draws": 1,
      "textureMB": 0,
@@ -9260,39 +9048,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/command-post.lod0.glb",
-     "tris": 3112,
-     "draws": 6,
+     "file": "/fps/br/models/command-post.zfix-v1.lod0.glb",
+     "tris": 2929,
+     "draws": 5,
      "textureMB": 2.67,
-     "kB": 97,
+     "kB": 89,
      "size": [
-      28.5,
-      9.96,
-      18.52
+      28.55,
+      9.957,
+      18.561
      ]
     },
     {
-     "file": "/fps/br/models/command-post.lod1.glb",
-     "tris": 3112,
-     "draws": 6,
+     "file": "/fps/br/models/command-post.zfix-v1.lod1.glb",
+     "tris": 2479,
+     "draws": 5,
      "textureMB": 0.67,
-     "kB": 59,
+     "kB": 47,
      "size": [
-      28.5,
-      9.96,
-      18.52
+      28.55,
+      9.957,
+      18.561
      ]
     },
     {
-     "file": "/fps/br/models/command-post.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/command-post.zfix-v5.lod2.glb",
+     "tris": 1138,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 8,
      "size": [
-      28.5,
-      9.96,
-      18.52
+      28.55,
+      9.951,
+      18.561
      ]
     }
    ]
@@ -10068,39 +9856,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/control-post.lod0.glb",
-     "tris": 2310,
+     "file": "/fps/br/models/control-post.zfix-v1.lod0.glb",
+     "tris": 2799,
      "draws": 6,
      "textureMB": 4,
-     "kB": 95,
+     "kB": 100,
      "size": [
       19.9,
-      4.09,
-      12.93
+      4.093,
+      12.932
      ]
     },
     {
-     "file": "/fps/br/models/control-post.lod1.glb",
-     "tris": 2310,
+     "file": "/fps/br/models/control-post.zfix-v1.lod1.glb",
+     "tris": 2699,
      "draws": 6,
      "textureMB": 1,
-     "kB": 56,
+     "kB": 59,
      "size": [
       19.9,
-      4.09,
-      12.93
+      4.092,
+      12.932
      ]
     },
     {
-     "file": "/fps/br/models/control-post.lod2.glb",
-     "tris": 999,
+     "file": "/fps/br/models/control-post.access-v13.lod2.glb",
+     "tris": 1334,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 8,
      "size": [
       19.9,
-      4.09,
-      12.93
+      4.088,
+      12.932
      ]
     }
    ]
@@ -10201,7 +9989,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/conveyor.lod2.glb",
+     "file": "/fps/br/models/conveyor.zfix-v1.lod2.glb",
      "tris": 588,
      "draws": 1,
      "textureMB": 0,
@@ -11166,7 +10954,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/dishwasher.lod1.glb",
+     "file": "/fps/br/models/dishwasher.lod0.glb",
      "tris": 1673,
      "draws": 1,
      "textureMB": 0,
@@ -11178,7 +10966,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/dishwasher.lod2.glb",
+     "file": "/fps/br/models/dishwasher.lod0.glb",
      "tris": 1673,
      "draws": 1,
      "textureMB": 0,
@@ -11568,60 +11356,6 @@
     }
    ]
   },
-  "electric-box": {
-   "title": "Electrical Boxes",
-   "author": "Outlier Spa",
-   "source": "https://sketchfab.com/3d-models/electrical-boxes-e5a058d5210448e5b2640cdb3fbcb163",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "detail",
-   "use": "Arena District (2026-11-14): switch boxes on the service walls",
-   "scale": 0.994417,
-   "sourceTris": 74,
-   "size": [
-    0.11,
-    0.6,
-    0.69
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/electric-box.lod0.glb",
-     "tris": 74,
-     "draws": 1,
-     "textureMB": 0.33,
-     "kB": 13,
-     "size": [
-      0.11,
-      0.6,
-      0.69
-     ]
-    },
-    {
-     "file": "/fps/br/models/electric-box.lod1.glb",
-     "tris": 74,
-     "draws": 1,
-     "textureMB": 0.08,
-     "kB": 6,
-     "size": [
-      0.11,
-      0.6,
-      0.69
-     ]
-    },
-    {
-     "file": "/fps/br/models/electric-box.lod2.glb",
-     "tris": 60,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      0.11,
-      0.6,
-      0.69
-     ]
-    }
-   ]
-  },
   "escalator": {
    "title": "Metaretail: Escalator",
    "author": "vmmaniac",
@@ -11855,38 +11589,38 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/factory-hall.lod0.glb",
-     "tris": 552,
-     "draws": 1,
+     "file": "/fps/br/models/factory-hall.zfix-v1.lod0.glb",
+     "tris": 806,
+     "draws": 3,
      "textureMB": 5.33,
-     "kB": 190,
+     "kB": 193,
      "size": [
-      14.59,
-      14.96,
+      14.589,
+      14.964,
       26
      ]
     },
     {
-     "file": "/fps/br/models/factory-hall.lod1.glb",
-     "tris": 552,
-     "draws": 1,
+     "file": "/fps/br/models/factory-hall.access-v12.lod1.glb",
+     "tris": 646,
+     "draws": 3,
      "textureMB": 1.33,
-     "kB": 50,
+     "kB": 51,
      "size": [
-      14.59,
-      14.96,
+      14.589,
+      14.963,
       26
      ]
     },
     {
-     "file": "/fps/br/models/factory-hall.lod2.glb",
-     "tris": 552,
+     "file": "/fps/br/models/factory-hall.access-v12.lod2.glb",
+     "tris": 646,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 5,
      "size": [
-      14.59,
-      14.96,
+      14.589,
+      14.963,
       26
      ]
     }
@@ -12029,11 +11763,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/field-hangar.lod1.glb",
+     "file": "/fps/br/models/field-hangar.zfix-v3.lod1.glb",
      "tris": 1400,
      "draws": 1,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 11,
      "size": [
       21.1,
       5.55,
@@ -12041,7 +11775,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/field-hangar.lod2.glb",
+     "file": "/fps/br/models/field-hangar.paint-v1.lod2.glb",
      "tris": 395,
      "draws": 1,
      "textureMB": 0,
@@ -12245,7 +11979,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fire-lookout.lod1.glb",
+     "file": "/fps/br/models/fire-lookout.zfix-v1.lod1.glb",
      "tris": 1999,
      "draws": 1,
      "textureMB": 0,
@@ -12257,7 +11991,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fire-lookout.lod2.glb",
+     "file": "/fps/br/models/fire-lookout.zfix-v1.lod2.glb",
      "tris": 1399,
      "draws": 1,
      "textureMB": 0,
@@ -12287,39 +12021,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/fire-station.lod0.glb",
-     "tris": 3784,
-     "draws": 1,
+     "file": "/fps/br/models/fire-station.zfix-v5.lod0.glb",
+     "tris": 4312,
+     "draws": 2,
      "textureMB": 5.33,
-     "kB": 152,
+     "kB": 154,
      "size": [
-      31.27,
+      31.266,
       10.57,
       23.61
      ]
     },
     {
-     "file": "/fps/br/models/fire-station.lod1.glb",
-     "tris": 3500,
-     "draws": 1,
+     "file": "/fps/br/models/fire-station.zfix-v5.lod1.glb",
+     "tris": 3864,
+     "draws": 2,
      "textureMB": 1.33,
-     "kB": 91,
+     "kB": 92,
      "size": [
-      31.27,
+      31.266,
       10.57,
       23.61
      ]
     },
     {
-     "file": "/fps/br/models/fire-station.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/fire-station.zfix-v1.lod2.glb",
+     "tris": 1188,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 8,
      "size": [
-      31.27,
-      10.57,
-      23.61
+      30.795,
+      10.05,
+      23.611
      ]
     }
    ]
@@ -12516,7 +12250,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fishing-hut.lod1.glb",
+     "file": "/fps/br/models/fishing-hut.zfix-v1.lod1.glb",
      "tris": 1577,
      "draws": 1,
      "textureMB": 0,
@@ -12851,7 +12585,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fountain.lod2.glb",
+     "file": "/fps/br/models/fountain.lod1.glb",
      "tris": 935,
      "draws": 1,
      "textureMB": 0,
@@ -13108,11 +12842,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/gantry-crane.lod1.glb",
+     "file": "/fps/br/models/gantry-crane.zfix-v6.lod1.glb",
      "tris": 9619,
      "draws": 8,
      "textureMB": 1.17,
-     "kB": 226,
+     "kB": 212,
      "size": [
       25,
       11.53,
@@ -13120,7 +12854,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/gantry-crane.lod2.glb",
+     "file": "/fps/br/models/gantry-crane.zfix-v5.lod2.glb",
      "tris": 2279,
      "draws": 1,
      "textureMB": 0,
@@ -13150,38 +12884,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/garage.lod0.glb",
-     "tris": 2204,
+     "file": "/fps/br/models/garage.zfix-v1.lod0.glb",
+     "tris": 2361,
      "draws": 3,
      "textureMB": 1,
-     "kB": 92,
+     "kB": 93,
      "size": [
-      5.07,
-      3.11,
+      5.069,
+      3.15,
       8
      ]
     },
     {
-     "file": "/fps/br/models/garage.lod1.glb",
-     "tris": 598,
+     "file": "/fps/br/models/garage.zfix-v1.lod1.glb",
+     "tris": 681,
      "draws": 1,
      "textureMB": 0,
-     "kB": 5,
+     "kB": 9,
      "size": [
-      5.07,
-      3.11,
+      5.067,
+      3.109,
       8
-     ]
+     ],
+     "facade": true
     },
     {
-     "file": "/fps/br/models/garage.lod2.glb",
-     "tris": 150,
+     "file": "/fps/br/models/garage.access-v3.lod2.glb",
+     "tris": 205,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
      "size": [
-      5.07,
-      3.11,
+      5.019,
+      3.083,
       8
      ]
     }
@@ -13403,60 +13138,6 @@
     }
    ]
   },
-  "glass-balustrade": {
-   "title": "Balustrade segment",
-   "author": "YouniqueĪdeaStudio",
-   "source": "https://sketchfab.com/3d-models/balustrade-segment-67b3670cf9af4b7fa1127a5b69c552bb",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "fitout",
-   "use": "Arena District (2026-11-14): glass railings on the VIP terraces (the arena model's rails collide)",
-   "scale": 0.92259,
-   "sourceTris": 4592,
-   "size": [
-    0.13,
-    1.05,
-    2.9
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/glass-balustrade.lod0.glb",
-     "tris": 600,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 7,
-     "size": [
-      0.13,
-      1.05,
-      2.9
-     ]
-    },
-    {
-     "file": "/fps/br/models/glass-balustrade.lod1.glb",
-     "tris": 210,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 5,
-     "size": [
-      0.13,
-      1.05,
-      2.9
-     ]
-    },
-    {
-     "file": "/fps/br/models/glass-balustrade.lod2.glb",
-     "tris": 60,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      0.13,
-      1.05,
-      2.9
-     ]
-    }
-   ]
-  },
   "glass-table": {
    "title": "Low-Poly Glass Table",
    "author": "NoobiePie",
@@ -13660,7 +13341,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/grand-piano.lod2.glb",
+     "file": "/fps/br/models/grand-piano.lod1.glb",
      "tris": 2430,
      "draws": 1,
      "textureMB": 0,
@@ -13669,60 +13350,6 @@
       1.29,
       1.38,
       2.2
-     ]
-    }
-   ]
-  },
-  "grandstand": {
-   "title": "Stadium Stand",
-   "author": "abhisekh_nath",
-   "source": "https://sketchfab.com/3d-models/stadium-stand-8b1d8eed69c0405882e50e9099090dc0",
-   "licence": "CC BY 4.0",
-   "class": "hero",
-   "ring": "hero",
-   "use": "Stadium (2026-11-13): grandstands along the pitch (cover, height)",
-   "scale": 0.00063,
-   "sourceTris": 74234,
-   "size": [
-    42,
-    15.67,
-    34.26
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/grandstand.lod0.glb",
-     "tris": 23997,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 90,
-     "size": [
-      42,
-      15.67,
-      34.26
-     ]
-    },
-    {
-     "file": "/fps/br/models/grandstand.lod1.glb",
-     "tris": 8399,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 36,
-     "size": [
-      42,
-      15.67,
-      34.26
-     ]
-    },
-    {
-     "file": "/fps/br/models/grandstand.lod2.glb",
-     "tris": 2509,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 13,
-     "size": [
-      42,
-      15.67,
-      34.26
      ]
     }
    ]
@@ -13851,39 +13478,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/guard-tower.lod0.glb",
+     "file": "/fps/br/models/guard-tower.access-v7.lod0.glb",
      "tris": 2265,
      "draws": 1,
      "textureMB": 1.33,
      "kB": 99,
      "size": [
-      3.71,
-      7.12,
-      3.38
+      5.005,
+      9.609,
+      4.556
      ]
     },
     {
-     "file": "/fps/br/models/guard-tower.lod1.glb",
-     "tris": 2008,
+     "file": "/fps/br/models/guard-tower.access-v7.lod1.glb",
+     "tris": 1995,
      "draws": 1,
      "textureMB": 0.33,
      "kB": 61,
      "size": [
-      3.71,
-      7.12,
-      3.38
+      4.911,
+      9.609,
+      4.556
      ]
     },
     {
-     "file": "/fps/br/models/guard-tower.lod2.glb",
-     "tris": 396,
+     "file": "/fps/br/models/guard-tower.zfix-v1.lod2.glb",
+     "tris": 395,
      "draws": 1,
      "textureMB": 0,
      "kB": 4,
      "size": [
-      3.71,
-      7.12,
-      3.38
+      4.911,
+      9.534,
+      4.556
      ]
     }
    ]
@@ -14121,11 +13748,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/hangar.lod0.glb",
-     "tris": 9777,
+     "file": "/fps/br/models/hangar.zfix-v1.lod0.glb",
+     "tris": 11239,
      "draws": 1,
      "textureMB": 0,
-     "kB": 43,
+     "kB": 138,
      "size": [
       62.35,
       12.68,
@@ -14133,11 +13760,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/hangar.lod1.glb",
-     "tris": 3365,
+     "file": "/fps/br/models/hangar.zfix-v1.lod1.glb",
+     "tris": 2895,
      "draws": 1,
      "textureMB": 0,
-     "kB": 18,
+     "kB": 38,
      "size": [
       62.35,
       12.68,
@@ -14145,11 +13772,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/hangar.lod2.glb",
-     "tris": 974,
+     "file": "/fps/br/models/hangar.zfix-v1.lod2.glb",
+     "tris": 961,
      "draws": 1,
      "textureMB": 0,
-     "kB": 7,
+     "kB": 13,
      "size": [
       62.35,
       12.68,
@@ -14175,39 +13802,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/hangar-j.lod0.glb",
-     "tris": 8112,
-     "draws": 1,
+     "file": "/fps/br/models/hangar-j.zfix-v1.lod0.glb",
+     "tris": 3781,
+     "draws": 3,
      "textureMB": 2.67,
-     "kB": 172,
+     "kB": 103,
      "size": [
       61.89,
-      19.3,
-      89.88
+      19.303,
+      89.884
      ]
     },
     {
-     "file": "/fps/br/models/hangar-j.lod1.glb",
-     "tris": 3500,
-     "draws": 1,
+     "file": "/fps/br/models/hangar-j.access-v8.lod1.glb",
+     "tris": 3141,
+     "draws": 3,
      "textureMB": 0.67,
-     "kB": 80,
+     "kB": 69,
      "size": [
       61.89,
-      19.3,
-      89.88
+      19.301,
+      89.884
      ]
     },
     {
-     "file": "/fps/br/models/hangar-j.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/hangar-j.access-v8.lod2.glb",
+     "tris": 953,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 7,
      "size": [
       61.89,
-      19.3,
-      89.88
+      14.122,
+      89.884
      ]
     }
    ]
@@ -14458,11 +14085,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/helideck.v1.lod1.glb",
+     "file": "/fps/br/models/helideck.zfix-v2.lod1.glb",
      "tris": 2392,
      "draws": 1,
      "textureMB": 0,
-     "kB": 30,
+     "kB": 31,
      "size": [
       22.6,
       7.3,
@@ -14479,59 +14106,6 @@
       22.6,
       7.3,
       22.8
-     ]
-    }
-   ]
-  },
-  "helipad": {
-   "title": "Heliport Helipad air base helicopter",
-   "author": "ahmagh2e",
-   "source": "https://sketchfab.com/3d-models/heliport-helipad-air-base-helicopter-46fe680de5404a49b2bfeb0ffbbe0fb2",
-   "licence": "CC BY 4.0",
-   "class": "structure",
-   "use": "military base helipad",
-   "scale": 0.017759,
-   "sourceTris": 30916,
-   "size": [
-    24,
-    5.33,
-    22.04
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/helipad.lod0.glb",
-     "tris": 4000,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 17,
-     "size": [
-      24,
-      5.33,
-      22.04
-     ]
-    },
-    {
-     "file": "/fps/br/models/helipad.lod1.glb",
-     "tris": 1400,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 8,
-     "size": [
-      24,
-      5.33,
-      22.04
-     ]
-    },
-    {
-     "file": "/fps/br/models/helipad.lod2.glb",
-     "tris": 834,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 5,
-     "size": [
-      24,
-      5.33,
-      22.04
      ]
     }
    ]
@@ -14630,7 +14204,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/highway-lamp.lod2.glb",
+     "file": "/fps/br/models/highway-lamp.lod1.glb",
      "tris": 161,
      "draws": 1,
      "textureMB": 0,
@@ -14996,7 +14570,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-east.mega-v3.lod1.glb",
+     "file": "/fps/br/models/hosp-east.zfix-v2.lod1.glb",
      "tris": 3216,
      "draws": 1,
      "textureMB": 0,
@@ -15050,7 +14624,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-er.mega-v3.lod1.glb",
+     "file": "/fps/br/models/hosp-er.zfix-v2.lod1.glb",
      "tris": 2844,
      "draws": 1,
      "textureMB": 0,
@@ -15104,7 +14678,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-main.mega-v3.lod1.glb",
+     "file": "/fps/br/models/hosp-main.zfix-v2.lod1.glb",
      "tris": 4380,
      "draws": 1,
      "textureMB": 0,
@@ -15266,7 +14840,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-west.mega-v3.lod1.glb",
+     "file": "/fps/br/models/hosp-west.zfix-v2.lod1.glb",
      "tris": 3216,
      "draws": 1,
      "textureMB": 0,
@@ -15308,23 +14882,23 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/hospital.lod0.glb",
-     "tris": 2971,
-     "draws": 2,
+     "file": "/fps/br/models/hospital.zfix-v1.lod0.glb",
+     "tris": 7321,
+     "draws": 6,
      "textureMB": 2.67,
-     "kB": 92,
+     "kB": 137,
      "size": [
       40,
-      24.53,
+      24.721,
       24.73
      ]
     },
     {
-     "file": "/fps/br/models/hospital.lod1.glb",
-     "tris": 1883,
-     "draws": 2,
+     "file": "/fps/br/models/hospital.access-v9.lod1.glb",
+     "tris": 2561,
+     "draws": 6,
      "textureMB": 0.67,
-     "kB": 44,
+     "kB": 54,
      "size": [
       40,
       24.53,
@@ -15332,11 +14906,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/hospital.lod2.glb",
-     "tris": 699,
+     "file": "/fps/br/models/hospital.zfix-v1.lod2.glb",
+     "tris": 1307,
      "draws": 1,
      "textureMB": 0,
-     "kB": 5,
+     "kB": 8,
      "size": [
       40,
       24.53,
@@ -15416,39 +14990,40 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/house.lod0.glb",
-     "tris": 3874,
-     "draws": 1,
+     "file": "/fps/br/models/house.int-v1.lod0.glb",
+     "tris": 4307,
+     "draws": 3,
      "textureMB": 5.33,
-     "kB": 171,
+     "kB": 174,
      "size": [
       12,
-      8.01,
-      7.45
+      8.011,
+      7.904
      ]
     },
     {
-     "file": "/fps/br/models/house.lod1.glb",
-     "tris": 992,
+     "file": "/fps/br/models/house.zfix-v1.lod1.glb",
+     "tris": 1225,
      "draws": 1,
      "textureMB": 0,
-     "kB": 7,
+     "kB": 17,
      "size": [
-      12,
+      11.95,
       8.01,
-      7.45
-     ]
+      7.902
+     ],
+     "facade": true
     },
     {
-     "file": "/fps/br/models/house.lod2.glb",
-     "tris": 275,
+     "file": "/fps/br/models/house.zfix-v1.lod2.glb",
+     "tris": 461,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 5,
      "size": [
-      12,
+      11.95,
       8.01,
-      7.45
+      7.902
      ]
     }
    ]
@@ -15482,11 +15057,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/humvee.lod1.glb",
+     "file": "/fps/br/models/humvee.paint-v1.lod1.glb",
      "tris": 868,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 8,
      "size": [
       4.9,
       2.09,
@@ -15494,11 +15069,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/humvee.lod2.glb",
+     "file": "/fps/br/models/humvee.paint-v1.lod2.glb",
      "tris": 249,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 4,
      "size": [
       4.9,
       2.09,
@@ -15740,39 +15315,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-building-1.lod0.glb",
-     "tris": 1986,
-     "draws": 2,
+     "file": "/fps/br/models/ind-building-1.zfix-v1.lod0.glb",
+     "tris": 2453,
+     "draws": 4,
      "textureMB": 2.67,
-     "kB": 128,
+     "kB": 134,
      "size": [
-      27.02,
-      16.63,
-      47.54
+      27.023,
+      16.632,
+      47.545
      ]
     },
     {
-     "file": "/fps/br/models/ind-building-1.lod1.glb",
-     "tris": 1986,
-     "draws": 2,
+     "file": "/fps/br/models/ind-building-1.access-v8.lod1.glb",
+     "tris": 2293,
+     "draws": 4,
      "textureMB": 0.67,
-     "kB": 64,
+     "kB": 68,
      "size": [
-      27.02,
+      27.023,
       16.63,
-      47.54
+      47.545
      ]
     },
     {
-     "file": "/fps/br/models/ind-building-1.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/ind-building-1.access-v8.lod2.glb",
+     "tris": 1312,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 8,
      "size": [
       27.02,
-      16.63,
-      47.54
+      15.219,
+      47.545
      ]
     }
    ]
@@ -15794,39 +15369,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-building-10.lod0.glb",
-     "tris": 2420,
-     "draws": 1,
+     "file": "/fps/br/models/ind-building-10.zfix-v1.lod0.glb",
+     "tris": 3284,
+     "draws": 3,
      "textureMB": 1.33,
-     "kB": 97,
+     "kB": 96,
      "size": [
-      43.5,
-      25.83,
-      83.27
+      43.499,
+      25.825,
+      83.266
      ]
     },
     {
-     "file": "/fps/br/models/ind-building-10.lod1.glb",
-     "tris": 2420,
-     "draws": 1,
+     "file": "/fps/br/models/ind-building-10.access-v8.lod1.glb",
+     "tris": 3124,
+     "draws": 3,
      "textureMB": 0.33,
-     "kB": 68,
+     "kB": 65,
      "size": [
-      43.5,
-      25.83,
-      83.27
+      43.499,
+      25.821,
+      83.266
      ]
     },
     {
-     "file": "/fps/br/models/ind-building-10.lod2.glb",
-     "tris": 961,
+     "file": "/fps/br/models/ind-building-10.access-v8.lod2.glb",
+     "tris": 1357,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 8,
      "size": [
-      43.5,
-      25.83,
-      83.27
+      43.499,
+      25.821,
+      83.266
      ]
     }
    ]
@@ -15848,39 +15423,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-factory.lod0.glb",
-     "tris": 3647,
-     "draws": 2,
+     "file": "/fps/br/models/ind-factory.zfix-v1.lod0.glb",
+     "tris": 4559,
+     "draws": 4,
      "textureMB": 2.67,
-     "kB": 156,
+     "kB": 166,
      "size": [
-      46.53,
-      24.73,
-      95.3
+      46.535,
+      24.736,
+      95.302
      ]
     },
     {
-     "file": "/fps/br/models/ind-factory.lod1.glb",
-     "tris": 3499,
-     "draws": 2,
+     "file": "/fps/br/models/ind-factory.access-v8.lod1.glb",
+     "tris": 4319,
+     "draws": 4,
      "textureMB": 0.67,
-     "kB": 100,
+     "kB": 109,
      "size": [
-      46.53,
-      24.73,
-      95.3
+      46.535,
+      24.734,
+      95.302
      ]
     },
     {
-     "file": "/fps/br/models/ind-factory.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/ind-factory.access-v8.lod2.glb",
+     "tris": 1845,
      "draws": 1,
      "textureMB": 0,
-     "kB": 7,
+     "kB": 11,
      "size": [
-      46.53,
-      24.73,
-      95.3
+      46.539,
+      24.737,
+      95.302
      ]
     }
    ]
@@ -15902,39 +15477,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-generic-2.lod0.glb",
-     "tris": 162,
-     "draws": 1,
+     "file": "/fps/br/models/ind-generic-2.walls-v2.lod0.glb",
+     "tris": 230,
+     "draws": 2,
      "textureMB": 1.33,
-     "kB": 40,
+     "kB": 42,
      "size": [
       4.9,
-      3.93,
-      4.62
+      3.935,
+      5.41
      ]
     },
     {
-     "file": "/fps/br/models/ind-generic-2.lod1.glb",
-     "tris": 162,
-     "draws": 1,
+     "file": "/fps/br/models/ind-generic-2.access-v2.lod1.glb",
+     "tris": 201,
+     "draws": 2,
      "textureMB": 0.33,
-     "kB": 16,
+     "kB": 18,
      "size": [
       4.9,
-      3.93,
-      4.62
+      3.935,
+      5.41
      ]
     },
     {
-     "file": "/fps/br/models/ind-generic-2.lod2.glb",
-     "tris": 162,
+     "file": "/fps/br/models/ind-generic-2.access-v2.lod2.glb",
+     "tris": 201,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
      "size": [
       4.9,
-      3.93,
-      4.62
+      3.935,
+      5.41
      ]
     }
    ]
@@ -15956,11 +15531,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-hangar.lod0.glb",
-     "tris": 1134,
+     "file": "/fps/br/models/ind-hangar.walls-v1.lod0.glb",
+     "tris": 1194,
      "draws": 2,
      "textureMB": 2.67,
-     "kB": 94,
+     "kB": 93,
      "size": [
       49.78,
       12.89,
@@ -15968,11 +15543,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/ind-hangar.lod1.glb",
-     "tris": 1134,
+     "file": "/fps/br/models/ind-hangar.walls-v1.lod1.glb",
+     "tris": 1194,
      "draws": 2,
      "textureMB": 0.67,
-     "kB": 51,
+     "kB": 50,
      "size": [
       49.78,
       12.89,
@@ -15980,11 +15555,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/ind-hangar.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/ind-hangar.walls-v1.lod2.glb",
+     "tris": 1059,
      "draws": 1,
      "textureMB": 0,
-     "kB": 7,
+     "kB": 8,
      "size": [
       49.78,
       12.89,
@@ -16022,7 +15597,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ind-loadbay.lod1.glb",
+     "file": "/fps/br/models/ind-loadbay.zfix-v1.lod1.glb",
      "tris": 720,
      "draws": 2,
      "textureMB": 0.5,
@@ -16034,7 +15609,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ind-loadbay.lod2.glb",
+     "file": "/fps/br/models/ind-loadbay.zfix-v1.lod2.glb",
      "tris": 720,
      "draws": 1,
      "textureMB": 0,
@@ -16064,39 +15639,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-office-trailer.lod0.glb",
-     "tris": 188,
-     "draws": 2,
+     "file": "/fps/br/models/ind-office-trailer.int-v1.lod0.glb",
+     "tris": 275,
+     "draws": 3,
      "textureMB": 2.67,
-     "kB": 75,
+     "kB": 77,
      "size": [
-      11.28,
-      3.93,
-      5.8
+      11.284,
+      3.927,
+      7.402
      ]
     },
     {
-     "file": "/fps/br/models/ind-office-trailer.lod1.glb",
-     "tris": 188,
-     "draws": 2,
+     "file": "/fps/br/models/ind-office-trailer.access-v2.lod1.glb",
+     "tris": 227,
+     "draws": 3,
      "textureMB": 0.67,
-     "kB": 28,
+     "kB": 30,
      "size": [
-      11.28,
-      3.93,
-      5.8
+      11.284,
+      3.927,
+      7.402
      ]
     },
     {
-     "file": "/fps/br/models/ind-office-trailer.lod2.glb",
-     "tris": 188,
+     "file": "/fps/br/models/ind-office-trailer.access-v2.lod2.glb",
+     "tris": 227,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
      "size": [
-      11.28,
-      3.93,
-      5.8
+      11.284,
+      3.926,
+      7.401
      ]
     }
    ]
@@ -16130,7 +15705,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ind-portal-crane.lod1.glb",
+     "file": "/fps/br/models/ind-portal-crane.zfix-v1.lod1.glb",
      "tris": 1330,
      "draws": 2,
      "textureMB": 0.5,
@@ -16226,39 +15801,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-smith.lod0.glb",
-     "tris": 888,
-     "draws": 1,
+     "file": "/fps/br/models/ind-smith.zfix-v1.lod0.glb",
+     "tris": 1473,
+     "draws": 3,
      "textureMB": 1.33,
-     "kB": 50,
+     "kB": 58,
      "size": [
       18.34,
-      15.04,
-      11.81
+      15.038,
+      11.804
      ]
     },
     {
-     "file": "/fps/br/models/ind-smith.lod1.glb",
-     "tris": 888,
-     "draws": 1,
+     "file": "/fps/br/models/ind-smith.access-v12.lod1.glb",
+     "tris": 1313,
+     "draws": 3,
      "textureMB": 0.33,
-     "kB": 27,
+     "kB": 34,
      "size": [
       18.34,
-      15.04,
-      11.81
+      15.038,
+      11.804
      ]
     },
     {
-     "file": "/fps/br/models/ind-smith.lod2.glb",
-     "tris": 888,
+     "file": "/fps/br/models/ind-smith.access-v12.lod2.glb",
+     "tris": 1313,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 8,
      "size": [
       18.34,
-      15.04,
-      11.81
+      15.038,
+      11.804
      ]
     }
    ]
@@ -16292,7 +15867,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ind-substation.lod1.glb",
+     "file": "/fps/br/models/ind-substation.zfix-v1.lod1.glb",
      "tris": 988,
      "draws": 1,
      "textureMB": 0.33,
@@ -16304,7 +15879,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ind-substation.lod2.glb",
+     "file": "/fps/br/models/ind-substation.zfix-v1.lod2.glb",
      "tris": 382,
      "draws": 1,
      "textureMB": 0,
@@ -16442,39 +16017,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-terminal.lod0.glb",
-     "tris": 844,
-     "draws": 2,
+     "file": "/fps/br/models/ind-terminal.zfix-v1.lod0.glb",
+     "tris": 1023,
+     "draws": 4,
      "textureMB": 2.67,
-     "kB": 87,
+     "kB": 89,
      "size": [
-      53.43,
-      7.88,
-      15.84
+      53.434,
+      7.882,
+      15.846
      ]
     },
     {
-     "file": "/fps/br/models/ind-terminal.lod1.glb",
-     "tris": 844,
-     "draws": 2,
+     "file": "/fps/br/models/ind-terminal.access-v8.lod1.glb",
+     "tris": 863,
+     "draws": 4,
      "textureMB": 0.67,
      "kB": 41,
      "size": [
-      53.43,
+      53.434,
       7.88,
-      15.84
+      15.846
      ]
     },
     {
-     "file": "/fps/br/models/ind-terminal.lod2.glb",
-     "tris": 844,
+     "file": "/fps/br/models/ind-terminal.access-v8.lod2.glb",
+     "tris": 863,
      "draws": 1,
      "textureMB": 0,
      "kB": 6,
      "size": [
-      53.43,
+      53.434,
       7.88,
-      15.84
+      15.846
      ]
     }
    ]
@@ -16496,39 +16071,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-warehouse-1.lod0.glb",
-     "tris": 366,
-     "draws": 2,
+     "file": "/fps/br/models/ind-warehouse-1.access-v23.lod0.glb",
+     "tris": 753,
+     "draws": 4,
      "textureMB": 2.67,
-     "kB": 81,
+     "kB": 87,
      "size": [
-      33.83,
-      11.12,
-      13.36
+      33.867,
+      11.124,
+      13.358
      ]
     },
     {
-     "file": "/fps/br/models/ind-warehouse-1.lod1.glb",
-     "tris": 366,
-     "draws": 2,
+     "file": "/fps/br/models/ind-warehouse-1.access-v23.lod1.glb",
+     "tris": 673,
+     "draws": 4,
      "textureMB": 0.67,
-     "kB": 29,
+     "kB": 34,
      "size": [
-      33.83,
-      11.12,
-      13.36
+      33.867,
+      11.124,
+      13.358
      ]
     },
     {
-     "file": "/fps/br/models/ind-warehouse-1.lod2.glb",
-     "tris": 366,
+     "file": "/fps/br/models/ind-warehouse-1.walls-v2.lod2.glb",
+     "tris": 613,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 5,
      "size": [
-      33.83,
-      11.12,
-      13.36
+      33.833,
+      11.124,
+      13.358
      ]
     }
    ]
@@ -16550,39 +16125,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-warehouse-3.lod0.glb",
-     "tris": 302,
-     "draws": 2,
+     "file": "/fps/br/models/ind-warehouse-3.walls-v2.lod0.glb",
+     "tris": 437,
+     "draws": 3,
      "textureMB": 2.67,
-     "kB": 61,
+     "kB": 64,
      "size": [
-      24.44,
-      12.49,
-      25.22
+      24.439,
+      12.488,
+      25.221
      ]
     },
     {
-     "file": "/fps/br/models/ind-warehouse-3.lod1.glb",
-     "tris": 302,
-     "draws": 2,
+     "file": "/fps/br/models/ind-warehouse-3.walls-v2.lod1.glb",
+     "tris": 427,
+     "draws": 3,
      "textureMB": 0.67,
-     "kB": 27,
+     "kB": 29,
      "size": [
-      24.44,
-      12.49,
-      25.22
+      24.439,
+      12.488,
+      25.221
      ]
     },
     {
-     "file": "/fps/br/models/ind-warehouse-3.lod2.glb",
-     "tris": 302,
+     "file": "/fps/br/models/ind-warehouse-3.zfix-v1.lod2.glb",
+     "tris": 427,
      "draws": 1,
      "textureMB": 0,
      "kB": 4,
      "size": [
-      24.44,
-      12.49,
-      25.22
+      24.439,
+      12.488,
+      25.221
      ]
     }
    ]
@@ -16604,39 +16179,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-warehouse-4.lod0.glb",
-     "tris": 344,
-     "draws": 1,
+     "file": "/fps/br/models/ind-warehouse-4.zfix-v1.lod0.glb",
+     "tris": 712,
+     "draws": 3,
      "textureMB": 1.33,
-     "kB": 49,
+     "kB": 56,
      "size": [
-      42.08,
-      9.38,
-      13.59
+      42.076,
+      9.384,
+      13.587
      ]
     },
     {
-     "file": "/fps/br/models/ind-warehouse-4.lod1.glb",
-     "tris": 344,
-     "draws": 1,
+     "file": "/fps/br/models/ind-warehouse-4.zfix-v1.lod1.glb",
+     "tris": 552,
+     "draws": 3,
      "textureMB": 0.33,
-     "kB": 20,
+     "kB": 25,
      "size": [
-      42.08,
-      9.38,
-      13.59
+      42.076,
+      9.384,
+      13.587
      ]
     },
     {
-     "file": "/fps/br/models/ind-warehouse-4.lod2.glb",
-     "tris": 344,
+     "file": "/fps/br/models/ind-warehouse-4.zfix-v1.lod2.glb",
+     "tris": 552,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 5,
      "size": [
-      42.08,
-      9.38,
-      13.59
+      42.076,
+      9.384,
+      13.587
      ]
     }
    ]
@@ -16658,39 +16233,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ind-warehouse-5.lod0.glb",
-     "tris": 1440,
-     "draws": 2,
+     "file": "/fps/br/models/ind-warehouse-5.zfix-v1.lod0.glb",
+     "tris": 1780,
+     "draws": 4,
      "textureMB": 2.67,
-     "kB": 97,
+     "kB": 102,
      "size": [
-      33,
-      11.68,
-      54.94
+      33.002,
+      11.684,
+      54.938
      ]
     },
     {
-     "file": "/fps/br/models/ind-warehouse-5.lod1.glb",
-     "tris": 1440,
-     "draws": 2,
+     "file": "/fps/br/models/ind-warehouse-5.access-v12.lod1.glb",
+     "tris": 1620,
+     "draws": 4,
      "textureMB": 0.67,
-     "kB": 50,
+     "kB": 54,
      "size": [
-      33,
-      11.68,
-      54.94
+      33.002,
+      11.683,
+      54.938
      ]
     },
     {
-     "file": "/fps/br/models/ind-warehouse-5.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/ind-warehouse-5.access-v12.lod2.glb",
+     "tris": 1168,
      "draws": 1,
      "textureMB": 0,
      "kB": 7,
      "size": [
       33,
-      11.68,
-      54.94
+      11.683,
+      54.938
      ]
     }
    ]
@@ -17808,7 +17383,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/lifeguard-tower.lod1.glb",
+     "file": "/fps/br/models/lifeguard-tower.zfix-v1.lod1.glb",
      "tris": 1398,
      "draws": 2,
      "textureMB": 0.67,
@@ -18078,7 +17653,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/log.lod1.glb",
+     "file": "/fps/br/models/log.lod0.glb",
      "tris": 148,
      "draws": 2,
      "textureMB": 0,
@@ -18120,39 +17695,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/log-cabin.lod0.glb",
-     "tris": 5258,
-     "draws": 6,
+     "file": "/fps/br/models/log-cabin.zfix-v1.lod0.glb",
+     "tris": 5474,
+     "draws": 7,
      "textureMB": 8,
-     "kB": 490,
+     "kB": 494,
      "size": [
       6.3,
-      4.51,
-      4.43
+      5.414,
+      5.034
      ]
     },
     {
-     "file": "/fps/br/models/log-cabin.lod1.glb",
-     "tris": 4742,
-     "draws": 6,
+     "file": "/fps/br/models/log-cabin.zfix-v1.lod1.glb",
+     "tris": 4912,
+     "draws": 7,
      "textureMB": 2,
-     "kB": 201,
+     "kB": 204,
      "size": [
       6.3,
-      4.51,
-      4.43
+      4.734,
+      5.034
      ]
     },
     {
-     "file": "/fps/br/models/log-cabin.lod2.glb",
-     "tris": 942,
+     "file": "/fps/br/models/log-cabin.zfix-v1.lod2.glb",
+     "tris": 1050,
      "draws": 1,
      "textureMB": 0,
-     "kB": 9,
+     "kB": 10,
      "size": [
       6.3,
-      4.51,
-      4.43
+      4.725,
+      5.029
      ]
     }
    ]
@@ -18294,11 +17869,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/lookout.lod1.glb",
+     "file": "/fps/br/models/lookout.zfix-v1.lod1.glb",
      "tris": 1398,
      "draws": 1,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 20,
      "size": [
       6.02,
       7,
@@ -18306,11 +17881,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/lookout.lod2.glb",
+     "file": "/fps/br/models/lookout.zfix-v1.lod2.glb",
      "tris": 398,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 7,
      "size": [
       6.02,
       7,
@@ -18348,7 +17923,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/lot-light.lod1.glb",
+     "file": "/fps/br/models/lot-light.lod0.glb",
      "tris": 60,
      "draws": 1,
      "textureMB": 0,
@@ -18402,7 +17977,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/lot-lines.lod1.glb",
+     "file": "/fps/br/models/lot-lines.lod0.glb",
      "tris": 348,
      "draws": 1,
      "textureMB": 0,
@@ -18510,7 +18085,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/lux-tv.lod1.glb",
+     "file": "/fps/br/models/lux-tv.lod0.glb",
      "tris": 182,
      "draws": 1,
      "textureMB": 0,
@@ -19483,7 +19058,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mil-armoured-car.lod1.glb",
+     "file": "/fps/br/models/mil-armoured-car.lod0.glb",
      "tris": 756,
      "draws": 1,
      "textureMB": 0.33,
@@ -19592,7 +19167,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mil-jeep.lod1.glb",
+     "file": "/fps/br/models/mil-jeep.lod0.glb",
      "tris": 462,
      "draws": 1,
      "textureMB": 0.33,
@@ -19741,39 +19316,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/military-hq.lod0.glb",
-     "tris": 9210,
+     "file": "/fps/br/models/military-hq.zfix-v1.lod0.glb",
+     "tris": 8752,
      "draws": 6,
      "textureMB": 5.33,
-     "kB": 179,
+     "kB": 162,
      "size": [
-      40.21,
-      8.92,
-      33.7
+      40.212,
+      8.914,
+      33.702
      ]
     },
     {
-     "file": "/fps/br/models/military-hq.lod1.glb",
-     "tris": 4239,
+     "file": "/fps/br/models/military-hq.zfix-v1.lod1.glb",
+     "tris": 4245,
      "draws": 6,
      "textureMB": 1,
-     "kB": 96,
+     "kB": 67,
      "size": [
-      40.21,
-      8.92,
-      33.7
+      40.212,
+      8.914,
+      33.702
      ]
     },
     {
-     "file": "/fps/br/models/military-hq.lod2.glb",
-     "tris": 992,
+     "file": "/fps/br/models/military-hq.walls-v3.lod2.glb",
+     "tris": 1127,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 7,
      "size": [
-      40.21,
-      8.92,
-      33.7
+      40.169,
+      8.915,
+      33.657
      ]
     }
    ]
@@ -20767,11 +20342,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/old-barn.lod0.glb",
-     "tris": 9374,
+     "file": "/fps/br/models/old-barn.zfix-v3.lod0.glb",
+     "tris": 9643,
      "draws": 1,
      "textureMB": 5.33,
-     "kB": 209,
+     "kB": 204,
      "size": [
       16,
       8.86,
@@ -20779,11 +20354,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/old-barn.lod1.glb",
-     "tris": 4818,
+     "file": "/fps/br/models/old-barn.zfix-v1.lod1.glb",
+     "tris": 5094,
      "draws": 1,
      "textureMB": 1.33,
-     "kB": 120,
+     "kB": 115,
      "size": [
       16,
       8.86,
@@ -20791,8 +20366,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/old-barn.lod2.glb",
-     "tris": 994,
+     "file": "/fps/br/models/old-barn.walls-v1.lod2.glb",
+     "tris": 946,
      "draws": 1,
      "textureMB": 0,
      "kB": 8,
@@ -20833,7 +20408,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/old-bridge.lod1.glb",
+     "file": "/fps/br/models/old-bridge.zfix-v1.lod1.glb",
      "tris": 1400,
      "draws": 1,
      "textureMB": 0.33,
@@ -20875,39 +20450,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/old-hut.lod0.glb",
-     "tris": 2362,
-     "draws": 1,
+     "file": "/fps/br/models/old-hut.zfix-v1.lod0.glb",
+     "tris": 2474,
+     "draws": 2,
      "textureMB": 5.33,
-     "kB": 230,
+     "kB": 233,
      "size": [
-      6.25,
-      4.68,
-      7.8
+      6.248,
+      5.578,
+      8.2
      ]
     },
     {
-     "file": "/fps/br/models/old-hut.lod1.glb",
-     "tris": 2362,
-     "draws": 1,
+     "file": "/fps/br/models/old-hut.zfix-v1.lod1.glb",
+     "tris": 2434,
+     "draws": 2,
      "textureMB": 1.33,
-     "kB": 85,
+     "kB": 87,
      "size": [
-      6.25,
-      4.68,
-      7.8
+      6.248,
+      5.128,
+      8.2
      ]
     },
     {
-     "file": "/fps/br/models/old-hut.lod2.glb",
-     "tris": 1000,
+     "file": "/fps/br/models/old-hut.access-v8.lod2.glb",
+     "tris": 1080,
      "draws": 1,
      "textureMB": 0,
      "kB": 6,
      "size": [
-      6.25,
-      4.68,
-      7.8
+      6.248,
+      5.129,
+      8.2
      ]
     }
    ]
@@ -22246,7 +21821,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/pier.lod2.glb",
+     "file": "/fps/br/models/pier.zfix-v1.lod2.glb",
      "tris": 389,
      "draws": 1,
      "textureMB": 0,
@@ -22396,7 +21971,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/pitch-lines.v1.lod1.glb",
+     "file": "/fps/br/models/pitch-lines.v1.lod0.glb",
      "tris": 1200,
      "draws": 1,
      "textureMB": 0,
@@ -22450,11 +22025,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/plane-shelter.lod1.glb",
+     "file": "/fps/br/models/plane-shelter.zfix-v1.lod1.glb",
      "tris": 1394,
      "draws": 1,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 11,
      "size": [
       21.08,
       5.55,
@@ -22462,7 +22037,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/plane-shelter.lod2.glb",
+     "file": "/fps/br/models/plane-shelter.paint-v1.lod2.glb",
      "tris": 382,
      "draws": 1,
      "textureMB": 0,
@@ -22870,11 +22445,11 @@
    "sourceTris": 1848,
    "lods": [
     {
-     "file": "/fps/br/models/police-station.lod0.glb",
-     "tris": 1848,
-     "draws": 1,
+     "file": "/fps/br/models/police-station.int-v1.lod0.glb",
+     "tris": 2098,
+     "draws": 3,
      "textureMB": 0,
-     "kB": 23,
+     "kB": 25,
      "size": [
       18,
       10,
@@ -22882,8 +22457,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/police-station.lod1.glb",
-     "tris": 624,
+     "file": "/fps/br/models/police-station.walls-v1.lod1.glb",
+     "tris": 675,
      "draws": 1,
      "textureMB": 0,
      "kB": 8,
@@ -22894,8 +22469,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/police-station.lod2.glb",
-     "tris": 60,
+     "file": "/fps/br/models/police-station.walls-v1.lod2.glb",
+     "tris": 66,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
@@ -23206,11 +22781,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/port-crane.lod1.glb",
+     "file": "/fps/br/models/port-crane.zfix-v1.lod1.glb",
      "tris": 2598,
      "draws": 3,
      "textureMB": 1,
-     "kB": 268,
+     "kB": 96,
      "size": [
       42.64,
       42,
@@ -23218,11 +22793,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/port-crane.lod2.glb",
+     "file": "/fps/br/models/port-crane.zfix-v1.lod2.glb",
      "tris": 881,
      "draws": 1,
      "textureMB": 0,
-     "kB": 176,
+     "kB": 6,
      "size": [
       42.64,
       42,
@@ -23465,39 +23040,40 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/prison-block.lod0.glb",
-     "tris": 44006,
+     "file": "/fps/br/models/prison-block.zfix-v5.lod0.glb",
+     "tris": 45431,
      "draws": 8,
      "textureMB": 9.33,
-     "kB": 967,
+     "kB": 977,
      "size": [
-      52,
-      17.11,
-      13.04
+      51.778,
+      17.112,
+      12.723
      ]
     },
     {
-     "file": "/fps/br/models/prison-block.lod1.glb",
-     "tris": 8983,
+     "file": "/fps/br/models/prison-block.zfix-v3.lod1.glb",
+     "tris": 9473,
      "draws": 1,
      "textureMB": 0,
-     "kB": 35,
+     "kB": 90,
      "size": [
-      52,
-      17.11,
-      13.04
-     ]
+      51.778,
+      15.582,
+      12.825
+     ],
+     "facade": true
     },
     {
-     "file": "/fps/br/models/prison-block.lod2.glb",
-     "tris": 7860,
+     "file": "/fps/br/models/prison-block.zfix-v3.lod2.glb",
+     "tris": 8284,
      "draws": 1,
      "textureMB": 0,
-     "kB": 29,
+     "kB": 33,
      "size": [
-      52,
-      17.11,
-      13.04
+      51.778,
+      14.982,
+      12.768
      ]
     }
    ]
@@ -23963,11 +23539,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/pylon.lod1.glb",
+     "file": "/fps/br/models/pylon.zfix-v1.lod1.glb",
      "tris": 4537,
      "draws": 3,
      "textureMB": 0.33,
-     "kB": 126,
+     "kB": 125,
      "size": [
       14.32,
       28,
@@ -23975,7 +23551,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/pylon.lod2.glb",
+     "file": "/fps/br/models/pylon.zfix-v1.lod2.glb",
      "tris": 4396,
      "draws": 1,
      "textureMB": 0,
@@ -24232,11 +23808,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/radio-tower.lod1.glb",
+     "file": "/fps/br/models/radio-tower.zfix-v1.lod1.glb",
      "tris": 2064,
      "draws": 3,
      "textureMB": 0.67,
-     "kB": 48,
+     "kB": 47,
      "size": [
       5.03,
       40,
@@ -24286,7 +23862,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/rail-crossing.lod1.glb",
+     "file": "/fps/br/models/rail-crossing.lod0.glb",
      "tris": 522,
      "draws": 1,
      "textureMB": 0,
@@ -24328,38 +23904,38 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rail-depot.lod0.glb",
-     "tris": 255,
-     "draws": 1,
+     "file": "/fps/br/models/rail-depot.zfix-v1.lod0.glb",
+     "tris": 432,
+     "draws": 2,
      "textureMB": 0.67,
-     "kB": 19,
+     "kB": 22,
      "size": [
-      16.32,
+      16.325,
       9.88,
       27.2
      ]
     },
     {
-     "file": "/fps/br/models/rail-depot.lod1.glb",
-     "tris": 255,
-     "draws": 1,
+     "file": "/fps/br/models/rail-depot.access-v6.lod1.glb",
+     "tris": 332,
+     "draws": 2,
      "textureMB": 0.17,
-     "kB": 10,
+     "kB": 12,
      "size": [
-      16.32,
-      9.88,
+      16.325,
+      9.879,
       27.2
      ]
     },
     {
-     "file": "/fps/br/models/rail-depot.lod2.glb",
-     "tris": 255,
+     "file": "/fps/br/models/rail-depot.access-v6.lod2.glb",
+     "tris": 332,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 4,
      "size": [
-      16.32,
-      9.88,
+      16.325,
+      9.879,
       27.2
      ]
     }
@@ -24934,7 +24510,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/river-shack.lod1.glb",
+     "file": "/fps/br/models/river-shack.zfix-v1.lod1.glb",
      "tris": 1397,
      "draws": 3,
      "textureMB": 0.33,
@@ -24946,7 +24522,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/river-shack.lod2.glb",
+     "file": "/fps/br/models/river-shack.zfix-v1.lod2.glb",
      "tris": 400,
      "draws": 1,
      "textureMB": 0,
@@ -25948,39 +25524,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/ruined-cabin.lod0.glb",
-     "tris": 3997,
+     "file": "/fps/br/models/ruined-cabin.zfix-v1.lod0.glb",
+     "tris": 4194,
      "draws": 3,
      "textureMB": 4,
-     "kB": 222,
+     "kB": 225,
      "size": [
       5.37,
-      4.25,
-      6
+      4.235,
+      5.984
      ]
     },
     {
-     "file": "/fps/br/models/ruined-cabin.lod1.glb",
-     "tris": 1494,
+     "file": "/fps/br/models/ruined-cabin.access-v6.lod1.glb",
+     "tris": 1701,
      "draws": 3,
      "textureMB": 1,
-     "kB": 83,
+     "kB": 87,
      "size": [
       5.37,
-      4.25,
-      6
+      4.235,
+      5.984
      ]
     },
     {
-     "file": "/fps/br/models/ruined-cabin.lod2.glb",
-     "tris": 496,
+     "file": "/fps/br/models/ruined-cabin.access-v6.lod2.glb",
+     "tris": 580,
      "draws": 1,
      "textureMB": 0,
      "kB": 5,
      "size": [
-      5.37,
-      4.25,
-      6
+      5.076,
+      4.202,
+      5.984
      ]
     }
    ]
@@ -26002,39 +25578,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-diner.lod0.glb",
-     "tris": 832,
-     "draws": 2,
+     "file": "/fps/br/models/rural-diner.int-v1.lod0.glb",
+     "tris": 1163,
+     "draws": 3,
      "textureMB": 2.67,
-     "kB": 72,
+     "kB": 76,
      "size": [
       18.3,
-      5.31,
-      8.96
+      5.311,
+      8.958
      ]
     },
     {
-     "file": "/fps/br/models/rural-diner.lod1.glb",
-     "tris": 832,
-     "draws": 2,
+     "file": "/fps/br/models/rural-diner.zfix-v1.lod1.glb",
+     "tris": 1073,
+     "draws": 3,
      "textureMB": 0.67,
-     "kB": 35,
+     "kB": 38,
      "size": [
       18.3,
-      5.31,
-      8.96
+      5.311,
+      8.958
      ]
     },
     {
-     "file": "/fps/br/models/rural-diner.lod2.glb",
-     "tris": 832,
+     "file": "/fps/br/models/rural-diner.lod-v1.lod2.glb",
+     "tris": 298,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 4,
      "size": [
       18.3,
-      5.31,
-      8.96
+      5.311,
+      8.959
      ]
     }
    ]
@@ -26056,39 +25632,40 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-house.lod0.glb",
-     "tris": 886,
-     "draws": 1,
+     "file": "/fps/br/models/rural-house.int-v1.lod0.glb",
+     "tris": 1282,
+     "draws": 3,
      "textureMB": 1.33,
-     "kB": 65,
+     "kB": 71,
      "size": [
-      6.9,
-      4.79,
-      7.82
+      6.898,
+      4.792,
+      8.761
      ]
     },
     {
-     "file": "/fps/br/models/rural-house.lod1.glb",
-     "tris": 440,
+     "file": "/fps/br/models/rural-house.facades-v1.lod1.glb",
+     "tris": 645,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      6.899,
+      4.792,
+      8.761
+     ],
+     "facade": true
+    },
+    {
+     "file": "/fps/br/models/rural-house.access-v7.lod2.glb",
+     "tris": 306,
      "draws": 1,
      "textureMB": 0,
      "kB": 4,
      "size": [
-      6.9,
-      4.79,
-      7.82
-     ]
-    },
-    {
-     "file": "/fps/br/models/rural-house.lod2.glb",
-     "tris": 142,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 3,
-     "size": [
-      6.9,
-      4.79,
-      7.82
+      6.899,
+      4.792,
+      8.761
      ]
     }
    ]
@@ -26110,39 +25687,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-mobile-home.lod0.glb",
-     "tris": 541,
-     "draws": 2,
+     "file": "/fps/br/models/rural-mobile-home.int-v1.lod0.glb",
+     "tris": 929,
+     "draws": 4,
      "textureMB": 2.67,
-     "kB": 68,
+     "kB": 73,
      "size": [
-      6.64,
-      4.39,
-      11.38
+      6.67,
+      4.387,
+      11.381
      ]
     },
     {
-     "file": "/fps/br/models/rural-mobile-home.lod1.glb",
-     "tris": 395,
-     "draws": 2,
+     "file": "/fps/br/models/rural-mobile-home.access-v7.lod1.glb",
+     "tris": 617,
+     "draws": 4,
      "textureMB": 0.67,
-     "kB": 29,
+     "kB": 33,
      "size": [
-      6.64,
-      4.39,
-      11.38
+      6.663,
+      4.387,
+      11.381
      ]
     },
     {
-     "file": "/fps/br/models/rural-mobile-home.lod2.glb",
-     "tris": 110,
+     "file": "/fps/br/models/rural-mobile-home.access-v7.lod2.glb",
+     "tris": 321,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 4,
      "size": [
-      6.64,
-      4.39,
-      11.38
+      6.624,
+      4.386,
+      11.381
      ]
     }
    ]
@@ -26164,39 +25741,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-quonset.lod0.glb",
-     "tris": 278,
-     "draws": 1,
+     "file": "/fps/br/models/rural-quonset.access-v2.lod0.glb",
+     "tris": 328,
+     "draws": 2,
      "textureMB": 1.33,
-     "kB": 38,
+     "kB": 40,
      "size": [
-      9.38,
-      4.81,
-      12.52
+      9.379,
+      4.807,
+      12.558
      ]
     },
     {
-     "file": "/fps/br/models/rural-quonset.lod1.glb",
-     "tris": 278,
-     "draws": 1,
+     "file": "/fps/br/models/rural-quonset.access-v2.lod1.glb",
+     "tris": 318,
+     "draws": 2,
      "textureMB": 0.33,
-     "kB": 16,
+     "kB": 17,
      "size": [
-      9.38,
-      4.81,
-      12.52
+      9.379,
+      4.807,
+      12.558
      ]
     },
     {
-     "file": "/fps/br/models/rural-quonset.lod2.glb",
-     "tris": 278,
+     "file": "/fps/br/models/rural-quonset.access-v2.lod2.glb",
+     "tris": 318,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
      "size": [
-      9.38,
-      4.81,
-      12.52
+      9.378,
+      4.806,
+      12.558
      ]
     }
    ]
@@ -26218,39 +25795,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-store-1.lod0.glb",
-     "tris": 211,
-     "draws": 2,
+     "file": "/fps/br/models/rural-store-1.int-v1.lod0.glb",
+     "tris": 271,
+     "draws": 3,
      "textureMB": 2.67,
-     "kB": 81,
+     "kB": 82,
      "size": [
-      8.32,
-      6.06,
-      12.59
+      8.324,
+      6.059,
+      12.592
      ]
     },
     {
-     "file": "/fps/br/models/rural-store-1.lod1.glb",
-     "tris": 211,
-     "draws": 2,
+     "file": "/fps/br/models/rural-store-1.access-v2.lod1.glb",
+     "tris": 261,
+     "draws": 3,
      "textureMB": 0.67,
-     "kB": 29,
+     "kB": 31,
      "size": [
-      8.32,
-      6.06,
-      12.59
+      8.324,
+      6.059,
+      12.592
      ]
     },
     {
-     "file": "/fps/br/models/rural-store-1.lod2.glb",
-     "tris": 211,
+     "file": "/fps/br/models/rural-store-1.access-v2.lod2.glb",
+     "tris": 261,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 4,
      "size": [
-      8.32,
-      6.06,
-      12.59
+      8.325,
+      6.059,
+      12.592
      ]
     }
    ]
@@ -26272,39 +25849,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-store-3.lod0.glb",
-     "tris": 224,
-     "draws": 2,
+     "file": "/fps/br/models/rural-store-3.int-v1.lod0.glb",
+     "tris": 324,
+     "draws": 3,
      "textureMB": 2,
-     "kB": 51,
+     "kB": 54,
      "size": [
-      6.06,
-      3.76,
-      13.59
+      6.057,
+      3.763,
+      13.594
      ]
     },
     {
-     "file": "/fps/br/models/rural-store-3.lod1.glb",
-     "tris": 224,
-     "draws": 2,
+     "file": "/fps/br/models/rural-store-3.zfix-v1.lod1.glb",
+     "tris": 314,
+     "draws": 3,
      "textureMB": 0.5,
-     "kB": 22,
+     "kB": 25,
      "size": [
-      6.06,
-      3.76,
-      13.59
+      6.057,
+      3.763,
+      13.594
      ]
     },
     {
-     "file": "/fps/br/models/rural-store-3.lod2.glb",
-     "tris": 224,
+     "file": "/fps/br/models/rural-store-3.zfix-v1.lod2.glb",
+     "tris": 314,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 4,
      "size": [
-      6.06,
-      3.76,
-      13.59
+      6.057,
+      3.762,
+      13.594
      ]
     }
    ]
@@ -26326,39 +25903,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-store-5.lod0.glb",
-     "tris": 163,
-     "draws": 2,
+     "file": "/fps/br/models/rural-store-5.int-v1.lod0.glb",
+     "tris": 214,
+     "draws": 3,
      "textureMB": 2.67,
-     "kB": 79,
+     "kB": 81,
      "size": [
-      8.38,
-      6.06,
-      20.12
+      8.379,
+      6.063,
+      20.116
      ]
     },
     {
-     "file": "/fps/br/models/rural-store-5.lod1.glb",
-     "tris": 163,
-     "draws": 2,
+     "file": "/fps/br/models/rural-store-5.access-v2.lod1.glb",
+     "tris": 204,
+     "draws": 3,
      "textureMB": 0.67,
-     "kB": 28,
+     "kB": 29,
      "size": [
-      8.38,
-      6.06,
-      20.12
+      8.379,
+      6.063,
+      20.116
      ]
     },
     {
-     "file": "/fps/br/models/rural-store-5.lod2.glb",
-     "tris": 163,
+     "file": "/fps/br/models/rural-store-5.walls-v2.lod2.glb",
+     "tris": 204,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
      "size": [
-      8.38,
-      6.06,
-      20.12
+      8.379,
+      6.061,
+      20.116
      ]
     }
    ]
@@ -26380,39 +25957,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-trailer.lod0.glb",
-     "tris": 902,
-     "draws": 1,
+     "file": "/fps/br/models/rural-trailer.int-v1.lod0.glb",
+     "tris": 1235,
+     "draws": 2,
      "textureMB": 1.33,
-     "kB": 37,
+     "kB": 42,
      "size": [
-      2.83,
+      3.716,
       2.98,
-      9.88
+      9.885
      ]
     },
     {
-     "file": "/fps/br/models/rural-trailer.lod1.glb",
-     "tris": 902,
-     "draws": 1,
+     "file": "/fps/br/models/rural-trailer.access-v3.lod1.glb",
+     "tris": 1185,
+     "draws": 2,
      "textureMB": 0.33,
-     "kB": 22,
+     "kB": 27,
      "size": [
-      2.83,
+      3.716,
       2.98,
-      9.88
+      9.885
      ]
     },
     {
-     "file": "/fps/br/models/rural-trailer.lod2.glb",
-     "tris": 400,
+     "file": "/fps/br/models/rural-trailer.access-v3.lod2.glb",
+     "tris": 592,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 5,
      "size": [
-      2.83,
+      3.716,
       2.98,
-      9.88
+      9.846
      ]
     }
    ]
@@ -26434,39 +26011,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-wood-1.lod0.glb",
-     "tris": 1324,
-     "draws": 2,
+     "file": "/fps/br/models/rural-wood-1.int-v1.lod0.glb",
+     "tris": 2138,
+     "draws": 3,
      "textureMB": 1,
-     "kB": 64,
+     "kB": 76,
      "size": [
-      21.07,
-      10.44,
-      17.26
+      21.067,
+      10.443,
+      17.265
      ]
     },
     {
-     "file": "/fps/br/models/rural-wood-1.lod1.glb",
-     "tris": 741,
-     "draws": 2,
+     "file": "/fps/br/models/rural-wood-1.walls-v3.lod1.glb",
+     "tris": 1155,
+     "draws": 3,
      "textureMB": 0.25,
-     "kB": 32,
+     "kB": 39,
      "size": [
-      21.07,
-      10.44,
-      17.26
+      21.067,
+      10.443,
+      17.265
      ]
     },
     {
-     "file": "/fps/br/models/rural-wood-1.lod2.glb",
-     "tris": 191,
+     "file": "/fps/br/models/rural-wood-1.walls-v3.lod2.glb",
+     "tris": 245,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 4,
      "size": [
-      21.07,
-      10.44,
-      17.26
+      21.063,
+      10.442,
+      17.265
      ]
     }
    ]
@@ -26488,39 +26065,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/rural-wood-4.lod0.glb",
-     "tris": 879,
-     "draws": 3,
+     "file": "/fps/br/models/rural-wood-4.int-v1.lod0.glb",
+     "tris": 1045,
+     "draws": 6,
      "textureMB": 2.33,
-     "kB": 86,
+     "kB": 90,
      "size": [
       27.73,
-      7.64,
-      14.49
+      7.638,
+      14.847
      ]
     },
     {
-     "file": "/fps/br/models/rural-wood-4.lod1.glb",
-     "tris": 589,
-     "draws": 3,
+     "file": "/fps/br/models/rural-wood-4.access-v23.lod1.glb",
+     "tris": 658,
+     "draws": 6,
      "textureMB": 0.58,
-     "kB": 38,
+     "kB": 42,
      "size": [
       27.73,
-      7.64,
-      14.49
+      7.638,
+      14.847
      ]
     },
     {
-     "file": "/fps/br/models/rural-wood-4.lod2.glb",
-     "tris": 177,
+     "file": "/fps/br/models/rural-wood-4.access-v23.lod2.glb",
+     "tris": 295,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 4,
      "size": [
       27.73,
-      7.64,
-      14.49
+      7.638,
+      14.846
      ]
     }
    ]
@@ -26877,7 +26454,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/sat-dish.lod1.glb",
+     "file": "/fps/br/models/sat-dish.zfix-v1.lod1.glb",
      "tris": 1399,
      "draws": 1,
      "textureMB": 0.33,
@@ -26889,7 +26466,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/sat-dish.lod2.glb",
+     "file": "/fps/br/models/sat-dish.zfix-v1.lod2.glb",
      "tris": 1399,
      "draws": 1,
      "textureMB": 0,
@@ -26931,11 +26508,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/sawmill.lod1.glb",
+     "file": "/fps/br/models/sawmill.zfix-v1.lod1.glb",
      "tris": 1510,
      "draws": 1,
      "textureMB": 0,
-     "kB": 8,
+     "kB": 9,
      "size": [
       10.51,
       6.12,
@@ -26943,7 +26520,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/sawmill.lod2.glb",
+     "file": "/fps/br/models/sawmill.zfix-v1.lod2.glb",
      "tris": 399,
      "draws": 1,
      "textureMB": 0,
@@ -27027,38 +26604,38 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/school.lod0.glb",
-     "tris": 7987,
+     "file": "/fps/br/models/school.zfix-v1.lod0.glb",
+     "tris": 8957,
      "draws": 6,
      "textureMB": 5.33,
-     "kB": 197,
+     "kB": 206,
      "size": [
-      62,
+      61.907,
       10.99,
-      52.63
+      52.629
      ]
     },
     {
-     "file": "/fps/br/models/school.lod1.glb",
-     "tris": 2627,
+     "file": "/fps/br/models/school.zfix-v1.lod1.glb",
+     "tris": 3177,
      "draws": 6,
      "textureMB": 1.33,
-     "kB": 73,
+     "kB": 82,
      "size": [
-      62,
+      61.905,
       10.99,
-      52.63
+      52.629
      ]
     },
     {
-     "file": "/fps/br/models/school.lod2.glb",
-     "tris": 800,
+     "file": "/fps/br/models/school.zfix-v1.lod2.glb",
+     "tris": 1134,
      "draws": 1,
      "textureMB": 0,
-     "kB": 6,
+     "kB": 8,
      "size": [
-      62,
-      10.99,
+      60.563,
+      10.446,
       52.63
      ]
     }
@@ -27227,60 +26804,6 @@
     }
    ]
   },
-  "scoreboard": {
-   "title": "Scoreboard",
-   "author": "CrunchCaptain",
-   "source": "https://sketchfab.com/3d-models/scoreboard-a69de1385cde43cda5de7b40b4451694",
-   "licence": "CC BY 4.0",
-   "class": "structure",
-   "ring": "structure",
-   "use": "Stadium (2026-11-13): the scoreboard behind the goal",
-   "scale": 0.582377,
-   "sourceTris": 4532,
-   "size": [
-    6.64,
-    7,
-    1.07
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/scoreboard.lod0.glb",
-     "tris": 4127,
-     "draws": 2,
-     "textureMB": 2.67,
-     "kB": 85,
-     "size": [
-      6.64,
-      7,
-      1.07
-     ]
-    },
-    {
-     "file": "/fps/br/models/scoreboard.lod1.glb",
-     "tris": 1400,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 7,
-     "size": [
-      6.64,
-      7,
-      1.07
-     ]
-    },
-    {
-     "file": "/fps/br/models/scoreboard.lod2.glb",
-     "tris": 442,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 4,
-     "size": [
-      6.64,
-      7,
-      1.07
-     ]
-    }
-   ]
-  },
   "scrap-pile": {
    "title": "Scrap metal (lowpoly)",
    "author": "Zuckergelee",
@@ -27418,11 +26941,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/security-booth.lod1.glb",
+     "file": "/fps/br/models/security-booth.zfix-v1.lod1.glb",
      "tris": 1396,
      "draws": 3,
      "textureMB": 0.67,
-     "kB": 36,
+     "kB": 37,
      "size": [
       2.88,
       2.65,
@@ -27430,7 +26953,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/security-booth.lod2.glb",
+     "file": "/fps/br/models/security-booth.zfix-v1.lod2.glb",
      "tris": 399,
      "draws": 1,
      "textureMB": 0,
@@ -27484,7 +27007,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/semi-cab.lod2.glb",
+     "file": "/fps/br/models/semi-cab.zfix-v1.lod2.glb",
      "tris": 396,
      "draws": 1,
      "textureMB": 0,
@@ -27568,39 +27091,40 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/shed.lod0.glb",
-     "tris": 2086,
+     "file": "/fps/br/models/shed.zfix-v1.lod0.glb",
+     "tris": 1384,
      "draws": 3,
      "textureMB": 0.67,
-     "kB": 54,
+     "kB": 45,
      "size": [
       6,
       3.31,
-      4.04
+      4.041
      ]
     },
     {
-     "file": "/fps/br/models/shed.lod1.glb",
-     "tris": 500,
+     "file": "/fps/br/models/shed.facades-v1.lod1.glb",
+     "tris": 513,
      "draws": 1,
      "textureMB": 0,
-     "kB": 4,
+     "kB": 8,
      "size": [
-      6,
+      5.984,
       3.31,
-      4.04
-     ]
+      4.041
+     ],
+     "facade": true
     },
     {
-     "file": "/fps/br/models/shed.lod2.glb",
-     "tris": 117,
+     "file": "/fps/br/models/shed.access-v3.lod2.glb",
+     "tris": 123,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
      "size": [
-      6,
+      5.933,
       3.31,
-      4.04
+      3.672
      ]
     }
    ]
@@ -28660,11 +28184,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/sniper-mast.lod1.glb",
+     "file": "/fps/br/models/sniper-mast.zfix-v3.lod0.glb",
      "tris": 3600,
      "draws": 1,
      "textureMB": 0,
-     "kB": 41,
+     "kB": 43,
      "size": [
       7,
       45.6,
@@ -28672,7 +28196,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/sniper-mast.lod2.glb",
+     "file": "/fps/br/models/sniper-mast.zfix-v1.lod2.glb",
      "tris": 36,
      "draws": 1,
      "textureMB": 0,
@@ -29254,7 +28778,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ss-desk.lod1.glb",
+     "file": "/fps/br/models/ss-desk.lod0.glb",
      "tris": 153,
      "draws": 1,
      "textureMB": 0,
@@ -29308,7 +28832,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ss-filing.lod1.glb",
+     "file": "/fps/br/models/ss-filing.lod0.glb",
      "tris": 122,
      "draws": 1,
      "textureMB": 0,
@@ -29632,7 +29156,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ss-office-chair.lod1.glb",
+     "file": "/fps/br/models/ss-office-chair.lod0.glb",
      "tris": 142,
      "draws": 1,
      "textureMB": 0,
@@ -30010,7 +29534,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ss-vending.lod1.glb",
+     "file": "/fps/br/models/ss-vending.lod0.glb",
      "tris": 157,
      "draws": 1,
      "textureMB": 0,
@@ -30388,7 +29912,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/station-platform.station-v1.lod1.glb",
+     "file": "/fps/br/models/station-platform.station-v1.lod0.glb",
      "tris": 396,
      "draws": 1,
      "textureMB": 0,
@@ -30496,11 +30020,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/stone-crusher.lod1.glb",
+     "file": "/fps/br/models/stone-crusher.zfix-v1.lod1.glb",
      "tris": 1352,
      "draws": 1,
      "textureMB": 0.33,
-     "kB": 53,
+     "kB": 52,
      "size": [
       9,
       6.54,
@@ -30571,59 +30095,6 @@
       2.31,
       1.1,
       0.28
-     ]
-    }
-   ]
-  },
-  "store-shelves": {
-   "title": "Store Shelves",
-   "author": "Peter_D",
-   "source": "https://sketchfab.com/3d-models/store-shelves-8406794ee19b4af49e0ccc02d1132915",
-   "licence": "CC BY 4.0",
-   "class": "prop",
-   "use": "superstore aisles (cover)",
-   "scale": 1,
-   "sourceTris": 81108,
-   "size": [
-    0.73,
-    1.37,
-    3.95
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/store-shelves.lod0.glb",
-     "tris": 1500,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 8,
-     "size": [
-      0.73,
-      1.37,
-      3.95
-     ]
-    },
-    {
-     "file": "/fps/br/models/store-shelves.lod1.glb",
-     "tris": 576,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 5,
-     "size": [
-      0.73,
-      1.37,
-      3.95
-     ]
-    },
-    {
-     "file": "/fps/br/models/store-shelves.lod2.glb",
-     "tris": 172,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 3,
-     "size": [
-      0.73,
-      1.37,
-      3.95
      ]
     }
    ]
@@ -30711,7 +30182,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/strait-pylon-e.lod1.glb",
+     "file": "/fps/br/models/strait-pylon-e.lod0.glb",
      "tris": 2722,
      "draws": 1,
      "textureMB": 0,
@@ -30765,7 +30236,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/strait-pylon-w.lod1.glb",
+     "file": "/fps/br/models/strait-pylon-w.lod0.glb",
      "tris": 2722,
      "draws": 1,
      "textureMB": 0,
@@ -30915,11 +30386,11 @@
    "sourceTris": 1368,
    "lods": [
     {
-     "file": "/fps/br/models/strip-mall.lod0.glb",
-     "tris": 1368,
-     "draws": 1,
+     "file": "/fps/br/models/strip-mall.int-v1.lod0.glb",
+     "tris": 1728,
+     "draws": 2,
      "textureMB": 0,
-     "kB": 17,
+     "kB": 19,
      "size": [
       45.3,
       5.300000000000001,
@@ -30927,8 +30398,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/strip-mall.lod1.glb",
-     "tris": 840,
+     "file": "/fps/br/models/strip-mall.walls-v1.lod1.glb",
+     "tris": 954,
      "draws": 1,
      "textureMB": 0,
      "kB": 11,
@@ -31101,7 +30572,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/sunchair.lod2.glb",
+     "file": "/fps/br/models/sunchair.lod1.glb",
      "tris": 418,
      "draws": 1,
      "textureMB": 0,
@@ -31131,39 +30602,40 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/superstore.lod0.glb",
-     "tris": 42700,
+     "file": "/fps/br/models/superstore.zfix-v1.lod0.glb",
+     "tris": 42973,
      "draws": 7,
      "textureMB": 10.66,
-     "kB": 1146,
+     "kB": 999,
      "size": [
-      150,
-      21.47,
-      83.09
+      149.994,
+      21.462,
+      83.086
      ]
     },
     {
-     "file": "/fps/br/models/superstore.lod1.glb",
-     "tris": 8378,
+     "file": "/fps/br/models/superstore.zfix-v1.lod1.glb",
+     "tris": 7164,
      "draws": 1,
      "textureMB": 0,
-     "kB": 23,
+     "kB": 56,
      "size": [
-      150,
-      21.47,
-      83.09
-     ]
+      148.736,
+      21.461,
+      83.095
+     ],
+     "facade": true
     },
     {
-     "file": "/fps/br/models/superstore.lod2.glb",
-     "tris": 2143,
+     "file": "/fps/br/models/superstore.zfix-v1.lod2.glb",
+     "tris": 1942,
      "draws": 1,
      "textureMB": 0,
-     "kB": 9,
+     "kB": 11,
      "size": [
-      150,
-      21.47,
-      83.09
+      148.712,
+      21.458,
+      82.991
      ]
     }
    ]
@@ -31251,7 +30723,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/superstore-stairs.fitout-v2.lod1.glb",
+     "file": "/fps/br/models/superstore-stairs.fitout-v2.lod0.glb",
      "tris": 1464,
      "draws": 1,
      "textureMB": 0,
@@ -31359,7 +30831,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/swamp-shack.lod1.glb",
+     "file": "/fps/br/models/swamp-shack.zfix-v1.lod1.glb",
      "tris": 1400,
      "draws": 1,
      "textureMB": 0.33,
@@ -31413,7 +30885,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/swimming-pool.lod1.glb",
+     "file": "/fps/br/models/swimming-pool.zfix-v1.lod1.glb",
      "tris": 1406,
      "draws": 3,
      "textureMB": 0,
@@ -31939,39 +31411,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/terminal.lod0.glb",
-     "tris": 10886,
+     "file": "/fps/br/models/terminal.zfix-v6.lod0.glb",
+     "tris": 10874,
      "draws": 1,
      "textureMB": 0,
-     "kB": 39,
+     "kB": 51,
      "size": [
       40,
-      8.9,
-      19.4
+      8.902,
+      22.601
      ]
     },
     {
-     "file": "/fps/br/models/terminal.lod1.glb",
-     "tris": 10886,
+     "file": "/fps/br/models/terminal.zfix-v6.lod1.glb",
+     "tris": 10718,
      "draws": 1,
      "textureMB": 0,
-     "kB": 39,
+     "kB": 51,
      "size": [
       40,
-      8.9,
-      19.4
+      8.902,
+      22.601
      ]
     },
     {
-     "file": "/fps/br/models/terminal.lod2.glb",
-     "tris": 10727,
+     "file": "/fps/br/models/terminal.zfix-v6.lod2.glb",
+     "tris": 10621,
      "draws": 1,
      "textureMB": 0,
-     "kB": 38,
+     "kB": 49,
      "size": [
-      40,
-      8.9,
-      19.4
+      39.458,
+      8.584,
+      22.598
      ]
     }
    ]
@@ -32192,60 +31664,6 @@
     }
    ]
   },
-  "toilet": {
-   "title": "Dirty Public Toilet",
-   "author": "lucianofgatto",
-   "source": "https://sketchfab.com/3d-models/dirty-public-toilet-7082a1c21601433d968ea83d33a40c00",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "fitout",
-   "use": "Arena District (2026-11-14): the arena's toilets",
-   "scale": 0.788155,
-   "sourceTris": 6712,
-   "size": [
-    0.42,
-    0.8,
-    0.73
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/toilet.lod0.glb",
-     "tris": 599,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 10,
-     "size": [
-      0.42,
-      0.8,
-      0.73
-     ]
-    },
-    {
-     "file": "/fps/br/models/toilet.lod1.glb",
-     "tris": 215,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 6,
-     "size": [
-      0.42,
-      0.8,
-      0.73
-     ]
-    },
-    {
-     "file": "/fps/br/models/toilet.lod2.glb",
-     "tris": 57,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      0.42,
-      0.8,
-      0.73
-     ]
-    }
-   ]
-  },
   "toilet-stall": {
    "title": "Low Poly Locker Room",
    "author": "gabrielmendesm",
@@ -32275,7 +31693,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/toilet-stall.lod1.glb",
+     "file": "/fps/br/models/toilet-stall.lod0.glb",
      "tris": 100,
      "draws": 1,
      "textureMB": 0,
@@ -32383,7 +31801,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/tower-crane.lod1.glb",
+     "file": "/fps/br/models/tower-crane.zfix-v3.lod1.glb",
      "tris": 1344,
      "draws": 1,
      "textureMB": 0,
@@ -32395,11 +31813,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/tower-crane.lod2.glb",
+     "file": "/fps/br/models/tower-crane.zfix-v3.lod2.glb",
      "tris": 399,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 4,
      "size": [
       47.9,
       48,
@@ -32479,11 +31897,11 @@
    "sourceTris": 1332,
    "lods": [
     {
-     "file": "/fps/br/models/townhouse.lod0.glb",
-     "tris": 1332,
-     "draws": 1,
+     "file": "/fps/br/models/townhouse.int-v1.lod0.glb",
+     "tris": 1434,
+     "draws": 3,
      "textureMB": 0,
-     "kB": 17,
+     "kB": 19,
      "size": [
       10,
       9.5,
@@ -32491,8 +31909,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/townhouse.lod1.glb",
-     "tris": 744,
+     "file": "/fps/br/models/townhouse.walls-v1.lod1.glb",
+     "tris": 808,
      "draws": 1,
      "textureMB": 0,
      "kB": 9,
@@ -32503,8 +31921,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/townhouse.lod2.glb",
-     "tris": 48,
+     "file": "/fps/br/models/townhouse.walls-v1.lod2.glb",
+     "tris": 54,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
@@ -32761,7 +32179,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/transformer.lod1.glb",
+     "file": "/fps/br/models/transformer.lod0.glb",
      "tris": 599,
      "draws": 1,
      "textureMB": 0,
@@ -32815,11 +32233,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/transformer-booth.lod1.glb",
+     "file": "/fps/br/models/transformer-booth.zfix-v1.lod1.glb",
      "tris": 764,
      "draws": 2,
      "textureMB": 0.67,
-     "kB": 38,
+     "kB": 35,
      "size": [
       8,
       4.37,
@@ -32827,7 +32245,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/transformer-booth.lod2.glb",
+     "file": "/fps/br/models/transformer-booth.zfix-v1.lod2.glb",
      "tris": 364,
      "draws": 1,
      "textureMB": 0,
@@ -32998,60 +32416,6 @@
       1.08,
       1,
       0.9
-     ]
-    }
-   ]
-  },
-  "trash-cans": {
-   "title": "Trash can",
-   "author": "bazz4r",
-   "source": "https://sketchfab.com/3d-models/trash-can-3836ff67877248c2a820e6a969984aac",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "detail",
-   "use": "Arena District (2026-11-14): bins in the concourses and on the plazas",
-   "scale": 0.740711,
-   "sourceTris": 6030,
-   "size": [
-    4.11,
-    1,
-    1.92
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/trash-cans.lod0.glb",
-     "tris": 582,
-     "draws": 1,
-     "textureMB": 0.33,
-     "kB": 25,
-     "size": [
-      4.11,
-      1,
-      1.92
-     ]
-    },
-    {
-     "file": "/fps/br/models/trash-cans.lod1.glb",
-     "tris": 210,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 4,
-     "size": [
-      4.11,
-      1,
-      1.92
-     ]
-    },
-    {
-     "file": "/fps/br/models/trash-cans.lod2.glb",
-     "tris": 60,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      4.11,
-      1,
-      1.92
      ]
     }
    ]
@@ -33259,7 +32623,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/treatment-plant.lod2.glb",
+     "file": "/fps/br/models/treatment-plant.zfix-v1.lod2.glb",
      "tris": 332,
      "draws": 1,
      "textureMB": 0,
@@ -33449,60 +32813,6 @@
     "height": 17
    }
   },
-  "tribune": {
-   "title": "Stands/Tribunes",
-   "author": "thenerdpoint60",
-   "source": "https://sketchfab.com/3d-models/standstribunes-9745757584ef46b7be11235af84225a9",
-   "licence": "CC BY 4.0",
-   "class": "structure",
-   "ring": "structure",
-   "use": "Stadium (2026-11-13): end-stand tribunes",
-   "scale": 0.119388,
-   "sourceTris": 8812,
-   "size": [
-    3.39,
-    4.23,
-    20
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/tribune.lod0.glb",
-     "tris": 3999,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 34,
-     "size": [
-      3.39,
-      4.23,
-      20
-     ]
-    },
-    {
-     "file": "/fps/br/models/tribune.lod1.glb",
-     "tris": 1390,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 7,
-     "size": [
-      3.39,
-      4.23,
-      20
-     ]
-    },
-    {
-     "file": "/fps/br/models/tribune.lod2.glb",
-     "tris": 400,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 4,
-     "size": [
-      3.39,
-      4.23,
-      20
-     ]
-    }
-   ]
-  },
   "trolley": {
    "title": "Shopping Trolley",
    "author": "MehraN",
@@ -33597,7 +32907,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/tugboat.lod2.glb",
+     "file": "/fps/br/models/tugboat.lod1.glb",
      "tris": 2045,
      "draws": 1,
      "textureMB": 0,
@@ -33606,168 +32916,6 @@
       11.5,
       19.62,
       28
-     ]
-    }
-   ]
-  },
-  "turnstile": {
-   "title": "Simple turnstile",
-   "author": "LUMENE",
-   "source": "https://sketchfab.com/3d-models/simple-turnstile-b0fb9ddd343544a681ae108591bf0277",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "detail",
-   "use": "Stadium (2026-11-13): turnstiles at the gates",
-   "scale": 0.050983,
-   "sourceTris": 2557,
-   "size": [
-    0.75,
-    1.1,
-    0.78
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/turnstile.lod0.glb",
-     "tris": 600,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 9,
-     "size": [
-      0.75,
-      1.1,
-      0.78
-     ]
-    },
-    {
-     "file": "/fps/br/models/turnstile.lod1.glb",
-     "tris": 235,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 6,
-     "size": [
-      0.75,
-      1.1,
-      0.78
-     ]
-    },
-    {
-     "file": "/fps/br/models/turnstile.lod2.glb",
-     "tris": 60,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      0.75,
-      1.1,
-      0.78
-     ]
-    }
-   ]
-  },
-  "turnstile-low": {
-   "title": "Low Poly Turnstiles",
-   "author": "anDDDres",
-   "source": "https://sketchfab.com/3d-models/low-poly-turnstiles-12536f966f9048dcba7e33fa08d9d6b5",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "detail",
-   "use": "Arena District (2026-11-14): ticket barriers in the arena gates",
-   "scale": 0.009292,
-   "sourceTris": 642,
-   "size": [
-    1.07,
-    1.05,
-    1.84
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/turnstile-low.lod0.glb",
-     "tris": 642,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 13,
-     "size": [
-      1.07,
-      1.05,
-      1.84
-     ]
-    },
-    {
-     "file": "/fps/br/models/turnstile-low.lod1.glb",
-     "tris": 200,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 3,
-     "size": [
-      1.07,
-      1.05,
-      1.84
-     ]
-    },
-    {
-     "file": "/fps/br/models/turnstile-low.lod2.glb",
-     "tris": 56,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      1.07,
-      1.05,
-      1.84
-     ]
-    }
-   ]
-  },
-  "turnstile-tall": {
-   "title": "Double full height turnstile (low poly)",
-   "author": "anDDDres",
-   "source": "https://sketchfab.com/3d-models/double-full-height-turnstile-low-poly-993581a938ff4bd0aff70b77f3278b81",
-   "licence": "CC BY 4.0",
-   "class": "prop",
-   "ring": "clutter",
-   "use": "Arena District (2026-11-14): full-height turnstiles at the arena gates",
-   "scale": 0.009796,
-   "sourceTris": 3254,
-   "size": [
-    6.13,
-    2.3,
-    3.06
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/turnstile-tall.lod0.glb",
-     "tris": 1463,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 9,
-     "size": [
-      6.13,
-      2.3,
-      3.06
-     ]
-    },
-    {
-     "file": "/fps/br/models/turnstile-tall.lod1.glb",
-     "tris": 491,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 5,
-     "size": [
-      6.13,
-      2.3,
-      3.06
-     ]
-    },
-    {
-     "file": "/fps/br/models/turnstile-tall.lod2.glb",
-     "tris": 147,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 3,
-     "size": [
-      6.13,
-      2.3,
-      3.06
      ]
     }
    ]
@@ -33934,60 +33082,6 @@
     }
    ]
   },
-  "vent-duct": {
-   "title": "Ventilation Duct",
-   "author": "Gunnar Correa",
-   "source": "https://sketchfab.com/3d-models/ventilation-duct-34b5be84762f40cb9e5f5f672bbb6728",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "fitout",
-   "use": "Arena District (2026-11-14): ducts under the concourse ceilings",
-   "scale": 0.612416,
-   "sourceTris": 3354,
-   "size": [
-    6,
-    1.55,
-    3.3
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/vent-duct.lod0.glb",
-     "tris": 600,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 8,
-     "size": [
-      6,
-      1.55,
-      3.3
-     ]
-    },
-    {
-     "file": "/fps/br/models/vent-duct.lod1.glb",
-     "tris": 210,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 6,
-     "size": [
-      6,
-      1.55,
-      3.3
-     ]
-    },
-    {
-     "file": "/fps/br/models/vent-duct.lod2.glb",
-     "tris": 60,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 5,
-     "size": [
-      6,
-      1.55,
-      3.3
-     ]
-    }
-   ]
-  },
   "vent-unit": {
    "title": "Industrial Ventilation Unit / HVAC Prop",
    "author": "hamster228",
@@ -34029,7 +33123,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/vent-unit.lod2.glb",
+     "file": "/fps/br/models/vent-unit.lod1.glb",
      "tris": 1938,
      "draws": 1,
      "textureMB": 0,
@@ -34386,39 +33480,39 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/warehouse.lod0.glb",
-     "tris": 9999,
+     "file": "/fps/br/models/warehouse.walls-v3.lod0.glb",
+     "tris": 10240,
      "draws": 3,
      "textureMB": 5.33,
-     "kB": 211,
+     "kB": 190,
      "size": [
-      16,
-      5.02,
+      16.001,
+      5.021,
       46.27
      ]
     },
     {
-     "file": "/fps/br/models/warehouse.lod1.glb",
-     "tris": 3587,
+     "file": "/fps/br/models/warehouse.walls-v3.lod1.glb",
+     "tris": 3814,
      "draws": 3,
      "textureMB": 1.33,
-     "kB": 64,
+     "kB": 56,
      "size": [
-      16,
-      5.02,
+      16.001,
+      5.021,
       46.27
      ]
     },
     {
-     "file": "/fps/br/models/warehouse.lod2.glb",
-     "tris": 910,
+     "file": "/fps/br/models/warehouse.access-v3.lod2.glb",
+     "tris": 865,
      "draws": 1,
      "textureMB": 0,
      "kB": 6,
      "size": [
-      16,
-      5.02,
-      46.27
+      16.002,
+      4.997,
+      46.2
      ]
     }
    ]
@@ -34612,7 +33706,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/water-tower.lod1.glb",
+     "file": "/fps/br/models/water-tower.zfix-v1.lod1.glb",
      "tris": 1470,
      "draws": 2,
      "textureMB": 0.67,
@@ -34990,11 +34084,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/windmill.lod1.glb",
+     "file": "/fps/br/models/windmill.zfix-v1.lod1.glb",
      "tris": 1517,
      "draws": 3,
      "textureMB": 0.67,
-     "kB": 65,
+     "kB": 43,
      "size": [
       11.81,
       12,
@@ -35002,11 +34096,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/windmill.lod2.glb",
+     "file": "/fps/br/models/windmill.zfix-v1.lod2.glb",
      "tris": 398,
      "draws": 1,
      "textureMB": 0,
-     "kB": 13,
+     "kB": 4,
      "size": [
       11.81,
       12,
@@ -35380,7 +34474,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/xray-viewer.lod2.glb",
+     "file": "/fps/br/models/xray-viewer.lod1.glb",
      "tris": 170,
      "draws": 1,
      "textureMB": 0,
