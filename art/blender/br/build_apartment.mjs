@@ -242,12 +242,11 @@ box([-8.9, SH + 1.9, -0.03, -7.6, SH + 1.98, 0.03], C.rail, { collide: false });
 
 // ------------------------------------------------------------------ meshes
 /** Quarter-disc fans (the balcony corners) as extra triangles, visual only. */
-function quarterDiscs() {
+function quarterDiscs(segs = 8) {
   const out = [];
   for (let n = 1; n < FLOORS; n++) {
     const y = n * STOREY;
-    const segs = 8,
-      r = 1.4;
+    const r = 1.4;
     for (let s = 0; s < segs; s++) {
       const a0 = (s / segs) * (Math.PI / 2),
         a1 = ((s + 1) / segs) * (Math.PI / 2);
@@ -267,7 +266,7 @@ function quarterDiscs() {
   return out;
 }
 
-function geometry(maxLod) {
+function geometry(maxLod, discSegs = 8) {
   const pos = [],
     nrm = [],
     col = [];
@@ -289,8 +288,8 @@ function geometry(maxLod) {
     quad([x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [1, 0, 0], c);
     quad([x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [-1, 0, 0], c);
   }
-  if (maxLod <= 1)
-    for (const { tri, colour } of quarterDiscs()) {
+  if (maxLod <= 1 || discSegs < 8)
+    for (const { tri, colour } of quarterDiscs(discSegs)) {
       const [a, b, c] = tri;
       const u = b.map((v, i) => v - a[i]),
         w = c.map((v, i) => v - a[i]);
@@ -305,15 +304,40 @@ function geometry(maxLod) {
   return { pos: new Float32Array(pos), nrm: new Float32Array(nrm), col: new Float32Array(col) };
 }
 
-/** LOD2: the mass (one box), the balcony bands and a dark band per window row. */
+/**
+ * LOD2 (600 m and beyond, so most of what the parachute sees): what the near LODs show from that
+ * far, as boxes. The first far LOD was the mass with front and back window bands and white
+ * ledges: the side windows, the stair house on the roof, the parapet, the dark railings and the
+ * balconies' rounded corner were missing, so a block's sides and outline changed every time it
+ * crossed 600 m (owner, 2026-11-16: flicker "on the side of the building mainly", from the
+ * parachute and from different camera angles). Details sit 2 cm proud of the mass and no two
+ * faces share a plane, so nothing needs the coplanar repair the near LODs went through.
+ */
 function farParts() {
   parts.length = 0;
-  box([X0, 0, Z0, X1, FLOORS * STOREY + 0.8, Z1], C.plaster, { lod: 2 });
+  const H = FLOORS * STOREY,
+    P = 0.25; // parapet
+  const far = (b, c) => box(b, c, { lod: 2 });
+  far([X0, 0, Z0, X1, H, Z1], C.plaster);
+  // The roof inside the parapet (2 cm up), the parapet, the stair house and its roof.
+  far([X0 + P, H, Z0 + P, X1 - P, H + 0.02, Z1 - P], C.roof);
+  far([X0, H, Z0, X1, H + 0.8, Z0 + P], C.plaster);
+  far([X0, H, Z1 - P, X1, H + 0.8, Z1], C.plaster);
+  far([X1 - P, H, Z0 + P, X1, H + 0.8, Z1 - P], C.plaster);
+  far([X0 - 0.01, H, Z0 + P, CORE_X1 + 0.15, H + 3.0, Z1 - P], C.plaster);
+  far([X0 - 0.01, H + 3.0, Z0 + P - 0.02, CORE_X1 + 0.17, H + 3.2, Z1 - P + 0.02], C.roof);
   for (let n = 0; n < FLOORS; n++) {
     const y = n * STOREY;
-    box([-6.2, y + 0.9, Z1, 9.2, y + 2.3, Z1 + 0.02], C.glass, { lod: 2 });
-    box([-6.2, y + 0.9, Z0 - 0.02, 9.2, y + 2.3, Z0], C.glass, { lod: 2 });
-    if (n > 0) box([-6.4, y - 0.2, Z1, X1, y + 1.0, Z1 + 1.4], C.plaster, { lod: 2 });
+    // Ribbon windows front and back; the window band east; the stair window west.
+    far([-6.2, y + 0.9, Z1, 9.2, y + 2.3, Z1 + 0.02], C.glass);
+    far([-6.2, y + 0.9, Z0 - 0.02, 9.2, y + 2.3, Z0], C.glass);
+    far([X1, y + 0.9, -4, X1 + 0.02, y + 2.3, 4], C.glass);
+    far([X0 - 0.02, y + 1.0, -1.6, X0, y + 2.6, 1.6], C.glass);
+    if (n > 0) {
+      // The balcony: its slab and its dark railing (the corner's quarter disc is added after).
+      far([-6.4, y - 0.2, Z1, X1, y, Z1 + 1.4], C.plaster);
+      far([-6.4, y, Z1 + 1.3, X1, y + 1.0, Z1 + 1.4], C.rail);
+    }
   }
 }
 
@@ -321,6 +345,15 @@ function farParts() {
 const write = (file, g) => writeGlb(file, g, "apartment");
 
 const OUT = "public/fps/br/models";
+// `--far`: only the far LOD, as apartment.far-v2.lod2.glb (the near LODs in the game went
+// through later passes: int-v1, walls-v1); the manifests are pointed at it by hand.
+if (process.argv.includes("--far")) {
+  farParts();
+  const out = `${OUT}/apartment.far-v2.lod2.glb`;
+  const r = await write(out, geometry(2, 3));
+  console.log(`apartment far LOD → ${out}`, r);
+  process.exit(0);
+}
 const collision = parts.filter((p) => p.collide).map((p) => p.b);
 const lods = [];
 lods.push(await write(`${OUT}/apartment.lod0.glb`, geometry(0)));
