@@ -279,15 +279,16 @@ class Pose:
     in the world): everything a key holds. Lengths in metres on the police character."""
 
     def __init__(self, **kw):
-        # The pelvis: offset from its place over the body's point, lean back (deg), turn, roll.
+        # The pelvis: offset from its place over the body's point; leaning BACK from the wall
+        # (deg; negative: bent forward to it), turn, roll.
         self.hips = kw.get("hips", (0, 0, 0))
-        self.lean = kw.get("lean", 26)
+        self.lean = kw.get("lean", 30)
         self.turn = kw.get("turn", 0)
         self.roll = kw.get("roll", 0)
-        # The spine's further lean back, turn and roll, shared out over its three bones.
-        self.spine = kw.get("spine", (16, 0, 0))
-        # The head, on top of the chest: nod forward (deg), turn, tilt.
-        self.head = kw.get("head", (30, 0, 0))
+        # The spine curled forward against that (deg), its turn and roll: over its three bones.
+        self.spine = kw.get("spine", (10, 0, 0))
+        # The head, on top of the chest: nodded forward (deg; down the wall), turned, tilted.
+        self.head = kw.get("head", (32, 0, 0))
         self.shoulders = kw.get("shoulders", (0, 0))  # each shoulder's shrug (deg)
         # Hands: the wrist's place from the body's point (x, y, z), and how firmly on the rope.
         self.hand = {"Left": kw.get("handL", HAND_L), "Right": kw.get("handR", HAND_R)}
@@ -308,13 +309,13 @@ def put(frame, at, yaw, p: Pose):
     origin = Vector((0, at[0], at[1]))
     world = lambda v: origin + turn @ Vector(v)
     key_obj(root, frame, loc=origin, rot=turn)
-    pelvis = turn @ RZ(p.turn) @ RX(p.lean) @ RY(p.roll)
+    pelvis = turn @ RZ(p.turn) @ RX(-p.lean) @ RY(p.roll)
     key_obj(C_hips, frame, loc=world((p.hips[0], p.hips[1], HIP + p.hips[2])), rot=pelvis @ REST_Q["Hips"])
     for name in ("Spine", "Spine1", "Spine2"):
         key_bone(name, frame, RZ(p.spine[1] / 3) @ RX(p.spine[0] / 3) @ RY(p.spine[2] / 3))
-    key_bone("Neck", frame, RX(-p.head[0] * 0.35) @ RZ(p.head[1] * 0.4))
+    key_bone("Neck", frame, RX(p.head[0] * 0.35) @ RZ(p.head[1] * 0.4))
     chest = pelvis @ RZ(p.spine[1]) @ RX(p.spine[0]) @ RY(p.spine[2])
-    key_obj(E_head, frame, rot=chest @ RZ(p.head[1]) @ RX(-p.head[0]) @ RY(p.head[2]) @ REST_Q["Head"])
+    key_obj(E_head, frame, rot=chest @ RZ(p.head[1]) @ RX(p.head[0]) @ RY(p.head[2]) @ REST_Q["Head"])
     for s in SIDES:
         side = 1 if s == "Left" else -1
         key_bone(s + "Shoulder", frame, RY(-side * p.shoulders[0 if s == "Left" else 1]))
@@ -360,8 +361,8 @@ def clip(name, frames, loop=False):
 # ---- idle: braced, breathing, a look down the wall and back up it (2 s loop)
 f0 = clip("idle", 60, loop=True)
 Z = TOP - HIP - 4.0
-for f, (breath, look, nod) in {0: (0, 0, 30), 15: (1, -14, 38), 30: (0, -6, 26), 45: (1, 16, 34), 60: (0, 0, 30)}.items():
-    put(f0 + f, (STAND_OFF, Z), 0, braced(Z, hips=(0, 0.012 * breath, 0.006 * breath), spine=(16 + 1.5 * breath, look * 0.3, 0), head=(nod, look, 0)))
+for f, (breath, look, nod) in {0: (0, 0, 32), 15: (1, -14, 50), 30: (0, -6, 30), 45: (1, 16, 16), 60: (0, 0, 32)}.items():
+    put(f0 + f, (STAND_OFF, Z), 0, braced(Z, hips=(0, 0.012 * breath, 0.006 * breath), spine=(10 + 1.5 * breath, look * 0.3, 0), head=(nod, look, 0)))
 
 
 # ---- the wall jump: the knees bend, off the wall and down on the rope, back onto it
@@ -378,31 +379,31 @@ def hop_clip(name, lead, twist):
     keys = {
         0: Pose(**start),
         # The knees bend, the hips come in to the wall, the chest over them.
-        2: Pose(**start, lean=24, spine=(13, 0, 0), head=(36, 0, 0)),
-        4: Pose(**start, lean=19, spine=(8, 0, 0), head=(42, 0, 0), kneeL=(0.55, -0.3, 1.9), kneeR=(-0.55, -0.3, 1.9),
+        2: Pose(**start, lean=28, spine=(12, 0, 0), head=(34, 0, 0)),
+        4: Pose(**start, lean=22, spine=(17, 0, 0), head=(38, 0, 0), kneeL=(0.55, -0.3, 1.9), kneeR=(-0.55, -0.3, 1.9),
                 handR=(-0.27, 0.02, 0.97)),
         # Pushed straight: the last of the boots on the wall, heels off it.
-        5: Pose(**start, lean=24, spine=(13, 0, 0), bootL=(72, 8), bootR=(72, 8), handR=(-0.3, 0.04, 0.92)),
+        5: Pose(**start, lean=33, spine=(8, 0, 0), head=(30, 0, 0), bootL=(72, 8), bootR=(72, 8), handR=(-0.3, 0.04, 0.92)),
         # Off: the legs trail to the wall, the brake hand lets the rope run.
-        6: Pose(**air(-0.66, 0.6, 0.18), lean=25, spine=(13, twist * 0.3, 0), bootL=(60, 6), bootR=(60, 6),
-                handR=(-0.34, 0.08, 0.86), head=(38, twist * 0.5, 0)),
-        10: Pose(**air(-0.5, 0.42), lean=16, turn=twist * 0.5, spine=(12, twist * 0.5, 0), bootL=(35, 8), bootR=(30, 8),
-                 handL=(0.03, -0.15, 1.3), handR=(-0.36, 0.1, 0.8), head=(44, twist, 0), shoulders=(4, 2),
+        6: Pose(**air(-0.66, 0.6, 0.18), lean=34, spine=(8, twist * 0.3, 0), bootL=(60, 6), bootR=(60, 6),
+                handR=(-0.34, 0.08, 0.86), head=(36, twist * 0.5, 0)),
+        10: Pose(**air(-0.5, 0.42), lean=27, turn=twist * 0.5, spine=(10, twist * 0.5, 0), bootL=(35, 8), bootR=(30, 8),
+                 handL=(0.03, -0.15, 1.3), handR=(-0.36, 0.1, 0.8), head=(46, twist, 0), shoulders=(4, 2),
                  kneeL=(0.4, -0.9, 1.2), kneeR=(-0.4, -0.9, 1.2)),
-        13: Pose(**air(-0.42, 0.34, 0.2), lean=13, turn=twist * 0.6, spine=(12, twist * 0.5, 0), bootL=(28, 8), bootR=(34, 8),
-                 handL=(0.03, -0.15, 1.31), handR=(-0.37, 0.11, 0.78), head=(46, twist, 0), shoulders=(5, 3),
+        13: Pose(**air(-0.42, 0.34, 0.2), lean=24, turn=twist * 0.6, spine=(10, twist * 0.5, 0), bootL=(28, 8), bootR=(34, 8),
+                 handL=(0.03, -0.15, 1.31), handR=(-0.37, 0.11, 0.78), head=(48, twist, 0), shoulders=(5, 3),
                  kneeL=(0.4, -0.9, 1.1), kneeR=(-0.4, -0.9, 1.1)),
         # The wall coming back: the legs swing up and forward to meet it.
-        16: Pose(**air(-0.6, 0.54, 0.21), lean=18, turn=twist * 0.3, spine=(13, twist * 0.2, 0), bootL=(55, 10), bootR=(55, 10),
-                 handL=(0.03, -0.14, 1.27), handR=(-0.36, 0.1, 0.8), head=(40, twist * 0.4, 0),
+        16: Pose(**air(-0.6, 0.54, 0.21), lean=28, turn=twist * 0.3, spine=(12, twist * 0.2, 0), bootL=(55, 10), bootR=(55, 10),
+                 handL=(0.03, -0.14, 1.27), handR=(-0.36, 0.1, 0.8), head=(38, twist * 0.4, 0),
                  kneeL=(0.45, -0.6, 1.5), kneeR=(-0.45, -0.6, 1.5)),
-        19: Pose(**air(-0.74, 0.7, 0.21), lean=23, spine=(14, 0, 0), bootL=(78, 12), bootR=(78, 12),
-                 handR=(-0.3, 0.04, 0.9), head=(34, 0, 0)),
+        19: Pose(**air(-0.74, 0.7, 0.21), lean=30, spine=(12, 0, 0), bootL=(78, 12), bootR=(78, 12),
+                 handR=(-0.3, 0.04, 0.9), head=(32, 0, 0)),
         # On it: the boots take the wall, the knees give.
-        21: Pose(**end, lean=24, spine=(13, 0, 0), head=(34, 0, 0)),
-        23: Pose(**end, lean=18, spine=(7, 0, 0), head=(42, 0, 0), kneeL=(0.55, -0.3, 1.9), kneeR=(-0.55, -0.3, 1.9),
+        21: Pose(**end, lean=30, spine=(12, 0, 0), head=(32, 0, 0)),
+        23: Pose(**end, lean=23, spine=(17, 0, 0), head=(38, 0, 0), kneeL=(0.55, -0.3, 1.9), kneeR=(-0.55, -0.3, 1.9),
                  handR=(-0.26, 0.0, 0.98)),
-        25: Pose(**end, lean=23, spine=(12, 0, 0), head=(34, 0, 0)),
+        25: Pose(**end, lean=28, spine=(12, 0, 0), head=(34, 0, 0)),
         27: Pose(**end),
     }
     # One boot back on the wall a frame before the other.
@@ -451,8 +452,8 @@ for f in range(0, 25, 2):
     put(f0 + f, (STAND_OFF, z), 0, Pose(
         footL=("w", FOOT_X, wl[2], wl[3]), plantL=pl, bootL=bl,
         footR=("w", -FOOT_X, wr[2], wr[3]), plantR=pr, bootR=br,
-        lean=25 + 2 * math.cos(2 * a), turn=5 * math.sin(a), roll=3 * math.sin(a),
-        spine=(15, -8 * math.sin(a), -3 * math.sin(a)), head=(18, 4 * math.sin(a), 0),
+        lean=28 + 2 * math.cos(2 * a), turn=5 * math.sin(a), roll=3 * math.sin(a),
+        spine=(10, -8 * math.sin(a), -3 * math.sin(a)), head=(8, 4 * math.sin(a), 0),
         handL=(0.05, -0.17, reach(f)), gripL=grip(f), handR=(-0.05, -0.15, reach(f + 12) - 0.04), gripR=grip(f + 12),
         elbowR=(-0.6, 0.2, 0.85), shoulders=(6 * max(0, math.sin(a)), 6 * max(0, -math.sin(a))),
     ))
@@ -468,30 +469,30 @@ Zb = TOP - HIP - S_TOP
 ON = {
     0: (STAND, {}),
     # Turning to the roof, a step to the edge with each foot, the hands coming to the rope.
-    6: (STAND, dict(hips=(0, 0, -0.03), lean=3, head=(18, 0, 0), handL=(0.2, -0.22, 1.02), handR=(-0.22, -0.16, 0.95),
+    6: (STAND, dict(hips=(0, 0, -0.03), lean=-2, head=(12, 0, 0), handL=(0.2, -0.22, 1.02), handR=(-0.22, -0.16, 0.95),
                     footL=REST_FOOT(1, 0.07), elbowL=(0.6, 0.4, 0.9), elbowR=(-0.6, 0.5, 0.9))),
-    12: (STAND, dict(hips=(0, 0.04, -0.08), lean=6, spine=(5, 0, 0), head=(24, 0, 0), handL=(0.04, -0.3, 1.14), gripL=0.7,
+    12: (STAND, dict(hips=(0, 0.04, -0.08), lean=-8, spine=(5, 0, 0), head=(14, 0, 0), handL=(0.04, -0.3, 1.14), gripL=0.7,
                      handR=(-0.12, -0.24, 0.98), gripR=0.7, footR=REST_FOOT(-1, 0.07), elbowL=(0.55, 0.2, 0.85), elbowR=(-0.6, 0.4, 0.9))),
     # At the edge, heels on it, the rope taken up.
-    17: (STAND, dict(hips=(0, 0.14, -0.06), lean=8, spine=(5, 0, 0), head=(20, 0, 0), handL=(0.03, -0.24, 1.2), gripL=1,
+    17: (STAND, dict(hips=(0, 0.14, -0.06), lean=-4, spine=(5, 0, 0), head=(12, 0, 0), handL=(0.03, -0.24, 1.2), gripL=1,
                      handR=(-0.26, 0.05, 0.95), gripR=1, footL=LIP(1), footR=LIP(-1), elbowL=(0.55, 0.15, 0.85), elbowR=(-0.75, 0.55, 1.1))),
     # Sitting back on the rope, over the drop.
-    22: ({}, dict(hips=(0, 0.26, -0.12), lean=24, spine=(8, 0, 0), head=(26, 0, 0), handL=(0.03, -0.1, 1.2), footL=LIP(1), footR=LIP(-1),
+    22: ({}, dict(hips=(0, 0.26, -0.12), lean=10, spine=(8, 0, 0), head=(20, 0, 0), handL=(0.03, -0.1, 1.2), footL=LIP(1), footR=LIP(-1),
                   plantL=0, plantR=0, bootL=(8, 8), bootR=(8, 8), kneeL=(0.3, -0.8, 1.5), kneeR=(-0.3, -0.8, 1.5))),
-    27: ({}, dict(hips=(0, 0.3, -0.2), lean=40, spine=(10, 0, 0), head=(30, 12, 0), handL=(0.03, -0.02, 1.16), footL=LIP(1), footR=LIP(-1),
+    27: ({}, dict(hips=(0, 0.3, -0.2), lean=24, spine=(10, 0, 0), head=(30, 12, 0), handL=(0.03, -0.02, 1.16), footL=LIP(1), footR=LIP(-1),
                   plantL=0, plantR=0, bootL=(28, 8), bootR=(28, 8), kneeL=(0.35, -0.5, 1.8), kneeR=(-0.35, -0.5, 1.8))),
     # The first boot down onto the wall.
-    31: ({}, dict(hips=(0, 0.22, -0.12), lean=50, spine=(6, 0, 0), head=(34, 16, 0), handL=(0.03, -0.06, 1.2), footL=LIP(1, -0.05, -0.01),
+    31: ({}, dict(hips=(0, 0.22, -0.12), lean=36, spine=(8, 0, 0), head=(40, 16, 0), handL=(0.03, -0.06, 1.2), footL=LIP(1, -0.05, -0.01),
                   footR=("w", -0.2, 0.2, TOP - 0.12), plantL=0, plantR=0, bootL=(50, 8), bootR=(70, 10))),
-    34: ({}, dict(hips=(0, 0.12, -0.06), lean=48, spine=(8, 0, 0), head=(36, 10, 0), footL=LIP(1, -0.03, -0.025),
+    34: ({}, dict(hips=(0, 0.12, -0.06), lean=40, spine=(8, 0, 0), head=(44, 10, 0), footL=LIP(1, -0.03, -0.025),
                   footR=on_wall(-1, TOP - 0.35), plantL=0, plantR=1, bootL=(70, 8))),
-    38: ({}, dict(hips=(0, 0.06, -0.03), lean=44, spine=(10, 0, 0), head=(36, 0, 0), footL=("w", 0.2, 0.22, TOP - 0.42),
+    38: ({}, dict(hips=(0, 0.06, -0.03), lean=38, spine=(10, 0, 0), head=(42, 0, 0), footL=("w", 0.2, 0.22, TOP - 0.42),
                   footR=on_wall(-1, TOP - 0.35), plantL=0, plantR=1, bootL=(72, 10))),
-    41: ({}, dict(lean=40, spine=(12, 0, 0), head=(34, 0, 0), footL=on_wall(1, TOP - 0.78), footR=on_wall(-1, TOP - 0.35))),
-    45: ({}, dict(lean=34, spine=(14, 0, 0), head=(32, 0, 0), footL=on_wall(1, TOP - 0.78), footR=("w", -FOOT_X, 0.24, Zb + FOOT_Z + 0.42),
+    41: ({}, dict(lean=36, spine=(10, 0, 0), head=(40, 0, 0), footL=on_wall(1, TOP - 0.78), footR=on_wall(-1, TOP - 0.35))),
+    45: ({}, dict(lean=34, spine=(10, 0, 0), head=(36, 0, 0), footL=on_wall(1, TOP - 0.78), footR=("w", -FOOT_X, 0.24, Zb + FOOT_Z + 0.42),
                   plantR=0, bootR=(70, 10))),
-    47: ({}, dict(lean=31, spine=(15, 0, 0), head=(30, 0, 0), footL=on_wall(1, TOP - 0.78), footR=on_wall(-1, Zb + FOOT_Z))),
-    49: ({}, dict(lean=28, footL=("w", FOOT_X, 0.22, Zb + FOOT_Z + 0.16), footR=on_wall(-1, Zb + FOOT_Z), plantL=0, bootL=(72, 10))),
+    47: ({}, dict(lean=32, spine=(10, 0, 0), head=(34, 0, 0), footL=on_wall(1, TOP - 0.78), footR=on_wall(-1, Zb + FOOT_Z))),
+    49: ({}, dict(lean=31, footL=("w", FOOT_X, 0.22, Zb + FOOT_Z + 0.16), footR=on_wall(-1, Zb + FOOT_Z), plantL=0, bootL=(72, 10))),
     51: ({}, dict(footL=on_wall(1, Zb + FOOT_Z), footR=on_wall(-1, Zb + FOOT_Z))),
 }
 for f, (base, extra) in ON.items():
@@ -510,13 +511,13 @@ Zl = FLOOR + LAND_HANG - HIP
 FLOORED = lambda side: ("w", side * 0.1, LAND_OFF - 0.014, FLOOR + ANKLE)
 LAND = {
     0: braced(Zl),
-    3: Pose(footL=(0.17, -0.55, 0.55), footR=(-0.17, -0.55, 0.55), plantL=0, plantR=0, bootL=(60, 8), bootR=(60, 8), lean=22),
-    8: Pose(footL=(0.13, -0.2, 0.27), footR=(-0.13, -0.16, 0.24), plantL=0, plantR=0, bootL=(22, 8), bootR=(18, 8), lean=12,
-            spine=(8, 0, 0), head=(34, 0, 0), kneeL=(0.2, -1, 0.9), kneeR=(-0.2, -1, 0.9)),
-    12: Pose(footL=FLOORED(1), footR=FLOORED(-1), plantL=0, plantR=0, bootL=(0, 8), bootR=(0, 8), hips=(0, 0, -0.16), lean=6,
-             spine=(6, 0, 0), head=(24, 0, 0), kneeL=(0.15, -1, 0.6), kneeR=(-0.15, -1, 0.6), handR=(-0.27, 0.0, 0.9)),
-    15: Pose(footL=FLOORED(1), footR=FLOORED(-1), plantL=0, plantR=0, bootL=(0, 8), bootR=(0, 8), hips=(0, 0.04, -0.3), lean=-8,
-             spine=(10, 0, 0), head=(10, 0, 0), kneeL=(0.18, -1, 0.5), kneeR=(-0.18, -1, 0.5), handL=(0.2, -0.2, 0.95), gripL=0.2,
+    3: Pose(footL=(0.17, -0.55, 0.55), footR=(-0.17, -0.55, 0.55), plantL=0, plantR=0, bootL=(60, 8), bootR=(60, 8), lean=26),
+    8: Pose(footL=(0.13, -0.2, 0.27), footR=(-0.13, -0.16, 0.24), plantL=0, plantR=0, bootL=(22, 8), bootR=(18, 8), lean=14,
+            spine=(8, 0, 0), head=(30, 0, 0), kneeL=(0.2, -1, 0.9), kneeR=(-0.2, -1, 0.9)),
+    12: Pose(footL=FLOORED(1), footR=FLOORED(-1), plantL=0, plantR=0, bootL=(0, 8), bootR=(0, 8), hips=(0, 0, -0.16), lean=3,
+             spine=(6, 0, 0), head=(18, 0, 0), kneeL=(0.15, -1, 0.6), kneeR=(-0.15, -1, 0.6), handR=(-0.27, 0.0, 0.9)),
+    15: Pose(footL=FLOORED(1), footR=FLOORED(-1), plantL=0, plantR=0, bootL=(0, 8), bootR=(0, 8), hips=(0, 0.04, -0.3), lean=-10,
+             spine=(10, 0, 0), head=(4, 0, 0), kneeL=(0.18, -1, 0.5), kneeR=(-0.18, -1, 0.5), handL=(0.2, -0.2, 0.95), gripL=0.2,
              handR=(-0.27, 0.0, 0.8), gripR=0.2, elbowL=(0.6, 0.4, 0.9)),
     18: Pose(**{**STAND, "footL": FLOORED(1), "footR": FLOORED(-1), "hips": (0, 0.01, -0.12), "lean": -3, "spine": (4, 0, 0),
                 "handL": (0.26, -0.04, 0.9), "handR": (-0.27, 0.02, 0.86)}),
