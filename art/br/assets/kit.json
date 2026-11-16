@@ -5221,13 +5221,18 @@
     },
     {
       "id": "sports-car",
-      "key": "sf:ab85c302e652492196b600ee1eb7106a",
+      "key": "sf:bcd03f021ca1465c974862ec401c324a",
       "class": "vehicle",
       "fit": {
-        "max": 4.7
+        "max": 4.5
       },
+      "lodTris": [
+        4800,
+        2400,
+        700
+      ],
       "collision": "solid",
-      "use": "Skyline Residences (2026-11-13): residents' sports cars"
+      "use": "Skyline Residences (2026-11-13): residents' sports cars (2026-11-16: Lodgelus's car)"
     },
     {
       "id": "office-chair",
