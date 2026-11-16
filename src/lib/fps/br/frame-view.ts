@@ -46,6 +46,10 @@ const EASE_FAST = 0.02;
 
 /** The view's footing: probe radius, and how far (m) above or below the preview it may stand. */
 const VIEW_RADIUS = 0.35;
+/** Movement under this (m) between frames counts as none: the body is held by walls. */
+const HELD_M = 1e-4;
+/** A part-step shorter than this (m) is checked against a whole one (HELD_M; a sliver). */
+const HELD_PROBE_M = 0.005;
 const VIEW_REACH = 1.2;
 
 const onFoot = (b: DropBody) => b.phase === "ground" || b.phase === "swim";
@@ -70,6 +74,8 @@ const STEP_SLOPE = 0.6;
 export class BrFrameView {
   private readonly preview = newDropBody();
   private readonly scratch = newDropBody();
+  /** A whole step from the body, to tell a body held by walls from one about to move. */
+  private readonly probe = newDropBody();
   private readonly out: FrameView = { x: 0, y: 0, z: 0, body: this.preview };
   /** The preview's own copy of the body's rope state (a rappel). */
   private readonly rope = {} as RappelState;
@@ -82,6 +88,9 @@ export class BrFrameView {
   private lastX = 0;
   private lastZ = 0;
   private wasGrounded = false;
+  /** The stepped body's place at the last frame (has a fixed step moved it since?). */
+  private bodyX = NaN;
+  private bodyZ = NaN;
 
   /** Forget the eased position (respawn, teleport, leaving a vehicle). */
   reset() {
@@ -166,6 +175,27 @@ export class BrFrameView {
         planeMs,
         Math.max(0, Math.min(TICK_MS, pendingMs)),
       );
+    // Held in a corner or against a door jamb, a whole step leaves the body where it is, but a
+    // part of one (the 1–14 ms of it drawn between steps) went up to 2 mm into the corner: the
+    // view crept in and snapped back 30 times a second, which at a wall 35 cm from the eye is a
+    // shake of a few pixels (owner, 2026-11-16: "lag … standing between the door walls", "at
+    // some corners"). The part-step is drawn only when the whole one would move the body too.
+    if (
+      input &&
+      onFoot(body) &&
+      !body.zip &&
+      !body.ladder &&
+      !body.lift &&
+      !body.rappel &&
+      Math.hypot(preview.x - body.x, preview.z - body.z) < HELD_PROBE_M
+    ) {
+      const probe = Object.assign(this.probe, body);
+      stepDrop(world, meta, route, probe, input, planeMs, TICK_MS);
+      if (Math.hypot(probe.x - body.x, probe.z - body.z) < HELD_M) {
+        preview.x = body.x;
+        preview.z = body.z;
+      }
+    }
     const tx = preview.x + correction.x,
       tz = preview.z + correction.z;
     out.y = preview.y + correction.y;
@@ -178,6 +208,19 @@ export class BrFrameView {
       out.z = tz;
       return out;
     }
+    // Held against walls (a corner, a door jamb), the body does not move: neither the fixed
+    // steps nor this frame's part of the next one. The view's own step below would still slide
+    // a millimetre along one wall each frame and be pulled back by the easing the next: about
+    // 1 mm of shake, reversing some 45 times a second at 144 Hz, which at a wall 35 cm from the
+    // eye moves its texture by pixels (owner, 2026-11-16: "lag happens when character stands
+    // beside the door … between the door walls", "standing at some corners also"). Then the
+    // view only settles on the body. (A body walking freely moves at a step or within one, so
+    // this never holds while it does.)
+    const held =
+      Math.hypot(preview.x - body.x, preview.z - body.z) < HELD_M &&
+      Math.hypot(body.x - this.bodyX, body.z - this.bodyZ) < HELD_M;
+    this.bodyX = body.x;
+    this.bodyZ = body.z;
     if (!this.walking || Math.hypot(tx - this.x, tz - this.z) > SNAP) {
       this.walking = true;
       this.x = tx;
@@ -197,7 +240,7 @@ export class BrFrameView {
         ? world.supportAt(this.x, this.z, VIEW_RADIUS, preview.y + VIEW_REACH)
         : preview.y;
       scratch.y = Math.abs(footY - preview.y) <= VIEW_REACH ? footY : preview.y;
-      let left = Math.max(0, Math.min(100, frameMs));
+      let left = held ? 0 : Math.max(0, Math.min(100, frameMs));
       while (left > 0) {
         const step = Math.min(TICK_MS, left);
         stepDrop(world, meta, route, scratch, input, planeMs, step);
