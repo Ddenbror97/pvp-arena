@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { SHARPEN } from "./sharpen";
 
 /**
  * Depth for a 14 km world with a 10 cm near plane, without logarithmic depth (2026-11-09).
@@ -61,8 +62,13 @@ export function reversedDepthSupported(): boolean {
 export type SceneTarget = {
   /** Match the canvas' drawing buffer (call after renderer.setSize / setPixelRatio). */
   resize: () => void;
-  /** Tone-map the frame onto the canvas; the scene target stays bound for the next frame. */
-  present: () => void;
+  /**
+   * Tone-map the frame onto the canvas; the scene target stays bound for the next frame.
+   * `sharpen`: the strength of sharpen.ts' pass, done here in the same pass (0: none). The
+   * default path sharpens the finished canvas; without this the reversed-Z picture was the
+   * softer of the two (EXPERIMENTAL, render audit 2026-11-15).
+   */
+  present: (sharpen?: number) => void;
   dispose: () => void;
 };
 
@@ -89,7 +95,11 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
 
   const material = new THREE.ShaderMaterial({
     name: "br-present",
-    uniforms: { tScene: { value: target.texture } },
+    uniforms: {
+      tScene: { value: target.texture },
+      uTexel: { value: new THREE.Vector2(1, 1) },
+      uSharpen: { value: 0 },
+    },
     vertexShader: /* glsl */ `
       varying vec2 vUv;
       void main() {
@@ -98,11 +108,30 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
       }`,
     fragmentShader: /* glsl */ `
       uniform sampler2D tScene;
+      uniform vec2 uTexel;
+      uniform float uSharpen;
       varying vec2 vUv;
+      // A pixel as the canvas shows it: tone-mapped and encoded (sharpen.ts works on that).
+      vec3 shown(vec2 uv) {
+        vec4 c = texture2D(tScene, uv);
+        #ifdef TONE_MAPPING
+          c.rgb = toneMapping(c.rgb);
+        #endif
+        return linearToOutputTexel(c).rgb;
+      }
       void main() {
-        gl_FragColor = texture2D(tScene, vUv);
-        #include <tonemapping_fragment>
-        #include <colorspace_fragment>
+        vec3 c = shown(vUv);
+        if (uSharpen > 0.0) {
+          vec3 n = shown(vUv + vec2(0.0, uTexel.y));
+          vec3 s = shown(vUv - vec2(0.0, uTexel.y));
+          vec3 e = shown(vUv + vec2(uTexel.x, 0.0));
+          vec3 w = shown(vUv - vec2(uTexel.x, 0.0));
+          vec3 lo = min(c, min(min(n, s), min(e, w)));
+          vec3 hi = max(c, max(max(n, s), max(e, w)));
+          vec3 margin = (hi - lo) * ${SHARPEN.overshoot.toFixed(2)};
+          c = clamp(c + uSharpen * (4.0 * c - n - s - e - w), lo - margin, hi + margin);
+        }
+        gl_FragColor = vec4(c, 1.0);
       }`,
     depthTest: false,
     depthWrite: false,
@@ -121,6 +150,7 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
       h = Math.max(1, size.y);
     if (target.width === w && target.height === h) return;
     target.setSize(w, h);
+    material.uniforms["uTexel"]!.value.set(1 / w, 1 / h);
     // setSize frees the framebuffer; binding again rebuilds it (three tracks the target as
     // bound, so without this the next frame would draw into a deleted framebuffer: black).
     if (renderer.getRenderTarget() === target) renderer.setRenderTarget(target);
@@ -130,7 +160,8 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
 
   return {
     resize,
-    present() {
+    present(sharpen = 0) {
+      material.uniforms["uSharpen"]!.value = sharpen;
       renderer.setRenderTarget(null);
       renderer.render(presentScene, presentCamera);
       renderer.setRenderTarget(target);
