@@ -28426,55 +28426,55 @@
    ]
   },
   "sports-car": {
-   "title": "Low Poly Car - De Tomaso P72 2020",
-   "author": "ROH3D",
-   "source": "https://sketchfab.com/3d-models/low-poly-car-de-tomaso-p72-2020-ab85c302e652492196b600ee1eb7106a",
+   "title": "car",
+   "author": "Lodgelus",
+   "source": "https://sketchfab.com/3d-models/car-bcd03f021ca1465c974862ec401c324a",
    "licence": "CC BY 4.0",
    "class": "vehicle",
    "ring": "vehicle",
-   "use": "Skyline Residences (2026-11-13): residents' sports cars",
-   "scale": 0.000992,
-   "sourceTris": 21495,
+   "use": "Skyline Residences (2026-11-13): residents' sports cars (2026-11-16: Lodgelus's car)",
+   "scale": 0.457398,
+   "sourceTris": 4739,
    "size": [
-    2.06,
-    1.1,
-    4.7
+    1.81,
+    1.37,
+    4.5
    ],
    "lods": [
     {
-     "file": "/fps/br/models/sports-car.lod0.glb",
-     "tris": 2662,
-     "draws": 1,
-     "textureMB": 1.33,
-     "kB": 97,
+     "file": "/fps/br/models/sports-car.car-v2.lod0.glb",
+     "tris": 4739,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 62,
      "size": [
-      2.06,
-      1.1,
-      4.7
+      1.81,
+      1.37,
+      4.5
      ]
     },
     {
-     "file": "/fps/br/models/sports-car.lod1.glb",
-     "tris": 867,
+     "file": "/fps/br/models/sports-car.car-v2.lod1.glb",
+     "tris": 2698,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 44,
+     "size": [
+      1.81,
+      1.37,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/sports-car.car-v2.lod2.glb",
+     "tris": 694,
      "draws": 1,
      "textureMB": 0,
      "kB": 6,
      "size": [
-      2.06,
-      1.1,
-      4.7
-     ]
-    },
-    {
-     "file": "/fps/br/models/sports-car.lod2.glb",
-     "tris": 249,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 3,
-     "size": [
-      2.06,
-      1.1,
-      4.7
+      1.81,
+      1.37,
+      4.5
      ]
     }
    ]
