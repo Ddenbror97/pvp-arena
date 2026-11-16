@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { shrinkImageTexture, shrinkModelTextures } from "./texture-quality";
+import { shrinkImageTexture, shrinkModelTextures, worldTextureScale } from "./texture-quality";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { downloadBrAsset } from "./asset-download";
@@ -11,7 +11,8 @@ import { createProps, type ModelManifest } from "./props-renderer";
 import type { CollisionData } from "./static-world";
 import { createPowerLines, createStructures } from "./structures-renderer";
 import { createTerrain, GROUND } from "./terrain";
-import { createVegetation, TREE_MODELS } from "./vegetation-renderer";
+import { createVegetation, TREE_MODELS, VEGETATION_VIEW } from "./vegetation-renderer";
+import { bakeTreeCover, FAR_FOREST, treeCoverTexture } from "./far-forest";
 import { createGrass, GRASS_ASSETS, GRASS_RANGE, parseGrassKit, type GrassControls } from "./grass";
 import { createWater } from "./water";
 import { createBrFootstepSurface } from "./footsteps";
@@ -179,6 +180,21 @@ export async function loadIslandScene(
     impostors,
   });
   root.add(vegetation.root);
+  // The forest beyond the tree ring (far-forest.ts): where the trees stand, baked once from
+  // the same placement, a frame let through every few rows of cells. Without it (it failed:
+  // out of memory on a small device) the far trees end at the ring as they always did.
+  const treeRing = (trees: number) => Math.max(VEGETATION_VIEW.viewDistance, Math.min(4000, trees));
+  const treeCover = await bakeTreeCover(
+    island.vegetation,
+    worldTextureScale() < 1 ? FAR_FOREST.size / 2 : FAR_FOREST.size,
+    () => new Promise((r) => setTimeout(r, 0)),
+  )
+    .then(treeCoverTexture)
+    .catch(() => null);
+  if (treeCover) {
+    terrain.setFarForest(treeCover, treeRing(VEGETATION_VIEW.viewDistance));
+    vegetation.setFarFade(FAR_FOREST.full);
+  }
   const lots = pavedLots(island.layout, meta);
   const structures = createStructures(meta, hf, lots);
   // Ground grass (grass.ts): optional, the ground stays as it was if the kit fails to load.
@@ -272,6 +288,7 @@ export async function loadIslandScene(
     },
     setViewDistance(trees, detail) {
       vegetation.setViewDistance(trees);
+      if (treeCover) terrain.setFarForest(treeCover, treeRing(trees));
       props.setDetailScale(detail);
     },
     warm(renderer) {
@@ -292,6 +309,8 @@ export async function loadIslandScene(
         props: p.instances,
         propTriangles: p.triangles,
         propDraws: p.draws,
+        farBuildings: p.farBuildings,
+        farTriangles: p.farTriangles,
         propTop: JSON.stringify(p.top),
         ...(() => {
           const g = grass?.stats();
@@ -303,6 +322,7 @@ export async function loadIslandScene(
       terrain.dispose();
       water.dispose();
       vegetation.dispose();
+      treeCover?.dispose();
       grass?.dispose();
       props.dispose();
       structures.dispose();

@@ -89,12 +89,16 @@ const rangeVertex = /* glsl */ `
   varying float vLayer;
   varying float vAngle;
   varying float vElev;
+  uniform float uDip;
   void main() {
     vShade = aShade;
     vLayer = aLayer;
     vAngle = aAngle;
     vElev = normalize(position).y;
-    vec4 p = projectionMatrix * vec4(mat3(viewMatrix) * position, 1.0);
+    // The ranges stand on the sea's far edge, which sinks below eye level as the camera rises
+    // (uDip, radians): from the plane they floated over a white stripe of haze.
+    vec3 lowered = normalize(vec3(position.x, position.y - uDip, position.z));
+    vec4 p = projectionMatrix * vec4(mat3(viewMatrix) * lowered, 1.0);
     // Just in front of the far plane (behind anything at any real distance), so the sky
     // drawn after the ranges leaves them in place.
     #ifdef USE_REVERSED_DEPTH_BUFFER
@@ -254,6 +258,7 @@ export function createAtmosphere(sun: SunLook = sunLook()): Atmosphere {
       uRockShade: { value: linear(ROCK_SHADE) },
       uSnow: { value: linear(SNOW) },
       uHaze: { value: haze },
+      uDip: { value: 0 },
     },
     vertexShader: rangeVertex,
     fragmentShader: rangeFragment,
@@ -267,6 +272,13 @@ export function createAtmosphere(sun: SunLook = sunLook()): Atmosphere {
   ranges.frustumCulled = false;
   // The near layer was pushed last, so it draws over the far one (the same depth: LessEqual).
   ranges.renderOrder = 1000;
+  // How far below eye level the world ends: where the fog has taken the sea (or the far plane).
+  ranges.onBeforeRender = (_renderer, scene, camera) => {
+    const fog = scene.fog as THREE.Fog | null;
+    const reach = Math.min(fog?.far ?? Infinity, (camera as THREE.PerspectiveCamera).far ?? 14000);
+    const height = Math.max(0, camera.matrixWorld.elements[13]!);
+    rangeMaterial.uniforms["uDip"]!.value = Math.atan2(height, reach);
+  };
 
   root.add(sky, ranges);
   root.updateMatrixWorld(true);

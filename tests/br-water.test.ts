@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { LOG_BIAS } from "@/lib/fps/br/depth-bias";
 import { describe, expect, it } from "vitest";
 import { DROP } from "@/lib/fps/br/drop";
 import { createWater, SHORE_FOAM_FULL_M, SHORE_FOAM_GONE_M } from "@/lib/fps/br/water";
@@ -75,7 +76,8 @@ describe("battle royale water", () => {
     expect(f).toMatch(/if \(lobe > 0\.004\)/);
     expect(f).toMatch(/if \(see > 0\.0\)/);
     expect(f).toMatch(/if \(waterDepth < 1\.1 && shoreNear > 0\.0 && vStill < 0\.5\)/);
-    expect(material.customProgramCacheKey()).toBe("br-water-v8-depth");
+    // (With the shore's depth bias for logarithmic depth: depth-bias.ts.)
+    expect(material.customProgramCacheKey()).toBe(`br-water-v8-depth|log-bias-${LOG_BIAS.water}`);
   });
 
   // Owner, 2026-11-13: "in the parachute ... the edges of the water rivers is too white, looks

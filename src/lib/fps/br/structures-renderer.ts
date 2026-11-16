@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { biasLogDepth, LOG_BIAS } from "./depth-bias";
 import {
   BRIDGE,
   DAM,
@@ -60,6 +61,9 @@ export function createStructures(
     },
   };
 }
+
+/** The roads' rise over far ground (m): none within `from`, then `perMetre` of the distance. */
+export const ROAD_LIFT = { from: 400, perMetre: 0.0016, max: 8 } as const;
 
 type RoadUniforms = {
   uGroundA: { value: THREE.DataArrayTexture };
@@ -481,6 +485,16 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader
       .replace("#include <common>", "#include <common>\nvarying vec3 vRoadWorld;")
+      // Far ground is drawn from every 2nd, 4th or 8th height sample (terrain.ts CDLOD) and
+      // rises over a road laid 8 cm above the full heightfield: 1.7 % of the road surface at
+      // 0.9–1.8 km and 5.4 % at 1.8–3.7 km was under it, as breaks in the roads from the air
+      // (render audit 2026-11-15). The road rises with its distance from the eye instead:
+      // nothing within ${ROAD_LIFT.from} m, then ${ROAD_LIFT.perMetre * 1000} mm a metre (about a pixel at most, seen edge on).
+      .replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+        transformed.y += clamp((distance(transformed, cameraPosition) - ${ROAD_LIFT.from.toFixed(1)}) * ${ROAD_LIFT.perMetre.toFixed(5)}, 0.0, ${ROAD_LIFT.max.toFixed(1)});`,
+      )
       .replace(
         "#include <worldpos_vertex>",
         "#include <worldpos_vertex>\nvRoadWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;",
@@ -540,7 +554,9 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
         }`,
       );
   };
-  material.customProgramCacheKey = () => "br-roads-v4";
+  material.customProgramCacheKey = () => "br-roads-v5";
+  // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
+  biasLogDepth(material, LOG_BIAS.road);
   const mesh = new THREE.Mesh(g, material);
   mesh.name = "br-runways";
   return mesh;

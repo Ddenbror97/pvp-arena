@@ -11,6 +11,7 @@ export { GROUND_LAYERS } from "./ground-style";
 import { Heightfield } from "./heightfield";
 import { buildMinMax, lodRanges, selectPatches, type LodConfig } from "./terrain-lod";
 import { LAND_COVER, WORLD_HALF, WORLD_SIZE } from "./world";
+import { FAR_FOREST, SUN_XZ } from "./far-forest";
 
 /**
  * Project Island terrain renderer: CDLOD over the whole 10 km heightfield in ONE draw call.
@@ -75,6 +76,11 @@ export type TerrainControls = {
    * tiling-breaker sample, the second zone only at real borders, one mid-field sample.
    */
   setGroundLite: (on: boolean) => void;
+  /**
+   * The forest beyond the tree ring (far-forest.ts): the tree-cover texture (null: off; the
+   * caller owns it) and the distance (m) the trees themselves are drawn to.
+   */
+  setFarForest: (cover: THREE.Texture | null, treeRing: number) => void;
   /** One ground layer for other surfaces (the road meshes' asphalt), once loaded. */
   groundLayer: (id: (typeof GROUND_LAYERS)[number]) => GroundLayer | null;
   dispose: () => void;
@@ -338,6 +344,8 @@ export function createTerrain(
 
   const material = new THREE.MeshStandardMaterial({ roughness: 0.94, metalness: 0 });
   let disposed = false;
+  const placeholderCover = new THREE.DataTexture(new Uint8Array([0, 0]), 1, 1, THREE.RGFormat);
+  placeholderCover.needsUpdate = true;
   const uniforms = {
     uHeight: { value: heightTex },
     uCoverA: { value: coverA },
@@ -373,6 +381,9 @@ export function createTerrain(
     uLayerScale: { value: GROUND_LAYERS.map(() => 0.25) },
     uRunway: { value: [new THREE.Vector4(0, 0, 0, 0), new THREE.Vector4(0, 0, 0, 0)] },
     uRunwayW: { value: [0, 0] },
+    uCanopy: { value: placeholderCover as THREE.Texture },
+    uCanopyOn: { value: 0 },
+    uTreeRing: { value: new THREE.Vector2(1e9, 2e9) },
   };
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
@@ -434,6 +445,9 @@ export function createTerrain(
         uniform sampler2DArray uGroundA, uGroundN;
         uniform sampler2D uSurface;
         uniform float uSurfaceOn;
+        uniform sampler2D uCanopy;
+        uniform float uCanopyOn;
+        uniform vec2 uTreeRing;
         uniform float uGroundOn, uGroundRange, uGroundLite;
         uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
         uniform float uLayerScale[${GROUND_LAYERS.length}];
@@ -790,6 +804,34 @@ export function createTerrain(
             vec3 B = cross(T, brNw);
             brNw = normalize(brNw + (T * rn.x + B * rn.y) * rockFar * ${ROCK_FAR.bump.toFixed(2)});
           }
+          // Far forest (far-forest.ts): beyond the tree ring the canopy is painted from where
+          // the trees really stand. The cover is looked up where the view ray meets the tree
+          // tops, so a forest stands on the ground and hides what is behind it, and a second
+          // look towards the sun shades its far side and the ground in its shadow.
+          float forestFar = uCanopyOn * smoothstep(uTreeRing.x, uTreeRing.y, camDist);
+          if (forestFar > 0.0) {
+            vec3 toCam = cameraPosition - vWorld;
+            float flat_ = length(toCam.xz);
+            vec2 lean = toCam.xz / max(toCam.y, 0.2 * flat_ + 1.0) * ${FAR_FOREST.height.toFixed(1)};
+            lean *= min(1.0, ${FAR_FOREST.lean.toFixed(1)} / max(length(lean), 1e-3));
+            vec2 cdx = brDx.xz / ${WORLD_SIZE.toFixed(1)}, cdy = brDy.xz / ${WORLD_SIZE.toFixed(1)};
+            vec2 cuv = uv + lean / ${WORLD_SIZE.toFixed(1)};
+            vec2 top = textureGrad(uCanopy, cuv, cdx, cdy).rg;
+            vec2 half_ = textureGrad(uCanopy, uv + 0.5 * lean / ${WORLD_SIZE.toFixed(1)}, cdx, cdy).rg;
+            float cover = max(top.r, half_.r);
+            float sunward = textureGrad(uCanopy, cuv + vec2(${(SUN_XZ[0] * FAR_FOREST.sunStep).toFixed(3)}, ${(SUN_XZ[1] * FAR_FOREST.sunStep).toFixed(3)}) / ${WORLD_SIZE.toFixed(1)}, cdx, cdy).r;
+            // Crowns, not a wash: the shared noise breaks the cover into clumps with edges.
+            float tuft = 0.5 * (d1.g + d2.r);
+            float canopy = smoothstep(0.16, 0.46, cover + (tuft - 0.5) * 0.4) * forestFar;
+            // More cover towards the sun: this spot is on a forest's shaded side.
+            float shade = clamp((sunward - cover) * 1.8, -0.45, 0.7);
+            vec3 leaf = mix(vec3(0.011, 0.028, 0.009), vec3(0.03, 0.06, 0.014), max(top.g, half_.g));
+            leaf *= (0.72 + 0.6 * tuft) * (1.0 - 0.5 * max(shade, 0.0)) * (1.0 + 0.5 * max(-shade, 0.0));
+            // The ground beside a forest, on the side away from the sun, lies in its shadow.
+            col *= 1.0 - forestFar * (1.0 - canopy) * max(shade, 0.0) * 0.55;
+            col = mix(col, leaf, canopy);
+            brDetailK *= 1.0 - canopy;
+          }
           // Cavities: gullies and hollows darker, ridges and crests lighter; strongest on rock.
           col *= 1.0 + (relief.b - 0.5) * 2.0 * ${RELIEF.fineK.toFixed(2)} * (0.45 + 0.55 * rocky);
           col *= 1.0 + (relief.a - 0.5) * 2.0 * ${RELIEF.broadK.toFixed(2)};
@@ -809,7 +851,7 @@ export function createTerrain(
         nonPerturbedNormal = normal;`,
       );
   };
-  material.customProgramCacheKey = () => "br-terrain-v6";
+  material.customProgramCacheKey = () => "br-terrain-v7";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";
@@ -927,12 +969,18 @@ export function createTerrain(
     setGroundLite(on) {
       uniforms.uGroundLite.value = on ? 1 : 0;
     },
+    setFarForest(cover, treeRing) {
+      uniforms.uCanopy.value = cover ?? placeholderCover;
+      uniforms.uCanopyOn.value = cover ? 1 : 0;
+      uniforms.uTreeRing.value.set(treeRing * FAR_FOREST.from, treeRing * FAR_FOREST.full);
+    },
     setGroundRange(m) {
       uniforms.uGroundRange.value = Math.max(1, m);
       uniforms.uGroundOn.value = m > 0 && uniforms.uGroundA.value.image.depth > 1 ? 1 : 0;
     },
     dispose() {
       disposed = true;
+      placeholderCover.dispose();
       uniforms.uSurface.value.dispose();
       uniforms.uGroundA.value.dispose();
       uniforms.uGroundN.value.dispose();

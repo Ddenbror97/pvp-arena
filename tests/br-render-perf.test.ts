@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 import * as THREE from "three";
 import { batchable, buildBatches } from "../src/lib/fps/br/props-batch";
 import { brResolutionScale } from "../src/lib/fps/br/br-settings";
-import { AIR_VIEW, createProps, RINGS, type ModelManifest } from "../src/lib/fps/br/props-renderer";
+import {
+  AIR_VIEW,
+  createProps,
+  LOD_HYSTERESIS,
+  RINGS,
+  type ModelManifest,
+} from "../src/lib/fps/br/props-renderer";
 import type { Placement } from "../src/lib/fps/br/layout";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
@@ -129,7 +135,9 @@ describe("BR props are culled against the view (performance audit 2026-11-14)", 
     );
   };
   const drawn = (props: ReturnType<typeof createProps>) =>
-    (props.root.children as THREE.InstancedMesh[]).filter((m) => m.visible && m.count > 0);
+    (props.root.children as THREE.InstancedMesh[]).filter(
+      (m) => m.isInstancedMesh && m.visible && m.count > 0,
+    );
 
   it("draws a model whose instances are all behind the view not at all", async () => {
     // "yard": a cluster 60 m east; "lamp": a ring round the camera.
@@ -238,6 +246,39 @@ describe("BR props follow the camera up and down (owner, 2026-11-14: houses from
   const frames = (props: ReturnType<typeof createProps>, n = 30) => {
     for (let i = 0; i < n; i++) props.update(camera);
   };
+
+  it("holds a LOD past its ring on the way out and takes the finer one at the ring on the way in", async () => {
+    // Houses on one spot (more than a batch takes, see N): `prop` is near to 70 m, middle to 250 m.
+    const one: Placement[] = Array.from({ length: N }, () => ({
+      model: "house",
+      x: 0,
+      y: 0,
+      z: 0,
+      turn: 0 as const,
+      poi: "test",
+    }));
+    const props = createProps(one, manifest("prop"), loader, { preload: true });
+    await props.ready;
+    const from = (d: number) => {
+      at(d, 0, 0);
+      props.update(camera, true);
+      return drawn(props).indexOf(N);
+    };
+    // (Each step is over the 8 m a reselect waits for.)
+    expect(from(60)).toBe(0);
+    expect(70 * LOD_HYSTERESIS).toBeGreaterThan(74);
+    expect(from(74)).toBe(0); // past the ring, inside the margin: held
+    expect(from(84)).toBe(1);
+    expect(from(72)).toBe(1); // back inside the margin: no flip
+    expect(from(60)).toBe(0); // inside the ring on the way in
+    expect(from(200)).toBe(1); // well past the margin: the near LOD is not held that far
+    expect(from(250 * LOD_HYSTERESIS - 1)).toBe(1);
+    expect(from(250 * LOD_HYSTERESIS + 9)).toBe(2);
+    // The far ring is not stretched: the model ends where it always did.
+    expect(from(990)).toBe(2);
+    expect(from(1001)).toBe(-1);
+    props.dispose();
+  });
 
   it("reselects on a fall straight down, not only on sideways movement", async () => {
     // `prop`: near to 70 m, middle to 250 m, far to 1000 m, the same at every view distance.

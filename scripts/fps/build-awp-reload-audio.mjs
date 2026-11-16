@@ -33,8 +33,9 @@ function read(name, seconds = 1.8) {
     throw Error(`Expected ${seconds}-second mono PCM16: ${name}`);
   // The existing procedural bolt is 44.1 kHz; preserve its pitch in the 48 kHz mix.
   return Float64Array.from({ length: Math.round(rate * seconds) }, (_, i) => {
-    const position = Math.min(i * inputRate / rate, data.length / 2 - 1);
-    const index = Math.floor(position), fraction = position - index;
+    const position = Math.min((i * inputRate) / rate, data.length / 2 - 1);
+    const index = Math.floor(position),
+      fraction = position - index;
     const a = data.readInt16LE(index * 2);
     const b = data.readInt16LE(Math.min(index + 1, data.length / 2 - 1) * 2);
     return (a * (1 - fraction) + b * fraction) / 32768;
