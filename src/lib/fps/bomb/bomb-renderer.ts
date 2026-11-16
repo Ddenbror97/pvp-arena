@@ -171,6 +171,12 @@ export function mountBombArena(
     onLocalShot?: (m4: boolean, awp?: boolean, gun?: SoundGun) => void;
     /** AWP zoom edges (true: zooming in), for the scope sounds. */
     onScope?: (entering: boolean) => void;
+    /**
+     * Every drawn frame while alive: where the player is drawn (the predicted position) and
+     * where they look, for the minimap's own arrow (the HUD's snapshot is the server's, ~120 ms
+     * apart and a round trip behind).
+     */
+    onSelfPose?: (x: number, z: number, yaw: number) => void;
     onKnifeCue?: (cue: string) => void;
     /** Own hit on an opponent confirmed (the hit marker shows): its sound. */
     onHitConfirmed?: () => void;
@@ -1298,6 +1304,7 @@ export function mountBombArena(
         quake * 0.6 * Math.sin(now * 0.05),
         "YXZ",
       );
+      hooks.onSelfPose?.(motion.x, motion.z, yaw);
     } else if (spectating !== null && remotes[spectating]?.drawn) {
       const r = remotes[spectating]!;
       camera.position.set(
