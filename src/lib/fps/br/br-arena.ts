@@ -3017,6 +3017,16 @@ export function createBrArena(
       yaw += Math.atan2(Math.sin(wallYaw - yaw), Math.cos(wallYaw - yaw)) * e;
       pitch += (0 - pitch) * e;
     }
+    // Leaving the rope (down onto the floor, or back over the edge): the view levels out, so
+    // your own eyes come back looking straight ahead (owner, 2026-11-16: "when animation done
+    // from desend the rope … the POV view is pointing up in the sky"). On the rope the mouse's
+    // up and down is the orbit's height: raised to bring the camera lower, it was still raised
+    // when first person came back.
+    if (
+      (myRope && (myRope.stage === "land" || myRope.stage === "up")) ||
+      (!myRope && rappelBlend > 0)
+    )
+      pitch += (0 - pitch) * (1 - Math.exp(-dtMs / 110));
     // Driving: your operator sat in the seat (the camera is always third person there).
     const mySeated = car ? (vehiclesFx?.seatRider(car.id, me.root) ?? null) : null;
     me.root.visible = (airborne && !canopyFp) || !!mySeated || zipShow || ropeShow || rappelShow;
