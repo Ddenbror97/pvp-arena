@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { BrAct } from "@/lib/fps/br/actions";
 import { stepDrop, type DropBody } from "@/lib/fps/br/drop";
+import { BrFrameView } from "@/lib/fps/br/frame-view";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland, type Island } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
@@ -464,6 +465,73 @@ describe("the server", () => {
     expect(me.body.phase).toBe("ground");
     expect(me.body.rappel).toBeUndefined();
     expect(Math.abs(me.body.y - tall.site.land)).toBeLessThan(0.45);
+  });
+});
+
+describe("your own descent as it is drawn each frame (owner, 2026-11-16: it lagged a lot)", () => {
+  /**
+   * A client's loop: the body predicted in fixed 30 Hz steps, the view sampled every frame
+   * (frame-view.ts: the body plus the part of the next step that has elapsed).
+   */
+  const run = (hz: number, seconds: number, sampled: boolean) => {
+    // (The tallest wall: on the rope for the whole of the run.)
+    const b = body(tall);
+    startRappel(b, tall.site);
+    b.phase = "rappel";
+    const view = new BrFrameView();
+    const input = { forward: 0, strafe: 0, yaw: 0 };
+    const frameMs = 1000 / hz;
+    const ys: number[] = [];
+    let accumulator = 0,
+      worst = 0;
+    for (let t = 0; t < seconds * 1000 && b.phase === "rappel"; t += frameMs) {
+      accumulator += frameMs;
+      while (accumulator >= TICK_MS) {
+        step(b);
+        accumulator -= TICK_MS;
+      }
+      if (!sampled || b.phase !== "rappel") continue;
+      // What the frame should show: this body, the elapsed part of the next step on.
+      const want = structuredClone(b);
+      stepDrop(island.solid, meta, route, want, input, 1e9, accumulator);
+      const got = view.sample(island.solid, meta, route, b, input, 1e9, accumulator, frameMs, {
+        x: 0,
+        y: 0,
+        z: 0,
+      });
+      worst = Math.max(worst, Math.hypot(got.x - want.x, got.y - want.y, got.z - want.z));
+      // The stage and the hop the animation is read from run on with it, frame by frame.
+      expect(got.body.rappel).toEqual(want.rappel);
+      ys.push(got.y);
+    }
+    return { b, worst, ys };
+  };
+
+  it("drawing a frame does not move the descent on", () => {
+    for (const hz of [60, 144, 240]) {
+      const drawn = run(hz, 4, true),
+        plain = run(hz, 4, false);
+      // The same descent whether or not it was drawn (it ran ahead by every frame's part of a
+      // step, two to four times as fast, and each snapshot pulled it back).
+      expect(plain.b.rappel, `${hz} Hz`).toBeDefined();
+      expect(drawn.b.rappel, `${hz} Hz`).toEqual(plain.b.rappel);
+      expect(drawn.b.y, `${hz} Hz`).toBe(plain.b.y);
+      expect(drawn.worst, `${hz} Hz`).toBeLessThan(1e-9);
+    }
+  });
+
+  it("moves every frame at the descent's own speed, never back up the wall in a hop", () => {
+    const { ys } = run(144, 6, true);
+    expect(ys.length).toBeGreaterThan(600);
+    let still = 0;
+    for (let i = 1; i < ys.length; i++) {
+      const dy = ys[i]! - ys[i - 1]!;
+      // 144 Hz: at most 7 ms of the fastest of a hop (about 7 m/s), and no jump back.
+      expect(Math.abs(dy)).toBeLessThan(0.08);
+      if (dy === 0) still++;
+    }
+    // (Not standing still for the frames between two steps, then jumping.)
+    expect(still / ys.length).toBeLessThan(0.2);
   });
 });
 
