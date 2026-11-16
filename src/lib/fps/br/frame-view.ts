@@ -1,5 +1,6 @@
 import { TICK_MS } from "../simulation";
 import { newDropBody, stepDrop, type DropBody, type DropInput, type Route } from "./drop";
+import type { RappelState } from "./rappel";
 import type { StaticWorld } from "./static-world";
 import { stepVehicle, type DriveInput, type Vehicle } from "./vehicles";
 import type { WorldMeta } from "./world";
@@ -70,6 +71,8 @@ export class BrFrameView {
   private readonly preview = newDropBody();
   private readonly scratch = newDropBody();
   private readonly out: FrameView = { x: 0, y: 0, z: 0, body: this.preview };
+  /** The preview's own copy of the body's rope state (a rappel). */
+  private readonly rope = {} as RappelState;
   private x = 0;
   private z = 0;
   private walking = false;
@@ -142,6 +145,17 @@ export class BrFrameView {
     // the cab and the rider back.
     if (body.lift) preview.lift = { ...body.lift };
     else delete preview.lift;
+    // The rappel's too (owner, 2026-11-16: "the descend rope animation is lagging a lot"): the
+    // descent runs on its own clock, so sharing the object moved the real descent on by every
+    // frame's part of a step, two to four times as fast as the server's, and each snapshot
+    // pulled the body and the animation back up the wall. (Into one kept copy: nothing made
+    // per frame.)
+    if (body.rappel) {
+      const rope = Object.assign(this.rope, body.rappel);
+      // (`stood` is only ever read or replaced by the step, so the copy may share it.)
+      if (!body.rappel.stood) delete rope.stood;
+      preview.rappel = rope;
+    } else delete preview.rappel;
     if (input)
       stepDrop(
         world,

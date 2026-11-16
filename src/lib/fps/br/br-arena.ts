@@ -3409,9 +3409,18 @@ export function createBrArena(
       }
       rappelCamSet = true;
       rappelCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 150));
-      // (The point looked at trails the body a little: a hop is seen as a hop, the body
-      // dropping in the frame and the view catching it up.)
-      rappelLook.lerp(ropePivot, 1 - Math.exp(-dtMs / 90));
+      // The point looked at is the body itself, frame for frame, down the wall and along it
+      // (as on the climbing rope: nothing trails). Only a hop's swing out from the wall is
+      // eased, so the body is seen leaving the wall and meeting it and the view does not
+      // bob in and out with it.
+      const swingNow = ropePivot.x * myRappel.nx + ropePivot.z * myRappel.nz,
+        swingWas = rappelLook.x * myRappel.nx + rappelLook.z * myRappel.nz;
+      const held = (swingWas - swingNow) * Math.exp(-dtMs / 120);
+      rappelLook.set(
+        ropePivot.x + myRappel.nx * held,
+        ropePivot.y,
+        ropePivot.z + myRappel.nz * held,
+      );
       const cx = rappelLook.x + rappelCam.x,
         cz = rappelLook.z + rappelCam.z;
       camera.position.set(
