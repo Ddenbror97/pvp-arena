@@ -1695,8 +1695,8 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/barracks.zfix-v1.lod0.glb",
-     "tris": 10769,
+     "file": "/fps/br/models/barracks.glass-v1.lod0.glb",
+     "tris": 10767,
      "draws": 6,
      "textureMB": 5.33,
      "kB": 200,
@@ -8940,11 +8940,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/coffee-cart.lod0.glb",
-     "tris": 1498,
+     "file": "/fps/br/models/coffee-cart.glass-v1.lod0.glb",
+     "tris": 1470,
      "draws": 2,
      "textureMB": 1.33,
-     "kB": 62,
+     "kB": 56,
      "size": [
       0.9,
       1.76,
@@ -14936,11 +14936,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/hotdog-cart.lod0.glb",
-     "tris": 1527,
+     "file": "/fps/br/models/hotdog-cart.glass-v1.lod0.glb",
+     "tris": 1481,
      "draws": 2,
      "textureMB": 0.67,
-     "kB": 59,
+     "kB": 57,
      "size": [
       1.67,
       2.41,
