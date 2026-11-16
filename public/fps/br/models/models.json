@@ -14570,8 +14570,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-east.zfix-v2.lod1.glb",
-     "tris": 3216,
+     "file": "/fps/br/models/hosp-east.plinth-v1.lod1.glb",
+     "tris": 3252,
      "draws": 1,
      "textureMB": 0,
      "kB": 27,
@@ -14624,11 +14624,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-er.zfix-v2.lod1.glb",
-     "tris": 2844,
+     "file": "/fps/br/models/hosp-er.plinth-v1.lod1.glb",
+     "tris": 2896,
      "draws": 1,
      "textureMB": 0,
-     "kB": 25,
+     "kB": 26,
      "size": [
       91,
       11.25,
@@ -14678,8 +14678,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-main.zfix-v2.lod1.glb",
-     "tris": 4380,
+     "file": "/fps/br/models/hosp-main.plinth-v1.lod1.glb",
+     "tris": 4424,
      "draws": 1,
      "textureMB": 0,
      "kB": 36,
@@ -14840,8 +14840,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/hosp-west.zfix-v2.lod1.glb",
-     "tris": 3216,
+     "file": "/fps/br/models/hosp-west.plinth-v1.lod1.glb",
+     "tris": 3252,
      "draws": 1,
      "textureMB": 0,
      "kB": 27,
