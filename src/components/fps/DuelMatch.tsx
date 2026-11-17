@@ -36,6 +36,7 @@ import { useMatchLeaveGuard } from "@/lib/fps/match-guard";
 import "./duel.css";
 import "./sniper-scope.css";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
+import { LeaveConfirm } from "./LeaveConfirm";
 import { GrenadeHud } from "./GrenadeHud";
 import { FeedWeaponIcon, HeldWeapon } from "./WeaponIcon";
 import { duelKills, heldWeapon, type DuelKill } from "@/lib/fps/kill-feed";
@@ -140,6 +141,7 @@ export function DuelMatch({
   const actionInFlight = useRef(false);
   const [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
   /** Spawn buy menu (B). While it is open, releasing the mouse does not open the settings. */
   const [buyOpen, setBuyOpen] = useState(false);
   const buyOpenRef = useRef(false);
@@ -678,7 +680,7 @@ export function DuelMatch({
   useEffect(() => {
     const open = (e: KeyboardEvent) => {
       if (e.code !== "KeyB" || e.repeat || buyOpenRef.current || !canBuyRef.current) return;
-      if (document.querySelector(".strike-settings")) return;
+      if (document.querySelector(".strike-settings, .fps-leave-card")) return;
       e.preventDefault();
       buyOpenRef.current = true;
       setBuyOpen(true);
@@ -869,15 +871,31 @@ export function DuelMatch({
         leaveError={error}
         leaveAction={
           !match?.practice || spectate ? (
-            <Link to="/fps-duel" className="duel-secondary">
+            <button
+              type="button"
+              className="duel-secondary"
+              onClick={() => {
+                setSettingsOpen(false);
+                setConfirmLeave(true);
+              }}
+            >
               Leave game
-            </Link>
+            </button>
           ) : undefined
         }
         onResume={() => {
           void activate();
         }}
       />
+      {confirmLeave && (
+        <LeaveConfirm
+          title="Leave this game?"
+          detail="You go back to the PvPStrike lobby."
+          stayLabel="Stay in game"
+          leaveLabel="Leave game"
+          onStay={() => setConfirmLeave(false)}
+        />
+      )}
       <div className="duel-hit-marker" aria-hidden>
         <i />
         <i />

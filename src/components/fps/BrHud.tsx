@@ -1454,6 +1454,10 @@ export function BrZone({
 }
 
 /** Eliminated (spectating) and the end of the match. */
+/**
+ * Placement (owner, 2026-11-16: "upgrade the battle royale placement window"): the place in
+ * large figures over a dimmed game, what happened in one line, and the match in three numbers.
+ */
 export function BrEnd({
   hud,
   out,
@@ -1468,42 +1472,42 @@ export function BrEnd({
   if (r) {
     const won = r.place === 1;
     return (
-      <div className="br-result">
+      <div className={`br-result ${won ? "won" : ""}`} role="dialog" aria-label="Match result">
         <section className={`br-result-card ${won ? "won" : ""}`}>
-          <small>{won ? "Winner winner" : "Match over"}</small>
-          <h1>{won ? "#1 — Last one standing" : `#${r.place}`}</h1>
+          <small className="br-result-tag">{won ? "Victory" : "Match over"}</small>
+          <BrPlace place={r.place} of={r.of} />
+          <h1>{won ? "Last one standing" : r.winnerName ? `${r.winnerName} won` : "No winner"}</h1>
           <p>
             {won
-              ? "You won the match."
+              ? "You outlasted everyone on the island."
               : r.winnerName
-                ? `${r.winnerName} won the match.`
+                ? "Better luck next drop."
                 : "Nobody survived the zone."}
           </p>
-          <dl>
-            <div>
-              <dt>Place</dt>
-              <dd>#{r.place}</dd>
-            </div>
-            <div>
-              <dt>Eliminations</dt>
-              <dd>{r.kills}</dd>
-            </div>
-            <div>
-              <dt>Damage</dt>
-              <dd>{r.damage}</dd>
-            </div>
-          </dl>
+          <BrResultStats
+            stats={[
+              ["Eliminations", r.kills],
+              ["Damage", r.damage],
+              ...(r.of ? ([["Players", r.of]] as const) : []),
+            ]}
+          />
           <div className="br-end-actions">{leave}</div>
         </section>
       </div>
     );
   }
   if (!out || hidden)
-    return hud.watch ? <div className="br-watch">Watching {hud.watch.name}</div> : null;
+    return hud.watch ? (
+      <div className="br-watch">
+        <span>Spectating</span> {hud.watch.name}
+      </div>
+    ) : null;
+  const placed = hud.placed;
   return (
-    <div className="br-result">
+    <div className="br-result out" role="dialog" aria-label="Eliminated">
       <section className="br-result-card out">
-        <small>Eliminated</small>
+        <small className="br-result-tag">Eliminated</small>
+        {placed && <BrPlace place={placed.place} of={placed.of} />}
         <h1>
           {out === "the gas"
             ? "The gas got you"
@@ -1511,19 +1515,16 @@ export function BrEnd({
               ? "You fell to your death"
               : `Killed by ${out}`}
         </h1>
-        <dl>
-          <div>
-            <dt>Eliminations</dt>
-            <dd>{hud.kit?.kills ?? 0}</dd>
-          </div>
-          <div>
-            <dt>Still alive</dt>
-            <dd>{hud.alive ?? "—"}</dd>
-          </div>
-        </dl>
+        <BrResultStats
+          stats={[
+            ["Eliminations", hud.kit?.kills ?? 0],
+            ...(placed ? ([["Damage", placed.damage]] as const) : []),
+            ["Still alive", hud.alive ?? "—"],
+          ]}
+        />
         <div className="br-end-actions">
           {hud.watch && (
-            <button className="duel-secondary" onClick={() => setHidden(true)}>
+            <button type="button" className="duel-secondary" onClick={() => setHidden(true)}>
               Watch {hud.watch.name}
             </button>
           )}
@@ -1531,6 +1532,31 @@ export function BrEnd({
         </div>
       </section>
     </div>
+  );
+}
+
+function BrPlace({ place, of }: { place: number; of?: number | undefined }) {
+  return (
+    <div className="br-result-place" aria-label={`Place ${place}${of ? ` of ${of}` : ""}`}>
+      <b>
+        <i>#</i>
+        {place}
+      </b>
+      {of ? <span>of {of}</span> : null}
+    </div>
+  );
+}
+
+function BrResultStats({ stats }: { stats: readonly (readonly [string, string | number])[] }) {
+  return (
+    <dl className="br-result-stats">
+      {stats.map(([label, value]) => (
+        <div key={label}>
+          <dt>{label}</dt>
+          <dd>{value}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 

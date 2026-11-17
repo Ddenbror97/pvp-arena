@@ -41,6 +41,7 @@ import { BombMinimap } from "./BombMinimap";
 import { minimapArrow } from "@/lib/fps/bomb/hud";
 import { bombStepGain } from "@/lib/fps/bomb/footstep-gain";
 import { GameSettings, StrikeCrosshair } from "./GameSettings";
+import { LeaveConfirm } from "./LeaveConfirm";
 import {
   DEFAULT_STRIKE_SETTINGS,
   readStrikeSettings,
@@ -108,7 +109,8 @@ export function BombMatch() {
       label: "Loading arena engine",
     });
   const [settings, setSettings] = useState(DEFAULT_STRIKE_SETTINGS),
-    [settingsOpen, setSettingsOpen] = useState(false);
+    [settingsOpen, setSettingsOpen] = useState(false),
+    [confirmLeave, setConfirmLeave] = useState(false);
   const [kitPending, setKitPending] = useState(false);
   const [kitError, setKitError] = useState<string | null>(null);
   const settingsRef = useRef(settings);
@@ -683,7 +685,7 @@ export function BombMatch() {
       const v = latest.current;
       if (e.code !== "KeyB" || e.repeat || buyOpenRef.current || !v || v.self.hp <= 0) return;
       if (v.phase !== "freeze" && v.phase !== "live") return;
-      if (document.querySelector(".strike-settings")) return;
+      if (document.querySelector(".strike-settings, .fps-leave-card")) return;
       e.preventDefault();
       buyOpenRef.current = true;
       setBuyOpen(true);
@@ -966,11 +968,27 @@ export function BombMatch() {
           </div>
         }
         leaveAction={
-          <Link to="/fps-duel" className="duel-secondary">
+          <button
+            type="button"
+            className="duel-secondary"
+            onClick={() => {
+              setSettingsOpen(false);
+              setConfirmLeave(true);
+            }}
+          >
             Leave game
-          </Link>
+          </button>
         }
       />
+      {confirmLeave && (
+        <LeaveConfirm
+          title="Leave this game?"
+          detail="You go back to the PvPStrike lobby."
+          stayLabel="Stay in game"
+          leaveLabel="Leave game"
+          onStay={() => setConfirmLeave(false)}
+        />
+      )}
       {error && !showLoading && (
         <p className="bomb-error" role="alert">
           {error}

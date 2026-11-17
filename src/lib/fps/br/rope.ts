@@ -64,10 +64,14 @@ export type RopeDef = { name: string; bearing: number; rBottom: number; rTop: nu
  * rope (2026-11-12, north-north-east) first.
  */
 export const ROPES: readonly RopeDef[] = [
-  { name: "north-north-east", bearing: 150, rBottom: 118, rTop: 12.5 },
+  // One at each corner of the summit (owner, 2026-11-16: "fix the 4 climbing ropes at the
+  // zip-line mountain to be 1 on each corner of the mountain top"; they were two in front and
+  // two at the back, the back pair 25° apart). South-east, north-east, north-north-west (the
+  // north-west face has no ground to step off onto near the tower) and south-west.
+  { name: "south-east", bearing: 45, rBottom: 103.5, rTop: 15 },
   { name: "north-east", bearing: 125, rBottom: 94, rTop: 12.5 },
-  { name: "south-south-east", bearing: 28, rBottom: 53, rTop: 16 },
-  { name: "south-west", bearing: 315, rBottom: 48, rTop: 12.5 },
+  { name: "north-north-west", bearing: 210, rBottom: 185, rTop: 16.5 },
+  { name: "south-west", bearing: 315, rBottom: 47, rTop: 12.5 },
 ];
 
 const T = ZIPLINE.tower;

@@ -390,11 +390,23 @@
   left: 50%;
   bottom: 70px;
   transform: translateX(-50%);
-  padding: 5px 14px;
-  border-radius: 4px;
-  background: var(--br-panel);
-  color: var(--br-text);
+  padding: 7px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(8, 8, 8, 0.7);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
   pointer-events: none;
+}
+.br-watch span {
+  margin-right: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 .br-end-actions {
   display: flex;
@@ -1567,23 +1579,6 @@
   z-index: 10;
   pointer-events: auto;
 }
-.br-leave-shield {
-  position: absolute;
-  inset: 0;
-  z-index: 30;
-  display: grid;
-  place-items: center;
-  background: #080b1299;
-  pointer-events: auto;
-}
-.br-leave-shield .duel-match-card {
-  max-width: 420px;
-}
-.br-leave-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
 .br-inventory {
   --inv-bg: rgba(16, 19, 22, 0.84);
   --inv-cell: rgba(255, 255, 255, 0.045);
@@ -2160,69 +2155,176 @@ button.br-inv-cell:hover {
     gap: 8px;
   }
 }
-/* ---- death and victory */
+/* ---- death and victory: the placement card (owner, 2026-11-16) */
 .br-result {
+  --res-accent: #fff;
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.7));
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.78) 70%),
+    linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55));
   z-index: 20;
-  animation: br-fadein 300ms ease-out;
+  animation: br-fadein 360ms ease-out;
+}
+.br-result.won {
+  --res-accent: #ffd34d;
+  background:
+    radial-gradient(ellipse at 50% 38%, rgba(255, 196, 40, 0.16), transparent 55%),
+    radial-gradient(ellipse at 50% 42%, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.78) 72%);
+}
+.br-result.out {
+  --res-accent: #ff6464;
 }
 .br-result-card {
+  position: relative;
   display: grid;
-  gap: 10px;
-  min-width: 320px;
-  padding: 22px 26px;
-  border-radius: 6px;
-  background: var(--hud-bg-strong);
-  border: 1px solid var(--hud-line);
-  color: var(--hud-text);
+  justify-items: center;
+  gap: 6px;
+  width: min(440px, 100%);
+  padding: 28px 28px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: rgba(8, 8, 8, 0.82);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+  color: #f5f5f5;
   text-align: center;
+  overflow: hidden;
+  animation: br-result-rise 520ms cubic-bezier(0.2, 0.9, 0.25, 1.15);
 }
-.br-result-card > small {
-  font: 700 11px/1 var(--hud-font);
+.br-result-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--res-accent), transparent);
+}
+.br-result-tag {
+  padding: 4px 10px;
+  border: 1px solid color-mix(in srgb, var(--res-accent) 45%, transparent);
+  border-radius: 999px;
+  color: var(--res-accent);
+  font: 800 10.5px/1 var(--hud-font);
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--hud-dim);
+}
+.br-result-place {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 6px;
+}
+.br-result-place b {
+  font: 900 92px/0.95 var(--hud-font);
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.br-result-place b i {
+  margin-right: 2px;
+  font-style: normal;
+  font-size: 0.5em;
+  vertical-align: 0.55em;
+  color: rgba(255, 255, 255, 0.5);
+}
+.br-result.won .br-result-place b {
+  color: var(--res-accent);
+  text-shadow: 0 0 40px rgba(255, 196, 40, 0.35);
+}
+.br-result-place span {
+  color: rgba(255, 255, 255, 0.5);
+  font: 700 16px/1 var(--hud-font);
 }
 .br-result-card h1 {
-  margin: 0;
-  font: 800 30px/1.1 var(--hud-font);
-}
-.br-result-card.won h1 {
-  color: #ffd440;
-  text-shadow: 0 0 24px rgba(255, 212, 64, 0.35);
-}
-.br-result-card.out h1 {
-  font-size: 24px;
+  margin: 4px 0 0;
+  font: 800 22px/1.2 var(--hud-font);
+  letter-spacing: -0.01em;
 }
 .br-result-card p {
   margin: 0;
-  color: var(--hud-dim);
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 13px;
 }
-.br-result-card dl {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  margin: 4px 0;
+.br-result-stats {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  width: 100%;
+  margin: 14px 0 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
 }
-.br-result-card dt {
+.br-result-stats > div {
+  padding: 12px 6px;
+}
+.br-result-stats > div + div {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+.br-result-stats dt {
+  color: rgba(255, 255, 255, 0.5);
   font-size: 10px;
+  font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--hud-dim);
 }
-.br-result-card dd {
-  margin: 2px 0 0;
-  font: 700 22px/1 var(--hud-font);
+.br-result-stats dd {
+  margin: 6px 0 0;
+  font: 800 24px/1 var(--hud-font);
   font-variant-numeric: tabular-nums;
 }
 .br-result-card .br-end-actions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 10px;
+  width: 100%;
+  margin-top: 6px;
+}
+.br-result-card .br-end-actions > * {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 16px;
+  border-radius: 10px !important;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+.br-result-card .br-end-actions .duel-primary {
+  border: 1px solid #fff;
+  background: #fff;
+  color: #0a0a0a !important;
+}
+.br-result-card .br-end-actions .duel-primary:hover {
+  background: #e6e6e6;
+}
+.br-result-card .br-end-actions .duel-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: transparent;
+  color: #fff;
+}
+.br-result-card .br-end-actions .duel-secondary:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+@keyframes br-result-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .br-result,
+  .br-result-card {
+    animation: none;
+  }
 }
 .br-game .br-altimeter {
   right: var(--hud-edge);
@@ -2597,37 +2699,16 @@ button.br-inv-cell:hover {
 }
 
 /* =====================================================================================
- * Battle royale settings sections (view distance, key bindings) inside the shared settings
- * dialog (GameSettings, duel.css .strike-settings).
+ * Battle royale settings sections (graphics, view distance, key bindings) inside the shared
+ * settings dialog (GameSettings, duel.css .strike-settings): black and white like it.
  * ===================================================================================== */
-.strike-settings fieldset.br-settings-keys {
-  display: grid;
-  gap: 8px;
-  margin: 4px 0 0;
-  padding: 10px 12px 12px;
-  border: 1px solid #3a2f48;
-  border-radius: 10px;
-}
-.strike-settings fieldset legend {
-  padding: 0 4px;
-  font-weight: 700;
-}
-.strike-settings fieldset small,
-.strike-settings .br-settings-view small {
-  color: #b9adc7;
-  font-size: 12px;
-  line-height: 1.45;
-}
-.strike-settings .br-settings-view small {
-  flex-basis: 100%;
-}
 .strike-settings .br-gpu-help {
-  color: #b9adc7;
-  font-size: 12px;
+  color: var(--set-mute);
+  font-size: 11.5px;
   line-height: 1.5;
 }
 .strike-settings .br-gpu-help b {
-  color: #e8e1f0;
+  color: #fff;
 }
 .strike-settings .br-gpu-help ol {
   margin: 4px 0;
@@ -2641,59 +2722,81 @@ button.br-inv-cell:hover {
 .strike-settings .br-settings-view small button {
   font: inherit;
   text-decoration: underline;
-  color: inherit;
+  color: #fff;
   cursor: pointer;
 }
+.br-keys-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+.br-keys-head small {
+  flex: 1 1 200px;
+}
+.strike-settings .br-keys-head .duel-secondary {
+  width: auto;
+  margin: 0;
+  padding: 6px 14px;
+  border-radius: 8px !important;
+  font-size: 12px;
+}
+/* The bindings flow down four columns (a group may continue in the next): the whole menu fits
+ * on a laptop screen without scrolling. */
+.br-keys-columns {
+  columns: 4 190px;
+  column-gap: 22px;
+}
 .br-keys-group {
-  display: grid;
-  gap: 4px;
+  display: block;
+}
+.br-keys-group + .br-keys-group h4 {
+  margin-top: 10px;
 }
 .br-keys-group h4 {
-  margin: 6px 0 2px;
-  color: #c2abd7;
-  font-size: 11px;
+  break-after: avoid;
+  margin: 0 0 4px;
+  color: var(--set-mute);
+  font-size: 10.5px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 .br-key-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  font-size: 13px;
+  gap: 10px;
+  min-height: 28px;
+  break-inside: avoid;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.82);
 }
 .br-key-row button {
-  color: #f1edf9;
+  color: #fff;
   font: inherit;
   cursor: pointer;
-  min-width: 96px;
-  padding: 5px 10px;
-  border: 1px solid #63536f;
+  flex: none;
+  width: 78px;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 6px;
-  background: #1e1830;
+  background: rgba(255, 255, 255, 0.05);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 .br-key-row button:hover {
-  border-color: #ca8cff;
+  border-color: #fff;
 }
 .br-key-row button.listening {
-  border-color: #ca8cff;
-  background: #38224c;
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.14);
   animation: br-key-pulse 1s ease-in-out infinite;
 }
 @keyframes br-key-pulse {
   50% {
-    border-color: #63536f;
+    border-color: rgba(255, 255, 255, 0.18);
   }
-}
-.br-keys-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 6px;
 }
 
 /* Parachute gauges (owner's reference): altitude left, speed right, tall scales with a marker. */

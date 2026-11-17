@@ -44,7 +44,7 @@ test.beforeAll(async () => {
             resolveDir: process.cwd(),
           }));
           b.onLoad({ filter: /.*/, namespace: "overlay" }, () => ({
-            contents: `import React from 'react';export {BrInventory} from '${path.resolve("src/components/fps/BrHud.tsx").replaceAll("\\", "/")}';export const GameSettings=p=>p.open?React.createElement('div',{role:'dialog','aria-label':'Game settings',style:{position:'absolute',inset:0,zIndex:20,padding:'200px'}},p.leaveAction):null;export const useBrFeed=()=>({onFeed(){},out:null});${["BrSettingsSections", "TacticalMap", "BrCanopyGauges", "BrAirdropAlert", "BrCentre", "BrEnd", "BrFeedView", "BrGasFx", "BrLobbyCard", "BrStatus", "BrTablet", "BrTopStatus", "BrZone"].map((n) => `export const ${n}=()=>null;`).join("")}`,
+            contents: `import React from 'react';export {BrInventory} from '${path.resolve("src/components/fps/BrHud.tsx").replaceAll("\\", "/")}';export const GameSettings=p=>p.open?React.createElement('div',{role:'dialog','aria-label':'Game settings',style:{position:'absolute',inset:0,zIndex:20,padding:'200px'}},p.leaveAction):null;export const useBrFeed=()=>({onFeed(){},out:null});${["BrSettingsGeneral", "BrKeyBindings", "TacticalMap", "BrCanopyGauges", "BrAirdropAlert", "BrCentre", "BrEnd", "BrFeedView", "BrGasFx", "BrLobbyCard", "BrStatus", "BrTablet", "BrTopStatus", "BrZone"].map((n) => `export const ${n}=()=>null;`).join("")}`,
             loader: "js",
             resolveDir: process.cwd(),
           }));

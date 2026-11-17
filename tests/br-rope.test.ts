@@ -101,12 +101,27 @@ const o = { x: 0, y: 0, z: 0 },
 const deg = (rad: number) => (rad * 180) / Math.PI;
 
 describe("Iron Peaks climbing ropes", () => {
-  it("are four: two down the front of the summit, two down the back", () => {
+  it("are four, one at each corner of the summit", () => {
     expect(ROPES).toHaveLength(4);
     expect(ropes.map((l) => l.id)).toEqual([1, 2, 3, 4]);
-    // The front faces south (Pine Ridge, +z), the back north (the broadcast tower).
-    const side = ropes.map((l) => Math.sign(l.rope!.foot[2] - ZIPLINE.tower.z));
-    expect(side).toEqual([-1, -1, 1, 1]);
+    // (Owner, 2026-11-16: "1 on each corner of the mountain top".) South-east, north-east,
+    // north-north-west, south-west: south is +z (Pine Ridge), east +x.
+    const side = ropes.map((l) => [
+      Math.sign(l.rope!.foot[0] - ZIPLINE.tower.x),
+      Math.sign(l.rope!.foot[2] - ZIPLINE.tower.z),
+    ]);
+    expect(side).toEqual([
+      [1, 1],
+      [1, -1],
+      [-1, -1],
+      [-1, 1],
+    ]);
+    // Spread round the summit: no two within 70° of bearing.
+    for (let i = 0; i < ROPES.length; i++)
+      for (let j = i + 1; j < ROPES.length; j++) {
+        const d = Math.abs(ROPES[i]!.bearing - ROPES[j]!.bearing) % 360;
+        expect(Math.min(d, 360 - d)).toBeGreaterThan(70);
+      }
     // Apart at the top (no two step off onto the same spot) and well apart at the foot.
     for (const a of ropes)
       for (const b of ropes) {
@@ -142,10 +157,10 @@ describe("Iron Peaks climbing ropes", () => {
 
   it("run up their faces from the foot to the plateau by the tower, clear all the way", () => {
     const drops = ropes.map((l) => l.rope!.exit[1] - l.rope!.foot[1]);
-    // The back falls to the saddle between the summits, the front to the shoulders under it.
-    expect(drops[0]).toBeGreaterThan(165);
+    // The north faces fall furthest (to the saddle and the valley), the south-west least.
+    expect(drops[0]).toBeGreaterThan(100);
     expect(drops[1]).toBeGreaterThan(115);
-    expect(drops[2]).toBeGreaterThan(40);
+    expect(drops[2]).toBeGreaterThan(260);
     expect(drops[3]).toBeGreaterThan(55);
     for (const l of ropes) {
       const p = l.rope!;
@@ -197,13 +212,13 @@ describe("Iron Peaks climbing ropes", () => {
         );
   });
 
-  it("take from half a minute (the front) to a minute and three quarters (the back)", () => {
+  it("take from half a minute (south-west) to under three minutes (north)", () => {
     // Taking hold, the climb, over the edge.
     const secs = ropes.map((l) => 0.7 + ladderHeight(l) / ROPE.speed + 1.1);
-    expect(secs[0]).toBeGreaterThan(95);
-    expect(secs[0]).toBeLessThan(110);
+    expect(secs[0]).toBeLessThan(75);
     expect(secs[1]).toBeLessThan(80);
-    expect(secs[2]).toBeLessThan(35);
+    expect(secs[2]).toBeGreaterThan(120);
+    expect(secs[2]).toBeLessThan(175);
     expect(secs[3]).toBeLessThan(40);
   });
 
@@ -219,7 +234,7 @@ describe("Iron Peaks climbing ropes", () => {
       let topAt = -1,
         maxStep = 0,
         last = { ...c.body };
-      while (now < start + 120_000 && topAt < 0) {
+      while (now < start + 180_000 && topAt < 0) {
         now += TICK_MS;
         // (This fixture's spot is in the gas, and the long ropes take minutes.)
         for (const seat of state.seats) seat.kit.hp = 100;
@@ -255,7 +270,7 @@ describe("Iron Peaks climbing ropes", () => {
       tick(state, now, [{ act: "ladder" }]);
       expect(c.body.phase).toBe("ladder");
       expect(c.body.ladder?.id).toBe(l.id);
-      while (now < 120_000 && c.body.phase === "ladder") {
+      while (now < 180_000 && c.body.phase === "ladder") {
         for (const seat of state.seats) seat.kit.hp = 100;
         tick(state, (now += TICK_MS), [], -1);
       }
@@ -291,7 +306,7 @@ describe("Iron Peaks climbing ropes", () => {
     // (The rope hangs 0.5 m off a 53° face here: the rock is 0.8 m under the climber.)
     expect(c.body.y).toBeLessThan(held.y - 0.7);
     // Near the top (of the shortest rope): E steps off over the edge instead.
-    const short = ropes[2]!;
+    const short = ropes[3]!;
     const s2 = liveMatch(short);
     const c2 = s2.seats[0]!;
     let n2 = 0;
