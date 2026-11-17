@@ -132,7 +132,7 @@ import {
 import { createLiftRenderer } from "./lift-renderer";
 import { withPanes } from "./panes";
 import { createPaneRenderer } from "./pane-renderer";
-import { spec, stepVehicle, VEHICLES, type Vehicle } from "./vehicles";
+import { spec, stepVehicle, vehicleGap, VEHICLES, type Vehicle } from "./vehicles";
 import type { NadeEvent } from "./match";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
@@ -3764,9 +3764,8 @@ export function createBrArena(
         for (const r of vehiclesFx.rows()) {
           const k = kindOfRow(r);
           if (r[12] === 1 || r[11]! >= 0) continue;
-          const d = Math.hypot(r[2]! - body.x, r[4]! - body.z);
-          if (d > VEHICLES.enterReach + spec(k).length / 2 || Math.abs(r[3]! - body.y) > 2)
-            continue;
+          const d = vehicleGap({ x: r[2]!, z: r[4]!, yaw: r[5]!, kind: k }, body.x, body.z);
+          if (d > VEHICLES.enterReach || Math.abs(r[3]! - body.y) > 2) continue;
           prompt = {
             kind: "enter",
             id: r[0]!,

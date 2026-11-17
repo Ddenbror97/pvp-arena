@@ -24,6 +24,7 @@ import {
   spec,
   stepVehicle,
   tyreAt,
+  vehicleGap,
   VEHICLES,
   type Vehicle,
 } from "@/lib/fps/br/vehicles";
@@ -194,6 +195,68 @@ describe("vehicles", () => {
       expect(world.blocked(v.x, v.y + 0.5, v.z, 0.6, 0.3)).toBe(false);
       expect(new Set(a.map((w) => w.condition)).size).toBeGreaterThan(1);
     }
+  });
+
+  it("gets in only close to the body: 1.5 m from its outline, not 3 m off its side", () => {
+    const v = { x: 0, z: 0, yaw: 0, kind: "sedan" as const };
+    const s = spec("sedan");
+    expect(vehicleGap(v, 0, 0)).toBe(0);
+    expect(vehicleGap(v, s.width / 2 + 1, 0)).toBeCloseTo(1, 5);
+    expect(vehicleGap(v, 0, s.length / 2 + 1)).toBeCloseTo(1, 5);
+    const { state, v: car, ux, uz } = scene();
+    const me = state.seats[0]!.body;
+    // 3 m off the door: the old reach let this in.
+    me.x = car.x + uz * (s.width / 2 + 3);
+    me.z = car.z - ux * (s.width / 2 + 3);
+    me.y = world.supportAt(me.x, me.z, 0.35, 1e4);
+    step(state, null);
+    expect(
+      step(state, { yaw: 0 }, [{ act: "enter", id: 0 }]).find((e) => e.type === "act"),
+    ).toMatchObject({ ok: false });
+    expect(VEHICLES.enterReach).toBeLessThanOrEqual(1.5);
+  });
+
+  it("a dirt bike rides up Iron Peaks' hillside: the slope slows it, it never crashes into it", () => {
+    const peak = meta.pois.find((p) => p.id === "iron-peaks")!;
+    const x = -506,
+      z = -3903;
+    const bike: Vehicle = {
+      id: 0,
+      kind: "bike",
+      condition: "good",
+      x,
+      y: hf.heightAt(x, z),
+      z,
+      yaw: Math.atan2(-(peak.x - x), -(peak.z - z)),
+      speed: 0,
+      pitch: 0,
+      roll: 0,
+      health: spec("bike").health,
+      maxHealth: spec("bike").health,
+      driver: 0,
+      destroyed: false,
+    };
+    const y0 = bike.y;
+    let impacts = 0,
+      steepest = 0;
+    for (let i = 0; i < 40_000 / TICK_MS; i++) {
+      const want = Math.atan2(-(peak.x - bike.x), -(peak.z - bike.z));
+      const d = Math.atan2(Math.sin(want - bike.yaw), Math.cos(want - bike.yaw));
+      impacts += stepVehicle(
+        world,
+        meta,
+        bike,
+        { forward: 1, strafe: Math.max(-1, Math.min(1, -d * 3)) } as never,
+        TICK_MS,
+      );
+      steepest = Math.max(steepest, Math.tan(bike.pitch));
+    }
+    expect(impacts).toBe(0);
+    expect(bike.y - y0).toBeGreaterThan(45);
+    expect(steepest).toBeGreaterThan(0.6);
+    // The bike out-climbs the cars; past its grade the hill, not a wall, stops it.
+    expect(spec("bike").grade).toBeGreaterThan(spec("suv").grade);
+    expect(spec("suv").grade).toBeGreaterThan(spec("sedan").grade);
   });
 
   it("enters within reach only, drives, steers, brakes, and lets the driver out beside it", () => {

@@ -60,6 +60,7 @@ import {
   invalidateVehicleQueries,
   TYRES,
   tyreAt,
+  vehicleGap,
   VEHICLES,
   withVehicles,
   type Vehicle,
@@ -1512,7 +1513,7 @@ function vehicleAct(
   if (!v) return res(false, "Gone");
   if (v.destroyed) return res(false, "Destroyed");
   if (v.driver >= 0) return res(false, "Occupied");
-  if (Math.hypot(v.x - s.body.x, v.z - s.body.z) > VEHICLES.enterReach + spec(v.kind).length / 2)
+  if (vehicleGap(v, s.body.x, s.body.z) > VEHICLES.enterReach + VEHICLES.enterSlack)
     return res(false, "Too far");
   if (Math.abs(v.y - s.body.y) > 2) return res(false, "Too far");
   v.driver = s.seat;
