@@ -95,3 +95,37 @@ describe("battle royale water", () => {
     expect(SHORE_FOAM_GONE_M).toBeLessThan(DROP.planeAltitude / 4);
   });
 });
+
+describe("BR water at a dam (owner, 2026-11-16: the reservoir over the dam's face)", () => {
+  it("keeps each lake on its own side of the Old Dam", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { damCuts } = await import("@/lib/fps/br/water");
+    const world = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
+    const cuts = damCuts(world);
+    const dam = world.bridges.find((b) => b.id === "old-dam")!;
+    const [ax, az] = dam.a,
+      [bx, bz] = dam.b;
+    const l = Math.hypot(bx - ax, bz - az);
+    const side = [-(bz - az) / l, (bx - ax) / l];
+    const down = dam.down ?? -1;
+    // The reservoir (lake-4, 61.5 m) upstream, the lake below the dam (lake-3) downstream.
+    const keep = (id: string) => {
+      const c = cuts.get(id)!;
+      expect(c).toHaveLength(1);
+      return Math.sign(c[0]!.nx * side[0]! + c[0]!.nz * side[1]!);
+    };
+    expect(keep("lake-4")).toBe(-down);
+    expect(keep("lake-3")).toBe(down);
+    // No other lake is cut.
+    expect([...cuts.keys()].sort()).toEqual(["lake-3", "lake-4"]);
+  });
+});
+
+describe("BR lakes seen edge-on (owner, 2026-11-16: a white line across the map)", () => {
+  it("mirror a dark bank towards grazing angles, the sea the horizon", () => {
+    const { shader } = compiled();
+    const f = shader.fragmentShader;
+    expect(f).toContain("float bank = vLake * (1.0 - smoothstep(");
+    expect(f).toMatch(/skyImage = mix\(skyImage, vec3\(0\.055, 0\.075, 0\.060\), bank \* 0\.8\)/);
+  });
+});

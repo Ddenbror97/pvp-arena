@@ -24,6 +24,9 @@ const SEA_MARGIN = 15_000;
  * thin white line round every bank.
  */
 export const SHORE_FOAM_FULL_M = 45;
+/** What a lake mirrors at grazing angles: its far bank's trees and grass (linear colour). */
+export const LAKE_BANK = [0.055, 0.075, 0.06] as const;
+const LAKE_BANK_GLSL = `vec3(${LAKE_BANK.map((c) => c.toFixed(3)).join(", ")})`;
 export const SHORE_FOAM_GONE_M = 170;
 
 /**
@@ -57,6 +60,84 @@ export type WaterGround = {
  * and the sun: a glitter path under the sun that lengthens towards the horizon and follows
  * the camera), in the sun's colour. Still no reflection pass, render target or texture.
  */
+/** A half-plane: points with (x − px)·nx + (z − pz)·nz ≥ 0 are kept. */
+type HalfPlane = { px: number; pz: number; nx: number; nz: number };
+
+/** A convex polygon cut to a half-plane (Sutherland–Hodgman, one edge). */
+function clipHalf(pts: Array<[number, number]>, h: HalfPlane): Array<[number, number]> {
+  const d = ([x, z]: [number, number]) => (x - h.px) * h.nx + (z - h.pz) * h.nz;
+  const out: Array<[number, number]> = [];
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i]!,
+      b = pts[(i + 1) % pts.length]!;
+    const da = d(a),
+      db = d(b);
+    if (da >= 0) out.push(a);
+    if (da >= 0 !== db >= 0) {
+      const t = da / (da - db);
+      out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+    }
+  }
+  return out;
+}
+
+/**
+ * The lakes a dam divides, each cut to its own side of the dam's centre line (owner,
+ * 2026-11-16: the Old Dam's reservoir showed as a pale sheet over the dam's downstream face).
+ * A lake is drawn as a rectangle round its bounds at its own level, kept where the land cover
+ * says water and the ground is under it; the reservoir's rectangle (61.5 m) reached past the
+ * dam over the lower lake (30.45 m), where both hold, so its sheet stood 30 m above that lake
+ * behind the dam's crest, and from above it was a hard-edged rectangle. Of the lakes whose
+ * rectangles cross a dam's line, the highest keeps the upstream side and the rest the
+ * downstream side; a lake alone on a dam's line keeps the side its middle is on.
+ */
+export function damCuts(meta: WorldMeta): Map<string, HalfPlane[]> {
+  const out = new Map<string, HalfPlane[]>();
+  for (const b of meta.bridges ?? []) {
+    if (!b.solid) continue;
+    const [ax, az] = b.a,
+      [bx, bz] = b.b;
+    const l = Math.hypot(bx - ax, bz - az);
+    // bridges.ts bridgeSpans: `side` is the left normal of a → b, `down` the downstream sign.
+    const sx = -(bz - az) / l,
+      sz = (bx - ax) / l;
+    const down = b.down ?? -1;
+    const across = (w: WorldMeta["waterBodies"][number]) => {
+      const [x0, z0, x1, z1] = w.bounds;
+      let lo = Infinity,
+        hi = -Infinity;
+      for (const [x, z] of [
+        [x0 - 20, z0 - 20],
+        [x1 + 20, z0 - 20],
+        [x0 - 20, z1 + 20],
+        [x1 + 20, z1 + 20],
+      ] as const) {
+        const d = (x - ax) * sx + (z - az) * sz;
+        lo = Math.min(lo, d);
+        hi = Math.max(hi, d);
+      }
+      // (Only where the rectangle also overlaps the dam's own length.)
+      const along = [x0 - 20, x1 + 20].flatMap((x) =>
+        [z0 - 20, z1 + 20].map((z) => ((x - ax) * (bx - ax) + (z - az) * (bz - az)) / l),
+      );
+      return lo < 0 && hi > 0 && Math.max(...along) > 0 && Math.min(...along) < l;
+    };
+    const lakes = meta.waterBodies.filter(across);
+    if (!lakes.length) continue;
+    const top = Math.max(...lakes.map((w) => w.level));
+    for (const w of lakes) {
+      const [x0, z0, x1, z1] = w.bounds;
+      const mid = ((x0 + x1) / 2 - ax) * sx + ((z0 + z1) / 2 - az) * sz;
+      // Sign along `side` to keep: upstream is −down.
+      const keep = lakes.length === 1 ? Math.sign(mid) || -down : w.level === top ? -down : down;
+      const cuts = out.get(w.id) ?? [];
+      cuts.push({ px: ax, pz: az, nx: sx * keep, nz: sz * keep });
+      out.set(w.id, cuts);
+    }
+  }
+  return out;
+}
+
 export function createWater(
   meta: WorldMeta,
   coverB: THREE.Texture,
@@ -73,12 +154,39 @@ export function createWater(
     // Counter-clockwise seen from above (+y).
     index.push(o, o + 2, o + 1, o + 1, o + 2, o + 3);
   };
+  /** A convex polygon (x, z corners) at y, fanned from its first corner, facing up. */
+  const poly = (pts: Array<[number, number]>, y: number, isLake: number) => {
+    if (pts.length < 3) return;
+    const o = positions.length / 3;
+    for (const [x, z] of pts) {
+      positions.push(x, y, z);
+      lake.push(isLake);
+    }
+    // Counter-clockwise seen from above (+y), whichever way the corners came.
+    let area = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const [ax, az] = pts[i]!,
+        [bx, bz] = pts[(i + 1) % pts.length]!;
+      area += ax * bz - bx * az;
+    }
+    for (let i = 1; i + 1 < pts.length; i++)
+      if (area < 0) index.push(o, o + i, o + i + 1);
+      else index.push(o, o + i + 1, o + i);
+  };
   const far = WORLD_HALF + SEA_MARGIN;
   quad(-far, -far, far, far, 0, 0);
+  const cuts = damCuts(meta);
   for (const w of meta.waterBodies) {
     const [x0, z0, x1, z1] = w.bounds;
     // (2: still water, the prison's moat: no waves, no foam lapping at its stone, drop.ts.)
-    quad(x0 - 20, z0 - 20, x1 + 20, z1 + 20, w.level, STILL_WATER.has(w.id) ? 2 : 1);
+    let pts: Array<[number, number]> = [
+      [x0 - 20, z0 - 20],
+      [x1 + 20, z0 - 20],
+      [x1 + 20, z1 + 20],
+      [x0 - 20, z1 + 20],
+    ];
+    for (const c of cuts.get(w.id) ?? []) pts = clipHalf(pts, c);
+    poly(pts, w.level, STILL_WATER.has(w.id) ? 2 : 1);
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
@@ -305,6 +413,12 @@ export function createWater(
           mirror.y = abs(mirror.y) + 0.015;
           mirror = normalize(mirror);
           vec3 skyImage = brSky(mirror);
+          // An inland lake seen edge-on mirrors its far bank, not the open horizon: the haze
+          // there turned every distant lake into a white line across the land (owner,
+          // 2026-11-16: "white line cross the map in some camera angles"). Towards grazing the
+          // image takes the far shore's dark green-grey; the sea keeps the horizon.
+          float bank = vLake * (1.0 - smoothstep(0.02, 0.16, mirror.y));
+          skyImage = mix(skyImage, ${LAKE_BANK_GLSL}, bank * 0.8);
           float reflects = clamp(0.2 + fres - 0.2 * bottom, 0.0, 0.84) * (1.0 - 0.7 * film);
           // The clouds' image where the water is mirror enough to show it (two lookups).
           if (reflects > 0.3 && mirror.y > 0.03) {
