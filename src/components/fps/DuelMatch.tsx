@@ -152,12 +152,6 @@ export function DuelMatch({
   }, []);
   useEffect(() => {
     arena.current?.setSensitivity(settings.sensitivity);
-    // The OS reduced-motion preference stays on even when this toggle is off.
-    if (settings.reducedMotion) arena.current?.setReducedMotion(true);
-    else
-      arena.current?.setReducedMotion(
-        typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches,
-      );
     sound.current?.setVolume(settings.volume);
     saveStrikeSettings(settings);
   }, [settings]);
@@ -322,7 +316,6 @@ export function DuelMatch({
             },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
-          if (settingsRef.current.reducedMotion) arena.current.setReducedMotion(true);
           void arena.current.ready
             .then(() => {
               if (!disposed) {

@@ -127,7 +127,6 @@ export function BombMatch() {
   }, []);
   useEffect(() => {
     arena.current?.setSensitivity(settings.sensitivity);
-    arena.current?.setReducedMotion(settings.reducedMotion);
     sound.current?.setVolume(settings.volume);
     saveStrikeSettings(settings);
   }, [settings]);
@@ -319,7 +318,6 @@ export function BombMatch() {
             mapId,
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
-          arena.current.setReducedMotion(settingsRef.current.reducedMotion);
           void arena.current.ready
             .then(() => {
               if (disposed) return;

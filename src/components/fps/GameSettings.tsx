@@ -98,15 +98,6 @@ export function GameSettings({
               />
             </label>
             {general}
-            <label className="strike-toggle">
-              <span>Reduced motion (calmer knife animations)</span>
-              <input
-                aria-label="Reduced motion"
-                type="checkbox"
-                checked={settings.reducedMotion}
-                onChange={(e) => onChange({ ...settings, reducedMotion: e.target.checked })}
-              />
-            </label>
           </section>
           <section className="strike-settings-card" aria-label="Crosshair settings">
             <fieldset>
