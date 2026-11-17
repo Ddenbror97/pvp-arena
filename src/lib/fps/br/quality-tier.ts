@@ -19,7 +19,7 @@
  * and their draw distances are the same for everyone).
  *
  * How the tier is chosen, in order:
- *  1. an override, localStorage "br-tier" = "low" | "standard";
+ *  1. (no longer used: graphics are always automatic, and a saved "br-tier" is cleared);
  *  2. a GPU known by name to be fast (STANDARD_GPU) is standard, whatever a session learnt:
  *     the low tier's blur and missing anti-aliasing are never forced on it;
  *  3. what the last sessions learnt: a standard session that spent its time at the budget's
@@ -251,13 +251,14 @@ export function detectBrTier(): BrTierInfo {
 
 function detect(): BrTierInfo {
   const store = storage();
-  const override = (() => {
-    try {
-      return store?.getItem(OVERRIDE_KEY) ?? null;
-    } catch {
-      return null;
-    }
-  })();
+  // Graphics are always automatic (owner, 2026-11-17: "default to automatically, should not be a
+  // dropdown"): a choice saved by the old menu is cleared so nobody stays on it.
+  try {
+    store?.removeItem(OVERRIDE_KEY);
+  } catch {
+    // Nothing stored.
+  }
+  const override = null;
   const learnt = readJson<{ tier: BrTier; at: number }>(store, LEARNT_KEY);
   const cached = readJson<{ gpu: string; ms: number }>(store, PROBE_KEY);
   // The name is free; the timed probe runs only when nothing else decides, once per GPU.
@@ -322,28 +323,6 @@ export function tierPixelRatio(
   const cap = tier === "balanced" ? BALANCED_CAP : LOW_CAP;
   const low = Math.min(deviceRatio, cap.ratio, Math.sqrt(cap.pixels / area)) * scale;
   return Math.min(standard, low);
-}
-
-/** The player's choice in the settings: "auto" (detected), or a tier forced by hand. */
-export type BrTierChoice = "auto" | BrTier;
-
-export function readBrTierChoice(): BrTierChoice {
-  try {
-    const v = storage()?.getItem(OVERRIDE_KEY);
-    return v === "low" || v === "balanced" || v === "standard" ? v : "auto";
-  } catch {
-    return "auto";
-  }
-}
-
-/** Saved for the next page load (the renderer's anti-aliasing cannot change while it runs). */
-export function writeBrTierChoice(choice: BrTierChoice) {
-  try {
-    if (choice === "auto") storage()?.removeItem(OVERRIDE_KEY);
-    else storage()?.setItem(OVERRIDE_KEY, choice);
-  } catch {
-    // Nowhere to save it.
-  }
 }
 
 /** Whether a GPU name is graphics built into the processor (a laptop may have a second GPU). */

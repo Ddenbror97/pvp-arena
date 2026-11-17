@@ -15,9 +15,6 @@ import {
   gpuFellBackFrom,
   gpuLabel,
   integratedGpu,
-  readBrTierChoice,
-  writeBrTierChoice,
-  type BrTierChoice,
   type BrTierInfo,
 } from "@/lib/fps/br/quality-tier";
 
@@ -118,53 +115,25 @@ export function BrKeyBindings({
 }
 
 /**
- * Graphics quality (owner, 2026-11-10: the island looked coarse on a laptop whose browser ran
- * on the processor's graphics). Automatic picks by the graphics card; the player can force
- * either mode, and is told when the browser is on integrated graphics.
+ * Graphics (owner, 2026-11-10: the island looked coarse on a laptop whose browser ran on the
+ * processor's graphics). Always automatic, by the graphics card; the player is told when the
+ * browser is on integrated graphics and how to move it to the card.
  */
 function BrGraphicsChoice() {
-  const [choice, setChoice] = useState<BrTierChoice>("auto");
   const [info, setInfo] = useState<BrTierInfo | null>(null);
-  useEffect(() => {
-    setChoice(readBrTierChoice());
-    setInfo(detectBrTier());
-  }, []);
+  useEffect(() => setInfo(detectBrTier()), []);
   const running = info?.tier ?? "standard";
-  const wanted = choice === "auto" ? null : choice;
-  const pending = wanted !== null ? wanted !== running : info?.reason === "override";
   return (
     <>
-      <label className="strike-select br-settings-view">
-        <span>Graphics quality</span>
-        <select
-          aria-label="Graphics quality"
-          value={choice}
-          onChange={(e) => {
-            const next = e.target.value as BrTierChoice;
-            writeBrTierChoice(next);
-            setChoice(next);
-          }}
-        >
-          <option value="auto">Automatic</option>
-          <option value="standard">High (full resolution, smooth edges)</option>
-          <option value="balanced">Balanced (smooth edges, 900p)</option>
-          <option value="low">Performance (for old computers)</option>
-        </select>
-        <small>
-          Now running:{" "}
+      {/* Always automatic, no choice to make (owner, 2026-11-17): only what it picked. */}
+      <p className="br-graphics-auto">
+        <span>Graphics</span>
+        <b>
+          Automatic ·{" "}
           {running === "low" ? "Performance" : running === "balanced" ? "Balanced" : "High"}
-          {info?.gpu ? ` on ${gpuLabel(info.gpu)}` : ""}.
-          {pending && (
-            <>
-              {" "}
-              The change applies when the page is reloaded.{" "}
-              <button type="button" onClick={() => location.reload()}>
-                Reload now
-              </button>
-            </>
-          )}
-        </small>
-      </label>
+        </b>
+        {info?.gpu ? <small>{gpuLabel(info.gpu)}</small> : null}
+      </p>
       {info && <GpuFellBack gpu={info.gpu} />}
       {info && integratedGpu(info.gpu) && <GpuSwitchHelp />}
     </>

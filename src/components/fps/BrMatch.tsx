@@ -96,7 +96,7 @@ export function BrMatch() {
     const tier = detectBrTier();
     setBrSettings(readBrSettings(tier.tier !== "standard" ? VIEW_RANGE.min : undefined));
     // Chosen automatically: say so once, or the coarse picture looks like a fault.
-    if (tier.tier === "low" && tier.reason !== "override") {
+    if (tier.tier === "low") {
       setLowNotice(true);
       const t = setTimeout(() => setLowNotice(false), 20_000);
       return () => clearTimeout(t);
@@ -597,8 +597,8 @@ export function BrMatch() {
       {hud && <div className="br-hint">{hint(hud, brSettings.binds)}</div>}
       {hud && lowNotice && (
         <div className="br-low-notice" role="status">
-          Performance graphics are on for this computer. For a sharper picture: Esc → Settings →
-          Graphics quality.
+          Performance graphics are on for this computer (chosen automatically). Esc → Settings shows
+          which graphics the browser is using.
         </div>
       )}
     </div>

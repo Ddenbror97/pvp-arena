@@ -1455,8 +1455,9 @@ export function BrZone({
 
 /** Eliminated (spectating) and the end of the match. */
 /**
- * Placement (owner, 2026-11-16: "upgrade the battle royale placement window"): the place in
- * large figures over a dimmed game, what happened in one line, and the match in three numbers.
+ * Placement (owner, 2026-11-17: "the placement window/winning looks old not modern"): no box.
+ * The game blurs behind, and on the left the place in large gradient figures, what happened in
+ * one line, and the match in counting numbers, each part rising in after the one before.
  */
 export function BrEnd({
   hud,
@@ -1472,28 +1473,27 @@ export function BrEnd({
   if (r) {
     const won = r.place === 1;
     return (
-      <div className={`br-result ${won ? "won" : ""}`} role="dialog" aria-label="Match result">
-        <section className={`br-result-card ${won ? "won" : ""}`}>
-          <small className="br-result-tag">{won ? "Victory" : "Match over"}</small>
-          <BrPlace place={r.place} of={r.of} />
-          <h1>{won ? "Last one standing" : r.winnerName ? `${r.winnerName} won` : "No winner"}</h1>
-          <p>
-            {won
-              ? "You outlasted everyone on the island."
-              : r.winnerName
-                ? "Better luck next drop."
-                : "Nobody survived the zone."}
-          </p>
-          <BrResultStats
-            stats={[
-              ["Eliminations", r.kills],
-              ["Damage", r.damage],
-              ...(r.of ? ([["Players", r.of]] as const) : []),
-            ]}
-          />
-          <div className="br-end-actions">{leave}</div>
-        </section>
-      </div>
+      <BrPlacement
+        tone={won ? "won" : "over"}
+        label="Match result"
+        tag={won ? "Winner" : "Match over"}
+        place={r.place}
+        of={r.of}
+        title={won ? "Last one standing" : r.winnerName ? `${r.winnerName} won` : "No winner"}
+        line={
+          won
+            ? "You outlasted everyone on the island."
+            : r.winnerName
+              ? "Better luck on the next drop."
+              : "Nobody survived the zone."
+        }
+        stats={[
+          ["Eliminations", r.kills],
+          ["Damage", r.damage],
+          ...(r.of ? ([["Players", r.of]] as const) : []),
+        ]}
+        actions={leave}
+      />
     );
   }
   if (!out || hidden)
@@ -1504,60 +1504,117 @@ export function BrEnd({
     ) : null;
   const placed = hud.placed;
   return (
-    <div className="br-result out" role="dialog" aria-label="Eliminated">
-      <section className="br-result-card out">
-        <small className="br-result-tag">Eliminated</small>
-        {placed && <BrPlace place={placed.place} of={placed.of} />}
-        <h1>
-          {out === "the gas"
-            ? "The gas got you"
-            : out === "a fall"
-              ? "You fell to your death"
-              : `Killed by ${out}`}
-        </h1>
-        <BrResultStats
-          stats={[
-            ["Eliminations", hud.kit?.kills ?? 0],
-            ...(placed ? ([["Damage", placed.damage]] as const) : []),
-            ["Still alive", hud.alive ?? "—"],
-          ]}
-        />
-        <div className="br-end-actions">
+    <BrPlacement
+      tone="out"
+      label="Eliminated"
+      tag="Eliminated"
+      place={placed?.place}
+      of={placed?.of}
+      title={
+        out === "the gas"
+          ? "The gas got you"
+          : out === "a fall"
+            ? "You fell to your death"
+            : `Killed by ${out}`
+      }
+      stats={[
+        ["Eliminations", hud.kit?.kills ?? 0],
+        ...(placed ? ([["Damage", placed.damage]] as const) : []),
+        ...(hud.alive !== undefined && hud.alive !== null
+          ? ([["Still alive", hud.alive]] as const)
+          : []),
+      ]}
+      actions={
+        <>
+          {leave}
           {hud.watch && (
             <button type="button" className="duel-secondary" onClick={() => setHidden(true)}>
               Watch {hud.watch.name}
             </button>
           )}
-          {leave}
-        </div>
+        </>
+      }
+    />
+  );
+}
+
+function BrPlacement({
+  tone,
+  label,
+  tag,
+  place,
+  of,
+  title,
+  line,
+  stats,
+  actions,
+}: {
+  tone: "won" | "over" | "out";
+  label: string;
+  tag: string;
+  place?: number | undefined;
+  of?: number | undefined;
+  title: string;
+  line?: string;
+  stats: readonly (readonly [string, number])[];
+  actions: React.ReactNode;
+}) {
+  return (
+    <div className={`br-placement ${tone}`} role="dialog" aria-label={label}>
+      <div className="br-placement-glow" aria-hidden />
+      <section className="br-placement-body">
+        <p className="br-placement-tag">
+          <i aria-hidden />
+          {tag}
+        </p>
+        {place !== undefined && (
+          <div className="br-placement-place" aria-label={`Place ${place}${of ? ` of ${of}` : ""}`}>
+            <i aria-hidden>#</i>
+            <b data-place={place}>{place}</b>
+            {of ? <span>/ {of}</span> : null}
+          </div>
+        )}
+        <h1>{title}</h1>
+        {line && <p className="br-placement-line">{line}</p>}
+        <dl className="br-placement-stats">
+          {stats.map(([name, value], i) => (
+            <div key={name} style={{ animationDelay: `${420 + i * 90}ms` }}>
+              <dd>
+                <CountUp to={value} delay={420 + i * 90} />
+              </dd>
+              <dt>{name}</dt>
+            </div>
+          ))}
+        </dl>
+        <div className="br-placement-actions">{actions}</div>
       </section>
     </div>
   );
 }
 
-function BrPlace({ place, of }: { place: number; of?: number | undefined }) {
-  return (
-    <div className="br-result-place" aria-label={`Place ${place}${of ? ` of ${of}` : ""}`}>
-      <b>
-        <i>#</i>
-        {place}
-      </b>
-      {of ? <span>of {of}</span> : null}
-    </div>
-  );
-}
-
-function BrResultStats({ stats }: { stats: readonly (readonly [string, string | number])[] }) {
-  return (
-    <dl className="br-result-stats">
-      {stats.map(([label, value]) => (
-        <div key={label}>
-          <dt>{label}</dt>
-          <dd>{value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
+/** A number that counts up from 0 once (instant with reduced motion). */
+function CountUp({ to, delay = 0 }: { to: number; delay?: number }) {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    if (
+      to <= 0 ||
+      typeof matchMedia === "undefined" ||
+      matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setShown(to);
+      return;
+    }
+    let frame = 0;
+    const start = performance.now() + delay;
+    const tick = (now: number) => {
+      const t = Math.min(1, Math.max(0, (now - start) / 900));
+      setShown(Math.round(to * (1 - (1 - t) ** 3)));
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [to, delay]);
+  return <>{shown.toLocaleString("en-US")}</>;
 }
 
 // ------------------------------------------------------------------ tactical tablet (T)
