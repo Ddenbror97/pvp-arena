@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-17T17:12:37-03:00",
+ "generated": "2026-11-17T20:46:59-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -44624,6 +44624,357 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:c9cadc2f026946da8cf9715a683739e9",
+   "title": "FREE Cessna 172SP",
+   "author": "NLM",
+   "author_url": "https://sketchfab.com/NLM-Group",
+   "source": "https://sketchfab.com/3d-models/free-cessna-172sp-c9cadc2f026946da8cf9715a683739e9",
+   "uid": "c9cadc2f026946da8cf9715a683739e9",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/d2b859cc-free_cessna_172sp.zip",
+     "sha256": "5b9525f00a6ed5dd8236e65ef7e532233c78bba7fb862b569deebab05e439893",
+     "size": 24095051,
+     "mtime": "2026-11-17T20:46:51-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 187453,
+    "verts": 121384,
+    "draws": 69,
+    "unique_tris": 187453,
+    "meshes": 69,
+    "primitives": 69,
+    "materials": 28,
+    "materials_used": 28,
+    "nodes": 124,
+    "mesh_nodes": 69,
+    "skins": 0,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.689,
+     0.897,
+     2.76
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 52,
+    "max_piece_tris": 27056,
+    "top_pieces": [
+     {
+      "name": "Plane.025_23",
+      "tris": 27056,
+      "draws": 1,
+      "size_m": [
+       0.361,
+       0.49,
+       2.243
+      ]
+     },
+     {
+      "name": "Plane.026_24",
+      "tris": 25872,
+      "draws": 1,
+      "size_m": [
+       0.357,
+       0.485,
+       2.221
+      ]
+     },
+     {
+      "name": "Cube.002_8",
+      "tris": 19584,
+      "draws": 2,
+      "size_m": [
+       0.889,
+       0.118,
+       0.118
+      ]
+     },
+     {
+      "name": "Cube.009_47",
+      "tris": 9792,
+      "draws": 2,
+      "size_m": [
+       0.041,
+       0.118,
+       0.118
+      ]
+     },
+     {
+      "name": "Plane.029_33",
+      "tris": 8056,
+      "draws": 1,
+      "size_m": [
+       1.761,
+       0.035,
+       0.012
+      ]
+     },
+     {
+      "name": "Plane.016_15",
+      "tris": 7104,
+      "draws": 1,
+      "size_m": [
+       0.366,
+       0.212,
+       0.908
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular",
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 28,
+    "images": [
+     {
+      "member": "textures/Body_baseColor.png",
+      "name": "textures/Body_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_metallicRoughness.png",
+      "name": "textures/Body_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_normal.png",
+      "name": "textures/Body_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tyre_baseColor.png",
+      "name": "textures/Tyre_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tyre_metallicRoughness.png",
+      "name": "textures/Tyre_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tyre_normal.png",
+      "name": "textures/Tyre_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Metal_baseColor.png",
+      "name": "textures/Metal_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Metal_metallicRoughness.png",
+      "name": "textures/Metal_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Window_baseColor.png",
+      "name": "textures/Window_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Window_metallicRoughness.png",
+      "name": "textures/Window_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Window_normal.png",
+      "name": "textures/Window_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Screw_metallicRoughness.png",
+      "name": "textures/Screw_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Screw_normal.png",
+      "name": "textures/Screw_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Front_baseColor.png",
+      "name": "textures/Front_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Front_metallicRoughness.png",
+      "name": "textures/Front_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Front_normal.png",
+      "name": "textures/Front_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.004_baseColor.png",
+      "name": "textures/Material.004_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.004_metallicRoughness.png",
+      "name": "textures/Material.004_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.004_normal.png",
+      "name": "textures/Material.004_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/remove_before_flight_baseColor.jpeg",
+      "name": "textures/remove_before_flight_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_baseColor.jpeg",
+      "name": "textures/material_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_19_baseColor.jpeg",
+      "name": "textures/material_19_baseColor.jpeg",
+      "w": 256,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_20_baseColor.jpeg",
+      "name": "textures/material_20_baseColor.jpeg",
+      "w": 256,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material.006_baseColor.jpeg",
+      "name": "textures/Material.006_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material.007_baseColor.jpeg",
+      "name": "textures/Material.007_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cockpit_metallicRoughness.png",
+      "name": "textures/Cockpit_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.009_baseColor.jpeg",
+      "name": "textures/Material.009_baseColor.jpeg",
+      "w": 2048,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_baseColor.png",
+      "name": "textures/Concrete_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 464.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (12.5x)",
+    "DRAWS 69",
+    "ANIM 1",
+    "TEXMB 464"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 12x) or reject",
+    "atlas materials (69 draws to ≤12)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 12.5
   },
   {
    "key": "sf:60c256c02122405a86de3d65b6be96d3",
@@ -156514,6 +156865,14 @@
    "size": 33426818,
    "mtime_ns": 1794946210168476650,
    "mtime": "2026-11-17T17:10:10-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/mnt/user-data/uploads/d2b859cc-free_cessna_172sp.zip": {
+   "sha256": "5b9525f00a6ed5dd8236e65ef7e532233c78bba7fb862b569deebab05e439893",
+   "size": 24095051,
+   "mtime_ns": 1794959211585377699,
+   "mtime": "2026-11-17T20:46:51-03:00",
    "batch": "2026-11-17",
    "present": true
   }
@@ -283690,6 +284049,328 @@
    "sha256": "ca71c2473f85af1170a81949ac496e3fc8eb9ac78ed73780aafc88670d086082",
    "size": 33426818,
    "parsed_at": "2026-11-17T17:12:36-03:00"
+  },
+  "5b9525f00a6ed5dd8236e65ef7e532233c78bba7fb862b569deebab05e439893": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 32,
+   "uncompressed_bytes": 28748274,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.65.0",
+   "licence": {
+    "title": "FREE Cessna 172SP",
+    "source": "https://sketchfab.com/3d-models/free-cessna-172sp-c9cadc2f026946da8cf9715a683739e9",
+    "author": "NLM (https://sketchfab.com/NLM-Group)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 187453,
+    "verts": 121384,
+    "draws": 69,
+    "unique_tris": 187453,
+    "meshes": 69,
+    "primitives": 69,
+    "materials": 28,
+    "materials_used": 28,
+    "nodes": 124,
+    "mesh_nodes": 69,
+    "skins": 0,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.689,
+     0.897,
+     2.76
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 52,
+    "max_piece_tris": 27056,
+    "top_pieces": [
+     {
+      "name": "Plane.025_23",
+      "tris": 27056,
+      "draws": 1,
+      "size_m": [
+       0.361,
+       0.49,
+       2.243
+      ]
+     },
+     {
+      "name": "Plane.026_24",
+      "tris": 25872,
+      "draws": 1,
+      "size_m": [
+       0.357,
+       0.485,
+       2.221
+      ]
+     },
+     {
+      "name": "Cube.002_8",
+      "tris": 19584,
+      "draws": 2,
+      "size_m": [
+       0.889,
+       0.118,
+       0.118
+      ]
+     },
+     {
+      "name": "Cube.009_47",
+      "tris": 9792,
+      "draws": 2,
+      "size_m": [
+       0.041,
+       0.118,
+       0.118
+      ]
+     },
+     {
+      "name": "Plane.029_33",
+      "tris": 8056,
+      "draws": 1,
+      "size_m": [
+       1.761,
+       0.035,
+       0.012
+      ]
+     },
+     {
+      "name": "Plane.016_15",
+      "tris": 7104,
+      "draws": 1,
+      "size_m": [
+       0.366,
+       0.212,
+       0.908
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular",
+     "KHR_materials_emissive_strength"
+    ]
+   },
+   "textures": {
+    "count": 28,
+    "images": [
+     {
+      "member": "textures/Body_baseColor.png",
+      "name": "textures/Body_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_metallicRoughness.png",
+      "name": "textures/Body_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Body_normal.png",
+      "name": "textures/Body_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tyre_baseColor.png",
+      "name": "textures/Tyre_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tyre_metallicRoughness.png",
+      "name": "textures/Tyre_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Tyre_normal.png",
+      "name": "textures/Tyre_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Metal_baseColor.png",
+      "name": "textures/Metal_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Metal_metallicRoughness.png",
+      "name": "textures/Metal_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Window_baseColor.png",
+      "name": "textures/Window_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Window_metallicRoughness.png",
+      "name": "textures/Window_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Window_normal.png",
+      "name": "textures/Window_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Screw_metallicRoughness.png",
+      "name": "textures/Screw_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Screw_normal.png",
+      "name": "textures/Screw_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Front_baseColor.png",
+      "name": "textures/Front_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Front_metallicRoughness.png",
+      "name": "textures/Front_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Front_normal.png",
+      "name": "textures/Front_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.004_baseColor.png",
+      "name": "textures/Material.004_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.004_metallicRoughness.png",
+      "name": "textures/Material.004_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.004_normal.png",
+      "name": "textures/Material.004_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/remove_before_flight_baseColor.jpeg",
+      "name": "textures/remove_before_flight_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_baseColor.jpeg",
+      "name": "textures/material_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_19_baseColor.jpeg",
+      "name": "textures/material_19_baseColor.jpeg",
+      "w": 256,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/material_20_baseColor.jpeg",
+      "name": "textures/material_20_baseColor.jpeg",
+      "w": 256,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material.006_baseColor.jpeg",
+      "name": "textures/Material.006_baseColor.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material.007_baseColor.jpeg",
+      "name": "textures/Material.007_baseColor.jpeg",
+      "w": 1024,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Cockpit_metallicRoughness.png",
+      "name": "textures/Cockpit_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.009_baseColor.jpeg",
+      "name": "textures/Material.009_baseColor.jpeg",
+      "w": 2048,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Concrete_baseColor.png",
+      "name": "textures/Concrete_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 464.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "5b9525f00a6ed5dd8236e65ef7e532233c78bba7fb862b569deebab05e439893",
+   "size": 24095051,
+   "parsed_at": "2026-11-17T20:46:59-03:00"
   }
  }
 }

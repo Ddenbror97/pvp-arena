@@ -1,21 +1,21 @@
 # Project Island asset inventory
 
-Generated 2026-11-17T17:12:37-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-17T20:46:59-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 47 |
-| Unique assets | 837 |
-| Licence OK / REVIEW / REJECT | 791 / 33 / 13 |
+| Zip files scanned (present now) | 48 |
+| Unique assets | 838 |
+| Licence OK / REVIEW / REJECT | 792 / 33 / 13 |
 | Assets with duplicate zips | 63 (72 extra files) |
-| Over budget (tris, per-piece, texture px or draws) | 440 |
+| Over budget (tris, per-piece, texture px or draws) | 441 |
 | Needs conversion (no glTF) | 8 |
 | Unparseable zips | 10 |
 | On the asset list: arrived / not yet | 0 / 0 (list has 0 items) |
-| Not on the asset list | 837 |
-| Assets first seen in batch 2026-11-17 (today) | 33 |
+| Not on the asset list | 838 |
+| Assets first seen in batch 2026-11-17 (today) | 34 |
 | Assets first seen in batch 2026-11-16 | 2 |
 | Assets first seen in batch 2026-11-15 | 37 |
 | Assets first seen in batch 2026-11-14 | 92 |
@@ -334,6 +334,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Free - Armor Plate Carrier - Gameready Metahuman | Karnaval | REJECT: Standard/paid licence | prop | 24.4k | 3 | 4096 | 314 | 0.004×0.005×0.003 | LIC-REJECT, TRIS>15k (1.6x), SKINNED, SCALE? 0.005 m, TEX 4096px, TEXMB 314 | reject (licence: Standard/paid licence); decimate to 15k; check scale (largest side 0.005 m; x100 would give 0.5 m); downscale textures to 1K | 11-03 |
 | Free AC Unit | vertexmonster | REJECT: Standard/paid licence | prop | 176.2k | 8 | 4096 | 1958 | 3.83×3.7×2.28 | LIC-REJECT, TRIS>15k (11.7x), TEX 4096px, TEXMB 1958 | reject (licence: Standard/paid licence); decimate to 15k (heavy: 12x) or reject; downscale textures to 1K | 11-02 |
 | Free Burned Police Cars | Renafox | OK | building | 21.6k | 2 | 2048 | 58 | 630×298×731 | SCALE? 731 m | check scale (largest side 731 m; x0.01 would give 7.31 m) | 11-03 |
+| FREE Cessna 172SP | NLM | OK | prop | 187.5k | 69 | 2048 | 464 | 3.69×0.897×2.76 | TRIS>15k (12.5x), DRAWS 69, ANIM 1, TEXMB 464 | decimate to 15k (heavy: 12x) or reject; atlas materials (69 draws to ≤12); downscale textures to 1K | 11-17 |
 | FREE FIRE GUN Desert Eagle | ROCK FF 99 | REJECT: Standard/paid licence | prop | 1.9k | 1 | 512 | 1 | 0.858×0.47×0.125 | LIC-REJECT | reject (licence: Standard/paid licence) | 11-09 |
 | Free low poly Hangar model | Herrsher | REJECT: Standard/paid licence | building | 524 | 5 | - | 0 | 7.84×4.38×7.99 | LIC-REJECT | reject (licence: Standard/paid licence) | 11-09 |
 | Free Low Poly Yacth | MarkoJantti | OK | prop | 5.3k | 1 | 1024 | 5 | 2.94×2.18×9.7 | ANIM 1 | use as-is | 11-17 |
