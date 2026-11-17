@@ -64,6 +64,20 @@ const walk = (
 /** Placed inside the arena (its pitch and concourses): not an overlap with it. */
 const INSIDE_ARENA = new Set(["escalator", "pitch-lines", "goal"]);
 
+/**
+ * Forgotten Ruins' trees that are props (trunk collision only): their canopies overhang the
+ * paving, the houses and each other as in any jungle, so only the trunk (2 m) stands on the
+ * ground and keeps clear of buildings (the layout's FOOT).
+ */
+const CANOPY = new Set([
+  "coconut-palm",
+  "bald-cypress",
+  "palm-tall",
+  "palm-fan",
+  "tall-tree",
+  "banana-grove",
+]);
+
 describe("Project Island static world", () => {
   it("places every layout model, each with collision data, on the flat building pads", () => {
     expect(layout.length).toBeGreaterThan(400);
@@ -85,7 +99,9 @@ describe("Project Island static world", () => {
       // the wall's (checked below).
       if (p.model === DAM.spillway.model) continue;
       const poi = meta.pois.find((q) => q.id === p.poi) ?? { padHeight: undefined };
-      const [x0, z0, x1, z1] = footprint(p);
+      const [x0, z0, x1, z1] = CANOPY.has(p.model)
+        ? [p.x - 1, p.z - 1, p.x + 1, p.z + 1]
+        : footprint(p);
       for (const [x, z] of [
         [x0, z0],
         [x1, z0],
@@ -211,7 +227,8 @@ describe("Project Island static world", () => {
         p.model !== "rope-bridge" &&
         // Plants and trees (no collision): their leaves overlap, as in any jungle.
         models.models[p.model]!.class !== "bush" &&
-        models.models[p.model]!.class !== "tree"
+        models.models[p.model]!.class !== "tree" &&
+        !CANOPY.has(p.model)
       );
     });
     // The placement data is immutable: calculate its footprint once, rather than

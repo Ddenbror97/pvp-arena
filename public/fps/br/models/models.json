@@ -20441,7 +20441,7 @@
    "ring": "hero",
    "use": "super yacht at anchor off Fisher's Cove: enterable decks, salon and cabins (landmark)",
    "scale": 1.580193,
-   "sourceTris": 300807,
+   "sourceTris": 253067,
    "size": [
     8.51,
     21.22,
@@ -20450,10 +20450,10 @@
    "lods": [
     {
      "file": "/fps/br/models/lux-yacht.lod0.glb",
-     "tris": 23990,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 91,
+     "tris": 51985,
+     "draws": 9,
+     "textureMB": 11.08,
+     "kB": 1017,
      "size": [
       8.51,
       21.22,
@@ -20462,10 +20462,10 @@
     },
     {
      "file": "/fps/br/models/lux-yacht.lod1.glb",
-     "tris": 8388,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 36,
+     "tris": 15899,
+     "draws": 9,
+     "textureMB": 3.08,
+     "kB": 321,
      "size": [
       8.51,
       21.22,
@@ -20474,7 +20474,7 @@
     },
     {
      "file": "/fps/br/models/lux-yacht.lod2.glb",
-     "tris": 2706,
+     "tris": 2279,
      "draws": 1,
      "textureMB": 0,
      "kB": 14,

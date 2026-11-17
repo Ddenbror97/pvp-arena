@@ -107,7 +107,12 @@ export const WORLD_ASSETS = {
   // container terminal and fishing quay, the military base, the airfield and the villages, and 22
   // enterable procedural buildings (build_locations.mjs: doors, stairs to every floor, rooms;
   // their doors authored in collision.entrances); the new models' coplanar faces lifted (zfix-v5).
-  // Then (ruins-v1, 2026-11-17) Forgotten Ruins: 13 procedural Maya buildings
+  // Then (yacht-v1, 2026-11-17) the super yacht rebuilt from the owner's re-download: textured
+  // (the old build had fallen back to a flat silhouette), the people on its decks dropped, its
+  // collision voxelised again without them, and its access-v14 fit-out applied again
+  // (access-v26: decks, salon, flybridge, the stair down, the lower deck's cabins and doors);
+  // its coplanar faces lifted (zfix-v7).
+  // And then (ruins-v1, 2026-11-17) Forgotten Ruins: 13 procedural Maya buildings
   // (build_ruins.mjs: the pyramid and its tunnel, the palace, the tower, temples, the acropolis's
   // tunnels, the ball court, the arch, walls, stelae, paving) and the owner's downloads for its
   // rainforest (two tree species, the jungle and palm, with impostors), undergrowth, statues and
