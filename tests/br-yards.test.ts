@@ -21,7 +21,7 @@ const manifest = JSON.parse(readFileSync("public/fps/br/models/models.json", "ut
 let island: Island;
 beforeAll(async () => {
   const [hf, cover] = await Promise.all([
-    decodeHeightfield(buffer("public/fps/br/height.v1.hf")),
+    decodeHeightfield(buffer("public/fps/br/height.v2.hf")),
     decodeLandCover(buffer("public/fps/br/landcover.v1.lc")),
   ]);
   island = buildIsland(hf, cover, meta, collision);

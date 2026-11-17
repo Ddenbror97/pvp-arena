@@ -16,7 +16,9 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
   revision: "locations-v1",
-  height: "/fps/br/height.v1.hf",
+  // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
+  // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
+  height: "/fps/br/height.v2.hf",
   landcover: "/fps/br/landcover.v1.lc",
   meta: "/fps/br/world.v1.json",
   // sites-v1 (the facades-v1 manifest, its mid-distance LODs of 54 models on the facade atlas,

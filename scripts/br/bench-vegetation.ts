@@ -15,7 +15,7 @@ const b = (p: string) => {
   const f = readFileSync(p);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const hf = await decodeHeightfield(b("public/fps/br/height.v1.hf"));
+const hf = await decodeHeightfield(b("public/fps/br/height.v2.hf"));
 const cover = await decodeLandCover(b("public/fps/br/landcover.v1.lc"));
 const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8"));
 const veg = createVegetation(vegetationWorld(hf, cover, meta));

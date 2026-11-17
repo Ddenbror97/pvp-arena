@@ -31,7 +31,7 @@ test("real BR renderer never draws an audio-only decoy, including after a delaye
     ]);
     const [meta, hf] = await Promise.all([
       fetch("/fps/br/world.v1.json").then((r) => r.json()),
-      fetch("/fps/br/height.v1.hf")
+      fetch("/fps/br/height.v2.hf")
         .then((r) => r.arrayBuffer())
         .then(decodeHeightfield),
     ]);

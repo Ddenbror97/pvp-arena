@@ -1,3 +1,4 @@
+import { createRoadGrade, OFF_ROAD_SURFACE, ROAD_GRADE } from "./road-grade";
 import { DAM, STRAIT, STRAIT_BRIDGES, deckHeight } from "./bridges";
 import { onRopeRoute } from "./rope";
 import { islandWalls, PRISON_WALL } from "./walls";
@@ -6189,6 +6190,17 @@ function roadsideCover(out: Placement[], ctx: Context) {
             const y = Math.min(h0, h1);
             if (Math.abs(h0 - h1) > 0.9 || !ok(x, z, y, 25) || roadDistance(meta, x, z, 16) < 13)
               continue;
+            // Not hanging over a cutting's edge (a corner more than half a metre down).
+            const cx = alongX ? 0 : 0.25,
+              cz = alongX ? 0.25 : 0;
+            if (
+              [-1, 1].some((a) =>
+                [-1, 1].some(
+                  (b) => ctx.heightAt(x + a * ex + b * cx, z + a * ez + b * cz) < y - 0.55,
+                ),
+              )
+            )
+              continue;
             if (!clear(x, z, alongX ? 1.15 : 0.2, alongX ? 0.2 : 1.15)) continue;
             push("stone-wall", x, y, z, wallTurn);
           }
@@ -6271,6 +6283,7 @@ function roadsideCover(out: Placement[], ctx: Context) {
       );
     });
   const RAIL = 10.8;
+  const grade = createRoadGrade(meta, ctx.heightAt);
   for (const road of meta.roads) {
     let run: Array<[number, number, number, Placement["turn"]]> = [];
     const flush = () => {
@@ -6298,21 +6311,27 @@ function roadsideCover(out: Placement[], ctx: Context) {
           for (const side of [-1, 1]) {
             const below = ry - ctx.heightAt(px + nx * side * 13, pz + nz * side * 13);
             if (below < 1.8) continue;
-            const x = px + nx * side * 4.9,
-              z = pz + nz * side * 4.9;
+            // On the carriageway's edge at the road's own height (owner, 2026-11-16: a rail
+            // 4.9 m out stood on the embankment's slope below the road, its top at the road's
+            // level, as if lying beside it).
+            const off = road.width / 2 - 0.05;
+            const x = px + nx * side * off,
+              z = pz + nz * side * off;
             // The lower end of the section (on a grade one end is 0.7 m below the other).
-            const ends = [
-              ctx.heightAt(x, z),
-              ctx.heightAt(x + ux * 5.4, z + uz * 5.4),
-              ctx.heightAt(x - ux * 5.4, z - uz * 5.4),
-            ];
+            const at = (sx: number, sz: number) => grade.at(sx, sz, false) ?? ctx.heightAt(sx, sz);
+            const ends = [at(x, z), at(x + ux * 5.4, z + uz * 5.4), at(x - ux * 5.4, z - uz * 5.4)];
             const y = Math.min(...ends);
             // (Not where the road climbs out of a cutting: one end was buried 6-15 m in the
             // bank by the higher hills and Eastport's pad, 2026-11-11.)
             if (Math.max(...ends) - y > 2.5) continue;
             if (underwater(meta, x, z, y) || !clear(x, z, alongX ? 5.4 : 0.2, alongX ? 0.2 : 5.4))
               continue;
-            run.push([x, y, z, (alongX ? 1 : 0) as Placement["turn"]]);
+            run.push([
+              x,
+              +(y + ROAD_GRADE.lift).toFixed(2),
+              z,
+              (alongX ? 1 : 0) as Placement["turn"],
+            ]);
             placed = true;
             break;
           }
@@ -7179,7 +7198,27 @@ export function* islandLayoutSteps(
         p.y = +(lo + Math.min(0.3, (hi - lo) / 2)).toFixed(2);
     }
   }
+  standOnRoads(out, ctx);
   return out;
+}
+
+/**
+ * Whatever stands on a road stands on its surface (owner, 2026-11-16: "items under the road"):
+ * the road is drawn on its grade (road-grade.ts, the same function), which on a crest or a cross
+ * slope stands above the ground there, and parked cars, wrecks, barriers, posts and lamps set on
+ * the ground stood up to 1.3 m into it. A placement whose base falls on a carriageway and lies
+ * below its surface (by less than 0.6 m) comes up to it.
+ */
+function standOnRoads(out: Placement[], ctx: Context) {
+  const grade = createRoadGrade(ctx.meta, ctx.heightAt);
+  for (const p of out) {
+    if (OFF_ROAD_SURFACE.has(p.model)) continue;
+    // (On the carriageway only: what stands on a verge stands on the verge.)
+    const g = grade.at(p.x, p.z, true, 0);
+    if (g === null) continue;
+    const surface = g + ROAD_GRADE.lift;
+    if (p.y < surface - 0.01 && p.y > surface - 0.6) p.y = +surface.toFixed(2);
+  }
 }
 
 /**
