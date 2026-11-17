@@ -45,6 +45,7 @@ export const VEHICLES = {
       crashScale: 1,
       climb: 0.5,
       offroad: 0.6,
+      grade: 0.55,
       bike: false,
     },
     suv: {
@@ -63,6 +64,7 @@ export const VEHICLES = {
       crashScale: 0.8,
       climb: 0.95,
       offroad: 0.95,
+      grade: 0.85,
       bike: false,
     },
     pickup: {
@@ -81,6 +83,7 @@ export const VEHICLES = {
       crashScale: 0.75,
       climb: 0.9,
       offroad: 0.85,
+      grade: 0.8,
       bike: false,
     },
     bike: {
@@ -99,6 +102,7 @@ export const VEHICLES = {
       crashScale: 1.2,
       climb: 0.85,
       offroad: 0.85,
+      grade: 1.3,
       bike: true,
     },
   } satisfies Record<VehicleKind, VehicleSpec>,
@@ -160,7 +164,14 @@ export const VEHICLES = {
   } as Record<string, Record<VehicleKind, number>>,
   /** Impacts above this speed (m/s) cost health: (speed − threshold) × perMs × crashScale. */
   crash: { threshold: 6, perMs: 28, playerThreshold: 6, playerPerMs: 7, maxShare: 0.45 },
-  enterReach: 3.2,
+  /**
+   * How far from the vehicle's body (its outline, not its centre) E gets in (owner, 2026-11-17:
+   * "requires the player to be closer"). It was 3.2 m plus half the length from the centre:
+   * a car could be entered from 4.5 m off its side. The server allows `enterSlack` more for
+   * the picture's delay.
+   */
+  enterReach: 1.5,
+  enterSlack: 0.75,
   /**
    * Grip (1/s: how fast sideways slide is caught), the steering wheel's speed (1/s toward the
    * key, faster back to centre), the handbrake's grip and extra turn, and off-road grip.
@@ -200,6 +211,11 @@ type VehicleSpec = {
   climb: number;
   /** How well the tyres grip off the road (rough or steep ground), 0..1. */
   offroad: number;
+  /**
+   * The steepest hillside it drives up (rise/run). Past it the wheels spin and it rolls back:
+   * the hill, not a wall, stops it (owner, 2026-11-17: the motorbike off road, Iron Peaks).
+   */
+  grade: number;
   bike: boolean;
 };
 export const spec = (k: VehicleKind): VehicleSpec => VEHICLES.kinds[k];
@@ -269,6 +285,21 @@ function areaOf(meta: WorldMeta, x: number, z: number) {
   }
   return best;
 }
+
+/** How far a point (x, z) is from a vehicle's footprint, 0 inside it. */
+export function vehicleGap(v: Pick<Vehicle, "x" | "z" | "yaw" | "kind">, x: number, z: number) {
+  const s = spec(v.kind);
+  const fx = -Math.sin(v.yaw),
+    fz = -Math.cos(v.yaw);
+  const dx = x - v.x,
+    dz = z - v.z;
+  const along = Math.abs(dx * fx + dz * fz) - s.length / 2;
+  const side = Math.abs(dx * -fz + dz * fx) - s.width / 2;
+  return Math.hypot(Math.max(0, along), Math.max(0, side));
+}
+
+/** Ground steeper than this (rise/run, about 65°) is a cliff that stops a vehicle. */
+const CLIFF = 2.1;
 
 /** Corners of a vehicle's footprint (world x/z), for collision and placement. */
 function footprint(v: Pick<Vehicle, "x" | "z" | "yaw" | "kind">, grow = 0) {
@@ -625,9 +656,17 @@ export function stepVehicle(
   const handbrake = !!input?.jump && !s.bike;
   const brakeHard = (!!input?.jump && s.bike) || !input;
   // Longitudinal: throttle forward, brake then reverse, drag, rolling resistance, slope.
+  // Up a hillside steeper than its grade the wheels spin: the drive fades over the next 0.25 of
+  // slope and gravity rolls it back. Below its grade it drives up, slower the steeper.
+  const uphill = Math.tan(v.pitch) * Math.sign(throttle);
+  const traction = Math.max(0, Math.min(1, 1 - (uphill - s.grade) / 0.25));
   if (throttle > 0)
-    v.speed += (v.speed < 0 ? s.brake : s.accel * (1 - Math.max(0, v.speed) / top)) * throttle * dt;
-  else if (throttle < 0) v.speed -= (v.speed > 0.3 ? s.brake : s.accel * 0.6) * -throttle * dt;
+    v.speed +=
+      (v.speed < 0 ? s.brake : s.accel * (1 - Math.max(0, v.speed) / top) * traction) *
+      throttle *
+      dt;
+  else if (throttle < 0)
+    v.speed -= (v.speed > 0.3 ? s.brake : s.accel * 0.6 * traction) * -throttle * dt;
   if (brakeHard)
     v.speed -= Math.sign(v.speed) * Math.min(Math.abs(v.speed), s.brake * dt * (input ? 1 : 0.6));
   // Handbrake: the rear wheels lock (it slows, less than the brakes) and let go sideways.
@@ -686,20 +725,40 @@ export function stepVehicle(
           if (Math.hypot(ax - bx, az - bz) < ar + br) hit = true;
     }
   // Ground under the new footprint: too high a step (a wall, a kerb above the wheels) blocks.
-  let bump = false;
+  // The hillside itself is not a step (owner, 2026-11-17: "some bugs with the mountains to drive
+  // up"): every rise of more than `climb` in one step stopped the vehicle dead with a crash, on
+  // any slope of about 40° or more and on every road cutting. Now the grade decides (above);
+  // only ground near vertical (a cliff) stops it, softly.
+  let bump = false,
+    cliff = false;
   if (!hit) {
     const h = groundUnder(world, next);
-    if (Math.max(...h) - v.y > s.climb) {
-      hit = true;
-      bump = true;
+    const before = footprint(v),
+      after = footprint(next);
+    const run = Math.max(0.05, Math.hypot(nx - v.x, nz - v.z));
+    for (let i = 0; i < 4; i++) {
+      const [ax, az] = after[i]!,
+        [bx, bz] = before[i]!;
+      const terrain = world.hf.heightAt(ax, az);
+      if (h[i]! > terrain + 0.05) {
+        // A box (kerb, wall, deck edge): the wheels ride up `climb` and no more.
+        if (h[i]! - v.y > s.climb) bump = true;
+      } else if (terrain - v.y > s.climb && (terrain - world.hf.heightAt(bx, bz)) / run > CLIFF)
+        cliff = true;
     }
+    if (bump) hit = true;
   }
   // A low obstacle (a boulder, a stump: its top under 1.6 m) is a bump, not a wall: the
   // suspension and the tyres take half of it.
   if (hit && !bump)
     bump = circles(next).every(([cx, cz, r]) => world.supportAt(cx, cz, r, v.y + 4) - v.y < 1.6);
   let impact = 0;
-  if (hit) {
+  if (cliff && !hit) {
+    // Into a cliff: it stops where it is, without a crash, and may turn away.
+    v.speed = 0;
+    v.yaw = nyaw;
+    slip *= 0.5;
+  } else if (hit) {
     impact = Math.hypot(v.speed, slip) * (bump ? 0.55 : 1);
     v.speed = -v.speed * 0.15;
     slip = 0;
