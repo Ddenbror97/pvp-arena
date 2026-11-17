@@ -1,11 +1,17 @@
 /**
  * Discord is another Supabase identity on the same user id as email/password.
- * Matching emails are not merged. An existing account signs in with its
- * password, then links Discord from Security while that session is live.
- * A Discord photo is copied once, through the existing avatar upload, and only
- * while the profile still has the default DiceBear avatar.
+ * An existing account can also link Discord from Security while its session is
+ * live. A Discord photo is copied once, through the existing avatar upload, and
+ * only while the profile still has the default DiceBear avatar.
+ *
+ * Supabase's built-in Discord provider (owner, 2026-11-17: "the discord login
+ * function does not work"). The custom OAuth2 provider ("custom:discord") read
+ * Discord's /users/@me as generic OAuth claims: Discord sends `id` and
+ * `verified`, not `sub` and `email_verified`, so every sign-in had no user id
+ * ("error missing provider id") and an unverified email. The built-in provider
+ * maps both.
  */
-export const DISCORD_PROVIDER = "custom:discord";
+export const DISCORD_PROVIDER = "discord";
 
 const PRODUCTION_HOSTS = new Set(["pvpspinarena.com", "www.pvpspinarena.com"]);
 
@@ -49,6 +55,10 @@ export function discordSignInMessage(code: string, description: string): string 
     return "That Discord account is already linked to another PVPspinArena account.";
   if (/email_exists|user_already|already registered|already been registered/.test(text))
     return "That email already has an account. Sign in with your password, then link Discord from Security.";
+  if (/provider_email_needs_verification|unverified email/.test(text))
+    return "Verify your email address in Discord first, then try again.";
+  if (/manual_linking_disabled|manual linking/.test(text))
+    return "Linking Discord is not available right now.";
   return "Couldn't sign in with Discord. Please try again.";
 }
 
@@ -65,7 +75,7 @@ type IdentitySource = {
 };
 
 export function isDiscordProvider(provider: string | null | undefined): boolean {
-  return provider === DISCORD_PROVIDER || provider === "discord";
+  return provider === DISCORD_PROVIDER || provider === "custom:discord";
 }
 
 /**
@@ -85,9 +95,19 @@ export function discordAvatarFetchUrl(user: IdentitySource | null | undefined): 
   return null;
 }
 
+/** The built-in provider's avatar URL: only a user avatar on Discord's CDN (not the defaults). */
+const CDN_AVATAR =
+  /^https:\/\/cdn\.discordapp\.com\/avatars\/(\d{17,20})\/([A-Za-z0-9_]{2,64})\.(?:png|gif|webp|jpg)$/;
+
 function cdnUrl(source: unknown): string | null {
   if (!source || typeof source !== "object") return null;
   const record = source as Record<string, unknown>;
+  // Supabase's built-in Discord provider stores the whole CDN address.
+  for (const key of ["avatar_url", "picture"]) {
+    const value = record[key];
+    const m = typeof value === "string" ? CDN_AVATAR.exec(value) : null;
+    if (m) return `https://cdn.discordapp.com/avatars/${m[1]}/${m[2]}.png?size=256`;
+  }
   const id = record["id"];
   const avatar = record["avatar"];
   if (typeof id !== "string" || !/^\d{17,20}$/.test(id)) return null;
