@@ -1,3 +1,4 @@
+import { FullscreenButton } from "./FullscreenButton";
 import { SpectatorCard } from "./SpectatorCard";
 import {
   defaultStrikeBinds,
@@ -12,7 +13,7 @@ import { openMatchSocket } from "@/lib/fps/match-socket";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Crosshair, Skull, Maximize, Volume2, VolumeX, Wrench } from "lucide-react";
+import { Crosshair, Skull, Volume2, VolumeX, Wrench } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { GrenadeHud } from "./GrenadeHud";
@@ -1003,13 +1004,7 @@ export function BombMatch() {
               {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
               {muted ? "Enable game audio" : "Mute game audio"}
             </button>
-            <button
-              type="button"
-              className="duel-secondary"
-              onClick={() => void document.documentElement.requestFullscreen().catch(() => {})}
-            >
-              <Maximize size={17} /> Fullscreen
-            </button>
+            <FullscreenButton className="duel-secondary" />
           </div>
         }
         leaveAction={

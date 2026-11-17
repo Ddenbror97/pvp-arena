@@ -1,3 +1,4 @@
+import { FullscreenButton } from "./FullscreenButton";
 import {
   defaultStrikeBinds,
   readStrikeBinds,
@@ -13,7 +14,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Volume2, VolumeX, Maximize, Copy, Crosshair, Skull } from "lucide-react";
+import { Volume2, VolumeX, Copy, Crosshair, Skull } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { SIDE_RIFLE } from "@/lib/fps/combat";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
@@ -874,16 +875,7 @@ export function DuelMatch({
               {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
               {muted ? "Enable audio" : "Mute audio"}
             </button>
-            <button
-              aria-label="Fullscreen arena"
-              onClick={() =>
-                void host.current?.parentElement
-                  ?.requestFullscreen()
-                  .catch(() => setError("Fullscreen is unavailable in this browser."))
-              }
-            >
-              <Maximize size={17} /> Fullscreen
-            </button>
+            <FullscreenButton onError={setError} />
           </div>
         }
         extra={<StrikeKeyBindings value={keyBindings} onChange={setKeyBindings} bomb={false} />}
