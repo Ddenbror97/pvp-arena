@@ -2546,10 +2546,10 @@ button.br-inv-cell:hover {
 .br-game .br-hint {
   bottom: 112px;
 }
-/* The E prompt (owner, 2026-11-13 and 2026-11-16: "upgrade the E interact window to more
-   mordern/clean"): a light key cap, then the thing's name (with its rarity tag) over a dim line
-   saying what E does and the detail. A rarity-coloured dot rides the key's corner. No blur (a
-   backdrop filter is a full-screen pass every frame). */
+/* The E prompt (owner, 2026-11-17: "less dark window, cleaner/leaner ux. its to big"): one slim
+   line, a small key cap, the name, then what E does, dimmer (no detail). A faint glass pill
+   (no blur: a backdrop filter is a full-screen pass every frame); a text shadow keeps it
+   readable over snow and sky. The rarity colours a dot on the key and the tag. */
 .br-prompt {
   position: absolute;
   left: 50%;
@@ -2557,24 +2557,22 @@ button.br-inv-cell:hover {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 12px;
-  max-width: min(380px, calc(100vw - 32px));
-  padding: 7px 16px 7px 7px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(22, 26, 31, 0.86), rgba(12, 15, 18, 0.86));
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 10px 28px rgba(0, 0, 0, 0.32);
-  color: #f2f5f7;
+  gap: 9px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 4px 13px 4px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(14, 16, 20, 0.52);
+  color: #fff;
   font-family: var(--hud-font);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
   pointer-events: none;
-  animation: br-prompt-in 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: br-prompt-in 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 @keyframes br-prompt-in {
   from {
     opacity: 0;
-    transform: translate(-50%, 6px) scale(0.98);
+    transform: translate(-50%, 4px);
   }
 }
 .br-prompt .br-prompt-key {
@@ -2583,75 +2581,70 @@ button.br-inv-cell:hover {
   place-items: center;
   flex: none;
   box-sizing: border-box;
-  width: 34px;
-  height: 34px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: 0;
-  border-radius: 9px;
-  background: linear-gradient(180deg, #ffffff, #dfe4e8);
-  box-shadow:
-    0 2px 0 #9aa3aa,
-    0 4px 10px rgba(0, 0, 0, 0.3);
-  color: #11161a;
-  font: 800 15px/1 var(--hud-font);
+  border-radius: 50%;
+  background: #fff;
+  color: #0d1014;
+  font: 800 12px/1 var(--hud-font);
+  text-shadow: none;
+}
+.br-prompt:not([data-rar]) .br-prompt-key::after {
+  content: none;
 }
 .br-prompt .br-prompt-key::after {
   content: "";
   position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 9px;
-  height: 9px;
-  border: 2px solid #12161a;
+  top: -1px;
+  right: -1px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--rar, #c8d0d4);
+  background: var(--rar, transparent);
+  box-shadow: 0 0 0 1.5px rgba(14, 16, 20, 0.7);
 }
 .br-prompt-body {
-  display: grid;
-  gap: 2px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
   min-width: 0;
 }
 .br-prompt-name {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13.5px;
   font-weight: 700;
   line-height: 1.2;
-  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 .br-prompt-name i {
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--rar, #c8d0d4) 20%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rar, #c8d0d4) 45%, transparent);
-  color: var(--rar, #c8d0d4);
+  align-self: center;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--rar, #c8d0d4) 26%, rgba(14, 16, 20, 0.5));
+  color: color-mix(in srgb, var(--rar, #c8d0d4) 55%, #fff);
+  text-shadow: none;
   font-size: 9.5px;
   font-style: normal;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 .br-prompt-act {
   overflow: hidden;
-  color: rgba(242, 245, 247, 0.62);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 12px;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.br-prompt-act small {
-  font-size: inherit;
-  font-weight: 500;
-}
-.br-prompt-act small::before {
+.br-prompt-act::before {
   content: "·";
-  margin: 0 6px;
-  opacity: 0.6;
-}
-.br-prompt-act small.solo::before {
-  content: none;
+  margin-right: 8px;
+  opacity: 0.5;
 }
 @media (max-width: 1100px) {
   .br-bottom .duel-health,
