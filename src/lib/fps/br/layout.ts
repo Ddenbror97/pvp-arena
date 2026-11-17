@@ -2052,6 +2052,53 @@ const FOOT: Record<string, [number, number]> = {
   "private-jet": [20.0, 19.3],
   sx2190: [2.6, 9.5],
   a320: [34.2, 37.6],
+  // The coastal towns (owner's 2026-11-17 downloads for Fisher's Cove and Bayview). The palms
+  // and parasols by their trunk or pole (no collision; the canopy hangs over the pavement).
+  "cove-fisher-boat": [3.6, 9],
+  "cove-fishing-boat": [2.0, 4.6],
+  "cove-old-rowboat": [4.1, 4.2],
+  "cove-victorian-rowboat": [1.5, 3.8],
+  "cove-lobster-pot": [0.9, 0.9],
+  "cove-bucket": [0.3, 0.4],
+  "cove-tackle-box": [0.6, 0.3],
+  "cove-hand-net": [0.5, 0.5],
+  "cove-fishing-net": [0.1, 6],
+  "cove-fish-crate": [0.5, 0.8],
+  "cove-barrel": [0.6, 0.6],
+  "cove-tarp-crates": [2.3, 2.4],
+  "cove-dock-cleat": [0.5, 0.1],
+  "cove-lifebuoy": [0.8, 0.5],
+  "cove-rope-coil": [0.7, 0.7],
+  "cove-harbour-buoy": [1.0, 1.0],
+  "cove-walkway": [8.7, 9.4],
+  "cove-bench": [1.6, 0.6],
+  "cove-street-light": [0.8, 0.8],
+  "cove-fishing-rod": [0.1, 2.2],
+  "bay-yacht": [4.9, 24],
+  "bay-sailboat": [2.7, 9],
+  "bay-speedboat": [6.5, 2.4],
+  "bay-cruiser": [3.3, 11],
+  "bay-jetski": [1.0, 3],
+  "bay-jetski-trailer": [1.7, 4.1],
+  "bay-kayak": [2.1, 4.9],
+  "bay-palm": [1.2, 1.2],
+  "bay-palm-2": [1.2, 1.2],
+  "bay-coconut-palm": [1.2, 1.2],
+  "bay-lounge-chair": [1.0, 1.1],
+  "bay-lounge-sofa": [1.6, 0.8],
+  "bay-lounge-table": [1.2, 0.6],
+  "bay-beach-table": [2.1, 2.1],
+  "bay-lifeguard-chair": [1.1, 1.4],
+  "bay-parasol": [0.6, 0.6],
+  "bay-sunbed": [1.9, 0.8],
+  "bay-surfboard": [0.9, 0.8],
+  "bay-volley-net": [9, 0.1],
+  "bay-beach-flag": [0.2, 1.7],
+  "bay-pergola": [4.3, 4.8],
+  "bay-street-lamp": [0.8, 0.4],
+  "bay-trash-can": [1.3, 1.1],
+  "bay-planter": [0.5, 0.5],
+  "bay-bike-stand": [1.6, 0.4],
 };
 for (const [id, b] of Object.entries(locationBuildings)) FOOT[id] = b.foot as [number, number];
 /** A footprint turned by quarter turns: [x extent, z extent]. */
@@ -2579,6 +2626,8 @@ function hamlet(
     at?: [number, number];
     foot?: number;
     flat?: number;
+    /** The quarter turn tried first (a harbour village's houses look out to sea). */
+    face?: Placement["turn"];
   },
 ) {
   const foot = o.foot ?? 5;
@@ -2601,7 +2650,7 @@ function hamlet(
     if (ENTRANCE_APRONS[model] && buildable(ctx, x, z, foot, 0.6) === null) continue;
     // Its doors a step at most above the ground outside (the first quarter turn that allows
     // it): a warehouse on a sloping bank by the Old Dam had its door 0.4 m over the ground.
-    const first = Math.floor(hash(o.salt + 2, tries) * 4) % 4;
+    const first = o.face ?? Math.floor(hash(o.salt + 2, tries) * 4) % 4;
     const turn = [0, 1, 2, 3]
       .map((k) => ((first + k) % 4) as Placement["turn"])
       .find((t) =>
@@ -4456,79 +4505,229 @@ function seaPier(
   return null;
 }
 
+/** An enterable building's doors a step at most above the ground outside them (its floor at y). */
+const doorsLevelAt =
+  (ctx: Context) => (model: string, x: number, z: number, t: Placement["turn"], y: number) =>
+    (ENTRANCE_APRONS[model] ?? []).every(([ax, az]) => {
+      const [dx, dz] = turnXZ(ax, az, t);
+      const rise = y - ctx.heightAt(x + dx, z + dz);
+      return rise <= 0.2 && rise >= -0.3;
+    });
 /**
- * Fisher's Cove (B8/C8, owner 2026-11-04: "at the coast"): the concept's fishing hamlet on the
- * bay south-west of Murder Cabins: houses on the slope above the water, the fish market and
- * net sheds by the shore, piers with boats out into the bay, boats pulled up on the beach.
+ * Fisher's Cove (B8/C8, owner 2026-11-04: "at the coast"; rebuilt 2026-11-17: "upgraded to a
+ * similar look and layout as the image", a colourful fishing harbour village): on the quay
+ * (build_world.py HARBORS, x −3850 to −3550, z 3245–3325) a terrace of painted harbour houses
+ * along the back, lanes up to the village between them; in front the fish hall, market stalls,
+ * the chandlery, net racks, lobster pots, crates and barrels, benches and lamps; bollards and
+ * cleats along the edge, boats pulled up on the shingle. Piers out into the bay with fishing
+ * boats moored beside them, channel buoys, the lighthouse on its rock, and more painted houses
+ * up the slope, looking out to sea.
  */
+const COVE_TERRACE = [
+  "cove-house-red",
+  "cove-house-yellow",
+  "cove-house-blue",
+  "cove-house-salmon",
+  "cove-house-orange",
+  "cove-house-white",
+  "cove-house-yellow",
+  "cove-house-blue",
+  "cove-house-red",
+  "cove-house-orange",
+  "cove-house-white",
+  "cove-house-salmon",
+];
 function fishersCove(poi: Poi, out: Placement[], ctx: Context) {
-  // Piers along the bay's north shore (heading north from offshore), one on the west coast;
-  // by each, on the first flat ground inland, a fish shack, a net shed or the market.
-  const shacks: Array<[string, Placement["turn"]]> = [
-    ["rural-diner", 0],
-    ["shed", 1],
-    ["rural-store-1", 0],
-    ["shed", 0],
-  ];
+  const doorsLevel = doorsLevelAt(ctx);
+  const grid = placementGrid(out, 60);
+  // (Against the placements near by only: a scan of the whole island's list per candidate
+  // took the town's layout step to 2 s.)
+  const busy = (model: string, x: number, z: number, t: Placement["turn"], gap: number) => {
+    const [w, d] = footAt(model, t);
+    return grid.some(x - w / 2, z - d / 2, x + w / 2, z + d / 2, (p) => {
+      const [pw, pd] = footAt(p.model, p.turn);
+      return Math.abs(p.x - x) < (w + pw) / 2 + gap && Math.abs(p.z - z) < (d + pd) / 2 + gap;
+    });
+  };
+  /** On the ground at (x, z), level within `flat` and dry, clear of what stands there. */
+  const at = (
+    model: string,
+    x: number,
+    z: number,
+    t: Placement["turn"],
+    o: { gap?: number; flat?: number; y?: number; lift?: number } = {},
+  ) => {
+    const [w, d] = footAt(model, t);
+    if (o.lift === undefined && busy(model, x, z, t, o.gap ?? 0.3)) return false;
+    let y = o.y;
+    if (y === undefined) {
+      const hs = (
+        [
+          [-w / 2, -d / 2],
+          [w / 2, -d / 2],
+          [-w / 2, d / 2],
+          [w / 2, d / 2],
+          [0, 0],
+        ] as const
+      ).map(([u, v]) => ctx.heightAt(x + u, z + v));
+      const lo = Math.min(...hs);
+      if (Math.max(...hs) - lo > (o.flat ?? 0.8) || lo < 0.4 || !doorsLevel(model, x, z, t, lo))
+        return false;
+      y = lo + (o.lift ?? 0);
+    }
+    out.push({ model, x: +x.toFixed(2), y: +y.toFixed(2), z: +z.toFixed(2), turn: t, poi: poi.id });
+    return true;
+  };
+  // ---- The quay's terrace: painted houses shoulder to shoulder along its back, fronts to the
+  // sea (+z), a lane every four houses (and wherever a road comes down to the quay).
+  const Q = { x0: -3846, x1: -3574, z0: 3247 };
+  let x = Q.x0,
+    n = 0;
+  while (x < Q.x1) {
+    const model = COVE_TERRACE[n % COVE_TERRACE.length]!;
+    const [w, d] = footAt(model, 0);
+    if (x + w > Q.x1) break;
+    const cx = x + w / 2,
+      cz = Q.z0 + d / 2;
+    if (
+      roadDistance(ctx.meta, cx, cz) > w / 2 + 2.5 &&
+      // Its door a step at most above the quay in front.
+      Math.abs(ctx.heightAt(cx - w / 4, cz + d / 2 + 1.2) - ctx.heightAt(cx, cz)) < 0.25 &&
+      at(model, cx, cz, 0, { gap: 0.2, flat: 0.5 })
+    ) {
+      n++;
+      x += w + 0.4 + (n % 4 === 0 ? 7 : 0);
+    } else x += 2;
+  }
+  // ---- The quay in front of them: the fish hall in the middle, market stalls and the
+  // chandlery's awning either side, then the working edge.
+  at("fish-market", -3700, 3278, 0, { gap: 1, flat: 0.6 });
+  for (const [m, mx, mz] of [
+    ["market-props", -3768, 3271],
+    ["market-props", -3628, 3271],
+    ["awning", -3812, 3272],
+    ["awning", -3592, 3272],
+  ] as const)
+    at(m, mx, mz, 0, { gap: 0.6, flat: 0.8 });
+  // Lamps along the lane in front of the houses and along the edge; benches facing the boats.
+  for (let lx = Q.x0 + 6; lx < Q.x1; lx += 22) {
+    at("cove-street-light", lx, 3262.5, 0, { gap: 0.4, flat: 1 });
+    at("cove-street-light", lx + 11, 3296, 0, { gap: 0.4, flat: 1.2 });
+    at("cove-bench", lx + 5, 3294.5, 0, { gap: 0.4, flat: 1 });
+  }
+  // The edge: bollards every 14 m with a cleat between, lifebuoys on their stands.
+  for (let ex = Q.x0 + 3; ex < Q.x1; ex += 14) {
+    at("mooring-bollard", ex, 3302, 0, { gap: 0.3, flat: 1.2 });
+    at("cove-dock-cleat", ex + 7, 3302, 0, { gap: 0.2, flat: 1.2 });
+    if (Math.round(ex) % 3 === 0) at("cove-lifebuoy", ex + 3.5, 3300.5, 0, { gap: 0.2, flat: 1.2 });
+  }
+  // Net racks drying on the quay, gear in heaps by them: lobster pots stacked, fish crates,
+  // barrels, crates under a tarp, coiled rope, bait buckets, tackle boxes, landing nets.
+  for (const [k, gx] of [-3826, -3742, -3660, -3590].entries()) {
+    at("cove-fishing-net", gx, 3285, 1, { gap: 0.4, flat: 1 });
+    const g = (dx: number, dz: number) => [gx + dx, 3287 + dz] as const;
+    const [px, pz] = g(-4, -3);
+    if (at("cove-lobster-pot", px, pz, 0, { gap: 0.1, flat: 0.6 })) {
+      const base = out[out.length - 1]!;
+      at("cove-lobster-pot", px, pz, 0, { y: base.y + 0.45, lift: 0 });
+      if (k % 2 === 0) at("cove-lobster-pot", px, pz, 0, { y: base.y + 0.9, lift: 0 });
+    }
+    at("cove-lobster-pot", px + 1.1, pz, 1, { gap: 0.1, flat: 0.6 });
+    for (const [m, dx, dz, t] of [
+      ["cove-fish-crate", 3, -2, 0],
+      ["cove-fish-crate", 3.7, -2, 0],
+      ["cove-barrel", 4.5, 2.5, 0],
+      ["cove-barrel", 5.3, 2.8, 0],
+      ["cove-tarp-crates", -6.5, 3, k % 2],
+      ["cove-rope-coil", 2, 3, 0],
+      ["cove-bucket", 1.2, -3.2, 0],
+      ["cove-tackle-box", 0.4, -3.4, 1],
+      ["cove-hand-net", -1.6, -3.6, 0],
+    ] as const) {
+      const [gx2, gz2] = g(dx, dz);
+      at(m, gx2, gz2, t as Placement["turn"], { gap: 0.1, flat: 0.8 });
+    }
+    // A stack of fish crates on a pallet's height.
+    const [cx3, cz3] = g(3, -2);
+    if (busy("cove-fish-crate", cx3, cz3, 0, -0.05))
+      at("cove-fish-crate", cx3 + 0.3, cz3, 0, { y: ctx.heightAt(cx3, cz3) + 0.41, lift: 0 });
+  }
+  // Boats pulled up on the shingle below the quay's edge, bows to the sea.
+  for (const [k, bx] of [-3836, -3806, -3772, -3748, -3628, -3604, -3584].entries()) {
+    const m = ["cove-old-rowboat", "cove-fishing-boat", "cove-victorian-rowboat"][k % 3]!;
+    for (const bz of [3312, 3316, 3308]) if (at(m, bx, bz, 0, { gap: 0.6, flat: 1.4 })) break;
+  }
+  // ---- Piers out into the bay (heading north from offshore), fishing boats moored beside
+  // them where the water is deep enough for their keels, rods at the pier heads.
   const piers: Array<[number, number, number, number, Placement["turn"]]> = [
     [-120, 420, 0, -1, 0],
     [-30, 420, 0, -1, 0],
     [70, 420, 0, -1, 0],
     [-500, -60, 1, 0, 1],
   ];
+  const moored: Array<[string, number, number]> = [
+    ["cove-fisher-boat", 1.0, 2.6],
+    ["trawler", 1.6, 2.4],
+    ["cove-fisher-boat", 1.0, 2.6],
+    ["cove-fishing-boat", 0.35, 1.2],
+  ];
   piers.forEach(([dx, dz, wx, wz, turn], i) => {
     const shore = seaPier(out, ctx, poi.x + dx, poi.z + dz, wx, wz, turn);
     if (!shore) return;
-    const [model, t] = shacks[i]!;
-    for (let d = 16; d < 80; d += 6)
-      for (const side of [-1, 1])
-        if (
-          onGround(
-            out,
-            ctx,
-            poi.id,
-            model,
-            shore[0] + wx * d - wz * side * 12,
-            shore[1] + wz * d + wx * side * 12,
-            t,
-            1.8,
-          )
-        ) {
-          const k = out[out.length - 1]!;
-          onGround(
-            out,
-            ctx,
-            poi.id,
-            "rowboat",
-            k.x + wz * side * 9,
-            k.z - wx * side * 9,
-            turn,
-            1.2,
-          );
-          onGround(
-            out,
-            ctx,
-            poi.id,
-            "picnic-table",
-            k.x - wz * side * 8,
-            k.z + wx * side * 8,
-            0,
-            1,
-          );
-          d = 99;
-          break;
-        }
+    let k = out.length - 1;
+    while (out[k]!.model !== "pier") k--;
+    const pier = out[k]!;
+    const [model, draft, need] = moored[i]!;
+    const [bw, bd] = footAt(model, turn);
+    // Alongside, on the side away from the pier's rowboat (which lies 5 m off one side).
+    for (const side of [-1, 1]) {
+      const bx = pier.x + (wz ? side * (4.1 + bw / 2 + 0.6) : 0),
+        bz = pier.z + (wx ? side * (4.1 + bd / 2 + 0.6) : 0);
+      const deep = [-1, 1].every((a) =>
+        [-1, 1].every((b) => ctx.heightAt(bx + (a * bw) / 2, bz + (b * bd) / 2) < -need),
+      );
+      if (!deep || busy(model, bx, bz, turn, 0.4)) continue;
+      out.push({ model, x: +bx.toFixed(2), y: -draft, z: +bz.toFixed(2), turn, poi: "shore" });
+      break;
+    }
+    // A rod and a coiled rope on the deck at the pier head (deck 0.7 m above the sea).
+    const hx = pier.x - wx * 9,
+      hz = pier.z - wz * 9;
+    out.push({
+      model: "cove-fishing-rod",
+      x: +(hx + 1.5).toFixed(2),
+      y: 0.7,
+      z: +hz.toFixed(2),
+      turn,
+      poi: "shore",
+    });
+    out.push({
+      model: "cove-rope-coil",
+      x: +(hx - 1.6).toFixed(2),
+      y: 0.7,
+      z: +(hz + 1).toFixed(2),
+      turn: 0,
+      poi: "shore",
+    });
   });
+  // Channel buoys at the harbour mouth.
+  for (const [bx, bz] of [
+    [-3860, 3470],
+    [-3560, 3470],
+    [-3700, 3540],
+  ] as const)
+    if (ctx.heightAt(bx, bz) < -2.5)
+      out.push({ model: "cove-harbour-buoy", x: bx, y: -0.7, z: bz, turn: 0, poi: "shore" });
   onGround(out, ctx, poi.id, "water-tower", poi.x + 120, poi.z + 160, 0, 1.8);
   // The lighthouse on its rock at the cove's western point, its foot in the surf.
   for (let z = poi.z - 100; z < poi.z + 300; z += 20) {
-    let x = poi.x - 200;
-    while (x > poi.x - 700 && ctx.heightAt(x, z) > 0) x -= 4;
-    if (x <= poi.x - 700 || ctx.heightAt(x - 25, z) > -2) continue;
-    if (out.some((p) => Math.abs(p.x - x) < 30 && Math.abs(p.z - z) < 30)) continue;
+    let lx = poi.x - 200;
+    while (lx > poi.x - 700 && ctx.heightAt(lx, z) > 0) lx -= 4;
+    if (lx <= poi.x - 700 || ctx.heightAt(lx - 25, z) > -2) continue;
+    if (out.some((p) => Math.abs(p.x - lx) < 30 && Math.abs(p.z - z) < 30)) continue;
     out.push({
       model: "lighthouse",
-      x: +x.toFixed(2),
+      x: +lx.toFixed(2),
       // Its floor just above the sea (it stood 0.4 m below it: the keeper's house was flooded,
       // anyone inside was swimming, and the audit found it could not be entered).
       y: 0.1,
@@ -4540,31 +4739,31 @@ function fishersCove(poi: Poi, out: Placement[], ctx: Context) {
     });
     break;
   }
-  // The quay (build_world.py HARBORS, z 3245–3325): the fish market, net sheds, containers,
-  // boats up on the stones, tables.
-  const quay: Array<[string, number, Placement["turn"]]> = [
-    ["rural-diner", -100, 0],
-    ["shed", -60, 0],
-    ["container-20", -40, 1],
-    ["rural-store-1", 0, 0],
-    ["shed", 40, 0],
-    ["container-40", 70, 0],
-    ["rural-diner", 110, 0],
-  ];
-  for (const [m, dx, t] of quay) onGround(out, ctx, poi.id, m, -3700 + dx, 3262, t, 1.2);
-  for (const dx of [-80, -20, 25, 90]) {
-    onGround(out, ctx, poi.id, "rowboat", -3700 + dx, 3300, 1, 0.8);
-    onGround(out, ctx, poi.id, "picnic-table", -3700 + dx + 6, 3285, 0, 0.8);
-  }
-  for (const dx of [-140, -70, 0, 70, 140])
-    onGround(out, ctx, poi.id, "street-lamp", -3700 + dx, 3280, 1, 1);
+  // A timber boardwalk at the quay's east end, over the beach.
+  for (const [wx2, wz2] of [
+    [-3548, 3306],
+    [-3536, 3296],
+  ] as const)
+    if (at("cove-walkway", wx2, wz2, 0, { gap: 0.5, flat: 1.6 })) break;
+  // ---- The village up the slope behind the quay: more painted houses, looking out to sea
+  // (south). (Its circle ends at the terrace: none of them on the quay's market.)
   hamlet(poi, out, ctx, {
-    radius: 230,
-    at: [0, 40],
-    palette: ["rural-house", "house", "bungalow", "shed", "cabin", "house", "garage", "bungalow"],
-    count: 22,
+    radius: 210,
+    at: [0, -45],
+    palette: [
+      "cove-house-white",
+      "cove-house-red",
+      "cove-house-blue",
+      "shed",
+      "cove-house-orange",
+      "cove-house-salmon",
+      "cove-house-yellow",
+      "cove-house-green",
+    ],
+    count: 26,
     salt: 614,
     flat: 1.6,
+    face: 0,
   });
 }
 function pineRidge(poi: Poi, out: Placement[], ctx: Context) {
@@ -4576,18 +4775,38 @@ function pineRidge(poi: Poi, out: Placement[], ctx: Context) {
   });
 }
 
-/** Bayview (B4, final audit 2026-11-04): a seaside suburb on the flat west coast: bungalows and
- * houses with gardens, a strip mall and townhouses in the middle, flats, a park with the church,
- * the police station and a climbable mast over the bay. */
+/** Bayview (B4, final audit 2026-11-04; rebuilt 2026-11-17 as a Mediterranean marina town,
+ * owner: "upgraded to a similar look and layout as the image"): white and pastel villas, town
+ * houses and blocks of flats with roof terraces on its grid, a strip mall, the park with the
+ * church, the police station, palms along every street; on the bluff over the sea a promenade
+ * (lamps, palms, benches, pergolas), seafront villas and the beach club; below it the marina's
+ * pontoons with yachts, cruisers, sailing boats and speedboats, more yachts at anchor. */
 function bayview(poi: Poi, out: Placement[], ctx: Context) {
+  const doorsLevel = doorsLevelAt(ctx);
+  const grid = placementGrid(out, 60);
   gridTown(
     poi,
     out,
     ctx,
     {
-      core: ["strip-mall", "townhouse", "townhouse", "brick-shop", "rural-diner", "apartment"],
-      homes: ["bungalow", "house", "bungalow", "rural-house", "garage", "bungalow", "house"],
-      edge: ["bungalow", "rural-house", "shed", "rural-mobile-home"],
+      core: [
+        "bay-apartments",
+        "bay-townhouse-pink",
+        "strip-mall",
+        "bay-townhouse-yellow",
+        "bay-apartments",
+        "bay-villa-white",
+      ],
+      homes: [
+        "bay-villa-white",
+        "bay-villa-cream",
+        "bay-townhouse-pink",
+        "bay-villa-white",
+        "bungalow",
+        "bay-villa-cream",
+        "bay-townhouse-yellow",
+      ],
+      edge: ["bay-villa-cream", "bay-villa-white", "bungalow", "shed"],
     },
     611,
     [["sniper-mast", -215, -170, 0]],
@@ -4597,6 +4816,233 @@ function bayview(poi: Poi, out: Placement[], ctx: Context) {
       { near: [-90, 60], build: policeBlock },
     ],
   );
+  // The seafront stands on the bluff, off the town's pad (its own poi: on the terrain).
+  const SEAFRONT = "bayview-seafront";
+  /** A palm's crown (up to 7.5 m across) clear of buildings and of the other palms. */
+  const palmFree = (x: number, z: number) =>
+    // (Over level ground: off the pad, a crown over the bluff's edge stands over a drop.)
+    [-3.8, 3.8].every((u) =>
+      [-3.8, 3.8].every((v) => ctx.heightAt(x + u, z + v) > ctx.heightAt(x, z) - 0.45),
+    ) &&
+    !grid.some(x - 4, z - 4, x + 4, z + 4, (p) => {
+      const [pw, pd] = footAt(p.model, p.turn);
+      const m = Math.max(pw, pd) > 6 || p.model.includes("palm") ? 3.9 : 1.0;
+      return Math.abs(p.x - x) < pw / 2 + m && Math.abs(p.z - z) < pd / 2 + m;
+    });
+  // (Against the placements near by only: a scan of the whole island's list per candidate
+  // took the town's layout step to 2 s.)
+  const busy = (model: string, x: number, z: number, t: Placement["turn"], gap: number) => {
+    const [w, d] = footAt(model, t);
+    return grid.some(x - w / 2, z - d / 2, x + w / 2, z + d / 2, (p) => {
+      const [pw, pd] = footAt(p.model, p.turn);
+      return Math.abs(p.x - x) < (w + pw) / 2 + gap && Math.abs(p.z - z) < (d + pd) / 2 + gap;
+    });
+  };
+  const at = (
+    model: string,
+    x: number,
+    z: number,
+    t: Placement["turn"],
+    o: { gap?: number; flat?: number; road?: number } = {},
+  ) => {
+    const [w, d] = footAt(model, t);
+    if (busy(model, x, z, t, o.gap ?? 0.4)) return false;
+    if (o.road !== undefined && roadDistance(ctx.meta, x, z) < Math.max(w, d) / 2 + o.road)
+      return false;
+    const hs = (
+      [
+        [-w / 2, -d / 2],
+        [w / 2, -d / 2],
+        [-w / 2, d / 2],
+        [w / 2, d / 2],
+        [0, 0],
+      ] as const
+    ).map(([u, v]) => ctx.heightAt(x + u, z + v));
+    const lo = Math.min(...hs);
+    if (Math.max(...hs) - lo > (o.flat ?? 0.8) || lo < 0.4 || !doorsLevel(model, x, z, t, lo))
+      return false;
+    out.push({
+      model,
+      x: +x.toFixed(2),
+      y: +lo.toFixed(2),
+      z: +z.toFixed(2),
+      turn: t,
+      poi: SEAFRONT,
+    });
+    return true;
+  };
+  const palm = (k: number) => (["bay-palm", "bay-palm-2", "bay-coconut-palm"] as const)[k % 3]!;
+  // ---- Palms along every street, at the kerb (clear of the junctions and of what stands there).
+  const t = poi.town;
+  if (t) {
+    const y = poi.padHeight ?? 0;
+    const kerb = t.street / 2 + 1.4;
+    const nearJunction = (v: number, lines: number[]) => lines.some((l) => Math.abs(v - l) < 12);
+    let k = 0;
+    const palmAt = (px: number, pz: number) => {
+      if (Math.abs(ctx.heightAt(px, pz) - y) > 0.4 || !palmFree(px, pz)) return;
+      out.push({
+        model: palm(k++),
+        x: +px.toFixed(2),
+        y,
+        z: +pz.toFixed(2),
+        turn: (k % 4) as Placement["turn"],
+        poi: poi.id,
+      });
+    };
+    for (const zl of t.zs)
+      for (let px = t.xs[0]! + 14; px < t.xs[t.xs.length - 1]! - 14; px += 26)
+        if (!nearJunction(px, t.xs)) for (const s of [-1, 1]) palmAt(px, zl + s * kerb);
+    for (const xl of t.xs)
+      for (let pz = t.zs[0]! + 14; pz < t.zs[t.zs.length - 1]! - 14; pz += 26)
+        if (!nearJunction(pz, t.zs)) for (const s of [-1, 1]) palmAt(xl + s * kerb, pz);
+  }
+  // ---- The seafront, along the bluff over the sea north-west of the town. For each line
+  // running north from the town: the bluff's edge (where the ground falls 4 m in the next
+  // 25 m) and the waterline below it.
+  const front: Array<{ x: number; edge: number; water: number }> = [];
+  for (let fx = -4590; fx <= -3990; fx += 12) {
+    let edge = NaN,
+      water = NaN;
+    for (let fz = poi.z - 180; fz > poi.z - 700; fz -= 2) {
+      const h = ctx.heightAt(fx, fz);
+      if (Number.isNaN(edge) && h > 3 && ctx.heightAt(fx, fz - 25) < h - 4) edge = fz;
+      if (h < 0) {
+        water = fz;
+        break;
+      }
+    }
+    if (!Number.isNaN(edge) && !Number.isNaN(water) && edge - water < 90)
+      front.push({ x: fx, edge, water });
+  }
+  // The promenade 6 m in from the edge: lamps, palms between them, benches looking out to sea,
+  // pergolas, planters, bike stands and bins.
+  front.forEach((f, i) => {
+    const z = f.edge + 6;
+    if (i % 2 === 0) at("bay-street-lamp", f.x, z, 0, { gap: 0.3, flat: 1, road: 1 });
+    else if (palmFree(f.x, z + 1.5)) at(palm(i), f.x, z + 1.5, 0, { gap: 0.6, flat: 1.2, road: 1 });
+    if (i % 4 === 1) at("bench-modern", f.x + 2.5, z - 1.5, 2, { gap: 0.3, flat: 0.8, road: 1 });
+    if (i % 9 === 4) at("bay-pergola", f.x, z + 6, 0, { gap: 0.6, flat: 1, road: 2 });
+    if (i % 7 === 2) at("bay-planter", f.x + 1.2, z + 3.5, 0, { gap: 0.2, flat: 0.6, road: 1 });
+    if (i % 11 === 6) at("bay-bike-stand", f.x, z + 4, 0, { gap: 0.3, flat: 0.6, road: 1 });
+    if (i % 13 === 8) at("bay-trash-can", f.x - 1.5, z + 3.5, 0, { gap: 0.3, flat: 0.6, road: 1 });
+  });
+  // The beach club on the edge in the middle (its glass front and terrace to the sea, -z), its
+  // sunbeds and parasols on the lawn either side; seafront villas and flats behind the
+  // promenade, fronts to the sea.
+  // (The front's middle first, then out along it; nearest the edge first.)
+  const order = front
+    .map((f, i) => ({ f, d: Math.abs(i - front.length / 2) }))
+    .sort((a, b) => a.d - b.d)
+    .map((e) => e.f);
+  club: for (const f of order)
+    for (const back of [14, 18, 24, 30]) {
+      if (!at("bay-beach-club", f.x, f.edge + back, 2, { gap: 1, flat: 0.8, road: 3 })) continue;
+      const cz = f.edge + back - 4.5;
+      for (const s2 of [-1, 1])
+        for (let r = 0; r < 3; r++) {
+          const lx = f.x + s2 * (10 + r * 2.6),
+            lz = cz - 1;
+          if (at("bay-parasol", lx, lz, 0, { gap: 0.3, flat: 0.8 })) {
+            at("bay-sunbed", lx - 0.2, lz + 1.4, 0, { gap: 0.1, flat: 0.8 });
+            at("bay-lounge-chair", lx + 1.1, lz - 0.9, 2, { gap: 0.1, flat: 0.8 });
+          }
+        }
+      at("bay-lounge-sofa", f.x - 3, cz - 4, 2, { gap: 0.2, flat: 0.8 });
+      at("bay-lounge-table", f.x - 3, cz - 2.7, 0, { gap: 0.2, flat: 0.8 });
+      at("bay-beach-table", f.x + 4, cz - 3.5, 0, { gap: 0.3, flat: 0.8 });
+      break club;
+    }
+  const seafront = [
+    "bay-villa-white",
+    "bay-apartments",
+    "bay-villa-cream",
+    "bay-townhouse-pink",
+    "bay-villa-white",
+    "bay-townhouse-yellow",
+  ];
+  // Three rows down to the town (the grid stands 170 m back from the bluff), the second and
+  // third staggered, palms between the houses.
+  let s = 0;
+  for (const [row, back] of [22, 50, 78].entries())
+    for (let i = 1 + row * 2; i < front.length; i += 4) {
+      const f = front[i]!;
+      const model = seafront[s % seafront.length]!;
+      const [, d] = footAt(model, 2);
+      if (at(model, f.x, f.edge + back + d / 2, 2, { gap: 3, flat: 0.6, road: 3 })) {
+        s++;
+        if (palmFree(f.x + 13, f.edge + back + 2))
+          at(palm(s), f.x + 13, f.edge + back + 2, 0, { gap: 1, flat: 1.2, road: 1 });
+      }
+    }
+  // A volleyball court on the lawn, the lifeguards' chair and flags at the top of the beach.
+  for (const f of front.slice(3))
+    if (at("bay-volley-net", f.x, f.edge + 30, 0, { gap: 6, flat: 0.8, road: 4 })) break;
+  for (const f of front.slice(Math.floor(front.length / 3)))
+    if (at("bay-lifeguard-chair", f.x, f.edge + 2, 2, { gap: 0.5, flat: 1 })) {
+      at("bay-beach-flag", f.x + 2, f.edge + 2, 0, { gap: 0.2, flat: 1.2 });
+      at("bay-surfboard", f.x - 2, f.edge + 3, 0, { gap: 0.2, flat: 1.2 });
+      break;
+    }
+  // ---- The marina: pontoons out from the waterline where the water is deep at once, boats
+  // moored either side, jet skis on a trailer and kayaks above the water.
+  const boats: Array<[string, number]> = [
+    ["bay-sailboat", 1.1],
+    ["bay-cruiser", 0.8],
+    ["bay-speedboat", 0.45],
+    ["bay-sailboat", 1.1],
+    ["bay-cruiser", 0.8],
+  ];
+  let b = 0;
+  for (const f of front.filter((_, i) => i % 8 === 3)) {
+    const pz = f.water - 9;
+    if (ctx.heightAt(f.x, f.water - 18) > -0.8 || busy("pier", f.x, pz, 0, 2)) continue;
+    out.push({
+      model: "pier",
+      x: f.x,
+      y: +(0.7 - PIER_DECK).toFixed(2),
+      z: +pz.toFixed(2),
+      turn: 0,
+      poi: "shore",
+    });
+    for (const side of [-1, 1])
+      for (const oz of [-6, 6]) {
+        const [model, draft] = boats[b++ % boats.length]!;
+        const [bw, bd] = footAt(model, 0);
+        const bx = f.x + side * (4.1 + bw / 2 + 0.8),
+          bz = pz + oz;
+        const deep = [-1, 1].every((u) =>
+          [-1, 1].every((v) => ctx.heightAt(bx + (u * bw) / 2, bz + (v * bd) / 2) < -draft - 0.6),
+        );
+        if (deep && !busy(model, bx, bz, 0, 0.5))
+          out.push({
+            model,
+            x: +bx.toFixed(2),
+            y: -draft,
+            z: +bz.toFixed(2),
+            turn: 0,
+            poi: "shore",
+          });
+      }
+  }
+  // Motor yachts at anchor off the marina.
+  for (const f of front.filter((_, i) => i % 12 === 7)) {
+    const yz = f.water - 70;
+    const [w, d] = footAt("bay-yacht", 0);
+    const deep = [-1, 1].every((u) =>
+      [-1, 1].every((v) => ctx.heightAt(f.x + (u * w) / 2, yz + (v * d) / 2) < -3),
+    );
+    if (deep && !busy("bay-yacht", f.x, yz, 0, 4))
+      out.push({ model: "bay-yacht", x: f.x, y: -1.4, z: +yz.toFixed(2), turn: 0, poi: "shore" });
+  }
+  // Jet skis on their trailers and kayaks on the lawn above the pontoons.
+  for (const [i, f] of front.filter((_, i) => i % 8 === 3).entries()) {
+    if (at("bay-jetski-trailer", f.x + 9, f.edge + 9, 0, { gap: 0.5, flat: 0.8, road: 1 })) {
+      const tr = out[out.length - 1]!;
+      out.push({ ...tr, model: "bay-jetski", y: +(tr.y + 0.55).toFixed(2) });
+    }
+    at("bay-kayak", f.x - 8, f.edge + 9, i % 2 ? 1 : 0, { gap: 0.3, flat: 0.8, road: 1 });
+  }
 }
 
 /**

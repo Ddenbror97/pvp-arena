@@ -1,5 +1,5 @@
 {
-  "_comment": "lodTris (per asset) overrides the LOD triangle targets (null = class budget) for models placed by the hundred in towns; ring picks the renderer LOD distance class. Assets processed into the game by art/blender/br/process_assets.mjs. Performance over quality (owner, 2026-11-03): budgets are LOD0 triangles; fit scales the model so the named extent equals metres (max = largest horizontal side, y = height). draws = most textured materials kept (the rest become one vertex-coloured draw); textureMB = GPU texture memory cap for LOD0 (halved per LOD); detailMaps = keep normal/roughness/AO maps (otherwise base colour only). Heavier alternatives that were skipped are listed under skipped with the reason. draws (per asset) caps the textured draws below the class's, for buildings whose fit-out adds coloured groups.",
+  "_comment": "lodTris (per asset) overrides the LOD triangle targets (null = class budget) for models placed by the hundred in towns; ring picks the renderer LOD distance class. Assets processed into the game by art/blender/br/process_assets.mjs. Performance over quality (owner, 2026-11-03): budgets are LOD0 triangles; fit scales the model so the named extent equals metres (max = largest horizontal side, y = height). draws = most textured materials kept (the rest become one vertex-coloured draw); textureMB = GPU texture memory cap for LOD0 (halved per LOD); detailMaps = keep normal/roughness/AO maps (otherwise base colour only). Heavier alternatives that were skipped are listed under skipped with the reason. draws (per asset) caps the textured draws below the class's, for buildings whose fit-out adds coloured groups. materialAlias ({from: to} material names) draws one material's primitives with another (tint variants on one texture layout: one draw, not three).",
   "budgets": {
     "aircraft": {
       "tris": 8000,
@@ -7276,6 +7276,633 @@
       "ring": "structure",
       "collision": "boxes",
       "use": "Eastport: the container terminal's stacks (procedural ISO 40 ft box, 2026-11-15)"
+    },
+    {
+      "id": "cove-fisher-boat",
+      "key": "sf:385b039e95754dca8d8c045ed0c515cf",
+      "class": "prop",
+      "fit": {
+        "max": 9
+      },
+      "lodTris": [
+        3000,
+        1200,
+        400
+      ],
+      "collision": "solid",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: wooden fishing boats moored at the piers"
+    },
+    {
+      "id": "cove-fishing-boat",
+      "key": "sf:f4b38ccf5ffb46018aa7931c0e106654",
+      "class": "prop",
+      "fit": {
+        "max": 4.6
+      },
+      "collision": "solid",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: small open fishing boats on the slipway and moored"
+    },
+    {
+      "id": "cove-old-rowboat",
+      "key": "sf:9922d5678af84adeb1c9b479856446ca",
+      "class": "prop",
+      "fit": {
+        "max": 4.2
+      },
+      "collision": "solid",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: old rowboats pulled up on the shingle"
+    },
+    {
+      "id": "cove-victorian-rowboat",
+      "key": "sf:3e9093b6f0ce474da4d8cfea7e01f420",
+      "class": "prop",
+      "fit": {
+        "max": 3.8
+      },
+      "collision": "solid",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: rowboats moored along the quay"
+    },
+    {
+      "id": "cove-lobster-pot",
+      "key": "sf:52d43940c5874950804855ce6889315c",
+      "class": "small",
+      "fit": {
+        "max": 0.9
+      },
+      "collision": "solid",
+      "ring": "clutter",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: lobster pots stacked on the quay"
+    },
+    {
+      "id": "cove-bucket",
+      "key": "sf:8742c7af23584443a42c24e52d25b60c",
+      "piece": "Plastic Bucket (Full)_3",
+      "class": "small",
+      "fit": {
+        "y": 0.42
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: bait buckets on the quay"
+    },
+    {
+      "id": "cove-tackle-box",
+      "key": "sf:8742c7af23584443a42c24e52d25b60c",
+      "piece": "Tackle Box_1",
+      "class": "small",
+      "fit": {
+        "max": 0.55
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: tackle boxes by the boats"
+    },
+    {
+      "id": "cove-hand-net",
+      "key": "sf:8742c7af23584443a42c24e52d25b60c",
+      "piece": "Fishing Net_4",
+      "class": "small",
+      "fit": {
+        "y": 1.5
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: landing nets leant on the sheds"
+    },
+    {
+      "id": "cove-fishing-net",
+      "key": "sf:cab12e62c8dd46cdbb6b250c2a3c1306",
+      "class": "prop",
+      "fit": {
+        "max": 6
+      },
+      "collision": "none",
+      "ring": "clutter",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: nets hung to dry on the net racks"
+    },
+    {
+      "id": "cove-fish-crate",
+      "key": "sf:59c85ab9efec436fb017b4c7805f9770",
+      "class": "small",
+      "fit": {
+        "max": 0.8
+      },
+      "collision": "solid",
+      "ring": "clutter",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: fish crates stacked at the market"
+    },
+    {
+      "id": "cove-barrel",
+      "key": "sf:5ae3c72285474862a89d69c2f2ad2246",
+      "piece": "Barrel",
+      "class": "small",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "solid",
+      "ring": "clutter",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: barrels on the quay"
+    },
+    {
+      "id": "cove-tarp-crates",
+      "key": "sf:5ae3c72285474862a89d69c2f2ad2246",
+      "piece": "Cloth",
+      "class": "small",
+      "fit": {
+        "max": 2.4
+      },
+      "collision": "solid",
+      "ring": "clutter",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: crates under a tarp on the quay (cover)"
+    },
+    {
+      "id": "cove-dock-cleat",
+      "key": "sf:421736f05c1a452f8f25b21ab6a020f0",
+      "class": "small",
+      "fit": {
+        "max": 0.45
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: mooring cleats along the quay edge"
+    },
+    {
+      "id": "cove-lifebuoy",
+      "key": "sf:0325cc64f5be4dbf935206c90cf9da7e",
+      "class": "small",
+      "fit": {
+        "max": 0.75
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: lifebuoys on their posts along the quay"
+    },
+    {
+      "id": "cove-rope-coil",
+      "key": "sf:e6fe8fedd3d04b1dac3e32e0dd515cbb",
+      "class": "small",
+      "fit": {
+        "max": 0.7
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: coiled ropes on the piers"
+    },
+    {
+      "id": "cove-harbour-buoy",
+      "key": "sf:62f7c151f4c048508b8cf5526f8588f9",
+      "exclude": [
+        "Sea_1"
+      ],
+      "class": "small",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "solid",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: channel buoys at the harbour mouth"
+    },
+    {
+      "id": "cove-walkway",
+      "key": "sf:02c44b1c549d46d995174fc5e3f66e78",
+      "class": "structure",
+      "fit": {
+        "max": 9.4
+      },
+      "permissive": true,
+      "collision": "voxel",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: railed timber boardwalk along the shore"
+    },
+    {
+      "id": "cove-bench",
+      "key": "sf:1400c9340d5049589deb43601462ac55",
+      "class": "small",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: wooden benches on the harbour front"
+    },
+    {
+      "id": "cove-street-light",
+      "key": "sf:04a47d898e704e1a809d24433c409bf5",
+      "class": "small",
+      "noEmissive": true,
+      "fit": {
+        "y": 4.5
+      },
+      "collision": "voxel",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: old street lights along the harbour front"
+    },
+    {
+      "id": "cove-fishing-rod",
+      "key": "sf:82973c905293422b8c47e0bf82170757",
+      "class": "small",
+      "fit": {
+        "max": 2.2
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: fishing rods at the pier ends"
+    },
+    {
+      "id": "bay-yacht",
+      "key": "sf:0dd451f295d049cea20c17d3ffa87ee3",
+      "class": "structure",
+      "fit": {
+        "max": 24
+      },
+      "collision": "voxel",
+      "voxel": 0.5,
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: motor yachts in the marina"
+    },
+    {
+      "id": "bay-sailboat",
+      "key": "sf:76d0b1e24be14d2f9a524bfce3001aeb",
+      "class": "prop",
+      "fit": {
+        "max": 9
+      },
+      "collision": "voxel",
+      "voxel": 0.5,
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: sailing yachts on the pontoons"
+    },
+    {
+      "id": "bay-speedboat",
+      "key": "sf:ee69bea3e40849909d73f6a896e7382a",
+      "class": "prop",
+      "fit": {
+        "max": 6.5
+      },
+      "collision": "solid",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: speedboats on the pontoons"
+    },
+    {
+      "id": "bay-cruiser",
+      "key": "sf:fafb7f55aeae460a8dbac92968a9a141",
+      "class": "prop",
+      "fit": {
+        "max": 11
+      },
+      "collision": "solid",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: small cabin cruisers in the marina"
+    },
+    {
+      "id": "bay-jetski",
+      "key": "sf:c9e324b0a9284904b4a442080fc2a6ef",
+      "piece": "V1_JetSki_1_1",
+      "class": "small",
+      "fit": {
+        "max": 3
+      },
+      "collision": "solid",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: jet skis on the beach and the slipway"
+    },
+    {
+      "id": "bay-jetski-trailer",
+      "key": "sf:c9e324b0a9284904b4a442080fc2a6ef",
+      "piece": "V1_JetSkiTrailer_1_1",
+      "class": "small",
+      "fit": {
+        "max": 4.1
+      },
+      "collision": "solid",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: jet ski trailers on the slipway"
+    },
+    {
+      "id": "bay-kayak",
+      "key": "sf:8af477241e61413785ec8906f08bd2e9",
+      "class": "small",
+      "fit": {
+        "max": 4.9
+      },
+      "collision": "none",
+      "ring": "clutter",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: kayaks on the beach"
+    },
+    {
+      "id": "bay-palm",
+      "key": "sf:55690379305145488e20afb05fc687e6",
+      "piece": "Bark_4",
+      "class": "tree",
+      "fit": {
+        "y": 8
+      },
+      "materialAlias": {
+        "Leaf_2": "Leaf_1",
+        "Leaf_3": "Leaf_1"
+      },
+      "collision": "none",
+      "ring": "bush",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: palms along the promenade and the streets"
+    },
+    {
+      "id": "bay-palm-2",
+      "key": "sf:55690379305145488e20afb05fc687e6",
+      "piece": "Bark_3",
+      "class": "tree",
+      "fit": {
+        "y": 6.5
+      },
+      "materialAlias": {
+        "Leaf_2": "Leaf_1",
+        "Leaf_3": "Leaf_1"
+      },
+      "collision": "none",
+      "ring": "bush",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: palms in the gardens and the squares"
+    },
+    {
+      "id": "bay-coconut-palm",
+      "key": "sf:26e787f2ff2e4c0fb004c3b0210805a3",
+      "exclude": [
+        "Tree_1_Tree_1Mat_0",
+        "Tree_3"
+      ],
+      "class": "tree",
+      "fit": {
+        "y": 7.5
+      },
+      "collision": "none",
+      "ring": "bush",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: leaning coconut palms on the beach"
+    },
+    {
+      "id": "bay-lounge-chair",
+      "key": "sf:6a6c0f882e0e444c9d95dee1b0cadda1",
+      "piece": "LoungeChair",
+      "class": "small",
+      "fit": {
+        "max": 1.05
+      },
+      "collision": "solid",
+      "ring": "furniture",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: terrace armchairs at the villas and the beach club"
+    },
+    {
+      "id": "bay-lounge-sofa",
+      "key": "sf:6a6c0f882e0e444c9d95dee1b0cadda1",
+      "piece": "LoungeSofa",
+      "class": "small",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "ring": "furniture",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: terrace sofas at the villas and the beach club"
+    },
+    {
+      "id": "bay-lounge-table",
+      "key": "sf:6a6c0f882e0e444c9d95dee1b0cadda1",
+      "piece": "LoungeTable",
+      "class": "small",
+      "fit": {
+        "max": 1.2
+      },
+      "collision": "solid",
+      "ring": "furniture",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: terrace tables at the villas and the beach club"
+    },
+    {
+      "id": "bay-beach-table",
+      "key": "sf:e559392994e04527b3f5ee35a8c3c418",
+      "class": "small",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "voxel",
+      "ring": "clutter",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: tables under parasols at the beach bar"
+    },
+    {
+      "id": "bay-lifeguard-chair",
+      "key": "sf:48c2980846c542a3bbd75bd36b2c3a61",
+      "class": "prop",
+      "fit": {
+        "y": 2.8
+      },
+      "collision": "voxel",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: the beach's lifeguard chairs"
+    },
+    {
+      "id": "bay-parasol",
+      "key": "sf:66c18ecd7a834d4a99dabc46b5ee6e4a",
+      "piece": "UMBRELLA1",
+      "class": "small",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: beach parasols"
+    },
+    {
+      "id": "bay-sunbed",
+      "key": "sf:66c18ecd7a834d4a99dabc46b5ee6e4a",
+      "piece": "B_CHAIR1",
+      "class": "small",
+      "fit": {
+        "max": 1.9
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: sunbeds under the parasols"
+    },
+    {
+      "id": "bay-surfboard",
+      "key": "sf:66c18ecd7a834d4a99dabc46b5ee6e4a",
+      "piece": "SURFBOARD",
+      "class": "small",
+      "fit": {
+        "y": 2.1
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: surfboards stood in the sand"
+    },
+    {
+      "id": "bay-volley-net",
+      "key": "sf:66c18ecd7a834d4a99dabc46b5ee6e4a",
+      "piece": "VOLLEYBALL2",
+      "class": "small",
+      "fit": {
+        "max": 9
+      },
+      "collision": "none",
+      "ring": "clutter",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: the beach volleyball court's net"
+    },
+    {
+      "id": "bay-beach-flag",
+      "key": "sf:66c18ecd7a834d4a99dabc46b5ee6e4a",
+      "piece": "FLAG",
+      "class": "small",
+      "fit": {
+        "y": 3
+      },
+      "collision": "none",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: the lifeguards' flags on the beach"
+    },
+    {
+      "id": "bay-pergola",
+      "key": "sf:eca838f2af7b4969813747fbc64f207f",
+      "class": "structure",
+      "fit": {
+        "y": 2.8
+      },
+      "collision": "voxel",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: pergolas over the villas' terraces and the promenade"
+    },
+    {
+      "id": "bay-street-lamp",
+      "key": "sf:6881aa1e84b047d79860fa9297e05e22",
+      "class": "small",
+      "noEmissive": true,
+      "fit": {
+        "y": 5.5
+      },
+      "collision": "voxel",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: modern lamps along the promenade and the marina"
+    },
+    {
+      "id": "bay-trash-can",
+      "key": "sf:3836ff67877248c2a820e6a969984aac",
+      "piece": "group",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: wheelie bins by the houses"
+    },
+    {
+      "id": "bay-planter",
+      "key": "sf:5f29539fda3748789361bb57e6b3c3e7",
+      "piece": "vase_Flower_Pot_",
+      "class": "small",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: flower pots on the terraces and the promenade"
+    },
+    {
+      "id": "bay-bike-stand",
+      "key": "sf:597656d383f94bca8fa098905a126ee1",
+      "class": "small",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "ring": "detail",
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: bicycle stands on the promenade"
+    },
+    {
+      "id": "cove-house-red",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Fisher's Cove: a narrow red harbour house, two floors under a clay-tile gable (procedural, 2026-11-17)"
+    },
+    {
+      "id": "cove-house-yellow",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Fisher's Cove: a tall ochre harbour house, three floors, a balcony over the harbour (procedural, 2026-11-17)"
+    },
+    {
+      "id": "cove-house-blue",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Fisher's Cove: a blue harbour house, two floors, a balcony over the door (procedural, 2026-11-17)"
+    },
+    {
+      "id": "cove-house-green",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Fisher's Cove: the green chandlery on the quay, a shop window and an awning, a flat over it (procedural, 2026-11-17)"
+    },
+    {
+      "id": "cove-house-salmon",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Fisher's Cove: a tall salmon-pink harbour house, three floors (procedural, 2026-11-17)"
+    },
+    {
+      "id": "cove-house-white",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Fisher's Cove: a white harbour house with blue shutters' trim, two floors (procedural, 2026-11-17)"
+    },
+    {
+      "id": "cove-house-orange",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Fisher's Cove: an orange harbour house, two floors, a balcony to the sea (procedural, 2026-11-17)"
+    },
+    {
+      "id": "bay-villa-white",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Bayview: a white two-storey villa, a pergola over the front terrace, a roof terrace (procedural, 2026-11-17)"
+    },
+    {
+      "id": "bay-villa-cream",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Bayview: a cream villa with terracotta trim, two floors, a roof terrace (procedural, 2026-11-17)"
+    },
+    {
+      "id": "bay-townhouse-pink",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Bayview: a narrow pink town house, three floors and a roof terrace (procedural, 2026-11-17)"
+    },
+    {
+      "id": "bay-townhouse-yellow",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Bayview: a narrow pale-yellow town house, three floors and a roof terrace (procedural, 2026-11-17)"
+    },
+    {
+      "id": "bay-apartments",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Bayview: a white block of flats over the marina, four floors, balconies, a roof terrace (procedural, 2026-11-17)"
+    },
+    {
+      "id": "bay-beach-club",
+      "procedural": "art/blender/br/build_coast.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Bayview: the glass-fronted beach club on the promenade, a roof terrace over the sea (procedural, 2026-11-17)"
     }
   ],
   "skipped": [

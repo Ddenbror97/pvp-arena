@@ -528,6 +528,22 @@ for (const item of work) {
           m.setBaseColorTexture(null);
           m.setBaseColorFactor([...item.colour.map((c) => Math.pow(c, 2.2)), 1]);
         }
+    // `materialAlias` ({ from: to }, material names): primitives drawn with `from` use `to`
+    // instead, for packs whose variants are the same texture layout in other tints (the
+    // palms' three leaf colours: one draw instead of three).
+    if (item.materialAlias) {
+      const byName = new Map(
+        doc
+          .getRoot()
+          .listMaterials()
+          .map((m) => [m.getName(), m]),
+      );
+      for (const mesh of doc.getRoot().listMeshes())
+        for (const p of mesh.listPrimitives()) {
+          const to = byName.get(item.materialAlias[p.getMaterial()?.getName() ?? ""]);
+          if (to) p.setMaterial(to);
+        }
+    }
     const bounds = bake(doc, scale, item.piece, item.exclude, item.zUp, xf);
     // `dropFloor` (m): the flat ground a download stands on (a wreck's painted sand plate) cut
     // away: triangles facing up whose three corners lie within this height of the bottom.
