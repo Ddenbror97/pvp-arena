@@ -73,6 +73,14 @@ export type GaitPose = {
   /** Pelvis yaw and roll (rad) in root space. */
   yaw: number;
   roll: number;
+  /**
+   * For the upper body to follow the legs: which foot leads (-1 the left is a full stride
+   * ahead … +1 the right), how far into moving (0 still … 1 walking), and the pace (0 a walk
+   * … 1 the run), each at the blend of this frame.
+   */
+  lead: number;
+  moving: number;
+  pace: number;
 };
 
 const ease = (e0: number, e1: number, x: number) => {
@@ -140,6 +148,9 @@ export class Gait {
     swayZ: 0,
     yaw: 0,
     roll: 0,
+    lead: 0,
+    moving: 0,
+    pace: 0,
   };
 
   /**
@@ -273,6 +284,11 @@ export class Gait {
     p.swayZ = -sz * unit * moving;
     p.yaw = yaw * moving;
     p.roll = -roll * moving;
+    // Lead from the feet themselves (forward is -z), so it is in step whatever the clip blend.
+    const reach = Math.max(0.05, 0.45 * unit * (0.6 + 0.4 * pace));
+    p.lead = Math.max(-1, Math.min(1, (p.left[2] - p.right[2]) / reach)) * moving;
+    p.moving = moving;
+    p.pace = pace * (1 - crouch);
     return p;
   }
 }

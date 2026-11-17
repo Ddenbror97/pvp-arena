@@ -128,6 +128,10 @@ declare global {
       /** Shader check only: you throw a grenade of this type at your feet. */
       throwNade?: (type: "he" | "smoke" | "fire") => void;
       /** Shader check only: the other player picks this gun up (and holds it). */
+      /** Gun checks: the other player holds only `item` (null: the knife). */
+      otherHold?: (item: string | null) => void;
+      /** Gun checks: turn the other player by `by` rad (seen from the side). */
+      otherTurn?: (by: number) => void;
       otherGun?: (item: string) => void;
       /** Spot checks (spot-capture.mjs): stand the local player at world (x, y, z), the other
        * player 60 m away; no input mirrored. `y` omitted: on whatever is under (x, z) below
@@ -602,6 +606,20 @@ const ready = (async () => {
     const d = ITEMS[item as keyof typeof ITEMS] as { magazine: number };
     pickUp(o.kit, { item: item as keyof typeof ITEMS, qty: 1, mag: d.magazine });
     o.kitVersion++;
+  };
+  window.sim.otherHold = (item) => {
+    const o = state.seats[other]!;
+    o.kit.guns = o.kit.guns.map(() => null) as typeof o.kit.guns;
+    o.kit.active = -1;
+    if (item) {
+      const d = ITEMS[item as keyof typeof ITEMS] as { magazine: number };
+      pickUp(o.kit, { item: item as keyof typeof ITEMS, qty: 1, mag: d.magazine });
+      o.kit.active = o.kit.guns.findIndex((g) => g?.item === item);
+    }
+    o.kitVersion++;
+  };
+  window.sim.otherTurn = (by) => {
+    state.seats[other]!.yaw += by;
   };
   window.sim.toGas = () => {
     const b = state.seats[me]!.body;
