@@ -206,46 +206,6 @@
   z-index: 2;
   background: linear-gradient(#090511aa, transparent);
 }
-.duel-score {
-  grid-column: 2;
-  grid-row: 1;
-  display: flex;
-  gap: 22px;
-  align-items: center;
-  background: #10091de6;
-  border: 1px solid #79509d88;
-  padding: 12px 24px;
-  border-radius: 7px;
-}
-.duel-score > span {
-  font-size: 12px;
-  color: #9c8cac;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.duel-score b {
-  color: #e4d7ef;
-  font-size: 30px;
-}
-.duel-score .you b {
-  color: #bc83ff;
-}
-.duel-score > div {
-  text-align: center;
-}
-.duel-score small {
-  font-size: 9px;
-  color: #a996bf;
-  letter-spacing: 0.1em;
-  display: block;
-}
-.duel-score strong {
-  display: block;
-  font-size: 18px;
-  margin-top: 3px;
-  font-variant-numeric: tabular-nums;
-}
 .duel-hud-actions {
   grid-column: 3;
   grid-row: 1;
@@ -517,20 +477,6 @@
   }
 }
 @media (max-width: 760px) {
-  .duel-score {
-    padding: 10px;
-    gap: 10px;
-  }
-  .duel-score b {
-    font-size: 23px;
-  }
-  .duel-score > span {
-    font-size: 10px;
-    gap: 6px;
-  }
-  .duel-score small {
-    font-size: 7px;
-  }
   .duel-hud-top {
     padding: 10px;
   }
@@ -753,13 +699,6 @@
 .duel-game[data-arena-ready="false"] .duel-render-host {
   visibility: hidden;
 }
-.duel-score > div {
-  width: 148px;
-  flex-shrink: 0;
-}
-.duel-score > span {
-  min-width: 110px;
-}
 .duel-halftime-detail {
   color: #d7b5ff;
   margin: -10px 0 20px;
@@ -790,12 +729,6 @@
   white-space: nowrap;
 }
 @media (max-width: 760px) {
-  .duel-score > div {
-    width: 105px;
-  }
-  .duel-score > span {
-    min-width: 28px;
-  }
   .duel-health strong,
   .duel-ammo strong {
     min-width: 120px;

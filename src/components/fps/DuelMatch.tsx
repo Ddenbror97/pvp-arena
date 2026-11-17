@@ -1,3 +1,4 @@
+import { MatchScoreHud } from "./MatchScoreHud";
 import { FullscreenButton } from "./FullscreenButton";
 import {
   defaultStrikeBinds,
@@ -40,7 +41,7 @@ import { MatchResult } from "./MatchResult";
 import { walletQuery } from "@/lib/jackpot/api";
 import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
-import { characterSide, isHalftime, sideName } from "@/lib/fps/sides";
+import { characterSide, halftimeRound, isHalftime } from "@/lib/fps/sides";
 import { useMatchLeaveGuard } from "@/lib/fps/match-guard";
 import "./duel.css";
 import "./sniper-scope.css";
@@ -716,6 +717,18 @@ export function DuelMatch({
   const buyStatus =
     frame && seat ? buyBlocked(duelBuyWindow(frame.state, seat, now + serverOffset.current)) : null;
   const myPrimary: Primary = me ? primaryOf(me) : "rifle";
+  const scoreLeft: Seat = seat ?? "A";
+  const scoreRight: Seat = scoreLeft === "A" ? "B" : "A";
+  const scoreSide = (s: Seat): "police" | "terrorist" =>
+    (frame ? characterSide(frame.state, s) : s) === "A" ? "police" : "terrorist";
+  const scorePlayer = (s: Seat) => [
+    {
+      slot: s === "A" ? 0 : 1,
+      team: scoreSide(s),
+      name: players[s === "A" ? 0 : 1]?.username ?? "Player",
+      alive: !frame || frame.state.players[s].hp > 0,
+    },
+  ];
   const phase = frame?.state.phase ?? "waiting";
   const seconds = frame
     ? Math.max(0, Math.ceil((frame.state.phaseEndsAt - now - serverOffset.current) / 1000))
@@ -805,28 +818,42 @@ export function DuelMatch({
         </div>
       )}
       <header className="duel-hud-top">
-        <div className="duel-score">
-          <span className={seat === "A" ? "you" : ""}>
-            {frame ? sideName(frame.state, "A") : "Anti-Terrorist"}{" "}
-            <b>{frame?.state.score.A ?? match?.score_a ?? 0}</b>
-          </span>
-          <div>
-            <small>
-              BEST OF {match?.best_of ?? 5} · ROUND {frame?.state.round ?? 1}
-            </small>
-            <strong>
-              {phase === "live"
-                ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
-                : frame && isHalftime(frame.state)
-                  ? "HALFTIME"
-                  : "PVPSTRIKE"}
-            </strong>
-          </div>
-          <span className={seat === "B" ? "you" : ""}>
-            <b>{frame?.state.score.B ?? match?.score_b ?? 0}</b>{" "}
-            {frame ? sideName(frame.state, "B") : "Terrorist"}
-          </span>
-        </div>
+        <MatchScoreHud
+          left={{
+            team: scoreSide(scoreLeft),
+            score:
+              frame?.state.score[scoreLeft] ??
+              (scoreLeft === "A" ? match?.score_a : match?.score_b) ??
+              0,
+            players: scorePlayer(scoreLeft),
+          }}
+          right={{
+            team: scoreSide(scoreRight),
+            score:
+              frame?.state.score[scoreRight] ??
+              (scoreRight === "A" ? match?.score_a : match?.score_b) ??
+              0,
+            players: scorePlayer(scoreRight),
+          }}
+          bestOf={frame?.state.bestOf ?? match?.best_of ?? 13}
+          round={frame?.state.round ?? 1}
+          half={
+            frame?.state.sideVersion === 1
+              ? frame.state.round > halftimeRound(frame.state)
+                ? 2
+                : 1
+              : undefined
+          }
+          clock={
+            phase === "live" || phase === "countdown"
+              ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
+              : frame && isHalftime(frame.state)
+                ? "HALFTIME"
+                : phase === "round-end"
+                  ? "ROUND OVER"
+                  : "WAITING"
+          }
+        />
         <div className="duel-hud-actions">
           <span
             className={connection === "Connected" ? "duel-connected duel-network-status" : ""}
