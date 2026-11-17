@@ -531,6 +531,8 @@ const SHORE_NEAR_M = 2;
 const SHORE_FAR_M = 13.7;
 const AMBIENCE_STEP = 20;
 const SNOW_AMBIENCE = [320, 390] as const;
+/** The jungle's sound fades out over this far beyond Forgotten Ruins' radius. */
+const JUNGLE_FADE_M = 90;
 const smooth = (a: number, b: number, x: number) => {
   const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
   return t * t * (3 - 2 * t);
@@ -2503,9 +2505,22 @@ export function createBrArena(
       const ground = hf.heightAt(body.x, body.z);
       const near = 1 - smooth(25, 90, body.y - ground);
       const plane = body.phase === "plane";
+      // Forgotten Ruins' jungle (owner, 2026-11-17: "use this audio to be played while
+      // enter/close to the location"): full inside the ruins' jungle, fading out over the
+      // JUNGLE_FADE_M beyond it; it takes the forest loop's place there.
+      const ruins = island.meta.pois.find((p) => p.id === "forgotten-ruins");
+      const jungle = ruins
+        ? 1 -
+          smooth(
+            ruins.radius,
+            ruins.radius + JUNGLE_FADE_M,
+            Math.hypot(body.x - ruins.x, body.z - ruins.z),
+          )
+        : 0;
       audio.setAmbience(
         plane ? 0 : near * smooth(0.12, 0.6, trees / 25),
         plane ? 0 : near * smooth(SNOW_AMBIENCE[0], SNOW_AMBIENCE[1], ground),
+        plane ? 0 : (1 - smooth(40, 120, body.y - ground)) * jungle,
       );
       // Waves on the shore (owner, 2026-11-12: "should hear it when getting 10-15 yards away
       // from any water with waves, light sound"): the nearest water, looked for along eight

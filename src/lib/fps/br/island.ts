@@ -110,6 +110,8 @@ const PLANTED: Record<string, Species | undefined> = {
   "tree-pine": "pine",
   "tree-oak": "broadleaf",
   "tree-birch": "birch",
+  "tree-jungle": "jungle",
+  "tree-palm": "palm",
 };
 
 /** A tree-free circle (x, z, radius) around each placed model's collision footprint. */

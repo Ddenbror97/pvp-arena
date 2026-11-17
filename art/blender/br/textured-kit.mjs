@@ -32,6 +32,11 @@ export const MATERIALS = {
   // Generated (make_location_textures.py, 2026-11-15): sheet metal and clay roof tiles.
   metal: { tex: "corrugated", tile: 2.0, rough: 0.6, metal: 0.3 },
   rooftile: { tex: "rooftile", tile: 1.6, rough: 0.85 },
+  // Generated (make_ruins_textures.py, 2026-11-17): Forgotten Ruins' Maya stone.
+  mayastone: { tex: "mayastone", tile: 2.6, rough: 0.95 },
+  mossstone: { tex: "mossstone", tile: 2.6, rough: 0.97 },
+  flagstone: { tex: "flagstone", tile: 3.2, rough: 0.95 },
+  glyphs: { tex: "glyphs", tile: 1.8, rough: 0.92 },
   paint: { tex: null, rough: 0.85 },
   glass: { tex: null, rough: 0.15, glass: true },
 };

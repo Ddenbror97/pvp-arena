@@ -105,7 +105,10 @@ describe("Project Island models", () => {
     // 2026-11-14; the Old Dam's spillway section (the USACE gravity dam), ~1 MB, 2026-11-14;
     // the locations upgrade's 32 downloads (Eastport's cranes, ships and port machines, the
     // military base's aircraft and launchers, the airfield's aircraft, the villages' huts and
-    // market), its 22 enterable buildings and the terminal's containers, ~7.6 MB, 2026-11-15).
-    expect(total / 1024).toBeLessThan(61);
+    // market), its 22 enterable buildings and the terminal's containers, ~7.6 MB, 2026-11-15;
+    // Forgotten Ruins' 13 procedural Maya buildings and the owner's 64 downloads for its
+    // rainforest (two tree species, undergrowth, statues, stelae, rocks, the camp), ~7.9 MB,
+    // 2026-11-17).
+    expect(total / 1024).toBeLessThan(68);
   });
 });

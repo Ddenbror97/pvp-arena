@@ -22,12 +22,12 @@ const buffer = (path: string) => {
 const tier = (k: number) => (k < 0.42 ? "easy" : k < 0.72 ? "medium" : "strong");
 
 export async function simulate(seeds: number[], maxMin = 40) {
-  const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
+  const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
   const collision = JSON.parse(
     readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
   ) as CollisionData;
-  const hf = await decodeHeightfield(buffer("public/fps/br/height.v2.hf"));
-  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
+  const hf = await decodeHeightfield(buffer("public/fps/br/height.v3.hf"));
+  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v2.lc"));
   const island = buildIsland(hf, cover, meta, collision);
   const results = [];
   for (const seed of seeds) {

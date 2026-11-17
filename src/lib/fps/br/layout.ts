@@ -2052,6 +2052,61 @@ const FOOT: Record<string, [number, number]> = {
   "private-jet": [20.0, 19.3],
   sx2190: [2.6, 9.5],
   a320: [34.2, 37.6],
+  // Forgotten Ruins (2026-11-17): the owner's downloads (trees by their trunks).
+  "tree-jungle": [2.5, 2.5],
+  "tree-palm": [2.5, 2.5],
+  "palm-small": [3.8, 3.4],
+  "bamboo-clump": [2.8, 2.8],
+  alocasia: [2.7, 2.8],
+  "elephant-ear": [3.9, 4.1],
+  "pink-plant": [0.9, 0.8],
+  "jungle-tall-plant": [1.4, 1.1],
+  "jungle-fan-plant": [1.8, 2.2],
+  "jungle-bulb-plant": [1.7, 1.5],
+  "jungle-thistle": [1.8, 1.8],
+  "jungle-fern": [2.2, 1.8],
+  "fern-sword": [2.8, 2.8],
+  "fern-cluster": [2.8, 2.9],
+  "fern-beech": [1.7, 1.5],
+  "fern-tall": [3.1, 2.6],
+  "grass-tall": [2.2, 2.2],
+  "rainforest-log": [6.0, 13],
+  "rainforest-log-b": [6.3, 15],
+  "monstera-a": [3.2, 2.5],
+  "aztec-god": [3.8, 1.2],
+  "dead-trunk": [1.9, 1.7],
+  kukulcan: [33.5, 34],
+  "root-rock": [16, 12.9],
+  "lily-pads": [5.2, 6],
+  lotus: [0.9, 1],
+  "mangrove-roots": [1.5, 1.2],
+  "mossy-rock-b": [4.4, 5],
+  "mossy-rock-c": [2.2, 2.5],
+  "mossy-stones": [1.2, 0.9],
+  "ruined-temple-prop": [8, 6.8],
+  "jungle-stump": [1.6, 1.4],
+  brazier: [0.8, 0.8],
+  "calendar-stone": [3.5, 0.4],
+  "aztec-effigy": [0.5, 0.5],
+  "stela-copan": [1.5, 1.2],
+  "column-torch": [1.1, 1.2],
+  "crates-barrels": [2.3, 4.5],
+  "jaguar-statue": [0.9, 1],
+  "honduran-statue": [1.0, 1.1],
+  "jungle-tent": [5, 2.2],
+  "rubble-pile": [1.3, 2.9],
+  "maya-head": [4.3, 6],
+  "croc-statue": [1.1, 1.0],
+  "maize-god": [1.2, 1.0],
+  "maya-statue-big": [2.3, 2.4],
+  "wooden-boxes": [1.4, 4],
+  "tribal-pillar": [2.4, 2.2],
+  "old-chest": [1, 0.6],
+  "pillar-ruin": [1.4, 1.0],
+  "oil-lantern": [0.3, 0.4],
+  "stela-tikal": [1.9, 1.1],
+  "stone-foundation": [9, 6.6],
+  "stone-statue": [1.2, 0.4],
 };
 for (const [id, b] of Object.entries(locationBuildings)) FOOT[id] = b.foot as [number, number];
 /** A footprint turned by quarter turns: [x extent, z extent]. */
@@ -2091,7 +2146,7 @@ type TownPalettes = {
 };
 
 /**
- * A town on its concept-map street grid (world.v1.json `town`): every built block gets buildings
+ * A town on its concept-map street grid (world.v2.json `town`): every built block gets buildings
  * along its four street fronts, facing the street, as many as the block's roof density on the map
  * calls for, with yards between them; sparse blocks get a few farm buildings; parked cars line
  * the streets. `landmarks` (model, x, z offsets from the POI, turn) are placed first. Buildings
@@ -2694,7 +2749,7 @@ function quarry(poi: Poi, out: Placement[], ctx: Context) {
 
 /**
  * Iron Peaks (E–F1): sniper positions (spec §3) on the summit perches the world builder flattens
- * (world.v1.json `perches`, highest first): a radio mast on the top summit as the landmark seen
+ * (world.v2.json `perches`, highest first): a radio mast on the top summit as the landmark seen
  * across the map, then guard towers and sandbag nests with an ammo crate.
  */
 function ironPeaks(poi: Poi, out: Placement[], ctx: Context) {
@@ -5688,7 +5743,280 @@ function furnishArena(
   at("soccer-ball", 0, 0.045, 0);
 }
 
+/**
+ * Forgotten Ruins (owner, 2026-11-17: "big neighborhood location … that have alot of
+ * deadspace/gras area … forgotten ruins … tropical forest … look like the prefered image",
+ * "a very realistic jungle/maya location with fun buildings/tunnels", "amazon enviroment",
+ * "nästan lika stor som downtown"): a Maya city lost in the rainforest
+ * (art/br/forgotten_ruins.py shaped its ground, art/blender/br/build_ruins.mjs built its
+ * buildings). Round the paved plaza: the great pyramid to the north facing it, the palace and
+ * its tower to the west, a temple to the east, the ball court and the acropolis (its tunnels)
+ * to the south before the escarpment and the cenote; an arch where the west causeway comes in.
+ * Out in the jungle: fallen temples, a scanned pyramid, broken walls, an expedition's camp, the
+ * giant kapok; everywhere the undergrowth (the owner's downloads): palms, monstera, ferns,
+ * bamboo, vines on the ruins, fallen trunks and mossy rocks.
+ */
+function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
+  const R = poi.radius;
+  const put = groundPlacer(ctx, out, poi.id, poi.x, poi.z, R + 40);
+  const at = (lx: number, lz: number) => [poi.x + lx, poi.z + lz] as [number, number];
+  /** The first spot near (lx, lz) (within `reach` m) where the model fits. */
+  const near = (
+    model: string,
+    lx: number,
+    lz: number,
+    turn: Placement["turn"],
+    reach = 12,
+    opts: { margin?: number; flat?: number } = { margin: 2, flat: 3 },
+  ) => {
+    const [cx, cz] = at(lx, lz);
+    return firstSpot(
+      put,
+      model,
+      turn,
+      spotsIn(cx - reach, cz - reach, cx + reach, cz + reach, 2, [cx, cz]),
+      opts,
+    );
+  };
+  // The plaza's monuments (the ground is flat there: placed exactly).
+  near("ruin-pyramid", 0, -72, 0, 6);
+  near("ruin-palace", -78, -8, 1, 8);
+  near("ruin-tower", -84, 38, 1, 8);
+  near("ruin-temple-a", 80, -14, 3, 8);
+  near("ruin-ballcourt", 18, 70, 1, 8);
+  near("ruin-acropolis", -62, 118, 2, 14, { margin: 2, flat: 4 });
+  near("ruin-arch", -128, -30, 1, 10, { margin: 1, flat: 3 });
+  // The plaza's paving: 20 m squares wherever no building stands (statues and stelae stand on
+  // it, so it is set down directly, under the placer's overlap test).
+  const big = out.filter((p) => p.poi === poi.id && p.model.startsWith("ruin-"));
+  for (let i = -5; i < 5; i++)
+    for (let j = -5; j < 5; j++) {
+      const lx = i * 20 + 10,
+        lz = j * 20 + 10;
+      if (Math.hypot(lx, lz) > 96) continue;
+      const [x, z] = at(lx, lz);
+      if (
+        big.some((p) => {
+          const [w, d] = footAt(p.model, p.turn);
+          return Math.abs(p.x - x) < w / 2 + 10 && Math.abs(p.z - z) < d / 2 + 10;
+        })
+      )
+        continue;
+      if (Math.abs(ctx.heightAt(x, z) - poi.padHeight!) > 0.3) continue;
+      out.push({ model: "ruin-paving", x, y: poi.padHeight!, z, turn: 0, poi: poi.id });
+    }
+  // The centre: an altar, the god, stelae in a row before the pyramid's stair.
+  near("calendar-stone", 0, 4, 2, 4);
+  near("aztec-god", 0, -38, 0, 4);
+  // Statues round the plaza (the owner's downloads), facing its middle.
+  for (const [m, lx, lz, turn] of [
+    ["stone-statue", -52, -34, 1],
+    ["maya-head", 54, 44, 3],
+    ["maize-god", -30, -48, 0],
+    ["jaguar-statue", 30, -48, 0],
+    ["croc-statue", 58, -40, 3],
+    ["jaguar-statue", -58, 46, 1],
+    ["honduran-statue", -24, 60, 2],
+    ["stone-statue", 24, 60, 2],
+    ["maya-statue-big", 70, 22, 3],
+    ["stela-copan", -66, -50, 1],
+    ["stela-tikal", 92, -50, 3],
+    ["stela-tikal", -46, 70, 2],
+    ["aztec-effigy", 46, 70, 2],
+    ["tribal-pillar", -96, -52, 1],
+    ["tribal-pillar", 100, 46, 3],
+    ["column-torch", -8, -40, 0],
+    ["column-torch", 8, -40, 0],
+    ["brazier", 70, -30, 3],
+    ["brazier", 70, 2, 3],
+  ] as const)
+    near(m, lx, lz, turn as Placement["turn"], 5, { margin: 0.8, flat: 1.5 });
+  // Standing pillars by the palace.
+  for (const lz of [-40, 24]) near("pillar-ruin", -58, lz, 1, 4, { margin: 0.5, flat: 1.5 });
+  for (const [lx, lz] of [
+    [-22, -30],
+    [22, -30],
+    [-40, 18],
+    [40, 18],
+    [-14, 34],
+    [14, 34],
+  ] as Array<[number, number]>)
+    near("ruin-stela", lx, lz, lz < 0 ? 0 : 2, 3);
+  // Out in the jungle: fallen temples, the scanned pyramid, another temple.
+  near("ruin-temple-b", 205, -150, 3, 20);
+  near("ruin-temple-b", -235, 150, 1, 20);
+  near("ruin-temple-a", -215, -175, 1, 20);
+  near("kukulcan", 250, 120, 3, 40, { margin: 3, flat: 3.5 });
+  near("ruin-temple-b", 150, 285, 2, 25);
+  near("stone-foundation", -120, -230, 0, 20, { margin: 2, flat: 3 });
+  near("stone-foundation", 230, 300, 1, 20, { margin: 2, flat: 3 });
+  near("stone-foundation", -320, 230, 2, 20, { margin: 2, flat: 3 });
+  // Giant tree roots on rock, east and west.
+  near("root-rock", 160, 40, 1, 14, { margin: 1, flat: 4 });
+  near("root-rock", -150, 90, 2, 14, { margin: 1, flat: 4 });
+  // Mossy boulders fallen from the escarpment (south, along the cliff's foot).
+  for (const [k, lx] of [-140, -90, -40, 60, 110, 160].entries())
+    near(k % 2 ? "mossy-rock-b" : "mossy-rock-c", lx, 186, (k & 3) as Placement["turn"], 10, {
+      margin: 1,
+      flat: 3,
+    });
+  // The expedition's camp by the east causeway: tents, crates, a generator, lights.
+  const camp = at(150, -70);
+  for (const [m, lx, lz, turn] of [
+    ["jungle-tent", 0, 0, 1],
+    ["tent-canvas", 0, 9, 1],
+    ["army-tent", 13, -7, 0],
+    ["gen-diesel", 12, 10, 0],
+    ["crates-barrels", 7, 15, 0],
+    ["wooden-boxes", -6, -8, 1],
+    ["military-crate", 4, 18, 1],
+    ["oil-lantern", 3, 4, 0],
+    ["old-chest", -3, 5, 1],
+    ["mil-jeep", -10, 14, 2],
+  ] as const)
+    firstSpot(
+      put,
+      m,
+      turn as Placement["turn"],
+      spotsIn(camp[0] + lx - 5, camp[1] + lz - 5, camp[0] + lx + 5, camp[1] + lz + 5, 1.5, [
+        camp[0] + lx,
+        camp[1] + lz,
+      ]),
+      { margin: 0.6, flat: 1.2 },
+    );
+  // The cenote's lilies (on the water, at its level).
+  const cenote = ctx.meta.waterBodies.find((w) => w.id === "ruins-cenote");
+  if (cenote) {
+    const cx = (cenote.bounds[0] + cenote.bounds[2]) / 2,
+      cz = (cenote.bounds[1] + cenote.bounds[3]) / 2;
+    for (const [m, dx, dz, t] of [
+      ["lily-pads", -5, 2, 0],
+      ["lily-pads", 6, -4, 1],
+      ["lotus", -3, -5, 0],
+      ["lotus", 4, 5, 2],
+    ] as const)
+      out.push({
+        model: m,
+        x: cx + dx,
+        y: cenote.level,
+        z: cz + dz,
+        turn: t as Placement["turn"],
+        poi: "shore",
+      });
+  }
+  // Broken walls: round the plaza and out through the jungle.
+  const walls = ["ruin-wall-long", "ruin-wall-short", "ruin-wall-corner"];
+  for (let k = 0; k < 46; k++) {
+    const a = hash(k, 7101) * Math.PI * 2,
+      d = 118 + hash(k, 7102) * (R - 130);
+    const [x, z] = at(Math.cos(a) * d, Math.sin(a) * d);
+    put(walls[k % 3]!, x, z, ((k * 3) & 3) as Placement["turn"], { margin: 1.5, flat: 1.4 });
+  }
+  // Rocks, roots, logs and stumps on the forest floor.
+  const floor = [
+    "mossy-rock-b",
+    "mossy-rock-c",
+    "mossy-stones",
+    "rainforest-log",
+    "rainforest-log-b",
+    "dead-trunk",
+    "jungle-stump",
+    "mangrove-roots",
+    "ruined-temple-prop",
+    "rubble-pile",
+    "rubble-pile",
+  ];
+  for (let k = 0; k < 110; k++) {
+    const a = hash(k, 7201) * Math.PI * 2,
+      d = 105 + hash(k, 7202) * (R - 100);
+    const [x, z] = at(Math.cos(a) * d, Math.sin(a) * d);
+    put(floor[k % floor.length]!, x, z, ((k * 7) & 3) as Placement["turn"], {
+      margin: 1,
+      flat: 1.6,
+    });
+  }
+  // The undergrowth: a jittered 6 m grid over the jungle (thinner in the plaza's clearing, none
+  // on its paving or the causeways), each spot a plant picked by the noise of where it is so
+  // they grow in patches: palms and bamboo, monstera and elephant ears, ferns and grass. Several
+  // thousand plants: tested against a grid of what stands here (the placer's list is linear).
+  const PATCHES: string[][] = [
+    ["monstera-a", "alocasia", "alocasia", "fern-sword", "jungle-fan-plant"],
+    ["elephant-ear", "jungle-tall-plant", "fern-cluster", "pink-plant", "monstera-a"],
+    ["palm-small", "fern-tall", "palm-small", "jungle-bulb-plant", "elephant-ear"],
+    ["bamboo-clump", "bamboo-clump", "fern-beech", "jungle-thistle", "jungle-fern"],
+    ["palm-small", "grass-tall", "fern-sword", "jungle-fern", "fern-cluster"],
+  ];
+  const CELL = 16;
+  const cellKey = (x: number, z: number) =>
+    (Math.floor(x / CELL) + 1024) * 4096 + Math.floor(z / CELL) + 1024;
+  const standing = new Map<number, Array<[number, number, number, number]>>();
+  for (const p of out) {
+    if (Math.abs(p.x - poi.x) > R + 120 || Math.abs(p.z - poi.z) > R + 120) continue;
+    const [w, d] = footAt(p.model, p.turn);
+    const b: [number, number, number, number] = [
+      p.x - w / 2,
+      p.z - d / 2,
+      p.x + w / 2,
+      p.z + d / 2,
+    ];
+    for (let x = Math.floor(b[0] / CELL); x <= Math.floor(b[2] / CELL); x++)
+      for (let z = Math.floor(b[1] / CELL); z <= Math.floor(b[3] / CELL); z++) {
+        const k = (x + 1024) * 4096 + z + 1024;
+        let list = standing.get(k);
+        if (!list) standing.set(k, (list = []));
+        list.push(b);
+      }
+  }
+  const step = 6;
+  for (let gx = -R - 60; gx <= R + 60; gx += step)
+    for (let gz = -R - 60; gz <= R + 60; gz += step) {
+      const lx = gx + (hash(gx, gz + 7301) - 0.5) * step,
+        lz = gz + (hash(gx + 7302, gz) - 0.5) * step;
+      const dist = Math.hypot(lx, lz);
+      if (dist > R + 40) continue;
+      const [x, z] = at(lx, lz);
+      const jungle = ctx.coverAt(x, z) === 4;
+      if (!jungle && hash(gx + 7303, gz) > (dist < 140 ? 0.12 : 0.3)) continue;
+      if (jungle && hash(gx + 7304, gz) > 0.6) continue;
+      const patch =
+        PATCHES[
+          Math.floor(hash(Math.floor(lx / 40), Math.floor(lz / 40) + 7305) * PATCHES.length)
+        ]!;
+      const m = patch[Math.floor(hash(gx + 7306, gz) * patch.length)]!;
+      const turn = (Math.floor(hash(gx, gz + 7307) * 4) & 3) as Placement["turn"];
+      const [w, d] = footAt(m, turn);
+      const r = Math.max(w, d) / 2 + 0.2;
+      if (
+        (standing.get(cellKey(x, z)) ?? []).some(
+          (b) => x + r > b[0] && x - r < b[2] && z + r > b[1] && z - r < b[3],
+        )
+      )
+        continue;
+      // It grows from the ground where it stands (the lowest point under it), on gentle ground,
+      // off the water, the roads and the runway.
+      const hs = [
+        [0, 0],
+        [-1, -1],
+        [1, -1],
+        [-1, 1],
+        [1, 1],
+      ].map(([sx, sz]) => ctx.heightAt(x + (sx! * w) / 2, z + (sz! * d) / 2));
+      const low = Math.min(...hs);
+      if (Math.max(...hs) - low > 0.8 || underwater(ctx.meta, x, z, low)) continue;
+      if (roadDistance(ctx.meta, x, z) < 4.6 + r || onRunway(ctx.meta, x, z, r + 60)) continue;
+      out.push({
+        model: m,
+        x: +x.toFixed(2),
+        y: +low.toFixed(2),
+        z: +z.toFixed(2),
+        turn,
+        poi: "countryside",
+      });
+    }
+}
+
 const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void> = {
+  "forgotten-ruins": forgottenRuins,
   "fishers-cove": fishersCove,
   bayview,
   eastport,

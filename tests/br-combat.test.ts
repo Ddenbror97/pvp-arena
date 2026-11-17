@@ -32,14 +32,14 @@ const buffer = (path: string) => {
   const f = readFileSync(path);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
 let hf: Heightfield, world: StaticWorld;
 beforeAll(async () => {
-  hf = await decodeHeightfield(buffer("public/fps/br/height.v2.hf"));
-  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v3.hf"));
+  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v2.lc"));
   world = buildIsland(hf, cover, meta, collision).solid;
 }, 60_000);
 

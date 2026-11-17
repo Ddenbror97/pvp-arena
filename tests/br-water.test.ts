@@ -100,7 +100,7 @@ describe("BR water at a dam (owner, 2026-11-16: the reservoir over the dam's fac
   it("keeps each lake on its own side of the Old Dam", async () => {
     const { readFileSync } = await import("node:fs");
     const { damCuts } = await import("@/lib/fps/br/water");
-    const world = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
+    const world = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
     const cuts = damCuts(world);
     const dam = world.bridges.find((b) => b.id === "old-dam")!;
     const [ax, az] = dam.a,
