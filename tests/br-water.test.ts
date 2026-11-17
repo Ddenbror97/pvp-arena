@@ -120,3 +120,12 @@ describe("BR water at a dam (owner, 2026-11-16: the reservoir over the dam's fac
     expect([...cuts.keys()].sort()).toEqual(["lake-3", "lake-4"]);
   });
 });
+
+describe("BR lakes seen edge-on (owner, 2026-11-16: a white line across the map)", () => {
+  it("mirror a dark bank towards grazing angles, the sea the horizon", () => {
+    const { shader } = compiled();
+    const f = shader.fragmentShader;
+    expect(f).toContain("float bank = vLake * (1.0 - smoothstep(");
+    expect(f).toMatch(/skyImage = mix\(skyImage, vec3\(0\.055, 0\.075, 0\.060\), bank \* 0\.8\)/);
+  });
+});

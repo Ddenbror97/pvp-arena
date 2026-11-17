@@ -24,6 +24,9 @@ const SEA_MARGIN = 15_000;
  * thin white line round every bank.
  */
 export const SHORE_FOAM_FULL_M = 45;
+/** What a lake mirrors at grazing angles: its far bank's trees and grass (linear colour). */
+export const LAKE_BANK = [0.055, 0.075, 0.06] as const;
+const LAKE_BANK_GLSL = `vec3(${LAKE_BANK.map((c) => c.toFixed(3)).join(", ")})`;
 export const SHORE_FOAM_GONE_M = 170;
 
 /**
@@ -410,6 +413,12 @@ export function createWater(
           mirror.y = abs(mirror.y) + 0.015;
           mirror = normalize(mirror);
           vec3 skyImage = brSky(mirror);
+          // An inland lake seen edge-on mirrors its far bank, not the open horizon: the haze
+          // there turned every distant lake into a white line across the land (owner,
+          // 2026-11-16: "white line cross the map in some camera angles"). Towards grazing the
+          // image takes the far shore's dark green-grey; the sea keeps the horizon.
+          float bank = vLake * (1.0 - smoothstep(0.02, 0.16, mirror.y));
+          skyImage = mix(skyImage, ${LAKE_BANK_GLSL}, bank * 0.8);
           float reflects = clamp(0.2 + fres - 0.2 * bottom, 0.0, 0.84) * (1.0 - 0.7 * film);
           // The clouds' image where the water is mirror enough to show it (two lookups).
           if (reflects > 0.3 && mirror.y > 0.03) {
