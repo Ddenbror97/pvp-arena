@@ -1,4 +1,4 @@
-import { useId, useState, type CSSProperties, type ReactNode } from "react";
+import { useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -6,6 +6,9 @@ import {
   Crosshair,
   Keyboard,
   SlidersHorizontal,
+  Maximize,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import type { StrikeSettings } from "@/lib/fps/settings";
@@ -70,6 +73,7 @@ export function GameSettings({
 }) {
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("game");
   const id = useId();
+  const lastVolume = useRef(settings.volume || 1);
   const tabs = TABS.filter((t) => t.id !== "keys" || extra);
   return (
     <Dialog
@@ -144,7 +148,37 @@ export function GameSettings({
                     </div>
                   </div>
                   {matchNotice}
-                  {displayActions && <div className="strike-quick-actions">{displayActions}</div>}
+                  <div className="strike-quick-actions">
+                    {displayActions ?? (
+                      <div>
+                        <button
+                          type="button"
+                          aria-pressed={settings.volume === 0}
+                          onClick={() => {
+                            if (settings.volume > 0) lastVolume.current = settings.volume;
+                            onChange({
+                              ...settings,
+                              volume: settings.volume > 0 ? 0 : lastVolume.current,
+                            });
+                          }}
+                        >
+                          {settings.volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                          {settings.volume === 0 ? "Enable audio" : "Mute audio"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const task = document.fullscreenElement
+                              ? document.exitFullscreen()
+                              : document.documentElement.requestFullscreen();
+                            void task.catch(() => {});
+                          }}
+                        >
+                          <Maximize size={16} /> Fullscreen
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <section className="strike-settings-card" aria-label="Controls">
                     <label className="strike-slider">
                       <span>Mouse sensitivity</span>
