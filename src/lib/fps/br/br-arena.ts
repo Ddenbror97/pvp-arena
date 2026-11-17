@@ -233,10 +233,14 @@ export type BrView = {
   zone?: BrZoneView & { hurt?: number };
   /** Eliminated: the player being watched. */
   watch?: { seat: number; name: string; kills: number };
+  /** An eliminated player's place, of how many started, and the damage they dealt. */
+  placed?: { place: number; of: number; damage: number };
   result?: {
     winner: number;
     winnerName: string | null;
     place: number;
+    /** How many started the match (players and bots). */
+    of?: number;
     kills: number;
     damage: number;
   };
@@ -304,6 +308,7 @@ export type BrHud = {
   /** Position and facing for the minimap (world metres; yaw radians). */
   me: { x: number; z: number; yaw: number };
   watch: BrView["watch"] | null;
+  placed: BrView["placed"] | null;
   result: BrView["result"] | null;
   vehicle: {
     name: string;
@@ -1386,7 +1391,23 @@ export function createBrArena(
 
   // ------------------------------------------------------------------ input
   const onKey = (down: boolean) => (e: KeyboardEvent) => {
-    if (down && e.isTrusted) audio.unlock();
+    if (down && e.isTrusted) {
+      audio.unlock();
+      // Back in the game with the mouse free (after the loading screen, or a screen closed with
+      // Escape): the first key press takes the mouse again (owner, 2026-11-16: "user have to
+      // click in to play the game"). A key press counts as the gesture the browser asks for;
+      // Escape does not, and the screen keys open their screens instead.
+      if (
+        !e.repeat &&
+        e.code !== "Escape" &&
+        e.code !== binds.inventory &&
+        e.code !== binds.map &&
+        e.code !== binds.tablet &&
+        e.code !== "KeyI" &&
+        !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+      )
+        takeMouse();
+    }
     if (e.code === "F3" && down) {
       e.preventDefault();
       overlay.toggle();
@@ -1506,6 +1527,21 @@ export function createBrArena(
     // Raw mouse deltas where the browser has them (no OS pointer acceleration), as in 1v1.
     if (!inventoryOpen) void capturePointer(renderer.domElement).catch(() => {});
   };
+  // In play with no screen open and the mouse free: take it (a key press or a click anywhere on
+  // the game that is not a button or a screen of its own).
+  const takeMouse = () => {
+    if (disposed || inventoryOpen || !scenePresented || kit?.dead || locked()) return;
+    lock();
+  };
+  const onPress = (e: MouseEvent) => {
+    if (!e.isTrusted || e.button !== 0 || locked()) return;
+    const at = e.target instanceof Element ? e.target : null;
+    if (!at || at === renderer.domElement) return; // the canvas's own click listener locks
+    if (!at.closest(".duel-game")) return;
+    if (at.closest("button,a,input,select,textarea,label,[role='dialog'],.br-inventory-layer"))
+      return;
+    takeMouse();
+  };
   const clearHeldControls = () => {
     canopyLook.release();
     keys.clear();
@@ -1524,6 +1560,7 @@ export function createBrArena(
   addEventListener("keyup", keyUp);
   addEventListener("mousemove", onMouse);
   addEventListener("mousedown", onDown);
+  addEventListener("mousedown", onPress);
   addEventListener("mouseup", onUp);
   addEventListener("wheel", onWheel, { passive: false });
   addEventListener("blur", clearHeldControls);
@@ -4159,6 +4196,7 @@ export function createBrArena(
           (2 * Math.PI),
         me: { x: body.x, z: body.z, yaw },
         watch: latest.watch ?? null,
+        placed: latest.placed ?? null,
         result: latest.result ?? null,
         drops: (latest.drops ?? [])
           .filter((d) => server >= d[4]!)
@@ -4376,6 +4414,7 @@ export function createBrArena(
       removeEventListener("keyup", keyUp);
       removeEventListener("mousemove", onMouse);
       removeEventListener("mousedown", onDown);
+      removeEventListener("mousedown", onPress);
       removeEventListener("mouseup", onUp);
       removeEventListener("wheel", onWheel);
       removeEventListener("blur", clearHeldControls);

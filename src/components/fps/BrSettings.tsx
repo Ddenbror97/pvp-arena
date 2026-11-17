@@ -22,10 +22,42 @@ import {
 } from "@/lib/fps/br/quality-tier";
 
 /**
- * The battle royale's own settings sections, shown inside the shared settings dialog
- * (GameSettings): graphics quality, view distance and key bindings (owner, 2026-11-04).
+ * The battle royale's own controls, under the shared sliders in the settings dialog
+ * (GameSettings): graphics quality and view distance (owner, 2026-11-04).
  */
-export function BrSettingsSections({
+export function BrSettingsGeneral({
+  value,
+  onChange,
+}: {
+  value: BrSettings;
+  onChange: (value: BrSettings) => void;
+}) {
+  return (
+    <>
+      <label className="strike-slider br-settings-view">
+        <span>View distance</span>
+        <output>{value.view.toLocaleString("en-US")} m</output>
+        <input
+          aria-label="View distance"
+          type="range"
+          min={VIEW_RANGE.min}
+          max={VIEW_RANGE.max}
+          step={VIEW_RANGE.step}
+          value={value.view}
+          onChange={(e) => onChange({ ...value, view: Number(e.target.value) })}
+        />
+        <small>
+          Far scenery, building detail and ground textures only: players, trees and rocks look the
+          same for everyone.
+        </small>
+      </label>
+      <BrGraphicsChoice />
+    </>
+  );
+}
+
+/** The battle royale's key bindings, across the settings dialog's full width. */
+export function BrKeyBindings({
   value,
   onChange,
 }: {
@@ -49,27 +81,19 @@ export function BrSettingsSections({
   }, [listening, value, onChange]);
   const groups = [...new Set(BR_ACTION_IDS.map((a) => BR_ACTIONS[a].group))];
   return (
-    <>
-      <BrGraphicsChoice />
-      <label className="br-settings-view">
-        View distance <output>{value.view.toLocaleString("en-US")} m</output>
-        <input
-          aria-label="View distance"
-          type="range"
-          min={VIEW_RANGE.min}
-          max={VIEW_RANGE.max}
-          step={VIEW_RANGE.step}
-          value={value.view}
-          onChange={(e) => onChange({ ...value, view: Number(e.target.value) })}
-        />
-        <small>
-          Lower it on slower computers, raise it on faster ones. It changes far scenery, building
-          detail and ground textures only: players, trees, bushes and rocks look the same for
-          everyone.
-        </small>
-      </label>
-      <fieldset className="br-settings-keys">
-        <legend>Key bindings</legend>
+    <section className="strike-settings-card br-settings-keys" aria-label="Key bindings">
+      <div className="br-keys-head">
+        <h3>Key bindings</h3>
+        <small>Fire and aim stay on the mouse buttons; Escape opens this menu.</small>
+        <button
+          type="button"
+          className="duel-secondary"
+          onClick={() => onChange({ ...value, binds: { ...DEFAULT_BR_SETTINGS.binds } })}
+        >
+          Reset keys
+        </button>
+      </div>
+      <div className="br-keys-columns">
         {groups.map((g) => (
           <div key={g} className="br-keys-group">
             <h4>{g}</h4>
@@ -88,18 +112,8 @@ export function BrSettingsSections({
             ))}
           </div>
         ))}
-        <div className="br-keys-foot">
-          <small>Fire and aim stay on the mouse buttons; Escape opens this menu.</small>
-          <button
-            type="button"
-            className="duel-secondary"
-            onClick={() => onChange({ ...value, binds: { ...DEFAULT_BR_SETTINGS.binds } })}
-          >
-            Reset keys
-          </button>
-        </div>
-      </fieldset>
-    </>
+      </div>
+    </section>
   );
 }
 
@@ -120,8 +134,8 @@ function BrGraphicsChoice() {
   const pending = wanted !== null ? wanted !== running : info?.reason === "override";
   return (
     <>
-      <label className="br-settings-view">
-        Graphics quality
+      <label className="strike-select br-settings-view">
+        <span>Graphics quality</span>
         <select
           aria-label="Graphics quality"
           value={choice}

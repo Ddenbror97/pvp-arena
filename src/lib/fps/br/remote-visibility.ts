@@ -18,14 +18,19 @@ export function brVisibleRows(
   for (const [seat, row] of rows) out.set(seat, right.rows.get(seat) ?? row);
 }
 
-/** Keep near/on-screen opponents on their full rigs instead of swapping at the nearest-16 edge. */
+/**
+ * Keep near/on-screen opponents on their full rigs instead of swapping at the nearest-16 edge.
+ * A player who has a rig keeps it until another is clearly nearer (0.6 of the squared distance,
+ * about 23 % nearer): with 0.8 two players at much the same range traded the rig back and forth,
+ * each swap a body becoming a stand-in for a moment (owner, 2026-11-16: bots "flicker").
+ */
 export function brActorPriority(
   distanceSquared: number,
   forwardDot: number,
   retained: boolean,
   alive: boolean,
 ) {
-  return distanceSquared * (forwardDot > 0.15 ? 1 : 4) * (retained ? 0.8 : 1) * (alive ? 1 : 4);
+  return distanceSquared * (forwardDot > 0.15 ? 1 : 4) * (retained ? 0.6 : 1) * (alive ? 1 : 4);
 }
 
 /**

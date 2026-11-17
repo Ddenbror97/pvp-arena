@@ -74,7 +74,7 @@ describe("BR line of sight", () => {
     expect(sight.visible(w.world, a, b, 1, 2, BR_RULES.sightRecheckMs)).toBe(true);
   });
 
-  it("keeps a pair in sight for sightHoldMs, then hides one who took cover", () => {
+  it("keeps a pair in sight for fogHoldMs after the last clear ray, then hides one who took cover", () => {
     const w = wallWorld(),
       sight = new BrSight();
     const a = body(-300, 400),
@@ -85,8 +85,12 @@ describe("BR line of sight", () => {
     const traced = w.rays.length;
     expect(sight.visible(w.world, a, b, 1, 2, BR_RULES.sightHoldMs - 1)).toBe(true);
     expect(w.rays).toHaveLength(traced);
-    expect(sight.visible(w.world, a, b, 1, 2, BR_RULES.sightHoldMs)).toBe(false);
+    // Still sent through the hold after the ray last found them (no flicker at a crest)...
+    expect(sight.visible(w.world, a, b, 1, 2, BR_RULES.sightHoldMs)).toBe(true);
+    // ...and left out once it has passed.
+    expect(sight.visible(w.world, a, b, 1, 2, BR_RULES.fogHoldMs)).toBe(false);
     expect(BR_RULES.sightHoldMs).toBeGreaterThanOrEqual(BR_RULES.sightRecheckMs);
+    expect(BR_RULES.fogHoldMs).toBeGreaterThan(BR_RULES.sightHoldMs);
   });
 
   it("never calls a pair hidden without a blocker, nor leaves one hidden past a recheck", () => {

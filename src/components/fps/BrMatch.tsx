@@ -10,7 +10,8 @@ import type { BrArenaControls, BrGraphics, BrHud, BrView } from "@/lib/fps/br/br
 import { BrGraphicsNotice } from "./BrGraphicsNotice";
 import { ArenaLoadingScreen } from "./ArenaLoadingScreen";
 import { GameSettings } from "./GameSettings";
-import { BrSettingsSections } from "./BrSettings";
+import { BrKeyBindings, BrSettingsGeneral } from "./BrSettings";
+import { LeaveConfirm } from "./LeaveConfirm";
 import {
   DEFAULT_STRIKE_SETTINGS,
   readStrikeSettings,
@@ -397,19 +398,6 @@ export function BrMatch() {
   useEffect(() => {
     arena.current?.setInventoryOpen(!!overlay || settingsOpen || confirmLeave);
   }, [overlay, settingsOpen, confirmLeave]);
-  const stay = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    if (!confirmLeave) return;
-    stay.current?.focus();
-    const cancel = (e: KeyboardEvent) => {
-      if (e.code === "Escape") {
-        e.preventDefault();
-        setConfirmLeave(false);
-      }
-    };
-    addEventListener("keydown", cancel);
-    return () => removeEventListener("keydown", cancel);
-  }, [confirmLeave]);
   const requestLeave = () => {
     setSettingsOpen(false);
     setConfirmLeave(true);
@@ -496,9 +484,15 @@ export function BrMatch() {
             hud={hud}
             out={feed.out}
             leave={
-              <button type="button" className="duel-primary" onClick={requestLeave}>
-                Leave
-              </button>
+              hud.result ? (
+                <Link to="/fps-duel" className="duel-primary">
+                  Back to lobby
+                </Link>
+              ) : (
+                <button type="button" className="duel-primary" onClick={requestLeave}>
+                  Leave match
+                </button>
+              )
             }
           />
         </>
@@ -512,7 +506,8 @@ export function BrMatch() {
           setSettingsOpen(false);
           arena.current?.relock();
         }}
-        extra={<BrSettingsSections value={brSettings} onChange={setBrSettings} />}
+        general={<BrSettingsGeneral value={brSettings} onChange={setBrSettings} />}
+        extra={<BrKeyBindings value={brSettings} onChange={setBrSettings} />}
         leaveAction={
           <button type="button" className="duel-secondary" onClick={requestLeave}>
             Leave match
@@ -520,10 +515,24 @@ export function BrMatch() {
         }
       />
       {map && arena.current && (
-        <TacticalMap arena={arena.current} alive={hud?.alive ?? null} close={() => setMap(false)} />
+        <TacticalMap
+          arena={arena.current}
+          alive={hud?.alive ?? null}
+          close={() => {
+            setMap(false);
+            arena.current?.relock();
+          }}
+        />
       )}
       {tablet && hud?.kit?.tablet && (
-        <BrTablet kit={hud.kit} act={(a) => arena.current?.act(a)} close={() => setTablet(false)} />
+        <BrTablet
+          kit={hud.kit}
+          act={(a) => arena.current?.act(a)}
+          close={() => {
+            setTablet(false);
+            arena.current?.relock();
+          }}
+        />
       )}
       {inventory && hud?.kit && (
         <div
@@ -537,7 +546,10 @@ export function BrMatch() {
             kit={hud.kit}
             nearby={hud.nearby}
             act={(a) => arena.current?.act(a)}
-            close={() => setInventory(false)}
+            close={() => {
+              setInventory(false);
+              arena.current?.relock();
+            }}
             figure={arena.current?.operatorFigure() ?? null}
             tabletKey={keyLabel(brSettings.binds.tablet)}
             {...(hud.kit.tablet
@@ -552,43 +564,13 @@ export function BrMatch() {
         </div>
       )}
       {confirmLeave && (
-        <div className="br-leave-shield" onClick={(e) => e.stopPropagation()}>
-          <section
-            role="alertdialog"
-            aria-modal="true"
-            aria-labelledby="br-leave-title"
-            className="duel-match-card"
-            onKeyDown={(e) => {
-              if (e.key !== "Tab") return;
-              const controls = e.currentTarget.querySelectorAll<HTMLElement>("button,a");
-              const first = controls[0],
-                last = controls[controls.length - 1];
-              if (e.shiftKey && document.activeElement === first) {
-                e.preventDefault();
-                last?.focus();
-              } else if (!e.shiftKey && document.activeElement === last) {
-                e.preventDefault();
-                first?.focus();
-              }
-            }}
-          >
-            <h2 id="br-leave-title">Leave this match?</h2>
-            <p>Return to the PvPStrike lobby?</p>
-            <div className="br-leave-actions">
-              <button
-                ref={stay}
-                type="button"
-                className="duel-primary"
-                onClick={() => setConfirmLeave(false)}
-              >
-                Stay in match
-              </button>
-              <Link to="/fps-duel" className="duel-secondary">
-                Leave match
-              </Link>
-            </div>
-          </section>
-        </div>
+        <LeaveConfirm
+          title="Leave this match?"
+          detail="You go back to the PvPStrike lobby."
+          stayLabel="Stay in match"
+          leaveLabel="Leave match"
+          onStay={() => setConfirmLeave(false)}
+        />
       )}
 
       <header className="duel-hud-top">

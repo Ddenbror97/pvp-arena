@@ -1884,6 +1884,8 @@ export class BrSight {
     {
       at: number;
       visible: boolean;
+      /** When the ray last found the pair in sight (−∞: never). */
+      seenAt: number;
       ax: number;
       ay: number;
       az: number;
@@ -1899,9 +1901,16 @@ export class BrSight {
   visible(world: StaticWorld, a: DropBody, b: DropBody, ia: number, ib: number, now: number) {
     const key = Math.min(ia, ib) * 1000 + Math.max(ia, ib);
     const hit = this.cache.get(key);
+    // Once in sight, a pair stays sent for `fogHoldMs` after the ray last found it, as in the
+    // near ring (owner, 2026-11-16: bots "flicker/gets invisible"). One eye-to-eye ray over a
+    // crest or along a cover's edge goes in and out of sight as the player bobs and strafes: the
+    // player was sent for 300 ms, left out for 100 ms, sent again, and so on. Real players took
+    // the same path; only bots move often enough there to show it.
+    const held = (h: { visible: boolean; seenAt: number }) =>
+      h.visible || now - h.seenAt < BR_RULES.fogHoldMs;
     if (hit) {
       const age = now - hit.at;
-      if (age < (hit.visible ? BR_RULES.sightHoldMs : BR_RULES.sightRecheckMs)) return hit.visible;
+      if (age < (hit.visible ? BR_RULES.sightHoldMs : BR_RULES.sightRecheckMs)) return held(hit);
       // Two players who have both stayed where they were (camping, looting, a bot holding an
       // angle) give the same ray against the same world: the answer stands a while longer
       // (performance audit 2026-11-11; these rays were 28 % of a full room's CPU time).
@@ -1913,7 +1922,7 @@ export class BrSight {
           (same(a, hit.ax, hit.ay, hit.az) && same(b, hit.bx, hit.by, hit.bz)) ||
           (same(a, hit.bx, hit.by, hit.bz) && same(b, hit.ax, hit.ay, hit.az))
         )
-          return hit.visible;
+          return held(hit);
       }
     }
     const eye = 1.6;
@@ -1957,6 +1966,7 @@ export class BrSight {
     if (hit) {
       hit.at = now;
       hit.visible = visible;
+      if (visible) hit.seenAt = now;
       hit.hx = hx;
       hit.hy = hy;
       hit.hz = hz;
@@ -1970,6 +1980,7 @@ export class BrSight {
       this.cache.set(key, {
         at: now,
         visible,
+        seenAt: visible ? now : -Infinity,
         ax: a.x,
         ay: a.y,
         az: a.z,
@@ -1980,7 +1991,7 @@ export class BrSight {
         hy,
         hz,
       });
-    return visible;
+    return visible || (hit !== undefined && now - hit.seenAt < BR_RULES.fogHoldMs);
   }
   private nearCache = new Map<number, NearPair>();
   /**
@@ -2695,12 +2706,17 @@ export function brViewFor(
     ...(me.dead && me.spectate !== undefined
       ? { watch: { seat: watched.seat, name: watched.name, kills: watched.kills } }
       : {}),
+    // The placement card (owner, 2026-11-16): the place an eliminated player finished in.
+    ...(me.dead && me.place !== undefined
+      ? { placed: { place: me.place, of: state.seats.length, damage: Math.round(me.damage) } }
+      : {}),
     ...(state.phase === "ending" || state.phase === "completed"
       ? {
           result: {
             winner: state.winner,
             winnerName: state.winner >= 0 ? state.seats[state.winner]!.name : null,
             place: me.place ?? 1,
+            of: state.seats.length,
             kills: me.kills,
             damage: Math.round(me.damage),
           },
