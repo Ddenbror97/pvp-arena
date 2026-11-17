@@ -2547,7 +2547,7 @@ button.br-inv-cell:hover {
   bottom: 112px;
 }
 /* The E prompt (owner, 2026-11-17: "less dark window, cleaner/leaner ux. its to big"): one slim
-   line, a small key cap, the name, then what E does and the detail, dimmer. A faint glass pill
+   line, a small key cap, the name, then what E does, dimmer (no detail). A faint glass pill
    (no blur: a backdrop filter is a full-screen pass every frame); a text shadow keeps it
    readable over snow and sky. The rarity colours a dot on the key and the tag. */
 .br-prompt {
@@ -2645,18 +2645,6 @@ button.br-inv-cell:hover {
   content: "·";
   margin-right: 8px;
   opacity: 0.5;
-}
-.br-prompt-act small {
-  font-size: inherit;
-  font-weight: 500;
-}
-.br-prompt-act small::before {
-  content: "·";
-  margin: 0 6px;
-  opacity: 0.5;
-}
-.br-prompt-act small.solo::before {
-  content: none;
 }
 @media (max-width: 1100px) {
   .br-bottom .duel-health,

@@ -297,14 +297,9 @@ export function BrCentre({
               {hud.prompt.name}
               {hud.prompt.rarity && <i>{hud.prompt.rarity}</i>}
             </span>
-            {(actShown || hud.prompt.detail) && (
-              <span className="br-prompt-act">
-                {actShown}
-                {hud.prompt.detail && (
-                  <small className={actShown ? "" : "solo"}>{hud.prompt.detail}</small>
-                )}
-              </span>
-            )}
+            {/* Only the action: no distances, counts or times (owner, 2026-11-17: "dont
+                display '30 rounds' / down the face 130 m. clean and lean"). */}
+            {actShown && <span className="br-prompt-act">{actShown}</span>}
           </div>
         </div>
       )}
