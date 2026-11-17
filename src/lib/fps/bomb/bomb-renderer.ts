@@ -1,5 +1,6 @@
 import { readStrikeBinds, strikeKey, type StrikeBinds } from "../key-bindings";
 import { clampPitch, mouseLook, moveAxes, PITCH_LIMIT, wrapYaw } from "@/lib/fps/look";
+import { isMacOS, MouseResampler } from "@/lib/fps/mouse-resample";
 import * as THREE from "three";
 import { isKarambitInspect } from "../karambit-animator";
 import { SHOT_AT_GAP_MS, SHOT_AT_M } from "../shot-awareness";
@@ -217,7 +218,8 @@ export function mountBombArena(
     depth: true,
     stencil: false,
     powerPreference: "high-performance",
-    desynchronized: true,
+    // Not on a Mac (isMacOS: frames out of step with the screen).
+    desynchronized: !isMacOS(),
   });
   if (!context) throw new Error("WebGL 2 is unavailable in this browser");
   const renderer = new THREE.WebGLRenderer({
@@ -697,7 +699,11 @@ export function mountBombArena(
     lastAwpDrawn = false,
     lastPrimary: Primary = "rifle";
   const locked = () => document.pointerLockElement === renderer.domElement;
+  // The mouse's reports are spread evenly over the frames (mouse-resample.ts: a Mac's 120 Hz
+  // screen against a ~125 Hz mouse or trackpad turned the view in uneven steps).
+  const looker = new MouseResampler();
   const clear = () => {
+    looker.reset();
     keys.clear();
     fire = fireLatched = alt = altLatched = reload = jump = false;
   };
@@ -717,12 +723,19 @@ export function mountBombArena(
     !suspended && latest?.phase === "live" && !!predicted && predicted.hp > 0 && !busy();
   const mouse = (e: MouseEvent) => {
     if (!locked()) return;
+    looker.push(e.movementX, e.movementY, e.timeStamp);
+  };
+  /** Turn the view by this frame's share of the mouse's movement. */
+  const applyLook = (now: number) => {
+    const { dx, dy } = looker.take(now);
+    if (!dx && !dy) return;
+    if (!locked()) return looker.reset();
     const look = HANDLING.sensitivity * sensitivity * scope.sensitivity();
-    const view = mouseLook(yaw, pitch, e.movementX, e.movementY, look);
+    const view = mouseLook(yaw, pitch, dx, dy, look);
     yaw = wrapYaw(view.yaw);
     pitch = view.pitch;
-    lookX += e.movementX;
-    lookY += e.movementY;
+    lookX += dx;
+    lookY += dy;
   };
   const GAME_KEYS = [
     "Space",
@@ -1087,6 +1100,7 @@ export function mountBombArena(
     }
     const controlled = focused && locked();
     previous = now;
+    applyLook(now);
     accumulator += tickDt;
     while (accumulator >= inputStepMs) {
       accumulator -= inputStepMs;
