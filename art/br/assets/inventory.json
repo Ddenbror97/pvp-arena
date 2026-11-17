@@ -3297,6 +3297,14 @@
    "list_match": null,
    "zips": [
     {
+     "path": "/mnt/user-data/uploads/25e088ff-a_speed_luxury_yacht_full_interior.zip",
+     "sha256": "acafa0662b9affae8248f12d68c29e6477456a296e773ae3cd0d2a38bd16e56a",
+     "size": 18513070,
+     "mtime": "2026-11-17T16:51:00-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    },
+    {
      "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/ad481c72-a_speed_luxury_yacht_full_interior.zip",
      "sha256": "acafa0662b9affae8248f12d68c29e6477456a296e773ae3cd0d2a38bd16e56a",
      "size": 18513070,

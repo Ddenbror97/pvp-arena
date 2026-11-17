@@ -3549,7 +3549,18 @@
         "max": 40
       },
       "use": "super yacht at anchor off Fisher's Cove: enterable decks, salon and cabins (landmark)",
-      "ring": "hero"
+      "ring": "hero",
+      "exclude": [
+        "3DGeom~1_Defintion_98",
+        "3DGeom~1_Defintion#1_99"
+      ],
+      "permissive": true,
+      "lodTris": [
+        52000,
+        16000,
+        4000
+      ],
+      "draws": 9
     },
     {
       "id": "fountain",
