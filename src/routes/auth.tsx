@@ -119,6 +119,8 @@ function AuthPage() {
       hash.get("error");
     const description = search.get("error_description") || hash.get("error_description") || "";
     if (!code && !description) return;
+    // The real reason stays in the console: the toast only says what the player can do.
+    console.warn("[auth] Discord sign-in returned", code, description);
     toast.error(discordSignInMessage(code ?? "", description));
     const url = new URL(window.location.href);
     for (const key of ["error", "error_code", "error_description"]) url.searchParams.delete(key);
