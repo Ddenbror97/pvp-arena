@@ -2053,6 +2053,36 @@ const FOOT: Record<string, [number, number]> = {
   sx2190: [2.6, 9.5],
   a320: [34.2, 37.6],
   // Forgotten Ruins (2026-11-17): the owner's downloads (trees by their trunks).
+  "coconut-palm": [2.0, 2.0],
+  "bald-cypress": [2.0, 2.0],
+  "banana-plant": [3.1, 3.0],
+  "banana-grove": [12.2, 11.9],
+  "palm-tall": [2.0, 2.0],
+  "palm-fan": [2.0, 2.0],
+  "palm-short": [2.6, 2.5],
+  "palm-young-a": [3.7, 3.5],
+  "palm-young-b": [3.0, 3.3],
+  "palm-clump": [6.1, 6.5],
+  "tall-tree": [2.0, 2.0],
+  "jungle-rock-a": [2.7, 3],
+  "jungle-rock-b": [2.5, 2.8],
+  "fern-grass": [3.6, 3.6],
+  "fern-big": [2.7, 2.8],
+  "fern-small": [1.7, 1.7],
+  "bounce-cap": [2.4, 3.2],
+  "big-bush": [4.5, 1.3],
+  "bush-round": [2.0, 0.9],
+  "tropical-plant": [0.9, 0.9],
+  "vines-hanging": [2.7, 1.3],
+  "vine-branch": [1.3, 1.4],
+  "vine-branch-b": [2.9, 2.5],
+  "aztec-shrine": [5, 4.0],
+  "lily-pad": [4.0, 4],
+  "mossy-stones-b": [0.9, 0.7],
+  "mossy-stones-c": [1, 0.9],
+  "aztec-pillar": [0.8, 0.8],
+  "treasure-chest": [1.4, 0.7],
+  "wooden-crate": [0.9, 0.6],
   "rope-bridge": [2.2, 16.4],
   "ancient-vase": [0.4, 0.3],
   "willys-jeep": [1.7, 3.4],
@@ -5887,6 +5917,9 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
     ["crates-barrels", 7, 15, 0],
     ["wooden-boxes", -6, -8, 1],
     ["military-crate", 4, 18, 1],
+    ["wooden-crate", 9, 18, 0],
+    ["wooden-crate", 10, 17.2, 1],
+    ["banana-plant", -8, -2, 0],
     ["oil-lantern", 3, 4, 0],
     ["old-chest", -3, 5, 1],
     ["willys-jeep", -10, 14, 2],
@@ -5922,7 +5955,24 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
     });
   };
   const pyramid = out.find((p) => p.model === "ruin-pyramid" && p.poi === poi.id);
-  if (pyramid) inPlace("skull-pile", pyramid, 2.4, 0.04, 2.4);
+  if (pyramid) {
+    inPlace("skull-pile", pyramid, 2.4, 0.04, 2.4);
+    inPlace("treasure-chest", pyramid, 1.8, 6.44, -11.5);
+    // Vines down the lowest tier's sides.
+    for (const [lx, lz, t] of [
+      [18.4, -8, 1],
+      [-18.4, 6, 3],
+      [10, -18.4, 2],
+    ] as const)
+      inPlace(
+        lx > 0 && t === 1 ? "vines-hanging" : t === 3 ? "vine-branch" : "vine-branch-b",
+        pyramid,
+        lx,
+        -0.4,
+        lz,
+        t,
+      );
+  }
   const great = out.find((p) => p.model === "ruin-great-temple" && p.poi === poi.id);
   if (great) {
     inPlace("skull-pile", great, 2.4, 2.44, -2.4);
@@ -5935,6 +5985,32 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
       inPlace("ancient-vase", great, lx, ly, lz);
     // A rope bridge over the outer gallery's fallen roof (its ends on the roof either side).
     inPlace("rope-bridge", great, 34, 5.0 - 0.26, -16);
+    // A chest in the tower's lookout room.
+    inPlace("treasure-chest", great, -1.6, 13.24, -1.8);
+    // Vines down the outer walls, two on each side (hung from the wall's top).
+    for (let s = 0; s < 4; s++)
+      for (const [k2, u] of [-14, 18].entries()) {
+        const [lx, lz] =
+          s === 0 ? [u, 36.7] : s === 1 ? [36.7, -u] : s === 2 ? [-u, -36.7] : [-36.7, u];
+        inPlace(
+          ["vines-hanging", "vine-branch", "vine-branch-b"][(s + k2) % 3]!,
+          great,
+          lx,
+          1.0,
+          lz,
+          s,
+        );
+      }
+    // Big ferns in its courts.
+    for (const [lx, lz, ly] of [
+      [-26, 30, 0.03],
+      [26, 28, 0.03],
+      [-28, -29, 0.03],
+      [29, -24, 0.03],
+      [-10, -14, 2.4],
+      [13, -12, 2.4],
+    ] as const)
+      inPlace("fern-big", great, lx, ly, lz);
     // Banners: two on the outer face of each gate tower, 4 m up.
     for (let s = 0; s < 4; s++)
       for (const u of [-4.2, 4.2]) {
@@ -5955,6 +6031,11 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
       ["lotus", 4, 5, 2],
       ["lotus", 1, 7, 3],
       ["lotus", -7, -2, 1],
+      ["lily-pad", -2, 3, 0],
+      ["lily-pad", 5, 1, 1],
+      ["lily-pad", -6, -6, 2],
+      ["lily-pad", 2, -7, 3],
+      ["lily-pad", 8, 5, 0],
     ] as const)
       out.push({
         model: m,
@@ -6008,6 +6089,47 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
     [200, 140, 3],
   ] as const)
     near("ruin-shrine", lx, lz, t as Placement["turn"], 10, { margin: 2, flat: 2 });
+  // Trees of their own among the town and the plaza's clearing (the vegetation leaves it
+  // open): tall palms and broadleaves, fan and coconut palms, banana groves by the houses; the
+  // cypresses by the cenote; shrines with offerings, carved pillars down the avenue north.
+  const TREES = ["palm-tall", "tall-tree", "coconut-palm", "palm-fan", "banana-grove", "palm-tall"];
+  for (let k = 0; k < 70; k++) {
+    const a = hash(k, 7401) * Math.PI * 2,
+      d = 60 + hash(k, 7402) * 170;
+    const [x, z] = at(Math.cos(a) * d, Math.sin(a) * d);
+    put(TREES[k % TREES.length]!, x, z, (k & 3) as Placement["turn"], { margin: 1, flat: 1.2 });
+  }
+  for (const [lx, lz] of [
+    [-12, 150],
+    [32, 152],
+    [-30, 186],
+    [48, 182],
+  ] as Array<[number, number]>)
+    near("bald-cypress", lx, lz, 0, 8, { margin: 1, flat: 2 });
+  for (const [lx, lz, t] of [
+    [-170, -150, 1],
+    [175, 220, 2],
+    [-240, 40, 1],
+  ] as const)
+    near("aztec-shrine", lx, lz, t as Placement["turn"], 15, { margin: 1.5, flat: 2 });
+  for (const lz of [-110, -126, -142, -158])
+    for (const lx of [-9, 9]) near("aztec-pillar", lx, lz, 0, 3, { margin: 0.4, flat: 1.5 });
+  // Heavier plants, a few each: short palms, palm clumps, tropical plants, banana plants.
+  for (let k = 0; k < 60; k++) {
+    const a = hash(k, 7501) * Math.PI * 2,
+      d = 130 + hash(k, 7502) * (R - 140);
+    const [x, z] = at(Math.cos(a) * d, Math.sin(a) * d);
+    put(
+      ["palm-short", "palm-clump", "tropical-plant", "banana-plant"][k % 4]!,
+      x,
+      z,
+      (k & 3) as Placement["turn"],
+      {
+        margin: 0.5,
+        flat: 0.8,
+      },
+    );
+  }
   // Broken walls: round the plaza and out through the jungle.
   const walls = ["ruin-wall-long", "ruin-wall-short", "ruin-wall-corner"];
   for (let k = 0; k < 46; k++) {
@@ -6029,8 +6151,12 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
     "ruined-temple-prop",
     "rubble-pile",
     "rubble-pile",
+    "jungle-rock-a",
+    "jungle-rock-b",
+    "mossy-stones-b",
+    "mossy-stones-c",
   ];
-  for (let k = 0; k < 110; k++) {
+  for (let k = 0; k < 150; k++) {
     const a = hash(k, 7201) * Math.PI * 2,
       d = 105 + hash(k, 7202) * (R - 100);
     const [x, z] = at(Math.cos(a) * d, Math.sin(a) * d);
@@ -6049,6 +6175,8 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
     ["palm-small", "fern-tall", "palm-small", "jungle-bulb-plant", "elephant-ear"],
     ["bamboo-clump", "bamboo-clump", "fern-beech", "jungle-thistle", "jungle-fern"],
     ["palm-small", "grass-tall", "fern-sword", "jungle-fern", "fern-cluster"],
+    ["fern-grass", "big-bush", "palm-young-a", "fern-small", "bush-round"],
+    ["palm-young-b", "bounce-cap", "fern-grass", "monstera-a", "big-bush"],
   ];
   const CELL = 16;
   const cellKey = (x: number, z: number) =>

@@ -1623,6 +1623,114 @@
     }
    ]
   },
+  "aztec-pillar": {
+   "title": "Aztec Temple",
+   "author": "cjmitchell",
+   "source": "https://sketchfab.com/3d-models/aztec-temple-3279eccde05346b3af53bf19f0f21690",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Forgotten Ruins (2026-11-17): carved pillar",
+   "scale": 0.022144,
+   "sourceTris": 474,
+   "size": [
+    0.81,
+    4.5,
+    0.81
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/aztec-pillar.lod0.glb",
+     "tris": 474,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 39,
+     "size": [
+      0.81,
+      4.5,
+      0.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/aztec-pillar.lod1.glb",
+     "tris": 474,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      0.81,
+      4.5,
+      0.81
+     ]
+    },
+    {
+     "file": "/fps/br/models/aztec-pillar.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.81,
+      4.5,
+      0.81
+     ]
+    }
+   ]
+  },
+  "aztec-shrine": {
+   "title": "Ancient Aztec Place",
+   "author": "Aydonyus",
+   "source": "https://sketchfab.com/3d-models/ancient-aztec-place-c3581295efcc4cabac24be3da76e8723",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Forgotten Ruins (2026-11-17): a small shrine with offerings in the jungle",
+   "scale": 0.982815,
+   "sourceTris": 18846,
+   "size": [
+    5,
+    3.75,
+    3.97
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/aztec-shrine.lod0.glb",
+     "tris": 2997,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 67,
+     "size": [
+      5,
+      3.75,
+      3.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/aztec-shrine.lod1.glb",
+     "tris": 1539,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 37,
+     "size": [
+      5,
+      3.75,
+      3.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/aztec-shrine.lod2.glb",
+     "tris": 338,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      5,
+      3.75,
+      3.97
+     ]
+    }
+   ]
+  },
   "bag-cart": {
    "title": "Airport baggage equipment (cart) lowpoly",
    "author": "propmaker1",
@@ -1732,6 +1840,60 @@
     }
    ]
   },
+  "bald-cypress": {
+   "title": "Great Bald Cypress",
+   "author": "BaptisteBerard",
+   "source": "https://sketchfab.com/3d-models/great-bald-cypress-dca97787b1b24fd8a0fb6bb536e383e3",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Forgotten Ruins (2026-11-17): cypress at the cenote and the river",
+   "scale": 0.015625,
+   "sourceTris": 7745,
+   "size": [
+    19.14,
+    18,
+    16.92
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bald-cypress.lod0.glb",
+     "tris": 2098,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 166,
+     "size": [
+      19.14,
+      18,
+      16.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/bald-cypress.lod1.glb",
+     "tris": 1812,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 79,
+     "size": [
+      19.14,
+      18,
+      16.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/bald-cypress.lod2.glb",
+     "tris": 1239,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 18,
+     "size": [
+      19.14,
+      18,
+      16.92
+     ]
+    }
+   ]
+  },
   "bamboo-clump": {
    "title": "Bamboo Bush",
    "author": "sujirour",
@@ -1782,6 +1944,114 @@
       2.76,
       5,
       2.78
+     ]
+    }
+   ]
+  },
+  "banana-grove": {
+   "title": "Banana Tree",
+   "author": "Duznot",
+   "source": "https://sketchfab.com/3d-models/banana-tree-43b0a0c41f0543d09f9501ca1fb1a7b1",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Forgotten Ruins (2026-11-17): banana grove",
+   "scale": 1.249889,
+   "sourceTris": 30466,
+   "size": [
+    12.22,
+    10,
+    11.93
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/banana-grove.lod0.glb",
+     "tris": 7999,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 117,
+     "size": [
+      12.22,
+      10,
+      11.93
+     ]
+    },
+    {
+     "file": "/fps/br/models/banana-grove.lod1.glb",
+     "tris": 3000,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 51,
+     "size": [
+      12.22,
+      10,
+      11.93
+     ]
+    },
+    {
+     "file": "/fps/br/models/banana-grove.lod2.glb",
+     "tris": 997,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      12.22,
+      10,
+      11.93
+     ]
+    }
+   ]
+  },
+  "banana-plant": {
+   "title": "Banana Tree",
+   "author": "Garecra",
+   "source": "https://sketchfab.com/3d-models/banana-tree-5cb46e64d7fc40978c3d6798017eced1",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Forgotten Ruins (2026-11-17): banana plants by the camp and the houses",
+   "scale": 1.015667,
+   "sourceTris": 5662,
+   "size": [
+    3.06,
+    4.2,
+    3.04
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/banana-plant.lod0.glb",
+     "tris": 4941,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 182,
+     "size": [
+      3.06,
+      4.2,
+      3.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/banana-plant.lod1.glb",
+     "tris": 4941,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 134,
+     "size": [
+      3.06,
+      4.2,
+      3.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/banana-plant.lod2.glb",
+     "tris": 4600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 24,
+     "size": [
+      3.06,
+      4.2,
+      3.04
      ]
     }
    ]
@@ -2653,6 +2923,60 @@
     }
    ]
   },
+  "big-bush": {
+   "title": "Tropical Forest",
+   "author": "Akii_4724",
+   "source": "https://sketchfab.com/3d-models/tropical-forest-18c03d71230d47d8906fd907a352cac5",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): big bush",
+   "scale": 1.856539,
+   "sourceTris": 416,
+   "size": [
+    4.52,
+    2.2,
+    1.29
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/big-bush.lod0.glb",
+     "tris": 416,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 42,
+     "size": [
+      4.52,
+      2.2,
+      1.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/big-bush.lod1.glb",
+     "tris": 175,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 19,
+     "size": [
+      4.52,
+      2.2,
+      1.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/big-bush.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 9,
+     "size": [
+      4.52,
+      2.2,
+      1.29
+     ]
+    }
+   ]
+  },
   "billboard": {
    "title": "Low Poly Billboard Sign - Standard",
    "author": "JeffK",
@@ -3298,6 +3622,60 @@
       110,
       26.68,
       93.08
+     ]
+    }
+   ]
+  },
+  "bounce-cap": {
+   "title": "Jungle Foliage (3)",
+   "author": "Cradle of the Cube",
+   "source": "https://sketchfab.com/3d-models/jungle-foliage-3-e5abbe590b594cbfaa4df7cce84d7c10",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): rainforest fungus shelf",
+   "scale": 0.992197,
+   "sourceTris": 919,
+   "size": [
+    2.38,
+    1.2,
+    3.17
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bounce-cap.lod0.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      2.38,
+      1.2,
+      3.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/bounce-cap.lod1.glb",
+     "tris": 175,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      2.38,
+      1.2,
+      3.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/bounce-cap.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 5,
+     "size": [
+      2.38,
+      1.2,
+      3.17
      ]
     }
    ]
@@ -4593,6 +4971,60 @@
       0.73,
       1.3,
       0.77
+     ]
+    }
+   ]
+  },
+  "bush-round": {
+   "title": "Tropical Forest",
+   "author": "Akii_4724",
+   "source": "https://sketchfab.com/3d-models/tropical-forest-18c03d71230d47d8906fd907a352cac5",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): round bush",
+   "scale": 1.948802,
+   "sourceTris": 336,
+   "size": [
+    2.05,
+    1.3,
+    0.91
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bush-round.lod0.glb",
+     "tris": 336,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 40,
+     "size": [
+      2.05,
+      1.3,
+      0.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/bush-round.lod1.glb",
+     "tris": 175,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 21,
+     "size": [
+      2.05,
+      1.3,
+      0.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/bush-round.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 9,
+     "size": [
+      2.05,
+      1.3,
+      0.91
      ]
     }
    ]
@@ -9301,6 +9733,60 @@
     }
    ]
   },
+  "coconut-palm": {
+   "title": "Coconut Palm",
+   "author": "evolveduk",
+   "source": "https://sketchfab.com/3d-models/coconut-palm-26e787f2ff2e4c0fb004c3b0210805a3",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Forgotten Ruins (2026-11-17): leaning coconut palm",
+   "scale": 1.432226,
+   "sourceTris": 6630,
+   "size": [
+    9.02,
+    9,
+    5.76
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/coconut-palm.lod0.glb",
+     "tris": 2117,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 110,
+     "size": [
+      9.02,
+      9,
+      5.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/coconut-palm.lod1.glb",
+     "tris": 890,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 53,
+     "size": [
+      9.02,
+      9,
+      5.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/coconut-palm.lod2.glb",
+     "tris": 598,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      9.02,
+      9,
+      5.76
+     ]
+    }
+   ]
+  },
   "coffee-cart": {
    "title": "Coffee Cart",
    "author": "Outlier Spa",
@@ -12436,6 +12922,60 @@
     }
    ]
   },
+  "fern-big": {
+   "title": "Tropical Plants Pack M02P",
+   "author": "MozzarellaARC",
+   "source": "https://sketchfab.com/3d-models/tropical-plants-pack-m02p-2f093afb792742438f0f7ba7eaab90f0",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): big fern",
+   "scale": 0.989452,
+   "sourceTris": 9792,
+   "size": [
+    2.73,
+    1.5,
+    2.75
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fern-big.lod0.glb",
+     "tris": 8314,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 109,
+     "size": [
+      2.73,
+      1.5,
+      2.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/fern-big.lod1.glb",
+     "tris": 8314,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 96,
+     "size": [
+      2.73,
+      1.5,
+      2.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/fern-big.lod2.glb",
+     "tris": 8314,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 92,
+     "size": [
+      2.73,
+      1.5,
+      2.75
+     ]
+    }
+   ]
+  },
   "fern-cluster": {
    "title": "Ferns Grass",
    "author": "RaffiBintang3D",
@@ -12486,6 +13026,114 @@
       2.75,
       0.8,
       2.86
+     ]
+    }
+   ]
+  },
+  "fern-grass": {
+   "title": "fern grass 01",
+   "author": "POLYSCAN",
+   "source": "https://sketchfab.com/3d-models/fern-grass-01-b0a96490483a48d2877d2ed8abc9e436",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): fern ground cover",
+   "scale": 0.237958,
+   "sourceTris": 14400,
+   "size": [
+    3.63,
+    0.8,
+    3.57
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fern-grass.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 42,
+     "size": [
+      3.63,
+      0.8,
+      3.57
+     ]
+    },
+    {
+     "file": "/fps/br/models/fern-grass.lod1.glb",
+     "tris": 568,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 20,
+     "size": [
+      3.63,
+      0.8,
+      3.57
+     ]
+    },
+    {
+     "file": "/fps/br/models/fern-grass.lod2.glb",
+     "tris": 200,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 11,
+     "size": [
+      3.63,
+      0.8,
+      3.57
+     ]
+    }
+   ]
+  },
+  "fern-small": {
+   "title": "Some Foliage",
+   "author": "soidev",
+   "source": "https://sketchfab.com/3d-models/some-foliage-5e806681504a4642a16a59c057d34e8d",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): small fern",
+   "scale": 0.00677,
+   "sourceTris": 384,
+   "size": [
+    1.74,
+    0.8,
+    1.68
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/fern-small.lod0.glb",
+     "tris": 384,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 41,
+     "size": [
+      1.74,
+      0.8,
+      1.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/fern-small.lod1.glb",
+     "tris": 174,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 17,
+     "size": [
+      1.74,
+      0.8,
+      1.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/fern-small.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 8,
+     "size": [
+      1.74,
+      0.8,
+      1.68
      ]
     }
    ]
@@ -18056,6 +18704,114 @@
     }
    ]
   },
+  "jungle-rock-a": {
+   "title": "Jungle Trees",
+   "author": "rhcreations",
+   "source": "https://sketchfab.com/3d-models/jungle-trees-7ac3988f9801479a994c8c7534d888b3",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "Forgotten Ruins (2026-11-17): mossy jungle rock",
+   "scale": 0.942478,
+   "sourceTris": 2904,
+   "size": [
+    2.66,
+    1.87,
+    3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/jungle-rock-a.lod0.glb",
+     "tris": 2578,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 83,
+     "size": [
+      2.66,
+      1.87,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/jungle-rock-a.lod1.glb",
+     "tris": 550,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.66,
+      1.87,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/jungle-rock-a.lod2.glb",
+     "tris": 200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.66,
+      1.87,
+      3
+     ]
+    }
+   ]
+  },
+  "jungle-rock-b": {
+   "title": "Jungle Trees",
+   "author": "rhcreations",
+   "source": "https://sketchfab.com/3d-models/jungle-trees-7ac3988f9801479a994c8c7534d888b3",
+   "licence": "CC BY 4.0",
+   "class": "rock",
+   "ring": "rock",
+   "use": "Forgotten Ruins (2026-11-17): mossy jungle rock",
+   "scale": 1.033291,
+   "sourceTris": 2904,
+   "size": [
+    2.45,
+    1.82,
+    2.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/jungle-rock-b.lod0.glb",
+     "tris": 2580,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 84,
+     "size": [
+      2.45,
+      1.82,
+      2.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/jungle-rock-b.lod1.glb",
+     "tris": 550,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.45,
+      1.82,
+      2.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/jungle-rock-b.lod2.glb",
+     "tris": 200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.45,
+      1.82,
+      2.8
+     ]
+    }
+   ]
+  },
   "jungle-stump": {
    "title": "Tree stump",
    "author": "Numbian",
@@ -18916,6 +19672,60 @@
       28.54,
       22,
       20.53
+     ]
+    }
+   ]
+  },
+  "lily-pad": {
+   "title": "Lily pad and Lotus flower",
+   "author": "Evie <3",
+   "source": "https://sketchfab.com/3d-models/lily-pad-and-lotus-flower-30ec9edca36f49ee91ce0773e545bac8",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Forgotten Ruins (2026-11-17): lily pads on the cenote",
+   "scale": 0.092767,
+   "sourceTris": 356,
+   "size": [
+    3.97,
+    0.19,
+    4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lily-pad.lod0.glb",
+     "tris": 356,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 9,
+     "size": [
+      3.97,
+      0.19,
+      4
+     ]
+    },
+    {
+     "file": "/fps/br/models/lily-pad.lod1.glb",
+     "tris": 232,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      3.97,
+      0.19,
+      4
+     ]
+    },
+    {
+     "file": "/fps/br/models/lily-pad.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3.97,
+      0.19,
+      4
      ]
     }
    ]
@@ -21729,6 +22539,114 @@
     }
    ]
   },
+  "mossy-stones-b": {
+   "title": "Mossy rock pack",
+   "author": "gamesastoater",
+   "source": "https://sketchfab.com/3d-models/mossy-rock-pack-30bc3e883739403a9fde8c97b1d63471",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Forgotten Ruins (2026-11-17): mossy stones",
+   "scale": 2.821856,
+   "sourceTris": 552,
+   "size": [
+    0.9,
+    0.56,
+    0.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mossy-stones-b.lod0.glb",
+     "tris": 552,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      0.9,
+      0.56,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/mossy-stones-b.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      0.9,
+      0.56,
+      0.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/mossy-stones-b.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.9,
+      0.56,
+      0.73
+     ]
+    }
+   ]
+  },
+  "mossy-stones-c": {
+   "title": "Mossy rock pack",
+   "author": "gamesastoater",
+   "source": "https://sketchfab.com/3d-models/mossy-rock-pack-30bc3e883739403a9fde8c97b1d63471",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Forgotten Ruins (2026-11-17): mossy stones",
+   "scale": 1.880424,
+   "sourceTris": 414,
+   "size": [
+    1,
+    0.74,
+    0.89
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mossy-stones-c.lod0.glb",
+     "tris": 414,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 21,
+     "size": [
+      1,
+      0.74,
+      0.89
+     ]
+    },
+    {
+     "file": "/fps/br/models/mossy-stones-c.lod1.glb",
+     "tris": 226,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      1,
+      0.74,
+      0.89
+     ]
+    },
+    {
+     "file": "/fps/br/models/mossy-stones-c.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1,
+      0.74,
+      0.89
+     ]
+    }
+   ]
+  },
   "motel-sign": {
    "title": "Roadside Motel",
    "author": "novusod",
@@ -23131,6 +24049,168 @@
     }
    ]
   },
+  "palm-clump": {
+   "title": "Jungle Trees",
+   "author": "rhcreations",
+   "source": "https://sketchfab.com/3d-models/jungle-trees-7ac3988f9801479a994c8c7534d888b3",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): clump of fan palms",
+   "scale": 1.231263,
+   "sourceTris": 4686,
+   "size": [
+    6.13,
+    7,
+    6.45
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/palm-clump.lod0.glb",
+     "tris": 4686,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 207,
+     "size": [
+      6.13,
+      7,
+      6.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-clump.lod1.glb",
+     "tris": 4686,
+     "draws": 2,
+     "textureMB": 0.08,
+     "kB": 180,
+     "size": [
+      6.13,
+      7,
+      6.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-clump.lod2.glb",
+     "tris": 4686,
+     "draws": 2,
+     "textureMB": 0.02,
+     "kB": 171,
+     "size": [
+      6.13,
+      7,
+      6.45
+     ]
+    }
+   ]
+  },
+  "palm-fan": {
+   "title": "Realistic Palm Tree Free",
+   "author": "Next Spring",
+   "source": "https://sketchfab.com/3d-models/realistic-palm-tree-free-39052ea764c945858449e699318efa53",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Forgotten Ruins (2026-11-17): fan palm",
+   "scale": 0.917811,
+   "sourceTris": 27152,
+   "size": [
+    9.16,
+    10,
+    9.37
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/palm-fan.lod0.glb",
+     "tris": 8316,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 208,
+     "size": [
+      9.16,
+      10,
+      9.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-fan.lod1.glb",
+     "tris": 4470,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 111,
+     "size": [
+      9.16,
+      10,
+      9.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-fan.lod2.glb",
+     "tris": 940,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      9.16,
+      10,
+      9.37
+     ]
+    }
+   ]
+  },
+  "palm-short": {
+   "title": "Tropical Palm",
+   "author": "Šimon Ustal",
+   "source": "https://sketchfab.com/3d-models/tropical-palm-08ccca74a0594fd999acaf4cfbd597e0",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): short tropical palm",
+   "scale": 1.000328,
+   "sourceTris": 27184,
+   "size": [
+    2.57,
+    4.5,
+    2.47
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/palm-short.lod0.glb",
+     "tris": 5999,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 84,
+     "size": [
+      2.57,
+      4.5,
+      2.47
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-short.lod1.glb",
+     "tris": 1999,
+     "draws": 2,
+     "textureMB": 0.12,
+     "kB": 33,
+     "size": [
+      2.57,
+      4.5,
+      2.47
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-short.lod2.glb",
+     "tris": 698,
+     "draws": 2,
+     "textureMB": 0.03,
+     "kB": 15,
+     "size": [
+      2.57,
+      4.5,
+      2.47
+     ]
+    }
+   ]
+  },
   "palm-small": {
    "title": "Tropical Plants Pack M02P",
    "author": "MozzarellaARC",
@@ -23181,6 +24261,168 @@
       3.8,
       6,
       3.44
+     ]
+    }
+   ]
+  },
+  "palm-tall": {
+   "title": "Realistic Palm Tree 4 Free",
+   "author": "Next Spring",
+   "source": "https://sketchfab.com/3d-models/realistic-palm-tree-4-free-917c18d6b2d04d33950dea6e20bc074f",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Forgotten Ruins (2026-11-17): tall palm over the plaza",
+   "scale": 0.87812,
+   "sourceTris": 8096,
+   "size": [
+    6.23,
+    14,
+    5.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/palm-tall.lod0.glb",
+     "tris": 5962,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 105,
+     "size": [
+      6.23,
+      14,
+      5.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-tall.lod1.glb",
+     "tris": 5938,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 79,
+     "size": [
+      6.23,
+      14,
+      5.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-tall.lod2.glb",
+     "tris": 5246,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      6.23,
+      14,
+      5.8
+     ]
+    }
+   ]
+  },
+  "palm-young-a": {
+   "title": "Tropical Plants Pack M02P",
+   "author": "MozzarellaARC",
+   "source": "https://sketchfab.com/3d-models/tropical-plants-pack-m02p-2f093afb792742438f0f7ba7eaab90f0",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): young palm",
+   "scale": 0.99875,
+   "sourceTris": 4080,
+   "size": [
+    3.74,
+    5,
+    3.49
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/palm-young-a.lod0.glb",
+     "tris": 512,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 34,
+     "size": [
+      3.74,
+      5,
+      3.49
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-young-a.lod1.glb",
+     "tris": 286,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 19,
+     "size": [
+      3.74,
+      5,
+      3.49
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-young-a.lod2.glb",
+     "tris": 238,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 17,
+     "size": [
+      3.74,
+      5,
+      3.49
+     ]
+    }
+   ]
+  },
+  "palm-young-b": {
+   "title": "Tropical Plants Pack M02P",
+   "author": "MozzarellaARC",
+   "source": "https://sketchfab.com/3d-models/tropical-plants-pack-m02p-2f093afb792742438f0f7ba7eaab90f0",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): young palm",
+   "scale": 0.962652,
+   "sourceTris": 4080,
+   "size": [
+    2.95,
+    5.5,
+    3.33
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/palm-young-b.lod0.glb",
+     "tris": 497,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 33,
+     "size": [
+      2.95,
+      5.5,
+      3.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-young-b.lod1.glb",
+     "tris": 235,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 17,
+     "size": [
+      2.95,
+      5.5,
+      3.33
+     ]
+    },
+    {
+     "file": "/fps/br/models/palm-young-b.lod2.glb",
+     "tris": 198,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 17,
+     "size": [
+      2.95,
+      5.5,
+      3.33
      ]
     }
    ]
@@ -35034,6 +36276,60 @@
     }
    ]
   },
+  "tall-tree": {
+   "title": "Realistic Tree 2 Free",
+   "author": "Next Spring",
+   "source": "https://sketchfab.com/3d-models/realistic-tree-2-free-2cd58e603ae542c78dd9cada46496921",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Forgotten Ruins (2026-11-17): tall broadleaf tree among the ruins",
+   "scale": 0.773468,
+   "sourceTris": 4652,
+   "size": [
+    17.01,
+    26,
+    16.51
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tall-tree.lod0.glb",
+     "tris": 4402,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 218,
+     "size": [
+      17.01,
+      26,
+      16.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/tall-tree.lod1.glb",
+     "tris": 4336,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 177,
+     "size": [
+      17.01,
+      26,
+      16.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/tall-tree.lod2.glb",
+     "tris": 3592,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 16,
+     "size": [
+      17.01,
+      26,
+      16.51
+     ]
+    }
+   ]
+  },
   "tank": {
    "title": "Tank Low-Poly # 2",
    "author": "Sidra",
@@ -36598,6 +37894,60 @@
     }
    ]
   },
+  "treasure-chest": {
+   "title": "Treasure Chest",
+   "author": "Multipainkiller Studio",
+   "source": "https://sketchfab.com/3d-models/treasure-chest-b124919b7bc3470c82daeef72823f941",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Forgotten Ruins (2026-11-17): treasure chest in the great temple's lookout",
+   "scale": 0.531823,
+   "sourceTris": 4588,
+   "size": [
+    1.4,
+    0.95,
+    0.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/treasure-chest.lod0.glb",
+     "tris": 2500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 37,
+     "size": [
+      1.4,
+      0.95,
+      0.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/treasure-chest.lod1.glb",
+     "tris": 1120,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 23,
+     "size": [
+      1.4,
+      0.95,
+      0.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/treasure-chest.lod2.glb",
+     "tris": 315,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      1.4,
+      0.95,
+      0.7
+     ]
+    }
+   ]
+  },
   "treatment-plant": {
    "title": "Water Treament Plant",
    "author": "novusod",
@@ -37054,6 +38404,60 @@
     }
    ]
   },
+  "tropical-plant": {
+   "title": "Tropical Plant 2",
+   "author": "evolveduk",
+   "source": "https://sketchfab.com/3d-models/tropical-plant-2-e5afe9e21dde4b11a951b7c8a286e56c",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): tropical plant",
+   "scale": 0.938041,
+   "sourceTris": 5257,
+   "size": [
+    0.89,
+    1.4,
+    0.92
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tropical-plant.lod0.glb",
+     "tris": 3545,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 71,
+     "size": [
+      0.89,
+      1.4,
+      0.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/tropical-plant.lod1.glb",
+     "tris": 3517,
+     "draws": 2,
+     "textureMB": 0.12,
+     "kB": 62,
+     "size": [
+      0.89,
+      1.4,
+      0.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/tropical-plant.lod2.glb",
+     "tris": 3517,
+     "draws": 2,
+     "textureMB": 0.03,
+     "kB": 60,
+     "size": [
+      0.89,
+      1.4,
+      0.92
+     ]
+    }
+   ]
+  },
   "tugboat": {
    "title": "Rastar 3200 tugboat",
    "author": "Brout",
@@ -37485,6 +38889,168 @@
       10.9,
       9.51,
       9.9
+     ]
+    }
+   ]
+  },
+  "vine-branch": {
+   "title": "Vine With Branch 3d Model Free",
+   "author": "iGauravRajput",
+   "source": "https://sketchfab.com/3d-models/vine-with-branch-3d-model-free-e4665bcbc81a43cb90bf998242a75b6a",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): vine on a branch over the ruins",
+   "scale": 3,
+   "sourceTris": 14711,
+   "size": [
+    1.29,
+    3,
+    1.37
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/vine-branch.lod0.glb",
+     "tris": 9179,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 251,
+     "size": [
+      1.29,
+      3,
+      1.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/vine-branch.lod1.glb",
+     "tris": 9179,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 240,
+     "size": [
+      1.29,
+      3,
+      1.37
+     ]
+    },
+    {
+     "file": "/fps/br/models/vine-branch.lod2.glb",
+     "tris": 9179,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 236,
+     "size": [
+      1.29,
+      3,
+      1.37
+     ]
+    }
+   ]
+  },
+  "vine-branch-b": {
+   "title": "Vine branch plants 3d model free",
+   "author": "iGauravRajput",
+   "source": "https://sketchfab.com/3d-models/vine-branch-plants-3d-model-free-80957507d8274fa7a826a0aad0355590",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): vines over the ruins",
+   "scale": 3.005871,
+   "sourceTris": 16327,
+   "size": [
+    2.93,
+    3,
+    2.46
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/vine-branch-b.lod0.glb",
+     "tris": 10933,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 301,
+     "size": [
+      2.93,
+      3,
+      2.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/vine-branch-b.lod1.glb",
+     "tris": 10933,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 288,
+     "size": [
+      2.93,
+      3,
+      2.46
+     ]
+    },
+    {
+     "file": "/fps/br/models/vine-branch-b.lod2.glb",
+     "tris": 10933,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 284,
+     "size": [
+      2.93,
+      3,
+      2.46
+     ]
+    }
+   ]
+  },
+  "vines-hanging": {
+   "title": "Realistic Vine plants 3d model free",
+   "author": "iGauravRajput",
+   "source": "https://sketchfab.com/3d-models/realistic-vine-plants-3d-model-free-d7a591201b904a66a114ebb9347bc6b8",
+   "licence": "CC BY 4.0",
+   "class": "bush",
+   "ring": "undergrowth",
+   "use": "Forgotten Ruins (2026-11-17): vines hanging down the ruins' walls",
+   "scale": 4,
+   "sourceTris": 17715,
+   "size": [
+    2.67,
+    4,
+    1.29
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/vines-hanging.lod0.glb",
+     "tris": 12712,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 367,
+     "size": [
+      2.67,
+      4,
+      1.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/vines-hanging.lod1.glb",
+     "tris": 12712,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 352,
+     "size": [
+      2.67,
+      4,
+      1.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/vines-hanging.lod2.glb",
+     "tris": 12712,
+     "draws": 1,
+     "textureMB": 0.02,
+     "kB": 347,
+     "size": [
+      2.67,
+      4,
+      1.29
      ]
     }
    ]
@@ -38509,6 +40075,60 @@
       1.42,
       1.94,
       4
+     ]
+    }
+   ]
+  },
+  "wooden-crate": {
+   "title": "Simple Wooden Crates Type A",
+   "author": "Mad_Lobster_Workshop",
+   "source": "https://sketchfab.com/3d-models/simple-wooden-crates-type-a-86b334cc0ad64a68b9f9522947c2eb08",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Forgotten Ruins (2026-11-17): wooden crate at the camp",
+   "scale": 1.716914,
+   "sourceTris": 2328,
+   "size": [
+    0.9,
+    0.6,
+    0.62
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wooden-crate.lod0.glb",
+     "tris": 800,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      0.9,
+      0.6,
+      0.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/wooden-crate.lod1.glb",
+     "tris": 300,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 10,
+     "size": [
+      0.9,
+      0.6,
+      0.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/wooden-crate.lod2.glb",
+     "tris": 140,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.9,
+      0.6,
+      0.62
      ]
     }
    ]

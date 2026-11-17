@@ -8178,6 +8178,439 @@
       },
       "collision": "boxes",
       "use": "Forgotten Ruins (2026-11-17): rope bridge over the great temple's fallen gallery roof (its deck and rope sides authored as boxes: the voxels drop a deck under 0.35 m)"
+    },
+    {
+      "id": "coconut-palm",
+      "key": "sf:26e787f2ff2e4c0fb004c3b0210805a3",
+      "class": "prop",
+      "draws": 2,
+      "lodTris": [
+        2100,
+        900,
+        600
+      ],
+      "fit": {
+        "y": 9
+      },
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): leaning coconut palm (its trunk authored as boxes)"
+    },
+    {
+      "id": "bald-cypress",
+      "key": "sf:dca97787b1b24fd8a0fb6bb536e383e3",
+      "class": "prop",
+      "lodTris": [
+        2100,
+        1500,
+        1250
+      ],
+      "fit": {
+        "y": 18
+      },
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): cypress at the cenote and the river (its trunk authored as boxes)"
+    },
+    {
+      "id": "banana-plant",
+      "key": "sf:5cb46e64d7fc40978c3d6798017eced1",
+      "class": "prop",
+      "draws": 2,
+      "lodTris": [
+        5000,
+        4600,
+        4600
+      ],
+      "fit": {
+        "y": 4.2
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): banana plants by the camp and the houses"
+    },
+    {
+      "id": "banana-grove",
+      "key": "sf:43b0a0c41f0543d09f9501ca1fb1a7b1",
+      "piece": "Trees",
+      "class": "prop",
+      "lodTris": [
+        8000,
+        3000,
+        1000
+      ],
+      "fit": {
+        "y": 10
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): banana grove"
+    },
+    {
+      "id": "palm-tall",
+      "key": "sf:917c18d6b2d04d33950dea6e20bc074f",
+      "class": "prop",
+      "lodTris": [
+        6000,
+        5400,
+        5300
+      ],
+      "fit": {
+        "y": 14
+      },
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): tall palm over the plaza (its trunk authored as boxes)"
+    },
+    {
+      "id": "palm-fan",
+      "key": "sf:39052ea764c945858449e699318efa53",
+      "class": "prop",
+      "lodTris": [
+        8000,
+        3000,
+        1000
+      ],
+      "fit": {
+        "y": 10
+      },
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): fan palm (its trunk authored as boxes)"
+    },
+    {
+      "id": "palm-short",
+      "key": "sf:08ccca74a0594fd999acaf4cfbd597e0",
+      "class": "bush",
+      "lodTris": [
+        6000,
+        2000,
+        700
+      ],
+      "ring": "undergrowth",
+      "fit": {
+        "y": 4.5
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): short tropical palm"
+    },
+    {
+      "id": "palm-young-a",
+      "key": "sf:2f093afb792742438f0f7ba7eaab90f0",
+      "piece": "SM_MZRa_Palm_B081",
+      "class": "bush",
+      "ring": "undergrowth",
+      "fit": {
+        "y": 5
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): young palm"
+    },
+    {
+      "id": "palm-young-b",
+      "key": "sf:2f093afb792742438f0f7ba7eaab90f0",
+      "piece": "SM_MZRa_Palm_B083",
+      "class": "bush",
+      "ring": "undergrowth",
+      "fit": {
+        "y": 5.5
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): young palm"
+    },
+    {
+      "id": "palm-clump",
+      "key": "sf:7ac3988f9801479a994c8c7534d888b3",
+      "piece": "Palm Tree 3 Main",
+      "class": "bush",
+      "lodTris": [
+        4700,
+        4700,
+        4700
+      ],
+      "ring": "undergrowth",
+      "fit": {
+        "y": 7
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): clump of fan palms"
+    },
+    {
+      "id": "tall-tree",
+      "key": "sf:2cd58e603ae542c78dd9cada46496921",
+      "class": "prop",
+      "lodTris": [
+        4500,
+        3700,
+        3600
+      ],
+      "fit": {
+        "y": 26
+      },
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): tall broadleaf tree among the ruins (its trunk authored as boxes)"
+    },
+    {
+      "id": "jungle-rock-a",
+      "key": "sf:7ac3988f9801479a994c8c7534d888b3",
+      "piece": "Rock 1",
+      "class": "rock",
+      "lodTris": [
+        2600,
+        550,
+        200
+      ],
+      "fit": {
+        "max": 3
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): mossy jungle rock"
+    },
+    {
+      "id": "jungle-rock-b",
+      "key": "sf:7ac3988f9801479a994c8c7534d888b3",
+      "piece": "Rock 3",
+      "class": "rock",
+      "lodTris": [
+        2600,
+        550,
+        200
+      ],
+      "fit": {
+        "max": 2.8
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): mossy jungle rock"
+    },
+    {
+      "id": "fern-grass",
+      "key": "sf:b0a96490483a48d2877d2ed8abc9e436",
+      "class": "bush",
+      "lodTris": [
+        1500,
+        500,
+        200
+      ],
+      "ring": "undergrowth",
+      "fit": {
+        "y": 0.8
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): fern ground cover"
+    },
+    {
+      "id": "fern-big",
+      "key": "sf:2f093afb792742438f0f7ba7eaab90f0",
+      "piece": "SM_MZRa_Fern_B051",
+      "class": "bush",
+      "lodTris": [
+        8400,
+        1000,
+        400
+      ],
+      "ring": "undergrowth",
+      "fit": {
+        "y": 1.5
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): big fern"
+    },
+    {
+      "id": "fern-small",
+      "key": "sf:5e806681504a4642a16a59c057d34e8d",
+      "piece": "SM_Fern_01",
+      "class": "bush",
+      "ring": "undergrowth",
+      "fit": {
+        "y": 0.8
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): small fern"
+    },
+    {
+      "id": "bounce-cap",
+      "key": "sf:e5abbe590b594cbfaa4df7cce84d7c10",
+      "piece": "SM_RainForest_BounceCap_Side_A_LOD0.mo",
+      "class": "bush",
+      "ring": "undergrowth",
+      "fit": {
+        "y": 1.2
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): rainforest fungus shelf"
+    },
+    {
+      "id": "big-bush",
+      "key": "sf:18c03d71230d47d8906fd907a352cac5",
+      "piece": "BigBush_2",
+      "class": "bush",
+      "ring": "undergrowth",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): big bush"
+    },
+    {
+      "id": "bush-round",
+      "key": "sf:18c03d71230d47d8906fd907a352cac5",
+      "piece": "Bush_1",
+      "class": "bush",
+      "ring": "undergrowth",
+      "fit": {
+        "y": 1.3
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): round bush"
+    },
+    {
+      "id": "tropical-plant",
+      "key": "sf:e5afe9e21dde4b11a951b7c8a286e56c",
+      "class": "bush",
+      "lodTris": [
+        3600,
+        3000,
+        3000
+      ],
+      "ring": "undergrowth",
+      "fit": {
+        "y": 1.4
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): tropical plant"
+    },
+    {
+      "id": "vines-hanging",
+      "key": "sf:d7a591201b904a66a114ebb9347bc6b8",
+      "class": "bush",
+      "lodTris": [
+        12800,
+        12300,
+        12300
+      ],
+      "ring": "undergrowth",
+      "fit": {
+        "y": 4
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): vines hanging down the ruins' walls"
+    },
+    {
+      "id": "vine-branch",
+      "key": "sf:e4665bcbc81a43cb90bf998242a75b6a",
+      "class": "bush",
+      "lodTris": [
+        9200,
+        8700,
+        8700
+      ],
+      "ring": "undergrowth",
+      "fit": {
+        "y": 3
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): vine on a branch over the ruins"
+    },
+    {
+      "id": "vine-branch-b",
+      "key": "sf:80957507d8274fa7a826a0aad0355590",
+      "class": "bush",
+      "lodTris": [
+        11000,
+        10300,
+        10300
+      ],
+      "ring": "undergrowth",
+      "fit": {
+        "y": 3
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): vines over the ruins"
+    },
+    {
+      "id": "aztec-shrine",
+      "key": "sf:c3581295efcc4cabac24be3da76e8723",
+      "class": "prop",
+      "lodTris": [
+        3000,
+        1100,
+        350
+      ],
+      "fit": {
+        "max": 5
+      },
+      "collision": "voxel",
+      "use": "Forgotten Ruins (2026-11-17): a small shrine with offerings in the jungle"
+    },
+    {
+      "id": "lily-pad",
+      "key": "sf:30ec9edca36f49ee91ce0773e545bac8",
+      "piece": "Object_5",
+      "class": "small",
+      "fit": {
+        "max": 4
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): lily pads on the cenote"
+    },
+    {
+      "id": "mossy-stones-b",
+      "key": "sf:30bc3e883739403a9fde8c97b1d63471",
+      "piece": "Rock10",
+      "class": "small",
+      "fit": {
+        "max": 0.9
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): mossy stones"
+    },
+    {
+      "id": "mossy-stones-c",
+      "key": "sf:30bc3e883739403a9fde8c97b1d63471",
+      "piece": "Rock6",
+      "class": "small",
+      "fit": {
+        "max": 1.0
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): mossy stones"
+    },
+    {
+      "id": "aztec-pillar",
+      "key": "sf:3279eccde05346b3af53bf19f0f21690",
+      "piece": "Pillars Walk Way",
+      "class": "structure",
+      "fit": {
+        "y": 4.5
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): carved pillar"
+    },
+    {
+      "id": "treasure-chest",
+      "key": "sf:b124919b7bc3470c82daeef72823f941",
+      "piece": "Armature",
+      "class": "small",
+      "lodTris": [
+        2500,
+        900,
+        300
+      ],
+      "fit": {
+        "max": 1.4
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): treasure chest in the great temple's lookout"
+    },
+    {
+      "id": "wooden-crate",
+      "key": "sf:86b334cc0ad64a68b9f9522947c2eb08",
+      "piece": "Simple Wooden Crate Type A Wood 01_0",
+      "class": "small",
+      "lodTris": [
+        800,
+        300,
+        100
+      ],
+      "fit": {
+        "max": 0.9
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): wooden crate at the camp"
     }
   ],
   "skipped": [
