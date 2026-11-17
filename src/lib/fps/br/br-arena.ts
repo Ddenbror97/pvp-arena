@@ -1,4 +1,5 @@
 import { clampPitch, mouseLook, moveAxes } from "@/lib/fps/look";
+import { isMacOS, MouseResampler } from "@/lib/fps/mouse-resample";
 import { BrAimRecoil, type BrRecoilState } from "./aim-recoil";
 import { NEAR_MISS_M, passBy, SHOT_AT_GAP_MS } from "../shot-awareness";
 import * as THREE from "three";
@@ -1445,47 +1446,90 @@ export function createBrArena(
   const locked = () =>
     document.pointerLockElement === renderer.domElement ||
     (globalThis as { __brAssumeLock?: boolean }).__brAssumeLock === true;
+  // The mouse's reports are spread evenly over the frames (mouse-resample.ts, as in 1v1/5v5: a
+  // Mac's 120 Hz screen against a ~125 Hz mouse or trackpad turned the view in uneven steps).
+  const looker = new MouseResampler();
   const onMouse = (e: MouseEvent) => {
     if (!locked() || inventoryOpen) return;
     syncCanopyLook();
     if (canopyLook.active) {
+      looker.reset();
       canopyLook.mouse(e.movementX, e.movementY, sensitivity);
       return;
     }
+    looker.push(e.movementX, e.movementY, e.timeStamp);
+    chaseLook.moved();
+  };
+  /** Turn the view by this frame's share of the mouse's movement. */
+  const applyLook = (now: number) => {
+    const { dx, dy } = looker.take(now);
+    if (!dx && !dy) return;
+    if (!locked() || inventoryOpen || canopyLook.active) return looker.reset();
     const scale = 1 / Math.max(1, currentZoom());
     // (No yaw wrap here: the island's prediction and the canopy camera follow yaw as it turns.)
-    ({ yaw, pitch } = mouseLook(yaw, pitch, e.movementX, e.movementY, sensitivity * scale));
-    chaseLook.moved();
-    lookX += e.movementX;
-    lookY += e.movementY;
+    ({ yaw, pitch } = mouseLook(yaw, pitch, dx, dy, sensitivity * scale));
+    lookX += dx;
+    lookY += dy;
+  };
+  // A Mac trackpad (owner, 2026-11-17: on a Mac a player "cant scope with sniper and shoot").
+  // Its right click is a two-finger click or Ctrl+click, and neither can be held while the other
+  // finger clicks to fire. So on a Mac: Ctrl+click is the right button, and a quick right click
+  // (under MAC_AIM_TAP_MS) toggles the aim on until the next right click; held longer, it aims
+  // while held, as everywhere else.
+  const macButtons = isMacOS();
+  const MAC_AIM_TAP_MS = 250;
+  let ctrlClick = false,
+    aimPressedAt = 0,
+    aimToggled = false;
+  const buttonOf = (e: MouseEvent, down: boolean) => {
+    if (!macButtons || e.button !== 0) return e.button;
+    if (down) ctrlClick = e.ctrlKey;
+    return ctrlClick ? 2 : 0;
   };
   const onDown = (e: MouseEvent) => {
     if (!locked() || inventoryOpen) return;
     if (e.isTrusted) audio.unlock();
+    const button = buttonOf(e, true);
     syncCanopyLook();
     if (canopyLook.active) {
-      if (e.button === 2) canopyLook.dragging = true;
+      if (button === 2) canopyLook.dragging = true;
       e.preventDefault();
       return;
     }
     if (nadeHand) {
       // Grenade in hand: the buttons throw (left overhand, right underhand, both medium).
-      if (e.button === 0) nadeButtons.left = nadeButtons.tapLeft = true;
-      if (e.button === 2) nadeButtons.right = nadeButtons.tapRight = true;
+      if (button === 0) nadeButtons.left = nadeButtons.tapLeft = true;
+      if (button === 2) nadeButtons.right = nadeButtons.tapRight = true;
       return;
     }
     // Driving: the mouse steers the view only.
     if (car) return;
-    if (e.button === 0) fireHeld = fireTapped = predictTap = true;
-    if (e.button === 2) {
+    if (button === 0) fireHeld = fireTapped = predictTap = true;
+    if (button === 2) {
+      if (macButtons && aimToggled && aimHeld) {
+        // The second click of a toggled aim lowers it.
+        aimHeld = aimToggled = false;
+        aimPressedAt = -Infinity;
+        return;
+      }
       aimHeld = true;
+      aimToggled = false;
+      aimPressedAt = performance.now();
       if (knifeDrawn()) stabTapped = predictStab = true;
     }
   };
   const onUp = (e: MouseEvent) => {
-    if (e.button === 2) canopyLook.release();
-    if (e.button === 0) fireHeld = nadeButtons.left = false;
-    if (e.button === 2) aimHeld = nadeButtons.right = false;
+    const button = buttonOf(e, false);
+    if (e.button === 0) ctrlClick = false;
+    if (button === 2) canopyLook.release();
+    if (button === 0) fireHeld = nadeButtons.left = false;
+    if (button === 2) {
+      nadeButtons.right = false;
+      // A Mac's quick right click keeps the aim up (see macButtons).
+      if (macButtons && aimHeld && performance.now() - aimPressedAt < MAC_AIM_TAP_MS)
+        aimToggled = true;
+      else aimHeld = aimToggled = false;
+    }
   };
   // The mouse wheel walks the hands through what is carried, as in 1v1/5v5 (owner,
   // 2026-11-11): the main guns, the pistol, the Karambit, then each grenade type held; wheel down
@@ -2268,6 +2312,7 @@ export function createBrArena(
     requestAnimationFrame(frame);
     const dtMs = Math.min(100, now - last);
     last = now;
+    applyLook(now);
     if (!island || !latest || !route) {
       if (island && !context.lost) {
         island.update(camera);
@@ -4093,7 +4138,7 @@ export function createBrArena(
       triangles: sceneTriangles,
       entities: visible,
       pixelRatio: renderer.getPixelRatio(),
-      note: `${tierNote}\nbudget ${budget.scale.toFixed(1)}, ground ${groundLite ? "lite" : "full"}`,
+      note: `${tierNote}\nbudget ${budget.scale.toFixed(1)}, ground ${groundLite ? "lite" : "full"}\nmouse ${looker.rate ? `${Math.round(looker.rate)} Hz, drawn ${looker.lag.toFixed(1)} ms behind` : "not moved yet"}`,
     });
     if (now - lastHud > 66 && hudListener) {
       lastHud = now;
