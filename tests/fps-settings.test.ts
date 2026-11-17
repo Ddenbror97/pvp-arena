@@ -36,15 +36,19 @@ it("saves and restores all five crosshairs and custom colors", () => {
       volume: 0.35,
       crosshair,
       color: "#12abcd",
-      reducedMotion: crosshair === 3,
     };
     saveStrikeSettings(value);
     expect(readStrikeSettings()).toEqual(value);
   }
 });
-it("ignores the former graphics-quality choice (one render configuration)", () => {
-  const stored = JSON.stringify({ ...DEFAULT_STRIKE_SETTINGS, graphics: "low" });
+it("ignores the former graphics-quality and reduced-motion choices", () => {
+  const stored = JSON.stringify({
+    ...DEFAULT_STRIKE_SETTINGS,
+    graphics: "low",
+    reducedMotion: true,
+  });
   vi.stubGlobal("localStorage", { getItem: () => stored, setItem: () => {} });
   expect(readStrikeSettings()).toEqual(DEFAULT_STRIKE_SETTINGS);
   expect("graphics" in readStrikeSettings()).toBe(false);
+  expect("reducedMotion" in readStrikeSettings()).toBe(false);
 });

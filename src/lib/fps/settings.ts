@@ -1,21 +1,20 @@
 /**
  * Player settings. Rendering has one configuration (see RENDER_CAP in presentation.ts); a
- * stored `graphics` value from the former High/Low choice is ignored.
+ * stored `graphics` value from the former High/Low choice is ignored, and so is the former
+ * "Reduced motion" toggle (owner, 2026-11-17: removed; the games follow the computer's own
+ * reduce-motion setting).
  */
 export type StrikeSettings = {
   sensitivity: number;
   volume: number;
   crosshair: number;
   color: string;
-  /** Smaller viewmodel camera choreography and weapon bob (also follows the OS setting). */
-  reducedMotion: boolean;
 };
 export const DEFAULT_STRIKE_SETTINGS: StrikeSettings = {
   sensitivity: 1,
   volume: 1,
   crosshair: 0,
   color: "#ffffff",
-  reducedMotion: false,
 };
 export function readStrikeSettings(): StrikeSettings {
   try {
@@ -30,7 +29,6 @@ export function readStrikeSettings(): StrikeSettings {
           ? value.crosshair
           : 0,
       color: /^#[0-9a-f]{6}$/i.test(value?.color) ? value.color : "#ffffff",
-      reducedMotion: value?.reducedMotion === true,
     };
   } catch {
     return { ...DEFAULT_STRIKE_SETTINGS };
