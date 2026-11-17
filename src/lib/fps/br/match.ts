@@ -187,6 +187,7 @@ export const PHASE_CODES: readonly DropPhase[] = [
 export type BrSeat = Fighter & {
   id: string;
   name: string;
+  avatar?: string;
   bot: boolean;
   /** Last applied input sequence (humans). */
   seq: number;
@@ -2623,6 +2624,7 @@ export function brViewFor(
       sync.tracksShown = prints.length > 0;
     }
   }
+  const watchGun = watched.kit.active === -1 ? null : watched.kit.guns[watched.kit.active];
   return {
     v: 1,
     type: "br-snapshot",
@@ -2715,6 +2717,11 @@ export function brViewFor(
             pitch: Math.round((watched.pitch ?? 0) * 1000) / 1000,
             ...(watched.hands.aimSince && now >= watched.hands.aimSince ? { aim: 1 } : {}),
             ...(watched.hands.reloadUntil ? { reload: watched.hands.reloadUntil } : {}),
+            bot: watched.bot,
+            ...(watched.avatar ? { avatar: watched.avatar } : {}),
+            hp: Math.round(watched.kit.hp),
+            weapon: watchGun?.item ?? "knife",
+            ...(watchGun ? { ammo: watchGun.mag } : {}),
           },
         }
       : {}),

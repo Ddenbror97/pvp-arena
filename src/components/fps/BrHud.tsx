@@ -1,3 +1,4 @@
+import { SpectatorCard } from "./SpectatorCard";
 import { useEffect, useRef, useState } from "react";
 import type { BrAct } from "@/lib/fps/br/actions";
 import type { BrFeed, BrHud, BrKillWeapon, BrNearby, BrPrompt } from "@/lib/fps/br/br-arena";
@@ -1494,9 +1495,30 @@ export function BrEnd({
   }
   if (!out || hidden)
     return hud.watch ? (
-      <div className="br-watch">
-        <span>Spectating</span> {hud.watch.name}
-      </div>
+      <SpectatorCard
+        name={hud.watch.name}
+        avatar={hud.watch.avatar}
+        bot={hud.watch.bot}
+        hp={hud.watch.hp}
+        kills={hud.watch.kills}
+        ammo={hud.watch.ammo}
+        weapon={
+          hud.watch.weapon ? (
+            hud.watch.weapon === "knife" ? (
+              <WeaponIcon weapon="knife" />
+            ) : (
+              <GunGlyph item={hud.watch.weapon} className="weapon-glyph" />
+            )
+          ) : undefined
+        }
+        weaponName={
+          hud.watch.weapon === "knife"
+            ? "Karambit"
+            : hud.watch.weapon
+              ? ITEMS[hud.watch.weapon as ItemId]?.name
+              : undefined
+        }
+      />
     ) : null;
   const placed = hud.placed;
   return (

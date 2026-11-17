@@ -1,3 +1,4 @@
+import { readStrikeBinds, strikeKey, type StrikeBinds } from "../key-bindings";
 import { clampPitch, mouseLook, moveAxes, PITCH_LIMIT, wrapYaw } from "@/lib/fps/look";
 import { isMacOS, MouseResampler } from "@/lib/fps/mouse-resample";
 import * as THREE from "three";
@@ -116,6 +117,7 @@ export type BombArenaControls = {
   ready: Promise<void>;
   snapshot: (view: BombView) => void;
   setSensitivity: (value: number) => void;
+  setKeyBindings: (value: StrikeBinds) => void;
   setReducedMotion: (reduced: boolean) => void;
   lock: () => Promise<void>;
   suspend: (paused: boolean) => void;
@@ -649,6 +651,7 @@ export function mountBombArena(
     wasAirborne = false,
     lookX = 0,
     lookY = 0;
+  let binds = readStrikeBinds();
   const keys = new Set<string>();
   const inputStepMs = Math.ceil(TICK_MS);
   const correction = new CameraCorrection(),
@@ -752,29 +755,30 @@ export function mountBombArena(
   ];
   const down = (e: KeyboardEvent) => {
     if (!locked()) return;
-    if (e.code === "Escape") {
+    const code = strikeKey(e.code, binds);
+    if (code === "Escape") {
       clear();
       document.exitPointerLock();
       return;
     }
-    if (GAME_KEYS.includes(e.code)) e.preventDefault();
-    keys.add(e.code);
-    if (e.code === "KeyR") reload = true;
-    if (e.code === "Space" && !e.repeat) jump = true;
+    if (GAME_KEYS.includes(code)) e.preventDefault();
+    keys.add(code);
+    if (code === "KeyR") reload = true;
+    if (code === "Space" && !e.repeat) jump = true;
     // 1: the primary, 2: the Desert Eagle (when bought), 3: the Karambit (as in CS; a released
     // grenade leaves the hand first). 4: a grenade; again: the next type.
     const hasSidearm = !!latest?.self.sidearm;
     if (
-      (e.code === "Digit1" || (e.code === "Digit2" && hasSidearm) || e.code === "Digit3") &&
+      (code === "Digit1" || (code === "Digit2" && hasSidearm) || code === "Digit3") &&
       !grenades.hands.busy
     ) {
-      weapon = e.code === "Digit1" ? "rifle" : e.code === "Digit2" ? "sidearm" : "knife";
+      weapon = code === "Digit1" ? "rifle" : code === "Digit2" ? "sidearm" : "knife";
       fire = fireLatched = alt = altLatched = false;
       scope.reset();
       grenades.putAway();
     }
     if (
-      (e.code === "Digit4" || e.code === "Digit5") &&
+      (code === "Digit4" || code === "Digit5") &&
       !e.repeat &&
       latest &&
       predicted &&
@@ -788,11 +792,11 @@ export function mountBombArena(
         scope.reset();
       }
     }
-    if (e.code === "KeyF" && !e.repeat && weapon === "knife") knifeView.animator?.inspect();
-    if (e.code === "KeyF" && !e.repeat && weapon === "grenade")
+    if (code === "KeyF" && !e.repeat && weapon === "knife") knifeView.animator?.inspect();
+    if (code === "KeyF" && !e.repeat && weapon === "grenade")
       grenades.hands.inspect(performance.now());
   };
-  const up = (e: KeyboardEvent) => keys.delete(e.code);
+  const up = (e: KeyboardEvent) => keys.delete(strikeKey(e.code, binds));
   const mousedown = (e: MouseEvent) => {
     if (!locked()) return;
     // Grenade: left overhand, right underhand, both medium (held: the pin; released: the throw).
@@ -1704,6 +1708,10 @@ export function mountBombArena(
   const scratch = { hp: 100 } as Player;
   return {
     ready: visualReady,
+    setKeyBindings: (value) => {
+      binds = value;
+      clear();
+    },
     setSensitivity: (value) => {
       sensitivity = Number.isFinite(value) ? Math.max(0.1, Math.min(3, value)) : 1;
     },

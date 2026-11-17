@@ -241,6 +241,11 @@ export type BrView = {
     pitch?: number;
     aim?: 1;
     reload?: number;
+    avatar?: string;
+    bot?: boolean;
+    hp?: number;
+    weapon?: string;
+    ammo?: number;
   };
   /** An eliminated player's place, of how many started, and the damage they dealt. */
   placed?: { place: number; of: number; damage: number };
