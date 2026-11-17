@@ -16,6 +16,15 @@ const park = (s: ReturnType<typeof live>["s"], slot: number, x: number, z: numbe
   Object.assign(s.players[slot]!, { x, z, y: 0, velocityY: 0 });
 
 describe("Bomb Defusal per-recipient snapshots", () => {
+  it("sends public avatar presentation but does not expose an enemy's health or ammo", () => {
+    const { s, t } = live();
+    s.players[1]!.avatar = "https://api.dicebear.com/9.x/shapes/svg?seed=mate";
+    const view = bombViewFor(s, 0, null, new BombReveal(), t);
+    expect(view.players[1]!.avatar).toBe(s.players[1]!.avatar);
+    expect(view.players[5]!.hp).toBeUndefined();
+    expect(view.players[5]!.ammo).toBeUndefined();
+  });
+
   it("teammates are sent in full; enemies only while visible, never their health or ammunition", () => {
     const { s, t } = live();
     park(s, 0, 0, -5); // Police in mid

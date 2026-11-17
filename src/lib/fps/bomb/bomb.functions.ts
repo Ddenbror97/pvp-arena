@@ -55,13 +55,17 @@ export const bombAdmission = createServerFn({ method: "POST" })
           eq: (
             k: string,
             v: string,
-          ) => { maybeSingle: () => Promise<{ data: { username?: string } | null }> };
+          ) => {
+            maybeSingle: () => Promise<{
+              data: { username?: string; avatar_url?: string | null } | null;
+            }>;
+          };
         };
       };
     };
     const profile = await db
       .from("profiles")
-      .select("username")
+      .select("username,avatar_url")
       .eq("id", context.userId)
       .maybeSingle();
     const name =
@@ -79,6 +83,9 @@ export const bombAdmission = createServerFn({ method: "POST" })
         nonce: crypto.randomUUID(),
         exp: Math.min(Date.now() + 60_000, authExpiresAt),
         name,
+        ...(typeof profile.data?.avatar_url === "string" && profile.data.avatar_url.length <= 2048
+          ? { avatar: profile.data.avatar_url }
+          : {}),
       },
       r.secret,
     );

@@ -187,6 +187,7 @@ export const PHASE_CODES: readonly DropPhase[] = [
 export type BrSeat = Fighter & {
   id: string;
   name: string;
+  avatar?: string;
   bot: boolean;
   /** Last applied input sequence (humans). */
   seq: number;
@@ -2623,6 +2624,7 @@ export function brViewFor(
       sync.tracksShown = prints.length > 0;
     }
   }
+  const watchGun = watched.kit.active === -1 ? null : watched.kit.guns[watched.kit.active];
   return {
     v: 1,
     type: "br-snapshot",
@@ -2705,7 +2707,18 @@ export function brViewFor(
         }
       : {}),
     ...(me.dead && me.spectate !== undefined
-      ? { watch: { seat: watched.seat, name: watched.name, kills: watched.kills } }
+      ? {
+          watch: {
+            seat: watched.seat,
+            name: watched.name,
+            kills: watched.kills,
+            bot: watched.bot,
+            ...(watched.avatar ? { avatar: watched.avatar } : {}),
+            hp: Math.round(watched.kit.hp),
+            weapon: watchGun?.item ?? "knife",
+            ...(watchGun ? { ammo: watchGun.mag } : {}),
+          },
+        }
       : {}),
     // The placement card (owner, 2026-11-16): the place an eliminated player finished in.
     ...(me.dead && me.place !== undefined

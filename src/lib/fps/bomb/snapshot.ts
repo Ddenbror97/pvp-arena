@@ -26,6 +26,7 @@ export type PublicPlayer = Pick<
   BombPlayer,
   "slot" | "group" | "name" | "bot" | "kills" | "deaths" | "assists" | "headshots" | "primary"
 > & {
+  avatar?: string;
   team: Team;
   alive: boolean;
   /** Pose: present for teammates always, for enemies only while revealed. */
@@ -201,6 +202,7 @@ export function bombViewFor(
       slot: p.slot,
       group: p.group,
       name: p.name,
+      ...(p.avatar ? { avatar: p.avatar } : {}),
       bot: p.bot,
       kills: p.kills,
       deaths: p.deaths,

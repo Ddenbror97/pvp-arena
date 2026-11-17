@@ -1,0 +1,179 @@
+.fps-spectator {
+  --watch-accent: #c5a1f4;
+  position: absolute;
+  left: 50%;
+  bottom: 108px;
+  transform: translateX(-50%);
+  width: min(420px, calc(100% - 32px));
+  z-index: 12;
+  pointer-events: none;
+  color: #fff;
+  font-family: inherit;
+}
+.fps-spectator.team-police {
+  --watch-accent: #8ac8ed;
+}
+.fps-spectator.team-terrorist {
+  --watch-accent: #eac58e;
+}
+.fps-spectator-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 2px 7px;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #ececf2;
+  text-shadow: 0 1px 6px #000;
+}
+.fps-spectator-label > span {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.75;
+}
+.fps-spectator-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 70px;
+  padding: 11px 15px 13px 11px;
+  border: 1px solid #ffffff25;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(105deg, #292b348a, #2426306e);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 30px #0004;
+}
+.fps-spectator-avatar {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 6px;
+  box-shadow: none;
+  --tw-ring-shadow: 0 0 #0000;
+  border: 1px solid #ffffff26;
+}
+.fps-spectator-bot {
+  display: grid;
+  place-items: center;
+  color: var(--watch-accent);
+  background: #ffffff0b;
+}
+.fps-spectator-player {
+  min-width: 0;
+  flex: 1;
+}
+.fps-spectator-player > strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.fps-spectator-player > div {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 6px;
+  color: #c1c2cd;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.fps-spectator-player > div > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.fps-spectator-player small {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--watch-accent);
+}
+.fps-spectator-weapon {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex: none;
+  max-width: 94px;
+}
+.fps-spectator-weapon .weapon-glyph,
+.fps-spectator-weapon .bomb-weapon-icon {
+  width: 82px;
+  height: 25px;
+  object-fit: contain;
+  margin: 0;
+  color: #ececf2;
+}
+.fps-spectator-weapon .weapon-glyph {
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+.fps-spectator-weapon > span {
+  color: #9d9eac;
+  font-size: 8px;
+  text-align: right;
+}
+.fps-spectator-ammo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 25px;
+  padding-left: 12px;
+  border-left: 1px solid #ffffff17;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.fps-spectator-ammo small {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  color: #9293a0;
+  font-weight: 500;
+}
+.fps-spectator-health {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: #ffffff13;
+}
+.fps-spectator-health > i {
+  display: block;
+  height: 100%;
+  background: var(--watch-accent);
+  transition: width 120ms linear;
+}
+@media (max-width: 520px) {
+  .fps-spectator {
+    bottom: 118px;
+  }
+  .fps-spectator-card {
+    gap: 9px;
+    padding-right: 10px;
+  }
+  .fps-spectator-player > strong {
+    font-size: 12px;
+  }
+  .fps-spectator-weapon {
+    max-width: 72px;
+  }
+  .fps-spectator-weapon .weapon-glyph {
+    width: 68px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fps-spectator-health > i {
+    transition: none;
+  }
+}

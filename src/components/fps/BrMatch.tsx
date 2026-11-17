@@ -498,6 +498,7 @@ export function BrMatch() {
         </>
       )}
       <GameSettings
+        mode="Battle Royale"
         open={settingsOpen && ready}
         onOpenChange={setSettingsOpen}
         settings={settings}

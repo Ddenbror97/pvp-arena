@@ -1,3 +1,11 @@
+import {
+  defaultStrikeBinds,
+  readStrikeBinds,
+  saveStrikeBinds,
+  strikeKey,
+} from "@/lib/fps/key-bindings";
+import { keyLabel } from "@/lib/fps/br/br-settings";
+import { StrikeKeyBindings } from "./StrikeKeyBindings";
 import { preparedDuelMap, takeDuelEntry } from "@/lib/fps/entry-preparation";
 import { openMatchSocket, type MatchSocketLink } from "@/lib/fps/match-socket";
 import { NetworkObservations, readNetworkReport, type NetworkReport } from "@/lib/fps/network";
@@ -145,6 +153,16 @@ export function DuelMatch({
   /** Spawn buy menu (B). While it is open, releasing the mouse does not open the settings. */
   const [buyOpen, setBuyOpen] = useState(false);
   const buyOpenRef = useRef(false);
+  const [keyBindings, setKeyBindings] = useState(defaultStrikeBinds);
+  const keyBindingsRef = useRef(keyBindings);
+  keyBindingsRef.current = keyBindings;
+  useEffect(() => {
+    setKeyBindings(readStrikeBinds());
+  }, []);
+  useEffect(() => {
+    arena.current?.setKeyBindings(keyBindings);
+    saveStrikeBinds(keyBindings);
+  }, [keyBindings]);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   useEffect(() => {
@@ -316,6 +334,7 @@ export function DuelMatch({
             },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
+          arena.current.setKeyBindings(keyBindingsRef.current);
           void arena.current.ready
             .then(() => {
               if (!disposed) {
@@ -672,7 +691,13 @@ export function DuelMatch({
   canBuyRef.current = canBuy;
   useEffect(() => {
     const open = (e: KeyboardEvent) => {
-      if (e.code !== "KeyB" || e.repeat || buyOpenRef.current || !canBuyRef.current) return;
+      if (
+        strikeKey(e.code, keyBindingsRef.current) !== "KeyB" ||
+        e.repeat ||
+        buyOpenRef.current ||
+        !canBuyRef.current
+      )
+        return;
       if (document.querySelector(".strike-settings, .fps-leave-card")) return;
       e.preventDefault();
       buyOpenRef.current = true;
@@ -814,22 +839,6 @@ export function DuelMatch({
           >
             {connection}
           </span>
-          <button
-            aria-label={muted ? "Enable game audio" : "Mute game audio"}
-            onClick={() => toggleSoundMuted()}
-          >
-            {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
-          </button>
-          <button
-            aria-label="Fullscreen arena"
-            onClick={() =>
-              void host.current?.parentElement
-                ?.requestFullscreen()
-                .catch(() => setError("Fullscreen is unavailable in this browser."))
-            }
-          >
-            <Maximize size={17} />
-          </button>
         </div>
       </header>
       {!terminal && frame && isDefeatedView(frame.state, seat, spectate) && (
@@ -842,7 +851,7 @@ export function DuelMatch({
       </div>
       {canBuy && locked && !buyStatus && (
         <div className="buy-hint" role="status">
-          <kbd>B</kbd> Buy weapons
+          <kbd>{keyLabel(keyBindings.buy)}</kbd> Buy weapons
         </div>
       )}
       <BuyMenu
@@ -854,6 +863,30 @@ export function DuelMatch({
         onClose={() => closeBuy(true)}
       />
       <GameSettings
+        mode="1v1 Duel"
+        displayActions={
+          <div>
+            {" "}
+            <button
+              aria-label={muted ? "Enable game audio" : "Mute game audio"}
+              onClick={() => toggleSoundMuted()}
+            >
+              {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+              {muted ? "Enable audio" : "Mute audio"}
+            </button>
+            <button
+              aria-label="Fullscreen arena"
+              onClick={() =>
+                void host.current?.parentElement
+                  ?.requestFullscreen()
+                  .catch(() => setError("Fullscreen is unavailable in this browser."))
+              }
+            >
+              <Maximize size={17} /> Fullscreen
+            </button>
+          </div>
+        }
+        extra={<StrikeKeyBindings value={keyBindings} onChange={setKeyBindings} bomb={false} />}
         matchNotice={<FpsReadyAction practiceId={matchId} />}
         open={settingsOpen && ready && !terminal}
         onOpenChange={setSettingsOpen}
