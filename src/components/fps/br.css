@@ -2856,11 +2856,12 @@ button.br-inv-cell:hover {
 .br-game .duel-loading-status {
   margin-bottom: 8px;
 }
-/* The supply drop alert (owner, 2026-11-16: "more clean/mordern"): one card under the match
-   status. An icon tile in the drop smoke's green, "SUPPLY DROP" over the stage, the grid chip
-   and distance, the countdown on the right, a thin bar filling along the bottom edge. */
+/* The supply drop alert (owner, 2026-11-16: "more clean/mordern" and then "no dark window,
+   clean/lean ux to the transparent way"): no panel. The icon, "SUPPLY DROP" and the stage,
+   the grid chip and distance, the countdown, and a hairline progress bar, straight on the
+   view with a soft text shadow so they read over sky and ground. */
 .br-airdrop {
-  --drop: #6ee78c;
+  --drop: #7cf29a;
   position: absolute;
   left: 50%;
   top: 100px;
@@ -2868,20 +2869,14 @@ button.br-inv-cell:hover {
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-width: 260px;
-  padding: 8px 16px 10px 8px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 14px;
-  background:
-    radial-gradient(120% 140% at 0% 0%, rgba(110, 231, 140, 0.16), transparent 55%),
-    linear-gradient(180deg, rgba(20, 26, 23, 0.86), rgba(10, 14, 12, 0.86));
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 10px 28px rgba(0, 0, 0, 0.32);
-  color: #f2f5f7;
+  gap: 10px;
+  min-width: 220px;
+  padding: 2px 2px 9px;
+  color: #fff;
   font-family: var(--hud-font, system-ui, sans-serif);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 0 10px rgba(0, 0, 0, 0.35);
   pointer-events: none;
   animation: br-airdrop-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -2889,65 +2884,60 @@ button.br-inv-cell:hover {
   display: grid;
   place-items: center;
   flex: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: rgba(110, 231, 140, 0.14);
-  box-shadow: inset 0 0 0 1px rgba(110, 231, 140, 0.35);
+  width: 28px;
+  height: 28px;
 }
 .br-airdrop-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   fill: none;
   stroke: var(--drop);
-  stroke-width: 1.7;
+  stroke-width: 1.8;
   stroke-linejoin: round;
   stroke-linecap: round;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
 }
 .br-airdrop-body {
   display: grid;
-  gap: 1px;
+  gap: 0;
   min-width: 0;
   flex: 1;
 }
 .br-airdrop-body small {
   color: var(--drop);
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 .br-airdrop-body b {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 .br-airdrop-body span {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: rgba(242, 245, 247, 0.62);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 .br-airdrop-body span i {
-  padding: 0 6px;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #f2f5f7;
-  font-size: 11px;
+  padding: 0 5px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 4px;
+  font-size: 10.5px;
   font-style: normal;
   font-weight: 800;
-  line-height: 17px;
+  line-height: 15px;
 }
 .br-airdrop-time {
   flex: none;
-  min-width: 44px;
-  padding-left: 12px;
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 40px;
   color: #fff;
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
   line-height: 1;
   text-align: right;
@@ -2955,17 +2945,29 @@ button.br-inv-cell:hover {
 }
 .br-airdrop-time small {
   margin-left: 1px;
-  color: rgba(242, 245, 247, 0.55);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 13px;
   font-weight: 700;
+}
+.br-airdrop::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.22);
 }
 .br-airdrop-bar {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 3px;
-  background: linear-gradient(90deg, rgba(110, 231, 140, 0.55), var(--drop));
+  height: 2px;
+  border-radius: 2px;
+  background: var(--drop);
+  box-shadow: 0 0 6px rgba(124, 242, 154, 0.6);
   transform-origin: left center;
   transition: transform 1s linear;
 }
@@ -2978,14 +2980,12 @@ button.br-inv-cell:hover {
 @keyframes br-airdrop-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -8px) scale(0.98);
+    transform: translate(-50%, -8px);
   }
 }
 @keyframes br-airdrop-pulse {
   50% {
-    box-shadow:
-      inset 0 0 0 1px rgba(110, 231, 140, 0.8),
-      0 0 14px rgba(110, 231, 140, 0.35);
+    transform: scale(1.12);
   }
 }
 @media (prefers-reduced-motion: reduce) {
