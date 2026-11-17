@@ -1,3 +1,4 @@
+import { FullscreenButton } from "./FullscreenButton";
 import { useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import {
   ArrowLeft,
@@ -6,7 +7,6 @@ import {
   Crosshair,
   Keyboard,
   SlidersHorizontal,
-  Maximize,
   Volume2,
   VolumeX,
 } from "lucide-react";
@@ -165,17 +165,7 @@ export function GameSettings({
                           {settings.volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
                           {settings.volume === 0 ? "Enable audio" : "Mute audio"}
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const task = document.fullscreenElement
-                              ? document.exitFullscreen()
-                              : document.documentElement.requestFullscreen();
-                            void task.catch(() => {});
-                          }}
-                        >
-                          <Maximize size={16} /> Fullscreen
-                        </button>
+                        <FullscreenButton />
                       </div>
                     )}
                   </div>
