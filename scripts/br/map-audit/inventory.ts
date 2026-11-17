@@ -27,7 +27,7 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")).
   string,
   { class: string; use?: string; size: number[]; lods: { tris: number }[] }
 >;
-const hf = await decodeHeightfield(buf("public/fps/br/height.v1.hf"));
+const hf = await decodeHeightfield(buf("public/fps/br/height.v2.hf"));
 const cover = await decodeLandCover(buf("public/fps/br/landcover.v1.lc"));
 const island = buildIsland(hf, cover, meta, collision);
 const layout = island.layout;

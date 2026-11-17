@@ -13,6 +13,7 @@ import {
 import type { Heightfield } from "./heightfield";
 import { GROUND, type GroundLayer } from "./terrain";
 import { lotHeight } from "./layout";
+import { createRoadGrade, ROAD_GRADE } from "./road-grade";
 import { islandWalls } from "./walls";
 import { WORLD_HALF, type WorldMeta } from "./world";
 
@@ -336,10 +337,10 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
 
 /**
  * The paved surfaces' rise over the ground (m). A road running onto a runway dips `under` as
- * it nears the runway's edge and lies that much lower beneath it: 9 cm under the runway's
+ * it nears the runway's edge and lies that much lower beneath it: 7 cm under the runway's
  * surface (two greys in one plane z-fight).
  */
-export const PAVED_LIFT = { road: 0.08, runway: 0.1, under: 0.07 } as const;
+export const PAVED_LIFT = { road: ROAD_GRADE.lift, runway: 0.1, under: 0.05 } as const;
 /** Ground samples round a point (m): the corners and sides of a 4 m square, and a 2 m one. */
 const PAVED_STENCIL: ReadonlyArray<readonly [number, number]> = [
   [-2, -2],
@@ -373,13 +374,6 @@ export function pavedHeight(
   for (const [dx, dz] of PAVED_STENCIL) h = Math.max(h, heightAt(x + dx, z + dz));
   return h + lift;
 }
-/**
- * The least the drawn ground may stand under a paved cell (m); where it does not, the surface
- * rises by the shortfall and `margin`, at the terrain's vertices within `reach` m. `look`: a
- * cell is measured in full only where a first look at seven of its points finds less than this,
- * or the ground's slope changes by more than `rough` m between neighbouring grid cells.
- */
-const PAVED_CLEAR = { least: 0.03, margin: 0.03, reach: 8.5, look: 0.07, rough: 0.05 } as const;
 /** Road cells this far inside a runway (m) are not drawn: the road ends under its edge. */
 const RUNWAY_INSET = 2.5;
 /** The steepest a paved vertex's normal leans (rise over run): a 1-in-2 hill. */
@@ -421,37 +415,16 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   const heightAt = hf.heightAt.bind(hf);
   const n3 = { x: 0, y: 1, z: 0 };
   type V = [number, number, number];
-  // The few places where the ground between a cell's corners still stands above it (a cliff's
-  // edge, the dam's abutments: 36 m² of the map): a first pass measures every cell against the
-  // ground as it is drawn and raises the surface round those spots, on the terrain's own grid
-  // (`raise`, read bilinearly: again a function of the position alone); a second pass draws.
-  const raise = new Map<number, number>();
-  const grid = (x: number) => (x + WORLD_HALF) / hf.spacing;
-  const raiseAt = (x: number, z: number) => {
-    if (!raise.size) return 0;
-    const gx = grid(x),
-      gz = grid(z);
-    const i = Math.floor(gx),
-      j = Math.floor(gz);
-    const fx = gx - i,
-      fz = gz - j;
-    const r = (a: number, b: number) => raise.get(b * hf.width + a) ?? 0;
-    return (
-      (r(i, j) * (1 - fx) + r(i + 1, j) * fx) * (1 - fz) +
-      (r(i, j + 1) * (1 - fx) + r(i + 1, j + 1) * fx) * fz
-    );
-  };
-  // (Both passes ask for the same points in the same order: the second reads the first's.)
-  const first: number[] = [];
-  let asked = 0;
-  const surface = (x: number, z: number, lift: number) => {
-    if (probing) first.push(pavedHeight(heightAt, x, z, lift));
-    return first[probing ? first.length - 1 : asked++]! + raiseAt(x, z);
-  };
-  /** The ground as drawn at (x, z): a cell's two triangles either way, the higher. */
+  // Roads take the road grade (road-grade.ts: along the centreline, level across, leaning
+  // into a side slope by half a metre at most); runways and their aprons the paved height.
+  /**
+   * The ground as the terrain draws it (its cells are two triangles, split either way between
+   * its levels of detail): the higher of the two, which can stand a few centimetres over the
+   * bilinear height. Paved surfaces are laid over this.
+   */
   const drawn = (x: number, z: number) => {
-    const gx = grid(x),
-      gz = grid(z);
+    const gx = (x + WORLD_HALF) / hf.spacing,
+      gz = (z + WORLD_HALF) / hf.spacing;
     const i = Math.min(hf.width - 2, Math.max(0, Math.floor(gx))),
       j = Math.min(hf.height - 2, Math.max(0, Math.floor(gz)));
     const fx = gx - i,
@@ -461,90 +434,19 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
       h10 = hf.data[o + 1]!,
       h01 = hf.data[o + hf.width]!,
       h11 = hf.data[o + hf.width + 1]!;
-    const one =
+    return Math.max(
       fx + fz <= 1
         ? h00 + (h10 - h00) * fx + (h01 - h00) * fz
-        : h11 + (h01 - h11) * (1 - fx) + (h10 - h11) * (1 - fz);
-    const other =
+        : h11 + (h01 - h11) * (1 - fx) + (h10 - h11) * (1 - fz),
       fx >= fz
         ? h00 + (h10 - h00) * fx + (h11 - h10) * fz
-        : h00 + (h11 - h01) * fx + (h01 - h00) * fz;
-    return Math.max(one, other);
-  };
-  let probing = true;
-  /** Where the drawn ground comes within `least` of triangle a, b, c: raise round it. */
-  const probe = (a: V, b: V, c: V) => {
-    const n = Math.max(
-      2,
-      Math.ceil(
-        Math.max(Math.hypot(b[0] - a[0], b[2] - a[2]), Math.hypot(c[0] - a[0], c[2] - a[2])),
-      ),
+        : h00 + (h11 - h01) * fx + (h01 - h00) * fz,
     );
-    for (let i = 0; i <= n; i++)
-      for (let k = 0; i + k <= n; k++) {
-        const u = i / n,
-          w = k / n;
-        const x = a[0] + (b[0] - a[0]) * u + (c[0] - a[0]) * w,
-          z = a[2] + (b[2] - a[2]) * u + (c[2] - a[2]) * w;
-        const y = a[1] + (b[1] - a[1]) * u + (c[1] - a[1]) * w;
-        const short = PAVED_CLEAR.least - (y - drawn(x, z));
-        if (short <= 0) continue;
-        const need = short + PAVED_CLEAR.margin;
-        const reach = Math.ceil(PAVED_CLEAR.reach / hf.spacing);
-        const ci = Math.round(grid(x)),
-          cj = Math.round(grid(z));
-        for (let dj = -reach; dj <= reach; dj++)
-          for (let di = -reach; di <= reach; di++) {
-            const key = (cj + dj) * hf.width + ci + di;
-            if ((raise.get(key) ?? 0) < need) raise.set(key, need);
-          }
-      }
   };
-  /**
-   * How far the ground round (x, z) is from a plane (m): the largest step between neighbouring
-   * slopes on the terrain's grid, over the cell there and the cells round it.
-   */
-  const rough = (x: number, z: number) => {
-    const i = Math.min(hf.width - 3, Math.max(1, Math.floor(grid(x)))),
-      j = Math.min(hf.height - 3, Math.max(1, Math.floor(grid(z))));
-    let most = 0;
-    for (let b = j - 1; b <= j + 2; b++)
-      for (let a = i - 1; a <= i + 2; a++) {
-        const o = b * hf.width + a;
-        const h = hf.data[o]!;
-        if (a > i - 1 && a < i + 2)
-          most = Math.max(most, Math.abs(hf.data[o - 1]! - 2 * h + hf.data[o + 1]!));
-        if (b > j - 1 && b < j + 2)
-          most = Math.max(most, Math.abs(hf.data[o - hf.width]! - 2 * h + hf.data[o + hf.width]!));
-      }
-    return most;
-  };
-  /**
-   * First pass, a cell a, b, c, d (drawn as a, b, c and a, c, d): a look at its middle, its
-   * edges' middles and both triangles' centres; the full measure only where one is close or
-   * the ground there is far from a plane.
-   */
-  const check = (a: V, b: V, c: V, d: V) => {
-    const clear = (x: number, y: number, z: number) => y - drawn(x, z);
-    const half = (p: V, q: V) => clear((p[0] + q[0]) / 2, (p[1] + q[1]) / 2, (p[2] + q[2]) / 2);
-    const third = (p: V, q: V, r: V) =>
-      clear((p[0] + q[0] + r[0]) / 3, (p[1] + q[1] + r[1]) / 3, (p[2] + q[2] + r[2]) / 3);
-    if (
-      rough((a[0] + c[0]) / 2, (a[2] + c[2]) / 2) > PAVED_CLEAR.rough ||
-      Math.min(
-        half(a, c),
-        half(a, b),
-        half(b, c),
-        half(c, d),
-        half(d, a),
-        third(a, b, c),
-        third(a, c, d),
-      ) < PAVED_CLEAR.look
-    ) {
-      probe(a, b, c);
-      probe(a, c, d);
-    }
-  };
+  const grade = createRoadGrade(meta, drawn);
+  const surface = (x: number, z: number, lift: number) => pavedHeight(drawn, x, z, lift);
+  const roadSurface = (x: number, z: number, lift: number) =>
+    (grade.at(x, z) ?? pavedHeight(drawn, x, z, 0)) + lift;
   /** A vertex (its normal the ground's there); `foot`: a skirt's foot, never lifted. */
   const add = (v: V, colour: [number, number, number], foot = false) => {
     pos.push(v[0], v[1], v[2]);
@@ -591,11 +493,9 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   };
   /** A cell of its own (four vertices): a, b, c, d round it. */
   const quad = (a: V, b: V, c: V, d: V, colour: [number, number, number]) => {
-    if (probing) return check(a, b, c, d);
     face(add(a, colour), add(b, colour), add(c, colour), add(d, colour));
   };
   const skirtDown = (a: V, b: V, ox: number, oz: number, colour: [number, number, number]) => {
-    if (probing) return;
     // (Both feet the same way out: square to the edge, on (ox, oz)'s side.)
     const ex = b[0] - a[0],
       ez = b[2] - a[2];
@@ -611,7 +511,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
     );
   };
 
-  // ---- runways: a grid of cells (5 m at most), the paint as cells of its own.
+  // ---- runways: a grid of cells (2.5 m along, 3.5 m across at most), the paint as cells of its own.
   const strips = meta.runways.map((r) => {
     const [ax, az] = r.a,
       [bx, bz] = r.b;
@@ -631,11 +531,11 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   /** Inside a runway (`inset` m in from its edges)? Roads end there. */
   const onRunway = (x: number, z: number, inset: number) => intoRunway(x, z) > inset;
   /**
-   * A road's rise at (x, z): less by `under` from 2 m outside a runway's edge inwards, eased
-   * in over the 4 m before that (a cell's length: the cells' corners are what is drawn).
+   * A road's rise at (x, z): from a runway's edge inwards it dips by `under` over 2.5 m (the
+   * road's cells stop under the runway, RUNWAY_INSET).
    */
   const roadLift = (x: number, z: number) =>
-    PAVED_LIFT.road - PAVED_LIFT.under * Math.min(1, Math.max(0, (intoRunway(x, z) + 6) / 4));
+    PAVED_LIFT.road - PAVED_LIFT.under * Math.min(1, Math.max(0, intoRunway(x, z) / 2.5));
   const layRunways = () => {
     for (const r of strips) {
       const { ax, az, dx, dz, length, half } = r;
@@ -650,15 +550,15 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
       const marks = [-half, -half + 1, -half + 1.6, -0.45, 0.45, half - 1.6, half - 1, half];
       const across: number[] = [];
       for (let i = 0; i + 1 < marks.length; i++) {
-        const n = Math.max(1, Math.ceil((marks[i + 1]! - marks[i]!) / 5));
+        const n = Math.max(1, Math.ceil((marks[i + 1]! - marks[i]!) / 3.5));
         for (let k = 0; k < n; k++) across.push(marks[i]! + ((marks[i + 1]! - marks[i]!) * k) / n);
       }
       across.push(half);
       const edgeLine = (o: number) => Math.abs(o) > half - 1.6 && Math.abs(o) < half - 1;
-      // Along: 5 m steps (the dashes, 25 m of every 50 from 40 m in, start and end on them).
+      // Along: 2.5 m steps (the dashes, 25 m of every 50 from 40 m in, start and end on them).
       let row = across.map((o) => p(0, o));
-      for (let t0 = 0; t0 < length - 1e-6; t0 += 5) {
-        const t1 = Math.min(length, t0 + 5);
+      for (let t0 = 0; t0 < length - 1e-6; t0 += 2.5) {
+        const t1 = Math.min(length, t0 + 2.5);
         const next = across.map((o) => p(t1, o));
         const dash = t0 >= 40 && t1 <= length - 40 && (t0 - 40) % 50 < 25;
         for (let i = 0; i + 1 < across.length; i++) {
@@ -694,7 +594,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   const roadPoint = (s: Station, off: number): V => {
     const x = s.x + s.sx * off,
       z = s.z + s.sz * off;
-    return [x, surface(x, z, roadLift(x, z)), z];
+    return [x, roadSurface(x, z, roadLift(x, z)), z];
   };
   const strip = (stations: Station[], half: number) => {
     let before: Station | null = null;
@@ -703,24 +603,19 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
     let ids: number[] | null = null;
     for (const s of stations) {
       const row: [V, V, V] = [roadPoint(s, half), roadPoint(s, 0), roadPoint(s, -half)];
-      const now = probing
-        ? null
-        : [
-            add(row[0], road),
-            add(row[1], road),
-            add(row[2], road),
-            addFoot(row[0], road, row[0][0] + s.sx, row[0][2] + s.sz),
-            addFoot(row[2], road, row[2][0] - s.sx, row[2][2] - s.sz),
-          ];
+      const now = [
+        add(row[0], road),
+        add(row[1], road),
+        add(row[2], road),
+        addFoot(row[0], road, row[0][0] + s.sx, row[0][2] + s.sz),
+        addFoot(row[2], road, row[2][0] - s.sx, row[2][2] - s.sz),
+      ];
       if (before && was) {
         const mx = (s.x + before.x) / 2,
           mz = (s.z + before.z) / 2;
         // Under a runway: not drawn (the road's end reaches under the runway's edge).
         if (!onRunway(mx, mz, RUNWAY_INSET)) {
-          if (probing) {
-            check(was[0], row[0], row[1], was[1]);
-            check(was[1], row[1], row[2], was[2]);
-          } else if (ids && now) {
+          if (ids) {
             face(ids[0]!, now[0]!, now[1]!, ids[1]!);
             face(ids[1]!, now[1]!, now[2]!, ids[2]!);
             skirtFace(
@@ -750,18 +645,14 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   /** A round joint at a sharp bend: a disc of the road's width over the notch. */
   const disc = (x: number, z: number, half: number) => {
     if (onRunway(x, z, RUNWAY_INSET)) return;
-    const centre: V = [x, surface(x, z, roadLift(x, z)), z];
+    const centre: V = [x, roadSurface(x, z, roadLift(x, z)), z];
     const n = 10;
     const rim: V[] = [];
     for (let i = 0; i < n; i++) {
       const a = (i / n) * Math.PI * 2;
       const rx = x + Math.cos(a) * half,
         rz = z + Math.sin(a) * half;
-      rim.push([rx, surface(rx, rz, roadLift(rx, rz)), rz]);
-    }
-    if (probing) {
-      for (let i = 0; i < n; i++) probe(centre, rim[i]!, rim[(i + 1) % n]!);
-      return;
+      rim.push([rx, roadSurface(rx, rz, roadLift(rx, rz)), rz]);
     }
     const c = add(centre, road);
     const tops = rim.map((v) => add(v, road)),
@@ -839,24 +730,18 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   };
   // The roadside stops' lots, laid on the ground in 2 m cells. Each corner's height depends on
   // its position alone (layout.ts lotHeight), so neighbours share their corners' heights with
-  // no seam for the grass to show through. (Plus the raise where the ground stood through a
-  // cell: render only, a few centimetres.)
-  const lotY = (x: number, z: number) => lotHeight(heightAt, x, z) + raiseAt(x, z);
+  // no seam for the grass to show through.
+  // (2 cm over the layout's lot height: its 2 m cells over the ground as drawn.)
+  const lotY = (x: number, z: number) => lotHeight(drawn, x, z) + 0.02;
   const layLots = () => {
     for (const c of lots) {
       const v = (i: number): V => [c[i]!, lotY(c[i]!, c[i + 1]!), c[i + 1]!];
       quad(v(0), v(2), v(4), v(6), road);
     }
   };
-  for (const pass of [0, 1]) {
-    probing = pass === 0;
-    layRunways();
-    layRoads();
-    layLots();
-  }
-  if (asked !== first.length) throw new Error("road mesh: the passes differ");
-  raise.clear();
-  first.length = 0;
+  layRunways();
+  layRoads();
+  layLots();
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));

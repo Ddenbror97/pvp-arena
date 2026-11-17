@@ -1,4 +1,5 @@
 import { WORLD_ASSETS } from "@/lib/fps/br/world";
+import { createRoadGrade, ROAD_GRADE } from "@/lib/fps/br/road-grade";
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
@@ -25,8 +26,10 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")) 
   models: Record<string, { size: number[] }>;
 };
 let hf: Heightfield, world: StaticWorld, layout: Placement[];
+let roadGrade: ReturnType<typeof createRoadGrade>;
 beforeAll(async () => {
-  hf = await decodeHeightfield(buffer("public/fps/br/height.v1.hf"));
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v2.hf"));
+  roadGrade = createRoadGrade(meta, (x, z) => hf.heightAt(x, z));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
   ({ layout, solid: world } = buildIsland(hf, cover, meta, collision));
 }, 60_000);
@@ -138,8 +141,12 @@ describe("Project Island static world", () => {
           expect(h, `${p.model} relief buried`).toBeLessThan(20);
         } else {
           // On the terrain (cabins, farms, summits): never floating, buried at most a few metres
-          // on the uphill side.
-          const h = hf.heightAt(x!, z!) - p.y;
+          // on the uphill side. (Guardrails stand on the road's edge: on its surface.)
+          const ground =
+            p.model === "guardrail"
+              ? (roadGrade.at(x!, z!) ?? hf.heightAt(x!, z!)) + ROAD_GRADE.lift
+              : hf.heightAt(x!, z!);
+          const h = ground - p.y;
           expect(h, `${p.model} @${p.poi} floats`).toBeGreaterThan(-0.6);
           expect(h, `${p.model} @${p.poi} buried`).toBeLessThan(4);
         }

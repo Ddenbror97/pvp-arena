@@ -22,7 +22,7 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")).
   string,
   { class: string }
 >;
-const hf = await decodeHeightfield(buf("public/fps/br/height.v1.hf"));
+const hf = await decodeHeightfield(buf("public/fps/br/height.v2.hf"));
 const cover = await decodeLandCover(buf("public/fps/br/landcover.v1.lc"));
 const island = buildIsland(hf, cover, meta, collision);
 const [x0, z0, x1, z1, R] = process.argv.slice(2).map(Number) as [

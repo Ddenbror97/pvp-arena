@@ -100,11 +100,14 @@ const rangeVertex = /* glsl */ `
     vec3 lowered = normalize(vec3(position.x, position.y - uDip, position.z));
     vec4 p = projectionMatrix * vec4(mat3(viewMatrix) * lowered, 1.0);
     // Just in front of the far plane (behind anything at any real distance), so the sky
-    // drawn after the ranges leaves them in place.
+    // drawn after the ranges leaves them in place. The near layer a step in front of the far
+    // one: at the same depth the two traded places column by column as the camera moved, the
+    // far layer's paler foot showing through in flickering streaks all round the horizon
+    // (owner, 2026-11-16: "some walls around the island ... flicker from distance").
     #ifdef USE_REVERSED_DEPTH_BUFFER
-    gl_Position = vec4(p.xy, p.w * 1e-9, p.w); // reversed: 1e-6 would be only ~12 km away
+    gl_Position = vec4(p.xy, p.w * mix(2e-9, 1e-9, aLayer), p.w); // 1e-6 would be ~12 km away
     #else
-    gl_Position = vec4(p.xy, p.w * 0.999999, p.w);
+    gl_Position = vec4(p.xy, p.w * mix(0.9999985, 0.999999, aLayer), p.w);
     #endif
   }
 `;
@@ -270,7 +273,7 @@ export function createAtmosphere(sun: SunLook = sunLook()): Atmosphere {
   const ranges = new THREE.Mesh(rangeGeometry, rangeMaterial);
   ranges.name = "br-ranges";
   ranges.frustumCulled = false;
-  // The near layer was pushed last, so it draws over the far one (the same depth: LessEqual).
+  // The near layer is a depth step in front of the far one (rangeVertex), whatever the order.
   ranges.renderOrder = 1000;
   // How far below eye level the world ends: where the fog has taken the sea (or the far plane).
   ranges.onBeforeRender = (_renderer, scene, camera) => {
