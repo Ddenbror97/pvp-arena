@@ -1,3 +1,4 @@
+import { MatchScoreHud } from "./MatchScoreHud";
 import { FullscreenButton } from "./FullscreenButton";
 import { SpectatorCard } from "./SpectatorCard";
 import {
@@ -799,26 +800,19 @@ export function BombMatch() {
       )}
       <header className="duel-hud-top">
         {view && me && teams && (
-          <div className="bomb-topbar">
-            <TeamBar players={teams[me.team]} side="mine" />
-            <div className="bomb-score">
-              <b className={`team-${me.team}`}>{view.score[mineGroup]}</b>
-              <div>
-                <small>
-                  BEST OF {BOMB_RULES.maxRounds} · ROUND{" "}
-                  {Math.min(view.round, BOMB_RULES.maxRounds)} · {view.half === 1 ? "1ST" : "2ND"}{" "}
-                  HALF
-                </small>
-                <strong className={view.bomb.state === "planted" ? "bomb-planted" : ""}>
-                  {clockText(view, serverNow)}
-                </strong>
-              </div>
-              <b className={`team-${me.team === "police" ? "terrorist" : "police"}`}>
-                {view.score[otherGroup(mineGroup)]}
-              </b>
-            </div>
-            <TeamBar players={teams[me.team === "police" ? "terrorist" : "police"]} side="enemy" />
-          </div>
+          <MatchScoreHud
+            left={{ team: me.team, score: view.score[mineGroup], players: teams[me.team] }}
+            right={{
+              team: me.team === "police" ? "terrorist" : "police",
+              score: view.score[otherGroup(mineGroup)],
+              players: teams[me.team === "police" ? "terrorist" : "police"],
+            }}
+            bestOf={BOMB_RULES.maxRounds}
+            round={view.round}
+            half={view.half}
+            clock={clockText(view, serverNow)}
+            planted={view.bomb.state === "planted"}
+          />
         )}
       </header>
       {view && hudSelf && hudSelf.hp > 0 && view.phase !== "completed" && (
@@ -1034,30 +1028,6 @@ export function BombMatch() {
           {error}
         </p>
       )}
-    </div>
-  );
-}
-
-function TeamBar({
-  players,
-  side,
-}: {
-  players: { slot: number; alive: boolean; team: string; name: string }[];
-  side: "mine" | "enemy";
-}) {
-  return (
-    <div
-      className={`bomb-teambar ${side}`}
-      aria-label={`${side === "mine" ? "Your" : "Enemy"} team`}
-    >
-      {players.map((p) => (
-        <i
-          key={p.slot}
-          title={p.name}
-          className={`team-${p.team}${p.alive ? "" : " dead"}`}
-          aria-label={`${p.name}${p.alive ? "" : " (dead)"}`}
-        />
-      ))}
     </div>
   );
 }
