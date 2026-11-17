@@ -156,7 +156,10 @@ import { createTrackerRenderer } from "./tracker-renderer";
 import { WORLD_HALF } from "./world";
 import { warmPrograms } from "../program-warmup";
 import { gridRefAt, MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
-import { createCharacter } from "../character";
+import { createCharacter, type CarryGun } from "../character";
+
+/** The guns worn on the back (the Desert Eagle has the thigh holster). */
+const CARRY_GUNS = new Set<string>(["ak47", "m4", "awp", "hunting", "mp5", "spas12"]);
 import { RenderBudget } from "../presentation";
 import { deathPose } from "../death-presentation";
 import { LocalGrenadeHands } from "../grenades/grenade-timeline";
@@ -1034,7 +1037,16 @@ export function createBrArena(
       seat: -1,
       deadAt: 0,
       rappel,
-      rappelMotion: { rappel: rappel.motion, primary: "none", weapon: "rifle" } as const,
+      rappelMotion: {
+        rappel: rappel.motion,
+        primary: "none" as const,
+        weapon: "rifle" as const,
+        back: undefined as readonly [CarryGun | null, CarryGun | null] | undefined,
+        pack: 0,
+        vest: 0,
+      },
+      /** The guns this player wears on the back this frame (carriedFor). */
+      back: [null, null] as [CarryGun | null, CarryGun | null],
     };
   });
   // Your own operator, seen from behind in freefall (and under the canopy in the third-person
@@ -1060,6 +1072,29 @@ export function createBrArena(
     figureKey = "",
     figureOpenedAt = 0,
     figureSecond = -1;
+  /**
+   * The guns a player wears on the back, from their row (match.ts carriedRow): [right of the
+   * backpack, left of it]. A main gun whose hands are busy (swimming, climbing, a rope, driving)
+   * goes on the back too, on the side left free.
+   */
+  function carriedFor(
+    o: { carried: number; gun: number; phase: string; vehicle: number },
+    out: [CarryGun | null, CarryGun | null],
+  ) {
+    const worn = (code: number): CarryGun | null => {
+      const id = code > 0 ? itemFromCode(code - 1) : undefined;
+      return id && CARRY_GUNS.has(id) ? (id as CarryGun) : null;
+    };
+    out[0] = worn(o.carried % 256);
+    out[1] = worn(Math.floor(o.carried / 256));
+    const busy = o.phase !== "ground" || o.vehicle >= 0;
+    const held = busy ? worn(o.gun + 1) : null;
+    if (held) {
+      if (!out[0]) out[0] = held;
+      else if (!out[1]) out[1] = held;
+    }
+    return out;
+  }
   function poseFigure(
     gear: number,
     primary: "ak47" | "m4" | "awp" | "hunting" | "mp5" | "deagle" | "spas12" | "none",
@@ -2335,6 +2370,8 @@ export function createBrArena(
     optic: number;
     muzzle: number;
     gear: number;
+    /** The main guns worn on the back (match.ts carriedRow). */
+    carried: number;
     /** The vehicle they drive, or −1. */
     vehicle: number;
     /** On a rope down a wall (phase "rappel"): the wall and the stage, from their row. */
@@ -2572,6 +2609,7 @@ export function createBrArena(
             optic: -1,
             muzzle: -1,
             gear: 0,
+            carried: 0,
             vehicle: -1,
             rappel: null,
             rappelSeen: {} as RappelSeen,
@@ -2604,12 +2642,13 @@ export function createBrArena(
         pose.optic = state[9] ?? -1;
         pose.muzzle = state[10] ?? -1;
         pose.gear = state[11] ?? 0;
+        pose.carried = state[12] ?? 0;
         pose.vehicle = state[8] ?? -1;
-        pose.rappel = pose.phase === "rappel" ? readRappelRow(state, 12, pose.rappelSeen) : null;
+        pose.rappel = pose.phase === "rappel" ? readRappelRow(state, 13, pose.rappelSeen) : null;
         if (pose.rappel && t < b.at) {
           // Between two rows of the same stage the hop (or the stage) runs on smoothly.
-          const cb = rb[17],
-            ca = ra[17];
+          const cb = rb[18],
+            ca = ra[18];
           if (
             cb !== undefined &&
             ca !== undefined &&
@@ -2753,6 +2792,12 @@ export function createBrArena(
         const root = slot.actor.root;
         root.visible = true;
         if (!o.rappel) slot.rappel.on = false;
+        const back = carriedFor(o, slot.back),
+          pack = (o.gear >> 4) & 3,
+          vest = (o.gear >> 2) & 3;
+        slot.rappelMotion.back = back;
+        slot.rappelMotion.pack = pack;
+        slot.rappelMotion.vest = vest;
         // Driving: sat in the seat, hands on the wheel or the bars (no gun).
         const seated =
           o.vehicle >= 0 && o.phase === "ground" ? vehiclesFx?.seatRider(o.vehicle, root) : null;
@@ -2761,6 +2806,9 @@ export function createBrArena(
             seated,
             primary: "none",
             weapon: "rifle",
+            back,
+            pack,
+            vest,
           });
           fitCharacterGear(slot.actor, o.gear);
           continue;
@@ -2783,6 +2831,9 @@ export function createBrArena(
             },
             primary: "none",
             weapon: "rifle",
+            back,
+            pack,
+            vest,
           });
           fitCharacterGear(slot.actor, o.gear);
           continue;
@@ -2823,6 +2874,9 @@ export function createBrArena(
             },
             primary: "none",
             weapon: "rifle",
+            back,
+            pack,
+            vest,
           });
           fitCharacterGear(slot.actor, o.gear);
           continue;
@@ -2834,6 +2888,9 @@ export function createBrArena(
             ladder: { cycles: climb.s / LADDER_CYCLE, standOff: LADDER.standOff },
             primary: "none",
             weapon: "rifle",
+            back,
+            pack,
+            vest,
           });
           fitCharacterGear(slot.actor, o.gear);
           continue;
@@ -2900,6 +2957,10 @@ export function createBrArena(
               : "none",
           // No gun drawn on foot: the Karambit in the hand (swings from "melee" events).
           weapon: !gun && o.phase === "ground" ? "knife" : "rifle",
+          // Dead: the guns went to the loot.
+          back: dead ? undefined : back,
+          pack,
+          vest,
           silenced: o.muzzle >= 0 && itemFromCode(o.muzzle) === "silencer",
           // Collapse progress 0–1 (the limbs relax with it), not the time of death.
           ...(collapse ? { death: collapse.progress } : {}),

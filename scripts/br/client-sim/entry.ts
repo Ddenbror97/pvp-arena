@@ -130,6 +130,9 @@ declare global {
       /** Shader check only: the other player picks this gun up (and holds it). */
       /** Gun checks: the other player holds only `item` (null: the knife). */
       otherHold?: (item: string | null) => void;
+      /** Gun checks: the other player's two main guns (slots 1 and 2) and the slot in hand
+       * (−1: the knife). */
+      otherLoadout?: (guns: [string | null, string | null], active: number) => void;
       /** Gun checks: turn the other player by `by` rad (seen from the side). */
       otherTurn?: (by: number) => void;
       otherGun?: (item: string) => void;
@@ -616,6 +619,22 @@ const ready = (async () => {
       pickUp(o.kit, { item: item as keyof typeof ITEMS, qty: 1, mag: d.magazine });
       o.kit.active = o.kit.guns.findIndex((g) => g?.item === item);
     }
+    o.kitVersion++;
+  };
+  window.sim.otherLoadout = (guns, active) => {
+    const o = state.seats[other]!;
+    o.kit.guns = o.kit.guns.map(() => null) as typeof o.kit.guns;
+    guns.forEach((item, i) => {
+      if (!item) return;
+      const d = ITEMS[item as keyof typeof ITEMS] as { magazine: number };
+      o.kit.guns[i] = {
+        item: item as keyof typeof ITEMS,
+        mag: d.magazine,
+        optic: null,
+        muzzle: null,
+      } as (typeof o.kit.guns)[number];
+    });
+    o.kit.active = active;
     o.kitVersion++;
   };
   window.sim.otherTurn = (by) => {

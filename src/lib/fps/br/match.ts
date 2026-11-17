@@ -2326,7 +2326,7 @@ export function brFastEvents(events: readonly BrMatchState["combat"][number][]) 
 }
 
 /** The parts of a player row that are not position or facing: a change is sent at once. */
-const ROW_STATE = [4, 6, 7, 8, 9, 10, 11] as const;
+const ROW_STATE = [4, 6, 7, 8, 9, 10, 11, 12] as const;
 
 const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
 /**
@@ -2442,9 +2442,24 @@ function playerRow(s: BrSeat) {
     wornLevel(s.kit.armour.helmet?.item) +
       4 * wornLevel(s.kit.armour.vest?.item) +
       16 * wornLevel(s.kit.backpack),
+    // The guns carried but not in hand, drawn on the back (owner, 2026-11-17: others must see
+    // the shotgun on the back of a player holding the sniper): carriedRow.
+    s.dead ? 0 : carriedRow(s.kit),
     // On a rope down a wall: the wall and how far into the stage or the hop (rappel.ts).
     ...(!s.dead && b.phase === "rappel" && b.rappel ? rappelRow(b.rappel) : []),
   ];
+}
+/**
+ * The two main gun slots as worn on the back, the ones not in hand: (slot 1's item code + 1)
+ * + 256 × (slot 2's + 1), 0 for an empty slot or the gun in hand. The pistol slot is left out
+ * (the operator's thigh holster shows one). Read by the client's `readCarried`.
+ */
+export function carriedRow(kit: BrSeat["kit"]) {
+  const code = (i: 0 | 1) => {
+    const g = kit.guns[i];
+    return g && kit.active !== i ? itemCode(g.item) + 1 : 0;
+  };
+  return code(0) + 256 * code(1);
 }
 
 export function brViewFor(
