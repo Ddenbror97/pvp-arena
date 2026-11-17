@@ -1,0 +1,94 @@
+.fps-match-hud {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.fps-match-score {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 20px;
+  text-shadow:
+    0 2px 5px #000,
+    0 0 2px #000;
+}
+.fps-match-score > b {
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+}
+.fps-match-score > div {
+  text-align: center;
+  min-width: 110px;
+}
+.fps-match-score small {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: #c9b79d;
+  white-space: nowrap;
+}
+.fps-match-score strong {
+  display: block;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  color: #f6efe3;
+}
+.fps-match-hud .team-police {
+  color: #6fa8ff;
+}
+.fps-match-hud .team-terrorist {
+  color: #f0a64a;
+}
+.fps-match-score strong.fps-bomb-planted {
+  color: #ff5a3c;
+  animation: fps-bomb-pulse 1s infinite;
+}
+.fps-team-bar {
+  display: flex;
+  gap: 4px;
+}
+.fps-team-bar i {
+  width: 16px;
+  height: 22px;
+  border-radius: 3px;
+  background: currentColor;
+  opacity: 0.95;
+}
+.fps-team-bar i.dead {
+  opacity: 0.18;
+}
+@keyframes fps-bomb-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+@media (max-width: 760px) {
+  .fps-match-hud {
+    gap: 6px;
+  }
+  .fps-match-score {
+    padding: 8px 5px;
+    gap: 10px;
+  }
+  .fps-match-score small {
+    font-size: 7px;
+    letter-spacing: 0.06em;
+  }
+  .fps-match-score > b {
+    font-size: 24px;
+  }
+  .fps-team-bar {
+    gap: 3px;
+  }
+  .fps-team-bar i {
+    width: 10px;
+    height: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fps-match-score strong.fps-bomb-planted {
+    animation: none;
+  }
+}

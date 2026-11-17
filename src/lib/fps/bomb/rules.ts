@@ -51,6 +51,7 @@ export interface BombPlayer extends Player {
   group: Group;
   /** Display name (bots: "BOT <name>"). */
   name: string;
+  avatar?: string;
   bot: boolean;
   deaths: number;
   assists: number;

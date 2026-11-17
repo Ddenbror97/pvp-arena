@@ -16,70 +16,11 @@
   white-space: nowrap;
   will-change: transform;
 }
-.bomb-topbar {
-  grid-column: 2;
-  grid-row: 1;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.bomb-score {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  text-shadow:
-    0 2px 5px #000,
-    0 0 2px #000;
-  padding: 8px 20px;
-}
-.bomb-score > b {
-  font-size: 28px;
-  font-variant-numeric: tabular-nums;
-}
-.bomb-score > div {
-  text-align: center;
-  min-width: 110px;
-}
-.bomb-score small {
-  display: block;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  color: #c9b79d;
-}
-.bomb-score strong {
-  display: block;
-  font-size: 20px;
-  font-variant-numeric: tabular-nums;
-  color: var(--bomb-ink);
-}
-.bomb-score strong.bomb-planted {
-  color: #ff5a3c;
-  animation: bomb-pulse 1s infinite;
-}
-@keyframes bomb-pulse {
-  50% {
-    opacity: 0.55;
-  }
-}
 .team-police {
   color: var(--bomb-police);
 }
 .team-terrorist {
   color: var(--bomb-terrorist);
-}
-.bomb-teambar {
-  display: flex;
-  gap: 4px;
-}
-.bomb-teambar i {
-  width: 16px;
-  height: 22px;
-  border-radius: 3px;
-  background: currentColor;
-  opacity: 0.95;
-}
-.bomb-teambar i.dead {
-  opacity: 0.18;
 }
 .bomb-killfeed {
   position: absolute;

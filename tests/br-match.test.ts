@@ -67,6 +67,31 @@ function run(
 }
 
 describe("Project Island match (Phase 2 core)", () => {
+  it("shares only the selected spectator's public profile and equipped gun after elimination", () => {
+    const state = createBrMatch(meta, 7, heightAt);
+    seatHuman(state, "viewer", "Viewer");
+    seatHuman(state, "target", "Target");
+    const target = state.seats[1]!;
+    target.avatar = "https://api.dicebear.com/9.x/shapes/svg?seed=target";
+    target.kit.guns[0] = { item: "ak47", mag: 17, optic: null, muzzle: null };
+    target.kit.active = 0;
+    target.kit.hp = 74;
+    const sight = new BrSight();
+    expect(brViewFor(state, world, sight, 0, 1000).watch).toBeUndefined();
+    state.seats[0]!.dead = true;
+    state.seats[0]!.spectate = 1;
+    const watch = brViewFor(state, world, sight, 0, 1001).watch;
+    expect(watch).toMatchObject({
+      name: "Target",
+      avatar: target.avatar,
+      hp: 74,
+      weapon: "ak47",
+      ammo: 17,
+    });
+    expect(watch).not.toHaveProperty("id");
+    expect(watch).not.toHaveProperty("kit");
+  });
+
   it("replicates and restores crouch-jump contraction so prediction cannot apply it twice", () => {
     const state = createBrMatch(meta, 7, heightAt);
     seatHuman(state, "jumper", "Jumper");

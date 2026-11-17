@@ -1,3 +1,13 @@
+import { MatchScoreHud } from "./MatchScoreHud";
+import { FullscreenButton } from "./FullscreenButton";
+import {
+  defaultStrikeBinds,
+  readStrikeBinds,
+  saveStrikeBinds,
+  strikeKey,
+} from "@/lib/fps/key-bindings";
+import { keyLabel } from "@/lib/fps/br/br-settings";
+import { StrikeKeyBindings } from "./StrikeKeyBindings";
 import { preparedDuelMap, takeDuelEntry } from "@/lib/fps/entry-preparation";
 import { openMatchSocket, type MatchSocketLink } from "@/lib/fps/match-socket";
 import { NetworkObservations, readNetworkReport, type NetworkReport } from "@/lib/fps/network";
@@ -5,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Volume2, VolumeX, Maximize, Copy, Crosshair, Skull } from "lucide-react";
+import { Volume2, VolumeX, Copy, Crosshair, Skull } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { SIDE_RIFLE } from "@/lib/fps/combat";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
@@ -31,7 +41,7 @@ import { MatchResult } from "./MatchResult";
 import { walletQuery } from "@/lib/jackpot/api";
 import { DeathFeedback } from "./DeathFeedback";
 import { isDefeatedView } from "@/lib/fps/death-presentation";
-import { characterSide, isHalftime, sideName } from "@/lib/fps/sides";
+import { characterSide, halftimeRound, isHalftime } from "@/lib/fps/sides";
 import { useMatchLeaveGuard } from "@/lib/fps/match-guard";
 import "./duel.css";
 import "./sniper-scope.css";
@@ -145,6 +155,16 @@ export function DuelMatch({
   /** Spawn buy menu (B). While it is open, releasing the mouse does not open the settings. */
   const [buyOpen, setBuyOpen] = useState(false);
   const buyOpenRef = useRef(false);
+  const [keyBindings, setKeyBindings] = useState(defaultStrikeBinds);
+  const keyBindingsRef = useRef(keyBindings);
+  keyBindingsRef.current = keyBindings;
+  useEffect(() => {
+    setKeyBindings(readStrikeBinds());
+  }, []);
+  useEffect(() => {
+    arena.current?.setKeyBindings(keyBindings);
+    saveStrikeBinds(keyBindings);
+  }, [keyBindings]);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   useEffect(() => {
@@ -316,6 +336,7 @@ export function DuelMatch({
             },
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
+          arena.current.setKeyBindings(keyBindingsRef.current);
           void arena.current.ready
             .then(() => {
               if (!disposed) {
@@ -672,7 +693,13 @@ export function DuelMatch({
   canBuyRef.current = canBuy;
   useEffect(() => {
     const open = (e: KeyboardEvent) => {
-      if (e.code !== "KeyB" || e.repeat || buyOpenRef.current || !canBuyRef.current) return;
+      if (
+        strikeKey(e.code, keyBindingsRef.current) !== "KeyB" ||
+        e.repeat ||
+        buyOpenRef.current ||
+        !canBuyRef.current
+      )
+        return;
       if (document.querySelector(".strike-settings, .fps-leave-card")) return;
       e.preventDefault();
       buyOpenRef.current = true;
@@ -690,6 +717,18 @@ export function DuelMatch({
   const buyStatus =
     frame && seat ? buyBlocked(duelBuyWindow(frame.state, seat, now + serverOffset.current)) : null;
   const myPrimary: Primary = me ? primaryOf(me) : "rifle";
+  const scoreLeft: Seat = seat ?? "A";
+  const scoreRight: Seat = scoreLeft === "A" ? "B" : "A";
+  const scoreSide = (s: Seat): "police" | "terrorist" =>
+    (frame ? characterSide(frame.state, s) : s) === "A" ? "police" : "terrorist";
+  const scorePlayer = (s: Seat) => [
+    {
+      slot: s === "A" ? 0 : 1,
+      team: scoreSide(s),
+      name: players[s === "A" ? 0 : 1]?.username ?? "Player",
+      alive: !frame || frame.state.players[s].hp > 0,
+    },
+  ];
   const phase = frame?.state.phase ?? "waiting";
   const seconds = frame
     ? Math.max(0, Math.ceil((frame.state.phaseEndsAt - now - serverOffset.current) / 1000))
@@ -779,28 +818,42 @@ export function DuelMatch({
         </div>
       )}
       <header className="duel-hud-top">
-        <div className="duel-score">
-          <span className={seat === "A" ? "you" : ""}>
-            {frame ? sideName(frame.state, "A") : "Anti-Terrorist"}{" "}
-            <b>{frame?.state.score.A ?? match?.score_a ?? 0}</b>
-          </span>
-          <div>
-            <small>
-              BEST OF {match?.best_of ?? 5} · ROUND {frame?.state.round ?? 1}
-            </small>
-            <strong>
-              {phase === "live"
-                ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
-                : frame && isHalftime(frame.state)
-                  ? "HALFTIME"
-                  : "PVPSTRIKE"}
-            </strong>
-          </div>
-          <span className={seat === "B" ? "you" : ""}>
-            <b>{frame?.state.score.B ?? match?.score_b ?? 0}</b>{" "}
-            {frame ? sideName(frame.state, "B") : "Terrorist"}
-          </span>
-        </div>
+        <MatchScoreHud
+          left={{
+            team: scoreSide(scoreLeft),
+            score:
+              frame?.state.score[scoreLeft] ??
+              (scoreLeft === "A" ? match?.score_a : match?.score_b) ??
+              0,
+            players: scorePlayer(scoreLeft),
+          }}
+          right={{
+            team: scoreSide(scoreRight),
+            score:
+              frame?.state.score[scoreRight] ??
+              (scoreRight === "A" ? match?.score_a : match?.score_b) ??
+              0,
+            players: scorePlayer(scoreRight),
+          }}
+          bestOf={frame?.state.bestOf ?? match?.best_of ?? 13}
+          round={frame?.state.round ?? 1}
+          half={
+            frame?.state.sideVersion === 1
+              ? frame.state.round > halftimeRound(frame.state)
+                ? 2
+                : 1
+              : undefined
+          }
+          clock={
+            phase === "live" || phase === "countdown"
+              ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
+              : frame && isHalftime(frame.state)
+                ? "HALFTIME"
+                : phase === "round-end"
+                  ? "ROUND OVER"
+                  : "WAITING"
+          }
+        />
         <div className="duel-hud-actions">
           <span
             className={connection === "Connected" ? "duel-connected duel-network-status" : ""}
@@ -814,22 +867,6 @@ export function DuelMatch({
           >
             {connection}
           </span>
-          <button
-            aria-label={muted ? "Enable game audio" : "Mute game audio"}
-            onClick={() => toggleSoundMuted()}
-          >
-            {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
-          </button>
-          <button
-            aria-label="Fullscreen arena"
-            onClick={() =>
-              void host.current?.parentElement
-                ?.requestFullscreen()
-                .catch(() => setError("Fullscreen is unavailable in this browser."))
-            }
-          >
-            <Maximize size={17} />
-          </button>
         </div>
       </header>
       {!terminal && frame && isDefeatedView(frame.state, seat, spectate) && (
@@ -842,7 +879,7 @@ export function DuelMatch({
       </div>
       {canBuy && locked && !buyStatus && (
         <div className="buy-hint" role="status">
-          <kbd>B</kbd> Buy weapons
+          <kbd>{keyLabel(keyBindings.buy)}</kbd> Buy weapons
         </div>
       )}
       <BuyMenu
@@ -854,6 +891,21 @@ export function DuelMatch({
         onClose={() => closeBuy(true)}
       />
       <GameSettings
+        mode="1v1 Duel"
+        displayActions={
+          <div>
+            {" "}
+            <button
+              aria-label={muted ? "Enable game audio" : "Mute game audio"}
+              onClick={() => toggleSoundMuted()}
+            >
+              {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+              {muted ? "Enable audio" : "Mute audio"}
+            </button>
+            <FullscreenButton onError={setError} />
+          </div>
+        }
+        extra={<StrikeKeyBindings value={keyBindings} onChange={setKeyBindings} bomb={false} />}
         matchNotice={<FpsReadyAction practiceId={matchId} />}
         open={settingsOpen && ready && !terminal}
         onOpenChange={setSettingsOpen}

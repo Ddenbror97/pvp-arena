@@ -1,9 +1,20 @@
+import { MatchScoreHud } from "./MatchScoreHud";
+import { FullscreenButton } from "./FullscreenButton";
+import { SpectatorCard } from "./SpectatorCard";
+import {
+  defaultStrikeBinds,
+  readStrikeBinds,
+  saveStrikeBinds,
+  strikeKey,
+} from "@/lib/fps/key-bindings";
+import { keyLabel } from "@/lib/fps/br/br-settings";
+import { StrikeKeyBindings } from "./StrikeKeyBindings";
 import { preparedBombMap, takeBombEntry } from "@/lib/fps/entry-preparation";
 import { openMatchSocket } from "@/lib/fps/match-socket";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Crosshair, Skull, Maximize, Volume2, VolumeX, Wrench } from "lucide-react";
+import { Crosshair, Skull, Volume2, VolumeX, Wrench } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
 import { GrenadeHud } from "./GrenadeHud";
@@ -113,6 +124,16 @@ export function BombMatch() {
     [confirmLeave, setConfirmLeave] = useState(false);
   const [kitPending, setKitPending] = useState(false);
   const [kitError, setKitError] = useState<string | null>(null);
+  const [keyBindings, setKeyBindings] = useState(defaultStrikeBinds);
+  const keyBindingsRef = useRef(keyBindings);
+  keyBindingsRef.current = keyBindings;
+  useEffect(() => {
+    setKeyBindings(readStrikeBinds());
+  }, []);
+  useEffect(() => {
+    arena.current?.setKeyBindings(keyBindings);
+    saveStrikeBinds(keyBindings);
+  }, [keyBindings]);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   const hadCaptured = useRef(false);
@@ -174,12 +195,17 @@ export function BombMatch() {
   // TAB: hold for the scoreboard (works while the mouse is captured).
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.code !== "Tab" || buyOpenRef.current) return;
+      if (
+        strikeKey(e.code, keyBindingsRef.current) !== "Tab" ||
+        document.querySelector(".strike-settings, .fps-leave-card") ||
+        buyOpenRef.current
+      )
+        return;
       e.preventDefault();
       setTab(true);
     };
     const up = (e: KeyboardEvent) => {
-      if (e.code === "Tab") setTab(false);
+      if (strikeKey(e.code, keyBindingsRef.current) === "Tab") setTab(false);
     };
     const blur = () => setTab(false);
     document.addEventListener("keydown", down);
@@ -318,6 +344,7 @@ export function BombMatch() {
             mapId,
           );
           arena.current.setSensitivity(settingsRef.current.sensitivity);
+          arena.current.setKeyBindings(keyBindingsRef.current);
           void arena.current.ready
             .then(() => {
               if (disposed) return;
@@ -681,7 +708,14 @@ export function BombMatch() {
   useEffect(() => {
     const open = (e: KeyboardEvent) => {
       const v = latest.current;
-      if (e.code !== "KeyB" || e.repeat || buyOpenRef.current || !v || v.self.hp <= 0) return;
+      if (
+        strikeKey(e.code, keyBindingsRef.current) !== "KeyB" ||
+        e.repeat ||
+        buyOpenRef.current ||
+        !v ||
+        v.self.hp <= 0
+      )
+        return;
       if (v.phase !== "freeze" && v.phase !== "live") return;
       if (document.querySelector(".strike-settings, .fps-leave-card")) return;
       e.preventDefault();
@@ -766,26 +800,19 @@ export function BombMatch() {
       )}
       <header className="duel-hud-top">
         {view && me && teams && (
-          <div className="bomb-topbar">
-            <TeamBar players={teams[me.team]} side="mine" />
-            <div className="bomb-score">
-              <b className={`team-${me.team}`}>{view.score[mineGroup]}</b>
-              <div>
-                <small>
-                  BEST OF {BOMB_RULES.maxRounds} · ROUND{" "}
-                  {Math.min(view.round, BOMB_RULES.maxRounds)} · {view.half === 1 ? "1ST" : "2ND"}{" "}
-                  HALF
-                </small>
-                <strong className={view.bomb.state === "planted" ? "bomb-planted" : ""}>
-                  {clockText(view, serverNow)}
-                </strong>
-              </div>
-              <b className={`team-${me.team === "police" ? "terrorist" : "police"}`}>
-                {view.score[otherGroup(mineGroup)]}
-              </b>
-            </div>
-            <TeamBar players={teams[me.team === "police" ? "terrorist" : "police"]} side="enemy" />
-          </div>
+          <MatchScoreHud
+            left={{ team: me.team, score: view.score[mineGroup], players: teams[me.team] }}
+            right={{
+              team: me.team === "police" ? "terrorist" : "police",
+              score: view.score[otherGroup(mineGroup)],
+              players: teams[me.team === "police" ? "terrorist" : "police"],
+            }}
+            bestOf={BOMB_RULES.maxRounds}
+            round={view.round}
+            half={view.half}
+            clock={clockText(view, serverNow)}
+            planted={view.bomb.state === "planted"}
+          />
         )}
       </header>
       {view && hudSelf && hudSelf.hp > 0 && view.phase !== "completed" && (
@@ -797,7 +824,7 @@ export function BombMatch() {
       </div>
       {buyable && locked && !buyStatus && me && (
         <div className="buy-hint" role="status">
-          <kbd>B</kbd> Buy weapons
+          <kbd>{keyLabel(keyBindings.buy)}</kbd> Buy weapons
         </div>
       )}
       {me && (
@@ -860,14 +887,27 @@ export function BombMatch() {
         </div>
       )}
       {view && self && self.hp <= 0 && view.phase === "live" && (
-        <div className="bomb-spectate" role="status">
+        <div className={watched ? "bomb-spectator-layer" : "bomb-spectate"}>
           {watched ? (
-            <>
-              <small>SPECTATING</small>
-              <strong className={`team-${watched.team}`}>
-                {watched.name} · {teamLabel(watched.team)}
-              </strong>
-            </>
+            <SpectatorCard
+              name={watched.name}
+              avatar={watched.avatar}
+              bot={watched.bot}
+              hp={hudSelf?.hp ?? watched.hp}
+              kills={watched.kills}
+              team={watched.team}
+              weapon={
+                hudSelf && (
+                  <FeedWeaponIcon weapon={heldWeapon(hudSelf, watched.team === "police") ?? "he"} />
+                )
+              }
+              ammo={
+                hudSelf && hudSelf.weapon !== "knife" && hudSelf.weapon !== "grenade"
+                  ? drawnGun(hudSelf).ammo
+                  : undefined
+              }
+              hint="Left / right click to switch"
+            />
           ) : (
             <>
               <small>YOUR TEAM IS DOWN</small>
@@ -945,6 +985,8 @@ export function BombMatch() {
       )}
       {showBoard && view && <BombScoreboard view={view} />}
       <GameSettings
+        mode="5v5 · Bomb Defusal"
+        extra={<StrikeKeyBindings value={keyBindings} onChange={setKeyBindings} bomb={true} />}
         open={settingsOpen && arenaReady}
         onOpenChange={setSettingsOpen}
         settings={settings}
@@ -956,13 +998,7 @@ export function BombMatch() {
               {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
               {muted ? "Enable game audio" : "Mute game audio"}
             </button>
-            <button
-              type="button"
-              className="duel-secondary"
-              onClick={() => void document.documentElement.requestFullscreen().catch(() => {})}
-            >
-              <Maximize size={17} /> Fullscreen
-            </button>
+            <FullscreenButton className="duel-secondary" />
           </div>
         }
         leaveAction={
@@ -992,30 +1028,6 @@ export function BombMatch() {
           {error}
         </p>
       )}
-    </div>
-  );
-}
-
-function TeamBar({
-  players,
-  side,
-}: {
-  players: { slot: number; alive: boolean; team: string; name: string }[];
-  side: "mine" | "enemy";
-}) {
-  return (
-    <div
-      className={`bomb-teambar ${side}`}
-      aria-label={`${side === "mine" ? "Your" : "Enemy"} team`}
-    >
-      {players.map((p) => (
-        <i
-          key={p.slot}
-          title={p.name}
-          className={`team-${p.team}${p.alive ? "" : " dead"}`}
-          aria-label={`${p.name}${p.alive ? "" : " (dead)"}`}
-        />
-      ))}
     </div>
   );
 }
