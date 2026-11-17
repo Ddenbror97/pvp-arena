@@ -70,22 +70,32 @@ export function BrKeyBindings({
       e.stopImmediatePropagation();
       if (e.code === "Escape") return setListening(null);
       if (RESERVED_KEYS.has(e.code)) return;
+      if (e.repeat) return;
       onChange({ ...value, binds: rebind(value.binds, listening, e.code) });
       setListening(null);
     };
     addEventListener("keydown", f, true);
     return () => removeEventListener("keydown", f, true);
   }, [listening, value, onChange]);
-  const groups = [...new Set(BR_ACTION_IDS.map((a) => BR_ACTIONS[a].group))];
+  const groupOf = (a: BrAction) =>
+    ["primary", "secondary", "pistol", "knife", "grenade", "medkit", "bandage", "inspect"].includes(
+      a,
+    )
+      ? "Equipment"
+      : BR_ACTIONS[a].group;
+  const groups = ["Movement", "Equipment", "Actions", "Screens"];
   return (
     <section className="strike-settings-card br-settings-keys" aria-label="Key bindings">
       <div className="br-keys-head">
         <h3>Key bindings</h3>
-        <small>Fire and aim stay on the mouse buttons; Escape opens this menu.</small>
+        <small>Select a key to change it. Assigned keys swap places.</small>
         <button
           type="button"
           className="duel-secondary"
-          onClick={() => onChange({ ...value, binds: { ...DEFAULT_BR_SETTINGS.binds } })}
+          onClick={() => {
+            setListening(null);
+            onChange({ ...value, binds: { ...DEFAULT_BR_SETTINGS.binds } });
+          }}
         >
           Reset keys
         </button>
@@ -94,7 +104,7 @@ export function BrKeyBindings({
         {groups.map((g) => (
           <div key={g} className="br-keys-group">
             <h4>{g}</h4>
-            {BR_ACTION_IDS.filter((a) => BR_ACTIONS[a].group === g).map((a) => (
+            {BR_ACTION_IDS.filter((a) => groupOf(a) === g).map((a) => (
               <div key={a} className="br-key-row">
                 <span>{BR_ACTIONS[a].label}</span>
                 <button
@@ -110,6 +120,26 @@ export function BrKeyBindings({
           </div>
         ))}
       </div>
+      <div className="strike-fixed-keys">
+        <span>
+          <kbd>LMB</kbd> Fire / throw
+        </span>
+        <span>
+          <kbd>RMB</kbd> Aim / free look
+        </span>
+        <span>
+          <kbd>Wheel</kbd> Cycle equipment
+        </span>
+        <span>
+          <kbd>Esc</kbd> Menu
+        </span>
+        <span>
+          <kbd>F3</kbd> Performance
+        </span>
+      </div>
+      <p className="strike-binding-status" role="status">
+        {listening ? "Press a key. Escape cancels." : ""}
+      </p>
     </section>
   );
 }
@@ -135,7 +165,12 @@ function BrGraphicsChoice() {
         {info?.gpu ? <small>{gpuLabel(info.gpu)}</small> : null}
       </p>
       {info && <GpuFellBack gpu={info.gpu} />}
-      {info && integratedGpu(info.gpu) && <GpuSwitchHelp />}
+      {info && integratedGpu(info.gpu) && (
+        <details className="strike-graphics-help">
+          <summary>Graphics troubleshooting</summary>
+          <GpuSwitchHelp />
+        </details>
+      )}
     </>
   );
 }

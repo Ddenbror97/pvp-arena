@@ -232,7 +232,16 @@ export type BrView = {
   /** The zone, with this player's gas damage per second now (exposure included). */
   zone?: BrZoneView & { hurt?: number };
   /** Eliminated: the player being watched. */
-  watch?: { seat: number; name: string; kills: number };
+  watch?: {
+    seat: number;
+    name: string;
+    kills: number;
+    avatar?: string;
+    bot?: boolean;
+    hp?: number;
+    weapon?: string;
+    ammo?: number;
+  };
   /** An eliminated player's place, of how many started, and the damage they dealt. */
   placed?: { place: number; of: number; damage: number };
   result?: {

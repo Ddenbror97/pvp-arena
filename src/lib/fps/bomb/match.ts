@@ -250,13 +250,15 @@ export function startBombMatch(state: BombMatchState, now: number): BombMatchSta
 export function assignSlot(
   state: BombMatchState,
   slot: number,
-  who: { id: string; name: string; bot: boolean },
+  who: { id: string; name: string; bot: boolean; avatar?: string },
 ) {
   const p = state.players[slot];
   if (!p) throw new Error("No such slot");
   p.id = who.id;
   p.name = who.name;
   p.bot = who.bot;
+  if (who.bot || !who.avatar) delete p.avatar;
+  else p.avatar = who.avatar;
   // Fresh input sequence for the new controller; stats stay with the slot for this match.
   p.lastSeq = -1;
   // Bots play the side rifle: a bot taking over a human's slot hands back a bought AWP or MP5.

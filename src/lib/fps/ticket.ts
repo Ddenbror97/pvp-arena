@@ -12,6 +12,8 @@ export type Admission = {
   authExpiresAt: number;
   /** Bomb Defusal and battle royale: display name shown to the other players (sanitised by the room). */
   name?: string;
+  /** Public profile image, presentation only; never used for authorization. */
+  avatar?: string;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

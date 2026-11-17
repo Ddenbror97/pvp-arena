@@ -330,6 +330,9 @@ export class BombRoom {
       assignSlot(state, slot, { id: claims.sub, name: sanitizeName(claims.name), bot: false });
       this.bots.release(slot);
     }
+    const avatar = claims.avatar;
+    if (typeof avatar === "string" && avatar.length <= 2048) state.players[slot]!.avatar = avatar;
+    else delete state.players[slot]!.avatar;
     const pair = new WebSocketPair();
     const [client, server] = [pair[0], pair[1]];
     this.ctx.acceptWebSocket(server);

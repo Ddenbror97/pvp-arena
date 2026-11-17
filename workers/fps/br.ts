@@ -406,6 +406,9 @@ export class BrRoom {
     }
     const seat = seatHuman(state, claims.sub, sanitizeName(claims.name));
     if (seat < 0) return json({ error: "MATCH_IN_PROGRESS" }, 409);
+    if (typeof claims.avatar === "string" && claims.avatar.length <= 2048)
+      state.seats[seat]!.avatar = claims.avatar;
+    else delete state.seats[seat]!.avatar;
     // The same user's older socket is replaced.
     for (const old of this.ctx.getWebSockets()) {
       const a = old.deserializeAttachment() as Attachment;

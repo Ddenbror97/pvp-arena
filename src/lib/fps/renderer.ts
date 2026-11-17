@@ -1,3 +1,4 @@
+import { readStrikeBinds, strikeKey, type StrikeBinds } from "./key-bindings";
 import { warmPrograms } from "./program-warmup";
 import { clampPitch, mouseLook, moveAxes, PITCH_LIMIT, wrapYaw } from "@/lib/fps/look";
 import * as THREE from "three";
@@ -157,6 +158,7 @@ export type ArenaControls = {
   audioPresentation: () => { yaw: number; poseAt: number };
   ready: Promise<void>;
   setSensitivity: (value: number) => void;
+  setKeyBindings: (value: StrikeBinds) => void;
   /** Reduced motion: smaller viewmodel camera choreography and movement layers. */
   setReducedMotion: (reduced: boolean) => void;
   snapshot: (frame: ArenaFrame, seat: Seat | null) => void;
@@ -704,6 +706,7 @@ export function mountArena(
     flashPending = false,
     reload = false,
     jump = false;
+  let binds = readStrikeBinds();
   const keys = new Set<string>();
   // Match the existing runtime's integer-millisecond tick; avoid steadily filling its command queue.
   const inputStepMs = Math.ceil(TICK_MS);
@@ -769,7 +772,8 @@ export function mountArena(
   };
   const down = (e: KeyboardEvent) => {
     if (!locked()) return;
-    if (e.code === "Escape") {
+    const code = strikeKey(e.code, binds);
+    if (code === "Escape") {
       clear();
       document.exitPointerLock();
       return;
@@ -789,26 +793,26 @@ export function mountArena(
         "Digit5",
         "ControlLeft",
         "ControlRight",
-      ].includes(e.code)
+      ].includes(code)
     )
       e.preventDefault();
-    keys.add(e.code);
-    if (e.code === "KeyR") reload = true;
-    if (e.code === "Space" && !e.repeat) jump = true;
+    keys.add(code);
+    if (code === "KeyR") reload = true;
+    if (code === "Space" && !e.repeat) jump = true;
     // A released grenade leaves the hand before anything else can be drawn.
     // 1 the primary, 2 the sidearm (the Desert Eagle, when carried), 3 the Karambit (as in CS).
     const hasSidearm = !!(state && seat && state.players[seat].sidearm);
     if (
-      (e.code === "Digit1" || (e.code === "Digit2" && hasSidearm) || e.code === "Digit3") &&
+      (code === "Digit1" || (code === "Digit2" && hasSidearm) || code === "Digit3") &&
       !grenades.hands.busy
     ) {
-      weapon = e.code === "Digit1" ? "rifle" : e.code === "Digit2" ? "sidearm" : "knife";
+      weapon = code === "Digit1" ? "rifle" : code === "Digit2" ? "sidearm" : "knife";
       grenades.putAway();
       scope.reset();
     }
     // 4: draw a grenade; again: the next type carried (HE → smoke → incendiary).
     if (
-      (e.code === "Digit4" || e.code === "Digit5") &&
+      (code === "Digit4" || code === "Digit5") &&
       !e.repeat &&
       state &&
       seat &&
@@ -821,13 +825,13 @@ export function mountArena(
         scope.reset();
       }
     }
-    if (e.code === "KeyF" && !e.repeat && weapon === "grenade")
+    if (code === "KeyF" && !e.repeat && weapon === "grenade")
       grenades.hands.inspect(performance.now());
     // Karambit inspect (F): cosmetic only; attacks and weapon switches interrupt it.
-    if (e.code === "KeyF" && !e.repeat && weapon === "knife") knifeView.animator?.inspect();
+    if (code === "KeyF" && !e.repeat && weapon === "knife") knifeView.animator?.inspect();
     // Police M4A1 inspection: cosmetic only, cancelled by firing, reloading or switching.
     if (
-      e.code === "KeyF" &&
+      code === "KeyF" &&
       !e.repeat &&
       weapon === "rifle" &&
       (authoredView.variant === "m4" ||
@@ -837,10 +841,10 @@ export function mountArena(
       const now = performance.now();
       if (now - inspectStart > inspectMs()) inspectStart = now;
     }
-    if (e.code === "KeyR" || e.code === "Digit1" || e.code === "Digit2" || e.code === "Digit3")
+    if (code === "KeyR" || code === "Digit1" || code === "Digit2" || code === "Digit3")
       inspectStart = -Infinity;
   };
-  const up = (e: KeyboardEvent) => keys.delete(e.code);
+  const up = (e: KeyboardEvent) => keys.delete(strikeKey(e.code, binds));
   const wheel = (e: WheelEvent) => {
     if (!locked() || !Number.isFinite(e.deltaY) || e.deltaY === 0) return;
     e.preventDefault();
@@ -1621,6 +1625,10 @@ export function mountArena(
   };
   animation = requestAnimationFrame(frame);
   return {
+    setKeyBindings: (value) => {
+      binds = value;
+      clear();
+    },
     setSensitivity: (value) => {
       sensitivity = Number.isFinite(value) ? Math.max(0.1, Math.min(3, value)) : 1;
     },
