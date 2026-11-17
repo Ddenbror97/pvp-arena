@@ -288,6 +288,7 @@ export function BrCentre({
         <div
           className="br-prompt"
           style={{ "--rar": hud.prompt.color } as React.CSSProperties}
+          data-rar={hud.prompt.color ? "" : undefined}
           role="status"
         >
           <kbd className="br-prompt-key">E</kbd>
