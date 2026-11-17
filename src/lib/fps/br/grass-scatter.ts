@@ -262,7 +262,9 @@ export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo
           const slope = hf.slopeAt(x, z);
           if (slope > 0.75) continue;
           if (onRoad(x, z) || onLot(x, z)) continue;
-          if (world.supportAt && world.supportAt(x, z, 0.12, y + 6) > y + 0.06) continue;
+          // (A little wider than a clump's foot: its position is stored as 32-bit floats, and a
+          // clump right at a wall's foot otherwise rounds onto it: Forgotten Ruins' terrace.)
+          if (world.supportAt && world.supportAt(x, z, 0.15, y + 6) > y + 0.06) continue;
           if (
             meta.waterBodies.some(
               (w) =>

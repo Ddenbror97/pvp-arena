@@ -207,6 +207,8 @@ describe("Project Island static world", () => {
         p.model !== "fire-truck" &&
         // Skyline Residences' flats: the kitchen runs along their walls, inside the storey.
         p.model !== "kitchen-run" &&
+        // Forgotten Ruins' rope bridge spans the great temple's fallen gallery roof.
+        p.model !== "rope-bridge" &&
         // Plants and trees (no collision): their leaves overlap, as in any jungle.
         models.models[p.model]!.class !== "bush" &&
         models.models[p.model]!.class !== "tree"

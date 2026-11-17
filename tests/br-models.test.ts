@@ -107,8 +107,9 @@ describe("Project Island models", () => {
     // military base's aircraft and launchers, the airfield's aircraft, the villages' huts and
     // market), its 22 enterable buildings and the terminal's containers, ~7.6 MB, 2026-11-15;
     // Forgotten Ruins' 13 procedural Maya buildings and the owner's 64 downloads for its
-    // rainforest (two tree species, undergrowth, statues, stelae, rocks, the camp), ~7.9 MB,
-    // 2026-11-17).
-    expect(total / 1024).toBeLessThan(68);
+    // rainforest (two tree species, undergrowth, statues, stelae, rocks, the camp), ~7.9 MB, and
+    // its great temple and temple town (8 procedural buildings) and 6 more downloads (the stilt
+    // houses, the jeep, the rope bridge, banners, skulls, vases), ~2 MB, 2026-11-17).
+    expect(total / 1024).toBeLessThan(70.5);
   });
 });

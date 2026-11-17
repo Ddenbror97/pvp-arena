@@ -113,19 +113,22 @@ function vault(x0, z0, x1, z1, y0, spring, { steps = 3, cr = 0.38, ci = 0.32, ca
   return out;
 }
 
-function kit() {
+/**
+ * The middle LOD (performance, owner 2026-11-17: "lagg optimizations as the other worlds
+ * buildings"): "solid", each mass drawn uncut (the big monuments, their near LOD out to 220 m:
+ * past that a doorway is a few pixels); "openings", only the cuts that open onto the outside
+ * (arches, doors, windows as shallow niches; the houses, near LOD to 100 m). Rooms, galleries,
+ * stairs inside, floors and rubble are the near LOD's alone.
+ */
+function kit(mid = "solid") {
   const k = createTexturedKit();
   const far = createTexturedKit();
   /**
    * A solid mass with `cuts` taken out: stone sides, a mossy top where `mossTop`, no bottom on
    * the ground. Collision is the pieces.
    */
-  const mass = (
-    b,
-    cuts = [],
-    { m = STONE, top = MOSS, tint = WHITE, farTint = FAR_STONE } = {},
-  ) => {
-    for (const p of carve(b, cuts)) {
+  const draw = (b, pieces, m, top, tint, lod) => {
+    for (const p of pieces) {
       const skip = [];
       if (p[1] <= 0.001) skip.push("bottom");
       // The top: mossy where it is the mass's top, plain where a cut's floor or ceiling.
@@ -138,23 +141,44 @@ function kit() {
           [p[3], p[4], p[2]],
           top,
           tint,
-          { n: [0, 1, 0] },
+          { n: [0, 1, 0], lod },
         );
       }
-      k.box(p, m, tint, { skip });
+      k.box(p, m, tint, { skip, lod, collide: lod === 0 });
     }
+  };
+  const mass = (
+    b,
+    cuts = [],
+    { m = STONE, top = MOSS, tint = WHITE, farTint = FAR_STONE } = {},
+  ) => {
+    draw(b, carve(b, cuts), m, top, tint, 0);
+    const e = 1e-6;
+    const outer =
+      mid === "solid"
+        ? []
+        : cuts.filter(
+            (c) =>
+              overlaps(b, c) &&
+              (c[0] <= b[0] + e ||
+                c[3] >= b[3] - e ||
+                c[2] <= b[2] + e ||
+                c[5] >= b[5] - e ||
+                c[4] >= b[4] - e),
+          );
+    draw(b, carve(b, outer), m, top, tint, "mid");
     far.box(b, "paint", farTint, { collide: false });
   };
   /** A floor of flagstones (drawn, a thin collision slab under it). */
   const floor = (x0, z0, x1, z1, y = 0.04) => {
-    k.quad([x0, y, z0], [x0, y, z1], [x1, y, z1], [x1, y, z0], FLAG, WHITE, { n: [0, 1, 0] });
+    k.quad([x0, y, z0], [x0, y, z1], [x1, y, z1], [x1, y, z0], FLAG, WHITE, { n: [0, 1, 0], lod: 0 });
     k.box([x0, y - 0.3, z0, x1, y, z1], STONE, WHITE, { visible: false });
   };
   /**
    * A straight stair of solid steps (each from `base` up to its tread), along +z or −z (dir),
    * x0..x1 wide, from z `a` rising `rise` with risers `r` and treads `t`. Returns its end.
    */
-  const stair = (x0, x1, a, dir, y, rise, { r = 0.25, t = 0.3, base = 0, m = STONE } = {}) => {
+  const stair = (x0, x1, a, dir, y, rise, { r = 0.25, t = 0.3, base = 0, m = STONE, lod = 1 } = {}) => {
     const n = Math.round(rise / r);
     const rr = rise / n;
     for (let s = 0; s < n; s++) {
@@ -165,7 +189,7 @@ function kit() {
         [x0, base, Math.min(za, zb), x1, top, Math.max(za, zb)],
         m,
         WHITE,
-        base <= 0.001 ? { skip: ["bottom"] } : {},
+        { lod, ...(base <= 0.001 ? { skip: ["bottom"] } : {}) },
       );
     }
     return a + dir * n * t;
@@ -359,11 +383,11 @@ const publish = async (id, K, entry, foot) => {
   floor(-B0, -0.9, B0, 0.9);
   floor(-4, -4, 4, 4);
   // The inner stair, up from the chamber floor.
-  stair(-SW, SW, -4, -1, 0, stairRise, { r: 0.25, t: 0.3 });
+  stair(-SW, SW, -4, -1, 0, stairRise, { r: 0.25, t: 0.3, lod: 0 });
   floor(-3, -13.6, 3, -4 - stairRun + 0.3, stairRise + 0.04);
   // A sarcophagus in the chamber, a stone bench round it.
-  k.box([-1.1, 0, -0.6, 1.1, 1.0, 0.6], GLYPH, WHITE, { skip: ["bottom"] });
-  k.box([-1.25, 1.0, -0.75, 1.25, 1.18, 0.75], MOSS, WHITE);
+  k.box([-1.1, 0, -0.6, 1.1, 1.0, 0.6], GLYPH, WHITE, { skip: ["bottom"], lod: 0 });
+  k.box([-1.25, 1.0, -0.75, 1.25, 1.18, 0.75], MOSS, WHITE, { lod: 0 });
   for (const [x0, x1] of [
     [-4, -3.4],
     [3.4, 4],
@@ -372,7 +396,7 @@ const publish = async (id, K, entry, foot) => {
       [-3.4, -1.3],
       [1.3, 3.4],
     ])
-      k.box([x0, 0, z0, x1, 0.5, z1], STONE, WHITE, { skip: ["bottom"] });
+      k.box([x0, 0, z0, x1, 0.5, z1], STONE, WHITE, { skip: ["bottom"], lod: 0 });
   // The front stair (+z): 9 m wide from the ground to the top platform's edge, balustrades.
   const zTop = half(TIERS - 1); // 6
   const steps = Math.round(topY / 0.3);
@@ -415,7 +439,7 @@ const publish = async (id, K, entry, foot) => {
       title: "Great pyramid (Maya temple)",
       use: "Forgotten Ruins: the great pyramid, six tiers, the temple on top, a tunnel through its base, the burial chamber and an inner stair to the south terrace (procedural, 2026-11-17)",
       class: "building",
-      ring: "landmark",
+      ring: "building",
       size: [2 * B0 + 1, T0 + WALL + 4.4, zFoot + B0],
     },
     [2 * B0 + 1, 2 * zFoot],
@@ -517,7 +541,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
       title: "Maya temple (roof comb)",
       use: "Forgotten Ruins: a four-tier temple, its front stair, a vaulted room with three doorways and a pierced roof comb (procedural, 2026-11-17)",
       class: "building",
-      ring: "landmark",
+      ring: "building",
       size: t.size,
     },
     t.foot,
@@ -541,7 +565,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
       title: "Maya temple (fallen)",
       use: "Forgotten Ruins: a three-tier temple whose vault has fallen in, broken walls on top (procedural, 2026-11-17)",
       class: "building",
-      ring: "landmark",
+      ring: "building",
       size: t.size,
     },
     t.foot,
@@ -612,7 +636,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
     const x0 = -GX + 0.8 + i * (rw + 0.9);
     floor(x0, GZ0 + 0.8, x0 + rw, 0.6, G0 + 0.04);
   }
-  stair(sx0, sx1, S0, -1, G0, rise, { r: 0.25, t: 0.3, base: G0 });
+  stair(sx0, sx1, S0, -1, G0, rise, { r: 0.25, t: 0.3, base: G0, lod: 0 });
   // The roof terrace's parapet along the front, with gaps.
   for (const [a, b] of [
     [-GX, -8],
@@ -651,7 +675,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
       title: "Maya palace",
       use: "Forgotten Ruins: the palace on its platform, a gallery of piers before five vaulted rooms, an inner stair to the roof terrace, the upper gallery and its roof (procedural, 2026-11-17)",
       class: "building",
-      ring: "landmark",
+      ring: "building",
       size: [2 * PX + 3, UR, PZ1 + fs_ * 0.4 - PZ0],
     },
     [2 * PX + 3, 2 * (PZ1 + fs_ * 0.4)],
@@ -731,6 +755,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
       r: 0.25,
       t: 0.3,
       base: y0,
+      lod: 0,
     });
     // A rail round the well's open sides on the floor above (a low wall).
     const za = even ? -1.7 : 1.7 - run;
@@ -752,7 +777,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
       title: "Maya tower",
       use: "Forgotten Ruins: the observation tower, four storeys with T windows, a stair up each, the roof behind a parapet (procedural, 2026-11-17)",
       class: "building",
-      ring: "landmark",
+      ring: "building",
       size: [2 * X + 1, top + 1, 2 * X + 1],
     },
     [2 * X + 1, 2 * X + 1],
@@ -788,7 +813,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
       title: "Maya arch",
       use: "Forgotten Ruins: a corbel-arched gateway with a glyph frieze, broken walls each side (procedural, 2026-11-17)",
       class: "structure",
-      ring: "landmark",
+      ring: "building",
       size: [27, 7.4, 4],
     },
     [27, 4],
@@ -892,7 +917,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
       title: "Maya ball court",
       use: "Forgotten Ruins: the ball court, two banks with sloped faces and stone rings either side of the alley, stairs up their backs (procedural, 2026-11-17)",
       class: "structure",
-      ring: "landmark",
+      ring: "building",
       size: [W, TOP + 3.2, 2 * L],
     },
     [W, 2 * L],
@@ -934,7 +959,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
   floor(12 - T, -Z, 12 + T, 0);
   floor(-15, -3, -9, 3);
   floor(9, -3, 15, 3);
-  stair(13.2, 14.8, -3, -1, 0, H, { r: 0.25, t: 0.3 });
+  stair(13.2, 14.8, -3, -1, 0, H, { r: 0.25, t: 0.3, lod: 0 });
   // The grand stair (+z), 12 wide, with balustrades.
   const steps = Math.round(H / 0.3);
   const zFoot = Z + steps * 0.33;
@@ -980,7 +1005,7 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
       title: "Maya acropolis (tunnels)",
       use: "Forgotten Ruins: the acropolis, a grand stair up to broken rooms and an altar; inside, tunnels through it with vaulted chambers, a tomb gallery and a stair up a shaft to the top (procedural, 2026-11-17)",
       class: "building",
-      ring: "landmark",
+      ring: "building",
       size: [2 * X + 4, H + 3, zFoot + Z],
     },
     [2 * X + 4, 2 * zFoot],
@@ -1097,6 +1122,414 @@ for (const [id, len, h, seed, corner] of [
       size: [1.8, 3.78, 3.0],
     },
     [2, 5],
+  );
+}
+
+// ---------------------------------------------------------------- the great temple
+// The owner's references (2026-11-17: Ta Prohm's galleries and towers in the roots, Palenque's
+// temples: "Build one major big temple with various levels and fun to be inside and explore").
+// Two concentric enclosures of vaulted galleries round courts: the outer one at ground level
+// (windows out, a colonnade into its court, a gate tower in the middle of each side), the
+// inner one on a terrace (stairs up at its gates); the central sanctuary on a three-tier
+// platform, its tower over a chamber with a stair up to a lookout room under its crown. Levels:
+// the galleries, their roofs (stairs up from both courts), the platform (stairs from the inner
+// court, bridges from the inner roof), the tower's chamber and its lookout; beneath, the crypt
+// in the platform with tunnels in from the court. Part of the outer gallery has fallen in.
+{
+  const K = kit();
+  const { k, mass, floor, stair, frieze } = K;
+  /**
+   * A side's box (u along the side, w across it, positive outward) turned onto the side:
+   * 0 = +z, 1 = +x, 2 = −z, 3 = −x.
+   */
+  const side = (b, s) => {
+    const [u0, y0, w0, u1, y1, w1] = b;
+    const P = (u, w) => (s === 0 ? [u, w] : s === 1 ? [w, -u] : s === 2 ? [-u, -w] : [-w, u]);
+    const a = P(u0, w0),
+      c = P(u1, w1);
+    return [Math.min(a[0], c[0]), y0, Math.min(a[1], c[1]), Math.max(a[0], c[0]), y1, Math.max(a[1], c[1])];
+  };
+  const all = (b) => [0, 1, 2, 3].map((s) => side(b, s));
+  // Outer enclosure.
+  const OA = 36,
+    OW = 4,
+    OR = 5.0;
+  // Inner terrace and its gallery.
+  const IT = 22,
+    TH = 2.4,
+    IA = 21,
+    IW = 4,
+    IR = TH + 4.6;
+  // Central platform (three tiers) and tower.
+  const CT = [11, 9.5, 8],
+    CY = TH + 4.8;
+  const cuts = [];
+  // The outer gallery: a vaulted corridor all round, its gates' passages, a colonnade into the
+  // court every 4 m, windows out every 6 m.
+  cuts.push(...all([-(OA - 0.6), 0, OA - OW + 0.6, OA - 0.6, 2.9, OA - 0.6]));
+  for (const [y, i] of [
+    [2.9, 0.35],
+    [3.25, 0.7],
+    [3.6, 1.05],
+  ])
+    cuts.push(...all([-(OA - 0.6), y, OA - OW + 0.6 + i, OA - 0.6, y + 0.35, OA - 0.6 - i]));
+  for (let u = -OA + 4; u <= OA - 4; u += 4)
+    if (Math.abs(u) > 7) cuts.push(...all([u - 1.1, 0, OA - OW - 0.1, u + 1.1, 2.6, OA - OW + 0.7]));
+  for (let u = -OA + 6; u <= OA - 6; u += 6)
+    if (Math.abs(u) > 8) cuts.push(...all([u - 0.5, 1.1, OA - 0.7, u + 0.5, 2.1, OA + 0.1]));
+  // The inner gallery on its terrace, the same way.
+  cuts.push(...all([-(IA - 0.6), TH, IA - IW + 0.6, IA - 0.6, TH + 2.8, IA - 0.6]));
+  for (const [y, i] of [
+    [TH + 2.8, 0.35],
+    [TH + 3.15, 0.7],
+    [TH + 3.5, 1.05],
+  ])
+    cuts.push(...all([-(IA - 0.6), y, IA - IW + 0.6 + i, IA - 0.6, y + 0.35, IA - 0.6 - i]));
+  for (let u = -IA + 4; u <= IA - 4; u += 4)
+    if (Math.abs(u) > 6) cuts.push(...all([u - 1.0, TH, IA - IW - 0.1, u + 1.0, TH + 2.5, IA - IW + 0.7]));
+  for (let u = -IA + 5; u <= IA - 5; u += 5)
+    if (Math.abs(u) > 6) cuts.push(...all([u - 0.45, TH + 1.1, IA - 0.7, u + 0.45, TH + 2.0, IA + 0.1]));
+  // Gate passages through both galleries (and the gate towers over them).
+  cuts.push(...all([-1.6, 0, OA - OW - 4, 1.6, 3.4, OA + 4]));
+  cuts.push(...all([-1.2, 0.2, OA - OW - 4, 1.2, 3.9, OA + 4]));
+  cuts.push(...all([-1.3, TH, IA - IW - 3, 1.3, TH + 3.0, IA + 2]));
+  // The inner roof's walk goes on through each inner gate tower (a passage at roof level).
+  cuts.push(...all([-5.2, IR, IA - IW + 0.8, 5.2, IR + 2.4, IA - 0.8]));
+  // …and on the east and west it opens onto the bridges over to the platform.
+  for (const s of [1, 3]) cuts.push(side([-1.6, IR, IA - IW - 0.3, 1.6, IR + 2.4, IA - IW + 1.0], s));
+  // The outer roof's walk goes on through the outer gate towers.
+  cuts.push(...all([-7.2, OR, OA - OW + 0.6, 7.2, OR + 2.4, OA - 0.6]));
+  // The fallen stretch: the outer gallery's roof gone along the north-east, its wall broken.
+  const fallen = [side([8, 3.3, OA - OW - 0.1, 24, OR + 6, OA + 0.1], 1), side([12, 1.8, OA - 0.7, 17, OR + 1, OA + 0.1], 1)];
+  // The galleries' masses: each side's strip runs past one corner and stops short of the
+  // other (a pinwheel), so the corners are built once.
+  const ring = (a, w, y0, y1, extra) => {
+    for (let s = 0; s < 4; s++) mass(side([-a, y0, a - w, a - w, y1, a], s), [...cuts, ...extra]);
+  };
+  ring(OA, OW, 0, OR, [...fallen, ...erode(OA, OR - 0.8, OR, 2000, 6, [[-8, 8, 1]])]);
+  // The inner terrace (solid, the inner court on it) and its gallery.
+  mass([-IT, 0, -IT, IT, TH, IT], [...cuts], { top: FLAG });
+  ring(IA, IW, TH, IR, erode(IA, IR - 0.7, IR, 2010, 4, [[-7, 7, 1]]));
+  // Parapet on the inner gallery's roof (its outer edge), broken at the gate towers.
+  for (let s = 0; s < 4; s++)
+    for (const [a, b] of [
+      [-IA, -5.5],
+      [5.5, IA - 0.5],
+    ])
+      mass(side([a, IR, IA - 0.5, b, IR + 0.7, IA], s), [], { top: MOSS });
+  // Floors: the galleries, the courts.
+  for (let s = 0; s < 4; s++) {
+    const b = side([-(OA - 0.6), 0, OA - OW + 0.6, OA - OW + 0.6 + 2.8, 0, OA - 0.6], s);
+    floor(b[0], b[2], b[3], b[5]);
+  }
+  floor(-OA + OW, -OA + OW, OA - OW, OA - OW, 0.03);
+  // Gate towers: outer (taller, over the passage, side rooms) and inner.
+  for (let s = 0; s < 4; s++) {
+    const g = [-7, 0, OA - 7, 7, 8.4, OA + 3];
+    const rooms = [side([-6.2, 0, OA - 6.2, -2.4, 3.2, OA + 2.2], s), side([2.4, 0, OA - 6.2, 6.2, 3.2, OA + 2.2], s)];
+    const doors = [side([-2.5, 0, OA - 3, -1.5, 2.4, OA - 1.8], s), side([1.5, 0, OA - 3, 2.5, 2.4, OA - 1.8], s)];
+    mass(side(g, s), [...cuts, ...rooms, ...doors]);
+    const t = side([-7, 6.8, OA - 7, 7, 7.8, OA + 3], s);
+    frieze(t[0], t[2], t[3], t[5], 6.8, 7.8);
+    // Its stepped crown.
+    for (let i = 0; i < 3; i++) {
+      const h = 5.6 - i * 1.6,
+        d = 4 - i * 1.0;
+      mass(side([-h, 8.4 + i * 1.8, OA - 2 - d, h, 8.4 + (i + 1) * 1.8, OA - 2 + d], s), []);
+    }
+    // The inner gate tower.
+    mass(side([-5, TH, IA - IW, 5, TH + 6.6, IA + 1], s), [...cuts]);
+    for (let i = 0; i < 2; i++)
+      mass(side([-3.6 + i * 1.2, TH + 6.6 + i * 1.6, IA - 3.5 + i * 0.8, 3.6 - i * 1.2, TH + 8.2 + i * 1.6, IA - 0.5 - i * 0.8], s), []);
+    // Stairs from the outer court onto the terrace at the inner gate.
+    for (let k2 = 0; k2 < 8; k2++) {
+      const w1 = IT + 2.4 - k2 * 0.3;
+      k.box(side([-2.4, 0, w1 - 0.3, 2.4, (k2 + 1) * 0.3, w1], s), STONE, WHITE, { skip: ["bottom"] });
+    }
+    // Stairs up onto the outer gallery's roof (in the outer court, against its wall) and onto
+    // the inner gallery's roof (in the inner court).
+    for (let k2 = 0; k2 < Math.round(OR / 0.25); k2++) {
+      const u0 = 9 + k2 * 0.3;
+      k.box(side([u0, 0, OA - OW - 1.6, u0 + 0.3, (k2 + 1) * (OR / Math.round(OR / 0.25)), OA - OW], s), STONE, WHITE, { skip: ["bottom"] });
+    }
+    const ir = IR - TH;
+    for (let k2 = 0; k2 < Math.round(ir / 0.25); k2++) {
+      const u0 = -8 - k2 * 0.3;
+      k.box(side([u0 - 0.3, TH, IA - IW - 1.6, u0, TH + (k2 + 1) * (ir / Math.round(ir / 0.25)), IA - IW], s), STONE, WHITE);
+    }
+  }
+  // The central platform: three tiers, stairs up from the inner court north and south,
+  // bridges from the inner gallery's roof east and west; the crypt inside with tunnels in from
+  // the east and west.
+  const crypt = vault(-4, -4, 4, 4, TH, TH + 2.6, { steps: 3, ci: 0.6, cr: 0.4 });
+  const tunnels = [side([-0.8, TH, 3.9, 0.8, TH + 2.3, 11.6], 1), side([-0.8, TH, 3.9, 0.8, TH + 2.3, 11.6], 3)];
+  for (let t = 0; t < 3; t++) {
+    const h = CT[t];
+    mass([-h, TH + t * 1.6, -h, h, TH + (t + 1) * 1.6, h], [...crypt, ...tunnels]);
+  }
+  floor(-4, -4, 4, 4, TH + 0.04);
+  for (const s of [0, 2])
+    for (let k2 = 0; k2 < 16; k2++) {
+      const w1 = CT[2] + 4.8 - k2 * 0.3;
+      k.box(side([-2, TH, w1 - 0.3, 2, TH + (k2 + 1) * 0.3, w1], s), STONE, WHITE);
+    }
+  for (const s of [1, 3]) {
+    k.box(side([-1.6, CY - 0.35, CT[2] - 0.2, 1.6, CY - 0.05, IA - IW + 0.1], s), STONE, WHITE);
+    for (const w of [12.5, 15.2]) k.box(side([-1.2, TH, w - 0.4, -0.6, CY - 0.35, w + 0.4], s), STONE, WHITE);
+    for (const w of [12.5, 15.2]) k.box(side([0.6, TH, w - 0.4, 1.2, CY - 0.35, w + 0.4], s), STONE, WHITE);
+  }
+  // The tower: a chamber (doors south, north and east, the stair up the west wall and along the
+  // south), the lookout room in its crown with a window on every side.
+  const TX = 4.5,
+    BODY = CY + 6,
+    TT = 2.6;
+  const flightRun = 12 * 0.3;
+  const towerCuts = [
+    [-3.5, CY, -3.5, 3.5, BODY - 0.3, 3.5],
+    [-0.7, CY, -TX - 0.1, 0.7, CY + 2.6, -3.4],
+    [TX - 1.1, CY, -0.7, TX + 0.1, CY + 2.6, 0.7],
+    [2.2, CY, 3.4, 3.2, CY + 2.6, TX + 0.1],
+    // The well over the second flight, up into the lookout room.
+    [-1.9, BODY - 0.35, 2.1, -1.9 + flightRun + 0.1, BODY + 1.9, 3.5],
+    // The lookout room.
+    [-2.9, BODY, -2.9, 2.9, BODY + TT - 0.4, 2.9],
+  ];
+  for (const s of [0, 1, 2, 3]) towerCuts.push(side([-0.5, BODY + 0.5, 2.7, 0.5, BODY + 1.8, 3.8], s));
+  mass([-TX, CY, -TX, TX, BODY, TX], towerCuts, { top: STONE });
+  frieze(-TX, -TX, TX, TX, BODY - 1.1, BODY - 0.2);
+  for (let i = 0; i < 4; i++) {
+    const h = TX - 0.8 * (i + 1);
+    mass([-h, BODY + i * TT, -h, h, BODY + (i + 1) * TT, h], i === 0 ? towerCuts : [], { top: i === 3 ? MOSS : STONE });
+  }
+  floor(-3.5, -3.5, 3.5, 3.5, CY + 0.04);
+  // The stair: up the west wall (north to south… along +z), a landing in the corner, along the
+  // south wall (+x) to the lookout room's floor.
+  stair(-3.5, -2.3, -1.8, 1, CY, 3.0, { r: 0.25, t: 0.3, base: CY, lod: 0 });
+  k.box([-3.5, CY, 1.8, -1.9, CY + 3.0, 3.5], STONE, WHITE, { lod: 0 });
+  for (let s2 = 0; s2 < 12; s2++) {
+    const x0 = -1.9 + s2 * 0.3;
+    k.box([x0, CY, 2.1, x0 + 0.3, CY + 3.0 + (s2 + 1) * 0.25, 3.5], STONE, WHITE, { lod: 0 });
+  }
+  // Rubble in the courts and the fallen gallery.
+  K.rubble(25, 18, 5, 14, 2050);
+  K.rubble(-26, -24, 4, 10, 2051);
+  K.rubble(OA - OW - 3, -16, 3, 10, 2052);
+  K.rubble(-14, 14, 3, 6, 2053, TH);
+  await publish(
+    "ruin-great-temple",
+    K,
+    {
+      title: "Great temple (Angkor and Maya)",
+      use: "Forgotten Ruins: the great temple, two enclosures of vaulted galleries with gate towers, the inner on a terrace, the central sanctuary on its platform (tower, lookout, crypt and tunnels), roofs to walk, a fallen stretch (procedural, 2026-11-17)",
+      class: "building",
+      ring: "building",
+      size: [2 * (OA + 3), BODY + 4 * TT, 2 * (OA + 3)],
+    },
+    [2 * (OA + 3), 2 * (OA + 3)],
+  );
+}
+
+// ---------------------------------------------------------------- the temple town
+// The owner's references (2026-11-17: "should be like a ruins temple town not just 1-3 small
+// single temples"; the arcaded colonial ruins with a pediment, the galleries in the roots).
+
+/**
+ * An arcaded house: a plinth with steps along the front, `bays` arches (stepped heads) onto a
+ * veranda, rooms behind it with doorways, and when `storeys` is 2 the same again upstairs (a
+ * stair up the end room; the roof long gone, the upper rooms open to the sky, a pediment over
+ * the middle bays). One storey: a flat roof with a parapet, an outer stair up the side.
+ */
+function arcadeHouse({ bays, storeys, seed }) {
+  const K = kit("openings");
+  const { k, mass, floor, stair, frieze } = K;
+  const BAY = 4.2,
+    W = 0.6,
+    P = 0.9;
+  const X = (bays * BAY) / 2 + W,
+    Z0 = -5.6,
+    Z1 = 5.6;
+  const SH = 4.2;
+  const top = P + storeys * SH;
+  // The plinth and its steps along the front.
+  mass([-X - 0.4, 0, Z0 - 0.4, X + 0.4, P, Z1 + 0.4], [], { top: STONE });
+  for (let i = 0; i < 3; i++)
+    k.box([-X + 1, 0, Z1 + 0.4 + (2 - i) * 0.35, X - 1, (i + 1) * 0.3, Z1 + 0.4 + (3 - i) * 0.35], STONE, WHITE, {
+      skip: ["bottom"],
+    });
+  const cuts = [];
+  const rooms = Math.max(2, Math.round(bays / 2));
+  const rw = (2 * (X - W) - (rooms - 1) * 0.4) / rooms;
+  for (let st = 0; st < storeys; st++) {
+    const y0 = P + st * SH,
+      // (Two storeys: the top one's roof has fallen, its rooms open to the sky.)
+      y1 = storeys === 2 && st === 1 ? y0 + SH + 0.2 : y0 + SH - 0.35;
+    // The arches.
+    for (let b = 0; b < bays; b++) {
+      const xc = -X + W + BAY * (b + 0.5);
+      cuts.push([xc - 1.4, y0, Z1 - W - 0.1, xc + 1.4, y0 + 2.6, Z1 + 0.1]);
+      cuts.push([xc - 1.1, y0 + 2.6, Z1 - W - 0.1, xc + 1.1, y0 + 3.0, Z1 + 0.1]);
+      cuts.push([xc - 0.6, y0 + 3.0, Z1 - W - 0.1, xc + 0.6, y0 + 3.25, Z1 + 0.1]);
+    }
+    // The veranda and the rooms behind its wall (doorways), windows out the back.
+    cuts.push([-X + W, y0, 2.2, X - W, y1, Z1 - W]);
+    for (let r = 0; r < rooms; r++) {
+      const x0 = -X + W + r * (rw + 0.4);
+      cuts.push([x0, y0, Z0 + W, x0 + rw, y1, 1.6]);
+      cuts.push([x0 + rw / 2 - 0.6, y0, 1.5, x0 + rw / 2 + 0.6, y0 + 2.4, 2.3]);
+      cuts.push([x0 + rw / 2 - 0.5, y0 + 1.0, Z0 - 0.1, x0 + rw / 2 + 0.5, y0 + 2.2, Z0 + W + 0.1]);
+    }
+  }
+  // Upstairs: a stair up the east room (its foot clear of the front wall), the well over it.
+  const ex1 = X - W,
+    sx0 = ex1 - 1.3;
+  const run = Math.round(SH / 0.25) * 0.3;
+  const s0 = 1.0;
+  if (storeys === 2) cuts.push([sx0, P + SH - 0.4, s0 - run - 0.01, ex1, P + SH + 0.1, s0 - run + 3.6]);
+  // The roof: gone upstairs (two storeys: the walls end raggedly), flat over one.
+  const ragged = storeys === 2 ? erode(X, top - 1.6, top, seed, 5) : [];
+  mass([-X, P, Z0, X, top, Z1], [...cuts, ...ragged]);
+  if (storeys === 2) {
+    // The upper floor's open sky: no roof slab (the top storey's rooms were cut to y1).
+    // A pediment over the middle bays (a triangle on the front wall).
+    const pw = Math.min(X - 1, BAY * 1.6);
+    k.quad([-pw, top - 0.3, Z1 + 0.02], [pw, top - 0.3, Z1 + 0.02], [0, top + 1.8, Z1 + 0.02], [0, top + 1.8, Z1 + 0.02], GLYPH, WHITE, {
+      n: [0, 0, 1],
+    });
+    k.quad([-pw, top - 0.3, Z1 - W - 0.02], [pw, top - 0.3, Z1 - W - 0.02], [0, top + 1.8, Z1 - W - 0.02], [0, top + 1.8, Z1 - W - 0.02], STONE, WHITE, {
+      n: [0, 0, -1],
+    });
+    // The upper floor (the slab between the storeys) with the stair's well.
+    stair(sx0, ex1, s0, -1, P, SH, { r: 0.25, t: 0.3, base: P, lod: 0 });
+  } else {
+    // Parapet round the roof, an outer stair up the east end.
+    for (const b of [
+      [-X, top, Z0, X, top + 0.7, Z0 + 0.4],
+      [-X, top, Z1 - 0.4, X, top + 0.7, Z1],
+      [-X, top, Z0 + 0.4, -X + 0.4, top + 0.7, Z1 - 0.4],
+      [X - 0.4, top, Z0 + 0.4, X, top + 0.7, -2.4],
+    ])
+      mass(b, [], { top: MOSS });
+    // The outer stair: from the ground up the east end to the roof's open corner.
+    const n = Math.round(top / 0.25);
+    for (let i = 0; i < n; i++) {
+      const z = 5.0 - i * 0.3;
+      k.box([X + 0.4, 0, z - 0.3, X + 1.8, ((i + 1) * top) / n, z], STONE, WHITE, {
+        skip: ["bottom"],
+      });
+    }
+  }
+  frieze(-X, Z0, X, Z1, P + SH - 0.9, P + SH - 0.4);
+  for (let st = 0; st < storeys; st++) {
+    floor(-X + W, 2.2, X - W, Z1 - W, P + st * SH + 0.04);
+    for (let r = 0; r < rooms; r++) {
+      const x0 = -X + W + r * (rw + 0.4);
+      if (st === 1 && r === rooms - 1) floor(x0, Z0 + W, sx0, 1.6, P + SH + 0.04);
+      else floor(x0, Z0 + W, x0 + rw, 1.6, P + st * SH + 0.04);
+    }
+  }
+  K.rubble(X - 2, Z0 - 2, 2, 5, seed + 3);
+  return { K, X, Z0, Z1, top };
+}
+for (const [id, bays, storeys, seed, title] of [
+  ["ruin-arcade-a", 5, 2, 3000, "Arcaded house (two storeys)"],
+  ["ruin-arcade-b", 7, 1, 3100, "Arcaded gallery (one storey)"],
+  ["ruin-arcade-c", 3, 2, 3200, "Arcaded house (small, two storeys)"],
+]) {
+  const t = arcadeHouse({ bays, storeys, seed });
+  const w = 2 * (t.X + (storeys === 1 ? 2 : 0.5)),
+    d = 2 * (t.Z1 + 1.6);
+  await publish(
+    id,
+    t.K,
+    {
+      title,
+      use: "Forgotten Ruins: the temple town's arcaded houses, arches onto a veranda, rooms behind, upstairs or a roof to climb (procedural, 2026-11-17)",
+      class: "building",
+      ring: "dwelling",
+      size: [w, t.top + 2, t.Z1 - t.Z0 + 2],
+    },
+    [w, d],
+  );
+}
+
+// Small stone houses: one or two rooms on a low platform, the vault fallen in.
+for (const [id, w, d, two, seed] of [
+  ["ruin-house-a", 8, 6.5, false, 3300],
+  ["ruin-house-b", 11, 7.5, true, 3400],
+]) {
+  const K = kit("openings");
+  const X = w / 2,
+    Z = d / 2,
+    P = 0.4,
+    H = 3.2;
+  K.mass([-X - 0.5, 0, -Z - 0.5, X + 0.5, P, Z + 0.5], [], { top: STONE });
+  for (let i = 0; i < 2; i++)
+    K.k.box([-1.2, 0, Z + 0.5 + (1 - i) * 0.3, 1.2, (i + 1) * 0.2, Z + 0.5 + (2 - i) * 0.3], STONE, WHITE, {
+      skip: ["bottom"],
+    });
+  const cuts = [[-X + 0.6, P, -Z + 0.6, X - 0.6, P + H + 1, Z - 0.6]];
+  cuts.push([-0.6, P, Z - 0.7, 0.6, P + 2.3, Z + 0.1]);
+  cuts.push([X - 0.7, P + 1.0, -0.5, X + 0.1, P + 2.0, 0.5]);
+  if (two) cuts.push([-X - 0.1, P + 1.0, -0.5, -X + 0.7, P + 2.0, 0.5]);
+  const parts = [[-X, P, -Z, X, P + H, Z]];
+  K.mass(parts[0], [...cuts, ...erode(Math.max(X, Z), P + 1.2, P + H, seed, 3)]);
+  if (two)
+    K.mass(
+      [X * 0.4 - 0.2, P, -Z + 0.6, X * 0.4 + 0.2, P + H - 0.6, Z - 0.6],
+      [[X * 0.4 - 0.3, P, -0.6, X * 0.4 + 0.3, P + 2.3, 0.6]],
+    );
+  K.floor(-X + 0.6, -Z + 0.6, X - 0.6, Z - 0.6, P + 0.04);
+  K.rubble(-X + 1.4, -Z + 1.4, 0.6, 3, seed + 7, P);
+  await publish(
+    id,
+    K,
+    {
+      title: "Maya stone house (fallen)",
+      use: "Forgotten Ruins: the temple town's stone houses, rooms open to the sky (procedural, 2026-11-17)",
+      class: "building",
+      ring: "dwelling",
+      texture: 256,
+      size: [w + 1, P + H, d + 2],
+    },
+    [w + 1, d + 2.4],
+  );
+}
+
+// A shrine tower (prasat): a room on a stepped base, the door to the front, its crown in tiers.
+{
+  const K = kit();
+  const B = 1.2,
+    X = 3.2;
+  K.mass([-4.2, 0, -4.2, 4.2, B, 4.2], [], { top: MOSS });
+  for (let i = 0; i < 4; i++)
+    K.k.box([-1.2, 0, 4.2 + (3 - i) * 0.3, 1.2, ((i + 1) * B) / 4, 4.2 + (4 - i) * 0.3], STONE, WHITE, {
+      skip: ["bottom"],
+    });
+  const room = [
+    [-2.2, B, -2.2, 2.2, B + 3.2, 2.2],
+    [-1.8, B + 3.2, -1.8, 1.8, B + 3.7, 1.8],
+    [-1.3, B + 3.7, -1.3, 1.3, B + 4.2, 1.3],
+    [-0.7, B, 2.0, 0.7, B + 2.4, X + 0.1],
+  ];
+  K.mass([-X, B, -X, X, B + 5, X], room);
+  K.frieze(-X, -X, X, X, B + 4.1, B + 4.9);
+  for (let i = 0; i < 3; i++) {
+    const h = X - 0.7 * (i + 1);
+    K.mass([-h, B + 5 + i * 1.5, -h, h, B + 5 + (i + 1) * 1.5, h], [], { top: i === 2 ? MOSS : STONE });
+  }
+  K.floor(-2.2, -2.2, 2.2, 2.2, B + 0.04);
+  await publish(
+    "ruin-shrine",
+    K,
+    {
+      title: "Shrine tower (prasat)",
+      use: "Forgotten Ruins: a shrine tower in the temple town, a room on a stepped base, its crown in tiers (procedural, 2026-11-17)",
+      class: "building",
+      ring: "dwelling",
+      texture: 256,
+      size: [8.4, B + 9.5, 9.6],
+    },
+    [8.4, 10],
   );
 }
 

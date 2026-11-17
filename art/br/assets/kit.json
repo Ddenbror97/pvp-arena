@@ -7557,17 +7557,6 @@
       "use": "Forgotten Ruins (2026-11-17): giant tree base on a rock outcrop"
     },
     {
-      "id": "lily-pads",
-      "key": "sf:30ec9edca36f49ee91ce0773e545bac8",
-      "piece": "Object_2",
-      "class": "small",
-      "fit": {
-        "max": 6
-      },
-      "collision": "none",
-      "use": "Forgotten Ruins (2026-11-17): lily pads on the cenote"
-    },
-    {
       "id": "lotus",
       "key": "sf:30ec9edca36f49ee91ce0773e545bac8",
       "piece": "Object_3",
@@ -8062,6 +8051,133 @@
       "ring": "structure",
       "collision": "boxes",
       "use": "Forgotten Ruins (2026-11-17): a carved stela with its round altar (procedural)"
+    },
+    {
+      "id": "ruin-great-temple",
+      "procedural": "art/blender/br/build_ruins.mjs",
+      "class": "building",
+      "ring": "landmark",
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): the great temple, galleries, gate towers, central sanctuary, crypt (procedural)"
+    },
+    {
+      "id": "ruin-arcade-a",
+      "procedural": "art/blender/br/build_ruins.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): the temple town: an arcaded two-storey house (procedural)"
+    },
+    {
+      "id": "ruin-arcade-b",
+      "procedural": "art/blender/br/build_ruins.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): the temple town: an arcaded one-storey gallery with a roof to climb (procedural)"
+    },
+    {
+      "id": "ruin-arcade-c",
+      "procedural": "art/blender/br/build_ruins.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): the temple town: a small arcaded two-storey house (procedural)"
+    },
+    {
+      "id": "ruin-house-a",
+      "procedural": "art/blender/br/build_ruins.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): the temple town: a fallen stone house (procedural)"
+    },
+    {
+      "id": "ruin-house-b",
+      "procedural": "art/blender/br/build_ruins.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): the temple town: a fallen two-room stone house (procedural)"
+    },
+    {
+      "id": "ruin-shrine",
+      "procedural": "art/blender/br/build_ruins.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): the temple town: a shrine tower (procedural)"
+    },
+    {
+      "id": "ancient-vase",
+      "key": "sf:4bb5d53be21d4cbd9bf39fc4a8043cac",
+      "class": "small",
+      "fit": {
+        "y": 0.8
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): ancient vase in the ruins' rooms"
+    },
+    {
+      "id": "willys-jeep",
+      "key": "sf:a28600c16b9e44bcb160ede0d199180d",
+      "piece": "MyCar",
+      "class": "vehicle",
+      "lodTris": [
+        2500,
+        900,
+        300
+      ],
+      "fit": {
+        "max": 3.4
+      },
+      "collision": "voxel",
+      "use": "Forgotten Ruins (2026-11-17): the expedition's Willys jeep"
+    },
+    {
+      "id": "red-banner",
+      "key": "sf:0a87672db9ef4059ae559d25f199baf2",
+      "class": "small",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): red banner hung on the great temple's gates"
+    },
+    {
+      "id": "skull-pile",
+      "key": "sf:11d46d32494c44218a55192adc067e57",
+      "class": "small",
+      "fit": {
+        "max": 1.4
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): pile of skulls in the crypts"
+    },
+    {
+      "id": "rusty-house",
+      "key": "sf:76ff1916c18845d9a1c5397330d3af55",
+      "class": "building",
+      "lodTris": [
+        23000,
+        5000,
+        1200
+      ],
+      "fit": {
+        "max": 10
+      },
+      "collision": "voxel",
+      "use": "Forgotten Ruins (2026-11-17): rusty-roofed wooden house in the jungle (the owner's pick)"
+    },
+    {
+      "id": "rope-bridge",
+      "key": "sf:54773600fbdb48ef9853e553515f61ca",
+      "class": "structure",
+      "fit": {
+        "max": 16.4
+      },
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): rope bridge over the great temple's fallen gallery roof (its deck and rope sides authored as boxes: the voxels drop a deck under 0.35 m)"
     }
   ],
   "skipped": [

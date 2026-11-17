@@ -54,8 +54,9 @@ export function createTexturedKit() {
   const solids = [];
   /**
    * A box. `m` material, `tint` [r,g,b] (multiplies the texture), `collide`, `lod` (0: only the
-   * nearest LOD, interiors; 1: the shell, near LODs), `skip`: faces not drawn ("top", "bottom",
-   * "x0", "x1", "z0", "z1").
+   * nearest LOD, interiors; 1: the shell, near LODs; "mid": the middle LOD only, a cheaper stand-in
+   * for what LOD 0 draws in detail), `skip`: faces not drawn ("top", "bottom", "x0", "x1", "z0",
+   * "z1").
    */
   const box = (
     b,
@@ -293,7 +294,8 @@ export function createTexturedKit() {
       return n.map((x) => x / l);
     };
     for (const p of parts) {
-      if (p.lod < maxLod) continue;
+      // ("mid": the middle LOD's stand-in only.)
+      if (p.lod === "mid" ? maxLod !== 1 : p.lod < maxLod) continue;
       const g = bucket(p.m);
       const tile = MATERIALS[p.m]?.tile ?? 3;
       if (p.q) {

@@ -8,7 +8,8 @@ The site is the main island's largest empty grassland, south of Riverwood and ea
 Southern Military Base: the river channels on its east side, the base's runway past its
 south-west edge. This pass shapes it, after grade_roads.py:
 
- - the plaza: flat at the centre's height within PLAZA m, eased out over PLAZA_BLEND m;
+ - the plaza and the town round it: flat at the centre's height within PLAZA m, eased out
+   over PLAZA_BLEND m; the great temple's square to the north level with it;
  - the escarpment: a limestone ridge along the south, its north face a cliff over the plaza
    side, with the cenote (a pool, a water body) at its foot;
  - mounds: buried ruins under the forest floor, and a gentle swell of the jungle floor;
@@ -42,8 +43,11 @@ HALF = 5000.0
 
 CX, CZ = 2420.0, 1790.0
 RADIUS = 420.0
-PLAZA = 105.0
+PLAZA = 150.0
 PLAZA_BLEND = 70.0
+# The great temple's ground (north of the plaza): flat at its own mean height.
+TEMPLE = (2420.0, 1585.0, 46.0)  # x, z, half size
+TEMPLE_BLEND = 30.0
 # The escarpment: a ridge from W to E along the south, crest CREST m above the plaza.
 RIDGE = [(2250.0, 2020.0), (2380.0, 2000.0), (2520.0, 2010.0), (2620.0, 2045.0)]
 CREST = 17.0
@@ -163,9 +167,15 @@ def main():
     # The plaza: flat at the centre's height.
     k = 1 - smooth(PLAZA, PLAZA + PLAZA_BLEND, r)
     new = new * (1 - k) + base * k
+    # The great temple's square.
+    tx, tz, th = TEMPLE
+    td = np.maximum(np.abs(X - tx), np.abs(Z - tz))
+    tk = 1 - smooth(th, th + TEMPLE_BLEND, td)
+    tbase = base  # level with the plaza: the temple is one of the location's pad buildings
     # The jungle floor's swell (outside the plaza), up to ±1.2 m.
     swell = (noise(X, Z, 70.0, 3) - 0.5) * 2.4 * smooth(PLAZA + 20, PLAZA + PLAZA_BLEND + 40, r)
-    new += swell
+    new += swell * (1 - tk)
+    new = new * (1 - tk) + tbase * tk
     # Mounds.
     for mx, mz, mr, mh in MOUNDS:
         d = np.hypot(X - mx, Z - mz) / mr

@@ -759,6 +759,60 @@
     }
    ]
   },
+  "ancient-vase": {
+   "title": "Ancient vase",
+   "author": "Eleanie",
+   "source": "https://sketchfab.com/3d-models/ancient-vase-4bb5d53be21d4cbd9bf39fc4a8043cac",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Forgotten Ruins (2026-11-17): ancient vase in the ruins' rooms",
+   "scale": 2.853342,
+   "sourceTris": 2712,
+   "size": [
+    0.37,
+    0.8,
+    0.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ancient-vase.lod0.glb",
+     "tris": 680,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      0.37,
+      0.8,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/ancient-vase.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 7,
+     "size": [
+      0.37,
+      0.8,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/ancient-vase.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.37,
+      0.8,
+      0.35
+     ]
+    }
+   ]
+  },
   "apache": {
    "title": "Boeing AH-64D Apache Combat Helicopter",
    "author": "Muhamad Mirza Arrafi",
@@ -18866,60 +18920,6 @@
     }
    ]
   },
-  "lily-pads": {
-   "title": "Lily pad and Lotus flower",
-   "author": "Evie <3",
-   "source": "https://sketchfab.com/3d-models/lily-pad-and-lotus-flower-30ec9edca36f49ee91ce0773e545bac8",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "small",
-   "use": "Forgotten Ruins (2026-11-17): lily pads on the cenote",
-   "scale": 0.185816,
-   "sourceTris": 2648,
-   "size": [
-    5.24,
-    0.79,
-    6
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/lily-pads.lod0.glb",
-     "tris": 600,
-     "draws": 1,
-     "textureMB": 0.33,
-     "kB": 13,
-     "size": [
-      5.24,
-      0.79,
-      6
-     ]
-    },
-    {
-     "file": "/fps/br/models/lily-pads.lod1.glb",
-     "tris": 210,
-     "draws": 1,
-     "textureMB": 0.08,
-     "kB": 8,
-     "size": [
-      5.24,
-      0.79,
-      6
-     ]
-    },
-    {
-     "file": "/fps/br/models/lily-pads.lod2.glb",
-     "tris": 60,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
-     "size": [
-      5.24,
-      0.79,
-      6
-     ]
-    }
-   ]
-  },
   "liquid-tanks": {
    "title": "Rusted liquid storages",
    "author": "maxpsr",
@@ -26641,6 +26641,60 @@
     }
    ]
   },
+  "red-banner": {
+   "title": "Medieval banner",
+   "author": "ejtam",
+   "source": "https://sketchfab.com/3d-models/medieval-banner-0a87672db9ef4059ae559d25f199baf2",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Forgotten Ruins (2026-11-17): red banner hung on the great temple's gates",
+   "scale": 2.168684,
+   "sourceTris": 2468,
+   "size": [
+    1.08,
+    2.6,
+    0.17
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/red-banner.lod0.glb",
+     "tris": 818,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      1.08,
+      2.6,
+      0.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/red-banner.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.08,
+      2.6,
+      0.17
+     ]
+    },
+    {
+     "file": "/fps/br/models/red-banner.lod2.glb",
+     "tris": 64,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.08,
+      2.6,
+      0.17
+     ]
+    }
+   ]
+  },
   "reefer-trailer": {
    "title": "Refrigerated Trailer (Custom Model)",
    "author": "matthew13482",
@@ -27775,6 +27829,60 @@
     }
    ]
   },
+  "rope-bridge": {
+   "title": "Wooden rope bridge",
+   "author": "DoniTodorov",
+   "source": "https://sketchfab.com/3d-models/wooden-rope-bridge-54773600fbdb48ef9853e553515f61ca",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Forgotten Ruins (2026-11-17): rope bridge over the great temple's fallen gallery roof",
+   "scale": 1.173837,
+   "sourceTris": 5568,
+   "size": [
+    2.16,
+    1.94,
+    16.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rope-bridge.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 90,
+     "size": [
+      2.16,
+      1.94,
+      16.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/rope-bridge.lod1.glb",
+     "tris": 1534,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 48,
+     "size": [
+      2.16,
+      1.94,
+      16.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/rope-bridge.lod2.glb",
+     "tris": 391,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.16,
+      1.94,
+      16.4
+     ]
+    }
+   ]
+  },
   "rowboat": {
    "title": "Wooden Boat",
    "author": "o0ozexo0o",
@@ -27942,7 +28050,7 @@
    "licence": "Original work (procedural)",
    "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
    "class": "building",
-   "ring": "landmark",
+   "ring": "building",
    "scale": 1,
    "source": "art/blender/br/build_ruins.mjs",
    "title": "Maya acropolis (tunnels)",
@@ -27968,10 +28076,10 @@
     },
     {
      "file": "/fps/br/models/ruin-acropolis.ruins-v1.lod1.glb",
-     "tris": 2878,
-     "draws": 4,
-     "textureMB": 1,
-     "kB": 109,
+     "tris": 456,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 50,
      "size": [
       48,
       9.4,
@@ -27992,12 +28100,177 @@
     }
    ]
   },
+  "ruin-arcade-a": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "source": "art/blender/br/build_ruins.mjs",
+   "title": "Arcaded house (two storeys)",
+   "use": "Forgotten Ruins: the temple town's arcaded houses, arches onto a veranda, rooms behind, upstairs or a roof to climb (procedural, 2026-11-17)",
+   "size": [
+    23.2,
+    11.3,
+    13.2
+   ],
+   "sourceTris": 2254,
+   "lods": [
+    {
+     "file": "/fps/br/models/ruin-arcade-a.ruins-v1.lod0.glb",
+     "tris": 2254,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 209,
+     "size": [
+      23.2,
+      11.3,
+      13.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-arcade-a.ruins-v1.lod1.glb",
+     "tris": 1734,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 70,
+     "size": [
+      23.2,
+      11.3,
+      13.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-arcade-a.ruins-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      23.2,
+      11.3,
+      13.2
+     ]
+    }
+   ]
+  },
+  "ruin-arcade-b": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "source": "art/blender/br/build_ruins.mjs",
+   "title": "Arcaded gallery (one storey)",
+   "use": "Forgotten Ruins: the temple town's arcaded houses, arches onto a veranda, rooms behind, upstairs or a roof to climb (procedural, 2026-11-17)",
+   "size": [
+    34.6,
+    7.1000000000000005,
+    13.2
+   ],
+   "sourceTris": 1568,
+   "lods": [
+    {
+     "file": "/fps/br/models/ruin-arcade-b.ruins-v1.lod0.glb",
+     "tris": 1568,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 197,
+     "size": [
+      34.6,
+      7.1000000000000005,
+      13.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-arcade-b.ruins-v1.lod1.glb",
+     "tris": 1354,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 64,
+     "size": [
+      34.6,
+      7.1000000000000005,
+      13.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-arcade-b.ruins-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      34.6,
+      7.1000000000000005,
+      13.2
+     ]
+    }
+   ]
+  },
+  "ruin-arcade-c": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "source": "art/blender/br/build_ruins.mjs",
+   "title": "Arcaded house (small, two storeys)",
+   "use": "Forgotten Ruins: the temple town's arcaded houses, arches onto a veranda, rooms behind, upstairs or a roof to climb (procedural, 2026-11-17)",
+   "size": [
+    14.8,
+    11.3,
+    13.2
+   ],
+   "sourceTris": 1734,
+   "lods": [
+    {
+     "file": "/fps/br/models/ruin-arcade-c.ruins-v1.lod0.glb",
+     "tris": 1734,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 200,
+     "size": [
+      14.8,
+      11.3,
+      13.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-arcade-c.ruins-v1.lod1.glb",
+     "tris": 1290,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 63,
+     "size": [
+      14.8,
+      11.3,
+      13.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-arcade-c.ruins-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      14.8,
+      11.3,
+      13.2
+     ]
+    }
+   ]
+  },
   "ruin-arch": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
    "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
    "class": "structure",
-   "ring": "landmark",
+   "ring": "building",
    "scale": 1,
    "source": "art/blender/br/build_ruins.mjs",
    "title": "Maya arch",
@@ -28023,10 +28296,10 @@
     },
     {
      "file": "/fps/br/models/ruin-arch.ruins-v1.lod1.glb",
-     "tris": 798,
-     "draws": 4,
-     "textureMB": 1,
-     "kB": 73,
+     "tris": 178,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 44,
      "size": [
       27,
       7.4,
@@ -28052,7 +28325,7 @@
    "licence": "Original work (procedural)",
    "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
    "class": "structure",
-   "ring": "landmark",
+   "ring": "building",
    "scale": 1,
    "source": "art/blender/br/build_ruins.mjs",
    "title": "Maya ball court",
@@ -28102,12 +28375,177 @@
     }
    ]
   },
+  "ruin-great-temple": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_ruins.mjs",
+   "title": "Great temple (Angkor and Maya)",
+   "use": "Forgotten Ruins: the great temple, two enclosures of vaulted galleries with gate towers, the inner on a terrace, the central sanctuary on its platform (tower, lookout, crypt and tunnels), roofs to walk, a fallen stretch (procedural, 2026-11-17)",
+   "size": [
+    78,
+    23.6,
+    78
+   ],
+   "sourceTris": 14496,
+   "lods": [
+    {
+     "file": "/fps/br/models/ruin-great-temple.ruins-v1.lod0.glb",
+     "tris": 14496,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 419,
+     "size": [
+      78,
+      23.6,
+      78
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-great-temple.ruins-v1.lod1.glb",
+     "tris": 3546,
+     "draws": 4,
+     "textureMB": 1,
+     "kB": 127,
+     "size": [
+      78,
+      23.6,
+      78
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-great-temple.ruins-v1.lod2.glb",
+     "tris": 636,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      78,
+      23.6,
+      78
+     ]
+    }
+   ]
+  },
+  "ruin-house-a": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "source": "art/blender/br/build_ruins.mjs",
+   "title": "Maya stone house (fallen)",
+   "use": "Forgotten Ruins: the temple town's stone houses, rooms open to the sky (procedural, 2026-11-17)",
+   "size": [
+    9,
+    3.6,
+    8.5
+   ],
+   "sourceTris": 400,
+   "lods": [
+    {
+     "file": "/fps/br/models/ruin-house-a.ruins-v1.lod0.glb",
+     "tris": 400,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 49,
+     "size": [
+      9,
+      3.6,
+      8.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-house-a.ruins-v1.lod1.glb",
+     "tris": 398,
+     "draws": 2,
+     "textureMB": 0.13,
+     "kB": 19,
+     "size": [
+      9,
+      3.6,
+      8.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-house-a.ruins-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      9,
+      3.6,
+      8.5
+     ]
+    }
+   ]
+  },
+  "ruin-house-b": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "source": "art/blender/br/build_ruins.mjs",
+   "title": "Maya stone house (fallen)",
+   "use": "Forgotten Ruins: the temple town's stone houses, rooms open to the sky (procedural, 2026-11-17)",
+   "size": [
+    12,
+    3.6,
+    9.5
+   ],
+   "sourceTris": 422,
+   "lods": [
+    {
+     "file": "/fps/br/models/ruin-house-b.ruins-v1.lod0.glb",
+     "tris": 422,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 49,
+     "size": [
+      12,
+      3.6,
+      9.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-house-b.ruins-v1.lod1.glb",
+     "tris": 420,
+     "draws": 2,
+     "textureMB": 0.13,
+     "kB": 19,
+     "size": [
+      12,
+      3.6,
+      9.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-house-b.ruins-v1.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12,
+      3.6,
+      9.5
+     ]
+    }
+   ]
+  },
   "ruin-palace": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
    "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
    "class": "building",
-   "ring": "landmark",
+   "ring": "building",
    "scale": 1,
    "source": "art/blender/br/build_ruins.mjs",
    "title": "Maya palace",
@@ -28133,10 +28571,10 @@
     },
     {
      "file": "/fps/br/models/ruin-palace.ruins-v1.lod1.glb",
-     "tris": 2598,
+     "tris": 622,
      "draws": 4,
      "textureMB": 1,
-     "kB": 107,
+     "kB": 71,
      "size": [
       57,
       12.2,
@@ -28217,7 +28655,7 @@
    "licence": "Original work (procedural)",
    "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
    "class": "building",
-   "ring": "landmark",
+   "ring": "building",
    "scale": 1,
    "source": "art/blender/br/build_ruins.mjs",
    "title": "Great pyramid (Maya temple)",
@@ -28243,10 +28681,10 @@
     },
     {
      "file": "/fps/br/models/ruin-pyramid.ruins-v1.lod1.glb",
-     "tris": 5670,
-     "draws": 4,
-     "textureMB": 1,
-     "kB": 154,
+     "tris": 1058,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 61,
      "size": [
       37,
       27.6,
@@ -28263,6 +28701,61 @@
       37,
       27.6,
       43.2
+     ]
+    }
+   ]
+  },
+  "ruin-shrine": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "source": "art/blender/br/build_ruins.mjs",
+   "title": "Shrine tower (prasat)",
+   "use": "Forgotten Ruins: a shrine tower in the temple town, a room on a stepped base, its crown in tiers (procedural, 2026-11-17)",
+   "size": [
+    8.4,
+    10.7,
+    9.6
+   ],
+   "sourceTris": 276,
+   "lods": [
+    {
+     "file": "/fps/br/models/ruin-shrine.ruins-v1.lod0.glb",
+     "tris": 276,
+     "draws": 4,
+     "textureMB": 1,
+     "kB": 62,
+     "size": [
+      8.4,
+      10.7,
+      9.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-shrine.ruins-v1.lod1.glb",
+     "tris": 106,
+     "draws": 3,
+     "textureMB": 0.19,
+     "kB": 21,
+     "size": [
+      8.4,
+      10.7,
+      9.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/ruin-shrine.ruins-v1.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      8.4,
+      10.7,
+      9.6
      ]
     }
    ]
@@ -28327,7 +28820,7 @@
    "licence": "Original work (procedural)",
    "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
    "class": "building",
-   "ring": "landmark",
+   "ring": "building",
    "scale": 1,
    "source": "art/blender/br/build_ruins.mjs",
    "title": "Maya temple (roof comb)",
@@ -28353,10 +28846,10 @@
     },
     {
      "file": "/fps/br/models/ruin-temple-a.ruins-v1.lod1.glb",
-     "tris": 1924,
-     "draws": 4,
-     "textureMB": 1,
-     "kB": 92,
+     "tris": 542,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 51,
      "size": [
       21,
       16.4,
@@ -28382,7 +28875,7 @@
    "licence": "Original work (procedural)",
    "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
    "class": "building",
-   "ring": "landmark",
+   "ring": "building",
    "scale": 1,
    "source": "art/blender/br/build_ruins.mjs",
    "title": "Maya temple (fallen)",
@@ -28408,10 +28901,10 @@
     },
     {
      "file": "/fps/br/models/ruin-temple-b.ruins-v1.lod1.glb",
-     "tris": 1512,
-     "draws": 3,
-     "textureMB": 0.75,
-     "kB": 69,
+     "tris": 478,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 34,
      "size": [
       17,
       10.200000000000001,
@@ -28437,7 +28930,7 @@
    "licence": "Original work (procedural)",
    "textures": "Original work (procedural): art/blender/br/make_ruins_textures.py",
    "class": "building",
-   "ring": "landmark",
+   "ring": "building",
    "scale": 1,
    "source": "art/blender/br/build_ruins.mjs",
    "title": "Maya tower",
@@ -28463,10 +28956,10 @@
     },
     {
      "file": "/fps/br/models/ruin-tower.ruins-v1.lod1.glb",
-     "tris": 1932,
+     "tris": 154,
      "draws": 3,
      "textureMB": 0.75,
-     "kB": 77,
+     "kB": 45,
      "size": [
       9.4,
       14.2,
@@ -28518,10 +29011,10 @@
     },
     {
      "file": "/fps/br/models/ruin-wall-corner.ruins-v1.lod1.glb",
-     "tris": 252,
+     "tris": 80,
      "draws": 2,
      "textureMB": 0.13,
-     "kB": 17,
+     "kB": 13,
      "size": [
       9,
       2.8,
@@ -28573,10 +29066,10 @@
     },
     {
      "file": "/fps/br/models/ruin-wall-long.ruins-v1.lod1.glb",
-     "tris": 132,
+     "tris": 100,
      "draws": 2,
      "textureMB": 0.13,
-     "kB": 15,
+     "kB": 14,
      "size": [
       14,
       3.2,
@@ -28628,10 +29121,10 @@
     },
     {
      "file": "/fps/br/models/ruin-wall-short.ruins-v1.lod1.glb",
-     "tris": 218,
+     "tris": 60,
      "draws": 2,
      "textureMB": 0.13,
-     "kB": 16,
+     "kB": 13,
      "size": [
       7,
       2.4,
@@ -29459,6 +29952,60 @@
       0.84,
       1,
       0.47
+     ]
+    }
+   ]
+  },
+  "rusty-house": {
+   "title": "Rusty roof Wooden house 3d model free",
+   "author": "iGauravRajput",
+   "source": "https://sketchfab.com/3d-models/rusty-roof-wooden-house-3d-model-free-76ff1916c18845d9a1c5397330d3af55",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "Forgotten Ruins (2026-11-17): rusty-roofed wooden house in the jungle (the owner's pick)",
+   "scale": 10,
+   "sourceTris": 173931,
+   "size": [
+    7.96,
+    6.93,
+    10
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rusty-house.lod0.glb",
+     "tris": 22996,
+     "draws": 1,
+     "textureMB": 5.33,
+     "kB": 527,
+     "size": [
+      7.96,
+      6.93,
+      10
+     ]
+    },
+    {
+     "file": "/fps/br/models/rusty-house.lod1.glb",
+     "tris": 4807,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      7.96,
+      6.93,
+      10
+     ]
+    },
+    {
+     "file": "/fps/br/models/rusty-house.lod2.glb",
+     "tris": 1138,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      7.96,
+      6.93,
+      10
      ]
     }
    ]
@@ -31242,6 +31789,60 @@
       10.33,
       2.58,
       7.28
+     ]
+    }
+   ]
+  },
+  "skull-pile": {
+   "title": "Pile of Skulls",
+   "author": "Abimael Gonzalez",
+   "source": "https://sketchfab.com/3d-models/pile-of-skulls-11d46d32494c44218a55192adc067e57",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Forgotten Ruins (2026-11-17): pile of skulls in the crypts",
+   "scale": 0.010009,
+   "sourceTris": 833,
+   "size": [
+    1.4,
+    0.39,
+    1.27
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/skull-pile.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 32,
+     "size": [
+      1.4,
+      0.39,
+      1.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/skull-pile.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 13,
+     "size": [
+      1.4,
+      0.39,
+      1.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/skull-pile.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.4,
+      0.39,
+      1.27
      ]
     }
    ]
@@ -37583,6 +38184,60 @@
      "size": [
       0.79,
       1.46,
+      3.4
+     ]
+    }
+   ]
+  },
+  "willys-jeep": {
+   "title": "Jeep Willys",
+   "author": "Willy Decarpentrie",
+   "source": "https://sketchfab.com/3d-models/jeep-willys-a28600c16b9e44bcb160ede0d199180d",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "Forgotten Ruins (2026-11-17): the expedition's Willys jeep",
+   "scale": 1.027504,
+   "sourceTris": 12244,
+   "size": [
+    1.67,
+    1.6,
+    3.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/willys-jeep.lod0.glb",
+     "tris": 4475,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 105,
+     "size": [
+      1.67,
+      1.6,
+      3.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/willys-jeep.lod1.glb",
+     "tris": 1554,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      1.67,
+      1.6,
+      3.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/willys-jeep.lod2.glb",
+     "tris": 1554,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      1.67,
+      1.6,
       3.4
      ]
     }

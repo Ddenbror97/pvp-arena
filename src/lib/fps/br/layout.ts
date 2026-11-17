@@ -2053,6 +2053,12 @@ const FOOT: Record<string, [number, number]> = {
   sx2190: [2.6, 9.5],
   a320: [34.2, 37.6],
   // Forgotten Ruins (2026-11-17): the owner's downloads (trees by their trunks).
+  "rope-bridge": [2.2, 16.4],
+  "ancient-vase": [0.4, 0.3],
+  "willys-jeep": [1.7, 3.4],
+  "red-banner": [1.1, 0.2],
+  "skull-pile": [1.4, 1.3],
+  "rusty-house": [8.0, 10],
   "tree-jungle": [2.5, 2.5],
   "tree-palm": [2.5, 2.5],
   "palm-small": [3.8, 3.4],
@@ -2077,7 +2083,6 @@ const FOOT: Record<string, [number, number]> = {
   "dead-trunk": [1.9, 1.7],
   kukulcan: [33.5, 34],
   "root-rock": [16, 12.9],
-  "lily-pads": [5.2, 6],
   lotus: [0.9, 1],
   "mangrove-roots": [1.5, 1.2],
   "mossy-rock-b": [4.4, 5],
@@ -5786,6 +5791,9 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
   near("ruin-ballcourt", 18, 70, 1, 8);
   near("ruin-acropolis", -62, 118, 2, 14, { margin: 2, flat: 4 });
   near("ruin-arch", -128, -30, 1, 10, { margin: 1, flat: 3 });
+  // The great temple (owner, 2026-11-17: "one major big temple with various levels and fun to
+  // be inside and explore"): north of the pyramid, its south gate to the plaza.
+  near("ruin-great-temple", 0, -205, 0, 6, { margin: 2, flat: 2 });
   // The plaza's paving: 20 m squares wherever no building stands (statues and stelae stand on
   // it, so it is set down directly, under the placer's overlap test).
   const big = out.filter((p) => p.poi === poi.id && p.model.startsWith("ruin-"));
@@ -5851,6 +5859,15 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
   near("stone-foundation", -120, -230, 0, 20, { margin: 2, flat: 3 });
   near("stone-foundation", 230, 300, 1, 20, { margin: 2, flat: 3 });
   near("stone-foundation", -320, 230, 2, 20, { margin: 2, flat: 3 });
+  // Stilt houses with rusted roofs (the owner's pick, 2026-11-17) out in the jungle and by the
+  // river.
+  for (const [lx, lz, t] of [
+    [300, -60, 3],
+    [285, 70, 3],
+    [-265, -215, 1],
+    [-290, 110, 1],
+  ] as const)
+    near("rusty-house", lx, lz, t as Placement["turn"], 20, { margin: 2, flat: 2.5 });
   // Giant tree roots on rock, east and west.
   near("root-rock", 160, 40, 1, 14, { margin: 1, flat: 4 });
   near("root-rock", -150, 90, 2, 14, { margin: 1, flat: 4 });
@@ -5872,7 +5889,7 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
     ["military-crate", 4, 18, 1],
     ["oil-lantern", 3, 4, 0],
     ["old-chest", -3, 5, 1],
-    ["mil-jeep", -10, 14, 2],
+    ["willys-jeep", -10, 14, 2],
   ] as const)
     firstSpot(
       put,
@@ -5884,16 +5901,60 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
       ]),
       { margin: 0.6, flat: 1.2 },
     );
+  // Inside: skulls by the pyramid's sarcophagus and in the great temple's crypt, vases in its
+  // courts; red banners on the great temple's gates.
+  const inPlace = (
+    model: string,
+    base: Placement,
+    lx: number,
+    ly: number,
+    lz: number,
+    turn = 0,
+  ) => {
+    const [dx, dz] = turnXZ(lx, lz, base.turn);
+    out.push({
+      model,
+      x: +(base.x + dx).toFixed(2),
+      y: +(base.y + ly).toFixed(2),
+      z: +(base.z + dz).toFixed(2),
+      turn: ((base.turn + turn) & 3) as Placement["turn"],
+      poi: poi.id,
+    });
+  };
+  const pyramid = out.find((p) => p.model === "ruin-pyramid" && p.poi === poi.id);
+  if (pyramid) inPlace("skull-pile", pyramid, 2.4, 0.04, 2.4);
+  const great = out.find((p) => p.model === "ruin-great-temple" && p.poi === poi.id);
+  if (great) {
+    inPlace("skull-pile", great, 2.4, 2.44, -2.4);
+    inPlace("skull-pile", great, -2.6, 2.44, 2.2, 1);
+    for (const [lx, ly, lz] of [
+      [-28, 0.03, 26],
+      [27, 0.03, -27],
+      [-12, 2.4, 13],
+    ] as const)
+      inPlace("ancient-vase", great, lx, ly, lz);
+    // A rope bridge over the outer gallery's fallen roof (its ends on the roof either side).
+    inPlace("rope-bridge", great, 34, 5.0 - 0.26, -16);
+    // Banners: two on the outer face of each gate tower, 4 m up.
+    for (let s = 0; s < 4; s++)
+      for (const u of [-4.2, 4.2]) {
+        const [lx, lz] =
+          s === 0 ? [u, 39.1] : s === 1 ? [39.1, -u] : s === 2 ? [-u, -39.1] : [-39.1, u];
+        inPlace("red-banner", great, lx, 4.2, lz, s === 0 ? 0 : s === 1 ? 1 : s === 2 ? 2 : 3);
+      }
+  }
   // The cenote's lilies (on the water, at its level).
   const cenote = ctx.meta.waterBodies.find((w) => w.id === "ruins-cenote");
   if (cenote) {
     const cx = (cenote.bounds[0] + cenote.bounds[2]) / 2,
       cz = (cenote.bounds[1] + cenote.bounds[3]) / 2;
     for (const [m, dx, dz, t] of [
-      ["lily-pads", -5, 2, 0],
-      ["lily-pads", 6, -4, 1],
+      ["lotus", -5, 2, 0],
+      ["lotus", 6, -4, 1],
       ["lotus", -3, -5, 0],
       ["lotus", 4, 5, 2],
+      ["lotus", 1, 7, 3],
+      ["lotus", -7, -2, 1],
     ] as const)
       out.push({
         model: m,
@@ -5904,6 +5965,49 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
         poi: "shore",
       });
   }
+  // The temple town (owner, 2026-11-17: "should be like a ruins temple town not just 1-3 small
+  // single temples"): a square street round the plaza's monuments, houses either side facing
+  // it (arcaded houses, stone houses, shrines), and shrines along the causeways.
+  const Q = 166;
+  const TOWN = [
+    "ruin-arcade-a",
+    "ruin-house-a",
+    "ruin-shrine",
+    "ruin-arcade-c",
+    "ruin-house-b",
+    "ruin-arcade-b",
+    "ruin-house-a",
+    "ruin-arcade-c",
+    "ruin-house-b",
+  ];
+  let n = 0;
+  for (const [row, off] of [
+    [0, -19],
+    [1, 19],
+  ] as const)
+    for (let side = 0; side < 4; side++)
+      for (let a = -Q + 12; a <= Q - 12; a += 26) {
+        const m = TOWN[(n++ * 7 + row * 3 + side) % TOWN.length]!;
+        // Avenues kept open: north to the great temple's gate, and where the causeways come in.
+        if (side === 2 ? Math.abs(a) < 50 : Math.abs(a) < 14) continue;
+        const d = Q + off;
+        // Side 0 south (+z), 1 east (+x), 2 north (−z), 3 west (−x); the inner row faces out to
+        // the street, the outer row in.
+        const [lx, lz] =
+          side === 0 ? [a, d] : side === 1 ? [d, -a] : side === 2 ? [-a, -d] : [-d, a];
+        const out_ = (side === 0 ? 0 : side === 1 ? 1 : side === 2 ? 2 : 3) as Placement["turn"];
+        const turn = (row === 0 ? out_ : (out_ + 2) & 3) as Placement["turn"];
+        near(m, lx, lz, turn, 6, { margin: 2, flat: 2 });
+      }
+  for (const [lx, lz, t] of [
+    [-60, -255, 1],
+    [60, -255, 3],
+    [-215, -70, 1],
+    [215, -40, 3],
+    [-40, 250, 0],
+    [200, 140, 3],
+  ] as const)
+    near("ruin-shrine", lx, lz, t as Placement["turn"], 10, { margin: 2, flat: 2 });
   // Broken walls: round the plaza and out through the jungle.
   const walls = ["ruin-wall-long", "ruin-wall-short", "ruin-wall-corner"];
   for (let k = 0; k < 46; k++) {
@@ -7121,6 +7225,8 @@ function shoreLife(out: Placement[], ctx: Context) {
     [0, -1, 0],
   ];
   for (const lake of meta.waterBodies) {
+    // (Forgotten Ruins' cenote is a sacred pool under a cliff: no pier, no boat.)
+    if (lake.id === "ruins-cenote") continue;
     const [x0, z0, x1, z1] = lake.bounds;
     const cx = (x0 + x1) / 2,
       cz = (z0 + z1) / 2;

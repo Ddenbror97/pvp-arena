@@ -1,12 +1,13 @@
 {
  "tool_version": 3,
- "generated": "2026-11-17T17:38:32-03:00",
+ "generated": "2026-11-17T18:55:57-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/home/claude/fr-zips/*.zip",
   "/home/claude/fr-zips2/*.zip",
   "/home/claude/fr-zips3/*.zip",
-  "/home/claude/fr-zips4/*.zip"
+  "/home/claude/fr-zips4/*.zip",
+  "/home/claude/fr-zips5/*.zip"
  ],
  "asset_list": "/home/claude/br-assets/index.html",
  "budgets": {
@@ -10524,6 +10525,123 @@
     "downscale textures to 1K"
    ],
    "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:4bb5d53be21d4cbd9bf39fc4a8043cac",
+   "title": "Ancient vase",
+   "author": "Eleanie",
+   "author_url": "https://sketchfab.com/Eleanie",
+   "source": "https://sketchfab.com/3d-models/ancient-vase-4bb5d53be21d4cbd9bf39fc4a8043cac",
+   "uid": "4bb5d53be21d4cbd9bf39fc4a8043cac",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips5/6eb3af6f-ancient_vase.zip",
+     "sha256": "fa90ff528caa11cabd2c8234f65023c32b448152147dcbdc9bc66503542b5edc",
+     "size": 5566924,
+     "mtime": "2026-11-17T18:46:57-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2712,
+    "verts": 1476,
+    "draws": 1,
+    "unique_tris": 2712,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.13,
+     0.28,
+     0.123
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "vase.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 2712,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 2712,
+      "draws": 1,
+      "size_m": [
+       0.13,
+       0.28,
+       0.123
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/NOMAL_VASE_baseColor.png",
+      "name": "textures/NOMAL_VASE_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/NOMAL_VASE_metallicRoughness.png",
+      "name": "textures/NOMAL_VASE_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/NOMAL_VASE_normal.png",
+      "name": "textures/NOMAL_VASE_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 64"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
    "budget_ratio": 0.0
   },
   {
@@ -66712,6 +66830,125 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:a28600c16b9e44bcb160ede0d199180d",
+   "title": "Jeep Willys",
+   "author": "Willy Decarpentrie",
+   "author_url": "https://sketchfab.com/skudgee",
+   "source": "https://sketchfab.com/3d-models/jeep-willys-a28600c16b9e44bcb160ede0d199180d",
+   "uid": "a28600c16b9e44bcb160ede0d199180d",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips5/9c427270-jeep_willys.zip",
+     "sha256": "243263724a81e204a89ea1dca3b87938c8ebd989de89fb1664a644c358971ec1",
+     "size": 3707326,
+     "mtime": "2026-11-17T18:46:57-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 12276,
+    "verts": 14904,
+    "draws": 7,
+    "unique_tris": 12276,
+    "meshes": 7,
+    "primitives": 7,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 18,
+    "mesh_nodes": 7,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.078,
+     1.574,
+     5.078
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "3d2785c053da49d592f58b41bea82661.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.008523,
+    "pieces_count": 2,
+    "max_piece_tris": 12244,
+    "top_pieces": [
+     {
+      "name": "MyCar",
+      "tris": 12244,
+      "draws": 6,
+      "size_m": [
+       1.621,
+       1.556,
+       3.309
+      ]
+     },
+     {
+      "name": "Plane001",
+      "tris": 32,
+      "draws": 1,
+      "size_m": [
+       5.078,
+       0.0,
+       5.078
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/Willys_baseColor.png",
+      "name": "textures/Willys_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ground_baseColor.png",
+      "name": "textures/Ground_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 22.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:b52246c9611a42a99a03b425535a0237",
    "title": "Jersey Barrier",
    "author": "emran.bayati",
@@ -81065,6 +81302,122 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:21fd9aaa5a3c486b9876816fefd8a03f",
+   "title": "Low-Poly Ceramic Vases Set / Clay Pots Pack",
+   "author": "Lucas Cerone",
+   "author_url": "https://sketchfab.com/lucas.n.cerone",
+   "source": "https://sketchfab.com/3d-models/low-poly-ceramic-vases-set-clay-pots-pack-21fd9aaa5a3c486b9876816fefd8a03f",
+   "uid": "21fd9aaa5a3c486b9876816fefd8a03f",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips5/c5efad34-low-poly_ceramic_vases_set__clay_pots_pack.zip",
+     "sha256": "265840162dc3fff66829a6e2131e7f09c30946e87d65da6d5a2484b14a3d2424",
+     "size": 242108,
+     "mtime": "2026-11-17T18:46:57-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 19456,
+    "verts": 10654,
+    "draws": 3,
+    "unique_tris": 19456,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 9,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.461,
+     3.508,
+     2.598
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "37579a8f5f434bb0aa4caee61143852d.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 3,
+    "max_piece_tris": 6528,
+    "top_pieces": [
+     {
+      "name": "Cylinder.001",
+      "tris": 6528,
+      "draws": 1,
+      "size_m": [
+       2.598,
+       3.504,
+       2.598
+      ]
+     },
+     {
+      "name": "Cylinder.002",
+      "tris": 6528,
+      "draws": 1,
+      "size_m": [
+       2.375,
+       2.206,
+       2.375
+      ]
+     },
+     {
+      "name": "Cylinder",
+      "tris": 6400,
+      "draws": 1,
+      "size_m": [
+       2.324,
+       2.099,
+       2.324
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.3x)"
+   ],
+   "actions": [
+    "decimate to 15k"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.3
+  },
+  {
    "key": "sf:228f6a684bf34ce4b669d4679063c788",
    "title": "low-poly Fire Hose Reel",
    "author": "qanx",
@@ -86420,6 +86773,261 @@
     "check scale (largest side 0.661 m; x100 would give 66.1 m)"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:0a87672db9ef4059ae559d25f199baf2",
+   "title": "Medieval banner",
+   "author": "ejtam",
+   "author_url": "https://sketchfab.com/ejtam",
+   "source": "https://sketchfab.com/3d-models/medieval-banner-0a87672db9ef4059ae559d25f199baf2",
+   "uid": "0a87672db9ef4059ae559d25f199baf2",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips5/medieval_banner.zip",
+     "sha256": "688231d16d4d55f81281cfb6889a52a49cb3d05fa747f4b3c3a1afe73f230748",
+     "size": 146892559,
+     "mtime": "2026-11-17T18:47:02-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2468,
+    "verts": 2601,
+    "draws": 8,
+    "unique_tris": 2468,
+    "meshes": 8,
+    "primitives": 8,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 19,
+    "mesh_nodes": 8,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.5,
+     1.199,
+     0.077
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "c562ed0fe68f4efdab500fac2d87a15b.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 8,
+    "max_piece_tris": 608,
+    "top_pieces": [
+     {
+      "name": "Cloth",
+      "tris": 608,
+      "draws": 1,
+      "size_m": [
+       0.415,
+       1.014,
+       0.076
+      ]
+     },
+     {
+      "name": "Wall mount",
+      "tris": 416,
+      "draws": 1,
+      "size_m": [
+       0.062,
+       0.121,
+       0.069
+      ]
+     },
+     {
+      "name": "Wall mount.001",
+      "tris": 416,
+      "draws": 1,
+      "size_m": [
+       0.062,
+       0.121,
+       0.069
+      ]
+     },
+     {
+      "name": "Chain",
+      "tris": 276,
+      "draws": 1,
+      "size_m": [
+       0.022,
+       0.112,
+       0.068
+      ]
+     },
+     {
+      "name": "Chain.001",
+      "tris": 276,
+      "draws": 1,
+      "size_m": [
+       0.022,
+       0.112,
+       0.068
+      ]
+     },
+     {
+      "name": "Cloth holder",
+      "tris": 160,
+      "draws": 1,
+      "size_m": [
+       0.047,
+       0.078,
+       0.013
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 15,
+    "images": [
+     {
+      "member": "textures/Wood_Mat_baseColor.png",
+      "name": "textures/Wood_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wood_Mat_metallicRoughness.png",
+      "name": "textures/Wood_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wood_Mat_normal.png",
+      "name": "textures/Wood_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mount_Mat_baseColor.png",
+      "name": "textures/Mount_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mount_Mat_metallicRoughness.png",
+      "name": "textures/Mount_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mount_Mat_normal.png",
+      "name": "textures/Mount_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Chain_Mat_baseColor.png",
+      "name": "textures/Chain_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Chain_Mat_metallicRoughness.png",
+      "name": "textures/Chain_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Chain_Mat_normal.png",
+      "name": "textures/Chain_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Steel_Mat_baseColor.png",
+      "name": "textures/Steel_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Steel_Mat_metallicRoughness.png",
+      "name": "textures/Steel_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Steel_Mat_normal.png",
+      "name": "textures/Steel_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Cloth_Mat_baseColor.png",
+      "name": "textures/Cloth_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Cloth_Mat_metallicRoughness.png",
+      "name": "textures/Cloth_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Cloth_Mat_normal.png",
+      "name": "textures/Cloth_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 1276.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 1277"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -111119,6 +111727,125 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:11d46d32494c44218a55192adc067e57",
+   "title": "Pile of Skulls",
+   "author": "Abimael Gonzalez",
+   "author_url": "https://sketchfab.com/abimaelgonzalez",
+   "source": "https://sketchfab.com/3d-models/pile-of-skulls-11d46d32494c44218a55192adc067e57",
+   "uid": "11d46d32494c44218a55192adc067e57",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips5/735884a6-pile_of_skulls.zip",
+     "sha256": "0f1f7c9a3260b321fb668bb4c20bdc85d132b0d34229680bbca4ea6537737587",
+     "size": 4121730,
+     "mtime": "2026-11-17T18:46:57-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 833,
+    "verts": 547,
+    "draws": 1,
+    "unique_tris": 833,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     139.879,
+     38.496,
+     127.205
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Skulls_Pile_AbimaelGL.FBX",
+     "RootNode",
+     "Box001"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 833,
+    "top_pieces": [
+     {
+      "name": "Box001_03 - Default_0",
+      "tris": 833,
+      "draws": 1,
+      "size_m": [
+       139.879,
+       38.496,
+       127.205
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/03_-_Default_baseColor.png",
+      "name": "textures/03_-_Default_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/03_-_Default_metallicRoughness.png",
+      "name": "textures/03_-_Default_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/03_-_Default_normal.png",
+      "name": "textures/03_-_Default_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 140 m"
+   ],
+   "actions": [
+    "check scale (largest side 140 m; x0.01 would give 1.4 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:d8540e0d5a3a4281bbea1607d8ef3c48",
    "title": "Pillar 01",
    "author": "OliverMatheGames",
@@ -126920,6 +127647,140 @@
    ],
    "over_budget": true,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:76ff1916c18845d9a1c5397330d3af55",
+   "title": "Rusty roof Wooden house 3d model free",
+   "author": "iGauravRajput",
+   "author_url": "https://sketchfab.com/iGauravRajput",
+   "source": "https://sketchfab.com/3d-models/rusty-roof-wooden-house-3d-model-free-76ff1916c18845d9a1c5397330d3af55",
+   "uid": "76ff1916c18845d9a1c5397330d3af55",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips5/78adabd1-rusty_roof_wooden_house_3d_model_free.zip",
+     "sha256": "01fc2c4d179e6fc4d02480254890d689b55de11fb7c14390cce58526c00cc89a",
+     "size": 25736554,
+     "mtime": "2026-11-17T18:47:53-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 173931,
+    "verts": 114900,
+    "draws": 2,
+    "unique_tris": 173931,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.796,
+     0.693,
+     1.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "tripo_node_d57dc95e-f972-4688-a9d3-7e57387f7c02_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 97775,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 97775,
+      "draws": 1,
+      "size_m": [
+       0.796,
+       0.693,
+       0.999
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 76156,
+      "draws": 1,
+      "size_m": [
+       0.681,
+       0.584,
+       0.552
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_baseColor.jpeg",
+      "name": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_metallicRoughness.png",
+      "name": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_normal.jpeg",
+      "name": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_normal.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "TRIS>60k (2.9x)",
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "decimate to 60k",
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 2.9
   },
   {
    "key": "sf:048ca9ab42b0453ab344a0691fbd5058",
@@ -156516,6 +157377,122 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:54773600fbdb48ef9853e553515f61ca",
+   "title": "Wooden rope bridge",
+   "author": "DoniTodorov",
+   "author_url": "https://sketchfab.com/DoniTodorov",
+   "source": "https://sketchfab.com/3d-models/wooden-rope-bridge-54773600fbdb48ef9853e553515f61ca",
+   "uid": "54773600fbdb48ef9853e553515f61ca",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips5/7199e163-wooden_rope_bridge.zip",
+     "sha256": "6db016f819b354b0b078a15f41a921d688be8539eb723b01fb1ff03158b1931b",
+     "size": 10322998,
+     "mtime": "2026-11-17T18:54:29-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5568,
+    "verts": 6744,
+    "draws": 1,
+    "unique_tris": 5568,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.841,
+     1.65,
+     13.971
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "pCube12"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 5568,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 5568,
+      "draws": 1,
+      "size_m": [
+       1.841,
+       1.65,
+       13.971
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Bridge_baseColor.jpeg",
+      "name": "textures/Bridge_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Bridge_metallicRoughness.png",
+      "name": "textures/Bridge_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Bridge_normal.png",
+      "name": "textures/Bridge_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:54914058fc444b3baaeed28c1ca6761f",
    "title": "Wooden Scaffoldings",
    "author": "Bull studios",
@@ -156539,10 +157516,18 @@
      "mtime": "2026-11-17T17:37:15-03:00",
      "batch": "2026-11-17",
      "present": true
+    },
+    {
+     "path": "/home/claude/fr-zips5/ee6c7912-wooden_scaffoldings_1.zip",
+     "sha256": "4e8c58ea470c40fec3b5dffda6ef8933cd0f4eb8df9c99bc4a58a640de18343e",
+     "size": 1106729,
+     "mtime": "2026-11-17T18:46:56-03:00",
+     "batch": "2026-11-17",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-17",
    "formats": [
     "gltf+bin"
@@ -165417,6 +166402,70 @@
    "size": 59466803,
    "mtime_ns": 1794947836696505160,
    "mtime": "2026-11-17T17:37:16-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips5/6eb3af6f-ancient_vase.zip": {
+   "sha256": "fa90ff528caa11cabd2c8234f65023c32b448152147dcbdc9bc66503542b5edc",
+   "size": 5566924,
+   "mtime_ns": 1794952017272753666,
+   "mtime": "2026-11-17T18:46:57-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips5/735884a6-pile_of_skulls.zip": {
+   "sha256": "0f1f7c9a3260b321fb668bb4c20bdc85d132b0d34229680bbca4ea6537737587",
+   "size": 4121730,
+   "mtime_ns": 1794952017180753661,
+   "mtime": "2026-11-17T18:46:57-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips5/78adabd1-rusty_roof_wooden_house_3d_model_free.zip": {
+   "sha256": "01fc2c4d179e6fc4d02480254890d689b55de11fb7c14390cce58526c00cc89a",
+   "size": 25736554,
+   "mtime_ns": 1794952073532757010,
+   "mtime": "2026-11-17T18:47:53-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips5/9c427270-jeep_willys.zip": {
+   "sha256": "243263724a81e204a89ea1dca3b87938c8ebd989de89fb1664a644c358971ec1",
+   "size": 3707326,
+   "mtime_ns": 1794952017124753657,
+   "mtime": "2026-11-17T18:46:57-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips5/c5efad34-low-poly_ceramic_vases_set__clay_pots_pack.zip": {
+   "sha256": "265840162dc3fff66829a6e2131e7f09c30946e87d65da6d5a2484b14a3d2424",
+   "size": 242108,
+   "mtime_ns": 1794952017188753661,
+   "mtime": "2026-11-17T18:46:57-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips5/ee6c7912-wooden_scaffoldings_1.zip": {
+   "sha256": "4e8c58ea470c40fec3b5dffda6ef8933cd0f4eb8df9c99bc4a58a640de18343e",
+   "size": 1106729,
+   "mtime_ns": 1794952016972753648,
+   "mtime": "2026-11-17T18:46:56-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips5/medieval_banner.zip": {
+   "sha256": "688231d16d4d55f81281cfb6889a52a49cb3d05fa747f4b3c3a1afe73f230748",
+   "size": 146892559,
+   "mtime_ns": 1794952022272753963,
+   "mtime": "2026-11-17T18:47:02-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips5/7199e163-wooden_rope_bridge.zip": {
+   "sha256": "6db016f819b354b0b078a15f41a921d688be8539eb723b01fb1ff03158b1931b",
+   "size": 10322998,
+   "mtime_ns": 1794952469736780562,
+   "mtime": "2026-11-17T18:54:29-03:00",
    "batch": "2026-11-17",
    "present": true
   }
@@ -299614,6 +300663,814 @@
    "sha256": "492179d8d10ac908ce6b41ecee47ca69a238a5bca7f983a1e244d17eafb0ac87",
    "size": 59466803,
    "parsed_at": "2026-11-17T17:38:32-03:00"
+  },
+  "fa90ff528caa11cabd2c8234f65023c32b448152147dcbdc9bc66503542b5edc": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 5609935,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.65.0",
+   "licence": {
+    "title": "Ancient vase",
+    "source": "https://sketchfab.com/3d-models/ancient-vase-4bb5d53be21d4cbd9bf39fc4a8043cac",
+    "author": "Eleanie (https://sketchfab.com/Eleanie)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2712,
+    "verts": 1476,
+    "draws": 1,
+    "unique_tris": 2712,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.13,
+     0.28,
+     0.123
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "vase.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 2712,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 2712,
+      "draws": 1,
+      "size_m": [
+       0.13,
+       0.28,
+       0.123
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/NOMAL_VASE_baseColor.png",
+      "name": "textures/NOMAL_VASE_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/NOMAL_VASE_metallicRoughness.png",
+      "name": "textures/NOMAL_VASE_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/NOMAL_VASE_normal.png",
+      "name": "textures/NOMAL_VASE_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "fa90ff528caa11cabd2c8234f65023c32b448152147dcbdc9bc66503542b5edc",
+   "size": 5566924,
+   "parsed_at": "2026-11-17T18:53:27-03:00"
+  },
+  "0f1f7c9a3260b321fb668bb4c20bdc85d132b0d34229680bbca4ea6537737587": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 4140938,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.65.0",
+   "licence": {
+    "title": "Pile of Skulls",
+    "source": "https://sketchfab.com/3d-models/pile-of-skulls-11d46d32494c44218a55192adc067e57",
+    "author": "Abimael Gonzalez (https://sketchfab.com/abimaelgonzalez)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 833,
+    "verts": 547,
+    "draws": 1,
+    "unique_tris": 833,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     139.879,
+     38.496,
+     127.205
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Skulls_Pile_AbimaelGL.FBX",
+     "RootNode",
+     "Box001"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 833,
+    "top_pieces": [
+     {
+      "name": "Box001_03 - Default_0",
+      "tris": 833,
+      "draws": 1,
+      "size_m": [
+       139.879,
+       38.496,
+       127.205
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/03_-_Default_baseColor.png",
+      "name": "textures/03_-_Default_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/03_-_Default_metallicRoughness.png",
+      "name": "textures/03_-_Default_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/03_-_Default_normal.png",
+      "name": "textures/03_-_Default_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "0f1f7c9a3260b321fb668bb4c20bdc85d132b0d34229680bbca4ea6537737587",
+   "size": 4121730,
+   "parsed_at": "2026-11-17T18:53:27-03:00"
+  },
+  "01fc2c4d179e6fc4d02480254890d689b55de11fb7c14390cce58526c00cc89a": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 31644232,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-0.13.0",
+   "licence": {
+    "title": "Rusty roof Wooden house 3d model free",
+    "source": "https://sketchfab.com/3d-models/rusty-roof-wooden-house-3d-model-free-76ff1916c18845d9a1c5397330d3af55",
+    "author": "iGauravRajput (https://sketchfab.com/iGauravRajput)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 173931,
+    "verts": 114900,
+    "draws": 2,
+    "unique_tris": 173931,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.796,
+     0.693,
+     1.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "tripo_node_d57dc95e-f972-4688-a9d3-7e57387f7c02_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 97775,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 97775,
+      "draws": 1,
+      "size_m": [
+       0.796,
+       0.693,
+       0.999
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 76156,
+      "draws": 1,
+      "size_m": [
+       0.681,
+       0.584,
+       0.552
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_baseColor.jpeg",
+      "name": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_metallicRoughness.png",
+      "name": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_normal.jpeg",
+      "name": "textures/tripo_mat_d57dc95e-f972-4688-a9d3-7e57387f7c02_normal.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "01fc2c4d179e6fc4d02480254890d689b55de11fb7c14390cce58526c00cc89a",
+   "size": 25736554,
+   "parsed_at": "2026-11-17T18:53:27-03:00"
+  },
+  "243263724a81e204a89ea1dca3b87938c8ebd989de89fb1664a644c358971ec1": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 4126227,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Jeep Willys",
+    "source": "https://sketchfab.com/3d-models/jeep-willys-a28600c16b9e44bcb160ede0d199180d",
+    "author": "Willy Decarpentrie (https://sketchfab.com/skudgee)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 12276,
+    "verts": 14904,
+    "draws": 7,
+    "unique_tris": 12276,
+    "meshes": 7,
+    "primitives": 7,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 18,
+    "mesh_nodes": 7,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.078,
+     1.574,
+     5.078
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "3d2785c053da49d592f58b41bea82661.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.008523,
+    "pieces_count": 2,
+    "max_piece_tris": 12244,
+    "top_pieces": [
+     {
+      "name": "MyCar",
+      "tris": 12244,
+      "draws": 6,
+      "size_m": [
+       1.621,
+       1.556,
+       3.309
+      ]
+     },
+     {
+      "name": "Plane001",
+      "tris": 32,
+      "draws": 1,
+      "size_m": [
+       5.078,
+       0.0,
+       5.078
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/Willys_baseColor.png",
+      "name": "textures/Willys_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ground_baseColor.png",
+      "name": "textures/Ground_baseColor.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 22.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "243263724a81e204a89ea1dca3b87938c8ebd989de89fb1664a644c358971ec1",
+   "size": 3707326,
+   "parsed_at": "2026-11-17T18:53:27-03:00"
+  },
+  "265840162dc3fff66829a6e2131e7f09c30946e87d65da6d5a2484b14a3d2424": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 582805,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-0.17.0",
+   "licence": {
+    "title": "Low-Poly Ceramic Vases Set / Clay Pots Pack",
+    "source": "https://sketchfab.com/3d-models/low-poly-ceramic-vases-set-clay-pots-pack-21fd9aaa5a3c486b9876816fefd8a03f",
+    "author": "Lucas Cerone (https://sketchfab.com/lucas.n.cerone)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 19456,
+    "verts": 10654,
+    "draws": 3,
+    "unique_tris": 19456,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 9,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     10.461,
+     3.508,
+     2.598
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "37579a8f5f434bb0aa4caee61143852d.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 3,
+    "max_piece_tris": 6528,
+    "top_pieces": [
+     {
+      "name": "Cylinder.001",
+      "tris": 6528,
+      "draws": 1,
+      "size_m": [
+       2.598,
+       3.504,
+       2.598
+      ]
+     },
+     {
+      "name": "Cylinder.002",
+      "tris": 6528,
+      "draws": 1,
+      "size_m": [
+       2.375,
+       2.206,
+       2.375
+      ]
+     },
+     {
+      "name": "Cylinder",
+      "tris": 6400,
+      "draws": 1,
+      "size_m": [
+       2.324,
+       2.099,
+       2.324
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "265840162dc3fff66829a6e2131e7f09c30946e87d65da6d5a2484b14a3d2424",
+   "size": 242108,
+   "parsed_at": "2026-11-17T18:53:27-03:00"
+  },
+  "688231d16d4d55f81281cfb6889a52a49cb3d05fa747f4b3c3a1afe73f230748": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 19,
+   "uncompressed_bytes": 147372071,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.59.0",
+   "licence": {
+    "title": "Medieval banner",
+    "source": "https://sketchfab.com/3d-models/medieval-banner-0a87672db9ef4059ae559d25f199baf2",
+    "author": "ejtam (https://sketchfab.com/ejtam)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2468,
+    "verts": 2601,
+    "draws": 8,
+    "unique_tris": 2468,
+    "meshes": 8,
+    "primitives": 8,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 19,
+    "mesh_nodes": 8,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.5,
+     1.199,
+     0.077
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "c562ed0fe68f4efdab500fac2d87a15b.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 8,
+    "max_piece_tris": 608,
+    "top_pieces": [
+     {
+      "name": "Cloth",
+      "tris": 608,
+      "draws": 1,
+      "size_m": [
+       0.415,
+       1.014,
+       0.076
+      ]
+     },
+     {
+      "name": "Wall mount",
+      "tris": 416,
+      "draws": 1,
+      "size_m": [
+       0.062,
+       0.121,
+       0.069
+      ]
+     },
+     {
+      "name": "Wall mount.001",
+      "tris": 416,
+      "draws": 1,
+      "size_m": [
+       0.062,
+       0.121,
+       0.069
+      ]
+     },
+     {
+      "name": "Chain",
+      "tris": 276,
+      "draws": 1,
+      "size_m": [
+       0.022,
+       0.112,
+       0.068
+      ]
+     },
+     {
+      "name": "Chain.001",
+      "tris": 276,
+      "draws": 1,
+      "size_m": [
+       0.022,
+       0.112,
+       0.068
+      ]
+     },
+     {
+      "name": "Cloth holder",
+      "tris": 160,
+      "draws": 1,
+      "size_m": [
+       0.047,
+       0.078,
+       0.013
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 15,
+    "images": [
+     {
+      "member": "textures/Wood_Mat_baseColor.png",
+      "name": "textures/Wood_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wood_Mat_metallicRoughness.png",
+      "name": "textures/Wood_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wood_Mat_normal.png",
+      "name": "textures/Wood_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mount_Mat_baseColor.png",
+      "name": "textures/Mount_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mount_Mat_metallicRoughness.png",
+      "name": "textures/Mount_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Mount_Mat_normal.png",
+      "name": "textures/Mount_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Chain_Mat_baseColor.png",
+      "name": "textures/Chain_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Chain_Mat_metallicRoughness.png",
+      "name": "textures/Chain_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Chain_Mat_normal.png",
+      "name": "textures/Chain_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Steel_Mat_baseColor.png",
+      "name": "textures/Steel_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Steel_Mat_metallicRoughness.png",
+      "name": "textures/Steel_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Steel_Mat_normal.png",
+      "name": "textures/Steel_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Cloth_Mat_baseColor.png",
+      "name": "textures/Cloth_Mat_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Cloth_Mat_metallicRoughness.png",
+      "name": "textures/Cloth_Mat_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Cloth_Mat_normal.png",
+      "name": "textures/Cloth_Mat_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 1276.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "688231d16d4d55f81281cfb6889a52a49cb3d05fa747f4b3c3a1afe73f230748",
+   "size": 146892559,
+   "parsed_at": "2026-11-17T18:53:27-03:00"
+  },
+  "6db016f819b354b0b078a15f41a921d688be8539eb723b01fb1ff03158b1931b": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 10719384,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.15.0",
+   "licence": {
+    "title": "Wooden rope bridge",
+    "source": "https://sketchfab.com/3d-models/wooden-rope-bridge-54773600fbdb48ef9853e553515f61ca",
+    "author": "DoniTodorov (https://sketchfab.com/DoniTodorov)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5568,
+    "verts": 6744,
+    "draws": 1,
+    "unique_tris": 5568,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.841,
+     1.65,
+     13.971
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "pCube12"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 5568,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 5568,
+      "draws": 1,
+      "size_m": [
+       1.841,
+       1.65,
+       13.971
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Bridge_baseColor.jpeg",
+      "name": "textures/Bridge_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Bridge_metallicRoughness.png",
+      "name": "textures/Bridge_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Bridge_normal.png",
+      "name": "textures/Bridge_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "6db016f819b354b0b078a15f41a921d688be8539eb723b01fb1ff03158b1931b",
+   "size": 10322998,
+   "parsed_at": "2026-11-17T18:55:57-03:00"
   }
  }
 }
