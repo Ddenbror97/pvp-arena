@@ -14,7 +14,7 @@ import type { Heightfield } from "./heightfield";
 import { GROUND, type GroundLayer } from "./terrain";
 import { lotHeight } from "./layout";
 import { islandWalls } from "./walls";
-import type { WorldMeta } from "./world";
+import { WORLD_HALF, type WorldMeta } from "./world";
 
 /**
  * Built infrastructure drawn from world data (no downloads): both strait bridges in one draw
@@ -64,9 +64,12 @@ export function createStructures(
 
 /** The roads' rise over far ground (m): none within `from`, then `perMetre` of the distance. */
 export const ROAD_LIFT = { from: 400, perMetre: 0.0016, max: 8 } as const;
-/** The road skirts' feet: this far below the ground at the edge (m), and their colour (linear). */
+/**
+ * The road skirts' feet: this far below the ground (m), and this far out from the edge: a
+ * shoulder sloping into the ground, not a wall (a wall's asphalt grain ran in vertical streaks).
+ */
 const SKIRT_DEPTH = 0.4;
-const SKIRT_COLOUR: [number, number, number] = [0.12, 0.12, 0.125];
+const SKIRT_OUT = 0.8;
 
 type RoadUniforms = {
   uGroundA: { value: THREE.DataArrayTexture };
@@ -331,160 +334,539 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
   return mesh;
 }
 
+/**
+ * The paved surfaces' rise over the ground (m). A road running onto a runway dips `under` as
+ * it nears the runway's edge and lies that much lower beneath it: 9 cm under the runway's
+ * surface (two greys in one plane z-fight).
+ */
+export const PAVED_LIFT = { road: 0.08, runway: 0.1, under: 0.07 } as const;
+/** Ground samples round a point (m): the corners and sides of a 4 m square, and a 2 m one. */
+const PAVED_STENCIL: ReadonlyArray<readonly [number, number]> = [
+  [-2, -2],
+  [0, -2],
+  [2, -2],
+  [-2, 0],
+  [2, 0],
+  [-2, 2],
+  [0, 2],
+  [2, 2],
+  [-1, -1],
+  [1, -1],
+  [-1, 1],
+  [1, 1],
+];
+/**
+ * A paved surface's height at a point: the highest ground within 2 m of it, `lift` up. A
+ * function of the position alone (as layout.ts lotHeight is for the lots): two pieces of road
+ * that overlap (a junction, a joint, a road end on another road) come to the same height
+ * there, and with the ground's own normal at each vertex they shade the same, so whichever
+ * the depth test picks, the picture is the same. No crest between two vertices (3.5 × 4 m
+ * apart at most, under the terrain's 3.9 m grid) pokes through.
+ */
+export function pavedHeight(
+  heightAt: (x: number, z: number) => number,
+  x: number,
+  z: number,
+  lift: number,
+) {
+  let h = heightAt(x, z);
+  for (const [dx, dz] of PAVED_STENCIL) h = Math.max(h, heightAt(x + dx, z + dz));
+  return h + lift;
+}
+/**
+ * The least the drawn ground may stand under a paved cell (m); where it does not, the surface
+ * rises by the shortfall and `margin`, at the terrain's vertices within `reach` m. `look`: a
+ * cell is measured in full only where a first look at seven of its points finds less than this,
+ * or the ground's slope changes by more than `rough` m between neighbouring grid cells.
+ */
+const PAVED_CLEAR = { least: 0.03, margin: 0.03, reach: 8.5, look: 0.07, rough: 0.05 } as const;
+/** Road cells this far inside a runway (m) are not drawn: the road ends under its edge. */
+const RUNWAY_INSET = 2.5;
+/** The steepest a paved vertex's normal leans (rise over run): a 1-in-2 hill. */
+const PAVED_SLOPE = 0.5;
+/** Bends up to this (radians) are mitred into one strip; sharper ones are a round joint. */
+const MITRE_MAX = 0.7;
+/** Road and runway vertices along and across: at most this far apart (m). */
+const ROAD_STEP = 4;
+
+/**
+ * The roads, runways and paved lots in one draw (owner, 2026-11-16: "still some flicker /
+ * render issues on roads in different camera angles / positions, audit and fix across the
+ * map"). The audit of the mesh as it was (tests/br-road-surfaces.test.ts keeps its measures):
+ *
+ *  - every polyline segment was its own strip, overlapping its neighbours 1.75 m at each joint
+ *    with heights and face normals of its own: 30 % of the road surface lay under another
+ *    piece of road, 240,000 m² of it within a centimetre: two faces lit a little differently
+ *    trading places as the camera moved. Each road is now one strip with its vertices shared
+ *    (bends mitred), heights and normals are functions of the position alone (pavedHeight, the
+ *    ground's normal), so where roads still overlap (junctions, round joints) they are the
+ *    same surface;
+ *  - the runways' paint lay 1 cm over the asphalt and roads crossed the runways in their plane
+ *    (932 m² within a centimetre, two greys): the paint is now cells of the runway's own grid,
+ *    the runways ride 6 cm over the roads and the roads end under them;
+ *  - the runways were 10 × 50–60 m quads: the ground rose through them (0.7 m at the military
+ *    runway) and through 994 m² of road; none now (5 m and 3.5 × 4 m cells);
+ *  - the skirts were a darker grey lit as walls: from the air a dark line along each road's
+ *    near edge, crawling. They are the road's colour and lit as the road.
+ */
 function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   const pos: number[] = [],
-    col: number[] = [];
+    col: number[] = [],
+    nor: number[] = [],
+    skirt: number[] = [],
+    index: number[] = [];
   const asphalt: [number, number, number] = [0.13, 0.13, 0.14],
-    paint: [number, number, number] = [0.8, 0.8, 0.78];
-  const lift = 0.08; // above the terrain (with polygon offset) so the strip never z-fights
-  for (const r of meta.runways) {
+    paint: [number, number, number] = [0.8, 0.8, 0.78],
+    road: [number, number, number] = [0.2, 0.2, 0.21];
+  const heightAt = hf.heightAt.bind(hf);
+  const n3 = { x: 0, y: 1, z: 0 };
+  type V = [number, number, number];
+  // The few places where the ground between a cell's corners still stands above it (a cliff's
+  // edge, the dam's abutments: 36 m² of the map): a first pass measures every cell against the
+  // ground as it is drawn and raises the surface round those spots, on the terrain's own grid
+  // (`raise`, read bilinearly: again a function of the position alone); a second pass draws.
+  const raise = new Map<number, number>();
+  const grid = (x: number) => (x + WORLD_HALF) / hf.spacing;
+  const raiseAt = (x: number, z: number) => {
+    if (!raise.size) return 0;
+    const gx = grid(x),
+      gz = grid(z);
+    const i = Math.floor(gx),
+      j = Math.floor(gz);
+    const fx = gx - i,
+      fz = gz - j;
+    const r = (a: number, b: number) => raise.get(b * hf.width + a) ?? 0;
+    return (
+      (r(i, j) * (1 - fx) + r(i + 1, j) * fx) * (1 - fz) +
+      (r(i, j + 1) * (1 - fx) + r(i + 1, j + 1) * fx) * fz
+    );
+  };
+  // (Both passes ask for the same points in the same order: the second reads the first's.)
+  const first: number[] = [];
+  let asked = 0;
+  const surface = (x: number, z: number, lift: number) => {
+    if (probing) first.push(pavedHeight(heightAt, x, z, lift));
+    return first[probing ? first.length - 1 : asked++]! + raiseAt(x, z);
+  };
+  /** The ground as drawn at (x, z): a cell's two triangles either way, the higher. */
+  const drawn = (x: number, z: number) => {
+    const gx = grid(x),
+      gz = grid(z);
+    const i = Math.min(hf.width - 2, Math.max(0, Math.floor(gx))),
+      j = Math.min(hf.height - 2, Math.max(0, Math.floor(gz)));
+    const fx = gx - i,
+      fz = gz - j;
+    const o = j * hf.width + i;
+    const h00 = hf.data[o]!,
+      h10 = hf.data[o + 1]!,
+      h01 = hf.data[o + hf.width]!,
+      h11 = hf.data[o + hf.width + 1]!;
+    const one =
+      fx + fz <= 1
+        ? h00 + (h10 - h00) * fx + (h01 - h00) * fz
+        : h11 + (h01 - h11) * (1 - fx) + (h10 - h11) * (1 - fz);
+    const other =
+      fx >= fz
+        ? h00 + (h10 - h00) * fx + (h11 - h10) * fz
+        : h00 + (h11 - h01) * fx + (h01 - h00) * fz;
+    return Math.max(one, other);
+  };
+  let probing = true;
+  /** Where the drawn ground comes within `least` of triangle a, b, c: raise round it. */
+  const probe = (a: V, b: V, c: V) => {
+    const n = Math.max(
+      2,
+      Math.ceil(
+        Math.max(Math.hypot(b[0] - a[0], b[2] - a[2]), Math.hypot(c[0] - a[0], c[2] - a[2])),
+      ),
+    );
+    for (let i = 0; i <= n; i++)
+      for (let k = 0; i + k <= n; k++) {
+        const u = i / n,
+          w = k / n;
+        const x = a[0] + (b[0] - a[0]) * u + (c[0] - a[0]) * w,
+          z = a[2] + (b[2] - a[2]) * u + (c[2] - a[2]) * w;
+        const y = a[1] + (b[1] - a[1]) * u + (c[1] - a[1]) * w;
+        const short = PAVED_CLEAR.least - (y - drawn(x, z));
+        if (short <= 0) continue;
+        const need = short + PAVED_CLEAR.margin;
+        const reach = Math.ceil(PAVED_CLEAR.reach / hf.spacing);
+        const ci = Math.round(grid(x)),
+          cj = Math.round(grid(z));
+        for (let dj = -reach; dj <= reach; dj++)
+          for (let di = -reach; di <= reach; di++) {
+            const key = (cj + dj) * hf.width + ci + di;
+            if ((raise.get(key) ?? 0) < need) raise.set(key, need);
+          }
+      }
+  };
+  /**
+   * How far the ground round (x, z) is from a plane (m): the largest step between neighbouring
+   * slopes on the terrain's grid, over the cell there and the cells round it.
+   */
+  const rough = (x: number, z: number) => {
+    const i = Math.min(hf.width - 3, Math.max(1, Math.floor(grid(x)))),
+      j = Math.min(hf.height - 3, Math.max(1, Math.floor(grid(z))));
+    let most = 0;
+    for (let b = j - 1; b <= j + 2; b++)
+      for (let a = i - 1; a <= i + 2; a++) {
+        const o = b * hf.width + a;
+        const h = hf.data[o]!;
+        if (a > i - 1 && a < i + 2)
+          most = Math.max(most, Math.abs(hf.data[o - 1]! - 2 * h + hf.data[o + 1]!));
+        if (b > j - 1 && b < j + 2)
+          most = Math.max(most, Math.abs(hf.data[o - hf.width]! - 2 * h + hf.data[o + hf.width]!));
+      }
+    return most;
+  };
+  /**
+   * First pass, a cell a, b, c, d (drawn as a, b, c and a, c, d): a look at its middle, its
+   * edges' middles and both triangles' centres; the full measure only where one is close or
+   * the ground there is far from a plane.
+   */
+  const check = (a: V, b: V, c: V, d: V) => {
+    const clear = (x: number, y: number, z: number) => y - drawn(x, z);
+    const half = (p: V, q: V) => clear((p[0] + q[0]) / 2, (p[1] + q[1]) / 2, (p[2] + q[2]) / 2);
+    const third = (p: V, q: V, r: V) =>
+      clear((p[0] + q[0] + r[0]) / 3, (p[1] + q[1] + r[1]) / 3, (p[2] + q[2] + r[2]) / 3);
+    if (
+      rough((a[0] + c[0]) / 2, (a[2] + c[2]) / 2) > PAVED_CLEAR.rough ||
+      Math.min(
+        half(a, c),
+        half(a, b),
+        half(b, c),
+        half(c, d),
+        half(d, a),
+        third(a, b, c),
+        third(a, c, d),
+      ) < PAVED_CLEAR.look
+    ) {
+      probe(a, b, c);
+      probe(a, c, d);
+    }
+  };
+  /** A vertex (its normal the ground's there); `foot`: a skirt's foot, never lifted. */
+  const add = (v: V, colour: [number, number, number], foot = false) => {
+    pos.push(v[0], v[1], v[2]);
+    col.push(colour[0], colour[1], colour[2]);
+    // (No steeper than PAVED_SLOPE: beside a cliff the ground's normal is the cliff's, and the
+    // road there would be lit as a wall.)
+    hf.normalAt(v[0], v[2], n3);
+    const slope = Math.hypot(n3.x, n3.z) / n3.y;
+    const k = slope > PAVED_SLOPE ? PAVED_SLOPE / slope : 1;
+    const l = Math.hypot(n3.x * k, n3.y, n3.z * k);
+    nor.push((n3.x * k) / l, n3.y / l, (n3.z * k) / l);
+    skirt.push(foot ? 1 : 0);
+    return skirt.length - 1;
+  };
+  /**
+   * A skirt's foot for the edge vertex v: SKIRT_OUT out from it towards (ox, oz), SKIRT_DEPTH
+   * under the ground there.
+   */
+  const addFoot = (v: V, colour: [number, number, number], ox: number, oz: number) => {
+    const l = Math.hypot(ox - v[0], oz - v[2]) || 1;
+    const x = v[0] + ((ox - v[0]) / l) * SKIRT_OUT,
+      z = v[2] + ((oz - v[2]) / l) * SKIRT_OUT;
+    return add([x, Math.min(heightAt(x, z), v[1]) - SKIRT_DEPTH, z], colour, true);
+  };
+  const px = (i: number) => pos[i * 3]!,
+    pz = (i: number) => pos[i * 3 + 2]!;
+  /** Vertices i, j, k, l as a cell facing up (whichever way round they came). */
+  const face = (i: number, j: number, k: number, l: number) => {
+    const up = (pz(j) - pz(i)) * (px(k) - px(i)) - (px(j) - px(i)) * (pz(k) - pz(i)) > 0;
+    if (up) index.push(i, j, k, i, k, l);
+    else index.push(i, l, k, i, k, j);
+  };
+  /**
+   * A skirt down the edge i → j to the feet fi, fj (owner, 2026-11-16: "asphalt roads need to
+   * lay correctly on the ground, it's a wide gap under it on most roads"): past ROAD_LIFT.from
+   * the vertex shader lifts the surface with its distance, and from the ground the lifted edge
+   * showed the lit ground under it. The top is the edge (lifted with it); the feet are never
+   * lifted and stand below the ground. Turned to face (ox, oz), a point on the outer side.
+   */
+  const skirtFace = (i: number, j: number, fi: number, fj: number, ox: number, oz: number) => {
+    const outward = (pz(j) - pz(i)) * (ox - px(i)) - (px(j) - px(i)) * (oz - pz(i)) > 0;
+    if (outward) index.push(i, j, fj, i, fj, fi);
+    else index.push(j, i, fi, j, fi, fj);
+  };
+  /** A cell of its own (four vertices): a, b, c, d round it. */
+  const quad = (a: V, b: V, c: V, d: V, colour: [number, number, number]) => {
+    if (probing) return check(a, b, c, d);
+    face(add(a, colour), add(b, colour), add(c, colour), add(d, colour));
+  };
+  const skirtDown = (a: V, b: V, ox: number, oz: number, colour: [number, number, number]) => {
+    if (probing) return;
+    // (Both feet the same way out: square to the edge, on (ox, oz)'s side.)
+    const ex = b[0] - a[0],
+      ez = b[2] - a[2];
+    const side = ez * (ox - a[0]) - ex * (oz - a[2]) > 0 ? 1 : -1;
+    const [nx, nz] = [ez * side, -ex * side];
+    skirtFace(
+      add(a, colour),
+      add(b, colour),
+      addFoot(a, colour, a[0] + nx, a[2] + nz),
+      addFoot(b, colour, b[0] + nx, b[2] + nz),
+      ox,
+      oz,
+    );
+  };
+
+  // ---- runways: a grid of cells (5 m at most), the paint as cells of its own.
+  const strips = meta.runways.map((r) => {
     const [ax, az] = r.a,
       [bx, bz] = r.b;
     const length = Math.hypot(bx - ax, bz - az);
-    const dx = (bx - ax) / length,
-      dz = (bz - az) / length;
-    const sx = -dz,
-      sz = dx;
-    const step = 10;
-    const strip = (
-      from: number,
-      to: number,
-      off0: number,
-      off1: number,
-      colour: [number, number, number],
-      extra = 0,
-    ) => {
-      for (let s = from; s < to; s += step) {
-        const e = Math.min(to, s + step);
-        const p = (t: number, off: number) => {
-          const x = ax + dx * t + sx * off,
-            z = az + dz * t + sz * off;
-          return [x, hf.heightAt(x, z) + lift + extra, z];
-        };
-        pushQuad(pos, col, p(s, off0), p(e, off0), p(e, off1), p(s, off1), colour);
-      }
-    };
-    const half = r.width / 2;
-    strip(0, length, half, -half, asphalt);
-    // Edge lines and centre dashes (paint sits a few millimetres above the asphalt).
-    strip(0, length, half - 1, half - 1.6, paint, 0.01);
-    strip(0, length, -half + 1.6, -half + 1, paint, 0.01);
-    for (let s = 40; s < length - 40; s += 50) strip(s, s + 25, 0.45, -0.45, paint, 0.01);
-  }
-  // Roads: asphalt ribbons along the centrelines, following the (road-smoothed) terrain.
-  const road: [number, number, number] = [0.2, 0.2, 0.21];
-  /** Each road quad's two edge skirts (corners a, b along the edge, then the feet c, d). */
-  const skirts: Array<[number[], number[], number[], number[]]> = [];
-  // (Plus the roads onto the bridges: bridges.ts bridgeApproaches.)
-  for (const r of [...meta.roads, ...bridgeApproaches(meta)]) {
-    const half = r.width / 2;
-    for (let k = 0; k + 1 < r.points.length; k++) {
-      const [ax, az] = r.points[k]!,
-        [bx, bz] = r.points[k + 1]!;
-      const length = Math.hypot(bx - ax, bz - az);
-      if (length < 0.01) continue;
-      // Mitre-free: each segment overlaps its neighbour a little so joints have no gaps.
-      const dx = (bx - ax) / length,
-        dz = (bz - az) / length;
+    return { ax, az, dx: (bx - ax) / length, dz: (bz - az) / length, length, half: r.width / 2 };
+  });
+  /** How far inside a runway (x, z) is, from its nearest edge (m; negative outside them all). */
+  const intoRunway = (x: number, z: number) => {
+    let most = -Infinity;
+    for (const r of strips) {
+      const t = (x - r.ax) * r.dx + (z - r.az) * r.dz,
+        o = -(x - r.ax) * r.dz + (z - r.az) * r.dx;
+      most = Math.max(most, Math.min(t, r.length - t, r.half - Math.abs(o)));
+    }
+    return most;
+  };
+  /** Inside a runway (`inset` m in from its edges)? Roads end there. */
+  const onRunway = (x: number, z: number, inset: number) => intoRunway(x, z) > inset;
+  /**
+   * A road's rise at (x, z): less by `under` from 2 m outside a runway's edge inwards, eased
+   * in over the 4 m before that (a cell's length: the cells' corners are what is drawn).
+   */
+  const roadLift = (x: number, z: number) =>
+    PAVED_LIFT.road - PAVED_LIFT.under * Math.min(1, Math.max(0, (intoRunway(x, z) + 6) / 4));
+  const layRunways = () => {
+    for (const r of strips) {
+      const { ax, az, dx, dz, length, half } = r;
       const sx = -dz,
         sz = dx;
-      // 4 m quads (were 8): over a crest or through a cutting that was never graded, the
-      // ground rose above a long quad's middle and buried the road (owner, 2026-11-11: "broken
-      // roads", a strip of rock across the asphalt). A sweep found 631 such spots.
-      const n = Math.max(1, Math.ceil(length / 4));
-      const span = length / n;
-      for (let i = 0; i < n; i++) {
-        const t0 = (i / n) * length - (i === 0 ? half * 0.5 : 0),
-          t1 = ((i + 1) / n) * length + (i === n - 1 ? half * 0.5 : 0);
-        // Each corner at least as high as the centreline and as the ground half a quad either
-        // way along it (the terrain's 3.9 m grid between two corners can only rise as far as
-        // those): the carriageway is graded level across, and never under the ground.
-        const ground = (t: number, off: number) =>
-          hf.heightAt(ax + dx * t + sx * off, az + dz * t + sz * off);
-        const p = (t: number, off: number) => {
-          const x = ax + dx * t + sx * off,
-            z = az + dz * t + sz * off;
-          const h = Math.max(
-            ground(t, off),
-            ground(t, 0),
-            ground(t - span / 2, off),
-            ground(t + span / 2, off),
-            ground(t - span / 2, 0),
-            ground(t + span / 2, 0),
-          );
-          return [x, h + lift, z];
-        };
-        pushQuad(pos, col, p(t0, half), p(t1, half), p(t1, -half), p(t0, -half), road);
-        // A skirt down each edge into the ground (owner, 2026-11-16: "asphalt roads need to lay
-        // correctly on the ground, it's a wide gap under it on most roads", and the white flicker
-        // along road edges). Past ROAD_LIFT.from the vertex shader lifts the road with distance
-        // (a metre at 1 km), and from the ground the lifted edge showed the lit ground under it:
-        // a gap up close, a sliver flickering white farther off. The skirt's top is the road's
-        // edge (lifted with it); its foot is never lifted and stands below the ground there.
-        for (const side of [half, -half]) {
-          const a = p(t0, side),
-            b = p(t1, side);
-          const foot = Math.min(ground(t0, side), ground(t1, side)) - SKIRT_DEPTH;
-          skirts.push([a, b, [b[0]!, foot, b[2]!], [a[0]!, foot, a[2]!]]);
-        }
+      const p = (t: number, off: number): V => {
+        const x = ax + dx * t + sx * off,
+          z = az + dz * t + sz * off;
+        return [x, surface(x, z, PAVED_LIFT.runway), z];
+      };
+      // Across: the edge lines (1 to 1.6 m in from each edge) and the centre line's 0.9 m.
+      const marks = [-half, -half + 1, -half + 1.6, -0.45, 0.45, half - 1.6, half - 1, half];
+      const across: number[] = [];
+      for (let i = 0; i + 1 < marks.length; i++) {
+        const n = Math.max(1, Math.ceil((marks[i + 1]! - marks[i]!) / 5));
+        for (let k = 0; k < n; k++) across.push(marks[i]! + ((marks[i + 1]! - marks[i]!) * k) / n);
       }
-      // Round joint where the road bends (over ~10°): a small fan fills the notch between the
-      // two segments. Gentle curves need none (keeps the road mesh small).
-      const prev = r.points[k - 1];
-      const bend =
-        prev &&
-        Math.abs(
-          Math.atan2(
-            (ax - prev[0]) * (bz - az) - (az - prev[1]) * (bx - ax),
-            (ax - prev[0]) * (bx - ax) + (az - prev[1]) * (bz - az),
-          ),
-        );
-      if (prev && bend! > 0.17) {
-        const [px, pz] = [ax, az];
-        const y = (x: number, z: number) => Math.max(hf.heightAt(x, z), hf.heightAt(px, pz)) + lift;
-        const n = 6;
-        for (let i = 0; i < n; i++) {
-          const a0 = (i / n) * Math.PI * 2,
-            a1 = ((i + 1) / n) * Math.PI * 2;
-          const x0 = px + Math.cos(a0) * half,
-            z0 = pz + Math.sin(a0) * half,
-            x1 = px + Math.cos(a1) * half,
-            z1 = pz + Math.sin(a1) * half;
-          for (const v of [
-            [px, y(px, pz), pz],
-            [x1, y(x1, z1), z1],
-            [x0, y(x0, z0), z0],
-          ]) {
-            pos.push(v[0]!, v[1]!, v[2]!);
-            col.push(...road);
+      across.push(half);
+      const edgeLine = (o: number) => Math.abs(o) > half - 1.6 && Math.abs(o) < half - 1;
+      // Along: 5 m steps (the dashes, 25 m of every 50 from 40 m in, start and end on them).
+      let row = across.map((o) => p(0, o));
+      for (let t0 = 0; t0 < length - 1e-6; t0 += 5) {
+        const t1 = Math.min(length, t0 + 5);
+        const next = across.map((o) => p(t1, o));
+        const dash = t0 >= 40 && t1 <= length - 40 && (t0 - 40) % 50 < 25;
+        for (let i = 0; i + 1 < across.length; i++) {
+          const mid = (across[i]! + across[i + 1]!) / 2;
+          const painted = edgeLine(mid) || (dash && Math.abs(mid) < 0.45);
+          quad(row[i + 1]!, next[i + 1]!, next[i]!, row[i]!, painted ? paint : asphalt);
+        }
+        const last = across.length - 1;
+        const mx = ax + dx * t0,
+          mz = az + dz * t0;
+        skirtDown(row[last]!, next[last]!, mx + sx * half * 2, mz + sz * half * 2, asphalt);
+        skirtDown(row[0]!, next[0]!, mx - sx * half * 2, mz - sz * half * 2, asphalt);
+        if (t0 === 0)
+          for (let i = 0; i + 1 < across.length; i++)
+            skirtDown(row[i]!, row[i + 1]!, ax - dx * 10, az - dz * 10, asphalt);
+        if (t1 === length)
+          for (let i = 0; i + 1 < across.length; i++)
+            skirtDown(
+              next[i]!,
+              next[i + 1]!,
+              ax + dx * (length + 10),
+              az + dz * (length + 10),
+              asphalt,
+            );
+        row = next;
+      }
+    }
+  };
+
+  // ---- roads: one strip a road (plus the roads onto the bridges: bridges.ts bridgeApproaches),
+  // three vertices across (edge, centreline, edge), following the (road-smoothed) terrain.
+  type Station = { x: number; z: number; sx: number; sz: number };
+  const roadPoint = (s: Station, off: number): V => {
+    const x = s.x + s.sx * off,
+      z = s.z + s.sz * off;
+    return [x, surface(x, z, roadLift(x, z)), z];
+  };
+  const strip = (stations: Station[], half: number) => {
+    let before: Station | null = null;
+    let was: [V, V, V] | null = null;
+    /** The row's vertices: edge, centreline, edge, and the feet under both edges. */
+    let ids: number[] | null = null;
+    for (const s of stations) {
+      const row: [V, V, V] = [roadPoint(s, half), roadPoint(s, 0), roadPoint(s, -half)];
+      const now = probing
+        ? null
+        : [
+            add(row[0], road),
+            add(row[1], road),
+            add(row[2], road),
+            addFoot(row[0], road, row[0][0] + s.sx, row[0][2] + s.sz),
+            addFoot(row[2], road, row[2][0] - s.sx, row[2][2] - s.sz),
+          ];
+      if (before && was) {
+        const mx = (s.x + before.x) / 2,
+          mz = (s.z + before.z) / 2;
+        // Under a runway: not drawn (the road's end reaches under the runway's edge).
+        if (!onRunway(mx, mz, RUNWAY_INSET)) {
+          if (probing) {
+            check(was[0], row[0], row[1], was[1]);
+            check(was[1], row[1], row[2], was[2]);
+          } else if (ids && now) {
+            face(ids[0]!, now[0]!, now[1]!, ids[1]!);
+            face(ids[1]!, now[1]!, now[2]!, ids[2]!);
+            skirtFace(
+              ids[0]!,
+              now[0]!,
+              ids[3]!,
+              now[3]!,
+              mx + s.sx * half * 2,
+              mz + s.sz * half * 2,
+            );
+            skirtFace(
+              ids[2]!,
+              now[2]!,
+              ids[4]!,
+              now[4]!,
+              mx - s.sx * half * 2,
+              mz - s.sz * half * 2,
+            );
           }
         }
       }
+      before = s;
+      was = row;
+      ids = now;
     }
-  }
+  };
+  /** A round joint at a sharp bend: a disc of the road's width over the notch. */
+  const disc = (x: number, z: number, half: number) => {
+    if (onRunway(x, z, RUNWAY_INSET)) return;
+    const centre: V = [x, surface(x, z, roadLift(x, z)), z];
+    const n = 10;
+    const rim: V[] = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2;
+      const rx = x + Math.cos(a) * half,
+        rz = z + Math.sin(a) * half;
+      rim.push([rx, surface(rx, rz, roadLift(rx, rz)), rz]);
+    }
+    if (probing) {
+      for (let i = 0; i < n; i++) probe(centre, rim[i]!, rim[(i + 1) % n]!);
+      return;
+    }
+    const c = add(centre, road);
+    const tops = rim.map((v) => add(v, road)),
+      feet = rim.map((v) => addFoot(v, road, v[0] * 2 - x, v[2] * 2 - z));
+    for (let i = 0; i < n; i++) {
+      const k = (i + 1) % n;
+      // (Counter-clockwise seen from above: the angle runs from +x towards +z.)
+      index.push(c, tops[k]!, tops[i]!);
+      skirtFace(
+        tops[i]!,
+        tops[k]!,
+        feet[i]!,
+        feet[k]!,
+        x + (px(tops[i]!) - x) * 2,
+        z + (pz(tops[i]!) - z) * 2,
+      );
+    }
+  };
+  const layRoads = () => {
+    for (const r of [...meta.roads, ...bridgeApproaches(meta)]) {
+      const half = r.width / 2;
+      // (Points less than a centimetre apart are one point.)
+      const pts: Array<readonly [number, number]> = [];
+      for (const q of r.points) {
+        const last = pts[pts.length - 1];
+        if (!last || Math.hypot(q[0]! - last[0], q[1]! - last[1]) >= 0.01) pts.push([q[0]!, q[1]!]);
+      }
+      if (pts.length < 2) continue;
+      const dir = (k: number) => {
+        const [ax, az] = pts[k]!,
+          [bx, bz] = pts[k + 1]!;
+        const l = Math.hypot(bx - ax, bz - az);
+        return [(bx - ax) / l, (bz - az) / l, l] as const;
+      };
+      let stations: Station[] = [];
+      for (let k = 0; k + 1 < pts.length; k++) {
+        const [ax, az] = pts[k]!;
+        const [dx, dz, length] = dir(k);
+        const sx = -dz,
+          sz = dx;
+        // The run's first point: back half a half-width, so the end reaches into its junction.
+        if (!stations.length)
+          stations.push(
+            { x: ax - dx * half * 0.5, z: az - dz * half * 0.5, sx, sz },
+            { x: ax, z: az, sx, sz },
+          );
+        // 4 m steps (were 8): over a crest or through a cutting that was never graded, the
+        // ground rose above a long quad's middle and buried the road (owner, 2026-11-11: "broken
+        // roads", a strip of rock across the asphalt).
+        const n = Math.max(1, Math.ceil(length / ROAD_STEP));
+        for (let i = 1; i < n; i++)
+          stations.push({ x: ax + (dx * length * i) / n, z: az + (dz * length * i) / n, sx, sz });
+        const [bx, bz] = pts[k + 1]!;
+        const next = k + 2 < pts.length ? dir(k + 1) : null;
+        const bend = next ? Math.acos(Math.max(-1, Math.min(1, dx * next[0] + dz * next[1]))) : 0;
+        if (next && bend <= MITRE_MAX) {
+          // A mitre: the cross-section along the bisector, widened to keep the road's width.
+          const mx = sx - next[1],
+            mz = sz + next[0];
+          const ml = Math.hypot(mx, mz);
+          const widen = 1 / Math.cos(bend / 2);
+          stations.push({ x: bx, z: bz, sx: (mx / ml) * widen, sz: (mz / ml) * widen });
+        } else {
+          // The run ends: on past its last point (the road's end, or a sharp bend's round joint).
+          stations.push(
+            { x: bx, z: bz, sx, sz },
+            { x: bx + dx * half * 0.5, z: bz + dz * half * 0.5, sx, sz },
+          );
+          strip(stations, half);
+          stations = [];
+          if (next) disc(bx, bz, half);
+        }
+      }
+    }
+  };
   // The roadside stops' lots, laid on the ground in 2 m cells. Each corner's height depends on
   // its position alone (layout.ts lotHeight), so neighbours share their corners' heights with
-  // no seam for the grass to show through.
-  const lotY = (x: number, z: number) => lotHeight(hf.heightAt.bind(hf), x, z);
-  for (const c of lots) {
-    const v = (i: number) => [c[i]!, lotY(c[i]!, c[i + 1]!), c[i + 1]!];
-    pushQuad(pos, col, v(0), v(2), v(4), v(6), road);
+  // no seam for the grass to show through. (Plus the raise where the ground stood through a
+  // cell: render only, a few centimetres.)
+  const lotY = (x: number, z: number) => lotHeight(heightAt, x, z) + raiseAt(x, z);
+  const layLots = () => {
+    for (const c of lots) {
+      const v = (i: number): V => [c[i]!, lotY(c[i]!, c[i + 1]!), c[i + 1]!];
+      quad(v(0), v(2), v(4), v(6), road);
+    }
+  };
+  for (const pass of [0, 1]) {
+    probing = pass === 0;
+    layRunways();
+    layRoads();
+    layLots();
   }
-  // The skirts last: `skirt` 1 marks their feet, which the vertex shader does not lift.
-  const skirt = new Array<number>(pos.length / 3).fill(0);
-  for (const [a, b, c, d] of skirts) {
-    pushQuad(pos, col, a, b, c, d, SKIRT_COLOUR);
-    skirt.push(0, 0, 1, 0, 1, 1);
-  }
-  skirts.length = 0;
+  if (asked !== first.length) throw new Error("road mesh: the passes differ");
+  raise.clear();
+  first.length = 0;
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
   g.setAttribute("skirt", new THREE.Float32BufferAttribute(skirt, 1));
-  g.computeVertexNormals();
+  g.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+  g.setIndex(index);
   // The attributes hold copies. Emptied, because the material's onBeforeCompile below closes
   // over this function's scope and would keep both lists (34 MB of numbers) for the whole match.
-  pos.length = col.length = skirt.length = 0;
+  pos.length = col.length = skirt.length = nor.length = 0;
+  index.length = 0;
   const material = new THREE.MeshStandardMaterial({
     vertexColors: true,
     roughness: 0.95,
@@ -582,7 +964,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
         }`,
       );
   };
-  material.customProgramCacheKey = () => "br-roads-v6";
+  material.customProgramCacheKey = () => "br-roads-v7";
   // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
   biasLogDepth(material, LOG_BIAS.road);
   const mesh = new THREE.Mesh(g, material);
