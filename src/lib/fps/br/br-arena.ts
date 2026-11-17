@@ -237,6 +237,10 @@ export type BrView = {
     seat: number;
     name: string;
     kills: number;
+    /** First-person spectating: their view's pitch, aiming (1), reload end (server ms). */
+    pitch?: number;
+    aim?: 1;
+    reload?: number;
     avatar?: string;
     bot?: boolean;
     hp?: number;
@@ -534,6 +538,8 @@ const FP_LIFT = 1;
 const CHARACTERS = 16;
 const MAX_PLAYERS = 100;
 const BASE_FOV = 75;
+/** Phases a watched player is seen from their own eyes (the rest: the chase view). */
+const POV_PHASES = new Set(["ground", "swim", "ladder", "zip", "lift", "rappel"]);
 
 function detailOf(item: {
   item: ItemId;
@@ -935,6 +941,12 @@ export function createBrArena(
   /** The reload as first seen: its end (server) and its span on the frame clock (ms). */
   const reloadSeen = { until: 0, from: 0, to: 0 };
   /** Own shots predicted since the last loadout from the server. */
+  /** First-person spectating: the watched seat (−1: none), its gun and its view's pitch. */
+  let povSeat = -1,
+    povGunNow: Gun | null = null,
+    povPitch = 0,
+    povKnife = false;
+  const povMoved = { x: 0, z: 0, speed: 0 };
   let predictedShots = 0,
     lastShotAt = -1e9;
   /** The AWP's own scope was up last frame (its zoom clicks). */
@@ -1634,11 +1646,30 @@ export function createBrArena(
   const activeGun = (): Gun | null =>
     kit && kit.active >= 0 && !kit.dead ? (kit.guns[kit.active] as Gun | null) : null;
   function currentZoom() {
-    const g = activeGun();
+    const g = povGunNow ?? activeGun();
     if (!g || !viewmodel || viewmodel.aim < 0.5) return 1;
     return g.optic
       ? (ITEMS[g.optic] as OpticDef).zoom
       : ((ITEMS[g.item] as WeaponDef).scope?.zoom ?? 1.1);
+  }
+  /** The watched player's gun as a Gun (from their row's codes), kept while it is the same. */
+  const povGunCache = { key: "", gun: null as Gun | null };
+  function povGunFor(gun: number, optic: number, muzzle: number): Gun | null {
+    const key = `${gun}/${optic}/${muzzle}`;
+    if (key !== povGunCache.key) {
+      const item = itemFromCode(gun);
+      povGunCache.key = key;
+      povGunCache.gun =
+        item && ITEMS[item]?.category === "weapon"
+          ? {
+              item: item as WeaponId,
+              mag: 1,
+              optic: optic >= 0 ? (itemFromCode(optic) ?? null) : null,
+              muzzle: muzzle >= 0 ? (itemFromCode(muzzle) ?? null) : null,
+            }
+          : null;
+    }
+    return povGunCache.gun;
   }
   const onFoot = () => body.phase === "ground" || body.phase === "swim";
   /** On the climbing rope (a "ladder" whose climb is the rope's: ladders.ts). */
@@ -1939,6 +1970,8 @@ export function createBrArena(
         continue;
       }
       if (e.type === "shot") {
+        // Spectating in first person: their shot kicks the gun in view, as one's own does.
+        if (e.seat === povSeat) viewmodel?.shot(now);
         if (e.seat !== mySeat) {
           audio.shot(e.gun, e.silenced, e.origin, e.hearM);
           const slot = actors.find((a) => a.seat === e.seat);
@@ -2598,6 +2631,17 @@ export function createBrArena(
             : 1;
         pose.priority = brActorPriority(pose.d, facing, near.has(seat), pose.phase !== "dead");
         others.push(pose);
+      }
+    }
+    // First-person spectating, as in 5v5 (owner, 2026-11-17): the watched player is the camera,
+    // not a body in front of it. (In a vehicle, the plane or the air, the chase view stays.)
+    povSeat = -1;
+    {
+      const seat = kit?.dead ? latest?.watch?.seat : undefined;
+      const w = seat !== undefined ? others.find((o) => o.seat === seat) : undefined;
+      if (w && w.vehicle < 0 && POV_PHASES.has(w.phase)) {
+        povSeat = w.seat;
+        w.occluded = true;
       }
     }
     // (−1, 0 or 1, not the difference: a comparator's fractional result goes onto the heap for
@@ -3644,10 +3688,23 @@ export function createBrArena(
     }
     // Spare frame time builds the tactical map (a few ms a frame until done).
     if (!mapDone) buildMapSlice(performance.now() + 2);
-    // Eliminated: follow the player being watched from behind.
+    // Eliminated: see through the eyes of the player being watched, as in 5v5 (their pitch comes
+    // with each snapshot and is eased between them); in a vehicle or the air, from behind.
     const watchSeat = kit?.dead ? latest.watch?.seat : undefined;
     const watched = watchSeat !== undefined ? others.find((o) => o.seat === watchSeat) : undefined;
-    if (watched) {
+    const pov = watched && watched.seat === povSeat ? watched : null;
+    if (pov) {
+      const eyeH = pov.phase === "swim" ? 0.3 : 1.6 - (1.6 - 0.95) * pov.stance;
+      camera.position.set(pov.pos.x, pov.pos.y + eyeH, pov.pos.z);
+      const target = latest.watch?.pitch ?? 0;
+      povPitch += (target - povPitch) * (1 - Math.exp(-Math.min(100, dtMs) / 60));
+      camera.rotation.set(povPitch, pov.yaw, 0, "YXZ");
+      // How fast they move (the gun's walk and sprint), from where they were last frame.
+      const sp = Math.hypot(pov.pos.x - povMoved.x, pov.pos.z - povMoved.z) / Math.max(1, dtMs);
+      povMoved.speed += (sp * 1000 - povMoved.speed) * (1 - Math.exp(-Math.min(100, dtMs) / 120));
+      povMoved.x = pov.pos.x;
+      povMoved.z = pov.pos.z;
+    } else if (watched) {
       camera.position.set(
         watched.pos.x + Math.sin(watched.yaw) * 4,
         watched.pos.y + 2.4,
@@ -3659,40 +3716,52 @@ export function createBrArena(
         watched.pos.z - Math.cos(watched.yaw) * 6,
       );
     }
-    // First-person gun, aim and zoom (lowered while a grenade is in hand).
-    const gun = onFoot() && !nadeHand && !car ? activeGun() : null;
-    const aiming =
-      !!gun &&
-      aimHeld &&
-      !inventoryOpen &&
-      locked() &&
-      body.phase === "ground" &&
-      !kit?.heal &&
-      !(kit?.reloadUntil && server < kit.reloadUntil) &&
-      server >= (kit?.drawUntil ?? 0) &&
-      // The AWP as in 1v1/5v5: a shot drops the scope while the bolt is worked; it comes back
-      // afterwards if aim is still held (the server restarts the scope's settle the same way).
-      !(
-        !(ITEMS[gun.item] as WeaponDef).recoil &&
-        now - lastShotAt < (ITEMS[gun.item] as WeaponDef).intervalMs
-      );
-    const reloadLeft = kit?.reloadUntil ? Math.max(0, kit.reloadUntil - server) : 0;
+    // First-person gun, aim and zoom (lowered while a grenade is in hand). Spectating in first
+    // person: the watched player's gun, their aim and their reload.
+    povGunNow =
+      pov && (pov.phase === "ground" || pov.phase === "swim") && pov.gun >= 0
+        ? povGunFor(pov.gun, pov.optic, pov.muzzle)
+        : null;
+    povKnife = !!pov && pov.gun < 0 && pov.phase === "ground";
+    const gun = pov ? povGunNow : onFoot() && !nadeHand && !car ? activeGun() : null;
+    const reloadUntil = pov ? (latest.watch?.reload ?? 0) : (kit?.reloadUntil ?? 0);
+    const aiming = pov
+      ? !!gun && latest.watch?.aim === 1 && pov.phase === "ground"
+      : !!gun &&
+        aimHeld &&
+        !inventoryOpen &&
+        locked() &&
+        body.phase === "ground" &&
+        !kit?.heal &&
+        !(kit?.reloadUntil && server < kit.reloadUntil) &&
+        server >= (kit?.drawUntil ?? 0) &&
+        // The AWP as in 1v1/5v5: a shot drops the scope while the bolt is worked; it comes back
+        // afterwards if aim is still held (the server restarts the scope's settle the same way).
+        !(
+          !(ITEMS[gun.item] as WeaponDef).recoil &&
+          now - lastShotAt < (ITEMS[gun.item] as WeaponDef).intervalMs
+        );
+    const reloadLeft = reloadUntil ? Math.max(0, reloadUntil - server) : 0;
     const gunDef = gun ? (ITEMS[gun.item] as WeaponDef) : null;
     // Against the reload's real length (the Quick Hands perk shortens it; against the full
     // length the clip started part-way through and jumped at the end).
     let reloadP = gunDef
-      ? reloadProgress(kit?.reloadUntil ?? 0, server, reloadLengthMs(gunDef.reloadMs, kit?.tablet))
+      ? reloadProgress(
+          reloadUntil,
+          server,
+          reloadLengthMs(gunDef.reloadMs, pov ? undefined : kit?.tablet),
+        )
       : 0;
     // On the frame clock from the moment the reload is seen (owner, 2026-11-14: "the reload
     // animation is not smooth as 1v1/5v5", the AWP): against the estimated server clock the clip
     // started part-way in (the snapshot's age) and moved with every correction of the estimate.
     // Here it starts at its first pose when the reload shows (with its sound) and ends with the
     // server's reload, at an even pace in between.
-    if (reloadP > 0 && kit?.reloadUntil) {
-      if (reloadSeen.until !== kit.reloadUntil) {
-        reloadSeen.until = kit.reloadUntil;
+    if (reloadP > 0 && reloadUntil) {
+      if (reloadSeen.until !== reloadUntil) {
+        reloadSeen.until = reloadUntil;
         reloadSeen.from = now;
-        reloadSeen.to = now + Math.max(150, kit.reloadUntil - server);
+        reloadSeen.to = now + Math.max(150, reloadUntil - server);
       }
       reloadP = Math.min(
         0.999,
@@ -3702,7 +3771,7 @@ export function createBrArena(
     // The SPAS-12, shell by shell: the server's stage picks the part of the clip (the start,
     // one shell's pass, the end), and the cues sound where the clip makes them.
     let shellsEmpty: boolean | null = null;
-    if (gunDef?.shells) {
+    if (gunDef?.shells && !pov) {
       reloadP = 0;
       if (kit?.shells && kit.reloadUntil) {
         const { stage } = kit.shells;
@@ -3740,7 +3809,7 @@ export function createBrArena(
     if (viewmodel) {
       viewmodel.grenade(
         dtMs,
-        nadeHand && onFoot() && !car
+        !pov && nadeHand && onFoot() && !car
           ? nadeHands.view(
               performance.now(),
               keys.has(binds.sprint)
@@ -3752,24 +3821,47 @@ export function createBrArena(
           : { kind: "hidden" },
       );
       viewmodel.setGun(gun);
-      viewmodel.update(dtMs, now, {
-        gun,
-        aiming,
-        reload: reloadP,
-        empty: shellsEmpty ?? (!!gun && gun.mag - predictedShots <= 0),
-        moving: [binds.forward, binds.left, binds.back, binds.right].some((k) => keys.has(k)),
-        sprinting: keys.has(binds.sprint),
-        airborne: !body.grounded,
-        lookX,
-        lookY,
-        silenced: gun?.muzzle === "silencer",
-        flash: !gun?.muzzle || !(ITEMS[gun.muzzle] as { hideFlash?: boolean }).hideFlash,
-        knife: knifeDrawn() && body.phase === "ground",
-        aimSway: perkOn(kit?.tablet, "steady-aim") ? PERK_EFFECT.aimSway : 1,
-        walking: keys.has(binds.walk) || body.crouched,
-        backward: keys.has(binds.back) && !keys.has(binds.forward),
-        strafe: moveAxes(keys, binds).strafe,
-      });
+      viewmodel.update(
+        dtMs,
+        now,
+        pov
+          ? {
+              gun,
+              aiming,
+              reload: reloadP,
+              empty: false,
+              moving: povMoved.speed > 1,
+              sprinting: povMoved.speed > 6.2,
+              airborne: false,
+              lookX: 0,
+              lookY: 0,
+              silenced: gun?.muzzle === "silencer",
+              flash: !gun?.muzzle || !(ITEMS[gun.muzzle] as { hideFlash?: boolean }).hideFlash,
+              knife: pov.gun < 0 && pov.phase === "ground",
+              aimSway: 1,
+              walking: pov.crouched,
+              backward: false,
+              strafe: 0,
+            }
+          : {
+              gun,
+              aiming,
+              reload: reloadP,
+              empty: shellsEmpty ?? (!!gun && gun.mag - predictedShots <= 0),
+              moving: [binds.forward, binds.left, binds.back, binds.right].some((k) => keys.has(k)),
+              sprinting: keys.has(binds.sprint),
+              airborne: !body.grounded,
+              lookX,
+              lookY,
+              silenced: gun?.muzzle === "silencer",
+              flash: !gun?.muzzle || !(ITEMS[gun.muzzle] as { hideFlash?: boolean }).hideFlash,
+              knife: knifeDrawn() && body.phase === "ground",
+              aimSway: perkOn(kit?.tablet, "steady-aim") ? PERK_EFFECT.aimSway : 1,
+              walking: keys.has(binds.walk) || body.crouched,
+              backward: keys.has(binds.back) && !keys.has(binds.forward),
+              strafe: moveAxes(keys, binds).strafe,
+            },
+      );
       lookX = lookY = 0;
       scopeUp = viewmodel.scopeView(gun);
       // The AWP's zoom clicks on the scope's edges (as in 1v1/5v5); the Hunting Rifle's too.
@@ -4113,7 +4205,10 @@ export function createBrArena(
     sharpenScene();
     viewmodel?.render(
       camera,
-      !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead || rappelBlend > 0.05,
+      // Spectating in first person: the watched player's gun, on foot and not scoped.
+      povGunNow || (povSeat >= 0 && povKnife)
+        ? scopeUp || inventoryOpen
+        : !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead || rappelBlend > 0.05,
     );
     sceneTarget?.present(sharpenPresent());
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a

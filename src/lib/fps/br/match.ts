@@ -2706,12 +2706,17 @@ export function brViewFor(
           },
         }
       : {}),
+    // Spectating in first person, as in 5v5 (owner, 2026-11-17: "look correct POV view just like
+    // 5v5"): where the watched player looks, whether they aim, and their reload (server ms).
     ...(me.dead && me.spectate !== undefined
       ? {
           watch: {
             seat: watched.seat,
             name: watched.name,
             kills: watched.kills,
+            pitch: Math.round((watched.pitch ?? 0) * 1000) / 1000,
+            ...(watched.hands.aimSince && now >= watched.hands.aimSince ? { aim: 1 } : {}),
+            ...(watched.hands.reloadUntil ? { reload: watched.hands.reloadUntil } : {}),
             bot: watched.bot,
             ...(watched.avatar ? { avatar: watched.avatar } : {}),
             hp: Math.round(watched.kit.hp),
