@@ -8,7 +8,7 @@
  *
  * On the current LOD0 and LOD1 (render only: collision is unchanged):
  *  - the download's floor faces under the fitted floors go;
- *  - the fitted floors: light stone tiles downstairs, oak planks upstairs (textured, LOD0);
+ *  - the fitted floors: oak planks, whitewashed downstairs (one textured draw, LOD0);
  *  - the walls (faces turned into a room only): painted, a colour per room (sand, sage, clay,
  *    a soft blue, warm white);
  *  - the ceilings: painted white, lit as if facing up (as textured-kit.mjs does indoors);
@@ -21,7 +21,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
-import { dequantize, meshopt, prune, unweld, weld } from "@gltf-transform/functions";
+import { dequantize, join, meshopt, prune, unweld, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 import sharp from "sharp";
 import { modelFile } from "./model-files.mjs";
@@ -57,12 +57,13 @@ const STAIR = [-8.4, -7.2, -5.5, 1.0];
 const PAD = 0.45;
 /** Materials: texture, metres per tile, roughness, colour (multiplies the texture). */
 const MATS = {
-  tiles: { tex: "tiles", tile: 1.6, rough: 0.6, color: [0.95, 0.93, 0.88] },
+  // One textured draw (the class budget allows it): oak, whitewashed downstairs.
   oak: { tex: "wood", tile: 2.0, rough: 0.7, color: [0.92, 0.78, 0.62] },
   // Painted plaster: colour alone (the kit's "plaster" set is a sandstone brick).
   paint: { tex: null, tile: 2.4, rough: 0.92, color: [1, 1, 1] },
 };
 const WHITE = [0.93, 0.92, 0.89];
+const PALE_OAK = [1.0, 0.95, 0.86];
 
 const inRoom = (x, z, room, pad = PAD) =>
   x > room[0] - pad && x < room[1] + pad && z > room[2] - pad && z < room[3] + pad;
@@ -98,7 +99,7 @@ async function dress(doc, level) {
   const stats = { dropped: 0, floors: 0, walls: 0, ceilings: 0, stair: 0 };
   const cache = new Map();
   /** Per material: positions, normals, uvs, colours (in the flat primitive's node space). */
-  const out = { tiles: [], oak: [], paint: [] };
+  const out = { oak: [], paint: [] };
   let host = null;
   for (const node of root.listNodes()) {
     const mesh = node.getMesh();
@@ -158,8 +159,8 @@ async function dress(doc, level) {
           tint = MATS.oak.color;
           stats.stair++;
         } else if (flat && ny > 0.9 && Math.abs(hi - floorY) < 0.06) {
-          mat = floorY === F0 ? "tiles" : "oak";
-          tint = MATS[mat].color;
+          mat = "oak";
+          tint = floorY === F0 ? PALE_OAK : MATS.oak.color;
           stats.floors++;
         } else if (flat && ny < -0.9) {
           mat = "paint";
@@ -204,11 +205,14 @@ async function dress(doc, level) {
   for (const [name, verts] of Object.entries(out)) {
     if (!verts.length) continue;
     const spec = MATS[name];
-    const material = doc
-      .createMaterial(`${ID}-${name}`)
-      .setBaseColorFactor([1, 1, 1, 1])
-      .setRoughnessFactor(spec.rough)
-      .setMetallicFactor(0);
+    // The paint joins the download's vertex-coloured draw (its material); the oak is a draw.
+    const material = spec.tex
+      ? doc
+          .createMaterial(`${ID}-${name}`)
+          .setBaseColorFactor([1, 1, 1, 1])
+          .setRoughnessFactor(spec.rough)
+          .setMetallicFactor(0)
+      : host.prim.getMaterial();
     // The textures on LOD0; LOD1 (from 35 m, through windows) takes the colours alone.
     if (level === 0 && spec.tex)
       material.setBaseColorTexture(await texture(doc, cache, spec.tex, 512));
@@ -255,13 +259,19 @@ const manifests = MANIFESTS.map((f) => [f, JSON.parse(fs.readFileSync(path.join(
 const live = manifests[0][1].models[ID];
 const done = new Map();
 for (const level of [0, 1]) {
-  const src = live.lods[level].file;
+  // From the files before the dressing (a re-run starts from them again).
+  const src = live.lods[level].file.replace(`.${TAG}.`, ".zfix-v3.");
   const doc = await io.read(modelFile(src));
   const stats = await dress(doc, level);
   const outFile = `/fps/br/models/${ID}.${TAG}.lod${level}.glb`;
   console.log(`${ID} LOD${level} (${path.basename(src)}): ${JSON.stringify(stats)} → ${outFile}`);
   if (dry) continue;
-  await doc.transform(weld(), prune(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
+  await doc.transform(
+    join({ keepNamed: false }),
+    weld(),
+    prune(),
+    meshopt({ encoder: MeshoptEncoder, level: "medium" }),
+  );
   await io.write(path.join("public", outFile), doc);
   done.set(src, outFile);
 }
