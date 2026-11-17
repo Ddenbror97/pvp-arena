@@ -33,6 +33,8 @@ import { quietWhileHidden } from "./quiet-hidden";
 import type { KnifeAttack } from "./protocol";
 import { GRENADE_TYPES, type GrenadeType, type ThrowKind } from "./grenades/rules";
 
+/** A gun that can be worn on the back (the Desert Eagle stays in the thigh holster). */
+export type CarryGun = "ak47" | "m4" | "awp" | "hunting" | "mp5" | "spas12";
 type Motion = {
   stance?: number;
   airborne?: boolean;
@@ -45,6 +47,15 @@ type Motion = {
    */
   primary?:
     "rifle" | "awp" | "hunting" | "ak47" | "m4" | "mp5" | "deagle" | "spas12" | "none" | undefined;
+  /**
+   * The main guns carried but not in hand, worn on the back (battle royale): [right of the
+   * backpack, left of it]. A gun that goes from here into the hands (or back) is carried there
+   * by the right hand; `pack` (its level) sets them beside a backpack.
+   */
+  back?: readonly [CarryGun | null, CarryGun | null] | undefined;
+  /** The backpack and the vest worn (level 1–3, 0 none). */
+  pack?: number | undefined;
+  vest?: number | undefined;
   /** Overrides the flash size (the Police M4A1 is otherwise drawn suppressed). */
   silenced?: boolean | undefined;
   /** With weapon "grenade": the type in the hand, and the wind-up while the button is held. */
@@ -228,6 +239,39 @@ const KNIFE_SWING_KEYS: Record<
     { t: 1, r: [0, 0, 0], tilt: 0, turn: 0, l: [0, 0, 0] },
   ],
 };
+/**
+ * Guns worn on the back (root space at rest, relative to the chest bone): the centre of each
+ * gun beside the spine, behind the vest, muzzle up and a little out over the shoulder, its side
+ * flat to the back and the magazine outward. With a backpack they sit out beside it.
+ */
+const BACK_MOUNT = {
+  /** Off the spine, and up from the chest bone (m, rest root space): the two apart, their
+   * stocks clear of each other over the spine. */
+  x: 0.15,
+  y: 0.06,
+  /** Muzzle lean out from straight up (rad). */
+  lean: 0.16,
+  /**
+   * Surfaces the guns lie on (owner, 2026-11-17: each gun flush on the back or the bag, none of
+   * it in the body), past the character's own back (measured on its mesh at load), by level:
+   * a vest's rear face, and a pack's half width and depth. Measured on the fitted gear.glb
+   * vests and packs (character-gear.ts) on both operators; the larger of the two.
+   */
+  vestBack: [0, 0.036, 0.024, 0.013],
+  packHalf: [0, 0.163, 0.174, 0.177],
+  packDepth: [0, 0.134, 0.154, 0.164],
+  /** With a pack: each gun turned a quarter on its bore, its narrow side to the pack's side. */
+  leanPack: 0.02,
+  /** Left between a gun and what it lies on (m), and how far a handle may press into a bag. */
+  gap: 0.006,
+  press: 0.03,
+  /** The SPAS-12 in closer on a pack (owner, 2026-11-17: "slightly tighter"): its folding
+   * stock's frame and the pump are wider than its body, which held it off the bag. */
+  shotgunPack: 0.015,
+};
+/** Hands to back, and back to hands (ms): the outgoing gun goes first, then the other comes. */
+const HOLSTER_MS = 300,
+  DRAW_MS = 300;
 /** The Desert Eagle's muzzle in weaponPivot space (the pivot sits right of the centre line). */
 const TP_PISTOL = { x: -0.07, y: 0.15, muzzle: -0.62 };
 /** Rifle stance: upper-body twist about the vertical (radians; negative brings the left
@@ -244,6 +288,34 @@ const upAxis = new THREE.Vector3(),
   FOOT_BOX = 0.34,
   /** The character's left–right axis in root space (toe roll turns about it). */
   sideAxis = new THREE.Vector3(1, 0, 0);
+
+/**
+ * Up to ~2400 points of a gun's meshes about `centre`, in the gun's own axes at its scale in the
+ * hands (to lay it against the back or a pack by its real outline, not its bounding box).
+ */
+function gunPoints(gun: THREE.Object3D, toGun: THREE.Matrix4, centre: THREE.Vector3) {
+  const meshes: THREE.Mesh[] = [];
+  let total = 0;
+  gun.traverse((o) => {
+    if (o instanceof THREE.Mesh && o.geometry.attributes["position"]) {
+      meshes.push(o);
+      total += o.geometry.attributes["position"].count;
+    }
+  });
+  const step = Math.max(1, Math.ceil(total / 2400)),
+    out: number[] = [],
+    m = new THREE.Matrix4(),
+    v = new THREE.Vector3();
+  for (const mesh of meshes) {
+    const pos = mesh.geometry.attributes["position"] as THREE.BufferAttribute;
+    m.multiplyMatrices(toGun, mesh.matrixWorld);
+    for (let i = 0; i < pos.count; i += step) {
+      v.fromBufferAttribute(pos, i).applyMatrix4(m).sub(centre).multiply(gun.scale);
+      out.push(v.x, v.y, v.z);
+    }
+  }
+  return new Float32Array(out);
+}
 
 export function createCharacter(
   seat: Seat,
@@ -630,6 +702,65 @@ export function createCharacter(
       // pistol grip sits a forearm further out than any rifle's and both arms are held straight.
       if (shotgun) seatGun(shotgun, TP_SPAS12_TUCK);
       if (pistol) seatPistol(pistol);
+      // What the back mounts need: each long gun's seat in the hands and its centre, and the
+      // chest at rest (the mounts are given against it and follow it).
+      for (const view of [weapon, awp, hunting, alt, smg, shotgun]) {
+        if (!view) continue;
+        view.root.updateWorldMatrix(true, true);
+        const toGun = view.root.matrixWorld.clone().invert(),
+          box = new THREE.Box3(),
+          part = new THREE.Box3(),
+          m = new THREE.Matrix4();
+        view.root.traverse((o) => {
+          if (!(o instanceof THREE.Mesh)) return;
+          if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+          box.union(
+            part
+              .copy(o.geometry.boundingBox!)
+              .applyMatrix4(m.multiplyMatrices(toGun, o.matrixWorld)),
+          );
+        });
+        if (box.isEmpty()) continue;
+        docks.set(view, {
+          state: "absent",
+          k: 1,
+          side: 0,
+          seatP: view.root.position.clone(),
+          seatQ: view.root.quaternion.clone(),
+          seatS: view.root.scale.clone(),
+          seatQInverse: view.root.quaternion.clone().invert(),
+          centre: box.getCenter(new THREE.Vector3()),
+          points: gunPoints(view.root, toGun, box.getCenter(new THREE.Vector3())),
+          reach: new Map(),
+        });
+      }
+      {
+        const chest = bones.get("Spine2");
+        if (chest) {
+          root.updateWorldMatrix(true, true);
+          root.worldToLocal(chestRestP.setFromMatrixPosition(chest.matrixWorld));
+          rotation(root, worldQ).invert();
+          chestRestQInverse.copy(worldQ.multiply(rotation(chest, parentQ))).invert();
+          // This operator's own back at the mounts: the rearmost skin beside the spine at
+          // chest height (the gear's surfaces are given past it).
+          const v = new THREE.Vector3();
+          let back = 0.12;
+          instance?.root.traverse((o) => {
+            const m = o as THREE.SkinnedMesh;
+            if (!m.isSkinnedMesh) return;
+            m.skeleton.update();
+            const pos = m.geometry.attributes["position"] as THREE.BufferAttribute;
+            for (let i = 0; i < pos.count; i += 2) {
+              m.getVertexPosition(i, v);
+              root.worldToLocal(v.applyMatrix4(m.matrixWorld)).sub(chestRestP);
+              if (Math.abs(Math.abs(v.x) - BACK_MOUNT.x) < 0.06 && Math.abs(v.y) < 0.18)
+                back = Math.max(back, v.z);
+            }
+          });
+          backSurface = back;
+          root.userData["backSurface"] = back;
+        }
+      }
       const rootRotation = root.getWorldQuaternion(new THREE.Quaternion()).invert();
       for (const side of ["Left", "Right"])
         footOrientations.set(
@@ -747,6 +878,101 @@ export function createCharacter(
   };
   const leanAxis = new THREE.Vector3(),
     bankAxis = new THREE.Vector3();
+  // Guns on the back (BACK_MOUNT): each gun's seat in the hands, its centre (its own space) and
+  // where it is between the hands (k 0) and its mount on the back (k 1).
+  type Dock = {
+    state: "absent" | "hand" | "back";
+    k: number;
+    side: 0 | 1;
+    seatP: THREE.Vector3;
+    seatQ: THREE.Quaternion;
+    seatS: THREE.Vector3;
+    seatQInverse: THREE.Quaternion;
+    centre: THREE.Vector3;
+    /** Points of the gun's surface about its centre (its own axes, at its hands' scale), and
+     * how far it reaches toward each surface it is mounted against (by mount). */
+    points: Float32Array;
+    reach: Map<string, number>;
+  };
+  const docks = new Map<object, Dock>();
+  /**
+   * The worn pack's sides, read from its own mesh when it changes (owner, 2026-11-17: the guns
+   * against the bag with no gap and not into it): per side, a grid over height × depth behind
+   * the chest (rest root space, PACK_CELL cells) of how far out the pack reaches.
+   */
+  const PACK_CELL = 0.02,
+    PACK_Y0 = -0.8,
+    PACK_NY = 70,
+    PACK_Z0 = -0.1,
+    PACK_NZ = 35;
+  let packProfile: { key: string; sides: [Float32Array, Float32Array]; found: boolean } | null =
+    null;
+  const readPack = () => {
+    // The visible worn gear (character-gear.ts binds it to the bones as "worn-gear" groups).
+    const held: THREE.Object3D[] = [];
+    root.traverse((o) => {
+      if (o.name !== "worn-gear") return;
+      for (let p: THREE.Object3D | null = o; p && p !== root; p = p.parent) if (!p.visible) return;
+      held.push(o);
+    });
+    const key = held.map((o) => o.uuid).join();
+    if (packProfile?.key === key) return packProfile;
+    const sides: [Float32Array, Float32Array] = [
+      new Float32Array(PACK_NY * PACK_NZ).fill(-1),
+      new Float32Array(PACK_NY * PACK_NZ).fill(-1),
+    ];
+    const toRest = new THREE.Quaternion().copy(dockDelta).invert(),
+      v = new THREE.Vector3(),
+      m = new THREE.Matrix4(),
+      toRoot = root.matrixWorld.clone().invert();
+    const each = (o: THREE.Object3D, fn: (x: number, y: number, z: number) => void) =>
+      o.traverse((c) => {
+        const mesh = c as THREE.Mesh;
+        const pos = mesh.isMesh ? mesh.geometry.attributes["position"] : undefined;
+        if (!pos) return;
+        m.multiplyMatrices(toRoot, mesh.matrixWorld);
+        for (let i = 0; i < pos.count; i++) {
+          v.fromBufferAttribute(pos, i).applyMatrix4(m).sub(dockChestP).applyQuaternion(toRest);
+          fn(v.x, v.y, v.z);
+        }
+      });
+    // The pack is the piece reaching furthest back (a vest hugs the back, a helmet is above).
+    let pack: THREE.Object3D | null = null,
+      far = backSurface + 0.08;
+    for (const o of held) {
+      let z = -Infinity;
+      each(o, (_x, _y, vz) => (z = Math.max(z, vz)));
+      if (z > far) {
+        far = z;
+        pack = o;
+      }
+    }
+    if (pack)
+      each(pack, (x, y, z) => {
+        const iy = Math.floor((y - PACK_Y0) / PACK_CELL),
+          iz = Math.floor((z - PACK_Z0) / PACK_CELL);
+        if (iy < 0 || iy >= PACK_NY || iz < 0 || iz >= PACK_NZ) return;
+        const side = sides[x >= 0 ? 0 : 1],
+          i = iy * PACK_NZ + iz;
+        side[i] = Math.max(side[i]!, Math.abs(x));
+      });
+    return (packProfile = { key, sides, found: pack !== null });
+  };
+  /** The operator's own back behind the chest bone at rest (m; measured at load). */
+  let backSurface = 0.17;
+  const chestRestP = new THREE.Vector3(),
+    chestRestQInverse = new THREE.Quaternion(),
+    dockM = new THREE.Matrix4(),
+    dockHandP = new THREE.Vector3(),
+    dockHandQ = new THREE.Quaternion(),
+    dockBackP = new THREE.Vector3(),
+    dockBackQ = new THREE.Quaternion(),
+    dockChestP = new THREE.Vector3(),
+    dockDelta = new THREE.Quaternion(),
+    dockScale = new THREE.Vector3(),
+    dockAxisX = new THREE.Vector3(),
+    dockAxisY = new THREE.Vector3(),
+    dockAxisZ = new THREE.Vector3();
   // The Karambit hold (root space), rebuilt each frame it is in hand.
   const knifeWristR = new THREE.Vector3(),
     knifeWristL = new THREE.Vector3(),
@@ -759,6 +985,199 @@ export function createCharacter(
     knifeZ = new THREE.Vector3(),
     knifeTurn = new THREE.Quaternion(),
     knifeM = new THREE.Matrix4();
+  /** The view drawn for a carried gun id (the two rifles share the operator's and the other). */
+  const viewFor = (id: CarryGun) =>
+    id === "awp"
+      ? awp
+      : id === "hunting"
+        ? hunting
+        : id === "mp5"
+          ? smg
+          : id === "spas12"
+            ? shotgun
+            : id === ownRifle || !alt
+              ? weapon
+              : alt;
+  /** Put a gun back in the hands' seat (in weaponPivot). */
+  const seatInHands = (v: typeof weapon, d: Dock) => {
+    if (v.root.parent === weaponPivot) return;
+    weaponPivot.add(v.root);
+    v.root.position.copy(d.seatP);
+    v.root.quaternion.copy(d.seatQ);
+    v.root.scale.copy(d.seatS);
+  };
+  /**
+   * Guns on the back and the trip between the back and the hands (BACK_MOUNT): the gun put
+   * away goes to its mount first, then the one drawn comes from its mount to the hands, the
+   * right hand carrying each (its grip markers move with it). Picked up or dropped, a gun just
+   * appears where it belongs. Returns the gun the right hand is carrying, if one is under way.
+   * Without `motion.back` (1v1, 5v5) every gun stays in the hands as before.
+   */
+  const placeCarried = (motion: Motion, inHand: typeof weapon | null, dt: number) => {
+    if (!docks.size) return null;
+    if (!motion.back) {
+      for (const [view, d] of docks) {
+        if (d.state !== "absent") seatInHands(view as typeof weapon, d);
+        d.state = "absent";
+        d.k = 1;
+      }
+      return null;
+    }
+    const first = motion.back[0] ? viewFor(motion.back[0]) : null;
+    let second = motion.back[1] ? viewFor(motion.back[1]) : null;
+    // Two of the same gun: one model of each per operator, so the second is not worn.
+    if (second === first) second = null;
+    let reaching: typeof weapon | null = null;
+    for (const [view, d] of docks) {
+      const v = view as typeof weapon;
+      if (v === inHand) continue;
+      const side = v === first ? 0 : v === second ? 1 : -1;
+      if (side < 0) {
+        if (d.state !== "absent") seatInHands(v, d);
+        d.state = "absent";
+        d.k = 1;
+        continue;
+      }
+      // Fresh on the back (picked up, or first seen): already there. From the hands: the trip.
+      if (d.state === "absent") d.k = 1;
+      d.state = "back";
+      d.side = side as 0 | 1;
+      if (d.k < 1) {
+        d.k = Math.min(1, d.k + dt / HOLSTER_MS);
+        reaching = v;
+      }
+    }
+    const drawn = inHand ? docks.get(inHand) : undefined;
+    if (inHand && drawn) {
+      if (drawn.state === "absent") drawn.k = 0;
+      else if (!reaching) drawn.k = Math.max(0, drawn.k - dt / DRAW_MS);
+      drawn.state = "hand";
+      if (drawn.k > 0) reaching ??= inHand;
+    }
+    const chest = bones.get("Spine2");
+    if (!chest) return null;
+    // How the chest has turned and moved since rest (the lean, the stride, the stance).
+    root.worldToLocal(dockChestP.setFromMatrixPosition(chest.matrixWorld));
+    rotation(root, worldQ).invert();
+    dockDelta.copy(worldQ.multiply(rotation(chest, parentQ))).multiply(chestRestQInverse);
+    weaponPivot.updateMatrix();
+    for (const [view, d] of docks) {
+      const v = view as typeof weapon;
+      if (d.state === "absent") continue;
+      if (d.state === "hand" && d.k <= 0) {
+        seatInHands(v, d);
+        continue;
+      }
+      if (v !== inHand) v.update(true, 0, 0);
+      // On the back: muzzle up and leaning out, the side flat to the back, magazine outward.
+      const sign = d.side === 0 ? 1 : -1,
+        level = Math.max(0, Math.min(3, Math.round(motion.pack ?? 0))),
+        vest = Math.max(0, Math.min(3, Math.round(motion.vest ?? 0))),
+        lean = level ? BACK_MOUNT.leanPack : BACK_MOUNT.lean;
+      dockAxisZ.set(-sign * Math.sin(lean), -Math.cos(lean), 0);
+      // The gun's top: toward the spine flat on the back, or back beside a pack.
+      if (level) dockAxisY.set(0, 0, 1);
+      else dockAxisY.set(-sign, 0, 0);
+      dockAxisY.addScaledVector(dockAxisZ, -dockAxisY.dot(dockAxisZ)).normalize();
+      dockAxisX.crossVectors(dockAxisY, dockAxisZ);
+      // How far the gun reaches from its centre along a direction (rest root space): its
+      // furthest point that way, worked out once per mount.
+      const reach = (x: number, y: number, z: number) => {
+        const key = `${d.side}${level}${x}${y}${z}`;
+        let r = d.reach.get(key);
+        if (r === undefined) {
+          const ax = dockAxisX.x * x + dockAxisX.y * y + dockAxisX.z * z,
+            ay = dockAxisY.x * x + dockAxisY.y * y + dockAxisY.z * z,
+            az = dockAxisZ.x * x + dockAxisZ.y * y + dockAxisZ.z * z,
+            p = d.points;
+          r = 0;
+          for (let i = 0; i < p.length; i += 3)
+            r = Math.max(r, p[i]! * ax + p[i + 1]! * ay + p[i + 2]! * az);
+          d.reach.set(key, r);
+        }
+        return r;
+      };
+      // Its inner face just off the back (or the vest), or off the pack's side panel.
+      const surface = backSurface + BACK_MOUNT.vestBack[vest]!,
+        offBack = surface + reach(0, 0, -1) + BACK_MOUNT.gap;
+      const z = level ? Math.max(offBack, backSurface + BACK_MOUNT.packDepth[level]! / 2) : offBack;
+      let x = level
+        ? BACK_MOUNT.packHalf[level]! + reach(-sign, 0, 0) + BACK_MOUNT.gap
+        : BACK_MOUNT.x;
+      if (level) {
+        // Against the pack's side as it is where the gun lies: each of its points clear of
+        // the side there by the gap, the nearest one touching (no gap, nothing in the bag).
+        const pack = readPack();
+        if (pack.found) {
+          const key = `${pack.key}|${d.side}${level}${z.toFixed(3)}`;
+          let fit = d.reach.get(key);
+          if (fit === undefined) {
+            const grid = pack.sides[d.side],
+              p = d.points;
+            // The gun's side toward the pack: the 80th percentile of how far its points reach
+            // that way. Handles and knobs past it may press into the bag's soft side (up to
+            // BACK_MOUNT.press): each gun's charging or bolt handle is on its own right, which
+            // faces the pack on the left mount.
+            const n = p.length / 3,
+              depth = new Float32Array(n),
+              qxs = new Float32Array(n),
+              cells = new Int32Array(n);
+            for (let i = 0, j = 0; i < p.length; i += 3, j++) {
+              const px = p[i]!,
+                py = p[i + 1]!,
+                pz = p[i + 2]!;
+              const qx = dockAxisX.x * px + dockAxisY.x * py + dockAxisZ.x * pz,
+                qy = dockAxisX.y * px + dockAxisY.y * py + dockAxisZ.y * pz,
+                qz = dockAxisX.z * px + dockAxisY.z * py + dockAxisZ.z * pz;
+              qxs[j] = qx;
+              depth[j] = -sign * qx;
+              const iy = Math.floor((BACK_MOUNT.y + qy - PACK_Y0) / PACK_CELL),
+                iz = Math.floor((z + qz - PACK_Z0) / PACK_CELL);
+              cells[j] =
+                iy < 0 || iy >= PACK_NY || iz < 0 || iz >= PACK_NZ ? -1 : iy * PACK_NZ + iz;
+            }
+            const face = depth.slice().sort()[Math.floor(n * 0.8)] ?? 0;
+            fit = -Infinity;
+            for (let j = 0; j < n; j++) {
+              const c = cells[j]!;
+              if (c < 0) continue;
+              const out = grid[c]!;
+              if (out < 0) continue;
+              const press = Math.min(BACK_MOUNT.press, Math.max(0, depth[j]! - face));
+              fit = Math.max(fit, out - sign * qxs[j]! - press);
+            }
+            d.reach.set(key, fit);
+          }
+          if (fit > -Infinity)
+            x = fit + BACK_MOUNT.gap - (v === shotgun ? BACK_MOUNT.shotgunPack : 0);
+        }
+      }
+      dockBackP.set(sign * x, BACK_MOUNT.y, z);
+      dockM.makeBasis(dockAxisX, dockAxisY, dockAxisZ);
+      dockBackQ.setFromRotationMatrix(dockM).premultiply(dockDelta);
+      dockBackP
+        .applyQuaternion(dockDelta)
+        .add(dockChestP)
+        .sub(dockScale.copy(d.centre).multiply(d.seatS).applyQuaternion(dockBackQ));
+      if (d.k < 1) {
+        // Between: from the seat in the hands, up and out past the shoulder, to the mount.
+        dockM.compose(d.seatP, d.seatQ, d.seatS).premultiply(weaponPivot.matrix);
+        dockM.decompose(dockHandP, dockHandQ, dockScale);
+        const e = THREE.MathUtils.smootherstep(d.k, 0, 1),
+          arc = Math.sin(Math.PI * e);
+        dockBackP.lerp(dockHandP, 1 - e);
+        dockBackP.y += 0.12 * arc;
+        dockBackP.x += sign * 0.12 * arc;
+        dockBackQ.slerp(dockHandQ, 1 - e);
+      }
+      if (v.root.parent !== root) root.add(v.root);
+      v.root.position.copy(dockBackP);
+      v.root.quaternion.copy(dockBackQ);
+      v.root.scale.copy(d.seatS);
+      v.root.updateMatrixWorld(true);
+    }
+    return reaching;
+  };
   const aim = (bone: THREE.Bone, child: THREE.Bone, target: THREE.Vector3) => {
     av.setFromMatrixPosition(bone.matrixWorld);
     bv.setFromMatrixPosition(child.matrixWorld);
@@ -1527,11 +1946,18 @@ export function createCharacter(
           bone.updateWorldMatrix(false, true);
         }
       }
+      const reaching = alive
+        ? placeCarried(motion, empty || holdingKnife || holdingNade ? null : held, dt)
+        : null;
       for (const side of sides) {
         const sign = side === "Left" ? -1 : 1;
-        held.grip(side === "Left" ? "L" : "R", target);
+        // A gun on its way between the back and the hands is in the right hand (the left lets
+        // go and waits at the chest); otherwise both hands on the gun in hand.
+        const gripView = reaching ?? held;
+        gripView.grip(side === "Left" ? "L" : "R", target);
         // Markers describe the grasp centre; the character Hand bone is at the wrist.
-        rotation(weaponPivot, worldQ);
+        if (reaching) rotation(reaching.root, worldQ).multiply(docks.get(reaching)!.seatQInverse);
+        else rotation(weaponPivot, worldQ);
         cv.set(side === "Left" ? -0.065 : 0.065, side === "Left" ? -0.045 : -0.03, 0.025)
           .multiplyScalar(HAND_SCALE)
           .applyQuaternion(worldQ);
@@ -1565,6 +1991,7 @@ export function createCharacter(
           );
         } else if (holdingKnife)
           root.localToWorld(side === "Right" ? target.copy(knifeWristR) : target.copy(knifeWristL));
+        else if (reaching && side === "Left") root.localToWorld(target.set(-0.14, 1.12, -0.24));
         else if (holdingNade)
           root.localToWorld(
             side === "Right"
@@ -1627,11 +2054,16 @@ export function createCharacter(
           !holdingNade &&
           !motion.canopy &&
           !motion.seated &&
-          !motion.zip
+          !motion.zip &&
+          !(reaching && side === "Left")
         ) {
           const hand = bones.get(side + "Hand")!;
           rotation(hand.parent!, parentQ).invert();
-          rotation(weaponPivot, worldQ).multiply(wristRotations[side]);
+          if (reaching)
+            rotation(reaching.root, worldQ)
+              .multiply(docks.get(reaching)!.seatQInverse)
+              .multiply(wristRotations[side]);
+          else rotation(weaponPivot, worldQ).multiply(wristRotations[side]);
           hand.quaternion.copy(parentQ.multiply(worldQ));
           hand.updateWorldMatrix(false, true);
         }

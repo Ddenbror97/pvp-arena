@@ -423,7 +423,7 @@ describe("the server", () => {
       const view = brViewFor(state, island.solid, sight, 1, now, new BrSeatSync());
       const row = view.players.find((r) => r[0] === 0);
       if (!row || row[4] !== 9) continue;
-      const r = readRappelRow(row, 12)!;
+      const r = readRappelRow(row, 13)!;
       expect(r).toMatchObject({
         dir: tall.site.dir,
         wall: Math.round(tall.site.wall * 100) / 100,
@@ -438,11 +438,11 @@ describe("the server", () => {
     const mine = brViewFor(state, island.solid, sight, 0, now, new BrSeatSync());
     expect(mine.you.phase).toBe("rappel");
     expect(mine.you.rappel).toMatchObject({ stage: "hang", dir: tall.site.dir });
-    // A player on foot has no such fields.
+    // A player on foot has no such fields (the row ends with the guns worn on the back).
     const other = brViewFor(state, island.solid, sight, 0, now, new BrSeatSync()).players.find(
       (r) => r[0] === 1,
     )!;
-    expect(other.length).toBe(12);
+    expect(other.length).toBe(13);
   });
 
   it("refuses E half way down a tower, and lays an eliminated player on the floor below", () => {
