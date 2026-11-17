@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v1.json). */
 export const WORLD_ASSETS = {
-  revision: "locations-v1",
+  revision: "yacht-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   height: "/fps/br/height.v2.hf",
@@ -105,8 +105,13 @@ export const WORLD_ASSETS = {
   // container terminal and fishing quay, the military base, the airfield and the villages, and 22
   // enterable procedural buildings (build_locations.mjs: doors, stairs to every floor, rooms;
   // their doors authored in collision.entrances); the new models' coplanar faces lifted (zfix-v5).
-  models: "/fps/br/models/models.locations-v1.json",
-  collision: "/fps/br/models/collision.locations-v1.json",
+  // Then (yacht-v1, 2026-11-17) the super yacht rebuilt from the owner's re-download: textured
+  // (the old build had fallen back to a flat silhouette), the people on its decks dropped, its
+  // collision voxelised again without them, and its access-v14 fit-out applied again
+  // (access-v26: decks, salon, flybridge, the stair down, the lower deck's cabins and doors);
+  // its coplanar faces lifted (zfix-v7).
+  models: "/fps/br/models/models.yacht-v1.json",
+  collision: "/fps/br/models/collision.yacht-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
