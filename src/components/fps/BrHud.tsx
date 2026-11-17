@@ -603,7 +603,7 @@ export function BrAirdropAlert({ hud }: { hud: BrHud }) {
         <b>{title}</b>
         <span>
           <i>{a.grid}</i>
-          {Math.round(a.dist / 10) * 10} m{a.stage === "landed" ? " · green smoke" : ""}
+          {Math.round(a.dist / 10) * 10} m
         </span>
       </div>
       {a.stage !== "landed" && (
