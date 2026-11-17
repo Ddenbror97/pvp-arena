@@ -163,8 +163,71 @@ const BODY_BREADTH = 1.06;
  * (e2e fps-world-rifle: hand-to-grip gap < 0.13 m; measured 0.10 m).
  */
 const TP_GUN = { x: 0.045, y: 0.12, butt: -0.045, scale: 0.88 };
-/** How far the SPAS-12's stock end sits behind the shoulder pocket (m; see seatGun). */
-const TP_SPAS12_TUCK = 0.15;
+/**
+ * How far the SPAS-12's stock end sits behind the shoulder pocket (m; see seatGun). Its folding
+ * stock is long: at 0.15 its end went 10 cm into the body (behind the shoulder joint's depth)
+ * and from outside the gun seemed to end at the hand (owner, 2026-11-17: the stock should sit
+ * in the shoulder like the AK's/M4's); a few cm keeps the pistol grip in reach.
+ */
+const TP_SPAS12_TUCK = 0.05;
+/**
+ * The hands (with the gloves and fingers) drawn a little smaller than the model's own (owner,
+ * 2026-11-17: the hand on the handguard read too big next to the gun). Grip offsets are scaled
+ * with them.
+ */
+const HAND_SCALE = 0.86;
+/**
+ * The Karambit as its holder sees it in first person (owner, 2026-11-17: "when a player stands
+ * close to another it should look like the POV"; README of art/blender/karambit): the right
+ * hand a reverse-grip hammer fist, upright, the index finger through the ring and the blade
+ * curving up out of the little-finger edge; the left hand up, open and relaxed. Root space at
+ * standing height (m): each wrist, the right fist's wrist-to-knuckles direction and the way the
+ * back of it faces, the left hand's fingers and back.
+ */
+const KNIFE_HOLD = {
+  // At the lower chest, so each elbow hangs below its wrist and the forearm rises to the hand
+  // in line with it (lower, the elbow rose behind and the wrist bent up square).
+  wristR: [0.16, 1.21, -0.3],
+  fistUp: [-0.12, 0.6, -0.8],
+  fistBack: [0.25, 0.5, 1],
+  wristL: [-0.17, 1.2, -0.3],
+  fingersL: [0.3, 0.6, -0.75],
+  backL: [-1, 0.2, 0.4],
+  /** The ring's centre from the wrist: along the hand, toward the thumb, into the palm (m). */
+  ring: [0.072, 0.012, 0.028],
+} as const;
+/** The swings, timed as the first-person clips (karambit_slash 0.4 s, karambit_stab 0.72 s). */
+const KNIFE_SWING_MS = { slash: 400, stab: 720 } as const;
+/**
+ * Their keys (t 0…1): right wrist offset (m), the fist's tilt forward and turn left (rad), and
+ * the left wrist's offset. Slash: a backhand sweep from up and right across and down to the
+ * left, the left hand opening out to balance it. Stab: cocked back and up, then driven forward
+ * with the blade turned to lead, the left hand bracing at the chest.
+ */
+const KNIFE_SWING_KEYS: Record<
+  "slash" | "stab",
+  Array<{
+    t: number;
+    r: [number, number, number];
+    tilt: number;
+    turn: number;
+    l: [number, number, number];
+  }>
+> = {
+  slash: [
+    { t: 0, r: [0, 0, 0], tilt: 0, turn: 0, l: [0, 0, 0] },
+    { t: 0.25, r: [0.07, 0.09, 0.05], tilt: -0.3, turn: -0.25, l: [0, 0.02, 0.02] },
+    { t: 0.55, r: [-0.26, -0.1, -0.2], tilt: 0.9, turn: 0.7, l: [-0.08, 0.04, 0.1] },
+    { t: 1, r: [0, 0, 0], tilt: 0, turn: 0, l: [0, 0, 0] },
+  ],
+  stab: [
+    { t: 0, r: [0, 0, 0], tilt: 0, turn: 0, l: [0, 0, 0] },
+    { t: 0.3, r: [0.02, 0.06, 0.1], tilt: -0.4, turn: 0, l: [0.05, 0.06, 0.05] },
+    { t: 0.5, r: [-0.06, 0.08, -0.42], tilt: 1.3, turn: 0.15, l: [0.07, 0.09, 0.08] },
+    { t: 0.7, r: [-0.05, 0.07, -0.38], tilt: 1.2, turn: 0.15, l: [0.07, 0.09, 0.08] },
+    { t: 1, r: [0, 0, 0], tilt: 0, turn: 0, l: [0, 0, 0] },
+  ],
+};
 /** The Desert Eagle's muzzle in weaponPivot space (the pivot sits right of the centre line). */
 const TP_PISTOL = { x: -0.07, y: 0.15, muzzle: -0.62 };
 /** Rifle stance: upper-body twist about the vertical (radians; negative brings the left
@@ -345,10 +408,9 @@ export function createCharacter(
       const mesh = knifeInstance.root.getObjectByName("Karambit");
       if (!mesh) return;
       mesh.removeFromParent();
-      // Knife space: ring at the origin, handle down -y, blade curving toward +z. Turned so
-      // the blade curls forward (-z, the way the character faces) below the fist.
+      // Knife space: ring at the origin (the pivot), handle down -y, blade curving toward +z;
+      // the group is turned into the fist each frame (KNIFE_HOLD).
       const holder = new THREE.Group();
-      holder.rotation.y = Math.PI;
       holder.scale.setScalar(KARAMBIT_SCALE);
       holder.add(mesh);
       knife.add(holder);
@@ -439,7 +501,15 @@ export function createCharacter(
     travelX = 0,
     travelZ = -1,
     baseX = 0,
-    baseZ = 0;
+    baseZ = 0,
+    // The upper body's follow-through (see "Upper body with the stride"), eased each frame.
+    leanForward = 0,
+    bank = 0,
+    sprintBlend = 0,
+    yawRate = 0,
+    lastYaw = 0,
+    lead = 0,
+    run = 0;
   /** Mixamo rifle gait (locomotion.ts) once both the rig and the clips are in. */
   let gait: Gait | null = null;
   /** Ankle-to-toe in root space at rest, per foot: the toe roll may not push a toe underground. */
@@ -645,6 +715,7 @@ export function createCharacter(
             });
           }
         }
+      for (const side of sides) bones.get(side + "Hand")?.scale.setScalar(HAND_SCALE);
       loaded = true;
     })
     .catch((error) =>
@@ -666,6 +737,28 @@ export function createCharacter(
     object.matrixWorld.decompose(matrixPosition, out, matrixScale);
     return out;
   };
+  /** Turn a bone by `angle` about a world axis (in its parent's space), and refresh below it. */
+  const turnBone = (bone: THREE.Bone | undefined, axis: THREE.Vector3, angle: number) => {
+    if (!bone || Math.abs(angle) < 1e-5) return;
+    rotation(bone.parent!, parentQ);
+    twistQ.setFromAxisAngle(axis, angle);
+    bone.quaternion.premultiply(parentQ.clone().invert().multiply(twistQ).multiply(parentQ));
+    bone.updateWorldMatrix(false, true);
+  };
+  const leanAxis = new THREE.Vector3(),
+    bankAxis = new THREE.Vector3();
+  // The Karambit hold (root space), rebuilt each frame it is in hand.
+  const knifeWristR = new THREE.Vector3(),
+    knifeWristL = new THREE.Vector3(),
+    knifeUp = new THREE.Vector3(),
+    knifeBack = new THREE.Vector3(),
+    knifeFingers = new THREE.Vector3(),
+    knifeBackL = new THREE.Vector3(),
+    knifeX = new THREE.Vector3(),
+    knifeY = new THREE.Vector3(),
+    knifeZ = new THREE.Vector3(),
+    knifeTurn = new THREE.Quaternion(),
+    knifeM = new THREE.Matrix4();
   const aim = (bone: THREE.Bone, child: THREE.Bone, target: THREE.Vector3) => {
     av.setFromMatrixPosition(bone.matrixWorld);
     bv.setFromMatrixPosition(child.matrixWorld);
@@ -1119,6 +1212,55 @@ export function createCharacter(
           chest.updateWorldMatrix(false, true);
         }
       }
+      {
+        // Upper body with the stride (owner, 2026-11-17: the characters looked stiff, as in
+        // PUBG or Warzone they should carry themselves): leaning into the pace, more at a
+        // sprint, and into turns; the shoulders rolling a little with each step; the head held
+        // level against it. Eased so a stop or a turn settles instead of snapping.
+        const yawNow = root.rotation.y;
+        let turned = yawNow - lastYaw;
+        turned -= Math.round(turned / (2 * Math.PI)) * 2 * Math.PI;
+        lastYaw = yawNow;
+        yawRate = THREE.MathUtils.damp(
+          yawRate,
+          Math.max(-5, Math.min(5, turned / seconds)),
+          8,
+          seconds,
+        );
+        const upright = 1 - 0.7 * stance;
+        const runTarget = pose ? pose.moving * (0.35 + 0.65 * pose.pace) * upright : 0;
+        run = THREE.MathUtils.damp(run, runTarget, 8, seconds);
+        lead = pose ? pose.lead : THREE.MathUtils.damp(lead, 0, 8, seconds);
+        // A sprint shows from the speed (only the battle royale and the sprint key reach it);
+        // a shot just fired keeps the gun up.
+        const sprinting =
+          pose && now - (flashUntil - 42) > 450
+            ? THREE.MathUtils.smoothstep(speed, 5.6, 6.8) * upright
+            : 0;
+        sprintBlend = THREE.MathUtils.damp(sprintBlend, sprinting, 6, seconds);
+        leanForward = THREE.MathUtils.damp(
+          leanForward,
+          walking ? 0.05 * run + 0.08 * sprintBlend : 0,
+          6,
+          seconds,
+        );
+        bank = THREE.MathUtils.damp(
+          bank,
+          walking ? Math.max(-0.11, Math.min(0.11, yawRate * speed * 0.012)) : 0,
+          6,
+          seconds,
+        );
+        leanAxis.set(1, 0, 0).transformDirection(root.matrixWorld);
+        bankAxis.set(0, 0, 1).transformDirection(root.matrixWorld);
+        const spine = bones.get("Spine");
+        turnBone(spine, leanAxis, -leanForward);
+        turnBone(spine, bankAxis, bank);
+        // A little roll of the shoulders over the leading foot.
+        turnBone(bones.get("Spine2"), bankAxis, -0.025 * run * lead);
+        const neck = bones.get("Neck");
+        turnBone(neck, leanAxis, leanForward * 0.85);
+        turnBone(neck, bankAxis, -bank * 0.7 + 0.02 * run * lead);
+      }
       if (motion.seated?.lean) {
         // Lean the upper body from the lower spine, about the character's own left–right axis.
         const spine = bones.get("Spine");
@@ -1224,6 +1366,15 @@ export function createCharacter(
       weaponPivot.rotation.x = pitch + recoil;
       weaponPivot.rotation.z = motion.reloading ? -0.25 : 0;
       weaponPivot.rotation.y = 0;
+      // The gun goes with the shoulders: forward with the lean, a small bob and swing in step,
+      // and at a sprint a low ready, the muzzle down and in across the body (it comes back up
+      // the moment he fires).
+      const bob = Math.abs(lead) - 0.5;
+      weaponPivot.position.z -= leanForward * 0.42;
+      weaponPivot.position.y += -0.05 * sprintBlend + 0.008 * run * bob;
+      weaponPivot.rotation.x += -0.5 * sprintBlend + 0.018 * run * bob;
+      weaponPivot.rotation.y += 0.38 * sprintBlend + 0.03 * run * lead;
+      weaponPivot.rotation.z += -0.18 * sprintBlend;
       if (motion.death !== undefined && deathRig) {
         // The gun leaves the hands as the body is hit: it drops to the floor ahead of the
         // body, turning onto its side, and lies there (cosmetic).
@@ -1317,17 +1468,49 @@ export function createCharacter(
         }
         nade.visible = alive;
       } else nade.visible = false;
-      // Swing: slash sweeps right → left and down, stab thrusts forward (≈0.3 s).
-      const swingT = (now - swingAt) / (swingKind === "stab" ? 320 : 260),
-        swing = swingT >= 0 && swingT < 1 ? Math.sin(Math.PI * swingT) : 0,
-        sweep = swingT >= 0 && swingT < 1 ? swingT * 2 - 1 : 0;
-      const knifeAt = target.set(
-        0.1 + (swingKind === "slash" ? -sweep * 0.22 * swing : 0),
-        1.1 - crouchOffset + (swingKind === "slash" ? -sweep * 0.1 * swing : 0.06 * swing),
-        -0.24 - (swingKind === "stab" ? 0.3 : 0.12) * swing,
-      );
-      knife.position.copy(knifeAt);
-      knife.rotation.set(pitch * 0.5 + (swingKind === "stab" ? 1.1 : 0.4) * swing, 0, 0);
+      // The Karambit's hold and swings (KNIFE_HOLD, KNIFE_SWING_KEYS), as in first person.
+      const swingT = (now - swingAt) / KNIFE_SWING_MS[swingKind],
+        swinging = swingT >= 0 && swingT < 1;
+      // Running with the knife the arms pump with the legs: the right one forward as the left
+      // foot leads, and the reverse.
+      const pump = run * (swinging ? 0 : 1) * (0.6 + 0.4 * sprintBlend);
+      if (holdingKnife) {
+        const keys = KNIFE_SWING_KEYS[swingKind];
+        let a = keys[0]!,
+          b = keys[0]!,
+          k = 0;
+        if (swinging)
+          for (let i = 1; i < keys.length; i++)
+            if (swingT <= keys[i]!.t) {
+              a = keys[i - 1]!;
+              b = keys[i]!;
+              k = THREE.MathUtils.smoothstep(swingT, a.t, b.t);
+              break;
+            }
+        const mix = (x: number, y: number) => x + (y - x) * k;
+        const [rx, ry, rz] = KNIFE_HOLD.wristR,
+          [lx, ly, lz] = KNIFE_HOLD.wristL;
+        knifeWristR.set(
+          rx + mix(a.r[0], b.r[0]),
+          ry - crouchOffset + mix(a.r[1], b.r[1]) + pitch * 0.12 - 0.04 * pump * (1 - lead),
+          rz + mix(a.r[2], b.r[2]) + 0.14 * pump * (lead + 0.2),
+        );
+        knifeWristL.set(
+          lx + mix(a.l[0], b.l[0]) + 0.04 * pump,
+          ly - crouchOffset + mix(a.l[1], b.l[1]) + pitch * 0.1 + 0.03 * pump,
+          lz + mix(a.l[2], b.l[2]) - 0.18 * pump * lead,
+        );
+        // The fist: tilted forward (the blade leads a stab) and turned with a slash's sweep.
+        knifeTurn.setFromEuler(
+          gaitEuler.set(-mix(a.tilt, b.tilt) + pitch * 0.4, mix(a.turn, b.turn), 0, "YXZ"),
+        );
+        knifeUp.fromArray(KNIFE_HOLD.fistUp).normalize().applyQuaternion(knifeTurn);
+        knifeBack.fromArray(KNIFE_HOLD.fistBack).applyQuaternion(knifeTurn);
+        knifeBack.addScaledVector(knifeUp, -knifeBack.dot(knifeUp)).normalize();
+        knifeFingers.fromArray(KNIFE_HOLD.fingersL).normalize();
+        knifeBackL.fromArray(KNIFE_HOLD.backL);
+        knifeBackL.addScaledVector(knifeFingers, -knifeBackL.dot(knifeFingers)).normalize();
+      }
       // Rifle stance (owner, 2026-11-04: the stock went into the body, not the shoulder): the
       // upper body bladed, left shoulder forward and right shoulder back, so the butt rests in
       // the right shoulder pocket and the support arm reaches the handguard; the neck turns
@@ -1349,11 +1532,9 @@ export function createCharacter(
         held.grip(side === "Left" ? "L" : "R", target);
         // Markers describe the grasp centre; the character Hand bone is at the wrist.
         rotation(weaponPivot, worldQ);
-        cv.set(
-          side === "Left" ? -0.065 : 0.065,
-          side === "Left" ? -0.045 : -0.03,
-          0.025,
-        ).applyQuaternion(worldQ);
+        cv.set(side === "Left" ? -0.065 : 0.065, side === "Left" ? -0.045 : -0.03, 0.025)
+          .multiplyScalar(HAND_SCALE)
+          .applyQuaternion(worldQ);
         target.add(cv);
         if (motion.seated) {
           const h = side === "Left" ? motion.seated.handL : motion.seated.handR;
@@ -1383,11 +1564,7 @@ export function createCharacter(
             ),
           );
         } else if (holdingKnife)
-          root.localToWorld(
-            side === "Right"
-              ? target.copy(knife.position).add(cv.set(-0.01, 0.06, 0.07))
-              : target.set(-0.24, 0.95 - stance * 0.5, -0.12),
-          );
+          root.localToWorld(side === "Right" ? target.copy(knifeWristR) : target.copy(knifeWristL));
         else if (holdingNade)
           root.localToWorld(
             side === "Right"
@@ -1403,7 +1580,9 @@ export function createCharacter(
           bend.set(sign, -0.15, 0.35); // elbows out and a little back
         else if (motion.zip)
           bend.set(sign, -0.1, 0.25); // elbows out, the arms up to the bar
-        else if (side === "Left" || holdingKnife || holdingNade) bend.set(sign, -0.6, -0.3);
+        else if (holdingKnife)
+          bend.set(sign * 0.35, -1, 0.15); // elbows down under the wrists
+        else if (side === "Left" || holdingNade) bend.set(sign, -0.6, -0.3);
         else bend.set(1, -0.25, 0.05);
         bend.transformDirection(root.matrixWorld);
         limb(
@@ -1413,7 +1592,43 @@ export function createCharacter(
           target,
           bend,
         );
-        if (!holdingKnife && !holdingNade && !motion.canopy && !motion.seated && !motion.zip) {
+        if (holdingKnife && !motion.canopy && !motion.seated && !motion.zip) {
+          // The hands turned as in first person (the basis as the knuckles': x along the hand,
+          // the left's fingers' way and the right's against them, y the back of the hand, z to
+          // the thumb), then the knife into the right fist.
+          const hand = bones.get(side + "Hand")!;
+          const right = side === "Right";
+          knifeX.copy(right ? knifeUp : knifeFingers);
+          if (right) knifeX.negate();
+          knifeY.copy(right ? knifeBack : knifeBackL);
+          knifeZ.crossVectors(knifeX, knifeY);
+          rotation(root, worldQ);
+          knifeM.makeBasis(knifeX, knifeY, knifeZ);
+          twistQ.setFromRotationMatrix(knifeM);
+          worldQ.multiply(twistQ).multiply(knuckles[side]);
+          rotation(hand.parent!, parentQ).invert();
+          hand.quaternion.copy(parentQ.multiply(worldQ));
+          hand.updateWorldMatrix(false, true);
+          if (right) {
+            // Ring on the index finger: along the fist from the wrist, toward the thumb, into
+            // the palm; the handle across the fist to the little finger, the blade curving up.
+            root.worldToLocal(knife.position.setFromMatrixPosition(hand.matrixWorld));
+            const [along, thumb, palm] = KNIFE_HOLD.ring;
+            knife.position
+              .addScaledVector(knifeUp, along * HAND_SCALE)
+              .addScaledVector(knifeZ, thumb * HAND_SCALE)
+              .addScaledVector(knifeBack, -palm * HAND_SCALE);
+            knifeY.copy(knifeBack).negate();
+            knifeM.makeBasis(knifeY, knifeZ, knifeUp);
+            knife.quaternion.setFromRotationMatrix(knifeM);
+          }
+        } else if (
+          !holdingKnife &&
+          !holdingNade &&
+          !motion.canopy &&
+          !motion.seated &&
+          !motion.zip
+        ) {
           const hand = bones.get(side + "Hand")!;
           rotation(hand.parent!, parentQ).invert();
           rotation(weaponPivot, worldQ).multiply(wristRotations[side]);
@@ -1423,6 +1638,13 @@ export function createCharacter(
       }
       if (!holdingKnife && !holdingNade)
         for (const pose of gripPoses) pose.bone.quaternion.copy(pose.q); // fists (gun or toggle)
+      else if (holdingKnife)
+        // The knife hand closed round the handle (an open hand read as empty), the other a
+        // loose guard.
+        for (const pose of gripPoses)
+          pose.bone.quaternion.copy(
+            !pose.left ? pose.fist : swinging && swingKind === "slash" ? pose.open : pose.q,
+          );
       if (climbing && ladderRig) {
         // The climb drives the whole body (hands on the rungs, feet on the rungs below).
         ladderRig.apply(motion.ladder!.cycles);
