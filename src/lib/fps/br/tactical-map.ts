@@ -209,6 +209,7 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
   const roofs = {
     dwelling: ["rgb(150, 82, 62)", "rgb(122, 76, 60)", "rgb(168, 160, 150)", "rgb(98, 92, 88)"],
     other: ["rgb(196, 194, 188)", "rgb(176, 178, 176)", "rgb(160, 164, 168)", "rgb(206, 202, 192)"],
+    ruins: ["rgb(191, 182, 150)", "rgb(171, 170, 139)", "rgb(202, 192, 163)", "rgb(156, 160, 130)"],
   };
   const hash = (x: number, z: number) => {
     let h = Math.imul(Math.round(x) ^ 0x2545f491, 0x9e3779b1) ^ Math.round(z * 7);
@@ -225,7 +226,13 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
     const pw = Math.max(1.2, fw * s),
       pd = Math.max(1.2, fd * s);
     const ring = (def as { ring?: string }).ring;
-    const set = ring === "dwelling" || ring === "outbuilding" ? roofs.dwelling : roofs.other;
+    // The temple town is pale weathered stone, distinct from modern metal and concrete roofs.
+    const set =
+      p.poi === "forgotten-ruins"
+        ? roofs.ruins
+        : ring === "dwelling" || ring === "outbuilding"
+          ? roofs.dwelling
+          : roofs.other;
     boxes.push([P(p.x - fw / 2), P(p.z - fd / 2), pw, pd, set[hash(p.x, p.z)]!]);
   }
   g.fillStyle = "rgba(10, 14, 10, 0.45)";

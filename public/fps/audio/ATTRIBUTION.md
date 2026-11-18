@@ -344,6 +344,23 @@ src/lib/fps/br/seagulls.ts, br-arena.ts):
   seam, levelled to -24 dBFS RMS, stored between copies of its own last and first 0.25 s
   (`AMBIENCE_LOOPS.seagulls` in br-audio.ts), mono 22.05 kHz, MP3 at 80 kb/s.
 
+### The Island Airfield's aircraft (2026-11-17)
+
+The owner's three supplied recordings, battle royale only (the Cessna 172SP:
+src/lib/fps/br/aircraft-audio.ts), mono 44.1 kHz, MP3 at 128 kb/s, peaks at -1 dBFS:
+
+- `br-plane-start-v1.mp3` ("airplane_start_up_sound.mp3", 12.1 s): the starter cranking and the
+  engine catching into its idle, from 0:00.2 so the catch falls 4.5 s in (the starter's time in
+  aircraft.ts), the last 0.8 s faded out. Played from the starter's own moment on the server's
+  clock, so everyone hears the catch when the propeller takes it.
+- `br-plane-roll-loop-v1.mp3` ("Plane_take_off_sound.mp3", 10 s): the loudest stretch of the
+  take-off run, 0:03.0 to 0:06.4, the following 0.6 s cross-faded (equal power) into its start,
+  stored between copies of its own last and first 0.25 s. The engine on the ground (taxi and the
+  take-off roll), its pitch and level with the RPM and the speed.
+- `br-plane-drive-loop-v1.mp3` ("Driving_airplane_sound.mp3", 45.7 s): 22 s from 0:21, the
+  following 1.2 s cross-faded into its start, stored the same way. The engine and propeller in
+  flight (and the idle under it, slowed).
+
 ### Climbing rope (2026-11-12)
 
 The owner's supplied recording, battle royale only (the Iron Peaks climbing ropes,
