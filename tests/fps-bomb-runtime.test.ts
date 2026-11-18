@@ -13,6 +13,7 @@ const sockets: Socket[] = [];
 const revoked = new Set<string>();
 let delayedSession = "";
 let delayStarted: (() => void) | undefined;
+let delayRelease: (() => void) | undefined;
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function ticket(
@@ -113,8 +114,13 @@ describe("Practice Bomb Defusal runtime", () => {
             user_id: string;
           }>;
           if (requested.some((s) => s.session_id === delayedSession)) {
-            delayStarted?.();
-            await pause(400);
+            // Held until the test releases it (or 10 s), so the test controls how long the
+            // read is in flight instead of racing a fixed delay.
+            await new Promise<void>((resolve) => {
+              delayRelease = resolve;
+              setTimeout(resolve, 10_000);
+              delayStarted?.();
+            });
           }
           return Response.json(
             requested.map((s) => ({
@@ -233,18 +239,28 @@ describe("Practice Bomb Defusal runtime", () => {
           throw Error("Periodic check did not start");
         }),
       ]);
-      const count = a.frames.filter((f) => f.type === "bomb-snapshot").length;
+      // While the read is held, snapshots keep coming (the read does not hold the room).
+      const snapshots = () => a.frames.filter((f) => f.type === "bomb-snapshot").length;
+      const count = snapshots();
+      await until(a.frames, () => snapshots() - count >= 2, 5000);
+      expect(a.s.readyState).toBe(1);
+      // The database now says revoked; the held read completes and closes the session.
       revoked.add(sub);
-      await pause(200);
-      expect(a.frames.filter((f) => f.type === "bomb-snapshot").length - count).toBeGreaterThan(1);
-      await pause(700);
+      delayedSession = ""; // only the periodic read is held; the re-admission below is not
+      delayRelease?.();
+      const closing = Date.now();
+      while (a.s.readyState === 1 && Date.now() - closing < 5000) await pause(20);
+      expect(a.s.readyState).not.toBe(1);
+      await pause(100);
       const ended = a.frames.length;
       await pause(250);
       expect(a.frames.length).toBe(ended);
       expect((await connect(id, await ticket(id, sub))).status).toBe(403);
     } finally {
+      delayRelease?.();
       delayedSession = "";
       delayStarted = undefined;
+      delayRelease = undefined;
     }
   }, 30000);
 

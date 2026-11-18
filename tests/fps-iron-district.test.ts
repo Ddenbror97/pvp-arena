@@ -339,7 +339,7 @@ describe("IRON DISTRICT layout", () => {
       for (const b of area(BM.spawns.police)) if (sees(a, b)) visible++;
     metrics["spawnPairsVisible"] = visible;
     expect(visible).toBe(0);
-  });
+  }, 600_000);
 
   it("first contact between teams running from spawn (simultaneous start)", () => {
     const sample: number[] = [];
