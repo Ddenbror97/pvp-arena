@@ -210,6 +210,14 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
     dwelling: ["rgb(150, 82, 62)", "rgb(122, 76, 60)", "rgb(168, 160, 150)", "rgb(98, 92, 88)"],
     other: ["rgb(196, 194, 188)", "rgb(176, 178, 176)", "rgb(160, 164, 168)", "rgb(206, 202, 192)"],
     ruins: ["rgb(191, 182, 150)", "rgb(171, 170, 139)", "rgb(202, 192, 163)", "rgb(156, 160, 130)"],
+    // The Old Fortress: grey castle stone and slate, its courtyard's cobbles paler.
+    fortress: [
+      "rgb(122, 120, 116)",
+      "rgb(110, 109, 106)",
+      "rgb(132, 129, 122)",
+      "rgb(104, 104, 104)",
+    ],
+    court: ["rgb(158, 154, 144)", "rgb(158, 154, 144)", "rgb(158, 154, 144)", "rgb(158, 154, 144)"],
   };
   const hash = (x: number, z: number) => {
     let h = Math.imul(Math.round(x) ^ 0x2545f491, 0x9e3779b1) ^ Math.round(z * 7);
@@ -230,9 +238,13 @@ function drawVectors(g: CanvasRenderingContext2D, src: MapSource, size: number) 
     const set =
       p.poi === "forgotten-ruins"
         ? roofs.ruins
-        : ring === "dwelling" || ring === "outbuilding"
-          ? roofs.dwelling
-          : roofs.other;
+        : p.poi === "old-fortress" && p.model.startsWith("fort-")
+          ? p.model === "fort-base"
+            ? roofs.court
+            : roofs.fortress
+          : ring === "dwelling" || ring === "outbuilding"
+            ? roofs.dwelling
+            : roofs.other;
     boxes.push([P(p.x - fw / 2), P(p.z - fd / 2), pw, pd, set[hash(p.x, p.z)]!]);
   }
   g.fillStyle = "rgba(10, 14, 10, 0.45)";

@@ -16,7 +16,7 @@ BASE m over the ground), so the ground here is:
  - the approach: a cleared track from the bridgehead to the road in the north-east (the ground
    there is gentle and left as it is);
  - the land cover: the hill cleared of forest within CLEAR m (a fortress keeps its field of fire),
-   grass on the ledge, the ditch and the track, rock on the steep faces.
+   grass on the ledge, the ditch and the track, rock on the steep faces, built-up under the base.
 
 Roads are left where they are (ROAD_KEEP m, easing in over KEEP_BLEND m).
 
@@ -58,7 +58,7 @@ CLEAR = 175.0
 RADIUS = 270.0
 ROAD_KEEP, KEEP_BLEND = 9.0, 22.0
 
-WATER, GRASS, FOREST, ROCK, ROAD = 0, 2, 4, 5, 7
+WATER, GRASS, FOREST, ROCK, URBAN, ROAD = 0, 2, 4, 5, 6, 7
 
 
 def read_h(path):
@@ -218,6 +218,9 @@ def main():
     steep = np.hypot(gx_, gz_)[hj, hi] > 0.75
     near = np.hypot(clx, clz) < RADIUS - 30
     sub[steep & near & ~keep] = ROCK
+    # Built-up under the fortress's base (its footprint, as every building pad is partly built):
+    # nothing grows there, and the ground's shade under it is paving, not grass.
+    sub[(np.abs(clx) < BX + 2) & (np.abs(clz) < BZ + 2)] = URBAN
     C[cj0:cj1, ci0:ci1] = sub
     OUT_C.write_bytes(raw[:8] + zlib.compress(C.tobytes(), 9))
 

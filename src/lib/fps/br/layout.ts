@@ -2213,29 +2213,28 @@ const FOOT: Record<string, [number, number]> = {
   "bay-planter": [0.5, 0.5],
   "bay-bike-stand": [1.6, 0.4],
   // The Old Fortress's downloads (2026-11-17).
-  "anvil": [0.6, 1.0],
+  anvil: [0.6, 1.0],
   "anvil-trough": [3.2, 2.3],
   "arch-door": [3.4, 2.1],
   "arched-door": [1.4, 0.2],
-  "ballista": [1.9, 2.4],
+  ballista: [1.9, 2.4],
   "ballista-b": [3.5, 4.2],
-  "barrel-oak": [0.8, 0.8],
   "battering-ram": [6.5, 6.5],
-  "bell": [0.7, 0.7],
-  "bookshelf": [1.8, 0.7],
-  "bookshelves": [2.5, 0.8],
-  "cannon": [1.3, 2.3],
+  bell: [0.7, 0.7],
+  bookshelf: [1.8, 0.7],
+  bookshelves: [2.5, 0.8],
+  cannon: [1.3, 2.3],
   "cannon-b": [2.6, 1.5],
-  "cannonballs": [1.2, 1.2],
+  cannonballs: [1.2, 1.2],
   "castle-flag-blue": [1.4, 5.0],
   "castle-flag-red": [2.6, 4.5],
-  "catapult": [6.4, 7.0],
+  catapult: [6.4, 7.0],
   "catapult-b": [5.0, 6.0],
-  "cauldron": [1.0, 1.0],
+  cauldron: [1.0, 1.0],
   "chandelier-ring": [1.8, 1.8],
   "city-gate": [6.0, 13.2],
   "crusader-shield": [1.0, 0.4],
-  "gargoyle": [0.8, 0.9],
+  gargoyle: [0.8, 0.9],
   "hanging-banner": [5.7, 0.2],
   "hay-bale": [0.9, 1.6],
   "heater-shield": [0.9, 0.4],
@@ -2244,7 +2243,7 @@ const FOOT: Record<string, [number, number]> = {
   "lantern-iron": [0.3, 0.3],
   "market-stall": [2.8, 4.9],
   "market-stall-b": [4.4, 1.9],
-  "mortar": [1.8, 1.3],
+  mortar: [1.8, 1.3],
   "old-cart": [1.4, 3.6],
   "old-chest-b": [1.0, 0.6],
   "old-well": [2.6, 1.9],
@@ -2257,7 +2256,7 @@ const FOOT: Record<string, [number, number]> = {
   "tavern-bench": [2.0, 0.4],
   "tavern-stool": [0.4, 0.4],
   "tavern-table": [2.2, 1.0],
-  "throne": [0.8, 1.1],
+  throne: [0.8, 1.1],
   "weapon-rack": [2.0, 0.9],
   "weapon-rack-b": [1.7, 1.3],
   "wooden-cart": [1.9, 4.6],
@@ -7104,15 +7103,15 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
   for (const [i, f] of frames("fort-tower-round").entries()) {
     const north = f[2] < 0;
     torch(f, -6.8, 11.5, 0, 1);
-    rel(f, "barrel-oak", -3.5, 10, 3.5);
+    rel(f, "cove-barrel", -3.5, 10, 3.5);
     rel(f, "old-chest-b", 2, 16, 4, 2);
     rel(f, i % 2 ? "cannon" : "mortar", -2.5, 28, 2, facing(f, north ? 2 : 0));
     rel(f, i % 2 ? "castle-flag-blue" : "castle-flag-red", 2.5, 28, 2.5);
   }
   for (const f of frames("fort-tower-square")) {
     torch(f, -4.5, 11.5, 0, 1);
-    rel(f, "barrel-oak", -3.6, 10, 3.6);
-    rel(f, "barrel-oak", -2.7, 10, 3.8);
+    rel(f, "cove-barrel", -3.6, 10, 3.6);
+    rel(f, "cove-barrel", -2.7, 10, 3.8);
     // Outward: the tower's own +z (it stands astride the wall, its door to the courtyard).
     rel(f, "ballista", 0, 28, -3, 0);
   }
@@ -7127,8 +7126,8 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
   rel(G, "weapon-rack-b", 4.23, 10, -10, 1);
   torch(G, 3.6, 11.5, -4, 1);
   rel(G, "cauldron", -2, 16, -6);
-  rel(G, "barrel-oak", -11.5, 16, -11.5);
-  rel(G, "barrel-oak", -10.6, 16, -11.6);
+  rel(G, "cove-barrel", -11.5, 16, -11.5);
+  rel(G, "cove-barrel", -10.6, 16, -11.6);
   torch(G, -6, 17.5, -12.5, 0);
   torch(G, 4, 17.5, -12.5, 0);
   rel(G, "old-chest-b", -10, 22, -11.9);
@@ -7187,8 +7186,8 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
   for (const x of [-9, -4]) rel(K, "spear-rack", x, 18, 11.68, 2);
   for (const z of [-4, 4]) rel(K, "heater-shield", -14.84, 19.6, z, 1);
   rel(K, "old-chest-b", -13.5, 18, 0, 1);
-  rel(K, "barrel-oak", 5, 18, -11);
-  rel(K, "barrel-oak", 6.2, 18, -11.2);
+  rel(K, "cove-barrel", 5, 18, -11);
+  rel(K, "cove-barrel", 6.2, 18, -11.2);
   rel(K, "cannonballs", 8, 18, 10);
   torch(K, 15, 19.5, -8, 3);
   for (const z of [-3.5, 3.5]) torch(K, -15, 19.5, z, 1);
@@ -7228,8 +7227,8 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
   rel(R, "tavern-table", 3, 0, 7, 1);
   rel(R, "tavern-stool", 2.2, 0, 6.4);
   rel(R, "tavern-stool", 3.8, 0, 7.6);
-  rel(R, "barrel-oak", 6.5, 0, 16.3);
-  rel(R, "barrel-oak", 5.6, 0, 16.4);
+  rel(R, "cove-barrel", 6.5, 0, 16.3);
+  rel(R, "cove-barrel", 5.6, 0, 16.4);
   rel(R, "old-chest-b", 3, 0, 16.4, 2);
   for (const z of [-7, 8]) torch(R, 7.25, 1.5, z, 3);
   torch(R, 0, 1.5, -17, 0);
@@ -7260,7 +7259,7 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
     [61, -21.1],
     [60, -20.5],
   ] as const)
-    at("barrel-oak", x, 10, z);
+    at("cove-barrel", x, 10, z);
   at("hay-bale", -70.4, 10, 66.8, 1);
   at("hay-bale", -67.6, 10, 67, 1);
   at("hay-bale", -64.9, 10, 66.6);
@@ -7284,10 +7283,12 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
   // The cells: straw, a chest, a barrel, bones.
   for (const c of [-50, -30, 10, 40]) at("hay-bale", c + 1.8, 0, 48.4, 1);
   for (const c of [-20, 30]) at("old-chest-b", c - 2.4, 0, 48.4, 2);
-  at("barrel-oak", 47.5, 0, 48.4);
+  at("cove-barrel", 47.5, 0, 48.4);
   at("skull-pile", -10, 0, 47.5);
-  // The corridor: torches along its north wall.
+  // The corridor: torches along its north wall, arched doors at its ends.
   for (const x of [-45, -35, -25, -17, -5, 5, 15, 25, 35, 45]) torch(BASE, x, 1.5, 38, 0);
+  at("arched-door", -55.92, 0, 39.75, 1);
+  at("arched-door", 55.92, 0, 39.75, 3);
   // The great vault.
   for (const x of [-15, -5, 5, 15]) torch(BASE, x, 1.5, -34, 0);
   for (const x of [-15, -6, 6, 15]) torch(BASE, x, 1.5, 6, 2);
@@ -7306,7 +7307,7 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
     [21, 2],
     [21, 3.1],
   ] as const)
-    at("barrel-oak", x, 0, z);
+    at("cove-barrel", x, 0, z);
   at("rusted-chandelier", -5.5, 3.5, -19);
   at("rusted-chandelier", 5.5, 3.5, -9);
   at("cannonballs", -20.8, 0, 3.6);
@@ -7319,6 +7320,7 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
     torch(BASE, x, 6.5, 18, 2);
   }
   torch(BASE, 15, 6.5, 8, 3);
+  at("arched-door", 14.92, 5, 2, 3);
   for (const [x, z] of [
     [13.9, 16.6],
     [12.9, 16.7],
@@ -7326,7 +7328,7 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
     [13.9, -0.6],
     [12.9, -0.7],
   ] as const)
-    at("barrel-oak", x, 5, z);
+    at("cove-barrel", x, 5, z);
   // The galleries and the cellars under the hall and the barracks.
   for (const x of [-65, -50, -30, -10, 10, 30, 50, 65]) torch(BASE, x, 6.5, 29.5, 2);
   for (const x of [-60, -35, -10, 15, 40, 60]) torch(BASE, x, 6.5, -44, 0);
@@ -7343,7 +7345,7 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
     [77.3, -20],
     [77.3, -18.9],
   ] as const)
-    at("barrel-oak", x, 5, z);
+    at("cove-barrel", x, 5, z);
   at("cannonballs", 76.8, 5, 20);
 
   // ---- Outside: the siege on the ledge (y 0), the outer gate tower, carts at the bridgehead.

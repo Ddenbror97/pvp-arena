@@ -9625,7 +9625,7 @@
       "collision": "solid",
       "use": "Old Fortress (2026-11-17): the king's throne in the keep's great chamber",
       "lodTris": [
-        5000,
+        6600,
         1800,
         500
       ],
@@ -10149,22 +10149,6 @@
       },
       "collision": "none",
       "use": "Old Fortress (2026-11-17): long banners hung on the keep's courtyard face"
-    },
-    {
-      "id": "barrel-oak",
-      "key": "sf:63105b753af54ba096de83866c192d90",
-      "class": "small",
-      "fit": {
-        "y": 1.0
-      },
-      "collision": "solid",
-      "use": "Old Fortress (2026-11-17): oak barrels in the cellars and the stables",
-      "lodTris": [
-        1200,
-        500,
-        150
-      ],
-      "ring": "furniture"
     },
     {
       "id": "fort-barracks",
@@ -10853,6 +10837,11 @@
       "key": "sf:976a3f158bcb4f4ea90f18d1fa78ca0c",
       "title": "portcullis (Old Fortress, 2026-11-17)",
       "reason": "a stone gate wall with a closed portcullis, not a portcullis to hang in the gate's slot"
+    },
+    {
+      "key": "sf:63105b753af54ba096de83866c192d90",
+      "title": "barrel-oak (Old Fortress, 2026-11-17)",
+      "reason": "its mesh would not simplify (3.4k triangles at every LOD); Fisher's Cove's barrel (cove-barrel) stands in the fortress instead"
     }
   ]
 }

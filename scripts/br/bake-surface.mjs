@@ -126,10 +126,10 @@ for (let row = 0; row < size; row++)
 // Raw RGB is decoded with the same square approximation as the existing tile arrays.
 await sharp(pixels, { raw: { width: size, height: size, channels: 3 } })
   .webp({ quality: 90, effort: 6 })
-  .toFile(dir + "surface-v2.webp");
+  .toFile(dir + "surface-v3.webp");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 fs.writeFileSync(
-  dir + "surface-v2.json",
+  dir + "surface-v3.json",
   JSON.stringify(
     {
       size,
@@ -143,7 +143,7 @@ fs.writeFileSync(
           surfaceSourceHash(f, fs.readFileSync(f)),
         ]),
       ),
-      output: sha(fs.readFileSync(dir + "surface-v2.webp")),
+      output: sha(fs.readFileSync(dir + "surface-v3.webp")),
     },
     null,
     2,
@@ -151,8 +151,8 @@ fs.writeFileSync(
 );
 console.log(
   JSON.stringify({
-    output: dir + "surface-v2.webp",
+    output: dir + "surface-v3.webp",
     size,
-    bytes: fs.statSync(dir + "surface-v2.webp").size,
+    bytes: fs.statSync(dir + "surface-v3.webp").size,
   }),
 );

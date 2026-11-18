@@ -18,7 +18,14 @@ for (const [m] of FORTRESS)
   models[m] ??= JSON.parse(readFileSync(`art/br/procedural/${m}.boxes.json`, "utf8"));
 const collision = { voxel: 0.1, models } as CollisionData;
 const hf = { heightAt: () => 0, raycast: () => null } as unknown as Heightfield;
-const placements: Placement[] = FORTRESS.map(([model, x, y, z, turn]) => ({ model, x, y, z, turn, poi: "test" }));
+const placements: Placement[] = FORTRESS.map(([model, x, y, z, turn]) => ({
+  model,
+  x,
+  y,
+  z,
+  turn,
+  poi: "test",
+}));
 let world = new StaticWorld(hf, placements, collision, null);
 // REAL=1: the island's own layout (the dressing in place) and collision, at the POI.
 let OX = 0,
@@ -44,9 +51,14 @@ if (process.env.REAL) {
   world = new StaticWorld(rhf, near, col, null);
 }
 const routes = Object.fromEntries(
-  Object.entries(JSON.parse(readFileSync(process.env.ROUTES!, "utf8")) as Record<string, number[][]>)
+  Object.entries(
+    JSON.parse(readFileSync(process.env.ROUTES!, "utf8")) as Record<string, number[][]>,
+  )
     .filter(([k]) => !k.startsWith("_"))
-    .map(([k, r]) => [k, r.map(([x, z, y], i) => (i ? [x! + OX, z! + OZ] : [x! + OX, z! + OZ, (y ?? 0.5) + OY]))]),
+    .map(([k, r]) => [
+      k,
+      r.map(([x, z, y], i) => (i ? [x! + OX, z! + OZ] : [x! + OX, z! + OZ, (y ?? 0.5) + OY])),
+    ]),
 );
 const BACK = !!process.env.BACK;
 let bad = 0;
@@ -74,7 +86,12 @@ for (const [name, fwd] of Object.entries(routes)) {
       stepBody(
         world,
         body,
-        { forward: 1, strafe: 0, yaw: Math.atan2(body.x - x!, body.z - z!), sprint: !!process.env.SPRINT } as never,
+        {
+          forward: 1,
+          strafe: 0,
+          yaw: Math.atan2(body.x - x!, body.z - z!),
+          sprint: !!process.env.SPRINT,
+        } as never,
         34,
       );
       const d = Math.hypot(body.x - x!, body.z - z!);
@@ -82,11 +99,14 @@ for (const [name, fwd] of Object.entries(routes)) {
       else stall = 0;
       last = d;
       if (stall > 12) break;
-      if (stall > 4 && !note) note = ` (stall at ${(body.x - OX).toFixed(1)},${(body.y - OY).toFixed(1)},${(body.z - OZ).toFixed(1)})`;
+      if (stall > 4 && !note)
+        note = ` (stall at ${(body.x - OX).toFixed(1)},${(body.y - OY).toFixed(1)},${(body.z - OZ).toFixed(1)})`;
     }
     const s = stall > 12 || ticks >= 600;
     if (s) ok = false;
-    out.push(`${s ? "STALL" : "ok"}→${(x! - OX).toFixed(1)},${(z! - OZ).toFixed(1)}@y${(body.y - OY).toFixed(1)}${s ? `(at ${(body.x - OX).toFixed(1)},${(body.z - OZ).toFixed(1)})` : note}`);
+    out.push(
+      `${s ? "STALL" : "ok"}→${(x! - OX).toFixed(1)},${(z! - OZ).toFixed(1)}@y${(body.y - OY).toFixed(1)}${s ? `(at ${(body.x - OX).toFixed(1)},${(body.z - OZ).toFixed(1)})` : note}`,
+    );
     if (note) ok = false;
   }
   if (!ok) bad++;

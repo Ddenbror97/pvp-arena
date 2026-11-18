@@ -2652,60 +2652,6 @@
     }
    ]
   },
-  "barrel-oak": {
-   "title": "Wooden Barrel (Low Poly, PBR)",
-   "author": "Karthikeyan D | 3D Game Artist",
-   "source": "https://sketchfab.com/3d-models/wooden-barrel-low-poly-pbr-63105b753af54ba096de83866c192d90",
-   "licence": "CC BY 4.0",
-   "class": "small",
-   "ring": "furniture",
-   "use": "Old Fortress (2026-11-17): oak barrels in the cellars and the stables",
-   "scale": 0.297117,
-   "sourceTris": 40384,
-   "size": [
-    0.74,
-    1,
-    0.74
-   ],
-   "lods": [
-    {
-     "file": "/fps/br/models/barrel-oak.lod0.glb",
-     "tris": 3427,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 14,
-     "size": [
-      0.74,
-      1,
-      0.74
-     ]
-    },
-    {
-     "file": "/fps/br/models/barrel-oak.lod1.glb",
-     "tris": 3427,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 14,
-     "size": [
-      0.74,
-      1,
-      0.74
-     ]
-    },
-    {
-     "file": "/fps/br/models/barrel-oak.lod2.glb",
-     "tris": 3420,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 14,
-     "size": [
-      0.74,
-      1,
-      0.74
-     ]
-    }
-   ]
-  },
   "basketball-hoop": {
    "title": "Basketball Hoop",
    "author": "paethon",
@@ -20012,10 +19958,10 @@
     },
     {
      "file": "/fps/br/models/fort-cellar-stair.fort-v1.lod2.glb",
-     "tris": 48,
+     "tris": 24,
      "draws": 1,
      "textureMB": 0,
-     "kB": 3,
+     "kB": 2,
      "size": [
       3.3,
       3.8,
@@ -20039,11 +19985,11 @@
     31.7,
     22
    ],
-   "sourceTris": 1978,
+   "sourceTris": 1988,
    "lods": [
     {
      "file": "/fps/br/models/fort-chapel.fort-v1.lod0.glb",
-     "tris": 1978,
+     "tris": 1988,
      "draws": 4,
      "textureMB": 4,
      "kB": 141,
@@ -20094,14 +20040,14 @@
     37.5,
     22.4
    ],
-   "sourceTris": 3532,
+   "sourceTris": 3612,
    "lods": [
     {
      "file": "/fps/br/models/fort-gatehouse.fort-v1.lod0.glb",
-     "tris": 3532,
+     "tris": 3612,
      "draws": 6,
      "textureMB": 5,
-     "kB": 199,
+     "kB": 201,
      "size": [
       31.2,
       37.5,
@@ -20110,10 +20056,10 @@
     },
     {
      "file": "/fps/br/models/fort-gatehouse.fort-v1.lod1.glb",
-     "tris": 2474,
+     "tris": 2554,
      "draws": 5,
      "textureMB": 1,
-     "kB": 83,
+     "kB": 85,
      "size": [
       31.2,
       37.5,
@@ -20149,14 +20095,14 @@
     15.5,
     48.8
    ],
-   "sourceTris": 742,
+   "sourceTris": 752,
    "lods": [
     {
      "file": "/fps/br/models/fort-hall.fort-v1.lod0.glb",
-     "tris": 742,
+     "tris": 752,
      "draws": 5,
      "textureMB": 4,
-     "kB": 118,
+     "kB": 119,
      "size": [
       17.3,
       15.5,
@@ -20204,14 +20150,14 @@
     36.5,
     29.4
    ],
-   "sourceTris": 5104,
+   "sourceTris": 5760,
    "lods": [
     {
      "file": "/fps/br/models/fort-keep.fort-v1.lod0.glb",
-     "tris": 5104,
+     "tris": 5760,
      "draws": 5,
      "textureMB": 4,
-     "kB": 201,
+     "kB": 213,
      "size": [
       35.4,
       36.5,
@@ -20220,10 +20166,10 @@
     },
     {
      "file": "/fps/br/models/fort-keep.fort-v1.lod1.glb",
-     "tris": 3064,
+     "tris": 3720,
      "draws": 4,
      "textureMB": 0.75,
-     "kB": 86,
+     "kB": 98,
      "size": [
       35.4,
       36.5,
@@ -20424,14 +20370,14 @@
     29.8,
     19.2
    ],
-   "sourceTris": 3744,
+   "sourceTris": 3834,
    "lods": [
     {
      "file": "/fps/br/models/fort-tower-round.fort-v1.lod0.glb",
-     "tris": 3744,
+     "tris": 3834,
      "draws": 5,
      "textureMB": 4,
-     "kB": 182,
+     "kB": 184,
      "size": [
       19.2,
       29.8,
@@ -20440,10 +20386,10 @@
     },
     {
      "file": "/fps/br/models/fort-tower-round.fort-v1.lod1.glb",
-     "tris": 2094,
+     "tris": 2144,
      "draws": 4,
      "textureMB": 0.75,
-     "kB": 71,
+     "kB": 72,
      "size": [
       19.2,
       29.8,
@@ -26329,10 +26275,10 @@
    "lods": [
     {
      "file": "/fps/br/models/kings-throne.lod0.glb",
-     "tris": 6529,
+     "tris": 6595,
      "draws": 2,
      "textureMB": 1.33,
-     "kB": 151,
+     "kB": 152,
      "size": [
       1.87,
       2.6,

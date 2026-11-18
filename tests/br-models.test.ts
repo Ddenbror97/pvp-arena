@@ -119,7 +119,11 @@ describe("Project Island models", () => {
     // plants, hanging vines ~2.7 MB of it, rocks, shrines, pillars, chests), ~6.9 MB; its
     // torches, Chac Mool, skeletons and ladders, ~0.3 MB, 2026-11-17; East Works rebuilt: 11
     // procedural models (boiler towers, chimneys, halls, tanks, the yard floor) and the owner's
-    // 14 downloads for it, ~2.8 MB, 2026-11-17).
-    expect(total / 1024).toBeLessThan(84);
+    // 14 downloads for it, ~2.8 MB, 2026-11-17; the Old Fortress: 23 procedural models (the
+    // base and its vaults, towers, walls, gatehouse, keep, hall, barracks, chapel, stables, the
+    // bridge, the breach, the scaffold), ~3.3 MB, and the owner's 47 downloads to furnish and
+    // besiege it (siege engines, cannons, the outer gate, thrones, tables, racks, shields,
+    // banners, chandeliers, the cage, the bell, the smithy, carts, flags), ~3.1 MB, 2026-11-17).
+    expect(total / 1024).toBeLessThan(91);
   });
 });

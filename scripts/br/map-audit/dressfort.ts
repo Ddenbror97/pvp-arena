@@ -19,7 +19,9 @@ const buf = (p: string) => {
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
 const meta = JSON.parse(readFileSync(`public${WORLD_ASSETS.meta}`, "utf8")) as WorldMeta;
-const collision = JSON.parse(readFileSync(`public${WORLD_ASSETS.collision}`, "utf8")) as CollisionData;
+const collision = JSON.parse(
+  readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
+) as CollisionData;
 const manifest = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")) as {
   models: Record<string, { size: number[] }>;
 };
@@ -48,7 +50,10 @@ for (const p of here) {
       [w / 2 - 0.1, d / 2 - 0.1],
     ];
     const low = pts.filter(([a, b]) => {
-      const g = Math.max(world.supportAt(p.x + a!, p.z + b!, 0.05, p.y + 0.1), hf.heightAt(p.x + a!, p.z + b!));
+      const g = Math.max(
+        world.supportAt(p.x + a!, p.z + b!, 0.05, p.y + 0.1),
+        hf.heightAt(p.x + a!, p.z + b!),
+      );
       return p.y - g > 0.08;
     }).length;
     if (low > 1) issues.push(`${low}/5 points unsupported`);

@@ -46,8 +46,22 @@ const setup = (async () => {
   return { hf, island, near, world: new StaticWorld(hf, near, collision, null) };
 })();
 
-type Walk = { stalls: number; ticks: number; longest: number; fall: number; drift: number; at: string; fellAt: string };
-function walk(world: StaticWorld, body: BrBody, points: number[][], sprint: boolean, where: string) {
+type Walk = {
+  stalls: number;
+  ticks: number;
+  longest: number;
+  fall: number;
+  drift: number;
+  at: string;
+  fellAt: string;
+};
+function walk(
+  world: StaticWorld,
+  body: BrBody,
+  points: number[][],
+  sprint: boolean,
+  where: string,
+) {
   const nominal = 5 * (sprint ? 1.5 : 1) * (1 / 30);
   const w: Walk = { stalls: 0, ticks: 0, longest: 0, fall: 0, drift: 0, at: "", fellAt: "" };
   const here = (b: BrBody) =>
@@ -76,7 +90,10 @@ function walk(world: StaticWorld, body: BrBody, points: number[][], sprint: bool
       const before = { ...body };
       stepBody(world, body, input, 34);
       stepBody(world, client, input, 34);
-      w.drift = Math.max(w.drift, Math.hypot(client.x - body.x, client.y - body.y, client.z - body.z));
+      w.drift = Math.max(
+        w.drift,
+        Math.hypot(client.x - body.x, client.y - body.y, client.z - body.z),
+      );
       w.ticks++;
       const left = Math.hypot(before.x - x!, before.z - z!);
       if (Math.hypot(body.x - before.x, body.z - before.z) < Math.min(nominal, left) * 0.5) {

@@ -93,7 +93,7 @@ function carve(b, cuts) {
 function merge(list) {
   const out = list.map((b) => [...b]);
   const eq = (a, b) => Math.abs(a - b) < 1e-6;
-  for (let changed = true; changed; ) {
+  for (let changed = true; changed;) {
     changed = false;
     for (let i = 0; i < out.length && !changed; i++)
       for (let j = i + 1; j < out.length && !changed; j++) {
@@ -145,20 +145,31 @@ function kit() {
       k.box(p, m, tint, { skip, lod, collide: lod === 0 });
     }
   };
-  const mass = (b, cuts = [], { m = STONE, top = null, tint = WHITE, farTint = FAR_STONE, farBox = true } = {}) => {
+  const mass = (
+    b,
+    cuts = [],
+    { m = STONE, top = null, tint = WHITE, farTint = FAR_STONE, farBox = true } = {},
+  ) => {
     draw(b, carve(b, cuts), m, top, 0, tint);
     const e = 1e-6;
     const outer = cuts.filter(
       (c) =>
         overlaps(b, c) &&
-        (c[0] <= b[0] + e || c[3] >= b[3] - e || c[2] <= b[2] + e || c[5] >= b[5] - e || c[4] >= b[4] - e),
+        (c[0] <= b[0] + e ||
+          c[3] >= b[3] - e ||
+          c[2] <= b[2] + e ||
+          c[5] >= b[5] - e ||
+          c[4] >= b[4] - e),
     );
     draw(b, carve(b, outer), m, top, "mid", tint);
     if (farBox) far.box(b, PAINT, farTint, { collide: false });
   };
   /** A floor surface drawn at y (near LOD), a thin collision slab under it. */
   const floor = (x0, z0, x1, z1, y, m = FLOOR, { collide = true, holes = [] } = {}) => {
-    for (const p of carve([x0, y - 0.3, z0, x1, y, z1], holes.map((h) => [h[0], y - 1, h[1], h[2], y + 1, h[3]]))) {
+    for (const p of carve(
+      [x0, y - 0.3, z0, x1, y, z1],
+      holes.map((h) => [h[0], y - 1, h[1], h[2], y + 1, h[3]]),
+    )) {
       k.quad([p[0], y, p[2]], [p[0], y, p[5]], [p[3], y, p[5]], [p[3], y, p[2]], m, WHITE, {
         n: [0, 1, 0],
         lod: 0,
@@ -171,7 +182,16 @@ function kit() {
    * rising `rise` from y in RISE steps of TREAD; solid from `base` (default: y) up to each tread.
    * Returns the run's end.
    */
-  const flight = (axis, a, dir, c0, c1, y, rise, { base = y, m = STONE, lod = 0, tread = TREAD } = {}) => {
+  const flight = (
+    axis,
+    a,
+    dir,
+    c0,
+    c1,
+    y,
+    rise,
+    { base = y, m = STONE, lod = 0, tread = TREAD } = {},
+  ) => {
     const n = Math.round(rise / RISE);
     const rr = rise / n;
     for (let s = 0; s < n; s++) {
@@ -194,7 +214,15 @@ function kit() {
    * merlons `mw` wide with crenels `cw` between them, the parapet `sill` high under the crenels
    * and `h` high at the merlons, from y.
    */
-  const parapet = (axis, a0, a1, c0, c1, y, { h = 1.8, sill = 0.95, mw = 1.5, cw = 0.9, m = STONE, gaps = [] } = {}) => {
+  const parapet = (
+    axis,
+    a0,
+    a1,
+    c0,
+    c1,
+    y,
+    { h = 1.8, sill = 0.95, mw = 1.5, cw = 0.9, m = STONE, gaps = [] } = {},
+  ) => {
     const len = a1 - a0;
     const n = Math.max(1, Math.round((len + cw) / (mw + cw)));
     const step = (len + cw) / n;
@@ -202,7 +230,10 @@ function kit() {
     const B = (p, q, y0, y1) => (axis === "x" ? [p, y0, c0, q, y1, c1] : [c0, y0, p, c1, y1, q]);
     const cut = (p, q) => gaps.some(([g0, g1]) => q > g0 && p < g1);
     // The sill all along (gaps: broken away).
-    for (const piece of carve(B(a0, a1, y, y + sill), gaps.map(([g0, g1]) => B(g0, g1, y - 1, y + 9))))
+    for (const piece of carve(
+      B(a0, a1, y, y + sill),
+      gaps.map(([g0, g1]) => B(g0, g1, y - 1, y + 9)),
+    ))
       k.box(piece, m, WHITE, { lod: 1 });
     for (let i = 0; i < n; i++) {
       const p = a0 + i * step,
@@ -215,15 +246,31 @@ function kit() {
   const slit = (axis, at, c, y, { w = 0.18, h = 1.6, out = 1 } = {}) => {
     const e = 0.02 * out;
     if (axis === "z")
-      k.quad([c - w / 2, y, at + e], [c + w / 2, y, at + e], [c + w / 2, y + h, at + e], [c - w / 2, y + h, at + e], PAINT, DARK, {
-        n: [0, 0, out],
-        lod: 1,
-      });
+      k.quad(
+        [c - w / 2, y, at + e],
+        [c + w / 2, y, at + e],
+        [c + w / 2, y + h, at + e],
+        [c - w / 2, y + h, at + e],
+        PAINT,
+        DARK,
+        {
+          n: [0, 0, out],
+          lod: 1,
+        },
+      );
     else
-      k.quad([at + e, y, c - w / 2], [at + e, y, c + w / 2], [at + e, y + h, c + w / 2], [at + e, y + h, c - w / 2], PAINT, DARK, {
-        n: [out, 0, 0],
-        lod: 1,
-      });
+      k.quad(
+        [at + e, y, c - w / 2],
+        [at + e, y, c + w / 2],
+        [at + e, y + h, c + w / 2],
+        [at + e, y + h, c - w / 2],
+        PAINT,
+        DARK,
+        {
+          n: [out, 0, 0],
+          lod: 1,
+        },
+      );
   };
   /**
    * A round wall (tower): `n` straight segments from radius r0 to r1 about (cx, cz), y0..y1, the
@@ -232,7 +279,26 @@ function kit() {
    * Drawn: the outer face (`m`), the inner face (`inner`), the top and the openings' sills and
    * lintels. Collision: boxes along each segment.
    */
-  const ring = (cx, cz, r0, r1, y0, y1, n, { phase = 0, open = [], m = STONE, inner = m, lod = 1, collide = true, top = true, only = null, ends = false } = {}) => {
+  const ring = (
+    cx,
+    cz,
+    r0,
+    r1,
+    y0,
+    y1,
+    n,
+    {
+      phase = 0,
+      open = [],
+      m = STONE,
+      inner = m,
+      lod = 1,
+      collide = true,
+      top = true,
+      only = null,
+      ends = false,
+    } = {},
+  ) => {
     const d = (2 * Math.PI) / n;
     for (let i = 0; i < n; i++) {
       if (only && !only(i)) continue;
@@ -240,10 +306,17 @@ function kit() {
         b = a + d,
         mid = a + d / 2;
       const cut = open.find(([o0, o1]) => {
-        const t = ((mid - o0) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-        return t <= (o1 - o0 + 2 * Math.PI) % (2 * Math.PI) || Math.abs(o1 - o0) >= 2 * Math.PI - 1e-6;
+        const t = (((mid - o0) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+        return (
+          t <= (o1 - o0 + 2 * Math.PI) % (2 * Math.PI) || Math.abs(o1 - o0) >= 2 * Math.PI - 1e-6
+        );
       });
-      const spans = cut ? [[y0, cut[2]], [cut[3], y1]].filter(([p, q]) => q - p > 1e-3) : [[y0, y1]];
+      const spans = cut
+        ? [
+            [y0, cut[2]],
+            [cut[3], y1],
+          ].filter(([p, q]) => q - p > 1e-3)
+        : [[y0, y1]];
       const P = (r, ang, y) => [cx + Math.cos(ang) * r, y, cz + Math.sin(ang) * r];
       for (const [ya, yb] of spans) {
         const nO = [Math.cos(mid), 0, Math.sin(mid)];
@@ -253,18 +326,30 @@ function kit() {
           lod,
         });
         if (top || yb < y1)
-          k.quad(P(r0, a, yb), P(r1, a, yb), P(r1, b, yb), P(r0, b, yb), m, WHITE, { n: [0, 1, 0], lod });
-        if (ya > y0) k.quad(P(r0, a, ya), P(r1, a, ya), P(r1, b, ya), P(r0, b, ya), m, WHITE, { n: [0, 1, 0], facing: [0, -1, 0], lod });
+          k.quad(P(r0, a, yb), P(r1, a, yb), P(r1, b, yb), P(r0, b, yb), m, WHITE, {
+            n: [0, 1, 0],
+            lod,
+          });
+        if (ya > y0)
+          k.quad(P(r0, a, ya), P(r1, a, ya), P(r1, b, ya), P(r0, b, ya), m, WHITE, {
+            n: [0, 1, 0],
+            facing: [0, -1, 0],
+            lod,
+          });
         // The segment's ends are hidden in the next ones (or the opening's reveals: drawn).
         if (cut || ends) {
           for (const ang of [a, b]) {
             const tn = [-Math.sin(ang), 0, Math.cos(ang)];
-            k.quad(P(r0, ang, ya), P(r1, ang, ya), P(r1, ang, yb), P(r0, ang, yb), m, WHITE, { n: tn, lod, both: true });
+            k.quad(P(r0, ang, ya), P(r1, ang, ya), P(r1, ang, yb), P(r0, ang, yb), m, WHITE, {
+              n: tn,
+              lod,
+              both: true,
+            });
           }
         }
         if (!collide) continue;
         // Collision: the segment as a few boxes along it (inside its thickness).
-        const steps = Math.max(1, Math.ceil(((r1 + r0) / 2) * d / 0.8));
+        const steps = Math.max(1, Math.ceil((((r1 + r0) / 2) * d) / 0.8));
         for (let s = 0; s < steps; s++) {
           const aa = a + (d * s) / steps,
             bb = a + (d * (s + 1)) / steps,
@@ -282,7 +367,15 @@ function kit() {
     }
   };
   /** Crenellations on a ring's top: the sill all round, every other segment of `n` a merlon. */
-  const ringMerlons = (cx, cz, r0, r1, y, n, { h = 1.8, sill = 0.95, phase = 0, m = STONE } = {}) => {
+  const ringMerlons = (
+    cx,
+    cz,
+    r0,
+    r1,
+    y,
+    n,
+    { h = 1.8, sill = 0.95, phase = 0, m = STONE } = {},
+  ) => {
     ring(cx, cz, r0, r1, y, y + sill, n, { phase, m });
     ring(cx, cz, r0, r1, y + sill, y + h, n, { phase, m, only: (i) => i % 2 === 0, ends: true });
   };
@@ -302,11 +395,16 @@ function kit() {
     for (let x = -r; x < r - 1e-6; x += strip) {
       const xa = x,
         xb = Math.min(r, x + strip);
-      const edge = Math.max(Math.abs(xa), Math.abs(xb));
+      // The strip's inner edge (its corners tuck under the ring round it), so the floor reaches
+      // the wall all round (the outer edge left a gap at the rim).
+      const edge = xa < 0 && xb > 0 ? 0 : Math.min(Math.abs(xa), Math.abs(xb));
       const h = Math.sqrt(Math.max(0, r * r - edge * edge));
       if (h < 0.05) continue;
       const b = [cx + xa, y - thick, cz - h, cx + xb, y, cz + h];
-      for (const p of carve(b, holes.map((o) => [o[0], y - 9, o[1], o[2], y + 9, o[3]])))
+      for (const p of carve(
+        b,
+        holes.map((o) => [o[0], y - 9, o[1], o[2], y + 9, o[3]]),
+      ))
         k.box(p, m, WHITE, { lod, skip: ["bottom"] });
     }
   };
@@ -320,11 +418,19 @@ function kit() {
       const A = [cx + Math.cos(a) * r, y, cz + Math.sin(a) * r],
         B = [cx + Math.cos(b) * r, y, cz + Math.sin(b) * r];
       const s = r / Math.hypot(r, h);
-      k.quad(A, B, apex, apex, m, WHITE, { n: [Math.cos(mid) * (h / Math.hypot(r, h)), s, Math.sin(mid) * (h / Math.hypot(r, h))], lod });
+      k.quad(A, B, apex, apex, m, WHITE, {
+        n: [Math.cos(mid) * (h / Math.hypot(r, h)), s, Math.sin(mid) * (h / Math.hypot(r, h))],
+        lod,
+      });
       // The eaves' underside.
       k.quad([cx, y, cz], A, B, B, m, WHITE, { n: [0, 1, 0], facing: [0, -1, 0], lod });
     }
-    far.box([cx - r * 0.7, y, cz - r * 0.7, cx + r * 0.7, y + h * 0.5, cz + r * 0.7], PAINT, FAR_SLATE, { collide: false });
+    far.box(
+      [cx - r * 0.7, y, cz - r * 0.7, cx + r * 0.7, y + h * 0.5, cz + r * 0.7],
+      PAINT,
+      FAR_SLATE,
+      { collide: false },
+    );
   };
   /** A pitched roof over x0..x1 × z0..z1 from eaves y, ridge h above, along x or z. */
   const gable = (x0, z0, x1, z1, y, h, along, { m = SLATE, ends = STONE, over = 0.4 } = {}) => {
@@ -338,10 +444,13 @@ function kit() {
         R1 = [R[0], R[1], z1 + over];
       k.quad(L, L1, top1, top0, m, WHITE, { facing: [-h, (x1 - x0) / 2, 0] });
       k.quad(R, top0, top1, R1, m, WHITE, { facing: [h, (x1 - x0) / 2, 0] });
-      k.quad(L, L1, top1, top0, WOOD, [0.6, 0.55, 0.5], { facing: [h, -(x1 - x0) / 2, 0] });
-      k.quad(R, top0, top1, R1, WOOD, [0.6, 0.55, 0.5], { facing: [-h, -(x1 - x0) / 2, 0] });
+      k.quad(L, L1, top1, top0, WOOD, WHITE, { facing: [h, -(x1 - x0) / 2, 0] });
+      k.quad(R, top0, top1, R1, WOOD, WHITE, { facing: [-h, -(x1 - x0) / 2, 0] });
       for (const z of [z0, z1])
-        k.quad([x0, y, z], [x1, y, z], [xm, y + h, z], [xm, y + h, z], ends, WHITE, { n: [0, 0, z === z0 ? -1 : 1], both: true });
+        k.quad([x0, y, z], [x1, y, z], [xm, y + h, z], [xm, y + h, z], ends, WHITE, {
+          n: [0, 0, z === z0 ? -1 : 1],
+          both: true,
+        });
       far.box([x0, y, z0, x1, y + h * 0.55, z1], PAINT, FAR_SLATE, { collide: false });
     } else {
       const zm = (z0 + z1) / 2;
@@ -353,10 +462,13 @@ function kit() {
         S1 = [x1 + over, S[1], z1 + over];
       k.quad(N, top0, top1, N1, m, WHITE, { facing: [0, (z1 - z0) / 2, -h] });
       k.quad(S, S1, top1, top0, m, WHITE, { facing: [0, (z1 - z0) / 2, h] });
-      k.quad(N, top0, top1, N1, WOOD, [0.6, 0.55, 0.5], { facing: [0, -(z1 - z0) / 2, h] });
-      k.quad(S, S1, top1, top0, WOOD, [0.6, 0.55, 0.5], { facing: [0, -(z1 - z0) / 2, -h] });
+      k.quad(N, top0, top1, N1, WOOD, WHITE, { facing: [0, -(z1 - z0) / 2, h] });
+      k.quad(S, S1, top1, top0, WOOD, WHITE, { facing: [0, -(z1 - z0) / 2, -h] });
       for (const x of [x0, x1])
-        k.quad([x, y, z0], [x, y, z1], [x, y + h, zm], [x, y + h, zm], ends, WHITE, { n: [x === x0 ? -1 : 1, 0, 0], both: true });
+        k.quad([x, y, z0], [x, y, z1], [x, y + h, zm], [x, y + h, zm], ends, WHITE, {
+          n: [x === x0 ? -1 : 1, 0, 0],
+          both: true,
+        });
       far.box([x0, y, z0, x1, y + h * 0.55, z1], PAINT, FAR_SLATE, { collide: false });
     }
     // Collision: a stepped block under the roof (nobody walks inside it).
@@ -387,10 +499,30 @@ function kit() {
         h = 0.25 + rnd() * 0.45,
         dd = 0.35 + rnd() * 0.6;
       // (Drawn only: underfoot they would stop a walker, as kerbs too tall to step.)
-      k.box([x - w / 2, y0, z - dd / 2, x + w / 2, y0 + h, z + dd / 2], m, WHITE, { skip: ["bottom"], lod: 0, collide: false });
+      k.box([x - w / 2, y0, z - dd / 2, x + w / 2, y0 + h, z + dd / 2], m, WHITE, {
+        skip: ["bottom"],
+        lod: 0,
+        collide: false,
+      });
     }
   };
-  return { k, far, mass, floor, flight, run, parapet, slit, ring, ringMerlons, roundSlit, disc, cone, gable, rubble };
+  return {
+    k,
+    far,
+    mass,
+    floor,
+    flight,
+    run,
+    parapet,
+    slit,
+    ring,
+    ringMerlons,
+    roundSlit,
+    disc,
+    cone,
+    gable,
+    rubble,
+  };
 }
 
 const publish = async (id, K, entry, foot) => {
@@ -400,7 +532,8 @@ const publish = async (id, K, entry, foot) => {
   await publishTextured(id, K.k, K.far, {
     tag: TAG,
     source: "art/blender/br/build_fortress.mjs",
-    textures: "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+    textures:
+      "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
     texture: 512,
     class: "building",
     ring: "building",
@@ -465,16 +598,23 @@ export const FORT = {
   for (const s of Object.values(FORT.stairs)) add([s[0], B1, s[1], s[2], BASE + 0.1, s[3]]);
   mass([-HX, 0, -HZ, HX, BASE, HZ], cuts, { m: WALL, top: COBBLE });
   // The talus round the foot (cut where the tunnels come out).
-  for (const p of carve([-HX - 1, 0, -HZ - 1, HX + 1, 1.6, HZ + 1], [
-    [-HX + 0.01, -1, -HZ + 0.01, HX - 0.01, 3, HZ - 0.01],
-    [-20.9, -1, -HZ - 2, -19.1, 2.2, -HZ + 1],
-    [-HX - 2, -1, -31.5, -HX + 1, 2.8, -28.5],
-    [-1.3, -1, HZ - 1, 1.3, 2.8, HZ + 2],
-  ]))
+  for (const p of carve(
+    [-HX - 1, 0, -HZ - 1, HX + 1, 1.6, HZ + 1],
+    [
+      [-HX + 0.01, -1, -HZ + 0.01, HX - 0.01, 3, HZ - 0.01],
+      [-20.9, -1, -HZ - 2, -19.1, 2.2, -HZ + 1],
+      [-HX - 2, -1, -31.5, -HX + 1, 2.8, -28.5],
+      [-1.3, -1, HZ - 1, 1.3, 2.8, HZ + 2],
+    ],
+  ))
     k.box(p, WALL, [0.9, 0.88, 0.84], { skip: ["bottom"] });
   // Pillars: the vault's and the undercroft's.
-  for (const x of [-11, 0, 11]) for (const z of [-24, -14, -4]) k.box([x - 0.7, 0, z - 0.7, x + 0.7, 4.4, z + 0.7], STONE, WHITE, { lod: 0 });
-  for (const x of [-6, 6]) for (const z of [4, 12]) k.box([x - 0.6, B1, z - 0.6, x + 0.6, B1T, z + 0.6], STONE, WHITE, { lod: 0 });
+  for (const x of [-11, 0, 11])
+    for (const z of [-24, -14, -4])
+      k.box([x - 0.7, 0, z - 0.7, x + 0.7, 4.4, z + 0.7], STONE, WHITE, { lod: 0 });
+  for (const x of [-6, 6])
+    for (const z of [4, 12])
+      k.box([x - 0.6, B1, z - 0.6, x + 0.6, B1T, z + 0.6], STONE, WHITE, { lod: 0 });
   // Floors (drawn): the vaults, the dungeon, the cellars.
   const holeOf = (s) => [s[0], s[1], s[2], s[3]];
   floor(-22, -34, 22, 6, 0.02, FLOOR, { collide: false });
@@ -491,7 +631,9 @@ export const FORT = {
     flight("z", s.ne[1] + 0.1, 1, s.ne[0] + 0.1, s.ne[2] - 0.1, B1, BASE - B1, { base: B1 });
     flight("z", s.sw[1] + 0.1, 1, s.sw[0] + 0.1, s.sw[2] - 0.1, B1, BASE - B1, { base: B1 });
     flight("z", s.hall[1] + 0.1, 1, s.hall[0] + 0.1, s.hall[2] - 0.1, B1, BASE - B1, { base: B1 });
-    flight("z", s.barracks[1] + 0.1, 1, s.barracks[0] + 0.1, s.barracks[2] - 0.1, B1, BASE - B1, { base: B1 });
+    flight("z", s.barracks[1] + 0.1, 1, s.barracks[0] + 0.1, s.barracks[2] - 0.1, B1, BASE - B1, {
+      base: B1,
+    });
     // B1 → B2: the dungeon stair (its foot at the dungeon end) and the vault stair.
     flight("z", 35.5, -1, 19.9, 21.9, 0, B1, { base: 0 });
     k.box([19.9, 0, 29.4, 21.9, B1, 29.9], STONE, WHITE, { lod: 0 });
@@ -545,10 +687,14 @@ async function curtain(id, L, { stair = null, gap = null, breach = null } = {}) 
   parapet("x", x0, x1, z1 - 0.6, z1, WH, { m: WALL, gaps: [...(gap ? [gap] : []), ...away] });
   const railGaps = [...away];
   if (stair !== null) railGaps.push([stair + K.run(WH) - 0.4, stair + K.run(WH) + 1.4]);
-  for (const p of carve([x0, WH, z0, x1, WH + 0.95, z0 + 0.3], railGaps.map(([a, b]) => [a, WH - 1, z0 - 1, b, WH + 3, z0 + 1])))
+  for (const p of carve(
+    [x0, WH, z0, x1, WH + 0.95, z0 + 0.3],
+    railGaps.map(([a, b]) => [a, WH - 1, z0 - 1, b, WH + 3, z0 + 1]),
+  ))
     k.box(p, WALL, WHITE);
   // Slits on the outer face every 6 m.
-  for (let x = x0 + 4; x < x1 - 3; x += 6) if (!breach || x < breach[0] - 8 || x > breach[1] + 8) slit("z", z1, x, 5.5);
+  for (let x = x0 + 4; x < x1 - 3; x += 6)
+    if (!breach || x < breach[0] - 8 || x > breach[1] + 8) slit("z", z1, x, 5.5);
   if (stair !== null) {
     flight("x", stair, 1, z0 - 1.45, z0, 0, WH, { base: 0, m: WALL, lod: 1 });
   }
@@ -558,7 +704,12 @@ async function curtain(id, L, { stair = null, gap = null, breach = null } = {}) 
     const n = Math.round(CREST / RISE);
     for (let s = 0; s < n; s++) {
       const za = z0 - s * 0.45;
-      k.box([b0 + 0.6, 0, za - 0.45, b1 - 0.6, CREST - (s + 1) * RISE + 0.01, za], WALL, [0.9, 0.88, 0.84], { skip: ["bottom"] });
+      k.box(
+        [b0 + 0.6, 0, za - 0.45, b1 - 0.6, CREST - (s + 1) * RISE + 0.01, za],
+        WALL,
+        [0.9, 0.88, 0.84],
+        { skip: ["bottom"] },
+      );
     }
     rubble((b0 + b1) / 2, z0 - 4, 4.5, 30, 81, 0, WALL);
     rubble((b0 + b1) / 2, 0, 3.5, 14, 82, CREST, WALL);
@@ -663,7 +814,8 @@ async function squareTower(id, { sally = false } = {}) {
   cuts.push([-3.3, F[3] - 0.5, 2.5, 3.6, F[3] + 0.1, 4.1]); // over C (the roof's hatch)
   if (sally) cuts.push([-1.3, 0, -8.1, 1.3, 2.8, 6.1]);
   // Windows: real loops (narrow) through the outer wall on the upper storeys.
-  for (const f of [F[1], F[2]]) for (const x of [-2.5, 2.5]) cuts.push([x - 0.2, f + 1.5, 4.4, x + 0.2, f + 3.3, 6.1]);
+  for (const f of [F[1], F[2]])
+    for (const x of [-2.5, 2.5]) cuts.push([x - 0.2, f + 1.5, 4.4, x + 0.2, f + 3.3, 6.1]);
   mass([-6, 0, -8, 6, F[3], 6], cuts, { m: STONE, top: FLOOR });
   for (const p of carve([-6.6, 0, -8, 6.6, 1.6, 6.6], sally ? [[-1.3, -1, -9, 1.3, 2.8, 7]] : []))
     K.k.box(p, WALL, [0.9, 0.88, 0.84], { skip: ["bottom"], lod: 1 });
@@ -677,14 +829,21 @@ async function squareTower(id, { sally = false } = {}) {
   flight("x", -3.2, 1, 2.6, 4.0, F[2], 6, { base: F[2] });
   // Floors (drawn): wood on the storeys, stone on the ground and the roof.
   K.floor(-4.5, -6.5, 4.5, 4.5, F[0] + 0.02, FLOOR, { collide: false });
-  K.floor(-4.5, -6.5, 4.5, 4.5, F[1] + 0.02, WOOD, { collide: false, holes: [[2.9, -5.1, 4.5, 1.8]] });
-  K.floor(-4.5, -6.5, 4.5, 4.5, F[2] + 0.02, WOOD, { collide: false, holes: [[-3.6, -6.5, 3.3, -5.1]] });
+  K.floor(-4.5, -6.5, 4.5, 4.5, F[1] + 0.02, WOOD, {
+    collide: false,
+    holes: [[2.9, -5.1, 4.5, 1.8]],
+  });
+  K.floor(-4.5, -6.5, 4.5, 4.5, F[2] + 0.02, WOOD, {
+    collide: false,
+    holes: [[-3.6, -6.5, 3.3, -5.1]],
+  });
   // Rails by the holes.
   k.box([2.7, F[1], -3.8, 2.9, F[1] + 1, 1.8], WOOD, WHITE, { lod: 0 });
   k.box([-2.4, F[2], -5.1, 3.3, F[2] + 1, -4.9], WOOD, WHITE, { lod: 0 });
   k.box([-3.3, F[3], 2.3, 2.3, F[3] + 1, 2.5], STONE, WHITE, { lod: 0 });
   for (const x of [-3.5, 0, 3.5]) slit("z", 6, x, 4.5);
-  for (const z of [-5, 0, 4]) for (const ax of [-6, 6]) slit("x", ax, z, F[3] - 3.6, { out: Math.sign(ax) });
+  for (const z of [-5, 0, 4])
+    for (const ax of [-6, 6]) slit("x", ax, z, F[3] - 3.6, { out: Math.sign(ax) });
   await publish(
     id,
     K,
@@ -717,18 +876,29 @@ await squareTower("fort-tower-sally", { sally: true });
       cz = 2.5;
     // Only the drum's front: its back half stands inside the block behind (and the base), where
     // it would cut across the guard room and its stair's foot.
-    const front = (r) => (i) => cz + Math.sin(((i + 0.5) * 2 * Math.PI) / 24) * r - r * Math.sin(Math.PI / 24) > -0.6;
+    const front = (r) => (i) =>
+      cz + Math.sin(((i + 0.5) * 2 * Math.PI) / 24) * r - r * Math.sin(Math.PI / 24) > -0.6;
     ring(cx, cz, 4.6, 5.5, 0, F[3] + 2, 24, { m: STONE, only: front(5.5) });
     ring(cx, cz, 5.4, 6.1, 0, 1.6, 24, { m: WALL, only: front(6.1) });
-    disc(cx, cz, 4.65, F[3] + 2, { m: STONE, thick: F[3] + 2, lod: 1, holes: [[cx - 6, cz - 6, cx + 6, 0]] });
+    disc(cx, cz, 4.65, F[3] + 2, {
+      m: STONE,
+      thick: F[3] + 2,
+      lod: 1,
+      holes: [[cx - 6, cz - 6, cx + 6, 0]],
+    });
     ring(cx, cz, 5.5, 5.9, F[3] + 1.4, F[3] + 2, 24, { m: STONE, only: front(5.9) }); // a corbel course
     cone(cx, cz, 6.3, F[3] + 2, 7.5, 24);
-    for (const y of [5, F[1] + 2, F[2] + 2]) for (const a of [0.2, 0.9, 1.6, 2.4]) roundSlit(cx, cz, 5.5, sx > 0 ? a - 0.6 : Math.PI - a + 0.6, y);
+    for (const y of [5, F[1] + 2, F[2] + 2])
+      for (const a of [0.2, 0.9, 1.6, 2.4])
+        roundSlit(cx, cz, 5.5, sx > 0 ? a - 0.6 : Math.PI - a + 0.6, y);
   }
   // The gate's front between the drums and the block behind.
   const cuts = [];
   cuts.push([-PW, F[0], -14.1, PW, F[0] + 5.2, 6.4]); // the passage
-  cuts.push([-2.0, F[0] + 5.2, -14.1, 2.0, F[0] + 5.6, 6.4], [-1.2, F[0] + 5.6, -14.1, 1.2, F[0] + 5.9, 6.4]);
+  cuts.push(
+    [-2.0, F[0] + 5.2, -14.1, 2.0, F[0] + 5.6, 6.4],
+    [-1.2, F[0] + 5.6, -14.1, 1.2, F[0] + 5.9, 6.4],
+  );
   // The guard room (east of the passage) and its stair hall; the murder room and the upper room.
   cuts.push([3.6, F[0], -12.5, 12.5, F[0] + 5.6, -1.5]);
   cuts.push([8.8, F[0], -14.1, 11, F[0] + 3.2, -12.4]); // its door from the courtyard
@@ -741,17 +911,41 @@ await squareTower("fort-tower-sally", { sally: true });
   cuts.push([10.5, F[3] - 0.5, -10, 12.3, F[3] + 0.1, -2.8]);
   // Windows over the gate (the murder room's loops) and on the courtyard side.
   for (const x of [-1.5, 1.5]) cuts.push([x - 0.25, F[1] + 1.4, 3, x + 0.25, F[1] + 3.6, 6.4]);
-  for (const x of [-8, -4, 4, 8]) cuts.push([x - 0.6, F[2] + 1.4, -14.1, x + 0.6, F[2] + 3.6, -12.4]);
+  for (const x of [-8, -4, 4, 8])
+    cuts.push([x - 0.6, F[2] + 1.4, -14.1, x + 0.6, F[2] + 3.6, -12.4]);
   mass([-14, F[0], -14, 14, F[3], 0], cuts, { m: STONE, top: FLOOR });
   mass([-5.6, 0, 0, 5.6, F[3], 6.3], cuts, { m: STONE, top: FLOOR });
   // The portcullis's slot (a dark band across the passage's roof) and the murder holes.
-  k.quad([-PW, F[0] + 5.19, 3.6], [PW, F[0] + 5.19, 3.6], [PW, F[0] + 5.19, 3.9], [-PW, F[0] + 5.19, 3.9], PAINT, DARK, { n: [0, 1, 0], facing: [0, -1, 0], lod: 0 });
-  for (const z of [-4, -8]) k.quad([-0.4, F[0] + 5.19, z - 0.4], [0.4, F[0] + 5.19, z - 0.4], [0.4, F[0] + 5.19, z + 0.4], [-0.4, F[0] + 5.19, z + 0.4], PAINT, DARK, { n: [0, 1, 0], facing: [0, -1, 0], lod: 0 });
+  k.quad(
+    [-PW, F[0] + 5.19, 3.6],
+    [PW, F[0] + 5.19, 3.6],
+    [PW, F[0] + 5.19, 3.9],
+    [-PW, F[0] + 5.19, 3.9],
+    PAINT,
+    DARK,
+    { n: [0, 1, 0], facing: [0, -1, 0], lod: 0 },
+  );
+  for (const z of [-4, -8])
+    k.quad(
+      [-0.4, F[0] + 5.19, z - 0.4],
+      [0.4, F[0] + 5.19, z - 0.4],
+      [0.4, F[0] + 5.19, z + 0.4],
+      [-0.4, F[0] + 5.19, z + 0.4],
+      PAINT,
+      DARK,
+      { n: [0, 1, 0], facing: [0, -1, 0], lod: 0 },
+    );
   // The passage's floor (flagstones over the courtyard level) and the rooms' floors.
   K.floor(-PW, -14, PW, 6.3, F[0] + 0.02, FLOOR, { collide: false });
   K.floor(3.6, -12.5, 12.5, -1.5, F[0] + 0.02, FLOOR, { collide: false });
-  K.floor(-12.5, -12.5, 12.5, -1.5, F[1] + 0.02, WOOD, { collide: false, holes: [[10.5, -10, 12.3, -2.8]] });
-  K.floor(-12.5, -12.5, 12.5, -1.5, F[2] + 0.02, WOOD, { collide: false, holes: [[8.5, -10, 10.3, -2.8]] });
+  K.floor(-12.5, -12.5, 12.5, -1.5, F[1] + 0.02, WOOD, {
+    collide: false,
+    holes: [[10.5, -10, 12.3, -2.8]],
+  });
+  K.floor(-12.5, -12.5, 12.5, -1.5, F[2] + 0.02, WOOD, {
+    collide: false,
+    holes: [[8.5, -10, 10.3, -2.8]],
+  });
   // Flights: A (10→16) east lane along −z; B (16→22) inner lane along +z; C (22→28) east lane.
   flight("z", -2.9, -1, 10.6, 12.2, F[0], 6, { base: F[0] });
   flight("z", -9.7, 1, 8.6, 10.2, F[1], 6, { base: F[1] });
@@ -807,7 +1001,8 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
       cuts.push([x - 0.7, f + 1.4, -HZ - 0.1, x + 0.7, f + 1.4 + h, -iz + 0.1]);
       cuts.push([x - 0.7, f + 1.4, iz - 0.1, x + 0.7, f + 1.4 + h, HZ + 0.1]);
     }
-    for (const z of [-7, 0, 7]) cuts.push([-HX - 0.1, f + 1.4, z - 0.7, -ix + 0.1, f + 1.4 + h, z + 0.7]);
+    for (const z of [-7, 0, 7])
+      cuts.push([-HX - 0.1, f + 1.4, z - 0.7, -ix + 0.1, f + 1.4 + h, z + 0.7]);
     for (const z of [-7]) cuts.push([ix - 0.1, f + 1.4, z - 0.7, HX + 0.1, f + 1.4 + h, z + 0.7]);
   }
   for (const f of [F[0], F[3]]) {
@@ -815,11 +1010,15 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
       cuts.push([x - 0.2, f + 1.6, -HZ - 0.1, x + 0.2, f + 3.6, -iz + 0.1]);
       cuts.push([x - 0.2, f + 1.6, iz - 0.1, x + 0.2, f + 3.6, HZ + 0.1]);
     }
-    for (const z of [-7, 0, 7]) cuts.push([-HX - 0.1, f + 1.6, z - 0.2, -ix + 0.1, f + 3.6, z + 0.2]);
+    for (const z of [-7, 0, 7])
+      cuts.push([-HX - 0.1, f + 1.6, z - 0.2, -ix + 0.1, f + 3.6, z + 0.2]);
   }
   mass([-HX, 0, -HZ, HX, F[4], HZ], cuts, { m: STONE, top: FLOOR });
   // A plinth course and a string course at each floor (drawn).
-  k.box([-HX - 0.3, 0, -HZ - 0.3, HX + 0.3, 1.0, HZ + 0.3], STONE, [0.9, 0.88, 0.84], { skip: ["bottom"], collide: false });
+  k.box([-HX - 0.3, 0, -HZ - 0.3, HX + 0.3, 1.0, HZ + 0.3], STONE, [0.9, 0.88, 0.84], {
+    skip: ["bottom"],
+    collide: false,
+  });
   for (const f of [F[1], F[2], F[3]])
     for (const p of carve([-HX - 0.12, f - 0.3, -HZ - 0.12, HX + 0.12, f, HZ + 0.12], cuts))
       k.box(p, STONE, [0.95, 0.93, 0.9], { collide: false, skip: ["bottom"] });
@@ -835,6 +1034,17 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
     [HX, HZ],
   ]) {
     ring(cx, cz, 2.6, 3.2, F[3] + 1, F[4] + 6, 16, { m: STONE });
+    // Down to the ground (owner, 2026-11-18: "did you forget to properly build the corner towers
+    // buttom?"): below the top storey, the round of the turret that stands out of the keep's
+    // corner (inside its walls the keep's own masonry), on a plinth like the keep's.
+    const out = (i) => {
+      const a = ((i + 0.5) * 2 * Math.PI) / 16;
+      const x = cx + Math.cos(a) * 2.9,
+        z = cz + Math.sin(a) * 2.9;
+      return Math.abs(x) > HX - 0.05 || Math.abs(z) > HZ - 0.05;
+    };
+    ring(cx, cz, 2.6, 3.2, 0, F[3] + 1, 16, { m: STONE, only: out });
+    ring(cx, cz, 3.15, 3.5, 0, 1.0, 16, { m: STONE, only: out });
     disc(cx, cz, 2.65, F[4] + 6, { m: STONE, thick: 7, lod: 1 });
     ring(cx, cz, 3.1, 3.5, F[4] + 5.4, F[4] + 6, 16, { m: STONE });
     cone(cx, cz, 3.7, F[4] + 6, 6.5, 16);
@@ -842,9 +1052,18 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   // Floors (drawn), the stair down's opening left on the ground floor.
   const down = [-15.1, -3.1, -13.1, 2.7];
   K.floor(-ix, -iz, ix, iz, 0.02, FLOOR, { collide: false, holes: [down] });
-  K.floor(-ix, -iz, ix, iz, F[1] + 0.02, WOOD, { collide: false, holes: [[east[0] - 0.1, -2.8, east[1] + 0.1, 4.1]] });
-  K.floor(-ix, -iz, ix, iz, F[2] + 0.02, WOOD, { collide: false, holes: [[inner[0] - 0.1, -2.8, inner[1] + 0.1, 4.1]] });
-  K.floor(-ix, -iz, ix, iz, F[3] + 0.02, WOOD, { collide: false, holes: [[east[0] - 0.1, -2.8, east[1] + 0.1, 4.1]] });
+  K.floor(-ix, -iz, ix, iz, F[1] + 0.02, WOOD, {
+    collide: false,
+    holes: [[east[0] - 0.1, -2.8, east[1] + 0.1, 4.1]],
+  });
+  K.floor(-ix, -iz, ix, iz, F[2] + 0.02, WOOD, {
+    collide: false,
+    holes: [[inner[0] - 0.1, -2.8, inner[1] + 0.1, 4.1]],
+  });
+  K.floor(-ix, -iz, ix, iz, F[3] + 0.02, WOOD, {
+    collide: false,
+    holes: [[east[0] - 0.1, -2.8, east[1] + 0.1, 4.1]],
+  });
   // Rails round the stair down (the undercroft's flight) and beside the holes.
   k.box([-15, 0, 2.7, -13, 1, 2.9], STONE, WHITE, { lod: 0 });
   k.box([-13.1, 0, -2.0, -12.9, 1, 2.9], STONE, WHITE, { lod: 0 });
@@ -860,12 +1079,26 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
     flight("z", foot, i % 2 === 0 ? -1 : 1, lane[0], lane[1], F[i], S, { base: F[i] });
   }
   // The second storey's chambers: a cross wall with doorways (x = 0).
-  for (const p of carve([-0.3, F[2], -iz, 0.3, F[2] + S - 0.4, iz], [[-1, F[2], -6, 1, F[2] + 2.6, -4], [-1, F[2], 4, 1, F[2] + 2.6, 6]]))
+  for (const p of carve(
+    [-0.3, F[2], -iz, 0.3, F[2] + S - 0.4, iz],
+    [
+      [-1, F[2], -6, 1, F[2] + 2.6, -4],
+      [-1, F[2], 4, 1, F[2] + 2.6, 6],
+    ],
+  ))
     k.box(p, STONE, WHITE, { lod: 0 });
   // The hall's hearth (west wall, the hall storey): a hood and a firebox.
   k.box([-ix, F[1], -2, -ix + 1.2, F[1] + 1.2, 2], STONE, WHITE, { lod: 0 });
   k.box([-ix, F[1] + 2.2, -2.4, -ix + 1.5, F[1] + 4.6, 2.4], STONE, WHITE, { lod: 0 });
-  k.quad([-ix + 0.01, F[1] + 0.2, -1.6], [-ix + 0.01, F[1] + 0.2, 1.6], [-ix + 0.01, F[1] + 1.15, 1.6], [-ix + 0.01, F[1] + 1.15, -1.6], PAINT, DARK, { n: [1, 0, 0], lod: 0 });
+  k.quad(
+    [-ix + 0.01, F[1] + 0.2, -1.6],
+    [-ix + 0.01, F[1] + 0.2, 1.6],
+    [-ix + 0.01, F[1] + 1.15, 1.6],
+    [-ix + 0.01, F[1] + 1.15, -1.6],
+    PAINT,
+    DARK,
+    { n: [1, 0, 0], lod: 0 },
+  );
   for (const x of [-12, -6, 6, 12]) slit("z", -HZ, x, F[4] - 3.6, { out: -1 });
   await publish(
     "fort-keep",
@@ -899,6 +1132,12 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   }
   mass([-HX, 0, -HZ, HX, H, HZ], cuts, { m: STONE });
   gable(-HX, -HZ, HX, HZ, H, 5.5, "z");
+  // A boarded ceiling under the roof (its sloped underside reads black from inside).
+  k.box([-HX + T, H - 0.25, -HZ + T, HX - T, H, HZ - T], WOOD, WHITE, {
+    lod: 0,
+    collide: false,
+    skip: ["top"],
+  });
   // The floor (drawn), the cellar stair's opening, its rails.
   const st = [4.15, 1.9, 6.15, 7.7];
   K.floor(-HX + T, -HZ + T, HX - T, HZ - T, 0.02, FLOOR, { collide: false, holes: [st] });
@@ -910,14 +1149,26 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
     GW = 2.6,
     GY = 4.5;
   k.box([GX, GY - 0.25, -HZ + T, GX + GW, GY, HZ - T], WOOD, WHITE, { lod: 0 });
-  for (let z = -HZ + T + 2; z < HZ - T; z += 4.5) k.box([GX + GW - 0.3, 0, z - 0.15, GX + GW, GY - 0.25, z + 0.15], WOOD, WHITE, { lod: 0 });
-  for (const p of carve([GX + GW - 0.1, GY, -HZ + T, GX + GW, GY + 1, HZ - T], [[GX, GY - 1, 17.5, GX + GW + 1, GY + 3, 20.5]]))
+  for (let z = -HZ + T + 2; z < HZ - T; z += 4.5)
+    k.box([GX + GW - 0.3, 0, z - 0.15, GX + GW, GY - 0.25, z + 0.15], WOOD, WHITE, { lod: 0 });
+  for (const p of carve(
+    [GX + GW - 0.1, GY, -HZ + T, GX + GW, GY + 1, HZ - T],
+    [[GX, GY - 1, 17.5, GX + GW + 1, GY + 3, 20.5]],
+  ))
     k.box(p, WOOD, WHITE, { lod: 0 });
   flight("z", 13.6, 1, GX + GW + 0.1, GX + GW + 1.5, 0, GY, { base: 0, m: WOOD });
   // The hearth on the north wall, long tables' dais at the south end.
   k.box([-2.5, 0, -HZ + T, 2.5, 1.2, -HZ + T + 1.2], STONE, WHITE, { lod: 0 });
   k.box([-3, 2.4, -HZ + T, 3, 6.5, -HZ + T + 1.6], STONE, WHITE, { lod: 0 });
-  k.quad([-2.1, 0.2, -HZ + T + 0.01], [2.1, 0.2, -HZ + T + 0.01], [2.1, 1.15, -HZ + T + 0.01], [-2.1, 1.15, -HZ + T + 0.01], PAINT, DARK, { n: [0, 0, 1], lod: 0 });
+  k.quad(
+    [-2.1, 0.2, -HZ + T + 0.01],
+    [2.1, 0.2, -HZ + T + 0.01],
+    [2.1, 1.15, -HZ + T + 0.01],
+    [-2.1, 1.15, -HZ + T + 0.01],
+    PAINT,
+    DARK,
+    { n: [0, 0, 1], lod: 0 },
+  );
   k.box([-HX + T + 3, 0, HZ - T - 5, HX - T, 0.3, HZ - T], WOOD, WHITE, { lod: 0 }); // one step up
   await publish(
     "fort-hall",
@@ -947,7 +1198,9 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   const cuts = [];
   for (const f of [F[0], F[1]]) cuts.push([-HX + T, f, -HZ + T, HX - T, f + 4.6, HZ - T]);
   for (const z of [-11, 0, 11]) cuts.push([-HX - 0.1, 0, z - 1.2, -HX + T + 0.1, 3.2, z + 1.2]);
-  for (const f of [F[0], F[1]]) for (const z of [-14, -6, 6, 14]) cuts.push([-HX - 0.1, f + 1.4, z - 0.6, -HX + T + 0.1, f + 3.2, z + 0.6]);
+  for (const f of [F[0], F[1]])
+    for (const z of [-14, -6, 6, 14])
+      cuts.push([-HX - 0.1, f + 1.4, z - 0.6, -HX + T + 0.1, f + 3.2, z + 0.6]);
   cuts.push([-7.3, F[1] - 0.5, 10.9, -5.7, F[1] + 0.1, 16.8]); // over the south stair
   cuts.push([-7.3, F[2] - 0.5, -16.8, -5.7, F[2] + 0.1, -10.9]); // the roof's hatch
   mass([-HX, 0, -HZ, HX, F[2], HZ], cuts, { m: STONE, top: FLOOR });
@@ -957,7 +1210,10 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   // Partitions (doorways in the middle).
   for (const f of [F[0], F[1]])
     for (const z of [-9, 1.5])
-      for (const p of carve([-HX + T, f, z - 0.15, HX - T, f + 4.6, z + 0.15], [[-1, f, z - 1, 1, f + 2.4, z + 1]]))
+      for (const p of carve(
+        [-HX + T, f, z - 0.15, HX - T, f + 4.6, z + 0.15],
+        [[-1, f, z - 1, 1, f + 2.4, z + 1]],
+      ))
         k.box(p, STONE, WHITE, { lod: 0 });
   flight("z", 11, 1, -7.2, -5.8, F[0], 5, { base: F[0] });
   flight("z", -11, -1, -7.2, -5.8, F[1], 5, { base: F[1] });
@@ -965,7 +1221,10 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   k.box([-5.7, F[2], -15.5, -5.5, F[2] + 1, -10.9], STONE, WHITE, { lod: 0 });
   const st = [-6.15, 1.9, -4.15, 7.7];
   K.floor(-HX + T, -HZ + T, HX - T, HZ - T, 0.02, FLOOR, { collide: false, holes: [st] });
-  K.floor(-HX + T, -HZ + T, HX - T, HZ - T, F[1] + 0.02, WOOD, { collide: false, holes: [[-7.3, 10.9, -5.7, 16.8]] });
+  K.floor(-HX + T, -HZ + T, HX - T, HZ - T, F[1] + 0.02, WOOD, {
+    collide: false,
+    holes: [[-7.3, 10.9, -5.7, 16.8]],
+  });
   k.box([-6.35, 0, 1.9, -6.15, 1, 7.7], STONE, WHITE, { lod: 0 });
   k.box([-4.15, 0, 1.9, -3.95, 1, 7.7], STONE, WHITE, { lod: 0 });
   k.box([-6.35, 0, 1.7, -3.95, 1, 1.9], STONE, WHITE, { lod: 0 });
@@ -994,15 +1253,35 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
     H = 9;
   const cuts = [[-NX + T, 0, -NZ + T, NX - T, H + 0.1, NZ - T]];
   cuts.push([-1.4, 0, -NZ - 0.1, 1.4, 4, -NZ + T + 0.1]);
-  for (const z of [-5, 0, 5]) for (const sx of [-1, 1]) cuts.push(sx > 0 ? [NX - T - 0.1, 3, z - 0.35, NX + 0.1, 7.2, z + 0.35] : [-NX - 0.1, 3, z - 0.35, -NX + T + 0.1, 7.2, z + 0.35]);
+  for (const z of [-5, 0, 5])
+    for (const sx of [-1, 1])
+      cuts.push(
+        sx > 0
+          ? [NX - T - 0.1, 3, z - 0.35, NX + 0.1, 7.2, z + 0.35]
+          : [-NX - 0.1, 3, z - 0.35, -NX + T + 0.1, 7.2, z + 0.35],
+      );
   cuts.push([-0.5, 3, NZ - T - 0.1, 0.5, 7.8, NZ + 0.1]);
   mass([-NX, 0, -NZ, NX, H, NZ], cuts, { m: STONE });
   gable(-NX, -NZ, NX, NZ, H, 5, "z");
+  k.box([-NX + T, H - 0.25, -NZ + T, NX - T, H, NZ - T], WOOD, WHITE, {
+    lod: 0,
+    collide: false,
+    skip: ["top"],
+  });
   K.floor(-NX + T, -NZ + T, NX - T, NZ - T, 0.02, FLOOR, { collide: false });
   // The altar and its step; benches (stone) down the nave.
   k.box([-NX + T, 0, NZ - T - 3, NX - T, 0.3, NZ - T], STONE, WHITE, { lod: 0 });
   k.box([-1.4, 0.3, NZ - T - 1.6, 1.4, 1.3, NZ - T - 0.8], STONE, WHITE, { lod: 0 });
-  for (let z = -6; z < 4; z += 2.2) for (const sx of [-1, 1]) k.box(sx < 0 ? [-NX + T + 0.4, 0, z, -0.8, 0.45, z + 0.5] : [0.8, 0, z, NX - T - 0.4, 0.45, z + 0.5], WOOD, WHITE, { lod: 0 });
+  for (let z = -6; z < 4; z += 2.2)
+    for (const sx of [-1, 1])
+      k.box(
+        sx < 0
+          ? [-NX + T + 0.4, 0, z, -0.8, 0.45, z + 0.5]
+          : [0.8, 0, z, NX - T - 0.4, 0.45, z + 0.5],
+        WOOD,
+        WHITE,
+        { lod: 0 },
+      );
   // The bell tower: x −14..−6, z −11..−3.
   const BX0 = -14,
     BX1 = -6,
@@ -1027,7 +1306,9 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   }
   for (const y of [6, 10, 14]) tcuts.push([BX0 - 0.1, y, -7.2, BX0 + BT + 0.1, y + 1.6, -6.8]);
   mass([BX0, 0, BZ0, BX1, 24, BZ1], tcuts, { m: STONE });
-  K.k.box([BX0 - 0.2, 23.6, BZ0 - 0.2, BX1 + 0.2, 24.2, BZ1 + 0.2], STONE, WHITE, { collide: false });
+  K.k.box([BX0 - 0.2, 23.6, BZ0 - 0.2, BX1 + 0.2, 24.2, BZ1 + 0.2], STONE, WHITE, {
+    collide: false,
+  });
   cone((BX0 + BX1) / 2, (BZ0 + BZ1) / 2, 6.2, 24.2, 7.5, 4, { phase: Math.PI / 4 });
   // Floors with holes over each flight (lane 0 along +z from z −9.6; lane 1 along −z from −4.4).
   const ix0 = BX0 + BT,
@@ -1046,11 +1327,16 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
       z1 = Math.max(foot, foot + dir * run) + 0.1;
     const f = L[i + 1];
     const holes = [[lane[0] - 0.1, z0, lane[1] + 0.1, z1]];
-    for (const p of carve([ix0, f - 0.3, iz0, ix1, f, iz1], holes.map((h) => [h[0], f - 1, h[1], h[2], f + 1, h[3]])))
+    for (const p of carve(
+      [ix0, f - 0.3, iz0, ix1, f, iz1],
+      holes.map((h) => [h[0], f - 1, h[1], h[2], f + 1, h[3]]),
+    ))
       k.box(p, f === 20 ? STONE : WOOD, WHITE, { lod: 0 });
     // A rail along the hole's inner side (open at the flight's top end).
     const rx = i % 2 === 0 ? lane[1] + 0.1 : lane[0] - 0.3;
-    k.box([rx, f, dir > 0 ? z0 : z0 + 1.2, rx + 0.2, f + 1, dir > 0 ? z1 - 1.2 : z1], WOOD, WHITE, { lod: 0 });
+    k.box([rx, f, dir > 0 ? z0 : z0 + 1.2, rx + 0.2, f + 1, dir > 0 ? z1 - 1.2 : z1], WOOD, WHITE, {
+      lod: 0,
+    });
   }
   // The bell's beam.
   k.box([BX0 + BT, 23.2, -7.2, BX1 - BT, 23.5, -6.8], WOOD, WHITE, { lod: 0, collide: false });
@@ -1076,23 +1362,54 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   const HX = 11,
     HZ = 5;
   mass([-HX, 0, HZ - 0.8, HX, 3, HZ], [], { m: WALL });
-  for (let x = -HX; x <= HX + 0.01; x += HX / 4) k.box([x - 0.18, 0, -HZ, x + 0.18, 4.3, -HZ + 0.36], WOOD, WHITE);
-  for (let x = -HX + HX / 4; x < HX - 8; x += HX / 4) k.box([x - 0.08, 0, -1, x + 0.08, 1.5, HZ - 0.8], WOOD, WHITE, { lod: 0 });
+  for (let x = -HX; x <= HX + 0.01; x += HX / 4)
+    k.box([x - 0.18, 0, -HZ, x + 0.18, 4.3, -HZ + 0.36], WOOD, WHITE);
+  for (let x = -HX + HX / 4; x < HX - 8; x += HX / 4)
+    k.box([x - 0.08, 0, -1, x + 0.08, 1.5, HZ - 0.8], WOOD, WHITE, { lod: 0 });
   // The roof: from 4.3 at the front to 5.8 at the back, slates on rafters.
   const y0 = 4.3,
     y1 = 5.8;
-  k.quad([-HX - 0.4, y0 - 0.1, -HZ - 0.5], [HX + 0.4, y0 - 0.1, -HZ - 0.5], [HX + 0.4, y1, HZ], [-HX - 0.4, y1, HZ], SLATE, WHITE, { facing: [0, 1, -0.15] });
-  k.quad([-HX - 0.4, y0 - 0.1, -HZ - 0.5], [HX + 0.4, y0 - 0.1, -HZ - 0.5], [HX + 0.4, y1, HZ], [-HX - 0.4, y1, HZ], WOOD, [0.6, 0.55, 0.5], { facing: [0, -1, 0.15] });
+  k.quad(
+    [-HX - 0.4, y0 - 0.1, -HZ - 0.5],
+    [HX + 0.4, y0 - 0.1, -HZ - 0.5],
+    [HX + 0.4, y1, HZ],
+    [-HX - 0.4, y1, HZ],
+    SLATE,
+    WHITE,
+    { facing: [0, 1, -0.15] },
+  );
+  k.quad(
+    [-HX - 0.4, y0 - 0.1, -HZ - 0.5],
+    [HX + 0.4, y0 - 0.1, -HZ - 0.5],
+    [HX + 0.4, y1, HZ],
+    [-HX - 0.4, y1, HZ],
+    WOOD,
+    WHITE,
+    { facing: [0, -1, 0.15] },
+  );
   k.box([-HX - 0.4, y0 - 0.3, -HZ - 0.5, HX + 0.4, y0, -HZ + 0.2], WOOD, WHITE);
   for (let s = 0; s < 3; s++) {
     const za = -HZ - 0.5 + ((2 * HZ + 0.5) * s) / 3,
       zb = -HZ - 0.5 + ((2 * HZ + 0.5) * (s + 1)) / 3;
-    k.box([-HX - 0.4, y0 + ((y1 - y0) * s) / 3, za, HX + 0.4, y0 + ((y1 - y0) * (s + 1)) / 3, zb], SLATE, WHITE, { visible: false });
+    k.box(
+      [-HX - 0.4, y0 + ((y1 - y0) * s) / 3, za, HX + 0.4, y0 + ((y1 - y0) * (s + 1)) / 3, zb],
+      SLATE,
+      WHITE,
+      { visible: false },
+    );
   }
   // The smithy: the forge (a stone hearth) and its chimney through the roof.
   k.box([HX - 6, 0, 1.6, HX - 3, 1.0, HZ - 0.8], STONE, WHITE);
   k.box([HX - 5.6, 1.0, 3, HX - 3.4, 8.5, HZ - 0.8], STONE, WHITE);
-  k.quad([HX - 5.4, 1.05, 2.4], [HX - 3.6, 1.05, 2.4], [HX - 3.6, 1.05, 3.9], [HX - 5.4, 1.05, 3.9], PAINT, [0.25, 0.08, 0.02], { n: [0, 1, 0], lod: 0 });
+  k.quad(
+    [HX - 5.4, 1.05, 2.4],
+    [HX - 3.6, 1.05, 2.4],
+    [HX - 3.6, 1.05, 3.9],
+    [HX - 5.4, 1.05, 3.9],
+    PAINT,
+    [0.25, 0.08, 0.02],
+    { n: [0, 1, 0], lod: 0 },
+  );
   K.far.box([-HX, 0, -HZ, HX, 5, HZ], PAINT, FAR_WOOD, { collide: false });
   await publish(
     "fort-stables",
@@ -1113,10 +1430,12 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
 {
   const K = kit();
   const { k, mass, gable } = K;
-  mass([-1.4, 0, -3.4, -0.95, 2.6, 3.1], [], { m: STONE });
-  mass([0.95, 0, -3.4, 1.4, 2.6, 3.1], [], { m: STONE });
-  mass([-1.4, 0, -3.4, 1.4, 2.6, -2.95], [], { m: STONE });
+  mass([-1.4, 0, -3.4, -0.95, 2.6, 3.1], [], { m: STONE, farBox: false });
+  mass([0.95, 0, -3.4, 1.4, 2.6, 3.1], [], { m: STONE, farBox: false });
+  mass([-1.4, 0, -3.4, 1.4, 2.6, -2.95], [], { m: STONE, farBox: false });
   gable(-1.4, -3.4, 1.4, 3.1, 2.6, 1.2, "z", { over: 0.25 });
+  // The far LOD: one block (its walls' three would outweigh the middle LOD).
+  K.far.box([-1.4, 0, -3.4, 1.4, 3.2, 3.1], PAINT, FAR_STONE, { collide: false });
   await publish(
     "fort-cellar-stair",
     K,
@@ -1152,10 +1471,16 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   mass([-W - 0.5, 0, -HZ, W + 0.5, D - 0.6, HZ - 4], cuts, { m: WALL });
   // The deck and parapets.
   mass([-W, D - 0.6, -HZ, W, D, HZ - 4], [], { m: STONE, top: COBBLE });
-  for (const sx of [-1, 1]) mass([sx > 0 ? W : -W - 0.5, D - 0.6, -HZ, sx > 0 ? W + 0.5 : -W, D + 1.0, HZ - 4], [], { m: STONE });
+  for (const sx of [-1, 1])
+    mass([sx > 0 ? W : -W - 0.5, D - 0.6, -HZ, sx > 0 ? W + 0.5 : -W, D + 1.0, HZ - 4], [], {
+      m: STONE,
+    });
   // The drawbridge (timber) to the gate.
   k.box([-W + 0.4, D - 0.35, HZ - 4, W - 0.4, D, HZ], WOOD, WHITE);
-  for (let z = HZ - 4; z < HZ; z += 0.6) k.box([-W + 0.4, D - 0.02, z, W - 0.4, D + 0.03, z + 0.5], WOOD, [0.8, 0.75, 0.7], { collide: false });
+  for (let z = HZ - 4; z < HZ; z += 0.6)
+    k.box([-W + 0.4, D - 0.02, z, W - 0.4, D + 0.03, z + 0.5], WOOD, [0.8, 0.75, 0.7], {
+      collide: false,
+    });
   await publish(
     "fort-bridge",
     K,
@@ -1195,7 +1520,12 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
       z = (rnd() * 2 - 1) * 5;
     const h = (top * (L - x)) / L;
     const s = 0.5 + rnd() * 1.1;
-    k.box([x - s / 2, h - 0.2, z - s / 2, x + s / 2, h + s * 0.45, z + s / 2], rnd() < 0.5 ? WALL : STONE, WHITE, { collide: false, lod: 0 });
+    k.box(
+      [x - s / 2, h - 0.2, z - s / 2, x + s / 2, h + s * 0.45, z + s / 2],
+      rnd() < 0.5 ? WALL : STONE,
+      WHITE,
+      { collide: false, lod: 0 },
+    );
   }
   rubble(L + 2, 0, 4, 18, 92);
   K.far.box([0, 0, -5, L, top * 0.5, 5], PAINT, FAR_STONE, { collide: false });
@@ -1238,11 +1568,14 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   // The top walkway to the wall: from the west landing to the base's face.
   k.box([-HX, top - 0.2, -4, -HX + 1.7, top, A[0]], WOOD, WHITE);
   // Rails on the outer side and the ends; posts and braces.
-  for (let i = 1; i <= 4; i++) k.box([-HX, i * rise, B[1], HX, i * rise + 1, B[1] + 0.12], WOOD, WHITE);
+  for (let i = 1; i <= 4; i++)
+    k.box([-HX, i * rise, B[1], HX, i * rise + 1, B[1] + 0.12], WOOD, WHITE);
   for (const x of [-HX, -1.6, 1.6, HX])
-    for (const z of [-4, A[0], B[1]]) k.box([x - 0.1, 0, z - 0.1, x + 0.1, top + 1, z + 0.1], WOOD, WHITE, { collide: z !== -4 });
+    for (const z of [-4, A[0], B[1]])
+      k.box([x - 0.1, 0, z - 0.1, x + 0.1, top + 1, z + 0.1], WOOD, WHITE, { collide: z !== -4 });
   for (let i = 0; i < 4; i++)
-    for (const z of [A[0], B[1]]) K.k.beam([-HX, i * rise, z], [HX, (i + 1) * rise, z], 0.12, 0.12, WOOD);
+    for (const z of [A[0], B[1]])
+      K.k.beam([-HX, i * rise, z], [HX, (i + 1) * rise, z], 0.12, 0.12, WOOD);
   K.far.box([-HX, 0, -4, HX, top, B[1]], PAINT, FAR_WOOD, { collide: false });
   await publish(
     "fort-scaffold",
