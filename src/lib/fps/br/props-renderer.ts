@@ -85,13 +85,27 @@ export const RINGS: Record<string, [number, number, number]> = {
   rock: [60, 250, 1500],
   bush: [40, 160, 600],
   // Forgotten Ruins' undergrowth (ferns, monstera, palms by the thousand under the canopy, owner
-  // 2026-11-17): it hides a crouching player, but under the trees it is unseen from farther off
-  // anyway; drawn alike for everyone, gone past 220 m.
-  undergrowth: [30, 100, 220],
+  // 2026-11-17): it hides a crouching player; drawn alike for everyone. As far as the bushes
+  // (owner, 2026-11-18: "render on longer distance as the rest of the gras"): at 220 m it was
+  // gone, so the jungle floor emptied ahead of a player crossing the plaza.
+  undergrowth: [30, 100, 600],
+  // The few undergrowth models whose far LOD is still thousands of triangles (the vines, the big
+  // fern, the palm clump: ≈ 30 placed, up to 12k each): their old distances, about 0.3 M
+  // triangles less at the plaza (UNDERGROWTH_HEAVY).
+  "undergrowth-heavy": [30, 100, 220],
   // House-lot fences (by the thousand in the towns): see-through and without collision, so
   // they neither hide nor stop anyone; boards up close, a panel mid-range, gone past 500 m.
   yard: [35, 140, 500],
 };
+/** An undergrowth model whose far LOD is over this many triangles keeps the shorter ring. */
+const UNDERGROWTH_HEAVY = 1000;
+/**
+ * Undergrowth thins out with distance, as the grass does: past `from` metres fewer and fewer
+ * plants draw, down to `keep` of them at the far ring (the same plants for everyone, by their
+ * index). A jungle floor 400 m off reads as plants from a third of them; drawn to 600 m in full it
+ * was 0.8 M more triangles at the plaza.
+ */
+const THIN = { from: 120, keep: 0.25 } as const;
 const RESELECT = 8;
 /**
  * A placement steps to a coarser LOD only once the camera is this much past the ring it
@@ -142,6 +156,7 @@ const FIXED_RINGS = new Set([
   "rock",
   "bush",
   "undergrowth",
+  "undergrowth-heavy",
   "yard",
 ]);
 /**
@@ -314,7 +329,11 @@ export function createProps(
   for (const id of byModel.keys()) {
     const m = manifest.models[id];
     if (!m) throw new Error(`Model ${id} missing from the manifest`);
-    const cls = m.ring ?? m.class;
+    const ring0 = m.ring ?? m.class;
+    const cls =
+      ring0 === "undergrowth" && (m.lods.at(-1)?.tris ?? 0) > UNDERGROWTH_HEAVY
+        ? "undergrowth-heavy"
+        : ring0;
     const ring = RINGS[cls] ?? RINGS["prop"]!;
     states.set(id, {
       id,
@@ -616,6 +635,10 @@ export function createProps(
         dz = p.z - pass.z;
       const d2 = dx * dx + dy * dy + dz * dz;
       let level = d2 <= r0 ? 0 : d2 <= r1 ? 1 : d2 <= r2 ? 2 : -1;
+      if (level === 2 && state.cls === "undergrowth" && d2 > THIN.from ** 2) {
+        const f = (Math.sqrt(d2) - THIN.from) / (state.ring[2] - THIN.from);
+        if ((i * 0.6180339887) % 1 > 1 - (1 - THIN.keep) * Math.min(1, f)) level = -1;
+      }
       const was = chosen[i]!;
       if (was >= 0 && was < 2 && level > was && d2 <= hold[was]!) level = was;
       chosen[i] = level;

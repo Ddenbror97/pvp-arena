@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "bay-v1",
+  revision: "stilt-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -149,8 +149,10 @@ export const WORLD_ASSETS = {
   // plinth 3 cm proud of the walls, the rest of their coplanar faces lifted (zfix-v12) and the
   // window glass seated on the walls dropped (glass-v3, also the East Works); the small houses'
   // stray shelf boxes out of the collision.
-  models: "/fps/br/models/models.bay-v1.json",
-  collision: "/fps/br/models/collision.bay-v1.json",
+  // stilt-v1 (2026-11-18): the rusty stilt house enterable (doorways, an upper floor, authored
+  // collision with ramped stairs: art/blender/br/rusty_house.mjs).
+  models: "/fps/br/models/models.stilt-v1.json",
+  collision: "/fps/br/models/collision.stilt-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

@@ -1123,7 +1123,7 @@ type GroundPut = (
   x: number,
   z: number,
   turn: Placement["turn"],
-  opts?: { margin?: number; flat?: number; onRoad?: boolean },
+  opts?: { margin?: number; flat?: number; onRoad?: boolean; sink?: number },
 ) => boolean;
 function groundPlacer(
   ctx: Context,
@@ -1148,7 +1148,13 @@ function groundPlacer(
       taken.push([p.x - w / 2, p.z - d / 2, p.x + w / 2, p.z + d / 2]);
       apronsOf(p.model, p.x, p.z, p.turn).forEach(keepClear);
     }
-  return (model, x, z, turn, { margin = 1.5, flat = 1.0, onRoad = false } = {}) => {
+  return (
+    model,
+    x,
+    z,
+    turn,
+    { margin = 1.5, flat = 1.0, onRoad = false, sink = Infinity } = {},
+  ) => {
     const [w, d] = footAt(model, turn);
     const box: [number, number, number, number] = [
       x - w / 2 - margin,
@@ -1194,6 +1200,9 @@ function groundPlacer(
       return top;
     };
     const y = model === "lot-lines" ? markingTop() : onPad ? Math.min(poi!.padHeight!, low) : low;
+    // `sink`: how far the model may stand into the ground at the pad's height (a stilt house's
+    // stairs and stilts read wrong buried where the ground rises above the pad).
+    if (low - y > sink) return false;
     // Its doors: outside them, clear of everything and level with the building (never dug in).
     const doors = apronsOf(model, x, z, turn);
     for (const [ax, az] of doors) {
@@ -6466,7 +6475,7 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
     lz: number,
     turn: Placement["turn"],
     reach = 12,
-    opts: { margin?: number; flat?: number } = { margin: 2, flat: 3 },
+    opts: { margin?: number; flat?: number; sink?: number } = { margin: 2, flat: 3 },
   ) => {
     const [cx, cz] = at(lx, lz);
     return firstSpot(
@@ -6553,15 +6562,6 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
   near("stone-foundation", -120, -230, 0, 20, { margin: 2, flat: 3 });
   near("stone-foundation", 230, 300, 1, 20, { margin: 2, flat: 3 });
   near("stone-foundation", -320, 230, 2, 20, { margin: 2, flat: 3 });
-  // Stilt houses with rusted roofs (the owner's pick, 2026-11-17) out in the jungle and by the
-  // river.
-  for (const [lx, lz, t] of [
-    [300, -60, 3],
-    [285, 70, 3],
-    [-265, -215, 1],
-    [-290, 110, 1],
-  ] as const)
-    near("rusty-house", lx, lz, t as Placement["turn"], 20, { margin: 2, flat: 2.5 });
   // Giant tree roots on rock, east and west.
   near("root-rock", 160, 40, 1, 14, { margin: 1, flat: 4 });
   near("root-rock", -150, 90, 2, 14, { margin: 1, flat: 4 });
@@ -6599,6 +6599,19 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
       ]),
       { margin: 0.6, flat: 1.2 },
     );
+  // Stilt houses with rusted roofs (the owner's pick, 2026-11-17), enterable (rusty_house.mjs).
+  // Owner, 2026-11-18: "this house needs better placement in the ruins": they stood out past the
+  // town in the open jungle, three of them outside the location, one on a 1.9 m slope. Now each
+  // belongs to something: the expedition's quarters behind its camp, a house on the cenote's bank
+  // looking over the water, and two on the town's edge facing the great temple and the palace.
+  // Turn 3 fronts the porch west, 1 east; the stairs are on the house's right.
+  for (const [lx, lz, t] of [
+    [176, -92, 3],
+    [50, 160, 3],
+    [128, -205, 3],
+    [-200, 30, 1],
+  ] as const)
+    near("rusty-house", lx, lz, t as Placement["turn"], 32, { margin: 2.5, flat: 0.4, sink: 0.1 });
   // Inside: skulls by the pyramid's sarcophagus and in the great temple's crypt, vases in its
   // courts; red banners on the great temple's gates.
   const inPlace = (
@@ -12538,7 +12551,7 @@ function firstSpot(
   model: string,
   turn: Placement["turn"],
   spots: Array<[number, number]>,
-  opts: { margin?: number; flat?: number; onRoad?: boolean } = {},
+  opts: { margin?: number; flat?: number; onRoad?: boolean; sink?: number } = {},
 ) {
   return spots.find(([x, z]) => put(model, x, z, turn, opts)) ?? null;
 }

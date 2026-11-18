@@ -1814,8 +1814,9 @@
       "fit": {
         "max": 1.6
       },
-      "collision": "solid",
-      "use": "old tree stump in the forests"
+      "collision": "core",
+      "use": "old tree stump in the forests",
+      "coreAbove": 0.12
     },
     {
       "id": "tent-canvas",
@@ -2150,7 +2151,8 @@
       "fit": {
         "max": 3.2
       },
-      "use": "small log pile (cabins, forest)"
+      "use": "small log pile (cabins, forest)",
+      "collision": "mound"
     },
     {
       "id": "log-stack",
@@ -7486,7 +7488,7 @@
       "fit": {
         "max": 13
       },
-      "collision": "voxel",
+      "collision": "columns",
       "use": "Forgotten Ruins (2026-11-17): fallen rainforest trunk (cover)"
     },
     {
@@ -7497,7 +7499,7 @@
       "fit": {
         "max": 15
       },
-      "collision": "voxel",
+      "collision": "columns",
       "use": "Forgotten Ruins (2026-11-17): fallen rainforest trunk, mossy (cover)"
     },
     {
@@ -7616,8 +7618,9 @@
       "fit": {
         "max": 2.5
       },
-      "collision": "solid",
-      "use": "Forgotten Ruins (2026-11-17): mossy stone"
+      "collision": "core",
+      "use": "Forgotten Ruins (2026-11-17): mossy stone",
+      "coreAbove": 0.3
     },
     {
       "id": "mossy-stones",
@@ -7627,7 +7630,7 @@
       "fit": {
         "max": 1.2
       },
-      "collision": "solid",
+      "collision": "mound",
       "use": "Forgotten Ruins (2026-11-17): mossy stones"
     },
     {
@@ -7657,8 +7660,9 @@
       "fit": {
         "max": 1.6
       },
-      "collision": "solid",
-      "use": "Forgotten Ruins (2026-11-17): tree stump"
+      "collision": "core",
+      "use": "Forgotten Ruins (2026-11-17): tree stump",
+      "coreAbove": 0.12
     },
     {
       "id": "brazier",
@@ -8183,8 +8187,9 @@
       "fit": {
         "max": 10
       },
-      "collision": "voxel",
-      "use": "Forgotten Ruins (2026-11-17): rusty-roofed wooden house in the jungle (the owner's pick)"
+      "collision": "boxes",
+      "use": "Forgotten Ruins (2026-11-17): rusty-roofed wooden house in the jungle (the owner's pick); made enterable (art/blender/br/rusty_house.mjs: doorways, an upper floor, authored collision)",
+      "ring": "dwelling"
     },
     {
       "id": "rope-bridge",
@@ -8572,7 +8577,7 @@
       "fit": {
         "max": 0.9
       },
-      "collision": "solid",
+      "collision": "mound",
       "use": "Forgotten Ruins (2026-11-17): mossy stones"
     },
     {
@@ -8583,7 +8588,7 @@
       "fit": {
         "max": 1.0
       },
-      "collision": "solid",
+      "collision": "mound",
       "use": "Forgotten Ruins (2026-11-17): mossy stones"
     },
     {
