@@ -11,10 +11,10 @@ export const guide: Guide = {
     "connect metamask to casino",
     "wallet signature",
   ],
-  title: "MetaMask Casino: How to Deposit, Play and Withdraw Safely",
+  title: "MetaMask Casinos: How to Deposit, Play and Withdraw Safely",
   description:
     "Use MetaMask at a crypto casino step by step: connect, sign in without gas, deposit USDC on Base, withdraw back to your wallet and spot risky approvals.",
-  h1: "MetaMask casino guide: connect, deposit and stay safe",
+  h1: "MetaMask casinos: connect, deposit and stay safe",
   answer:
     "A MetaMask casino is a crypto casino you can use with the MetaMask wallet. You connect MetaMask to prove which address is yours, usually by signing a free message, then send deposits from that wallet on the network the site supports. Your funds stay in MetaMask until you send them, and you should never share your secret recovery phrase with any site.",
   facts: [
@@ -163,7 +163,7 @@ Our upcoming [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals
 - **Revoke old approvals.** Block explorer tools let you review and revoke token approvals you gave in the past.
 - **Use a hardware wallet for savings.** For larger amounts, keep funds on a hardware wallet and move only a gaming budget to a hot wallet.
 
-Our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling) compares wallet types in more detail.`,
+Our [crypto wallet for gambling guide](/guides/best-crypto-wallet-for-gambling) compares wallet types in more detail.`,
     },
     {
       id: "troubleshooting",

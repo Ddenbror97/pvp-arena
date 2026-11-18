@@ -63,7 +63,7 @@ Steps before a session:
 
 1. Confirm Base network selected.
 2. Confirm USDC balance and ETH gas balance.
-3. Send a tiny test deposit to the real [wallet](/wallet) address if new.
+3. Send a tiny test deposit to the real [wallet](/how-it-works#wallet) address if new.
 4. Then send the real amount.
 
 [How to swap tokens](/guides/how-to-swap-tokens) helps if you hold only USDC and need ETH for gas—mind swap fees too.`,

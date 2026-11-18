@@ -309,7 +309,6 @@ Do not treat a search-volume list as an ordered list of quality. A large brand m
     ],
     related: [
       "browser-battle-royale",
-      "battle-royale-for-money-hub",
       "zombs-royale-unblocked",
       "pubg-unblocked",
       "best-fps-games",
@@ -436,7 +435,6 @@ For a managed school or work device, an accessible page is not permission to use
     ],
     related: [
       "battle-royale-games",
-      "battle-royale-for-money-hub",
       "zombs-royale-unblocked",
       "pubg-unblocked",
       "browser-fps-games",
@@ -552,7 +550,6 @@ For further comparisons, use the [FPS and aim topic hub](/guides/topics/fps-and-
     related: [
       "browser-battle-royale",
       "battle-royale-games",
-      "battle-royale-for-money-hub",
       "pubg-unblocked",
       "shooting-games-unblocked",
     ],
@@ -672,7 +669,6 @@ Before using any new access route, verify the title and domain, check the requir
       "browser-battle-royale",
       "battle-royale-games",
       "zombs-royale-unblocked",
-      "battle-royale-for-money-hub",
       "shooting-games-unblocked",
     ],
   }),

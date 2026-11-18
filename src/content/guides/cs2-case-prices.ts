@@ -167,7 +167,16 @@ The case is the container. The skin is the item. Today's dollar price is on the 
       a: "No. It checks a committed seed on our games. Marketplace asks are outside that check.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Steam Subscriber Agreement",
+      url: "https://store.steampowered.com/subscriber_agreement/",
+    },
+    {
+      label: "Steam Support: trade and market holds",
+      url: "https://help.steampowered.com/en/faqs/view/34A1-EA3F-83ED-54AB",
+    },
+  ],
   related: [
     "cs2-skin-prices",
     "csgo-case-opening",

@@ -67,7 +67,7 @@ Do not invent a fixed “always $X / always 2 minutes” rule in your notes. Wri
       title: "Bridging USDC vs ETH",
       body: `ETH bridging is usually straightforward because ETH is the native gas asset on both sides (bridged ETH on Base). USDC involves token contracts: you must pick the USDC version the destination app expects.
 
-For PVPspinArena, deposit the USDC flavour the [wallet](/wallet) page specifies on Base. Bridging the wrong USDC representation can leave you holding a token the cashier does not credit.
+For PVPspinArena, deposit the USDC flavour the [wallet](/how-it-works#wallet) page specifies on Base. Bridging the wrong USDC representation can leave you holding a token the cashier does not credit.
 
 [How to buy USDC](/guides/how-to-buy-usdc) covers acquiring stablecoins before you bridge.`,
     },

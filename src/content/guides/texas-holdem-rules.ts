@@ -167,7 +167,7 @@ A full deck is the game above. [The 36-card deck](/guides/short-deck-poker) drop
     },
     {
       q: "Does PVPspinArena have Texas Hold'em tables?",
-      a: "Yes. Six-max No-Limit Hold'em is live, with blinds from $0.02/$0.05 to $5/$10. The fee is 5% of a pot only after a flop. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott are separate games.",
+      a: "Yes. Six-max No-Limit Hold'em is live, with blinds from $0.02/$0.05 to $5/$10. The fee is 5% of a pot only after a flop. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott are separate games.",
     },
     {
       q: "What happens if two players have the same hand?",

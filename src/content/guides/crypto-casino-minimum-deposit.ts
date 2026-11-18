@@ -83,7 +83,7 @@ The rail itself may be a stablecoin, a volatile coin, or an on-chain transfer in
 
 Whatever you send, keep the adult rule. Gambling is for people 18 or older, or the age required where you live. A minimum deposit is still a wagering balance once you play it. If you are depositing to chase a loss, the size of the floor will not protect you. Stop and use the limits and help lines published for your state.
 
-The rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [crypto casino deposit fees](/guides/crypto-casino-deposit-fees), [crypto casino payment methods](/guides/crypto-casino-payment-methods), [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). Jackpot, coinflip, roulette, P2P Slott, and six-max poker settle at PVPspinArena in US dollars. Read [wallet](/wallet) before you play.`,
+The rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [crypto casino deposit fees](/guides/crypto-casino-deposit-fees), [crypto casino payment methods](/guides/crypto-casino-payment-methods), [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling). Jackpot, coinflip, roulette, P2P Slott, and six-max poker settle at PVPspinArena in US dollars. Read [wallet](/how-it-works#wallet) before you play.`,
     },
   ],
   faqs: [

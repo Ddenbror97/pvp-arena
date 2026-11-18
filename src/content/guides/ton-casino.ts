@@ -5,10 +5,10 @@ export const guide: Guide = {
   cluster: "Crypto payments",
   keyword: "ton casino",
   secondary: ["toncoin casino", "telegram casino ton", "gamble with ton", "toncoin gambling"],
-  title: "TON Casino Guide: Toncoin, Telegram Wallets and Fees",
+  title: "TON Casinos: Toncoin Deposits, Telegram Wallets and Fees",
   description:
     "How a TON casino works: which wallets hold Toncoin, why fees are tiny, what Telegram mini-app casinos still need to prove, and how to test a small deposit.",
-  h1: "TON casino: Toncoin wallets, fees and Telegram habits",
+  h1: "TON casinos: Toncoin wallets, fees and Telegram habits",
   answer:
     "A TON casino accepts Toncoin on the TON blockchain. Fees are low and transfers are quick, and the usual wallets are TON wallets such as Tonkeeper, not MetaMask. A casino inside Telegram is still a casino with an operator, an edge and withdrawal rules. PVPspinArena does not accept TON and is not a Telegram bot.",
   facts: [
@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "What people mean by a TON casino",
       body: `A ton casino search is commercial: someone wants a gambling site that accepts TON. Accepting a coin is a cashier choice. It is not a licence, a fairness proof, or a reason the game is cheaper. Adults 18+ only. This is not legal advice and not a deposit instruction for a blocked country.
 
-Start in [Crypto payments](/guides/topics/crypto-payments). Read [how to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) if you do not yet have a wallet that can actually hold TON. PVPspinArena's cashier is USDC or ETH on Base, explained on the [wallet](/wallet) page. We do not credit TON.
+Start in [Crypto payments](/guides/topics/crypto-payments). Read [how to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) if you do not yet have a wallet that can actually hold TON. PVPspinArena's cashier is USDC or ETH on Base, explained on the [wallet](/how-it-works#wallet) page. We do not credit TON.
 
 TON casino searches spiked with Telegram. People meet a bot or a mini-app and assume the chat platform is the casino. The chat is a window. The cashier, the company and the game rules are elsewhere, and you should be able to name them before you send Toncoin.
 
@@ -91,7 +91,7 @@ Withdraw a slice of that test back to the same wallet before you play in earnest
 
 Only after the round trip do you decide whether a larger amount is even a question. Convert your dollar loss limit into TON at the moment you would send it. When the dollar limit is gone, stop, even if the token count looks small. Stop if a bot asks for your seed phrase. Stop if you cannot find a terms page with a legal name. Low fees are not a substitute for knowing who has the float. A mini-app that hides the company name behind a username is not finished research, and a fast Toncoin transfer will not finish it for you.
 
-PVPspinArena still does not accept TON. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/wallet) page lists on-chain Bitcoin, and USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
+PVPspinArena still does not accept TON. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/how-it-works#wallet) page lists on-chain Bitcoin, and USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
     },
     {
       id: "stop",
@@ -147,8 +147,8 @@ The asset still needs its own wallet. A [TON wallet](/guides/ton-wallet) such as
   updated: "2026-09-27",
   cta: {
     title: "This cashier is Base",
-    text: "PVPspinArena does not take TON. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A TON balance in another wallet is not a deposit here.",
-    primary: { to: "/wallet", label: "Open the wallet page" },
-    secondary: { to: "/how-it-works", label: "How the site works" },
+    text: "PVPspinArena does not take TON. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars. A TON balance in another wallet is not a deposit here.",
+    primary: { to: "/how-it-works#wallet", label: "How deposits work" },
+    secondary: { to: "/guides/how-to-buy-usdc", label: "How to buy USDC" },
   },
 };

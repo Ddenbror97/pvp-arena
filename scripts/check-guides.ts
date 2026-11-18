@@ -1,7 +1,11 @@
 import { GUIDE_SITE_PATHS } from "../src/lib/guides/site-links";
 // Run: npm run check:guides
 import { GUIDES, getGuide, publishedTopics, wordCount } from "../src/content/guides";
-import { criticalQualityFailures, repeatedGuideBodyFailures } from "../src/lib/guides/quality";
+import {
+  criticalQualityFailures,
+  keywordStuffingFailure,
+  repeatedGuideBodyFailures,
+} from "../src/lib/guides/quality";
 import { NEW_GUIDES } from "./new-guides-plan";
 import { FPS_GUIDE_SLUGS } from "../src/content/guides/fps-topics";
 import { FPS_WAVE2_SLUGS } from "./fps-wave2-plan";
@@ -76,7 +80,6 @@ const PLANNED = new Set([
   "is-metamask-safe",
   "how-to-buy-usdc",
   "add-base-network-metamask",
-  "crypto-wallet-for-gambling",
   "server-seed-client-seed",
   "provably-fair-roulette",
   "coin-flip-odds",
@@ -382,9 +385,6 @@ const PLANNED = new Set([
   "crypto-casino-netherlands",
   "crypto-casino-south-africa",
   "crypto-casino-india",
-  "stake-vs-roobet",
-  "gamdom-alternatives",
-  "duelbits-alternatives",
   "stake-originals-games",
   "nfl-betting",
   "nba-betting",
@@ -484,6 +484,8 @@ for (const g of GUIDES) {
   if (!g.sections.some((s) => /\]\((\/(?!guides\/)[^)]*)\)/.test(s.body))) err("no site links");
   for (const r of g.related) if (!getGuide(r)) err(`unknown related ${r}`);
   for (const problem of criticalQualityFailures(body)) err(problem);
+  const stuffing = keywordStuffingFailure(g.keyword, body);
+  if (stuffing) err(stuffing);
   if (g.sources.length < 1) unsourced++;
 }
 for (const issue of repeatedGuideBodyFailures(

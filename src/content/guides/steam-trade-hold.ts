@@ -143,7 +143,7 @@ USDC on Base is a token. Once a transfer confirms, the recipient has it. There i
 - **Hold friction** is why skins are a messy chip: delayed, fee-cut, wallet-locked.
 - **Chain friction** is gas, the right network, and not leaking a seed. Our payments cluster covers that; this page stays on Steam.
 
-If you play here, set size first on a [gambling budget](/guides/gambling-budget) and keep the session in the [wallet](/wallet) you control. Do not deposit a held AWP into a bot and call it liquidity.
+If you play here, set size first on a [gambling budget](/guides/gambling-budget) and keep the session in the [wallet](/how-it-works#wallet) you control. Do not deposit a held AWP into a bot and call it liquidity.
 
 A token send can fail for a different reason — wrong network, no gas, a typo address. That is minutes of damage or permanent loss, not a published seven-day clock. Read the destination twice. The hold article is not a payments guide.
 

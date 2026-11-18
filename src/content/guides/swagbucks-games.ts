@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Skill wagers",
   keyword: "swagbucks games",
   secondary: ["swagbucks points", "swagbucks redemption", "rewards lobby games"],
-  title: "Swagbucks Games: Points, Not a Frozen Ranking",
+  title: "Swagbucks Games: How the Points and Payouts Work",
   description:
     "Swagbucks games sit in a points lobby. The points-per-dollar rate belongs on the redemption page, so none is printed here. No game is crowned the top payer.",
   h1: "Swagbucks games in 2026: the redemption page holds the rate",
@@ -176,7 +176,6 @@ Points on one site are not points on the next. [The other survey lobby](/guides/
     "games-that-pay-real-money",
     "house-edge",
     "skill-based-gambling",
-
     "inboxdollars-games",
   ],
   updated: "2026-10-20",

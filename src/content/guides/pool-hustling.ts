@@ -111,7 +111,6 @@ WPA rules effective 21 October 2026 call shots, and a legal break 8 is spotted o
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "8-ball-pool-rules",
     "9-ball-rules",

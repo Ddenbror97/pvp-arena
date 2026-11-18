@@ -89,7 +89,7 @@ Pair digital limits with a paper [gambling budget](/guides/gambling-budget) so e
 
 ### PVPspinArena habit
 
-Set a deposit ceiling on the [wallet](/wallet) side too—only fund the gambling wallet with what the limit allows—then enable site limits if offered on [responsible gambling](/responsible-gambling).
+Set a deposit ceiling on the [wallet](/how-it-works#wallet) side too—only fund the gambling wallet with what the limit allows—then enable site limits if offered on [responsible gambling](/responsible-gambling).
 
 ### Shared accounts
 

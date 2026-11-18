@@ -10,7 +10,7 @@ export const guide: Guide = {
     "legal gambling age united states",
     "online gambling age",
   ],
-  title: "Gambling Age by State: 18 vs 21 in the US",
+  title: "Gambling Age in the US by State: 18 vs 21 Explained",
   description:
     "Gambling age by state in the US is usually 18 or 21 by product and place: lottery, casinos, sports, online. A high-level map, not a live legal database.",
   h1: "Gambling age by state: 18 versus 21, and why it splits",

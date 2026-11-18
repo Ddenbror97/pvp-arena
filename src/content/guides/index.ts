@@ -69,7 +69,6 @@ import { guide as metamaskCasino } from "./metamask-casino";
 import { guide as isMetamaskSafe } from "./is-metamask-safe";
 import { guide as buyUsdc } from "./how-to-buy-usdc";
 import { guide as addBase } from "./add-base-network-metamask";
-import { guide as cryptoWallet } from "./crypto-wallet-for-gambling";
 import { guide as seeds } from "./server-seed-client-seed";
 import { guide as pfRoulette } from "./provably-fair-roulette";
 import { guide as coinOdds } from "./coin-flip-odds";
@@ -375,9 +374,6 @@ import { guide as gapCryptoCasinoIreland } from "./crypto-casino-ireland";
 import { guide as gapCryptoCasinoNetherlands } from "./crypto-casino-netherlands";
 import { guide as gapCryptoCasinoSouthAfrica } from "./crypto-casino-south-africa";
 import { guide as gapCryptoCasinoIndia } from "./crypto-casino-india";
-import { guide as gapStakeVsRoobet } from "./stake-vs-roobet";
-import { guide as gapGamdomAlternatives } from "./gamdom-alternatives";
-import { guide as gapDuelbitsAlternatives } from "./duelbits-alternatives";
 import { guide as gapStakeOriginalsGames } from "./stake-originals-games";
 import { guide as gapNflBetting } from "./nfl-betting";
 import { guide as gapNbaBetting } from "./nba-betting";
@@ -418,12 +414,7 @@ import { guide as seoVavadaReview } from "./vavada-review";
 
 import { guide as seoPrizepicksPromoCode } from "./prizepicks-promo-code";
 
-import { guide as seoSleeperPicksReview } from "./sleeper-picks-review";
-import { guide as seoBetrPicksReview } from "./betr-picks-review";
-import { guide as seoMetawinReview } from "./metawin-review";
-import { guide as seoDabbleReview } from "./dabble-review";
 import { guide as seoPokerSolver } from "./poker-solver";
-import { guide as seoSmarketsReview } from "./smarkets-review";
 import { guide as seoDoubleDiamondSlot } from "./double-diamond-slot";
 import { guide as seoFirePortalsSlot } from "./fire-portals-slot";
 import { guide as seoLeBanditSlot } from "./le-bandit-slot";
@@ -437,16 +428,11 @@ import { guide as seoDanielNegreanu } from "./daniel-negreanu";
 import { guide as seoWsopMainEvent } from "./wsop-main-event";
 import { guide as seoHustlerCasinoLive } from "./hustler-casino-live";
 
-import { guide as seoCloudbetReview } from "./cloudbet-review";
 import { guide as seoBetfuryReview } from "./betfury-review";
 
 import { guide as seoStakePoker } from "./stake-poker";
 
 import { guide as seoFliffReview } from "./fliff-review";
-
-import { guide as seoBetonlineReview } from "./betonline-review";
-
-import { guide as seoBovadaReview } from "./bovada-review";
 
 import { guide as seoLuckyForLifeLottery } from "./lucky-for-life-lottery";
 import { guide as seoPick3Lottery } from "./pick-3-lottery";
@@ -459,7 +445,6 @@ import { guide as seoHotHandFallacy } from "./hot-hand-fallacy";
 import { guide as seoRouletteCalculator } from "./roulette-calculator";
 
 import { guide as seoCsgoTradeBot } from "./csgo-trade-bot";
-import { guide as seoFlushCasinoReview } from "./flush-casino-review";
 import { guide as seoStarburstSlot } from "./starburst-slot";
 import { guide as seoMegaMoolahSlot } from "./mega-moolah-slot";
 
@@ -703,7 +688,6 @@ import { guide as ngIsGamblingLegalInGeorgia } from "./is-gambling-legal-in-geor
 import { guide as ngIsGamblingLegalInTennessee } from "./is-gambling-legal-in-tennessee";
 import { guide as ngIsGamblingLegalInTexas } from "./is-gambling-legal-in-texas";
 import { guide as ngIsKalshiGambling } from "./is-kalshi-gambling";
-import { guide as ngKalshiReview } from "./kalshi-review";
 import { guide as ngKentuckyDerbyBetting } from "./kentucky-derby-betting";
 import { guide as ngLineShopping } from "./line-shopping";
 import { guide as ngLotteryCalculator } from "./lottery-calculator";
@@ -795,9 +779,6 @@ import { guide as ngWagerApp } from "./wager-app";
 import { guide as ngHighCardGame } from "./high-card-game";
 import { guide as ngNovigReview } from "./novig-review";
 
-import { guide as ngSporttradeReview } from "./sporttrade-review";
-import { guide as ngNovigVsProphetx } from "./novig-vs-prophetx";
-
 import { guide as ngSplashSportsReview } from "./splash-sports-review";
 import { guide as ngFantasyFootballPayouts } from "./fantasy-football-payouts";
 import { guide as ngWolfGolfGame } from "./wolf-golf-game";
@@ -809,20 +790,15 @@ import { guide as ngPlayersLoungeReview } from "./players-lounge-review";
 import { guide as ngCheckmateGamingReview } from "./checkmate-gaming-review";
 import { guide as ngGamersaloonReview } from "./gamersaloon-review";
 import { guide as ngChallengermodeReview } from "./challengermode-review";
-import { guide as ngSolitaireCashReview } from "./solitaire-cash-review";
 import { guide as ngBingoCashReview } from "./bingo-cash-review";
 import { guide as ngSolitaireClashReview } from "./solitaire-clash-review";
 import { guide as ngPapayaGamesReview } from "./papaya-games-review";
 import { guide as ngAviaGamesReview } from "./avia-games-review";
-import { guide as ngBlitzWinCashReview } from "./blitz-win-cash-review";
-import { guide as ngPocket7gamesReview } from "./pocket7games-review";
 import { guide as ngSolitaireForMoney } from "./solitaire-for-money";
 import { guide as ngSpadesForMoney } from "./spades-for-money";
 import { guide as ngBackgammonForMoney } from "./backgammon-for-money";
 import { guide as ngGinRummyForMoney } from "./gin-rummy-for-money";
 import { guide as ngTriviaForMoney } from "./trivia-for-money";
-import { guide as ngClubggReview } from "./clubgg-review";
-import { guide as ngPokerbrosReview } from "./pokerbros-review";
 import { guide as ngAcrPokerReview } from "./acr-poker-review";
 import { guide as ngRealMoneyPokerApps } from "./real-money-poker-apps";
 import { guide as ngPokerStaking } from "./poker-staking";
@@ -876,8 +852,6 @@ import { guide as lostOnlineGamblingLegalKentucky } from "./online-gambling-lega
 import { guide as lostPkInBetting } from "./pk-in-betting";
 
 import { guide as lostSwagbucksGames } from "./swagbucks-games";
-
-import { guide as lostWorldwinnerReview } from "./worldwinner-review";
 
 import { guide as lostBigBassBonanza } from "./big-bass-bonanza";
 import { guide as lostBigBassSplash } from "./big-bass-splash";
@@ -979,7 +953,6 @@ import { guide as w2SportsBettingLegalOklahoma } from "./sports-betting-legal-ok
 import { guide as w2StraddlePoker } from "./straddle-poker";
 
 import { guide as w2SweetBonanzaCandyland } from "./sweet-bonanza-candyland";
-import { guide as w2ThunderpickReview } from "./thunderpick-review";
 import { guide as w2TomDwan } from "./tom-dwan";
 import { guide as w2VikingsGoBerzerkSlot } from "./vikings-go-berzerk-slot";
 import { guide as w2WantedDeadOrAWild } from "./wanted-dead-or-a-wild";
@@ -1118,7 +1091,6 @@ export const GUIDES: Guide[] = [
   isMetamaskSafe,
   buyUsdc,
   addBase,
-  cryptoWallet,
   seeds,
   pfRoulette,
   coinOdds,
@@ -1424,9 +1396,6 @@ export const GUIDES: Guide[] = [
   gapCryptoCasinoNetherlands,
   gapCryptoCasinoSouthAfrica,
   gapCryptoCasinoIndia,
-  gapStakeVsRoobet,
-  gapGamdomAlternatives,
-  gapDuelbitsAlternatives,
   gapStakeOriginalsGames,
   gapNflBetting,
   gapNbaBetting,
@@ -1466,13 +1435,7 @@ export const GUIDES: Guide[] = [
   seoVavadaReview,
 
   seoPrizepicksPromoCode,
-
-  seoSleeperPicksReview,
-  seoBetrPicksReview,
-  seoMetawinReview,
-  seoDabbleReview,
   seoPokerSolver,
-  seoSmarketsReview,
   seoDoubleDiamondSlot,
   seoFirePortalsSlot,
   seoLeBanditSlot,
@@ -1485,17 +1448,11 @@ export const GUIDES: Guide[] = [
   seoDanielNegreanu,
   seoWsopMainEvent,
   seoHustlerCasinoLive,
-
-  seoCloudbetReview,
   seoBetfuryReview,
 
   seoStakePoker,
 
   seoFliffReview,
-
-  seoBetonlineReview,
-
-  seoBovadaReview,
 
   seoLuckyForLifeLottery,
   seoPick3Lottery,
@@ -1508,7 +1465,6 @@ export const GUIDES: Guide[] = [
   seoRouletteCalculator,
 
   seoCsgoTradeBot,
-  seoFlushCasinoReview,
   seoStarburstSlot,
   seoMegaMoolahSlot,
 
@@ -1752,7 +1708,6 @@ export const GUIDES: Guide[] = [
   ngIsGamblingLegalInTennessee,
   ngIsGamblingLegalInTexas,
   ngIsKalshiGambling,
-  ngKalshiReview,
   ngKentuckyDerbyBetting,
   ngLineShopping,
   ngLotteryCalculator,
@@ -1844,9 +1799,6 @@ export const GUIDES: Guide[] = [
   ngHighCardGame,
   ngNovigReview,
 
-  ngSporttradeReview,
-  ngNovigVsProphetx,
-
   ngSplashSportsReview,
   ngFantasyFootballPayouts,
   ngWolfGolfGame,
@@ -1858,20 +1810,15 @@ export const GUIDES: Guide[] = [
   ngCheckmateGamingReview,
   ngGamersaloonReview,
   ngChallengermodeReview,
-  ngSolitaireCashReview,
   ngBingoCashReview,
   ngSolitaireClashReview,
   ngPapayaGamesReview,
   ngAviaGamesReview,
-  ngBlitzWinCashReview,
-  ngPocket7gamesReview,
   ngSolitaireForMoney,
   ngSpadesForMoney,
   ngBackgammonForMoney,
   ngGinRummyForMoney,
   ngTriviaForMoney,
-  ngClubggReview,
-  ngPokerbrosReview,
   ngAcrPokerReview,
   ngRealMoneyPokerApps,
   ngPokerStaking,
@@ -1925,8 +1872,6 @@ export const GUIDES: Guide[] = [
   lostPkInBetting,
 
   lostSwagbucksGames,
-
-  lostWorldwinnerReview,
 
   lostBigBassBonanza,
   lostBigBassSplash,
@@ -2024,7 +1969,6 @@ export const GUIDES: Guide[] = [
   w2StraddlePoker,
 
   w2SweetBonanzaCandyland,
-  w2ThunderpickReview,
   w2TomDwan,
   w2VikingsGoBerzerkSlot,
   w2WantedDeadOrAWild,

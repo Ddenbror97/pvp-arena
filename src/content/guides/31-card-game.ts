@@ -11,7 +11,7 @@ export const guide: Guide = {
     "31 rules knocking",
     "31 for quarters",
   ],
-  title: "31 Card Game: Scat Rules, Knocking and Lives",
+  title: "31 Card Game Rules: How to Play Scat, Knocking and Lives",
   description:
     "31 card game rules explained: dealing, card values, knocking, lives and playing Scat for quarters, with real hand odds and a simple knock strategy.",
   h1: "31 card game: Scat rules, knocking, lives and odds",

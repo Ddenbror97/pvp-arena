@@ -66,7 +66,12 @@ export const guide: Guide = {
       a: "Use the offer written in the official rules for your state and your account. A code republished on another site can be expired or ineligible, and this page does not list any.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "FTC: prize, sweepstakes and lottery scams",
+      url: "https://www.ftc.gov/consumer-advice/money-credit/scams/prize-sweepstakes-lotteries",
+    },
+  ],
   related: ["no-deposit-bonus-casino", "free-spins-no-deposit"],
   updated: "2026-10-21",
 };

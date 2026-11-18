@@ -78,7 +78,7 @@ Only the first can be a true PvP duel, and only if stakes fund the prize. [PvP g
       title: "A clearer duel alternative",
       body: `If your goal is a simple money duel with a friend, a coinflip room is easier to price: two sides, one fee, transparent 50/50 before the cut. [CS:GO coinflip](/guides/csgo-coinflip) is the heritage format. [Commit reveal scheme](/guides/commit-reveal-scheme) is how honest reveals should work.
 
-On PVPspinArena: deposit via [wallet](/wallet), duel on [Coinflip](/coinflip), verify on [Fairness](/fairness). Roulette on [Roulette](/roulette) is not a duel.`,
+On PVPspinArena: deposit via [wallet](/how-it-works#wallet), duel on [Coinflip](/coinflip), verify on [Fairness](/fairness). Roulette on [Roulette](/roulette) is not a duel.`,
     },
     {
       id: "budget",

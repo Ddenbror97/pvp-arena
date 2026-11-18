@@ -59,7 +59,7 @@ Some crypto casinos build their own baccarat. The shuffle comes from a server se
       title: "How to play baccarat with crypto, step by step",
       body: `1. **Pick the coin.** Decide whether you want dollar-stable results (USDC or another stablecoin) or are happy to hold a volatile coin such as ETH or BTC during play.
 2. **Pick the network.** The same token can exist on several networks. Sending on the wrong one can lose funds. Match the casino's deposit network exactly; [sent crypto to wrong network](/guides/sent-crypto-to-wrong-network) explains what goes wrong.
-3. **Fund from a wallet you control.** Buy on an exchange, withdraw to your own wallet, then deposit. Self-custody means you control the keys; see [crypto wallet for gambling](/guides/crypto-wallet-for-gambling).
+3. **Fund from a wallet you control.** Buy on an exchange, withdraw to your own wallet, then deposit. Self-custody means you control the keys; see [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling).
 4. **Check the table.** Confirm the Banker commission, the Tie payout, the minimum and maximum, and any side bets.
 5. **Set a budget in dollars.** Decide how much you can lose and how long you will play, before the first hand.
 6. **Play, then withdraw.** Test the withdrawal with a small amount early so you know how long it takes and what it costs.

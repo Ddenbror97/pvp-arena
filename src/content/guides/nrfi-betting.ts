@@ -238,7 +238,13 @@ Any later outbound link to a book should be read as advertising.`,
       a: "No. No pitcher, no team, and no live odds. The page explains the contract. A later link to a book should be read as advertising.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Mathematics of bookmaking",
+      url: "https://en.wikipedia.org/wiki/Mathematics_of_bookmaking",
+    },
+    { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
+  ],
   related: ["prop-bets-explained", "house-edge", "ats-in-betting", "first-touchdown-scorer-bets"],
   updated: "2026-10-20",
 };

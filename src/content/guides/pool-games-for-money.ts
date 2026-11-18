@@ -113,7 +113,6 @@ Whether you may play pool for money at all depends on where you live. This page 
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "best-pool-games",
     "pool-hustling",

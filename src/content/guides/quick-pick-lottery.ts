@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "quick-pick-lottery",
-  cluster: "Games of chance",
+  cluster: "Lottery",
   keyword: "quick pick",
   secondary: [
     "quick pick vs own numbers",
@@ -35,9 +35,9 @@ Quick picks are popular because they are fast, need no slip, and suit people who
 
 Each quick-pick line is generated independently. Two quick picks, even on the same ticket, can in principle repeat numbers or duplicate another player's line, though with hundreds of millions of combinations that is rare. The generator does not look at previous draws, does not avoid past winners and does not favour “due” numbers. That independence is the correct behaviour, and it is also why the [gambler's fallacy](/guides/gamblers-fallacy) gets no help from a quick pick.
 
-### Why this sits with games of chance
+### Why the draw is pure chance
 
-Lotteries are pure chance: nothing you do before the draw changes which balls come out. The [Games of chance topic](/guides/topics/games-of-chance) groups lotteries with other luck-driven games, from pull tabs to bingo, where the only real decisions are about price, prize structure and how much to spend.`,
+Lotteries are pure chance: nothing you do before the draw changes which balls come out. The [lottery topic](/guides/topics/lottery) groups the draws, odds and payout pages. The only real decisions are about price, prize structure and how much to spend.`,
     },
     {
       id: "odds",

@@ -122,7 +122,7 @@ You open [Coinflip](/coinflip), create a $2.00 game and pick a side. When someon
       title: "Summary",
       body: `A USDC casino uses a dollar-tracking stablecoin, so your balance reflects your play rather than market swings. The key to using one safely is the network: send on the exact network the site supports, from a verified wallet, and start with a small amount. Look for clear confirmation rules, honest withdrawal limits and fees shown up front.
 
-Before your first deposit, read about [choosing a crypto wallet for gaming](/guides/crypto-wallet-for-gambling) and set a [gambling budget](/guides/gambling-budget). When you are ready, the [wallet page](/wallet) connects your wallet and sends on Base.
+Before your first deposit, read about [choosing a crypto wallet for gaming](/guides/best-crypto-wallet-for-gambling) and set a [gambling budget](/guides/gambling-budget). When you are ready, the [wallet page](/how-it-works#wallet) connects your wallet and sends on Base.
 
 More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
 

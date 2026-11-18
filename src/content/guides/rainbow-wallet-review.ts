@@ -130,7 +130,7 @@ Adults get phished too. Age is not a shield. Slow down when the message is urgen
     {
       id: "casino-fit",
       title: "Where a casino deposit actually leaves the app",
-      body: `A wallet review is not a deposit tutorial. If you send assets from Rainbow to a game, the tokens leave the address you control and sit wherever that cashier watches. Rainbow does not run the game, and the game does not hold your seed phrase. The [wallet](/wallet) page on this site is where PVPspinArena describes its own cashier. Read that page for this product. Do not treat this review as the steps. If a site asks for the phrase to credit a balance, close it.
+      body: `A wallet review is not a deposit tutorial. If you send assets from Rainbow to a game, the tokens leave the address you control and sit wherever that cashier watches. Rainbow does not run the game, and the game does not hold your seed phrase. The [wallet](/how-it-works#wallet) page on this site is where PVPspinArena describes its own cashier. Read that page for this product. Do not treat this review as the steps. If a site asks for the phrase to credit a balance, close it.
 
 Use Rainbow only for networks it actually shows, only with amounts you can lose, and only if you are 18 or older. It can fit an Ethereum-style payment and fail a chain it does not list. Check rainbow.me for the networks and swap flow you see today.
 

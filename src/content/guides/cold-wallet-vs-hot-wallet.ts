@@ -32,7 +32,7 @@ This sits in the [crypto payments](/guides/topics/crypto-payments) cluster. It i
 
 Exchange accounts are a third category people call a wallet. They are custodial hot wallets you do not sign. Useful for buying USDC. Poor as the last hop if a casino matches a verified from-address, and poor as long-term storage.
 
-For the wider choice of apps, see [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). For the key-ownership idea, see [self custody wallet](/guides/self-custody-wallet). The cold-versus-hot split only applies after you already chose self-custody. An exchange "cold storage" marketing line is the company's cold storage, not yours.`,
+For the wider choice of apps, see [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling). For the key-ownership idea, see [self custody wallet](/guides/self-custody-wallet). The cold-versus-hot split only applies after you already chose self-custody. An exchange "cold storage" marketing line is the company's cold storage, not yours.`,
     },
     {
       id: "hot-risks",
@@ -79,7 +79,7 @@ Cold storage that never signs is safer still. You do not need the savings device
 2. **Funding hot wallet.** Browser or phone wallet on Base, funded with the month's or week's gambling budget in USDC plus a little ETH for gas.
 3. **Optional exchange account.** A place to buy USDC, not a place to keep a long-term stack, and not the sender if the casino matches deposits to a verified self-custody address.
 
-On PVPspinArena you verify the hot wallet on your [profile](/profile) with a signature, then send USDC or ETH on Base. The site never needs the cold seed. Withdrawals go back to an address you choose; sending them to the hot wallet is fine if the amount is still "play money." Sweep larger cashouts to cold storage in a separate, careful transaction.
+On PVPspinArena you verify the hot wallet on your [profile](/how-it-works#wallet) with a signature, then send USDC or ETH on Base. The site never needs the cold seed. Withdrawals go back to an address you choose; sending them to the hot wallet is fine if the amount is still "play money." Sweep larger cashouts to cold storage in a separate, careful transaction.
 
 Label the wallets in a way you will still understand in six months. "Play-Base" and "Savings" is enough. Do not reuse the play seed on a second phone "for convenience." Two hot copies of the same seed are two attack surfaces.
 
@@ -178,7 +178,7 @@ A third model, neither a single hot key nor a hardware stick, is a [multisig wal
     "usdc-casino",
     "ledger-vs-trezor",
     "seed-phrase",
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "metamask-casino",
     "connect-ledger-to-metamask",
     "what-is-a-hardware-wallet",

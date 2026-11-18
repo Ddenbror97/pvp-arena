@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "crypto-lottery",
-  cluster: "Games & odds",
+  cluster: "Lottery",
   keyword: "crypto lottery",
   secondary: ["bitcoin lottery", "on chain lottery", "crypto lotto", "satoshi lottery"],
   title: "Crypto Lottery Guide: Ticket Odds and Jackpots",
@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 The coin on the cashier does not change the combinatorics. A USDC ticket, an ETH ticket and a satoshi lottery ticket are the same machine if N and the prize table match. Cheap tickets change the unit, not the odds. A “crypto lotto” banner is the same product wearing a shorter name.
 
-This [games and odds](/guides/topics/games-and-odds) guide is generic: ticket identity, draw risk and jackpots across coins. An on chain lottery is a draw method, not a better prize table. The Bitcoin-specific cashier, satoshi pricing and BTC price risk live on the [bitcoin lottery](/guides/bitcoin-lottery) page. Read that next if the site you are looking at is denominated in BTC.
+This [lottery](/guides/topics/lottery) guide is generic: ticket identity, draw risk and jackpots across coins. An on chain lottery is a draw method, not a better prize table. The Bitcoin-specific cashier, satoshi pricing and BTC price risk live on the [bitcoin lottery](/guides/bitcoin-lottery) page. Read that next if the site you are looking at is denominated in BTC.
 
 Adults aged 18 or over only. A wallet login is not a lottery licence. Paying in crypto does not make a foreign raffle legal where you live.
 

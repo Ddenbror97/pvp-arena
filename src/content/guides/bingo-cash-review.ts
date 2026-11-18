@@ -78,7 +78,7 @@ Roulette is a 33-slot wheel: 16 Purple and 16 Silver pay 2x, and 1 Green pays 14
 
 P2P Slott takes 10% of the pot when you win, and a bomb means the house keeps both stakes. That is a third game with a harsher bad outcome. It is mentioned so a “player versus player” label is not assumed to mean one fee.
 
-The [skill wagers topic](/guides/topics/skill-wagers) is the cluster for cash contests of this family. The same app group holds [Solitaire Cash](/guides/solitaire-cash-review), [Papaya Games](/guides/papaya-games-review), and [Solitaire Clash](/guides/solitaire-clash-review). Bingo Cash lives there as a room with a rake, beside other ways of reading a prize list.`,
+The [skill wagers topic](/guides/topics/skill-wagers) is the cluster for cash contests of this family. The same app group holds [Papaya Games](/guides/papaya-games-review) and [Solitaire Clash](/guides/solitaire-clash-review). Bingo Cash lives there as a room with a rake, beside other ways of reading a prize list.`,
     },
     {
       id: "hall-versus-app",
@@ -114,7 +114,7 @@ Suppose you move $20 from a bad bingo night into a coin. You have bought a secon
 
 Two extra habits. Cap the night in dollars before the first room, and stop when the cap hits, including the night you are “due.” Record misses. A log of only the bingos will convince you the room is kinder than it is.
 
-[Wallet](/wallet) on this site is a USD balance for a different set of games, funded with Bitcoin or USDC/ETH on Base. It will not cash a bingo card. It is named so the two cashiers stay distinct when you compare fees.`,
+[Wallet](/how-it-works#wallet) on this site is a USD balance for a different set of games, funded with Bitcoin or USDC/ETH on Base. It will not cash a bingo card. It is named so the two cashiers stay distinct when you compare fees.`,
     },
     {
       id: "live-block",
@@ -156,11 +156,6 @@ Real money bingo against players pays the places on the list when the cashier wo
     { label: "Papaya: Bingo Cash", url: "https://www.papaya.com/games/bingo-cash" },
     { label: "Wikipedia: Bingo", url: "https://en.wikipedia.org/wiki/Bingo" },
   ],
-  related: [
-    "solitaire-cash-review",
-    "papaya-games-review",
-    "solitaire-clash-review",
-    "skillz-review",
-  ],
+  related: ["papaya-games-review", "solitaire-clash-review", "skillz-review"],
   updated: "2026-10-07",
 };

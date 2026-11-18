@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "hold and win slots",
   secondary: ["hold and win slots rtp", "hold and win slots max win", "hold and win slots demo"],
-  title: "Hold and Win Slots: A Mechanic, Not One RTP",
+  title: "Hold and Win Slots: How the Respin Mechanic Works",
   description:
     "Hold and win slots are a mechanic many titles use. There is no single RTP for the category. The rules screen of each game pays and can change by casino.",
   h1: "Hold and win slots in 2026: a shared mechanic, not one game's return",

@@ -62,7 +62,7 @@ Steam wallet funds buy games, items and gifts. They do not leave Steam as dollar
 
 A leftover CS:GO loadout is the same item set CS2 uses. Wear, stickers and names carried over. Price those rows the same way. There is no separate “csgo inventory value” article on this site, and there should not be: one adder, one fee, one wallet rule. Searches for steam inventory worth and cs2 inventory worth belong here too. One worksheet.
 
-If you are comparing skins as chips versus a dollar token, the [skin gambling vs crypto](/guides/skin-gambling-vs-crypto) guide is the comparison. PVPspinArena shows balances in USD backed by USDC on Base, which you can move from a [wallet](/wallet) you control.`,
+If you are comparing skins as chips versus a dollar token, the [skin gambling vs crypto](/guides/skin-gambling-vs-crypto) guide is the comparison. PVPspinArena shows balances in USD backed by USDC on Base, which you can move from a [wallet](/how-it-works#wallet) you control.`,
     },
     {
       id: "steam-fee",

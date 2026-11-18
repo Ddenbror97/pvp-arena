@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Casino knowledge",
   keyword: "gambling tattoos",
   secondary: ["dice tattoo", "ace of spades tattoo"],
-  title: "Gambling Tattoos: Dice, Aces, and What Ink Does Not Do",
+  title: "Gambling Tattoos: Dice, Aces, Sevens and What They Mean",
   description:
     "Gambling tattoos are culture and personal meaning. A dice tattoo does not change a roll. An ace of spades has more than one history, and ink is not odds.",
   h1: "Gambling tattoos in 2026: pictures on skin, not a change in the odds",

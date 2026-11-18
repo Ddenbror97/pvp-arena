@@ -5,10 +5,10 @@ export const guide: Guide = {
   cluster: "Casino games",
   keyword: "come bet craps",
   secondary: ["come bet versus pass line", "come odds", "craps come point"],
-  title: "Come Bet Craps: Pass Line, Odds, and a Dollar Layout",
+  title: "Come Bet in Craps: How It Works, Odds and Payouts",
   description:
     "Come bet craps starts on the next roll, not the come-out. Odds can ride behind it, the Wizard page prints the price, and a dollar layout is not a promise.",
-  h1: "Come bet craps: the next-roll contract, the odds chip, and a dollar layout",
+  h1: "Come bet craps: how the come bet works, the odds bet and the payouts",
   answer:
     "Come bet craps is a pass-line contract that starts on the next roll. The Wizard page opened on 20 October 2026 calls it the same as pass, at 1.41% on the flat chip. Odds behind it are marked at zero house edge. A dollar layout below is not a promise the point arrives.",
   facts: [

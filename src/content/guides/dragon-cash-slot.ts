@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "dragon cash",
   secondary: ["dragon cash rtp", "dragon cash max win", "dragon cash demo"],
-  title: "Dragon Cash Slot: Not the Dragon Link Game",
+  title: "Dragon Cash Slot: Features and How It Differs From Link",
   description:
     "Dragon cash is its own titled game. Dragon Link is a different product. The rules screen pays and can change by casino. A $72 pot pays the winner $68.40.",
   h1: "Dragon cash in 2026: a titled game, separate from Dragon Link",

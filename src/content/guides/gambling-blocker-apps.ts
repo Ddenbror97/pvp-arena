@@ -160,7 +160,7 @@ Share install confirmation with someone you trust. Secrecy defeats the purpose.
 
 ### When bypass keeps happening
 
-Escalate to longer [gambling self-exclusion](/guides/gambling-self-exclusion), therapy via SAMHSA referral at 1-800-662-4357, and removing access to funds on [wallet](/wallet) pages you use to deposit.
+Escalate to longer [gambling self-exclusion](/guides/gambling-self-exclusion), therapy via SAMHSA referral at 1-800-662-4357, and removing access to funds on [wallet](/how-it-works#wallet) pages you use to deposit.
 
 ### Relapse planning
 

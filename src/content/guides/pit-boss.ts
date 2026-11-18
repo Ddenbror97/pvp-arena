@@ -10,10 +10,10 @@ export const guide: Guide = {
     "casino floor supervisor",
     "what does a pit boss do",
   ],
-  title: "Pit Boss: What a Casino Pit Boss Actually Does",
+  title: "Pit Boss and Pit Manager: What the Casino Roles Do",
   description:
     "Pit boss explained: where the role sits in the casino hierarchy, what a pit manager signs, how players get rated, and how it differs from a floor supervisor.",
-  h1: "Pit boss: the casino role, the hierarchy and the daily job",
+  h1: "Pit boss and pit manager: the casino roles, the hierarchy and the job",
   answer:
     "A pit boss is the casino manager responsible for a pit, the cluster of table games arranged around a central work area. The pit boss supervises floor supervisors and dealers, approves chip fills and credits, signs off on large payouts and markers, settles disputes, rates players for comps and works with surveillance when something looks wrong. It is a management role, not a dealing role.",
   facts: [

@@ -9,7 +9,7 @@ export const guide: Guide = {
     "wanted dead or a wild max win",
     "wanted dead or a wild demo",
   ],
-  title: "Wanted Dead or a Wild: Bonus Buy, No Multiple",
+  title: "Wanted Dead or a Wild: Bonus Features and Bonus Buy",
   description:
     "Wanted dead or a wild is a western poster with a buy-button reputation. No multiplier is printed. RTP stays on the rules screen. No demo is promised.",
   h1: "Wanted dead or a wild is a western poster with the multiple left off",

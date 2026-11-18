@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "handicapping-horses",
-  cluster: "Games of chance",
+  cluster: "Horse racing",
   keyword: "handicapping horses",
   secondary: [
     "horse racing handicapping",
@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 This page is the live-race craft: speed, class, pace, form. Virtual or cartoon tracks paid in crypto are a different product with an RNG and an overround; that is [crypto horse racing betting](/guides/crypto-horse-racing-betting). Sportsbook holds on other sports are [how to win at sports betting](/guides/how-to-win-at-sports-betting). Both neighbours stay in their lanes.
 
-Racing is gambling. Adults only, 18+ or the local legal age. A form book does not create an edge by itself. The [Games of chance topic](/guides/topics/games-of-chance) is the right hub because even a careful line still faces a ten-horse sample. A well-made 30% shot still loses seven times in ten. That is not a broken figure; it is a small sample. Bankroll for the seven, or do not take the price.
+Racing is gambling. Adults only, 18+ or the local legal age. A form book does not create an edge by itself. The [horse racing topic](/guides/topics/horse-racing) has the bet types and odds pages. Even a careful line still faces a ten-horse sample. A well-made 30% shot still loses seven times in ten. That is not a broken figure; it is a small sample. Bankroll for the seven, or do not take the price.
 
 ### The four words in the title
 

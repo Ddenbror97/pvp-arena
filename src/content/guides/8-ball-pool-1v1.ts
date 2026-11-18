@@ -102,7 +102,6 @@ The playing surface is 2.54 m by 1.27 m. Cue upgrades are not sold, so a cosmeti
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "8-ball-pool-hub",
     "crypto-8-ball-pool",

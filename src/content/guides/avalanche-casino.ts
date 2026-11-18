@@ -107,7 +107,7 @@ Ava Labs' Core wallet will show X-Chain, P-Chain and C-Chain balances in one app
 2. If you sent AVAX, sell it for USDC on the exchange book.
 3. Withdraw **USDC on Base** to your 0x wallet. Read the network selector twice.
 4. Keep a few dollars of ETH on Base for gas.
-5. Deposit here. The [wallet](/wallet) page is the cashier, not a C-Chain explorer.
+5. Deposit here. The [wallet](/how-it-works#wallet) page is the cashier, not a C-Chain explorer.
 
 ### Path that usually hurts more
 

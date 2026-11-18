@@ -103,7 +103,7 @@ Sending funds to the wrong address, or on a network the site does not support, u
 
 ### Wallet security
 
-Whoever holds your wallet's recovery phrase controls your funds. No legitimate site will ever ask for it. Keep it offline, and consider using a separate wallet just for gaming so a problem there cannot touch your savings. Our guide to [choosing a crypto wallet for gaming](/guides/crypto-wallet-for-gambling) covers the basics.
+Whoever holds your wallet's recovery phrase controls your funds. No legitimate site will ever ask for it. Keep it offline, and consider using a separate wallet just for gaming so a problem there cannot touch your savings. Our guide to [choosing a crypto wallet for gaming](/guides/best-crypto-wallet-for-gambling) covers the basics.
 
 ### Site risk
 

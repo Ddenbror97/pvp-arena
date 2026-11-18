@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "wolf run slot",
   secondary: ["wolf run slot rtp", "wolf run slot max win", "wolf run slot demo"],
-  title: "Wolf Run Slot: Another Wolf, Not Wolf Gold",
+  title: "Wolf Run Slot: Stacked Wilds and Free Spins Explained",
   description:
     "Wolf run slot is another wolf title, different from Wolf Gold. The rules screen of this title pays and can change by casino. A $44 pot pays the winner $41.80.",
   h1: "Wolf run slot in 2026: a second wolf title, separate from Wolf Gold",

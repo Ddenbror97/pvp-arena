@@ -29,7 +29,7 @@ There are several designs (lock-and-mint, burn-and-mint, liquidity pools, offici
 
 Bridges are for adults who already understand wallet risk. They are not a gambling product. Using one before [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/) does not change the odds. It only changes how you fund a dollar chip.
 
-PVPspinArena never asks you to bridge into a "site bridge address." You send USDC or ETH on Base to the deposit address on the [wallet](/wallet) page. Official-looking bridge pages in ads are a common phishing pattern. Background reading lives under [crypto payments](/guides/topics/crypto-payments).`,
+PVPspinArena never asks you to bridge into a "site bridge address." You send USDC or ETH on Base to the deposit address on the [wallet](/how-it-works#wallet) page. Official-looking bridge pages in ads are a common phishing pattern. Background reading lives under [crypto payments](/guides/topics/crypto-payments).`,
     },
     {
       id: "why",

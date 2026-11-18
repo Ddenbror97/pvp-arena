@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "razor shark slot",
   secondary: ["razor shark slot rtp", "razor shark slot max win", "razor shark slot demo"],
-  title: "Razor Shark Slot: Mystery Stacks, No Multiple",
+  title: "Razor Shark Slot: Mystery Stacks and Features Explained",
   description:
     "Razor shark slot markets mystery stacks and nudges. No multiple is quoted. The rules screen pays and can change by casino. A $54 pot pays $51.30.",
   h1: "Razor shark slot in 2026: mystery-stack marketing with the multiple left blank",

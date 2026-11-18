@@ -145,7 +145,6 @@ The fairest line in this skillz review is the dull one. Read the entry, read the
     "provably-fair-casino",
     "pvp-casino-games",
     "fake-casino-sites",
-    "worldwinner-review",
   ],
   updated: "2026-10-06",
 };

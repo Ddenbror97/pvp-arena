@@ -78,7 +78,7 @@ Roulette uses 33 slots: 16 Purple and 16 Silver at 2x, and 1 Green at 14x. Five 
 
 A [wager app](/guides/wager-app) is the general pattern of locked entries and a payout from the pot. Solitaire Clash is a phone version aimed at a card score. The pattern is the reason the confirm screen matters. The theme is the reason people forget to read it.
 
-The [skill wagers topic](/guides/topics/skill-wagers) collects these reviews. Publisher and catalog neighbors are the [Avia Games review](/guides/avia-games-review), [Pocket7Games](/guides/pocket7games-review), and [Bingo Cash](/guides/bingo-cash-review). Use it to compare shapes. Then return to the match that is actually charging you.`,
+The [skill wagers topic](/guides/topics/skill-wagers) collects these reviews. Publisher and catalog neighbors are the [Avia Games review](/guides/avia-games-review) and [Bingo Cash](/guides/bingo-cash-review). Use it to compare shapes. Then return to the match that is actually charging you.`,
     },
     {
       id: "balance-types",
@@ -164,6 +164,6 @@ The line to leave with: Solitaire Clash is legit in the narrow sense only when y
     { label: "AviaGames: Solitaire Clash", url: "https://www.aviagames.com/games/solitaire-clash" },
     { label: "Wikipedia: Solitaire", url: "https://en.wikipedia.org/wiki/Solitaire" },
   ],
-  related: ["avia-games-review", "pocket7games-review", "bingo-cash-review", "solitaire-rules"],
+  related: ["avia-games-review", "bingo-cash-review", "solitaire-rules"],
   updated: "2026-10-20",
 };

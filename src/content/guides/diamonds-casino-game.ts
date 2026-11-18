@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Skill wagers",
   keyword: "diamonds game",
   secondary: ["diamonds game legit", "diamonds game payout", "diamonds game real money"],
-  title: "Diamonds Game: Crowded Name, Cash-Out Question",
+  title: "Diamonds Casino Game: How to Play and Cash Out",
   description:
     "Diamonds game is a crowded cash-out query, not a card-suit lesson and not a slot review. No payout, RTP, code, or license is invented.",
   h1: "Diamonds game in 2026: one crowded name, one cash-out question",
@@ -42,7 +42,7 @@ For the cash-out app, the checks are ordinary: operator or developer if shown, t
 
 If any of those is missing, it stays not published. A suit has none of those fields, so it cannot answer the cash-out question.
 
-[Products that advertise paying money](/guides/games-that-pay-real-money) collects the cash-out shelf. [Solitaire with an entry fee](/guides/solitaire-cash-review) is a card game that does take money, which is still not the diamond suit by itself. [A stated house edge](/guides/house-edge) is what you study after a stake exists.
+[Products that advertise paying money](/guides/games-that-pay-real-money) collects the cash-out shelf. [Solitaire with an entry fee](/guides/papaya-games-review) is a card game that does take money, which is still not the diamond suit by itself. [A stated house edge](/guides/house-edge) is what you study after a stake exists.
 
 The hub for this cluster is [skill-wager guides](/guides/topics/skill-wagers). No code is listed. PVPspinArena is not an affiliate of the crowded name.`,
     },
@@ -196,6 +196,6 @@ An affiliate banner that ranks "the diamonds game" is an ad. It is not this revi
     },
   ],
   sources: [],
-  related: ["games-that-pay-real-money", "solitaire-cash-review", "house-edge", "pvp-gambling"],
+  related: ["games-that-pay-real-money", "house-edge", "pvp-gambling"],
   updated: "2026-10-20",
 };

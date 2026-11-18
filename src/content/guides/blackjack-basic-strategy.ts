@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "blackjack-basic-strategy",
-  cluster: "Games & odds",
+  cluster: "Blackjack",
   keyword: "blackjack basic strategy",
   secondary: ["blackjack chart", "basic strategy chart", "blackjack odds", "blackjack house edge"],
   title: "Blackjack Basic Strategy: Charts, Edge and Limits",
@@ -131,7 +131,7 @@ If blackjack or any other game is becoming hard to put down, use the [responsibl
 - [Roulette](/roulette) — count 33 slots, read 2x and 14x.
 - [Fairness](/fairness) — verify the committed result.
 
-The [games and odds topic](/guides/topics/games-and-odds) holds those live numbers. Use this page when you sit at someone else’s 21 table and need to know what a chart is for — and what it is not.
+The [blackjack topic](/guides/topics/blackjack) holds the rules, charts and table variants. Use this page when you sit at someone else’s 21 table and need to know what a chart is for — and what it is not.
 
 A colour wheel does not care whether you “hit 16”. A pot does not have a soft 18. If you like blackjack because the decisions feel meaningful, that feeling is real and still compatible with a negative expectation. Meaningful decisions can be the least-bad way to lose slowly. They are not a wage. Keep the session sized as entertainment, then leave when the note says leave.`,
     },

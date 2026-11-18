@@ -4,6 +4,7 @@ import { applyWorkerEnv } from "./lib/worker-env";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { canonicalHostRedirect, httpsRedirect, withSecurityHeaders } from "./lib/security-headers";
+import { retiredGuideResponse } from "./lib/guides/retired";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -46,16 +47,8 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
-const MOVED: Record<string, string> = {
-  "/guides/best-crypto-wallet-for-gambling-2026": "/guides/best-crypto-wallet-for-gambling",
-};
-
 function movedRedirect(request: Request): Response | null {
-  const url = new URL(request.url);
-  const next = MOVED[url.pathname];
-  if (!next) return null;
-  url.pathname = next;
-  return new Response(null, { status: 301, headers: { location: url.toString() } });
+  return retiredGuideResponse(new URL(request.url));
 }
 
 async function handle(request: Request, env: unknown, ctx: unknown): Promise<Response> {

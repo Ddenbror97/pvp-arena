@@ -116,7 +116,6 @@ Whether a cash match is allowed depends on where you live. This page is not lega
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "pool-scratch-rules",
     "8-ball-pool-hub",

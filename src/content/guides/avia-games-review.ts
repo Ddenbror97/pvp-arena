@@ -87,7 +87,7 @@ PVPspinArena holds a USD balance funded with Bitcoin, or with USDC or ETH on Bas
 
 A finished chance round can be checked on [fairness](/fairness). A Klondike score cannot, because the result is play, not a committed coin. [House edge](/guides/house-edge) is the language for the wheel. [Wager app](/guides/wager-app) is the language for a 1v1 stake held before the match. Avia sits closer to the wager column, with the extra twist that the other score may be historical.
 
-The [skill wagers topic](/guides/topics/skill-wagers) collects those pages. Catalog neighbors are [Solitaire Clash](/guides/solitaire-clash-review), [Pocket7Games](/guides/pocket7games-review), and [Blitz](/guides/blitz-win-cash-review). Use the entry screen when you want today’s price.`,
+The [skill wagers topic](/guides/topics/skill-wagers) collects those pages. A catalog neighbor is [Solitaire Clash](/guides/solitaire-clash-review). Use the entry screen when you want today’s price.`,
     },
     {
       id: "checklist",
@@ -148,11 +148,6 @@ The dull line is the useful one. Read the entry, believe the gap, know whether t
       url: "https://www.prnewswire.com/news-releases/aviagames-unveils-new-brand-identity-to-reflect-enhanced-corporate-vision-and-accelerated-growth-aspirations-301958552.html",
     },
   ],
-  related: [
-    "solitaire-clash-review",
-    "pocket7games-review",
-    "blitz-win-cash-review",
-    "skillz-review",
-  ],
+  related: ["solitaire-clash-review", "skillz-review"],
   updated: "2026-10-07",
 };

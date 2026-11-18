@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "What people mean by a ADA casino",
       body: `A cardano casino search is commercial: someone wants a gambling site that accepts ADA. Accepting a coin is a cashier choice. It is not a licence, a fairness proof, or a reason the game is cheaper. Adults 18+ only. This is not legal advice and not a deposit instruction for a blocked country.
 
-Start in [Crypto payments](/guides/topics/crypto-payments). Read [how to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) if you do not yet have a wallet that can actually hold ADA. PVPspinArena's cashier is USDC or ETH on Base, explained on the [wallet](/wallet) page. We do not credit ADA.
+Start in [Crypto payments](/guides/topics/crypto-payments). Read [how to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) if you do not yet have a wallet that can actually hold ADA. PVPspinArena's cashier is USDC or ETH on Base, explained on the [wallet](/how-it-works#wallet) page. We do not credit ADA.
 
 People type Cardano casino when they already hold ADA and want a cashier that will take it. The chain can be inexpensive and still deliver you to a game with a large edge. Settle the wallet question first: if you cannot sign an ADA transaction, you cannot deposit ADA, whatever the banner says.
 
@@ -91,7 +91,7 @@ Withdraw a slice of that test back to the same wallet before you play in earnest
 
 Only after the round trip do you decide whether a larger amount is even a question. Convert your dollar loss limit into ADA at the moment you would send it. When the dollar limit is gone, stop, even if the token count looks small. Stop if the deposit address is not a Cardano address you can verify in your wallet's send screen. Stop if the site wants you to buy ADA on a page it controls. Use an exchange or wallet you already trust, then send only the float.
 
-PVPspinArena still does not accept ADA. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/wallet) page lists on-chain Bitcoin, and USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
+PVPspinArena still does not accept ADA. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/how-it-works#wallet) page lists on-chain Bitcoin, and USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
     },
     {
       id: "stop",
@@ -149,8 +149,8 @@ A useful session ends with the float you set aside, whether that float comes hom
   updated: "2026-10-21",
   cta: {
     title: "This cashier is Base",
-    text: "PVPspinArena does not take ADA. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars. A ADA balance in another wallet is not a deposit here.",
-    primary: { to: "/wallet", label: "Open the wallet page" },
-    secondary: { to: "/how-it-works", label: "How the site works" },
+    text: "PVPspinArena does not take ADA. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars. An ADA balance in another wallet is not a deposit here.",
+    primary: { to: "/how-it-works#wallet", label: "How deposits work" },
+    secondary: { to: "/guides/how-to-buy-usdc", label: "How to buy USDC" },
   },
 };

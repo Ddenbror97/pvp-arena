@@ -9,7 +9,7 @@ export const guide: Guide = {
     "sweet bonanza candyland max win",
     "sweet bonanza candyland demo",
   ],
-  title: "Sweet Bonanza Candyland: Live Wheel, Not a Slot",
+  title: "Sweet Bonanza Candyland: Live Wheel Rules and Bets",
   description:
     "Sweet bonanza candyland is a live wheel and bonus-game show, not the candy slot. RTP and max win stay on the rules screen. No demo is promised.",
   h1: "Sweet bonanza candyland is a live wheel show, not a reel slot",
@@ -196,7 +196,9 @@ This wheel is not the Olympus tumble. [The tumble tile people search next](/guid
       a: "No. This site is not an affiliate of the show and lists no promo code for it. The games here are player versus player, with the fees printed on those games.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "Wikipedia: Big Six wheel", url: "https://en.wikipedia.org/wiki/Big_Six_wheel" },
+  ],
   related: ["crazy-time", "sweet-bonanza", "house-edge", "slot-volatility", "gates-of-olympus"],
   updated: "2026-10-20",
 };

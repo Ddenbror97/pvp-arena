@@ -116,7 +116,7 @@ This cluster of payment guides lives under [crypto payments](/guides/topics/cryp
       title: "Worked example: from 0.001 BTC to a $40 session",
       body: `Suppose you hold 0.001 BTC and want about $40 of play on PVPspinArena. Bitcoin is $64,000 in this example, so 0.001 BTC is $64.00 of value before fees.
 
-1. **Open the [wallet page](/wallet) and choose Bitcoin.** Enter $40. The invoice shows the exact BTC to send and the confirmations required.
+1. **Open the [wallet page](/how-it-works#wallet) and choose Bitcoin.** Enter $40. The invoice shows the exact BTC to send and the confirmations required.
 2. **Send that on-chain amount** from a Bitcoin wallet to the invoice address. MetaMask does not hold native BTC. Do not send a Lightning invoice.
 3. **Wait for those confirmations.** The site credits US dollars, not a BTC play balance. A smaller confirmed amount can still credit at the same rate.
 4. **Play from the dollar balance.** P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette all use that balance.

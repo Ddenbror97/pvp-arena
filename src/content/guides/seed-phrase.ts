@@ -45,7 +45,7 @@ If you lose your phone or computer, installing the wallet on a new device and en
 
 ### Other names
 
-You may see it called a recovery phrase, secret recovery phrase, mnemonic or backup phrase. They all mean the same thing. If you are new to wallets, start with our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling).`,
+You may see it called a recovery phrase, secret recovery phrase, mnemonic or backup phrase. They all mean the same thing. If you are new to wallets, start with our [crypto wallet for gambling guide](/guides/best-crypto-wallet-for-gambling).`,
     },
     {
       id: "how",
@@ -136,7 +136,7 @@ If anyone asks for your seed phrase for any reason, it is a scam.`,
 
 ### On PVPspinArena
 
-You verify your wallet by signing a message in MetaMask, which proves ownership without revealing any keys. Deposits from that verified address are then credited automatically. Withdrawals go back to your wallet from the [wallet page](/wallet). At no point do we ask for your seed phrase or private key, and our support will never ask for them. Our [MetaMask casino guide](/guides/metamask-casino) explains the flow.
+You verify your wallet by signing a message in MetaMask, which proves ownership without revealing any keys. Deposits from that verified address are then credited automatically. Withdrawals go back to your wallet from the [wallet page](/how-it-works#wallet). At no point do we ask for your seed phrase or private key, and our support will never ask for them. Our [MetaMask casino guide](/guides/metamask-casino) explains the flow.
 
 ### Red flag
 
@@ -283,7 +283,7 @@ More crypto payments reading lives in our [Crypto payments guides](/guides/topic
   ],
   related: [
     "usdc-casino",
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "metamask-casino",
     "phantom-wallet-gambling",
     "coinbase-wallet-casino",

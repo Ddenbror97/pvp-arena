@@ -222,7 +222,16 @@ Editorial only. No code, no store link that pays us, no request that you deposit
       a: "No. They are a different game. The links in this guide are there so you do not blend a skin listing with a crate key.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Steam Subscriber Agreement",
+      url: "https://store.steampowered.com/subscriber_agreement/",
+    },
+    {
+      label: "Steam Support: trade and market holds",
+      url: "https://help.steampowered.com/en/faqs/view/34A1-EA3F-83ED-54AB",
+    },
+  ],
   related: ["sell-skins-for-crypto", "cs2-skin-prices", "fake-casino-sites"],
   updated: "2026-10-20",
 };

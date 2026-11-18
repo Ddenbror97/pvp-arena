@@ -160,7 +160,7 @@ If a deposit seems slow, the explorer shows whether it has actually been confirm
 
 ### How deposits work
 
-You verify your wallet address on your profile by signing a message. On the wallet page you connect that wallet and send USDC on Base. The transfer is detected, checked and credited to your USD balance automatically. See the [wallet page](/wallet) for the network and the send button.
+You verify your wallet address on your profile by signing a message. On the wallet page you connect that wallet and send USDC on Base. The transfer is detected, checked and credited to your USD balance automatically. See the [wallet page](/how-it-works#wallet) for the network and the send button.
 
 ### How withdrawals work
 
@@ -206,7 +206,7 @@ Solana, Tron and others also support stablecoins but use different wallets and a
 
 ### The rule of thumb
 
-Always send tokens on the network the recipient supports. For PVPspinArena, that means USDC on Base. If in doubt, check the [wallet page](/wallet) before sending.`,
+Always send tokens on the network the recipient supports. For PVPspinArena, that means USDC on Base. If in doubt, check the [wallet page](/how-it-works#wallet) before sending.`,
     },
     {
       id: "apps",

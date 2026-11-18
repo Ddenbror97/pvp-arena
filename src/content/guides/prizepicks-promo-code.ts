@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "prizepicks-promo-code",
-  cluster: "Sports betting",
+  cluster: "Prediction markets",
   keyword: "prizepicks promo code",
   secondary: [
     "maxbonus signup string",
@@ -132,7 +132,7 @@ You can still lose the stake. The [terms](/terms) are this site's fee schedule, 
 
 [A neighboring pick'em app](/guides/underdog-fantasy-review) is a separate contract. [Season-long fantasy cash rates](/guides/fantasy-football-payouts) are not bonus lineups.
 
-The cluster home is [Sports betting](/guides/topics/sports-betting). [A price on a game](/guides/what-is-sports-betting) is sportsbook vocabulary, not this reward.`,
+The cluster home is [Prediction markets](/guides/topics/prediction-markets). [A price on a game](/guides/what-is-sports-betting) is sportsbook vocabulary, not this reward.`,
     },
     {
       id: "checklist",
@@ -172,7 +172,7 @@ IRS Topic 419 taxes casual gambling winnings, including sports betting, with or 
 
 Call 1-800-GAMBLER before you chase a loss. The offer page prints 1-800-426-2537, the same digits, and NCPG also lists 1-800-MY-RESET. [Responsible gambling](/responsible-gambling) is the off switch, with no profit promise.
 
-Write down the prizepicks promo code the field accepted, then date a new read on the [sports betting hub](/guides/topics/sports-betting) if that string changes.`,
+Write down the prizepicks promo code the field accepted, then date a new read on the [prediction markets hub](/guides/topics/prediction-markets) if that string changes.`,
     },
   ],
   faqs: [

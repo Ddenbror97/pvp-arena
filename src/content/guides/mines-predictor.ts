@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "mines-predictor",
-  cluster: "Game shows",
+  cluster: "Games & odds",
   keyword: "mines predictor",
   secondary: [
     "mines predictor app",
@@ -38,7 +38,7 @@ A mines predictor usually comes in one of these forms:
 - **Scripts for Roblox gambling sites** and similar communities, often shared in video descriptions; see [Roblox gambling](/guides/roblox-gambling) for that context.
 - **“AI” predictors** that ask you to paste your server seed hash, client seed and nonce and return a pattern.
 
-The marketing is consistent: screenshots of big multipliers, testimonials, a countdown timer, and a link to a specific casino where the tool “works best”. Crash games get the same treatment, and the [crash game predictor page](/guides/crash-cashout-calculator) explains why the multiplier cannot be forecast either. The whole family sits in the [Game shows and instant games topic](/guides/topics/game-shows).`,
+The marketing is consistent: screenshots of big multipliers, testimonials, a countdown timer, and a link to a specific casino where the tool “works best”. Crash games get the same treatment, and the [crash game predictor page](/guides/crash-cashout-calculator) explains why the multiplier cannot be forecast either. The whole family sits in the [games and odds topic](/guides/topics/games-and-odds).`,
     },
     {
       id: "why",

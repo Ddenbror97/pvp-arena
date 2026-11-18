@@ -104,7 +104,6 @@ A friend can be the opponent. A stranger in the product lobby can be the opponen
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "8-ball-pool-1v1",
     "pool-betting",

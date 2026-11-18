@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "cs2-betting",
-  cluster: "CS:GO heritage",
+  cluster: "Esports betting",
   keyword: "cs2 betting",
   secondary: ["csgo betting", "cs2 match betting", "cs2 skin betting", "cs2 betting odds"],
   title: "CS2 Betting Explained: Match Odds, Skins and Risks",
@@ -248,7 +248,7 @@ Our [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals) explain
     {
       id: "checklist",
       title: "CS2 betting site checklist",
-      body: "Before depositing on any CS2 betting site, check:\n\n- Licence and regulator, and whether it covers where you live.\n- Clear odds and margins on the markets you want.\n- Withdrawal times, limits and fees.\n- Age and identity checks, which a legitimate site should have.\n- Responsible gambling tools such as deposit limits and self-exclusion.\n- Independent reviews and complaint history.\n\nMore cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/csgo-heritage).\n\nIf you mean playing a duel yourself rather than betting on a professional match, use [CS2 1v1 versus browser cash duels](/guides/cs2-1v1-for-money). [CS2 Major rules](/guides/cs2-major) and [CS2 ranks](/guides/cs2-ranks) cover event and player context without turning either into an odds forecast.",
+      body: "Before depositing on any CS2 betting site, check:\n\n- Licence and regulator, and whether it covers where you live.\n- Clear odds and margins on the markets you want.\n- Withdrawal times, limits and fees.\n- Age and identity checks, which a legitimate site should have.\n- Responsible gambling tools such as deposit limits and self-exclusion.\n- Independent reviews and complaint history.\n\nMore match-betting reading lives in our [esports betting guides](/guides/topics/esports-betting); the skin side is in the [CS:GO heritage guides](/guides/topics/csgo-heritage).\n\nIf you mean playing a duel yourself rather than betting on a professional match, use [CS2 1v1 versus browser cash duels](/guides/cs2-1v1-for-money). [CS2 Major rules](/guides/cs2-major) and [CS2 ranks](/guides/cs2-ranks) cover event and player context without turning either into an odds forecast.",
     },
   ],
   faqs: [

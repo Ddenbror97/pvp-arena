@@ -125,7 +125,7 @@ If a $2 unit already feels like it must be recovered tonight, the unit is too la
 
 Results come from committed seeds. After a sitting, any settled round can be checked on [fairness](/fairness). Verification answers “was this tape honest?” It does not answer “should I have raised?” The honest tape plus a constant unit is the clean experiment: count how many units left after 30 decisions. That number, not a brochure pyramid, is what a Purple or Silver bet costs.
 
-Prestige XP on [prestige](/prestige) tracks wager volume. A flat unit still writes XP as you play; it just refuses to let volume spike because the last spin missed. If you want a rule because it stops you inventing stakes, keep the rule and skip the folklore ladder.
+Prestige XP tracks wager volume. A flat unit still writes XP as you play; it just refuses to let volume spike because the last spin missed. If you want a rule because it stops you inventing stakes, keep the rule and skip the folklore ladder.
 
 A last comparison in units: thirty flat $1 Purple bets expect to leak about $2.00. Thirty dollars put through a 1-2-3 Labouchere line can finish as five booked $6 targets or as one wreck. The mean is still the edge on the dollars that actually went down. Flat betting is the plan that makes that sentence visible before you sit.`,
     },

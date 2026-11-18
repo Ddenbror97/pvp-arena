@@ -110,7 +110,7 @@ The $15 is not a puzzle about Tether's reserves. It is a puzzle about which ledg
 
 If you already live on Tron, that stack is fine for sites that list TRC-20. Convert before you come here. Do not expect support to hunt a TRC-20 transfer on Tronscan and turn it into a Base credit. Different chains do not share a mempool.
 
-If you are moving to this site from a Tron room, plan the conversion as its own session: withdraw TRC-20 USDT to a wallet that can swap or to an exchange that lists both USDT-TRON and USDC-Base, then send USDC on Base from a verified wallet. Do not try to "bridge into the deposit address." The [wallet](/wallet) page is a Base invoice.
+If you are moving to this site from a Tron room, plan the conversion as its own session: withdraw TRC-20 USDT to a wallet that can swap or to an exchange that lists both USDT-TRON and USDC-Base, then send USDC on Base from a verified wallet. Do not try to "bridge into the deposit address." The [wallet](/how-it-works#wallet) page is a Base invoice.
 
 Use Tron when the site names Tron. Use Base when this site names Base. The games here remain hashed PvP pots. Switching chains does not add poker, sports or a TRX-denominated lottery.`,
     },

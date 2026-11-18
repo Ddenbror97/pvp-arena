@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "megaways slots",
   secondary: ["megaways slots rtp", "megaways slots max win", "megaways slots demo"],
-  title: "Megaways Slots: Ways Change, RTP Does Not Unify",
+  title: "Megaways Slots: How Ways to Win and Reel Heights Work",
   description:
     "Megaways slots change the way count when symbol counts change. A category page with one RTP is the wrong shape. Read ways on the title you opened.",
   h1: "Megaways slots in 2026: a changing way count, not one return",

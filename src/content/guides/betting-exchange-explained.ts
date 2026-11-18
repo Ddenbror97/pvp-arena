@@ -4,166 +4,128 @@ export const guide: Guide = {
   slug: "betting-exchange-explained",
   cluster: "Sports betting",
   keyword: "betting exchange explained",
-  secondary: ["betting exchange explained"],
+  secondary: [
+    "how does a betting exchange work",
+    "back and lay",
+    "betting exchange commission",
+    "lay betting",
+  ],
   title: "Betting Exchange Explained: Back, Lay and Commission",
   description:
-    "A betting exchange explained: backing, laying, unmatched bets and commission. How an exchange differs from a bookmaker. Adults 18+.",
+    "How a betting exchange works: backing and laying between users, lay liability, commission on net winnings, and how it differs from a bookmaker.",
   h1: "Betting exchange explained: back, lay and commission",
   answer:
-    "A betting exchange explained in one line: you offer or take a price against other customers, including laying a result so it loses. Unmatched offers are not bets yet. The exchange charges commission. It is not a bookmaker's fixed board, and it is not a product on PVPspinArena.",
+    "A betting exchange is a marketplace where bettors bet against each other instead of against a bookmaker. You either back an outcome (bet it happens) or lay it (bet it does not, taking the bookmaker's role). The exchange matches opposite bets, holds both sides' money and charges commission on net winnings in each market instead of building a margin into the odds.",
   facts: [
-    "Back means you want the result to happen. Lay means you want it not to.",
-    "An unmatched offer can be cancelled. It is not a position.",
-    "Commission is usually a percent of net winnings in the market.",
-    "Liquidity decides whether you get the price you see.",
-    "This site does not operate an exchange.",
+    "Backing bets an outcome happens; laying bets it does not.",
+    "A lay's liability is lay stake × (odds − 1): what you pay if the outcome happens.",
+    "The exchange matches users' opposite bets and charges commission on net market winnings.",
+    "Unmatched bets stay open until someone takes the other side or you cancel.",
+    "Exchanges are licensed in some countries and US states, not everywhere sportsbooks are.",
   ],
   sections: [
     {
-      id: "scope",
-      title: "Betting exchange explained without the jargon",
-      body: "Put today's date on any betting exchange explained figure you keep. If the logged-in page does not show the betting exchange explained figure, leave the cell blank. A percent copied from a clip is not a betting exchange explained source.\n\nYou need to be 18, or older where local law sets a higher age, before any betting exchange explained stake. This betting exchange explained page is not legal advice, not a promo code, and not a pick. PVPspinArena runs Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, settled in US dollars. It does not sell betting exchange explained, and a guide is not a licence.\n\nIf a betting exchange explained session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a betting exchange explained limit you already set.\n\nStart in [Sports betting](/guides/topics/sports-betting). Related reading: [what sports betting is](/guides/what-is-sports-betting), [how sports betting works](/guides/how-does-sports-betting-work), [point spread](/guides/point-spread-explained). The product on this site, if you wanted a hashed pot instead, is [Coinflip](/coinflip).",
+      id: "how",
+      title: "How a betting exchange works",
+      body: `On a bookmaker, the bookmaker sets the odds and takes the other side of your bet. On a betting exchange, other users take the other side. Each market shows two columns of prices: **back** (the best odds you can bet at) and **lay** (the best odds at which someone will let you take the bookmaker's side). Smarkets' help centre explains [what a betting exchange is](https://help.smarkets.com/hc/en-gb/articles/115001820389-What-is-a-betting-exchange) with a worked back bet.
+
+When you place a bet, the exchange looks for an opposite bet at the same or better odds. If one exists, your bet is **matched**. If not, your bet sits in the market as an offer until someone matches it or you cancel. Partly matched bets are common: $50 at your price may be matched while the other $50 waits.
+
+The exchange never cares who wins. It earns commission on the winnings, which is why prices on an exchange are often closer to the true odds than a bookmaker's. Because users trade with each other, the model belongs with [peer-to-peer sports betting](/guides/peer-to-peer-sports-betting).`,
     },
     {
-      id: "price",
-      title: "Back and lay",
-      body: `Backing a team at 3.0 is a bet that it wins, paid at those odds if it does. Laying a team at 3.0 means you take the other side of that offer. If the team wins, you pay the backer's profit. Your liability is posted up front. People skip that number and then meet it.
+      id: "lay",
+      title: "Laying and liability",
+      body: `To **lay** is to offer a bet to other users. If you lay a team at 4.00 for a $10 stake, you are saying it will not win. Someone backs it with your $10 offer:
 
-Date the betting exchange explained note on the day you can still open the live page. Leave a blank when the betting exchange explained page has no figure. A video is a poor place to borrow a betting exchange explained percentage.
+- If the team does **not** win, you win the backer's $10 stake (minus commission).
+- If the team **wins**, you pay the backer's profit: $10 × (4.00 − 1) = **$30**. That $30 is your **liability**, and the exchange holds it from your balance when the bet is matched.
 
-Adults only, 18 or the higher local age. Nothing here is a lawyer's letter, a betting exchange explained code, or a selection. The games on this site, unlike betting exchange explained, are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Betting exchange explained is not one of them, and the article is not a licence.
-
-Stop a betting exchange explained session that has become a chase. The limit is [responsible gambling](/responsible-gambling). Another account does not clear the betting exchange explained session you already played.
-
-The gap between two prices, one of them on an exchange, is the setup [arbitrage betting](/guides/arbitrage-betting) describes.`,
+Laying short odds is cheap to fund and pays often; laying long odds risks a large liability for a small win. Smarkets shows [how lay liability is calculated](https://help.smarkets.com/hc/en-gb/articles/115003381865-How-to-calculate-the-liability-of-a-lay-bet). Laying is what makes [matched betting](/guides/matched-betting) and exchange [hedging](/guides/hedge-betting) possible.`,
     },
     {
-      id: "rules",
-      title: "Unmatched is not filled",
-      body: `If your offer sits in the queue, it is unmatched. The event can start, or the price can move, with you still unfilled. A filled bet is the only bet. Screenshots of a requested price are not tickets.
+      id: "commission",
+      title: "How commission is charged",
+      body: `Exchanges charge a percentage of your **net winnings in a market**, not of each bet and not of losing bets. If you back and lay in the same market, only the overall profit is charged.
 
-When you record a betting exchange explained price, write the date beside it. A betting exchange explained cell with no logged-in source stays empty. Do not fill a betting exchange explained blank from a recording.
+**Example.** In one market you win $40 on one bet and lose $10 on another. Net market winnings: $30. At a 2% rate the commission is $0.60; you keep $29.40. Had you lost overall, you would pay no commission on that market.
 
-Play only at 18, or older if your law requires it, including for betting exchange explained. This is a betting exchange explained explainer, not legal advice and not a code to redeem. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, separate from betting exchange explained. The desk does not offer betting exchange explained, and these paragraphs are not a licence.
-
-Chasing a betting exchange explained loss is the moment to stop. Use [responsible gambling](/responsible-gambling). A second profile is not a new budget.
-
-More on the surrounding ideas: [moneyline](/guides/moneyline-betting-explained), [gambling budget](/guides/gambling-budget).`,
+Rates differ by exchange and sometimes by customer or market. Smarkets publishes a [commission breakdown](https://help.smarkets.com/hc/en-gb/articles/212106009-Commission-breakdown); other exchanges publish their own. When you compare an exchange price with a bookmaker price, subtract commission first: decimal odds of 3.00 at 2% commission pay like about 2.96. [Line shopping](/guides/line-shopping) explains why that comparison matters.`,
     },
     {
-      id: "cashier",
-      title: "Commission and the real price",
-      body: `Commission on net market winnings means a winning day is smaller than the odds implied. A losing day does not refund the commission you did not pay. Write the percent next to any 'value' you think you found. Value that ignores commission is incomplete.
+      id: "vs",
+      title: "Exchange versus bookmaker",
+      body: `| | Bookmaker | Betting exchange |
+| --- | --- | --- |
+| Who you bet against | The bookmaker | Other users |
+| How it earns | Margin built into odds | Commission on net winnings |
+| Lay bets | No | Yes |
+| Winning-account limits | Common | Not the business model, though terms still apply |
+| Liquidity | Always quotes a price | Depends on other users; big markets are deep, small ones thin |
 
-Keep the betting exchange explained date on the same line as the figure. If you cannot open the betting exchange explained page while logged in, do not invent the percent. A borrowed betting exchange explained number is worse than a blank cell.
-
-The age floor for betting exchange explained is 18, or higher where you live. No betting exchange explained sentence here is a promo code, a pick, or legal advice. PVPspinArena settles six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, separate from betting exchange explained. It does not operate betting exchange explained, and a guide cannot license you.
-
-Leave the betting exchange explained session if it starts to feel like a chase. [Responsible gambling](/responsible-gambling) is that boundary. Switching accounts does not reset it.`,
+The exchange's weakness is liquidity: in a minor market there may be no one to match your bet at a fair price. Its strength is that a winning customer is not a problem for the exchange. The [sports betting topic](/guides/topics/sports-betting) covers the bookmaker side.`,
     },
     {
-      id: "table",
-      title: "Liquidity",
-      body: `A pretty price with no money behind it will not take your stake. Look at the volume at that price. Moving a large stake walks into worse prices. That walk is slippage, and it belongs in the note.
+      id: "legal",
+      title: "Where exchanges are allowed",
+      body: `Betting exchanges are licensed in some countries, such as Great Britain. In the United States, licensing is state by state, and many states that allow sportsbooks have not licensed an exchange model. Some US products call themselves exchanges or prediction markets under federal rules; [prediction markets and US law](/guides/prediction-market-legal-us) explains why that is a different legal question. Check your regulator before you deposit.
 
-A betting exchange explained note without a date is a guess. Confirm the betting exchange explained figure on a page you can open, or leave the cell blank. Clips do not publish a betting exchange explained price you can rely on.
-
-Stay at 18-plus for betting exchange explained, or the older age your region sets. Treat this betting exchange explained page as explanation, not as advice, a code, or a tip. The live catalog, which does not include betting exchange explained, is Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, in US dollars. betting exchange explained is absent from that catalog, and the page is not a licence.
-
-A chase is a finished betting exchange explained decision. Stop, and read [responsible gambling](/responsible-gambling). Opening another betting exchange explained account is not a fresh bankroll.
-
-| Check | What to record for betting exchange explained |
-| --- | --- |
-| Price | The number on the screen today, not a memory |
-| Rules | Settlement, voids, and who can be refused |
-| Cashier | A small test, timed, with the transaction id |
-| Country | Whether you are allowed, without a workaround |
-| Stop | The loss limit, written before the deposit |`,
-    },
-    {
-      id: "stop",
-      title: "What this site will not match",
-      body: "PVPspinArena does not lay NFL sides or match exchange orders. Coinflip is a filled pot between players on a coin, already matched when both seats are taken, resolved by a hash rather than a referee.\n\nWrite the betting exchange explained source and the date before the conclusion. An empty betting exchange explained cell means the live page did not show the figure. That blank is more honest than a betting exchange explained percent from a video.\n\nEighteen is the betting exchange explained minimum, unless local law is older. This betting exchange explained note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not betting exchange explained. The site does not sell betting exchange explained, and the text is not a licence.\n\nIf betting exchange explained play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement betting exchange explained account is not a clean record.\n\n[A back-and-lay file that names Anjouan and 1% on net profit](/guides/betdex-review) is another exchange shape. Read its docs host, not a mirror domain.",
-    },
-    {
-      id: "close",
-      title: "A note you can keep",
-      body: `Betting exchange explained without the jargon. A traditional book sets prices and accepts bets. An exchange lets customers set prices for each other.
-
-Back and lay. Backing a team at 3.0 is a bet that it wins, paid at those odds if it does. Laying a team at 3.0 means you take the other side of that offer.
-
-Unmatched is not filled. If your offer sits in the queue, it is unmatched. The event can start, or the price can move, with you still unfilled.
-
-Commission and the real price. Commission on net market winnings means a winning day is smaller than the odds implied. A losing day does not refund the commission you did not pay.
-
-Liquidity. A pretty price with no money behind it will not take your stake. Look at the volume at that price.
-
-What this site will not match. PVPspinArena does not lay NFL sides or match exchange orders. Coinflip is a filled pot between players on a coin, already matched when both seats are taken, resolved by a hash rather than a referee.
-
-Read the betting exchange explained list once, from the top, and stop at the first empty cell. That empty cell is the decision. A clip, a chat, or this paragraph must not become the advertisement you write for yourself.
-
-Facts worth dating:
-
-- Back means you want the result to happen. Lay means you want it not to.
-- An unmatched offer can be cancelled. It is not a position.
-- Commission is usually a percent of net winnings in the market.
-- Liquidity decides whether you get the price you see.
-- This site does not operate an exchange.
-
-A sportsbook price already contains the book's margin. Research can find a shorter price. It does not delete the margin, and it does not turn a parlay into a cheaper bet. Write the market, the odds and the stake before the event, then leave the slip alone. Cash out, if you see it, is a new sale. Props are a different market with their own hold.
-
-Peer markets and exchanges fail differently from a book: you may not get filled, and a lay has a liability. Matched-betting talk is about a promotion's terms, not about a team. This site will not book the event, lay the side, or help anyone skip an identity check.
-
-Do the betting exchange explained arithmetic before you call it a bargain. A wagering multiple times the chip is the amount you must bet. Commission comes off the winner. A hold inside the odds is already the cost. An RTP, when a game prints one, is a long-run return, not a promise about tonight. If the live page will not give you the input, the output stays unknown. Unknown is a reason to skip, including when a betting exchange explained search feels urgent.
-
-Date the betting exchange explained note on the same line as the stake and the loss limit. When the limit is reached, stop. The rest of the reading can wait. Waiting is a finished decision, and opening another logo to repair the feeling is how a short note becomes a second deposit.
-
-Prefer one small betting exchange explained test over many open tabs. Stake the cashier's minimum, on the asset and network it names, and withdraw a fraction before you add funds. Record the time and the id. Answer an identity question or leave. A betting exchange explained path that skips the question is a different product, and not a better one.
-
-Play only the games this site actually offers after you close the tab. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars, adults 18+ only. Another betting exchange explained account is not a reset of the last one.
-
-One exchange prints 2% of net market winnings, and a lay can risk more than the win. That help-center read is [the commission and lay pages](/guides/smarkets-review).`,
+Adults only, 18 or the higher age your law sets. This page explains how exchanges work; it is not legal advice. PVPspinArena is not an exchange; its games are explained on [how it works](/how-it-works). If betting stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
     },
   ],
   faqs: [
     {
-      q: "What is the point of this betting exchange explained page?",
-      a: "To name the product, the price, and the rule you must read before you stake. It is not a pick, a code, or a bypass.",
+      q: "What does lay mean in betting?",
+      a: "To lay is to bet that an outcome will not happen, taking the bookmaker's side against another user's back bet. If the outcome happens, you pay the backer's profit.",
     },
     {
-      q: "Does PVPspinArena offer this?",
-      a: "No. The site runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
+      q: "How much can I lose on a lay bet?",
+      a: "Your liability: lay stake × (odds − 1). Laying $10 at 4.00 risks $30. The exchange holds that amount when the bet is matched.",
     },
     {
-      q: "Is this legal advice?",
-      a: "No. If a statute or a tax rule decides your case, use the primary source or a qualified professional.",
+      q: "How does betting exchange commission work?",
+      a: "It is a percentage of your net winnings in each market. Losing markets are not charged. At 2%, net winnings of $30 cost $0.60.",
     },
     {
-      q: "What should I write down?",
-      a: "The price, the rule, the date, and your loss limit. Leave a blank rather than invent a number.",
+      q: "What is an unmatched bet?",
+      a: "An offer no one has taken yet. It stays open until another user matches it, the market closes, or you cancel it.",
     },
     {
-      q: "When should I stop?",
-      a: "When the note says you are not allowed, when you are chasing, or when the product is not the one you meant to use.",
+      q: "Are betting exchanges better than sportsbooks?",
+      a: "Prices are often closer to fair and winners are not the problem, but small markets can lack liquidity, and exchanges are not licensed in many places where sportsbooks are.",
     },
   ],
   sources: [
     {
-      label: "GambleAware",
-      url: "https://www.gambleaware.org/",
+      label: "Smarkets: what is a betting exchange",
+      url: "https://help.smarkets.com/hc/en-gb/articles/115001820389-What-is-a-betting-exchange",
     },
+    {
+      label: "Smarkets: what is lay betting on an exchange",
+      url: "https://help.smarkets.com/hc/en-gb/articles/115003374849-What-is-lay-betting-on-an-exchange",
+    },
+    {
+      label: "Smarkets: how to calculate the liability of a lay bet",
+      url: "https://help.smarkets.com/hc/en-gb/articles/115003381865-How-to-calculate-the-liability-of-a-lay-bet",
+    },
+    {
+      label: "Smarkets: commission breakdown",
+      url: "https://help.smarkets.com/hc/en-gb/articles/212106009-Commission-breakdown",
+    },
+    { label: "GambleAware", url: "https://www.gambleaware.org/" },
   ],
   related: [
-    "what-is-sports-betting",
-    "how-does-sports-betting-work",
-    "point-spread-explained",
-    "moneyline-betting-explained",
+    "peer-to-peer-sports-betting",
+    "matched-betting",
+    "hedge-betting",
+    "line-shopping",
+    "novig-review",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
   cta: {
-    title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott settle in US dollars.",
-    primary: { to: "/responsible-gambling", label: "Responsible gambling" },
-    secondary: { to: "/how-it-works", label: "How this site works" },
+    title: "Player against player, on one pot",
+    text: "PVPspinArena's Jackpot and Coinflip are peer-to-peer too: players' stakes form the pot and a published fee is the only cut.",
+    primary: { to: "/how-it-works", label: "How the games work" },
+    secondary: { to: "/guides/peer-to-peer-sports-betting", label: "Peer-to-peer sports betting" },
   },
 };

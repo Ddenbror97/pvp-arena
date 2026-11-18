@@ -167,7 +167,6 @@ A [web3 casino](/guides/web3-casino) may still use a wallet and a chain. It shou
     "nft-gambling",
     "web3-casino",
     "are-online-casinos-rigged",
-
     "crypto-fps-game",
   ],
   updated: "2026-10-31",

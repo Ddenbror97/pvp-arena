@@ -66,7 +66,14 @@ export const guide: Guide = {
       a: "Crypto can be the payment rail. It does not replace a license, a ledger, support, or compliance. It also does not erase state law. A site that settles in US dollars, including a small lobby such as jackpot, coinflip, and roulette, still has to be allowed to offer those bets.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "UK Gambling Commission", url: "https://www.gamblingcommission.gov.uk/" },
+    { label: "Malta Gaming Authority", url: "https://www.mga.org.mt/" },
+    {
+      label: "FATF: virtual assets",
+      url: "https://www.fatf-gafi.org/en/topics/virtual-assets.html",
+    },
+  ],
   related: ["crypto-casino-license", "curacao-gambling-license"],
   updated: "2026-09-26",
 };

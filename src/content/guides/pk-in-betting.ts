@@ -182,7 +182,13 @@ Read the ticket. That sentence is the legal-adjacent habit this glossary is will
       a: "No. It checks our seed against our flip. A sportsbook's PK language is outside that check.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Mathematics of bookmaking",
+      url: "https://en.wikipedia.org/wiki/Mathematics_of_bookmaking",
+    },
+    { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
+  ],
   related: [
     "nfl-betting",
     "prop-bets-explained",

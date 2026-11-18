@@ -180,7 +180,17 @@ The $1.90 fee is our pot's fee on $38. It is not takeout, and it is not a mornin
       a: "The fee is $1.90. The winner receives $36.10. That is Jackpot on this site, not a racing pool.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Glossary of North American horse racing",
+      url: "https://en.wikipedia.org/wiki/Glossary_of_North_American_horse_racing",
+    },
+    {
+      label: "Wikipedia: Parimutuel betting",
+      url: "https://en.wikipedia.org/wiki/Parimutuel_betting",
+    },
+    { label: "Equibase", url: "https://www.equibase.com/" },
+  ],
   related: ["horse-racing-odds-explained", "kentucky-derby-betting", "how-to-bet-on-horse-racing"],
   updated: "2026-10-20",
 };

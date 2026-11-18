@@ -66,7 +66,13 @@ export const guide: Guide = {
       a: "Crypto can change the payment rail, the fee, and the unit of the balance. It does not remove the paytable or the peer-to-peer fee. It also does not erase the law where you live. Real-money online casino play is restricted in most US states.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wizard of Odds: house edge of casino games",
+      url: "https://wizardofodds.com/gambling/house-edge/",
+    },
+    { label: "Wikipedia: Casino game", url: "https://en.wikipedia.org/wiki/Casino_game" },
+  ],
   related: ["how-crypto-casinos-make-money", "house-edge"],
   updated: "2026-09-26",
 };

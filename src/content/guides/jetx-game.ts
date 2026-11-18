@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Game shows",
   keyword: "jetx",
   secondary: ["jetx game", "jetx rtp", "jetx auto cashout", "jetx strategy", "smartsoft jetx"],
-  title: "JetX Game: RTP, Auto Cashout and Real Crash Odds",
+  title: "JetX Game: How It Works, RTP, Strategy and Auto Cashout",
   description:
     "JetX by SmartSoft explained: how a round works, the 97% RTP, the real chance of reaching each multiplier, auto cashout, two-bet play and myths.",
   h1: "JetX: how the jet crash game works, its RTP and auto cashout",

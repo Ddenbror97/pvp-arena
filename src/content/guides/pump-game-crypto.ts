@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Foundations",
   keyword: "pump game",
   secondary: ["pump game legit", "pump game payout", "pump game real money"],
-  title: "Pump Game: Ambiguous Name, Unverified Payout",
+  title: "Pump Game Crypto: What Pump Games Are and How They Pay",
   description:
     "Pump game can mean a crypto tap title or a different product. This page will not verify a payout, a license, or which name you meant.",
   h1: "Pump game in 2026: the name splits before any cash-out",

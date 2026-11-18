@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "What people mean by a XRP casino",
       body: `A xrp casino search is commercial: someone wants a gambling site that accepts XRP. Accepting a coin is a cashier choice. It is not a licence, a fairness proof, or a reason the game is cheaper. Adults 18+ only. This is not legal advice and not a deposit instruction for a blocked country.
 
-Start in [Crypto payments](/guides/topics/crypto-payments). Read [how to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) if you do not yet have a wallet that can actually hold XRP. PVPspinArena's cashier is USDC or ETH on Base, explained on the [wallet](/wallet) page. We do not credit XRP.
+Start in [Crypto payments](/guides/topics/crypto-payments). Read [how to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) if you do not yet have a wallet that can actually hold XRP. PVPspinArena's cashier is USDC or ETH on Base, explained on the [wallet](/how-it-works#wallet) page. We do not credit XRP.
 
 XRP casino pages attract people who already hold XRP at an exchange. The dangerous step is the tag. Exchanges and many casinos credit XRP using one address plus a destination tag that identifies you. Omit the tag and the coins can arrive in a pile that is not yours.
 
@@ -91,7 +91,7 @@ Withdraw a slice of that test back to the same wallet before you play in earnest
 
 Only after the round trip do you decide whether a larger amount is even a question. Convert your dollar loss limit into XRP at the moment you would send it. When the dollar limit is gone, stop, even if the token count looks small. Stop if you cannot see the destination tag field and the casino's instructions mention one. Stop if you are about to send XRP from an Ethereum network. The names match and the ledgers do not.
 
-PVPspinArena still does not accept XRP. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/wallet) page lists on-chain Bitcoin, and USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
+PVPspinArena still does not accept XRP. A successful rehearsal somewhere else does not create a balance here. This site's [wallet](/how-it-works#wallet) page lists on-chain Bitcoin, and USDC or ETH on Base. Adults 18+ only. If the drill left you wanting a second site to chase the test, stop and use [responsible gambling](/responsible-gambling) instead of another deposit screen.`,
     },
     {
       id: "stop",
@@ -145,8 +145,8 @@ A useful session ends with the float you set aside, whether that float comes hom
   updated: "2026-09-27",
   cta: {
     title: "This cashier is Base",
-    text: "PVPspinArena does not take XRP. Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott settle in US dollars. A XRP balance in another wallet is not a deposit here.",
-    primary: { to: "/wallet", label: "Open the wallet page" },
-    secondary: { to: "/how-it-works", label: "How the site works" },
+    text: "PVPspinArena does not take XRP. Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott settle in US dollars. An XRP balance in another wallet is not a deposit here.",
+    primary: { to: "/how-it-works#wallet", label: "How deposits work" },
+    secondary: { to: "/guides/how-to-buy-usdc", label: "How to buy USDC" },
   },
 };

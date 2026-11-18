@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Casino games",
   keyword: "deal or no deal live",
   secondary: ["deal or no deal briefcases", "deal or no deal banker", "deal or no deal qualifier"],
-  title: "Deal or No Deal Live: 16 Cases, No Printed RTP",
+  title: "Deal or No Deal Live: How the Game Show Plays and Pays",
   description:
     "Deal or No Deal Live uses 16 briefcases, a qualifying wheel, and four banker offers. The studio page prints no return percent and no single max win.",
   h1: "Deal or no deal live: 16 briefcases, four offers, and a blank return",

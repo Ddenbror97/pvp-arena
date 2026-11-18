@@ -65,7 +65,7 @@ Tiers are 1% up to $50,000 traded, 0.8% above that up to $500,000, and 0.5% abov
 
 The promo window is Monday 12 October through Sunday 25 October, and no year is printed. Those weekdays match 2026, so 20 October 2026 falls in the second week they name. We did not see a rebate in an account.
 
-A [2% commission exchange](/guides/smarkets-review) uses another schedule. Prices on the ladder run from 1.01 to 1000.`,
+Prices on the ladder run from 1.01 to 1000.`,
     },
     {
       id: "cash",
@@ -243,7 +243,6 @@ Stay away if you are under 18, if your law bars the product, or if you need a st
   ],
   related: [
     "betting-exchange-explained",
-    "smarkets-review",
     "peer-to-peer-sports-betting",
     "vig-betting",
     "sports-betting-legal-states",

@@ -66,7 +66,9 @@ export const guide: Guide = {
       a: "You can use it as one input, and you still cannot replay your personal result from the audit PDF. If the game offers a proof you can check, that proof is a separate tool from the security review.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "Wikipedia: Smart contract", url: "https://en.wikipedia.org/wiki/Smart_contract" },
+  ],
   related: ["smart-contract-casino", "casino-fairness-audits"],
   updated: "2026-10-21",
 };

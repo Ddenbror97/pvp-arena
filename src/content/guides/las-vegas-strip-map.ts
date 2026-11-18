@@ -185,7 +185,9 @@ A map of the Strip is not an online license. [Whether the state's online offer m
       a: "The fee is $0.80. The winner receives $15.20. That is Jackpot on this site, not a ride and not a table on the boulevard.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "Wikipedia: Las Vegas Strip", url: "https://en.wikipedia.org/wiki/Las_Vegas_Strip" },
+  ],
   related: [
     "las-vegas-history",
     "house-edge",

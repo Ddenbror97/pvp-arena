@@ -108,7 +108,7 @@ Also avoid using trading sites as gambling front-doors. If the product is a wage
 
 Choose the higher risk-adjusted you-receive, not the prettier UI. Then trade small once before you move a main inventory.
 
-After coins arrive, a Base deposit on PVPspinArena’s [wallet](/wallet) is optional. Trading sites and this casino are separate products. More reading: [CS:GO heritage](/guides/topics/csgo-heritage).
+After coins arrive, a Base deposit on PVPspinArena’s [wallet](/how-it-works#wallet) is optional. Trading sites and this casino are separate products. More reading: [CS:GO heritage](/guides/topics/csgo-heritage).
 
 Compare you-receive on the same item across two books in the same hour. Banner percents are theatre; the fill is mathematics.`,
     },

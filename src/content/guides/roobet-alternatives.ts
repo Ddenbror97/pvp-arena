@@ -140,9 +140,6 @@ If the hour of testing already feels compulsive, stop. Criteria pages do not fix
 After a successful loop, revoke any token approvals you do not need and confirm the bookmark still points at the same domain. Clone sites often appear the week a brand trends on social.
 
 Cap weekly deposits in writing. Alternatives shopping can become a new form of chasing — fresh lobbies feel like fresh luck.
-### Extra diligence notes
-
-Write the date beside fee tables and withdrawal limits. Keep play funds in a separate wallet. If shopping for Roobet alternatives becomes chase behaviour, stop and use self-exclusion tools instead of opening another lobby.
 `,
     },
     {
@@ -189,5 +186,5 @@ Write the date beside fee tables and withdrawal limits. Keep play funds in a sep
     "fake-casino-sites",
     "crypto-casino-license",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

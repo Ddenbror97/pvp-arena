@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Sports betting",
   keyword: "round robin bet",
   secondary: ["round robin parlay", "round robin cost", "robin combinations"],
-  title: "Round Robin Bet: How It Works and Is It Worth It?",
+  title: "Round Robin Bet Explained: How Many Parlays You Buy",
   description:
     "Round robin bets explained with examples: how many parlays you create, total cost, payout scenarios and when a round robin beats a straight parlay.",
   h1: "Round robin bet: how many parlays you actually buy",

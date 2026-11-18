@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "piggy bankin",
   secondary: ["piggy bankin slot machine", "piggy bankin bonus"],
-  title: "Piggy Bankin: Theatre Is Not the Extra Cost",
+  title: "Piggy Bankin Slot: Features, Bonus and Cost per Spin",
   description:
     "Piggy bankin makes a broken bank into theatre. The cost is the extra bet or feature entry if the glass lists one. Otherwise the price is not published.",
   h1: "Piggy bankin in 2026: a broken bank is theatre, not a fee",

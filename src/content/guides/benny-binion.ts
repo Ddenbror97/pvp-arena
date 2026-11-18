@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Casino knowledge",
   keyword: "benny binion",
   secondary: ["benny binion net worth", "benny binion story", "benny binion facts"],
-  title: "Benny Binion: Horseshoe, WSOP, No Net Worth",
+  title: "Benny Binion: The Horseshoe, the WSOP and His Legacy",
   description:
     "Benny Binion, 1904 to 1989, opened Binion's Horseshoe in downtown Las Vegas and hosted the World Series of Poker from 1970. Net worth is not published.",
   h1: "Benny Binion facts: the Horseshoe, the 1970 WSOP, no fortune",

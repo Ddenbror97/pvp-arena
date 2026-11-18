@@ -10,7 +10,7 @@ export const guide: Guide = {
     "baccarat banker house edge",
     "live baccarat squeeze",
   ],
-  title: "Baccarat Squeeze: What It Is and Why Players Do It",
+  title: "Baccarat Squeeze: How It Works and No-Commission Tables",
   description:
     "What the baccarat squeeze is, who gets to peel the cards, why the slow reveal feels like control, and why the 1.06% banker edge stays the same either way.",
   h1: "Baccarat squeeze: the reveal ritual and the edge that stays",
@@ -94,6 +94,16 @@ A commonly published 8:1 tie is near 14% on that standard layout. Some felts pay
 A scoreboard of past winners does not edit the next reveal.`,
     },
     {
+      id: "no-commission",
+      title: "Squeeze on a no-commission table",
+      body: `Many live studios run squeeze rounds on **no-commission** baccarat. The squeeze is the same peel. What changes is how a banker win is paid:
+
+- **Standard baccarat:** banker wins pay 1:1 minus a 5% commission, so a $100 banker win returns $95 profit.
+- **No-commission baccarat (the common version):** banker wins pay 1:1 with no commission, **except a banker win on a total of 6, which pays 1:2** (half the stake). A $100 banker bet that wins with 6 pays $50.
+
+That one exception does the work the commission used to do. On an eight-deck shoe the banker bet's house edge is about 1.46% under the common no-commission rule, against about 1.06% with a 5% commission, so the "no commission" table usually costs the banker bettor slightly more. Player and tie bets are unchanged. Some studios use a different exception, so read the table's rules panel before the first hand. [Baccarat rules](/guides/baccarat-rules) has the full drawing rules and [mini baccarat](/guides/mini-baccarat) the faster table format.`,
+    },
+    {
       id: "control",
       title: "Why the peel feels like control",
       body: `Hands that let you touch the object of the bet invite the [illusion of control](/guides/illusion-of-control). Ellen Langer's work described people treating chance as skill when they could choose, handle, or practice a ritual. A squeeze is a perfect prop: your fingers, a pause, an audience, a card that "almost" showed a nine.
@@ -172,5 +182,5 @@ This page is about the bend. The drawing rules and the bet prices live on the ru
     { label: "Wikipedia: Baccarat", url: "https://en.wikipedia.org/wiki/Baccarat_(card_game)" },
   ],
   related: ["baccarat-rules", "baccarat-strategy", "illusion-of-control", "crypto-baccarat"],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

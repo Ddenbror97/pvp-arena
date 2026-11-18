@@ -203,13 +203,7 @@ The [FPS money hub](/guides/fps-for-money-hub) explains pot versus profit. Compa
       },
     ],
     sources: [store, workshop],
-    related: [
-      "fps-for-money-hub",
-      "cs2-aim-maps",
-      "fps-1v1-strategy",
-      "cs2-betting",
-      "checkmate-gaming-review",
-    ],
+    related: ["cs2-aim-maps", "fps-1v1-strategy", "cs2-betting", "checkmate-gaming-review"],
   }),
   article({
     slug: "crypto-fps-game",
@@ -278,7 +272,7 @@ Continue with the [FPS money hub](/guides/fps-for-money-hub) or [FPS topic](/gui
       },
     ],
     sources: [store],
-    related: ["fps-for-money-hub", "cs2-anti-cheat", "what-is-usdc", "gamefi", "base-network-fees"],
+    related: ["cs2-anti-cheat", "what-is-usdc", "gamefi", "base-network-fees"],
   }),
   article({
     slug: "1v1-lol-alternatives",
@@ -412,7 +406,7 @@ Use [FPS strategy](/guides/fps-1v1-strategy) after controls are comfortable. Bro
       },
     ],
     sources: [{ label: "Krunker official game", url: "https://krunker.io/" }, store, telemetry],
-    related: ["fps-for-money-hub", "1v1-lol-alternatives", "best-cs2-settings", "fps-1v1-strategy"],
+    related: ["1v1-lol-alternatives", "best-cs2-settings", "fps-1v1-strategy"],
   }),
   article({
     slug: "cs2-crosshair-codes",
@@ -1417,7 +1411,7 @@ For competitive preparation, verify [map and event rules](/guides/cs2-map-pool) 
       },
       valve,
     ],
-    related: ["mirage-smokes", "cs2-game-modes", "cs2-map-pool", "fps-for-money-hub"],
+    related: ["mirage-smokes", "cs2-game-modes", "cs2-map-pool"],
   }),
   article({
     slug: "cs2-ranks",
@@ -1559,7 +1553,7 @@ If you are preparing for an event, read its entry rules separately in [CS2 tourn
       },
     ],
     sources: [faceit],
-    related: ["cs2-ranks", "k-d-ratio", "cs2-tournaments-for-money", "fps-for-money-hub"],
+    related: ["cs2-ranks", "k-d-ratio", "cs2-tournaments-for-money"],
   }),
   article({
     slug: "cs2-anti-cheat",
@@ -1624,13 +1618,7 @@ The [FPS money hub](/guides/fps-for-money-hub) explains why cash-entry terms and
       },
     ],
     sources: [trusted, trust],
-    related: [
-      "cs2-trust-factor",
-      "cs2-subtick",
-      "cs2-launch-options",
-      "fps-for-money-hub",
-      "provably-fair-games",
-    ],
+    related: ["cs2-trust-factor", "cs2-subtick", "cs2-launch-options", "provably-fair-games"],
   }),
   article({
     slug: "cs2-trust-factor",
@@ -1977,7 +1965,7 @@ Retain the dated rulebook you accepted so later changes are visible.`,
         url: "https://github.com/ValveSoftware/counter-strike_rules_and_regs/blob/main/tournament-operation-requirements.md",
       },
     ],
-    related: ["cs2-tournaments-for-money", "cs2-map-pool", "cs2-ranks", "fps-for-money-hub"],
+    related: ["cs2-tournaments-for-money", "cs2-map-pool", "cs2-ranks"],
   }),
   article({
     slug: "cs2-tournaments-for-money",
@@ -2051,13 +2039,7 @@ Start with the [FPS topic](/guides/topics/fps-and-aim), respect [terms](/terms),
       },
     ],
     sources: [majors, faceit],
-    related: [
-      "fps-for-money-hub",
-      "cs2-major",
-      "faceit-elo",
-      "checkmate-gaming-review",
-      "gamersaloon-review",
-    ],
+    related: ["cs2-major", "faceit-elo", "checkmate-gaming-review", "gamersaloon-review"],
   }),
   article({
     slug: "valorant-1v1",
@@ -2124,13 +2106,7 @@ Do not claim an exact current menu or mode restriction from an old video; use th
       },
     ],
     sources: [{ label: "Riot Games: Valorant", url: "https://playvalorant.com/en-us/" }],
-    related: [
-      "cs2-vs-valorant",
-      "edpi-calculator",
-      "cs2-aim-training",
-      "valorant-betting",
-      "fps-for-money-hub",
-    ],
+    related: ["cs2-vs-valorant", "edpi-calculator", "cs2-aim-training", "valorant-betting"],
   }),
   article({
     slug: "cs2-vs-valorant",
@@ -2342,13 +2318,7 @@ The [K/D and hit-rate guide](/guides/k-d-ratio) clarifies denominators. Try [PvP
       },
     ],
     sources: [recoil],
-    related: [
-      "counter-strafing",
-      "cs2-aim-training",
-      "cs2-spray-patterns",
-      "k-d-ratio",
-      "fps-for-money-hub",
-    ],
+    related: ["counter-strafing", "cs2-aim-training", "cs2-spray-patterns", "k-d-ratio"],
   }),
 ].map((guide) => {
   const context = FPS_WAVE2_CONTEXT[guide.slug];

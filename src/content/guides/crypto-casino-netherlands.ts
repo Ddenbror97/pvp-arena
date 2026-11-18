@@ -58,7 +58,7 @@ Self-exclusion and blocking tools still matter where play is lawful. [Gambling s
 
 A blocked card and a successful crypto transfer are not a legal opinion. Banks and app stores enforce their own rules on top of the statute. [Crypto gambling taxes](/guides/crypto-gambling-taxes) is a different question from whether the bet was lawful. You can owe a record-keeping duty on a bet you should not have placed. This page will not help you hide either one.
 
-PVPspinArena's rails are USDC or ETH on Base, described on the [wallet](/wallet) page. That technical fact is not a statement that every country may use them.`,
+PVPspinArena's rails are USDC or ETH on Base, described on the [wallet](/how-it-works#wallet) page. That technical fact is not a statement that every country may use them.`,
     },
     {
       id: "table",

@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "quick hit platinum",
   secondary: ["quick hit platinum rtp", "quick hit platinum max win", "quick hit platinum demo"],
-  title: "Quick Hit Platinum: Floor Cabinet, Not Higher RTP",
+  title: "Quick Hit Platinum Slot: The Cabinet and Its Features",
   description:
     "Quick hit platinum is a floor cabinet family. Platinum is a tier name, not a higher return. RTP and max win stay on the rules screen. No demo is promised.",
   h1: "Quick hit platinum is a floor nameplate, not a better percent",

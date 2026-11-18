@@ -44,7 +44,7 @@ This page does not print a minimum, a fee, or a wait time. Those lines change on
 
 [The map of products that mention real cash](/guides/games-that-pay-real-money) shows how many lobbies use a similar credit. [Tournament entries with a rake](/guides/skillz-review) are a stake you pay to join a match, which a survey usually is not.
 
-[Solitaire played for an entry fee](/guides/solitaire-cash-review) is skill-wager territory. A trivia tile in a rewards inbox is often just a tile.
+[Solitaire played for an entry fee](/guides/papaya-games-review) is skill-wager territory. A trivia tile in a rewards inbox is often just a tile.
 
 The hub is [skill-wager guides](/guides/topics/skill-wagers). We are not an affiliate of the survey site. No code is printed.`,
     },
@@ -200,6 +200,6 @@ If a video calls the card "crypto-style cash," the video is using a costume. The
     },
   ],
   sources: [],
-  related: ["games-that-pay-real-money", "skillz-review", "solitaire-cash-review", "house-edge"],
+  related: ["games-that-pay-real-money", "skillz-review", "house-edge"],
   updated: "2026-10-20",
 };

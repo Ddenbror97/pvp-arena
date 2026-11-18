@@ -36,7 +36,7 @@ In a club or agent app, the cards may be the same and the payer may not. You mig
 
 In a house game, the pay table is the opponent. You are not trying to fold out a person. You are taking a price the game posted, the way a slot posts a price. Hand rankings show up, and the decision is still you versus the listing.
 
-This [poker](/guides/topics/poker) guide is for adults 18 or older. The room pages are the [ClubGG review](/guides/clubgg-review), the [PokerBros review](/guides/pokerbros-review), and the [ACR review](/guides/acr-poker-review). It is not legal advice. Which of these apps you may use for money depends on where you live and on each operator's terms. This page will not publish a legal map. If an app will not offer you a cashier in your location, believe the cashier.
+This [poker](/guides/topics/poker) guide is for adults 18 or older. The room page is the [ACR review](/guides/acr-poker-review). It is not legal advice. Which of these apps you may use for money depends on where you live and on each operator's terms. This page will not publish a legal map. If an app will not offer you a cashier in your location, believe the cashier.
 
 Start with [how to play poker](/guides/how-to-play-poker) if the cards themselves are new. Then come back and label the app. Learning c-bets in a house game is studying for the wrong exam.`,
     },
@@ -153,6 +153,6 @@ Pick one on purpose. Then read the table and the cashier, or the host's written 
     { label: "Wikipedia — Poker", url: "https://en.wikipedia.org/wiki/Poker" },
     { label: "Wikipedia — Online poker", url: "https://en.wikipedia.org/wiki/Online_poker" },
   ],
-  related: ["clubgg-review", "pokerbros-review", "acr-poker-review", "crypto-poker"],
+  related: ["acr-poker-review", "crypto-poker"],
   updated: "2026-10-21",
 };

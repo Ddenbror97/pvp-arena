@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "Threat model for a gambling wallet",
       body: `You are defending against phishing sites, malicious approvals, device malware, shoulder surfing and your own fatigue at 2 a.m. You are not defending against a mathematically fair game suddenly becoming unfair because MetaMask exists.
 
-This checklist lives in [crypto payments](/guides/topics/crypto-payments). Adults 18+. Deep dives: [crypto wallet for gambling](/guides/crypto-wallet-for-gambling), [self-custody wallet](/guides/self-custody-wallet), [is MetaMask safe](/guides/is-metamask-safe), [seed phrase](/guides/seed-phrase).`,
+This checklist lives in [crypto payments](/guides/topics/crypto-payments). Adults 18+. Deep dives: [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling), [self-custody wallet](/guides/self-custody-wallet), [is MetaMask safe](/guides/is-metamask-safe), [seed phrase](/guides/seed-phrase).`,
     },
     {
       id: "hot-hygiene",
@@ -58,7 +58,7 @@ Anyone asking for the phrase to “unlock a bonus” is stealing.`,
       title: "Approval and signature discipline",
       body: `Read every prompt. Prefer message signatures and normal transfers. Reject unlimited token approvals for casino deposits. Periodically revoke stale allowances; [revoke token approvals](/guides/revoke-token-approvals) shows how to find and cancel them.
 
-PVPspinArena: verify wallet with a signature, deposit USDC or ETH on Base via transfer shown on the real [wallet](/wallet) page.`,
+PVPspinArena: verify wallet with a signature, deposit USDC or ETH on Base via transfer shown on the real [wallet](/how-it-works#wallet) page.`,
     },
     {
       id: "phishing",
@@ -115,7 +115,7 @@ Write down the network name you intend to use before you open the send modal. Sp
     { label: "Ethereum.org — Wallets security", url: "https://ethereum.org/en/security/" },
   ],
   related: [
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "self-custody-wallet",
     "seed-phrase",
     "is-metamask-safe",

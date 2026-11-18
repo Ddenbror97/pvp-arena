@@ -100,7 +100,7 @@ Cash versions kept the show structure and replaced the chip. That is clearer for
       id: "play-here",
       title: "Playing the game on PVPspinArena",
       body: `1. Read [how it works](/how-it-works).
-2. Deposit a session-sized amount via [wallet](/wallet).
+2. Deposit a session-sized amount via [wallet](/how-it-works#wallet).
 3. Open [Coinflip](/coinflip), take one small duel, verify if you want the habit.
 4. Stop at your limit. Withdraw what you are not using.
 

@@ -27,7 +27,7 @@ export const guide: Guide = {
     {
       id: "what-is",
       title: 'What does "instant withdrawal" mean?',
-      body: "Many crypto casinos advertise instant withdrawals. The phrase usually means the site does not make you wait hours or days for someone to approve your request. Your withdrawal is processed automatically and sent to the blockchain soon after you ask.\n\nIt does not mean the money appears in your wallet in zero seconds. Every crypto withdrawal involves:\n\n1. **Processing** by the site: checking your balance, holding the amount and signing a transaction.\n2. **Broadcasting** the transaction to the network.\n3. **Inclusion** in a block.\n4. **Confirmation**: waiting until the block is safe from being reversed.\n\nOn fast networks these steps can take under a minute. On slower or busy networks they can take much longer. And any responsible site will pause some withdrawals for review.\n\nSo when comparing sites, it is more useful to ask how long a typical withdrawal takes, which amounts are processed automatically and what happens to larger requests. This guide explains each part so you know what to expect. For deposits and the full money flow, see our [USDC casino guide](/guides/usdc-casino).\n\nOur [payment walkthrough](/how-it-works) separates a wallet transfer from credit to an in-game balance; use the current [wallet](/wallet) controls for your own account.",
+      body: "Many crypto casinos advertise instant withdrawals. The phrase usually means the site does not make you wait hours or days for someone to approve your request. Your withdrawal is processed automatically and sent to the blockchain soon after you ask.\n\nIt does not mean the money appears in your wallet in zero seconds. Every crypto withdrawal involves:\n\n1. **Processing** by the site: checking your balance, holding the amount and signing a transaction.\n2. **Broadcasting** the transaction to the network.\n3. **Inclusion** in a block.\n4. **Confirmation**: waiting until the block is safe from being reversed.\n\nOn fast networks these steps can take under a minute. On slower or busy networks they can take much longer. And any responsible site will pause some withdrawals for review.\n\nSo when comparing sites, it is more useful to ask how long a typical withdrawal takes, which amounts are processed automatically and what happens to larger requests. This guide explains each part so you know what to expect. For deposits and the full money flow, see our [USDC casino guide](/guides/usdc-casino).\n\nOur [payment walkthrough](/how-it-works) separates a wallet transfer from credit to an in-game balance; use the current [wallet](/how-it-works#wallet) controls for your own account.",
     },
     {
       id: "network",
@@ -164,7 +164,7 @@ A site's approach to fairness is also a useful signal. Sites that let you verify
     {
       id: "troubleshooting",
       title: "Common withdrawal problems",
-      body: "- **Withdrawal shows as pending review.** Larger requests wait for approval. On PVPspinArena that applies to amounts over $25.\n- **Transaction sent but tokens not visible.** Switch your wallet to Base and import the USDC token, then check the hash on basescan.org.\n- **Hit the daily limit.** Wait until the limit resets, or withdraw the remainder the next day.\n- **Wrong address entered.** Blockchain payments cannot be reversed once confirmed. Always check the first and last characters.\n- **Exchange address used.** Some exchanges do not credit transfers from certain senders or networks. Withdrawing to your own wallet first is safest; see our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling).\n- **Withdrawal marked finished but you are unsure.** Look up the hash on a block explorer to confirm the recipient and amount.\n\n[Papers required when any withdrawal is requested](/guides/flush-casino-review) is one operator's file. It is not a universal cash-out clock.",
+      body: "- **Withdrawal shows as pending review.** Larger requests wait for approval. On PVPspinArena that applies to amounts over $25.\n- **Transaction sent but tokens not visible.** Switch your wallet to Base and import the USDC token, then check the hash on basescan.org.\n- **Hit the daily limit.** Wait until the limit resets, or withdraw the remainder the next day.\n- **Wrong address entered.** Blockchain payments cannot be reversed once confirmed. Always check the first and last characters.\n- **Exchange address used.** Some exchanges do not credit transfers from certain senders or networks. Withdrawing to your own wallet first is safest; see our [crypto wallet for gambling guide](/guides/best-crypto-wallet-for-gambling).\n- **Withdrawal marked finished but you are unsure.** Look up the hash on a block explorer to confirm the recipient and amount.",
     },
     {
       id: "plan",
@@ -180,9 +180,7 @@ On Base, routine withdrawals can arrive within minutes because blocks are fast a
 
 Verify your wallet early, use the right network, keep transaction hashes and be wary of sites that add fees or conditions only after you ask to withdraw.
 
-More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).
-
-One homepage says about two minutes, and the terms do not print the same clock. [That two-minute sentence](/guides/cloudbet-review) is a claim we did not time. Handling can still reach 5%.`,
+More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).`,
     },
   ],
   faqs: [

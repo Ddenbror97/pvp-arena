@@ -29,7 +29,7 @@ export const guide: Guide = {
       title: "What Wallet Connect is (and is not)",
       body: `Wallet Connect, often written WalletConnect, is a way for a website to talk to a mobile or desktop wallet over an encrypted session. You do not create a new account with “Wallet Connect.” You already have MetaMask, Coinbase Wallet, Trust Wallet or another compatible app. The protocol only carries requests.
 
-That matters at a [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) setup because many players browse on a laptop and keep keys on a phone. Pairing avoids exporting keys. It does not avoid reading prompts.
+That matters at a [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) setup because many players browse on a laptop and keep keys on a phone. Pairing avoids exporting keys. It does not avoid reading prompts.
 
 ### What a session can do
 
@@ -147,7 +147,7 @@ Keep a small ETH balance on Base for gas. Wallet Connect cannot pay the fee for 
 
 If several addresses live in the mobile wallet, the pairing screen should show which account you are sharing. Verify that account, then send from it. Pairing account 1 and sending from account 2 is the same mismatch as using two browser profiles. The session does not merge them.
 
-When a withdrawal later lands in the wallet, Wallet Connect is not involved. The site broadcasts a Base transfer to the address you typed on the [wallet](/wallet) page. You only need the app to watch Base and to display USDC.`,
+When a withdrawal later lands in the wallet, Wallet Connect is not involved. The site broadcasts a Base transfer to the address you typed on the [wallet](/how-it-works#wallet) page. You only need the app to watch Base and to display USDC.`,
     },
     {
       id: "worked-example",

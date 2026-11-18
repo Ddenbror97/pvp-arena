@@ -37,11 +37,8 @@ export const Route = createFileRoute("/guides/")({
               name: TITLE,
               url: `${OG_SITE_URL}/guides`,
               publisher: publisherNode(),
-              hasPart: (loaderData?.guides ?? []).map((g) => ({
-                "@type": "Article",
-                headline: g.h1,
-                url: `${OG_SITE_URL}/guides/${g.slug}`,
-              })),
+              // The page links every guide in its HTML; listing all ~1,000 again here only
+              // added about 150 kB to the document. The topic list below carries the structure.
             },
             {
               "@type": "ItemList",

@@ -74,7 +74,7 @@ Choosing heads because you won on heads last time does not change the next proba
 
 Cash coinflip keeps the duel ritual and prices the stake in dollars you can withdraw to a wallet. That is clearer accounting. It is still gambling. A $50 loss is a $50 loss, not an “inventory setback.”
 
-PVPspinArena does not ingest skins. If you want to play here, deposit USDC or ETH on Base through the [wallet](/wallet) flow.`,
+PVPspinArena does not ingest skins. If you want to play here, deposit USDC or ETH on Base through the [wallet](/how-it-works#wallet) flow.`,
     },
     {
       id: "fairness",

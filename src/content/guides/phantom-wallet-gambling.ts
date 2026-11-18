@@ -27,7 +27,7 @@ export const guide: Guide = {
     {
       id: "what-phantom-is",
       title: "What a Phantom wallet actually is",
-      body: `Phantom is a [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) only in the sense that it can hold coins and send them. It is not a casino account, and connecting it does not give a site your funds. You keep the keys. The site sees a public address after you approve a connection, and it can ask Phantom to show you a signature or a transaction.
+      body: `Phantom is a [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) only in the sense that it can hold coins and send them. It is not a casino account, and connecting it does not give a site your funds. You keep the keys. The site sees a public address after you approve a connection, and it can ask Phantom to show you a signature or a transaction.
 
 That design is useful if you already live on Solana. Many people buy SOL or Solana USDC, keep it in Phantom and look for a [Solana casino](/guides/solana-casino). The product name then becomes a trap: “I have USDC in Phantom” does not tell you which chain that USDC lives on.
 
@@ -43,7 +43,7 @@ That design is useful if you already live on Solana. Many people buy SOL or Sola
 - It does not let the site sweep your balance later.
 - It does not prove you sent a deposit from that address unless the site also matches the on-chain sender.
 
-PVPspinArena uses a signed message on an EVM wallet to verify the sender, then matches deposits to that address. If you only have Phantom set up for Solana, you still need a Base-capable wallet and USDC or ETH on Base before the [wallet page](/wallet) can credit you.
+PVPspinArena uses a signed message on an EVM wallet to verify the sender, then matches deposits to that address. If you only have Phantom set up for Solana, you still need a Base-capable wallet and USDC or ETH on Base before the [wallet page](/how-it-works#wallet) can credit you.
 
 Players must be 18 or older. Treat Phantom as a payment tool, not as a way to hide play from yourself.`,
     },

@@ -27,7 +27,7 @@ export const guide: Guide = {
 
 What you can take from this page is a map. Who calls the contract a regulated instrument. Who calls it a wager. How the dollars behave either way. What you should do with your own money while the map is unfinished. The map is not a ruling. If you need a ruling, you need a lawyer in your state and the primary documents, not a guide.
 
-Adults 18+ only. Whatever the label, the premium you pay can go to zero. This is not legal advice, financial advice, or tax advice. Start from [Prediction market guides](/guides/topics/prediction-markets). The product tour, fees included, is the [Kalshi review](/guides/kalshi-review). The wider US frame is [prediction markets and US law](/guides/prediction-market-legal-us).
+Adults 18+ only. Whatever the label, the premium you pay can go to zero. This is not legal advice, financial advice, or tax advice. Start from [Prediction market guides](/guides/topics/prediction-markets). The wider US frame is [prediction markets and US law](/guides/prediction-market-legal-us), and the two brands side by side are [Polymarket vs Kalshi](/guides/polymarket-vs-kalshi). The mechanics of the other venue are in [how Polymarket works](/guides/how-does-polymarket-work).
 
 [Is crypto gambling legal](/guides/is-crypto-gambling-legal) answers a neighboring question about casino-style crypto wagering. Do not paste that answer onto an event contract. The statutes people cite are different.`,
     },
@@ -62,7 +62,7 @@ Both descriptions fit the cashflows. Neither description is the legal verdict. A
 
 Example 2 uses 50 contracts at that same 30 cents. Cost is 50 × $0.30 = $15. If Yes, payout is 50 × $1 = $50 and profit is $35 before fees. If No, the loss is $15. Scaling does not create a new product. It multiplies the stake. If you are sizing up to get back a loss, the legal label is irrelevant and the behavior is the problem. Stop.
 
-The price is still not a measured probability. Thirty cents is what the book of orders will charge you. [Kalshi review](/guides/kalshi-review) walks the fee method without inventing today's percent. Subtract the fee before you compare 30 cents with your own estimate of the event.`,
+The price is still not a measured probability. Thirty cents is what the book of orders will charge you. Kalshi's own fee schedule is the method; this page does not invent today's percent. Subtract the fee before you compare 30 cents with your own estimate of the event.`,
     },
     {
       id: "sportsbook",
@@ -143,11 +143,6 @@ Adults 18+ only. Not legal, financial, or tax advice.`,
     { label: "Kalshi", url: "https://kalshi.com/" },
     { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
   ],
-  related: [
-    "kalshi-review",
-    "prediction-market-legal-us",
-    "is-crypto-gambling-legal",
-    "polymarket-vs-kalshi",
-  ],
+  related: ["prediction-market-legal-us", "is-crypto-gambling-legal", "polymarket-vs-kalshi"],
   updated: "2026-10-21",
 };

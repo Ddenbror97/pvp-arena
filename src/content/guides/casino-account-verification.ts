@@ -99,7 +99,7 @@ Skipping a passport does not skip a public blockchain, a device log the operator
 - Wallet or email signup without that upload: the no-KYC guide.
 - A payout that already has a hash: the pending-withdrawal split, then the crypto payout guide.
 
-PVPspinArena’s [wallet](/wallet) is the signed-in balance, deposits, withdrawals, and ledger. It is not a passport scanner. A fresh document request from another casino stays on that casino’s own site. If you want the description of how this site checks a wallet, use the no-KYC guide rather than expecting an ID form here.`,
+PVPspinArena’s [wallet](/how-it-works#wallet) is the signed-in balance, deposits, withdrawals, and ledger. It is not a passport scanner. A fresh document request from another casino stays on that casino’s own site. If you want the description of how this site checks a wallet, use the no-KYC guide rather than expecting an ID form here.`,
     },
     {
       id: "aml",
@@ -121,7 +121,7 @@ A site that asks you to skip its own cashier and send files to a personal messen
       title: "After the documents, the payout is still a payout",
       body: `Clearing verification does not teleport the money. A crypto cashout then follows the path in [crypto casino withdrawals](/guides/crypto-casino-withdrawals): the asset, the network, the address you registered, and the review the site still applies to size or to risk. Read the network on the cashier before you confirm. [Casino withdrawal pending](/guides/casino-withdrawal-pending) remains the split between “the site has not sent it” and “the chain has not confirmed it.” Verification delay is the first of those, and only until the site says the documents are accepted.
 
-Limits can outlive the check. Read the cap in the terms or on the cashier and plan the cashout in pieces if the rules say pieces. The [wallet](/wallet) page, once you are signed in, is where a balance and a ledger for this site are visible. A ledger line is not a KYC approval from some other casino. Keep each site’s request id with that site.
+Limits can outlive the check. Read the cap in the terms or on the cashier and plan the cashout in pieces if the rules say pieces. The [wallet](/how-it-works#wallet) page, once you are signed in, is where a balance and a ledger for this site are visible. A ledger line is not a KYC approval from some other casino. Keep each site’s request id with that site.
 
 ### A short order of operations
 

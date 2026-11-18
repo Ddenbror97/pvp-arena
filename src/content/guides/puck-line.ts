@@ -5,10 +5,10 @@ export const guide: Guide = {
   cluster: "Sports betting",
   keyword: "puck line",
   secondary: ["NHL puck line", "hockey spread", "puck line vs moneyline", "minus 1.5 hockey"],
-  title: "Puck Line Betting: NHL Spreads Explained Simply",
+  title: "Puck Line Betting: How Point Spreads Work in Hockey",
   description:
     "The NHL puck line explained: how the 1.5-goal spread works, puck line vs moneyline odds, empty-net math and when the puck line offers value.",
-  h1: "Puck Line Betting: NHL Spreads Explained Simply",
+  h1: "Puck line betting: how the point spread works in hockey",
   answer:
     "Puck line betting is the National Hockey League's usual spread: a 1.5-goal handicap. The favorite at minus 1.5 must win by two or more goals. The underdog at plus 1.5 cashes by winning the game or by losing by exactly one. A one-goal game, including overtime and a shootout final, does not cover minus 1.5. The price next to 1.5 is a different contract from the moneyline. This page shows the settlement, the empty-net fork, and a labeled illustration. It is not a pick sheet. Adults 18+ only. PVPspinArena does not post hockey lines.",
   facts: [

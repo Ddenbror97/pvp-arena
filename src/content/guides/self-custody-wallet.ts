@@ -35,7 +35,7 @@ This [crypto payments](/guides/topics/crypto-payments) how-to is for adults aged
 
 "Not your keys" is a custody slogan, not a fairness slogan. Holding keys does not let you recompute a game. It lets you refuse a send and keep what you did not deposit.
 
-Related reading: [cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet), [seed phrase](/guides/seed-phrase), and [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). If you are still on an exchange-only setup, withdraw a test amount to a wallet you created yourself before you try a casino deposit. The test is cheap education. The first real send is a poor time to learn what a network dropdown is.`,
+Related reading: [cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet), [seed phrase](/guides/seed-phrase), and [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling). If you are still on an exchange-only setup, withdraw a test amount to a wallet you created yourself before you try a casino deposit. The test is cheap education. The first real send is a poor time to learn what a network dropdown is.`,
     },
     {
       id: "keys",
@@ -74,7 +74,7 @@ After you deposit, the casino holds a balance. That slice is no longer self-cust
 2. **Write the seed on paper, offline.** Confirm the wallet's quiz. Store the paper where a roommate or a photo backup will not leak it.
 3. **Add the Base network** if it is not already listed. You need Base for this site.
 4. **Fund the wallet** with USDC on Base and a little ETH for gas. Buy on an exchange, withdraw on Base, or swap carefully.
-5. **Open your [profile](/profile)** and connect the wallet. Sign the verification message. Read the message; it should not spend tokens.
+5. **Open your [profile](/how-it-works#wallet)** and connect the wallet. Sign the verification message. Read the message; it should not spend tokens.
 6. **Copy the deposit address** from the wallet page. Send a small USDC test, then the rest of the session budget.
 7. **Play only with a budget.** Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip can take the stake. Withdraw what you want to keep.
 
@@ -171,7 +171,7 @@ A common beginner self-custody app is [Exodus](/guides/exodus-wallet).`,
     "cold-wallet-vs-hot-wallet",
     "ledger-vs-trezor",
     "seed-phrase",
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "export-metamask-private-key",
     "how-to-delete-metamask-account",
     "how-to-create-a-crypto-wallet",

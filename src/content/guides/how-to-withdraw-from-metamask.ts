@@ -44,7 +44,7 @@ If no provider is available for the location or asset, an exchange that supports
       title: "Keep the transfer record",
       body: `Record the asset, network, address, amount and transaction or order ID. Do not send a second payment simply because the first status has not changed. For an unresolved provider order, use that provider's official support route.
 
-More transfer explanations are in [crypto payments](/guides/topics/crypto-payments). The [wallet](/wallet) contains PVPspinArena's own cashier instructions, not MetaMask's bank-sale terms. Never provide a recovery phrase to someone offering to accelerate a payment.`,
+More transfer explanations are in [crypto payments](/guides/topics/crypto-payments). The [wallet](/how-it-works#wallet) contains PVPspinArena's own cashier instructions, not MetaMask's bank-sale terms. Never provide a recovery phrase to someone offering to accelerate a payment.`,
     },
   ],
   faqs: [

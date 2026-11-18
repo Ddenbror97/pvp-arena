@@ -79,7 +79,7 @@ When the session is over, disconnect the site in the wallet's connected-sites li
 
 You are finished when you can say three things. The keys for the savings account are on the Ledger. MetaMask can ask that device to sign, and you can refuse on the device. The browser never received the phrase. Button labels will change. Those three sentences should not.
 
-The rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [ledger vs trezor](/guides/ledger-vs-trezor), [cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet), [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). In US dollars, PVPspinArena settles six-max poker, jackpot, coinflip, roulette, and P2P Slott. Read [wallet](/wallet) before you play.`,
+The rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [ledger vs trezor](/guides/ledger-vs-trezor), [cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet), [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling). In US dollars, PVPspinArena settles six-max poker, jackpot, coinflip, roulette, and P2P Slott. Read [wallet](/how-it-works#wallet) before you play.`,
     },
   ],
   faqs: [

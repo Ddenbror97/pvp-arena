@@ -84,7 +84,7 @@ Buy from the official shop. Counterfeit units exist. A cheap “Ledger” from a
       title: "Which device you should connect to a casino — if either",
       body: `A ledger casino search usually means one of three things: a phishing kit wearing Ledger’s colours, a person who wants to plug their Nano into every site, or a genuine question about deposits.
 
-Connect a **hot gaming wallet** to the casino. Fund it with the amount you are willing to lose this month. Use the hardware wallet as savings. That split is the whole recommendation. The [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) guide is the broader wallet-choice page.
+Connect a **hot gaming wallet** to the casino. Fund it with the amount you are willing to lose this month. Use the hardware wallet as savings. That split is the whole recommendation. The [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) guide is the broader wallet-choice page.
 
 ### Why not the hardware wallet for every deposit
 
@@ -94,7 +94,7 @@ Connect a **hot gaming wallet** to the casino. Fund it with the amount you are w
 
 ### How PVPspinArena actually connects
 
-You verify an address by signing a message, then send USDC or ETH on Base from that address. Withdrawals return to the verified address on the [wallet](/wallet) page. We never need a seed, a Ledger Recover share, or a Trezor Shamir share. Anyone who asks for those is not us.
+You verify an address by signing a message, then send USDC or ETH on Base from that address. Withdrawals return to the verified address on the [wallet](/how-it-works#wallet) page. We never need a seed, a Ledger Recover share, or a Trezor Shamir share. Anyone who asks for those is not us.
 
 If you insist on using a hardware wallet for the gaming address, create a **separate account** on the device with its own small balance. Do not use account 0 where the rest of your life lives. Still never export the seed.
 
@@ -170,7 +170,7 @@ If gambling spend is past the number you set, stop. Savings on a Trezor will not
   related: [
     "usdc-casino",
     "seed-phrase",
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "metamask-casino",
     "phantom-wallet-gambling",
     "connect-ledger-to-metamask",

@@ -71,7 +71,13 @@ export const guide: Guide = {
       a: "Losing can be the normal result of a game with a house margin or a fee, even when the round is honest. That is a bankroll fact, not proof of a hack. Only wager US dollars you can afford to lose, and stop when it stops being entertainment.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "UK Gambling Commission: age and identity verification rules (May 2019)",
+      url: "https://www.gamblingcommission.gov.uk/news/article/new-age-and-identity-verification-rules-changes-to-the-lccp-from-tuesday-7",
+    },
+    { label: "UK Gambling Commission", url: "https://www.gamblingcommission.gov.uk/" },
+  ],
   related: ["are-online-casinos-rigged", "fake-casino-sites"],
   updated: "2026-09-26",
 };

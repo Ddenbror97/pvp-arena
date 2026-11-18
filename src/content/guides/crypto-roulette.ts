@@ -129,7 +129,7 @@ On PVPspinArena, you verify your wallet address on your profile. Deposits from t
 - Sending from an exchange address that you have not verified.
 - Sending a token other than USDC.
 
-Always send a small test amount first if you are unsure. The [wallet page](/wallet) shows the exact address and network.`,
+Always send a small test amount first if you are unsure. The [wallet page](/how-it-works#wallet) shows the exact address and network.`,
     },
     {
       id: "withdrawals",
@@ -138,7 +138,7 @@ Always send a small test amount first if you are unsure. The [wallet page](/wall
 
 ### How it works on PVPspinArena
 
-1. Request a withdrawal from the [wallet page](/wallet).
+1. Request a withdrawal from the [wallet page](/how-it-works#wallet).
 2. The amount is held immediately, so it cannot be spent while the payout is processed.
 3. The payout is signed and sent on Base.
 4. The withdrawal is marked finished only once the transaction is in a safe block and two separate network providers agree it succeeded.

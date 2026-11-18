@@ -46,7 +46,7 @@ MetaMask supports alternative-token gas payment on some networks. Other routes n
     {
       id: "cashier",
       title: "Use the current cashier address",
-      body: `A payment from a service and a deposit into that service are different directions. Use the active deposit instructions rather than reusing the address that sent a previous payout. PVPspinArena's [wallet](/wallet) provides its current cashier details.
+      body: `A payment from a service and a deposit into that service are different directions. Use the active deposit instructions rather than reusing the address that sent a previous payout. PVPspinArena's [wallet](/how-it-works#wallet) provides its current cashier details.
 
 See [crypto payments](/guides/topics/crypto-payments) for related guides. A legitimate transfer does not require giving a recipient or support agent your recovery phrase.`,
     },

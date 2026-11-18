@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "survivor-pool",
-  cluster: "Games of chance",
+  cluster: "Sports betting",
   keyword: "survivor pool",
   secondary: [
     "nfl survivor pool",
@@ -47,7 +47,7 @@ Some pools lock the entire slate at the Thursday kickoff. Some lock each pick at
 
 NFL regular-season ties are rare but they happen. House options: a tie kills you, a tie is a win (you survived), a tie is a "push" that does not use the team. Postponements, abandoned games and cancelled games need a line in the rules too. If the commissioner shrugs in week 14, you do not have a pool, you have an argument.
 
-Survivor pools live in the [Games of chance topic](/guides/topics/games-of-chance) because the weekly result is still a random football game. The skill is allocation, not covering −3. A 70% side still loses three weeks in ten. Over a long season those three weeks are why "I only pick locks" still dies. Plan the inventory around that, not around a fantasy of sixteen straight covers.`,
+Survivor pools sit with the other office pools in the [sports betting topic](/guides/topics/sports-betting). The weekly result is still an uncertain football game. The skill is allocation, not covering −3. A 70% side still loses three weeks in ten. Over a long season those three weeks are why "I only pick locks" still dies. Plan the inventory around that, not around a fantasy of sixteen straight covers.`,
     },
     {
       id: "endings",

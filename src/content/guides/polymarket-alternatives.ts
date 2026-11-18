@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "polymarket-alternatives",
-  cluster: "Foundations",
+  cluster: "Prediction markets",
   keyword: "polymarket alternatives",
   secondary: ["compare prediction venues", "event market custody"],
   title: "Polymarket Alternatives: How to Compare Event Venues",
@@ -36,7 +36,7 @@ export const guide: Guide = {
     {
       id: "how-to-keep-the-comparison-honest",
       title: "How to keep the comparison honest",
-      body: "Use a three-column note and no stars. Column one, custody: ledger balances, contract-held collateral, or unclear. Column two, resolution: named source, staff call, or vote, plus the dispute window in a phrase you copied. Column three, access: your region yes or no, identity step, rail you can actually fund. Add a fourth line for the fee you would pay on the size you actually trade. Stop. A fifth line labeled “hype” is how rankings sneak back in.\n\nIf two venues tie on those lines, you still do not need a public ranking. Pick the one whose resolution sentence you understand, with the smaller amount of money. Understanding is the tie-break. A larger catalog is not. A louder social account is not. A number of users you cannot verify is not, and this page will not supply one.\n\nRe-run the note when you return. Alternatives change eligibility and admin keys. The brand you liked in the spring can be a different custody pile by the fall. The point of a comparison method is that you can repeat it. A frozen “top alternatives” article cannot.\n\nPVPspinArena does not enter the note. Jackpot, coinflip, and roulette in USD are not shares on an outside event. They resolve by the game’s own outcome, in dollars, on this site. If that is what you wanted, you do not need a prediction venue. If you wanted a stand-in for an event-share site, the three columns are the page. The product definition sits on [crypto prediction markets](/guides/crypto-prediction-markets) so this one can stay a worksheet.\n\nAdults 18 or older, or the age required where you live should fund only a venue that survived the worksheet, and only with USD value they can lose if the share settles low or the withdrawal stalls. A careful comparison does not owe you a winning side. It owes you a cleaner choice of who holds the money and who signs the result.\n\nThe rest of this subject is on the [Foundations guides](/guides/topics/foundations). See [crypto prediction markets](/guides/crypto-prediction-markets), [decentralized casino explained](/guides/decentralized-casino-explained), [what is a crypto casino](/guides/what-is-a-crypto-casino). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [responsible gambling](/responsible-gambling) before you play.",
+      body: "Use a three-column note and no stars. Column one, custody: ledger balances, contract-held collateral, or unclear. Column two, resolution: named source, staff call, or vote, plus the dispute window in a phrase you copied. Column three, access: your region yes or no, identity step, rail you can actually fund. Add a fourth line for the fee you would pay on the size you actually trade. Stop. A fifth line labeled “hype” is how rankings sneak back in.\n\nIf two venues tie on those lines, you still do not need a public ranking. Pick the one whose resolution sentence you understand, with the smaller amount of money. Understanding is the tie-break. A larger catalog is not. A louder social account is not. A number of users you cannot verify is not, and this page will not supply one.\n\nRe-run the note when you return. Alternatives change eligibility and admin keys. The brand you liked in the spring can be a different custody pile by the fall. The point of a comparison method is that you can repeat it. A frozen “top alternatives” article cannot.\n\nPVPspinArena does not enter the note. Jackpot, coinflip, and roulette in USD are not shares on an outside event. They resolve by the game’s own outcome, in dollars, on this site. If that is what you wanted, you do not need a prediction venue. If you wanted a stand-in for an event-share site, the three columns are the page. The product definition sits on [crypto prediction markets](/guides/crypto-prediction-markets) so this one can stay a worksheet.\n\nAdults 18 or older, or the age required where you live should fund only a venue that survived the worksheet, and only with USD value they can lose if the share settles low or the withdrawal stalls. A careful comparison does not owe you a winning side. It owes you a cleaner choice of who holds the money and who signs the result.\n\nThe rest of this subject is on the [prediction market guides](/guides/topics/prediction-markets). See [crypto prediction markets](/guides/crypto-prediction-markets), [decentralized casino explained](/guides/decentralized-casino-explained), [what is a crypto casino](/guides/what-is-a-crypto-casino). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [responsible gambling](/responsible-gambling) before you play.",
     },
   ],
   faqs: [
@@ -61,7 +61,10 @@ export const guide: Guide = {
       a: "No. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only. It is not an event-contract venue and not a stand-in for one.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "U.S. Commodity Futures Trading Commission", url: "https://www.cftc.gov/" },
+    { label: "Polymarket", url: "https://polymarket.com/" },
+  ],
   related: ["crypto-prediction-markets", "decentralized-casino-explained"],
   updated: "2026-10-21",
 };

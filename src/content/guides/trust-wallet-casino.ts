@@ -10,10 +10,10 @@ export const guide: Guide = {
     "trust wallet base",
     "trust wallet deposit",
   ],
-  title: "Trust Wallet Casino Guide: Deposits and Networks",
+  title: "Trust Wallet Casinos: Deposits, Networks and Approvals",
   description:
     "How a Trust Wallet casino deposit works: networks, dapp browser risks, token approvals, and moving USDC onto Base without sending to the wrong chain.",
-  h1: "Trust Wallet casino deposits: networks, dapps and approvals",
+  h1: "Trust Wallet casinos: deposits, networks, dapps and approvals",
   answer:
     "A Trust Wallet casino deposit is a normal on-chain send from a Trust Wallet you control, on the network the site actually watches. Trust Wallet holds many chains in one app, which is convenient and easy to mis-tap. For PVPspinArena you verify the EVM address by signing a message, then send USDC or ETH on Base from that same address. The dapp browser is optional and is the riskiest part of the app if you follow random links.",
   facts: [
@@ -27,7 +27,7 @@ export const guide: Guide = {
     {
       id: "fit",
       title: "When Trust Wallet is a reasonable casino wallet",
-      body: `Trust Wallet is a [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) if you already use it, if you can switch networks without guessing and if you keep only a gaming budget on the hot wallet. It is a poor choice if you treat the dapp browser like a search engine and sign whatever appears.
+      body: `Trust Wallet is a [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) if you already use it, if you can switch networks without guessing and if you keep only a gaming budget on the hot wallet. It is a poor choice if you treat the dapp browser like a search engine and sign whatever appears.
 
 The app stores a recovery phrase. That phrase restores every enabled coin account derived from it. The casino never needs those words. If a Trust Wallet casino page asks you to “validate” by entering the phrase, close it.
 
@@ -84,7 +84,7 @@ If Base ETH is zero, Trust Wallet may still let you build a USDC send and then f
 - If a page immediately asks to approve USDC spending, leave. A [USDC casino](/guides/usdc-casino) deposit to an address does not need that.
 - Prefer WalletConnect from a desktop browser you already trust, if the phone browser feels noisy.
 
-PVPspinArena verification is a message on your [profile](/profile), not a contract you “enable” inside a random web view.
+PVPspinArena verification is a message on your [profile](/how-it-works#wallet), not a contract you “enable” inside a random web view.
 
 After you finish, clear the dapp session or lock the wallet. Do not leave an unknown tab sitting on a connect modal.
 

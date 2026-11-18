@@ -5,10 +5,10 @@ export const guide: Guide = {
   cluster: "Casino games",
   keyword: "sic bo online",
   secondary: ["sic bo online"],
-  title: "Sic Bo Online: Rules, Bets and the Lower-Edge Wagers",
+  title: "How to Play Sic Bo Online: Rules, Bets and Payouts",
   description:
     "Sic bo online is three dice and one roll. Big and Small lose on triples. On published 1 to 1 tables their edge is 2.78%. Other boxes cost more.",
-  h1: "Sic bo online: three dice, 216 outcomes, and a paytable that is local",
+  h1: "Sic bo online: how to play, the rules, the bets and the payouts",
   answer:
     "Sic bo online is a bet on one roll of three dice. There are 216 equally likely outcomes. Big is a total of 11 through 17, Small is 4 through 10, and both lose if the roll is a triple. On the UK, New Zealand, Austria, and Macau columns of a standard published table, Big and Small pay 1 to 1 with a house edge of 2.78%. A specific triple is a different bet, and its odds are not the same in every jurisdiction.",
   facts: [

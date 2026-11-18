@@ -66,7 +66,13 @@ export const guide: Guide = {
       a: "Do not wager illegally, and do not use a VPN to pretend you are somewhere else. Read the current rules from your state regulator. Sweepstakes and social casinos are a different product. If you are unsure, do not deposit.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "UK Gambling Commission: age and identity verification rules (May 2019)",
+      url: "https://www.gamblingcommission.gov.uk/news/article/new-age-and-identity-verification-rules-changes-to-the-lccp-from-tuesday-7",
+    },
+    { label: "UK Gambling Commission", url: "https://www.gamblingcommission.gov.uk/" },
+  ],
   related: ["crypto-casino-usa", "no-kyc-casino"],
   updated: "2026-09-26",
 };

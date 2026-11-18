@@ -25,6 +25,7 @@ import { SoundToggle } from "@/components/SoundToggle";
 import { warmStrikeShowcase } from "@/lib/fps/showcase";
 import { fetchDuelLobby, fetchDuelRankings } from "@/lib/fps/api";
 import { cn } from "@/lib/utils";
+import { TOPIC_NAV } from "@/lib/guides/topic-nav";
 
 // Signed-in only, so logged-out visitors never download the balance chip.
 const HeaderWallet = lazy(() =>
@@ -365,49 +366,13 @@ export function SiteFooter({ className }: { className?: string }) {
               </Link>
             </li>
             <li>
+              <Link to="/fps-1v1" className={footerLink}>
+                1v1 FPS for money
+              </Link>
+            </li>
+            <li>
               <Link to="/guides" className={footerLink}>
                 Crypto casino guides
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/guides/topics/$topic"
-                params={{ topic: "provably-fair" }}
-                className={footerLink}
-              >
-                Provably fair
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/guides/topics/$topic"
-                params={{ topic: "crypto-payments" }}
-                className={footerLink}
-              >
-                Wallets and payments
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/guides/topics/$topic"
-                params={{ topic: "csgo-heritage" }}
-                className={footerLink}
-              >
-                CS2 and PvP formats
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/guides/topics/$topic"
-                params={{ topic: "games-and-odds" }}
-                className={footerLink}
-              >
-                Odds and roulette
-              </Link>
-            </li>
-            <li>
-              <Link to="/guides/topics/$topic" params={{ topic: "lottery" }} className={footerLink}>
-                Lottery
               </Link>
             </li>
             <li>
@@ -421,6 +386,18 @@ export function SiteFooter({ className }: { className?: string }) {
                 Ranks
               </Link>
             </li>
+          </ul>
+        </nav>
+        <nav aria-label="Guide topics" className="mt-6 border-t border-border pt-6">
+          <h2 className="font-display text-sm text-foreground">Guide topics</h2>
+          <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-4 lg:grid-cols-6">
+            {TOPIC_NAV.map((t) => (
+              <li key={t.slug}>
+                <Link to="/guides/topics/$topic" params={{ topic: t.slug }} className={footerLink}>
+                  {t.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
       </div>

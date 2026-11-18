@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "crypto-slots",
-  cluster: "Games & odds",
+  cluster: "Slots",
   keyword: "crypto slots",
   secondary: ["bitcoin slots", "crypto slot machine", "slots rtp", "online slots odds"],
   title: "Crypto Slots Guide: RTP, Volatility and Fairness",
@@ -121,7 +121,7 @@ A large top symbol pays a published multiple of stake. Rare, but at least the pr
 
 On PVPspinArena, Jackpot is a pot of player stakes. One ticket wins. Your probability is visible: your stake over the pot. There is no hidden reel strip and no mystery progressive. Compare that with a slot: you cannot see the strips, you cannot see the true hit rate, and the house is the bank.
 
-If you want the pot you can actually measure, open [Jackpot](/) or read the [games and odds topic](/guides/topics/games-and-odds).`,
+If you want the pot you can actually measure, open [Jackpot](/) or read the [slots topic](/guides/topics/slots).`,
     },
     {
       id: "not-here",

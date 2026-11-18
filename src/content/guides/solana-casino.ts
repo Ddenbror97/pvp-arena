@@ -62,7 +62,7 @@ Phantom is the wallet most Solana casino pages mention. It holds SOL and Solana 
 
 MetaMask, Coinbase Wallet and many WalletConnect apps default to 0x addresses on Ethereum, Base and other EVM chains. Those addresses are **not** Solana addresses. Pasting a MetaMask 0x address into a Solana withdrawal screen is a classic way to lose funds. Pasting a Phantom Solana address into a Base USDC withdrawal is the same mistake in the other direction.
 
-If you use Phantom mainly for Solana and MetaMask for Base, keep the two mental models separate. Our [Phantom wallet gambling](/guides/phantom-wallet-gambling) guide is for Solana-side use. For Base deposits, use a wallet that supports the Base network, as described in [crypto wallet for gambling](/guides/crypto-wallet-for-gambling).
+If you use Phantom mainly for Solana and MetaMask for Base, keep the two mental models separate. Our [Phantom wallet gambling](/guides/phantom-wallet-gambling) guide is for Solana-side use. For Base deposits, use a wallet that supports the Base network, as described in [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling).
 
 ### What PVPspinArena verifies
 
@@ -102,7 +102,7 @@ If you already sent to the wrong chain, do not send more. Save the transaction s
 2. Sell SOL for USDC (or for USD, then buy USDC).
 3. Withdraw USDC choosing **Base**.
 4. Receive it in MetaMask or another EVM wallet that has Base enabled.
-5. Deposit USDC on Base to the address on the [wallet page](/wallet).
+5. Deposit USDC on Base to the address on the [wallet page](/how-it-works#wallet).
 
 ### Wallet-to-wallet path
 

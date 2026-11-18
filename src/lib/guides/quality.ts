@@ -8,7 +8,34 @@ export const SKELETON_PHRASES = [
   "the price is a number you can point at today",
   "start every session by naming the outcome you actually want",
   "keep the statute column blank on purpose",
+  // Padding templates removed on 2026-11-18 (keyword-stuffed filler repeated in every section).
+  "extra diligence notes",
+  "what is the point of this",
+  "is a poor place to borrow",
+  "is not a reset of the last one",
 ] as const;
+
+/**
+ * Exact-match keyword stuffing: a multi-word keyword repeated far beyond natural use.
+ * The padded guides rewritten on 2026-11-18 carried 30–60 exact repeats in about 2,000 words.
+ * Single-word names (a game, a brand) are exempt: they repeat naturally. Two-word names
+ * ("house edge", "seed phrase") get a higher ceiling than longer search phrases.
+ */
+export const MAX_KEYWORD_PER_1000_WORDS = 15;
+export const MAX_TWO_WORD_KEYWORD_PER_1000_WORDS = 25;
+export function keywordStuffingFailure(keyword: string, text: string): string | null {
+  const words = keyword.trim().split(/\s+/);
+  if (words.length < 2) return null;
+  const max = words.length === 2 ? MAX_TWO_WORD_KEYWORD_PER_1000_WORDS : MAX_KEYWORD_PER_1000_WORDS;
+  const hay = text.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").toLowerCase();
+  const total = hay.split(/\s+/).filter(Boolean).length;
+  const esc = keyword.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const hits = hay.match(new RegExp(`(?<![a-z0-9])${esc}(?![a-z0-9])`, "g"))?.length ?? 0;
+  const per1000 = total ? (hits / total) * 1000 : 0;
+  return per1000 > max
+    ? `keyword "${keyword}" repeated ${hits} times (${per1000.toFixed(1)} per 1,000 words)`
+    : null;
+}
 
 /** Editorial review gate for substantial body padding shared across unrelated URLs.
  * Short navigation, legal notices and common definitions do not meet the word/share floors.
