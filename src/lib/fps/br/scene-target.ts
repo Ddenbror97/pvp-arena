@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { SHARPEN } from "./sharpen";
+import { SHARPEN, SHARPEN_WEIGHT_GLSL } from "./sharpen";
 
 /**
  * Depth for a 14 km world with a 10 cm near plane, without logarithmic depth (2026-11-09).
@@ -120,6 +120,7 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
       uniform vec2 uTexel;
       uniform float uSharpen;
       varying vec2 vUv;
+      ${SHARPEN_WEIGHT_GLSL}
       // A pixel as the canvas shows it: tone-mapped and encoded (sharpen.ts works on that).
       vec3 shown(vec2 uv) {
         vec4 c = texture2D(tScene, uv);
@@ -138,7 +139,7 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
           vec3 lo = min(c, min(min(n, s), min(e, w)));
           vec3 hi = max(c, max(max(n, s), max(e, w)));
           vec3 margin = (hi - lo) * ${SHARPEN.overshoot.toFixed(2)};
-          c = clamp(c + uSharpen * (4.0 * c - n - s - e - w), lo - margin, hi + margin);
+          c = clamp(c + uSharpen * sharpenWeight(lo, hi) * (4.0 * c - n - s - e - w), lo - margin, hi + margin);
         }
         gl_FragColor = vec4(c, 1.0);
       }`,

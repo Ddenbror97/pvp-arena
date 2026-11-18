@@ -10379,6 +10379,84 @@
       "collision": "none",
       "ring": "furniture",
       "use": "Old Fortress (2026-11-17): an arched plank door set against the dungeon's and the keep's walls (blind doors)"
+    },
+    {
+      "id": "barrow",
+      "key": "sf:5b8d975b31e44fb7a93d66ef649bbfad",
+      "class": "small",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a wooden wheelbarrow in the courtyard and by the scaffold"
+    },
+    {
+      "id": "cheval-de-frise",
+      "key": "sf:bd0f03f1d8de446b94140e5ddb80a4ff",
+      "class": "prop",
+      "fit": {
+        "max": 3.6
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): spiked chevaux de frise barring the approach and the besiegers' camp"
+    },
+    {
+      "id": "wood-crane",
+      "key": "sf:764c69861341491ab6872dc50b7a2ae7",
+      "class": "prop",
+      "fit": {
+        "y": 7
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a wooden lifting crane by the south wall's scaffold (the repairs)"
+    },
+    {
+      "id": "medieval-chest-b",
+      "key": "sf:1be4b664c1774fb080a9b0520c3ac786",
+      "class": "small",
+      "fit": {
+        "max": 1.2
+      },
+      "collision": "solid",
+      "ring": "furniture",
+      "use": "Old Fortress (2026-11-17): an iron-bound chest in the keep, the vault and the barracks"
+    },
+    {
+      "id": "trebuchet",
+      "key": "sf:b87ea7a2b30a4a39a2aae7374bec91a4",
+      "class": "structure",
+      "fit": {
+        "y": 11
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): the besiegers' trebuchet on the south ledge"
+    },
+    {
+      "id": "trebuchet-b",
+      "key": "sf:cba06d74dac24c7eb236fb73753243a4",
+      "class": "structure",
+      "fit": {
+        "y": 9
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a second trebuchet on the west ledge"
+    },
+    {
+      "id": "cell-grate",
+      "key": "sf:62ccabc4e78b4822ac8c5af74fe9c66a",
+      "piece": "Portcullis_3",
+      "class": "small",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "solid",
+      "ring": "furniture",
+      "use": "Old Fortress (2026-11-17): an iron grate shut across a dungeon cell's door (from the owner's Modular Dungeon Props)",
+      "lodTris": [
+        900,
+        600,
+        400
+      ]
     }
   ],
   "skipped": [

@@ -1,21 +1,22 @@
 # Project Island asset inventory
 
-Generated 2026-11-17T23:58:29-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-18T01:22:12-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 119 |
-| Unique assets | 1025 |
-| Licence OK / REVIEW / REJECT | 978 / 34 / 13 |
+| Zip files scanned (present now) | 126 |
+| Unique assets | 1032 |
+| Licence OK / REVIEW / REJECT | 985 / 34 / 13 |
 | Assets with duplicate zips | 79 (89 extra files) |
-| Over budget (tris, per-piece, texture px or draws) | 544 |
+| Over budget (tris, per-piece, texture px or draws) | 545 |
 | Needs conversion (no glTF) | 8 |
 | Unparseable zips | 10 |
 | On the asset list: arrived / not yet | 0 / 0 (list has 0 items) |
-| Not on the asset list | 1025 |
-| Assets first seen in batch 2026-11-17 (today) | 221 |
+| Not on the asset list | 1032 |
+| Assets first seen in batch 2026-11-18 (today) | 7 |
+| Assets first seen in batch 2026-11-17 | 221 |
 | Assets first seen in batch 2026-11-16 | 2 |
 | Assets first seen in batch 2026-11-15 | 37 |
 | Assets first seen in batch 2026-11-14 | 92 |
@@ -174,6 +175,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | barrel 03 2k.blend |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | - | 2048 | 43 |  | LIC-REVIEW, needs-conversion, TEX-MISSING 2 | material/texture set: use the maps only (ignore the preview mesh); needs-conversion (blend to glTF in Blender) | 11-10 |
 | Barrier & Traffic Cone Pack | Sabri Ayeş | OK | kit | 9.6k (17 pcs, max 1.0k) | 17 | 2048 | 915 | 6.84×2.59×4.03 | MATS 17, TEXMB 915 | atlas materials across kit (17 materials); downscale textures to 1K | 11-08 |
 | Barrier \_ Wooden\_ Barbed\_ Wire Protection\_13\_MB | Mehdi Shahsavan | OK | prop | 1.1k | 1 | 2048 | 48 | 5.16×1.69×1.57 | TEXMB 48 | downscale textures to 1K | 11-03 |
+| Barrow | blazejjura95 | OK | prop | 3.6k | 3 | 1024 | 16 | 0.661×0.673×2.13 | - | use as-is | 11-18 |
 | Basic Plains Shelter | Michael.Lohr | OK | prop | 12.1k | 12 | 256 | 1 | 10.3×4.77×8.53 | - | use as-is | 11-11 |
 | Basketball Hoop | paethon | OK | prop | 2.6k | 1 | 2048 | 64 | 2.48×3.58×1.64 | TEXMB 64 | downscale textures to 1K | 11-08 |
 | Bathroom Furniture Set - Game Ready | General of Thailand | OK | prop | 10.1k | 3 | 2048 | 154 | 2.5×2.42×2.5 | TEXMB 154 | downscale textures to 1K | 11-13 |
@@ -247,6 +249,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Checkpoint Building | tylerlherring | OK | building | 506 | 4 | 2048 | 64 | 2.62×1.2×2.38 | - | use as-is | 11-03 |
 | Checkpoint Gate | AnshiNoWara NG+ | OK | building | 5.0k | 3 | 2048 | 192 | 12.2×5.03×5.8 | ANIM 1, TEXMB 192 | downscale textures to 2K | 11-11 |
 | Chemical tank ⧉ | ixMkc1 | OK | prop | 8.7k | 1 | 2048 | 64 | 2.74×5.69×6.21 | TEXMB 64 | downscale textures to 1K | 11-03 |
+| Chevaux De Frise | diverserp | OK | prop | 1.3k | 4 | - | 0 | 1.63×1.63×2.55 | - | use as-is | 11-18 |
 | Chicken Coop | jakerc10 | OK | prop | 2.3k | 2 | 2048 | 21 | 3.48×3.61×3.04 | - | use as-is | 11-04 |
 | Church Pew | maherart | OK | prop | 3.8k | 3 | 2048 | 170 | 0.19×0.116×0.877 | TEXMB 170 | downscale textures to 1K | 11-14 |
 | Church ruins | A9908244 | OK | prop | 27.0k | 5 | 2048 | 362 | 18.3×14×8.66 | TRIS>15k (1.8x), TEXMB 362 | decimate to 15k; downscale textures to 1K | 11-08 |
@@ -281,6 +284,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Couvent des Récollets, Nivelles \[Belgium\] | Lost Gecko | OK | prop | 12.6k | 3 | 2048 | 136 | 55.9×45.6×71.2 | SCALE? 71.2 m, SPEC-GLOSS, TEXMB 136 | check scale (largest side 71.2 m; x0.01 would give 0.712 m); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 1K | 11-08 |
 | cracked concrete wall 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 1.01×1.02×1.01 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-02 |
 | cracked concrete wall 2k |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | 1 | 2048 | 64 | 1.01×1.02×1.01 | LIC-REVIEW | material/texture set: use the maps only (ignore the preview mesh) | 11-10 |
+| Crane | sam\_ogon | OK | vehicle | 1.6k | 5 | 128 | 0 | 1.22×2.67×1.8 | - | use as-is | 11-18 |
 | Crashed Abandoned Car - Game Ready | Rashad Ibrahimli | OK | building | 8.3k | 10 | 4096 | 255 | 5.59×3.48×8.12 | TEX 4096px, TEXMB 255 | downscale textures to 2K | 11-08 |
 | Crashed Abandoned Truck - Game Ready | Rashad Ibrahimli | OK | vehicle | 9.4k | 15 | 4096 | 255 | 23.5×14.6×35.7 | DRAWS 15, TEX 4096px, TEXMB 255 | atlas materials (15 draws to ≤12); downscale textures to 2K | 11-08 |
 | Crate And Barrels Asset Pack | ElliottA | OK | kit | 1.6k (4 pcs, max 432) | 9 | 2048 | 170 | 47.7×49.6×196 | TEXMB 170 | downscale textures to 1K | 11-02 |
@@ -635,6 +639,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Medieval Catapult | DigitalBirb | OK | prop | 9.3k | 8 | 2048 | 64 | 7.42×5.23×9 | TEXMB 64 | downscale textures to 1K | 11-17 |
 | Medieval Chandelier | Kevin.Popescu | OK | prop | 13.1k | 2 | 2048 | 128 | 38.7×42.5×38.7 | SCALE? 42.5 m, TEXMB 128 | check scale (largest side 42.5 m; x0.01 would give 0.425 m); downscale textures to 1K | 11-17 |
 | Medieval Chest | Logan S. | OK | prop | 9.0k | 1 | 1024 | 16 | 19.5×9.59×9.98 | - | use as-is | 11-17 |
+| Medieval Chest | Melon Polygons | OK | prop | 4.4k | 2 | 2048 | 128 | 5.21×2.19×2.36 | TEXMB 128 | downscale textures to 1K | 11-18 |
 | Medieval City Gate | Daan van Leeuwen | OK | prop | 4.1k | 6 | 2048 | 192 | 8.6×18.9×19.1 | ANIM 1, TEXMB 192 | downscale textures to 1K | 11-17 |
 | Medieval Fantasy - Spear Rack Asset | Scott VanArsdale | OK | prop | 1.1k | 1 | 1024 | 5 | 2×1.63×0.635 | - | use as-is | 11-17 |
 | Medieval Food Stall | Mateusz Woliński | OK | prop | 25.3k | 80 | 2048 | 596 | 1.74e+03×909×1.74e+03 | TRIS>15k (1.7x), DRAWS 80, SCALE? 1.74e+03 m, TEXMB 596 | decimate to 15k; atlas materials (80 draws to ≤12); check scale (largest side 1.74e+03 m; x0.01 would give 17.4 m); downscale textures to 1K | 11-17 |
@@ -699,6 +704,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | modular airduct circular 01 2k.blend |  | REVIEW: no licence file; looks like a Poly Haven texture set (CC0 at polyhaven.com) - confirm source | texture-set | - | - | 2048 | 21 |  | LIC-REVIEW, needs-conversion, TEX-MISSING 3 | material/texture set: use the maps only (ignore the preview mesh); needs-conversion (blend to glTF in Blender) | 11-10 |
 | Modular Bridge ( low Poly ) Game Ready. | Salah3D | OK | building-kit | 36.6k (5 pcs, max 14.7k) | 10 | 512 | 5 | 46.4×2.86×37 | - | use as-is | 11-03 |
 | Modular Chain Link Fence Set ⧉ | FrodoUndead | OK | kit | 3.1k (5 pcs, max 1.3k) | 5 | 2048 | 64 | 0.855×6.9×31.2 | - | use as-is | 11-03 |
+| Modular Dungeon Props | Logan Thomas | OK | kit | 14.4k (12 pcs, max 5.7k) | 17 | 4096 | 1085 | 9.89×2.72×5.33 | TEX 4096px, TEXMB 1085 | downscale textures to 1K | 11-18 |
 | modular kit (City development) | Pieter Ferreira | OK | prop | 5.6k | 1 | 2048 | 64 | 9.28×1.58×9.92 | TEXMB 64 | downscale textures to 1K | 11-14 |
 | Modular kitchen cabinets | sauti | OK | building-kit | 11.7k (82 pcs, max 690) | 85 | 2048 | 80 | 7.89×2×0.65 | - | use as-is | 11-13 |
 | Modular Motel | Wardster | OK | building-kit | 28.6k (48 pcs, max 6.3k) | 48 | 2048 | 722 | 24.5×4.03×10.9 | MATS 15, TEXMB 722 | atlas materials across kit (15 materials); downscale textures to 2K | 11-12 |
@@ -1040,6 +1046,8 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Treadwheel Crane | sheffrator | OK | vehicle | 67.5k | 687 | - | 0 | 1.08e+03×771×1.18e+03 | DRAWS 687, SCALE? 1.18e+03 m | atlas materials (687 draws to ≤12); check scale (largest side 1.18e+03 m; x0.01 would give 11.8 m) | 11-17 |
 | Treasure Chest | Multipainkiller Studio | OK | prop | 4.6k | 2 | 2048 | 128 | 2.63×1.78×1.31 | SKINNED, ANIM 2, TEXMB 128 | downscale textures to 1K | 11-17 |
 | Trebuchet | Hansalex | OK | prop | 45.6k | 65 | - | 0 | 39.4×23.1×39.4 | TRIS>15k (3.0x), DRAWS 65 | decimate to 15k; atlas materials (65 draws to ≤12) | 11-17 |
+| Trebuchet | Ayden1994 | OK | prop | 2.4k | 4 | 512 | 11 | 108×79.2×137 | ANIM 1, SCALE? 137 m, SPEC-GLOSS | check scale (largest side 137 m; x0.01 would give 1.37 m); convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension) | 11-18 |
+| Trebuchet | BahamutFierce | OK | prop | 5.7k | 4 | 1024 | 64 | 1.91×0.846×0.631 | TEXMB 64 | downscale textures to 1K | 11-18 |
 | Tree GN ⧉ | TechArtBGN | OK | tree | 22.6k (2 pcs, max 22.6k) | 6 | 4096 | 310 | 21.1×22.5×24.1 | PIECE>10k (2.3x), SPEC-GLOSS, TEX 4096px, TEXMB 310 | decimate each tree to ≤10k + impostor/billboard LOD; convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); instance (InstancedMesh); downscale textures to 1K | 11-17 |
 | Tree Planter with Grate FREE Low Poly | LordSamueliSolo | OK | tree | 2.2k (5 pcs, max 1.1k) | 5 | 2048 | 64 | 1.56e+03×1.94e+03×1.88e+03 | SCALE? 1.94e+03 m, TEXMB 64 | check scale (largest side 1.94e+03 m; x0.01 would give 19.4 m); instance (InstancedMesh); downscale textures to 1K | 11-08 |
 | Tree Roots | Andre.Zakhya | OK | tree | 49.6k | 1 | 8192 | 340 | 26.9×10.1×38.5 | PIECE>10k (5.0x), TEX 8192px, TEXMB 340 | decimate each tree to ≤10k + impostor/billboard LOD; instance (InstancedMesh); downscale textures to 1K | 11-17 |

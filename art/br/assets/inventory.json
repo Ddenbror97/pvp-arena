@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-17T23:58:29-03:00",
+ "generated": "2026-11-18T01:22:12-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -16257,6 +16257,144 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:5b8d975b31e44fb7a93d66ef649bbfad",
+   "title": "Barrow",
+   "author": "blazejjura95",
+   "author_url": "https://sketchfab.com/blazejjura95",
+   "source": "https://sketchfab.com/3d-models/barrow-5b8d975b31e44fb7a93d66ef649bbfad",
+   "uid": "5b8d975b31e44fb7a93d66ef649bbfad",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/9100ea96-barrow.zip",
+     "sha256": "4cabcf7864c4ec231fa87857113e939ce70bd7c2078df86a288b8b8ff957a926",
+     "size": 3720660,
+     "mtime": "2026-11-18T01:20:28-03:00",
+     "batch": "2026-11-18",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-18",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3646,
+    "verts": 2925,
+    "draws": 3,
+    "unique_tris": 3646,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 9,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.661,
+     0.673,
+     2.129
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Barrow.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 2710,
+    "top_pieces": [
+     {
+      "name": "Plane.007",
+      "tris": 2710,
+      "draws": 1,
+      "size_m": [
+       0.661,
+       0.673,
+       2.129
+      ]
+     },
+     {
+      "name": "Plane.008",
+      "tris": 636,
+      "draws": 1,
+      "size_m": [
+       0.429,
+       0.159,
+       0.159
+      ]
+     },
+     {
+      "name": "Cube.007",
+      "tris": 300,
+      "draws": 1,
+      "size_m": [
+       0.591,
+       0.426,
+       0.214
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/M_Material_baseColor.png",
+      "name": "textures/M_Material_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Material_metallicRoughness.png",
+      "name": "textures/M_Material_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Material_normal.png",
+      "name": "textures/M_Material_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:f4b304e567464fc7933d25b2c8ebd829",
    "title": "Basic Plains Shelter",
    "author": "Michael.Lohr",
@@ -27696,6 +27834,129 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:bd0f03f1d8de446b94140e5ddb80a4ff",
+   "title": "Chevaux De Frise",
+   "author": "diverserp",
+   "author_url": "https://sketchfab.com/diverserp",
+   "source": "https://sketchfab.com/3d-models/chevaux-de-frise-bd0f03f1d8de446b94140e5ddb80a4ff",
+   "uid": "bd0f03f1d8de446b94140e5ddb80a4ff",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/b94f02dd-chevaux_de_frise.zip",
+     "sha256": "7b5295ca52b5215b12468fd76128c971616e38d4c7bc50d32ebc76d86bc4b231",
+     "size": 17007,
+     "mtime": "2026-11-18T01:20:27-03:00",
+     "batch": "2026-11-18",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-18",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1296,
+    "verts": 2520,
+    "draws": 4,
+    "unique_tris": 1296,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 6,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.626,
+     1.626,
+     2.549
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "254edde696074dbd8e43d15ee2dd02a4.obj.cleaner.materialmerger."
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 608,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 608,
+      "draws": 1,
+      "size_m": [
+       0.244,
+       0.023,
+       2.243
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 588,
+      "draws": 1,
+      "size_m": [
+       1.626,
+       1.626,
+       2.5
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 72,
+      "draws": 1,
+      "size_m": [
+       0.236,
+       0.03,
+       2.28
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 28,
+      "draws": 1,
+      "size_m": [
+       0.2,
+       0.195,
+       2.549
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:806ddc063b3d4caf935f30eec1ae0003",
    "title": "Chicken Coop",
    "author": "jakerc10",
@@ -34572,6 +34833,149 @@
    ],
    "actions": [
     "material/texture set: use the maps only (ignore the preview mesh)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:764c69861341491ab6872dc50b7a2ae7",
+   "title": "Crane",
+   "author": "sam_ogon",
+   "author_url": "https://sketchfab.com/sam_ogon",
+   "source": "https://sketchfab.com/3d-models/crane-764c69861341491ab6872dc50b7a2ae7",
+   "uid": "764c69861341491ab6872dc50b7a2ae7",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/35d99e65-crane.zip",
+     "sha256": "b9c385b95a8f2f409c415d5d1d4431a95ece0bf40782110eb16d35ef1bc46313",
+     "size": 59255,
+     "mtime": "2026-11-18T01:20:27-03:00",
+     "batch": "2026-11-18",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-18",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1640,
+    "verts": 3230,
+    "draws": 5,
+    "unique_tris": 1640,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 18,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.219,
+     2.67,
+     1.8
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "5d3f7eaf3acd4ca0b3a700d37dfecbb3.fbx",
+     "RootNode",
+     "crane"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 1282,
+    "top_pieces": [
+     {
+      "name": "Line026",
+      "tris": 1282,
+      "draws": 1,
+      "size_m": [
+       1.219,
+       2.67,
+       1.8
+      ]
+     },
+     {
+      "name": "Mesh004",
+      "tris": 118,
+      "draws": 1,
+      "size_m": [
+       0.297,
+       1.173,
+       0.03
+      ]
+     },
+     {
+      "name": "Line025",
+      "tris": 112,
+      "draws": 1,
+      "size_m": [
+       0.29,
+       1.173,
+       0.03
+      ]
+     },
+     {
+      "name": "Line256",
+      "tris": 64,
+      "draws": 1,
+      "size_m": [
+       0.27,
+       0.66,
+       0.044
+      ]
+     },
+     {
+      "name": "Line265",
+      "tris": 64,
+      "draws": 1,
+      "size_m": [
+       0.27,
+       0.66,
+       0.044
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/med_diffuse_baseColor.png",
+      "name": "textures/med_diffuse_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 128,
+    "rgba_mb": 0.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle",
+   "flags": [],
+   "actions": [
+    "use as-is"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -97483,6 +97887,156 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:1be4b664c1774fb080a9b0520c3ac786",
+   "title": "Medieval Chest",
+   "author": "Melon Polygons",
+   "author_url": "https://sketchfab.com/Melonpolygons",
+   "source": "https://sketchfab.com/3d-models/medieval-chest-1be4b664c1774fb080a9b0520c3ac786",
+   "uid": "1be4b664c1774fb080a9b0520c3ac786",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/bc5fb610-medieval_chest.zip",
+     "sha256": "e0215feae222b47dd8afb511e9ed49621ae5d5e954ea7d31385b33900499a29e",
+     "size": 25926763,
+     "mtime": "2026-11-18T01:20:29-03:00",
+     "batch": "2026-11-18",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-18",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4418,
+    "verts": 7326,
+    "draws": 2,
+    "unique_tris": 4418,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.209,
+     2.191,
+     2.363
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "acd49c639f1146cfa8d6e9eddb15a6bc.fbx",
+     "RootNode",
+     "Medieval_Crate_LP"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 4370,
+    "top_pieces": [
+     {
+      "name": "Medieval_Crate_LP_Material.001_0",
+      "tris": 4370,
+      "draws": 1,
+      "size_m": [
+       5.209,
+       1.963,
+       2.363
+      ]
+     },
+     {
+      "name": "Medieval_Crate_LP_Medieval_Chest_0",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       5.141,
+       2.152,
+       2.24
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Material.001_baseColor.png",
+      "name": "textures/Material.001_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_metallicRoughness.png",
+      "name": "textures/Material.001_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_normal.png",
+      "name": "textures/Material.001_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Medieval_Chest_baseColor.png",
+      "name": "textures/Medieval_Chest_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Medieval_Chest_metallicRoughness.png",
+      "name": "textures/Medieval_Chest_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Medieval_Chest_normal.png",
+      "name": "textures/Medieval_Chest_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 128"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:e379d065c2674a5db7c437eef98e2a23",
    "title": "Medieval City Gate",
    "author": "Daan van Leeuwen",
@@ -110164,6 +110718,259 @@
     "use as-is"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:62ccabc4e78b4822ac8c5af74fe9c66a",
+   "title": "Modular Dungeon Props",
+   "author": "Logan Thomas",
+   "author_url": "https://sketchfab.com/LThomas762",
+   "source": "https://sketchfab.com/3d-models/modular-dungeon-props-62ccabc4e78b4822ac8c5af74fe9c66a",
+   "uid": "62ccabc4e78b4822ac8c5af74fe9c66a",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/modular_dungeon_props.zip",
+     "sha256": "d11bc26455c684680edbe1e1fd819b3b2ee51ce4729479bf66e354e0893d0816",
+     "size": 279442867,
+     "mtime": "2026-11-18T01:21:49-03:00",
+     "batch": "2026-11-18",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-18",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 14361,
+    "verts": 13478,
+    "draws": 17,
+    "unique_tris": 14361,
+    "meshes": 17,
+    "primitives": 17,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 32,
+    "mesh_nodes": 17,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     9.887,
+     2.718,
+     5.325
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "291297c013a740e189ced7a20589ecee.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 12,
+    "max_piece_tris": 5652,
+    "top_pieces": [
+     {
+      "name": "Candle_56677",
+      "tris": 5652,
+      "draws": 1,
+      "size_m": [
+       0.756,
+       0.259,
+       0.173
+      ]
+     },
+     {
+      "name": "Torch_5",
+      "tris": 2376,
+      "draws": 3,
+      "size_m": [
+       0.821,
+       0.434,
+       0.821
+      ]
+     },
+     {
+      "name": "Altar_and_Book_2",
+      "tris": 1399,
+      "draws": 1,
+      "size_m": [
+       2.575,
+       1.68,
+       2.575
+      ]
+     },
+     {
+      "name": "Pillar_6",
+      "tris": 1360,
+      "draws": 2,
+      "size_m": [
+       0.576,
+       2.518,
+       0.576
+      ]
+     },
+     {
+      "name": "Portcullis_3",
+      "tris": 1324,
+      "draws": 1,
+      "size_m": [
+       1.003,
+       2.18,
+       0.255
+      ]
+     },
+     {
+      "name": "Door_6",
+      "tris": 882,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.525,
+       0.326
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 15,
+    "images": [
+     {
+      "member": "textures/standardSurface6_baseColor.png",
+      "name": "textures/standardSurface6_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface6_metallicRoughness.png",
+      "name": "textures/standardSurface6_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface6_normal.png",
+      "name": "textures/standardSurface6_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface2_baseColor.png",
+      "name": "textures/standardSurface2_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface2_metallicRoughness.png",
+      "name": "textures/standardSurface2_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface2_normal.png",
+      "name": "textures/standardSurface2_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface3_baseColor.png",
+      "name": "textures/standardSurface3_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface3_metallicRoughness.png",
+      "name": "textures/standardSurface3_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface3_normal.png",
+      "name": "textures/standardSurface3_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface5_baseColor.jpeg",
+      "name": "textures/standardSurface5_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/standardSurface5_metallicRoughness.png",
+      "name": "textures/standardSurface5_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface5_normal.png",
+      "name": "textures/standardSurface5_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface4_baseColor.jpeg",
+      "name": "textures/standardSurface4_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/standardSurface4_metallicRoughness.png",
+      "name": "textures/standardSurface4_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface4_normal.png",
+      "name": "textures/standardSurface4_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 1085.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 1085"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -168622,6 +169429,392 @@
    "budget_ratio": 3.04
   },
   {
+   "key": "sf:cba06d74dac24c7eb236fb73753243a4",
+   "title": "Trebuchet",
+   "author": "Ayden1994",
+   "author_url": "https://sketchfab.com/Ayden1994",
+   "source": "https://sketchfab.com/3d-models/trebuchet-cba06d74dac24c7eb236fb73753243a4",
+   "uid": "cba06d74dac24c7eb236fb73753243a4",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/aa4ec7f0-trebuchet2.zip",
+     "sha256": "2594d9aca3253ff89d5cffebf5352b249ee2eb15d998b99a8a3d0e99154ac485",
+     "size": 1659083,
+     "mtime": "2026-11-18T01:20:28-03:00",
+     "batch": "2026-11-18",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-18",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2416,
+    "verts": 3142,
+    "draws": 4,
+    "unique_tris": 2416,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 16,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     108.29,
+     79.202,
+     136.568
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "93a1150dac4b4364b29ba35f87bdd3db.fbx",
+     "Object_2",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 2368,
+    "top_pieces": [
+     {
+      "name": "TrebuchetBase",
+      "tris": 2368,
+      "draws": 3,
+      "size_m": [
+       108.29,
+       78.843,
+       136.568
+      ]
+     },
+     {
+      "name": "TrebuchetBoulder",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       18.662,
+       19.195,
+       19.195
+      ]
+     },
+     {
+      "name": "Camera001",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 8,
+    "images": [
+     {
+      "member": "textures/PlatformMaterial_diffuse.png",
+      "name": "textures/PlatformMaterial_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PlatformMaterial_occlusion.png",
+      "name": "textures/PlatformMaterial_occlusion.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReleaseMechMaterial_diffuse.png",
+      "name": "textures/ReleaseMechMaterial_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReleaseMechMaterial_occlusion.png",
+      "name": "textures/ReleaseMechMaterial_occlusion.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SwingArmMaterial_diffuse.png",
+      "name": "textures/SwingArmMaterial_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SwingArmMaterial_occlusion.png",
+      "name": "textures/SwingArmMaterial_occlusion.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Boulder_diffuse.png",
+      "name": "textures/Boulder_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Boulder_occlusion.png",
+      "name": "textures/Boulder_occlusion.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 10.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "ANIM 1",
+    "SCALE? 137 m",
+    "SPEC-GLOSS"
+   ],
+   "actions": [
+    "check scale (largest side 137 m; x0.01 would give 1.37 m)",
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:b87ea7a2b30a4a39a2aae7374bec91a4",
+   "title": "Trebuchet",
+   "author": "BahamutFierce",
+   "author_url": "https://sketchfab.com/BahamutFierce",
+   "source": "https://sketchfab.com/3d-models/trebuchet-b87ea7a2b30a4a39a2aae7374bec91a4",
+   "uid": "b87ea7a2b30a4a39a2aae7374bec91a4",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/fdc40400-trebuchet.zip",
+     "sha256": "928712b8ebefec37117b0473642b7bc44333c837c16be6cb501b9e35adc39fd7",
+     "size": 13197139,
+     "mtime": "2026-11-18T01:20:28-03:00",
+     "batch": "2026-11-18",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-18",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5728,
+    "verts": 6503,
+    "draws": 4,
+    "unique_tris": 5728,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 11,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.911,
+     0.846,
+     0.631
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "e53877885c334591be00c0977a945736.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 4,
+    "max_piece_tris": 2064,
+    "top_pieces": [
+     {
+      "name": "IronFittings",
+      "tris": 2064,
+      "draws": 1,
+      "size_m": [
+       1.911,
+       0.703,
+       0.223
+      ]
+     },
+     {
+      "name": "WoodenFrame",
+      "tris": 1858,
+      "draws": 1,
+      "size_m": [
+       1.893,
+       0.837,
+       0.631
+      ]
+     },
+     {
+      "name": "Ropes",
+      "tris": 1554,
+      "draws": 1,
+      "size_m": [
+       1.015,
+       0.679,
+       0.029
+      ]
+     },
+     {
+      "name": "Sling",
+      "tris": 252,
+      "draws": 1,
+      "size_m": [
+       0.105,
+       0.072,
+       0.068
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/Ropes_baseColor.png",
+      "name": "textures/Ropes_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ropes_metallicRoughness.png",
+      "name": "textures/Ropes_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ropes_normal.png",
+      "name": "textures/Ropes_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sling_baseColor.png",
+      "name": "textures/Sling_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sling_metallicRoughness.png",
+      "name": "textures/Sling_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sling_normal.png",
+      "name": "textures/Sling_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodenFrame_baseColor.png",
+      "name": "textures/WoodenFrame_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodenFrame_metallicRoughness.png",
+      "name": "textures/WoodenFrame_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodenFrame_normal.png",
+      "name": "textures/WoodenFrame_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Iron_baseColor.png",
+      "name": "textures/Iron_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Iron_metallicRoughness.png",
+      "name": "textures/Iron_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Iron_normal.png",
+      "name": "textures/Iron_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 64"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:40da979cb23f492583ec89c4196cff4e",
    "title": "Tree GN",
    "author": "TechArtBGN",
@@ -189033,6 +190226,62 @@
    "mtime_ns": 1794970689836298927,
    "mtime": "2026-11-17T23:58:09-03:00",
    "batch": "2026-11-17",
+   "present": true
+  },
+  "/mnt/user-data/uploads/35d99e65-crane.zip": {
+   "sha256": "b9c385b95a8f2f409c415d5d1d4431a95ece0bf40782110eb16d35ef1bc46313",
+   "size": 59255,
+   "mtime_ns": 1794975627797569277,
+   "mtime": "2026-11-18T01:20:27-03:00",
+   "batch": "2026-11-18",
+   "present": true
+  },
+  "/mnt/user-data/uploads/9100ea96-barrow.zip": {
+   "sha256": "4cabcf7864c4ec231fa87857113e939ce70bd7c2078df86a288b8b8ff957a926",
+   "size": 3720660,
+   "mtime_ns": 1794975628234433170,
+   "mtime": "2026-11-18T01:20:28-03:00",
+   "batch": "2026-11-18",
+   "present": true
+  },
+  "/mnt/user-data/uploads/aa4ec7f0-trebuchet2.zip": {
+   "sha256": "2594d9aca3253ff89d5cffebf5352b249ee2eb15d998b99a8a3d0e99154ac485",
+   "size": 1659083,
+   "mtime_ns": 1794975628022756792,
+   "mtime": "2026-11-18T01:20:28-03:00",
+   "batch": "2026-11-18",
+   "present": true
+  },
+  "/mnt/user-data/uploads/b94f02dd-chevaux_de_frise.zip": {
+   "sha256": "7b5295ca52b5215b12468fd76128c971616e38d4c7bc50d32ebc76d86bc4b231",
+   "size": 17007,
+   "mtime_ns": 1794975627681648807,
+   "mtime": "2026-11-18T01:20:27-03:00",
+   "batch": "2026-11-18",
+   "present": true
+  },
+  "/mnt/user-data/uploads/bc5fb610-medieval_chest.zip": {
+   "sha256": "e0215feae222b47dd8afb511e9ed49621ae5d5e954ea7d31385b33900499a29e",
+   "size": 25926763,
+   "mtime_ns": 1794975629931382607,
+   "mtime": "2026-11-18T01:20:29-03:00",
+   "batch": "2026-11-18",
+   "present": true
+  },
+  "/mnt/user-data/uploads/fdc40400-trebuchet.zip": {
+   "sha256": "928712b8ebefec37117b0473642b7bc44333c837c16be6cb501b9e35adc39fd7",
+   "size": 13197139,
+   "mtime_ns": 1794975628835382568,
+   "mtime": "2026-11-18T01:20:28-03:00",
+   "batch": "2026-11-18",
+   "present": true
+  },
+  "/mnt/user-data/uploads/modular_dungeon_props.zip": {
+   "sha256": "d11bc26455c684680edbe1e1fd819b3b2ee51ce4729479bf66e354e0893d0816",
+   "size": 279442867,
+   "mtime_ns": 1794975709727385460,
+   "mtime": "2026-11-18T01:21:49-03:00",
+   "batch": "2026-11-18",
    "present": true
   }
  },
@@ -342146,6 +343395,1033 @@
    "sha256": "6784501d014590d8258cd916772b270c76873dac58a9dfd0fd873dafccc60eff",
    "size": 1945390,
    "parsed_at": "2026-11-17T23:58:29-03:00"
+  },
+  "b9c385b95a8f2f409c415d5d1d4431a95ece0bf40782110eb16d35ef1bc46313": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 148911,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Crane",
+    "source": "https://sketchfab.com/3d-models/crane-764c69861341491ab6872dc50b7a2ae7",
+    "author": "sam_ogon (https://sketchfab.com/sam_ogon)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1640,
+    "verts": 3230,
+    "draws": 5,
+    "unique_tris": 1640,
+    "meshes": 5,
+    "primitives": 5,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 18,
+    "mesh_nodes": 5,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.219,
+     2.67,
+     1.8
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "5d3f7eaf3acd4ca0b3a700d37dfecbb3.fbx",
+     "RootNode",
+     "crane"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 5,
+    "max_piece_tris": 1282,
+    "top_pieces": [
+     {
+      "name": "Line026",
+      "tris": 1282,
+      "draws": 1,
+      "size_m": [
+       1.219,
+       2.67,
+       1.8
+      ]
+     },
+     {
+      "name": "Mesh004",
+      "tris": 118,
+      "draws": 1,
+      "size_m": [
+       0.297,
+       1.173,
+       0.03
+      ]
+     },
+     {
+      "name": "Line025",
+      "tris": 112,
+      "draws": 1,
+      "size_m": [
+       0.29,
+       1.173,
+       0.03
+      ]
+     },
+     {
+      "name": "Line256",
+      "tris": 64,
+      "draws": 1,
+      "size_m": [
+       0.27,
+       0.66,
+       0.044
+      ]
+     },
+     {
+      "name": "Line265",
+      "tris": 64,
+      "draws": 1,
+      "size_m": [
+       0.27,
+       0.66,
+       0.044
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/med_diffuse_baseColor.png",
+      "name": "textures/med_diffuse_baseColor.png",
+      "w": 128,
+      "h": 128,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 128,
+    "rgba_mb": 0.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "b9c385b95a8f2f409c415d5d1d4431a95ece0bf40782110eb16d35ef1bc46313",
+   "size": 59255,
+   "parsed_at": "2026-11-18T01:20:44-03:00"
+  },
+  "4cabcf7864c4ec231fa87857113e939ce70bd7c2078df86a288b8b8ff957a926": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 3812417,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.36.0",
+   "licence": {
+    "title": "Barrow",
+    "source": "https://sketchfab.com/3d-models/barrow-5b8d975b31e44fb7a93d66ef649bbfad",
+    "author": "blazejjura95 (https://sketchfab.com/blazejjura95)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3646,
+    "verts": 2925,
+    "draws": 3,
+    "unique_tris": 3646,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 9,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.661,
+     0.673,
+     2.129
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Barrow.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 2710,
+    "top_pieces": [
+     {
+      "name": "Plane.007",
+      "tris": 2710,
+      "draws": 1,
+      "size_m": [
+       0.661,
+       0.673,
+       2.129
+      ]
+     },
+     {
+      "name": "Plane.008",
+      "tris": 636,
+      "draws": 1,
+      "size_m": [
+       0.429,
+       0.159,
+       0.159
+      ]
+     },
+     {
+      "name": "Cube.007",
+      "tris": 300,
+      "draws": 1,
+      "size_m": [
+       0.591,
+       0.426,
+       0.214
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/M_Material_baseColor.png",
+      "name": "textures/M_Material_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Material_metallicRoughness.png",
+      "name": "textures/M_Material_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/M_Material_normal.png",
+      "name": "textures/M_Material_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "4cabcf7864c4ec231fa87857113e939ce70bd7c2078df86a288b8b8ff957a926",
+   "size": 3720660,
+   "parsed_at": "2026-11-18T01:20:44-03:00"
+  },
+  "2594d9aca3253ff89d5cffebf5352b249ee2eb15d998b99a8a3d0e99154ac485": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 12,
+   "uncompressed_bytes": 1798821,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Trebuchet",
+    "source": "https://sketchfab.com/3d-models/trebuchet-cba06d74dac24c7eb236fb73753243a4",
+    "author": "Ayden1994 (https://sketchfab.com/Ayden1994)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2416,
+    "verts": 3142,
+    "draws": 4,
+    "unique_tris": 2416,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 16,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 1,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     108.29,
+     79.202,
+     136.568
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "93a1150dac4b4364b29ba35f87bdd3db.fbx",
+     "Object_2",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 2368,
+    "top_pieces": [
+     {
+      "name": "TrebuchetBase",
+      "tris": 2368,
+      "draws": 3,
+      "size_m": [
+       108.29,
+       78.843,
+       136.568
+      ]
+     },
+     {
+      "name": "TrebuchetBoulder",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       18.662,
+       19.195,
+       19.195
+      ]
+     },
+     {
+      "name": "Camera001",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 8,
+    "images": [
+     {
+      "member": "textures/PlatformMaterial_diffuse.png",
+      "name": "textures/PlatformMaterial_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PlatformMaterial_occlusion.png",
+      "name": "textures/PlatformMaterial_occlusion.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReleaseMechMaterial_diffuse.png",
+      "name": "textures/ReleaseMechMaterial_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ReleaseMechMaterial_occlusion.png",
+      "name": "textures/ReleaseMechMaterial_occlusion.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SwingArmMaterial_diffuse.png",
+      "name": "textures/SwingArmMaterial_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/SwingArmMaterial_occlusion.png",
+      "name": "textures/SwingArmMaterial_occlusion.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Boulder_diffuse.png",
+      "name": "textures/Boulder_diffuse.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Boulder_occlusion.png",
+      "name": "textures/Boulder_occlusion.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 10.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "2594d9aca3253ff89d5cffebf5352b249ee2eb15d998b99a8a3d0e99154ac485",
+   "size": 1659083,
+   "parsed_at": "2026-11-18T01:20:44-03:00"
+  },
+  "7b5295ca52b5215b12468fd76128c971616e38d4c7bc50d32ebc76d86bc4b231": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 104840,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Chevaux De Frise",
+    "source": "https://sketchfab.com/3d-models/chevaux-de-frise-bd0f03f1d8de446b94140e5ddb80a4ff",
+    "author": "diverserp (https://sketchfab.com/diverserp)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1296,
+    "verts": 2520,
+    "draws": 4,
+    "unique_tris": 1296,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 6,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.626,
+     1.626,
+     2.549
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "254edde696074dbd8e43d15ee2dd02a4.obj.cleaner.materialmerger."
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 608,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 608,
+      "draws": 1,
+      "size_m": [
+       0.244,
+       0.023,
+       2.243
+      ]
+     },
+     {
+      "name": "Object_2",
+      "tris": 588,
+      "draws": 1,
+      "size_m": [
+       1.626,
+       1.626,
+       2.5
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 72,
+      "draws": 1,
+      "size_m": [
+       0.236,
+       0.03,
+       2.28
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 28,
+      "draws": 1,
+      "size_m": [
+       0.2,
+       0.195,
+       2.549
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "7b5295ca52b5215b12468fd76128c971616e38d4c7bc50d32ebc76d86bc4b231",
+   "size": 17007,
+   "parsed_at": "2026-11-18T01:20:44-03:00"
+  },
+  "e0215feae222b47dd8afb511e9ed49621ae5d5e954ea7d31385b33900499a29e": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 26238538,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.55.0",
+   "licence": {
+    "title": "Medieval Chest",
+    "source": "https://sketchfab.com/3d-models/medieval-chest-1be4b664c1774fb080a9b0520c3ac786",
+    "author": "Melon Polygons (https://sketchfab.com/Melonpolygons)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4418,
+    "verts": 7326,
+    "draws": 2,
+    "unique_tris": 4418,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 6,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     5.209,
+     2.191,
+     2.363
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "acd49c639f1146cfa8d6e9eddb15a6bc.fbx",
+     "RootNode",
+     "Medieval_Crate_LP"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 4370,
+    "top_pieces": [
+     {
+      "name": "Medieval_Crate_LP_Material.001_0",
+      "tris": 4370,
+      "draws": 1,
+      "size_m": [
+       5.209,
+       1.963,
+       2.363
+      ]
+     },
+     {
+      "name": "Medieval_Crate_LP_Medieval_Chest_0",
+      "tris": 48,
+      "draws": 1,
+      "size_m": [
+       5.141,
+       2.152,
+       2.24
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/Material.001_baseColor.png",
+      "name": "textures/Material.001_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_metallicRoughness.png",
+      "name": "textures/Material.001_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_normal.png",
+      "name": "textures/Material.001_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Medieval_Chest_baseColor.png",
+      "name": "textures/Medieval_Chest_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Medieval_Chest_metallicRoughness.png",
+      "name": "textures/Medieval_Chest_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Medieval_Chest_normal.png",
+      "name": "textures/Medieval_Chest_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 127.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "e0215feae222b47dd8afb511e9ed49621ae5d5e954ea7d31385b33900499a29e",
+   "size": 25926763,
+   "parsed_at": "2026-11-18T01:20:44-03:00"
+  },
+  "928712b8ebefec37117b0473642b7bc44333c837c16be6cb501b9e35adc39fd7": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 16,
+   "uncompressed_bytes": 13893393,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.45.0",
+   "licence": {
+    "title": "Trebuchet",
+    "source": "https://sketchfab.com/3d-models/trebuchet-b87ea7a2b30a4a39a2aae7374bec91a4",
+    "author": "BahamutFierce (https://sketchfab.com/BahamutFierce)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5728,
+    "verts": 6503,
+    "draws": 4,
+    "unique_tris": 5728,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 11,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.911,
+     0.846,
+     0.631
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "e53877885c334591be00c0977a945736.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 4,
+    "max_piece_tris": 2064,
+    "top_pieces": [
+     {
+      "name": "IronFittings",
+      "tris": 2064,
+      "draws": 1,
+      "size_m": [
+       1.911,
+       0.703,
+       0.223
+      ]
+     },
+     {
+      "name": "WoodenFrame",
+      "tris": 1858,
+      "draws": 1,
+      "size_m": [
+       1.893,
+       0.837,
+       0.631
+      ]
+     },
+     {
+      "name": "Ropes",
+      "tris": 1554,
+      "draws": 1,
+      "size_m": [
+       1.015,
+       0.679,
+       0.029
+      ]
+     },
+     {
+      "name": "Sling",
+      "tris": 252,
+      "draws": 1,
+      "size_m": [
+       0.105,
+       0.072,
+       0.068
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/Ropes_baseColor.png",
+      "name": "textures/Ropes_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ropes_metallicRoughness.png",
+      "name": "textures/Ropes_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Ropes_normal.png",
+      "name": "textures/Ropes_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sling_baseColor.png",
+      "name": "textures/Sling_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sling_metallicRoughness.png",
+      "name": "textures/Sling_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Sling_normal.png",
+      "name": "textures/Sling_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodenFrame_baseColor.png",
+      "name": "textures/WoodenFrame_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodenFrame_metallicRoughness.png",
+      "name": "textures/WoodenFrame_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WoodenFrame_normal.png",
+      "name": "textures/WoodenFrame_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Iron_baseColor.png",
+      "name": "textures/Iron_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Iron_metallicRoughness.png",
+      "name": "textures/Iron_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Iron_normal.png",
+      "name": "textures/Iron_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "928712b8ebefec37117b0473642b7bc44333c837c16be6cb501b9e35adc39fd7",
+   "size": 13197139,
+   "parsed_at": "2026-11-18T01:20:44-03:00"
+  },
+  "d11bc26455c684680edbe1e1fd819b3b2ee51ce4729479bf66e354e0893d0816": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 19,
+   "uncompressed_bytes": 280256383,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Modular Dungeon Props",
+    "source": "https://sketchfab.com/3d-models/modular-dungeon-props-62ccabc4e78b4822ac8c5af74fe9c66a",
+    "author": "Logan Thomas (https://sketchfab.com/LThomas762)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 14361,
+    "verts": 13478,
+    "draws": 17,
+    "unique_tris": 14361,
+    "meshes": 17,
+    "primitives": 17,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 32,
+    "mesh_nodes": 17,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     9.887,
+     2.718,
+     5.325
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "291297c013a740e189ced7a20589ecee.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 12,
+    "max_piece_tris": 5652,
+    "top_pieces": [
+     {
+      "name": "Candle_56677",
+      "tris": 5652,
+      "draws": 1,
+      "size_m": [
+       0.756,
+       0.259,
+       0.173
+      ]
+     },
+     {
+      "name": "Torch_5",
+      "tris": 2376,
+      "draws": 3,
+      "size_m": [
+       0.821,
+       0.434,
+       0.821
+      ]
+     },
+     {
+      "name": "Altar_and_Book_2",
+      "tris": 1399,
+      "draws": 1,
+      "size_m": [
+       2.575,
+       1.68,
+       2.575
+      ]
+     },
+     {
+      "name": "Pillar_6",
+      "tris": 1360,
+      "draws": 2,
+      "size_m": [
+       0.576,
+       2.518,
+       0.576
+      ]
+     },
+     {
+      "name": "Portcullis_3",
+      "tris": 1324,
+      "draws": 1,
+      "size_m": [
+       1.003,
+       2.18,
+       0.255
+      ]
+     },
+     {
+      "name": "Door_6",
+      "tris": 882,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.525,
+       0.326
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 15,
+    "images": [
+     {
+      "member": "textures/standardSurface6_baseColor.png",
+      "name": "textures/standardSurface6_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface6_metallicRoughness.png",
+      "name": "textures/standardSurface6_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface6_normal.png",
+      "name": "textures/standardSurface6_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface2_baseColor.png",
+      "name": "textures/standardSurface2_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface2_metallicRoughness.png",
+      "name": "textures/standardSurface2_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface2_normal.png",
+      "name": "textures/standardSurface2_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface3_baseColor.png",
+      "name": "textures/standardSurface3_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface3_metallicRoughness.png",
+      "name": "textures/standardSurface3_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface3_normal.png",
+      "name": "textures/standardSurface3_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface5_baseColor.jpeg",
+      "name": "textures/standardSurface5_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/standardSurface5_metallicRoughness.png",
+      "name": "textures/standardSurface5_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface5_normal.png",
+      "name": "textures/standardSurface5_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface4_baseColor.jpeg",
+      "name": "textures/standardSurface4_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/standardSurface4_metallicRoughness.png",
+      "name": "textures/standardSurface4_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/standardSurface4_normal.png",
+      "name": "textures/standardSurface4_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 1085.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "d11bc26455c684680edbe1e1fd819b3b2ee51ce4729479bf66e354e0893d0816",
+   "size": 279442867,
+   "parsed_at": "2026-11-18T01:22:12-03:00"
   }
  }
 }

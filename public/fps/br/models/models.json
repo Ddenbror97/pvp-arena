@@ -2652,6 +2652,60 @@
     }
    ]
   },
+  "barrow": {
+   "title": "Barrow",
+   "author": "blazejjura95",
+   "source": "https://sketchfab.com/3d-models/barrow-5b8d975b31e44fb7a93d66ef649bbfad",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): a wooden wheelbarrow in the courtyard and by the scaffold",
+   "scale": 0.939315,
+   "sourceTris": 3646,
+   "size": [
+    0.62,
+    0.63,
+    2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/barrow.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      0.62,
+      0.63,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/barrow.lod1.glb",
+     "tris": 198,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.62,
+      0.63,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/barrow.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.62,
+      0.63,
+      2
+     ]
+    }
+   ]
+  },
   "basketball-hoop": {
    "title": "Basketball Hoop",
    "author": "paethon",
@@ -11305,6 +11359,60 @@
     }
    ]
   },
+  "cell-grate": {
+   "title": "Modular Dungeon Props",
+   "author": "Logan Thomas",
+   "source": "https://sketchfab.com/3d-models/modular-dungeon-props-62ccabc4e78b4822ac8c5af74fe9c66a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an iron grate shut across a dungeon cell's door (from the owner's Modular Dungeon Props)",
+   "scale": 1.009179,
+   "sourceTris": 1324,
+   "size": [
+    1.01,
+    2.2,
+    0.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cell-grate.lod0.glb",
+     "tris": 902,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 28,
+     "size": [
+      1.01,
+      2.2,
+      0.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/cell-grate.lod1.glb",
+     "tris": 886,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 22,
+     "size": [
+      1.01,
+      2.2,
+      0.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/cell-grate.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.01,
+      2.2,
+      0.26
+     ]
+    }
+   ]
+  },
   "cement-pallet": {
    "title": "Construction Site Asset Pack",
    "author": "vmatthew",
@@ -12002,6 +12110,60 @@
       2.87,
       5.95,
       6.5
+     ]
+    }
+   ]
+  },
+  "cheval-de-frise": {
+   "title": "Chevaux De Frise",
+   "author": "diverserp",
+   "source": "https://sketchfab.com/3d-models/chevaux-de-frise-bd0f03f1d8de446b94140e5ddb80a4ff",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): spiked chevaux de frise barring the approach and the besiegers' camp",
+   "scale": 1.412541,
+   "sourceTris": 1296,
+   "size": [
+    2.3,
+    2.3,
+    3.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cheval-de-frise.lod0.glb",
+     "tris": 1296,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 25,
+     "size": [
+      2.3,
+      2.3,
+      3.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cheval-de-frise.lod1.glb",
+     "tris": 726,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      2.3,
+      2.3,
+      3.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cheval-de-frise.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.3,
+      2.3,
+      3.6
      ]
     }
    ]
@@ -20040,14 +20202,14 @@
     37.5,
     22.4
    ],
-   "sourceTris": 3612,
+   "sourceTris": 3768,
    "lods": [
     {
      "file": "/fps/br/models/fort-gatehouse.fort-v1.lod0.glb",
-     "tris": 3612,
+     "tris": 3768,
      "draws": 6,
      "textureMB": 5,
-     "kB": 201,
+     "kB": 203,
      "size": [
       31.2,
       37.5,
@@ -28737,6 +28899,60 @@
       0.45,
       0.43,
       0.43
+     ]
+    }
+   ]
+  },
+  "medieval-chest-b": {
+   "title": "Medieval Chest",
+   "author": "Melon Polygons",
+   "source": "https://sketchfab.com/3d-models/medieval-chest-1be4b664c1774fb080a9b0520c3ac786",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an iron-bound chest in the keep, the vault and the barracks",
+   "scale": 0.230363,
+   "sourceTris": 4418,
+   "size": [
+    1.2,
+    0.5,
+    0.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/medieval-chest-b.lod0.glb",
+     "tris": 552,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.2,
+      0.5,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/medieval-chest-b.lod1.glb",
+     "tris": 198,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.2,
+      0.5,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/medieval-chest-b.lod2.glb",
+     "tris": 50,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.2,
+      0.5,
+      0.54
      ]
     }
    ]
@@ -37676,14 +37892,14 @@
     27.6,
     43.2
    ],
-   "sourceTris": 5670,
+   "sourceTris": 5850,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-pyramid.ruins-v1.lod0.glb",
-     "tris": 5670,
+     "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod0.glb",
+     "tris": 5850,
      "draws": 4,
      "textureMB": 4,
-     "kB": 265,
+     "kB": 268,
      "size": [
       37,
       27.6,
@@ -37691,11 +37907,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-pyramid.ruins-v1.lod1.glb",
-     "tris": 1058,
+     "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod1.glb",
+     "tris": 1238,
      "draws": 3,
      "textureMB": 0.75,
-     "kB": 61,
+     "kB": 64,
      "size": [
       37,
       27.6,
@@ -37703,7 +37919,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-pyramid.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod2.glb",
      "tris": 168,
      "draws": 1,
      "textureMB": 0,
@@ -46527,6 +46743,114 @@
     }
    ]
   },
+  "trebuchet": {
+   "title": "Trebuchet",
+   "author": "BahamutFierce",
+   "source": "https://sketchfab.com/3d-models/trebuchet-b87ea7a2b30a4a39a2aae7374bec91a4",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Old Fortress (2026-11-17): the besiegers' trebuchet on the south ledge",
+   "scale": 13.0015,
+   "sourceTris": 5728,
+   "size": [
+    24.84,
+    11,
+    8.21
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trebuchet.lod0.glb",
+     "tris": 3996,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 180,
+     "size": [
+      24.84,
+      11,
+      8.21
+     ]
+    },
+    {
+     "file": "/fps/br/models/trebuchet.lod1.glb",
+     "tris": 1829,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 72,
+     "size": [
+      24.84,
+      11,
+      8.21
+     ]
+    },
+    {
+     "file": "/fps/br/models/trebuchet.lod2.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      24.84,
+      11,
+      8.21
+     ]
+    }
+   ]
+  },
+  "trebuchet-b": {
+   "title": "Trebuchet",
+   "author": "Ayden1994",
+   "source": "https://sketchfab.com/3d-models/trebuchet-cba06d74dac24c7eb236fb73753243a4",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Old Fortress (2026-11-17): a second trebuchet on the west ledge",
+   "scale": 0.114023,
+   "sourceTris": 2416,
+   "size": [
+    12.35,
+    9,
+    15.52
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trebuchet-b.lod0.glb",
+     "tris": 2416,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 118,
+     "size": [
+      12.35,
+      9,
+      15.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/trebuchet-b.lod1.glb",
+     "tris": 1396,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 57,
+     "size": [
+      12.35,
+      9,
+      15.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/trebuchet-b.lod2.glb",
+     "tris": 398,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      12.35,
+      9,
+      15.52
+     ]
+    }
+   ]
+  },
   "tree-birch": {
    "title": "Birch tree",
    "author": "evolveduk",
@@ -48654,6 +48978,60 @@
       0.74,
       1.1,
       0.47
+     ]
+    }
+   ]
+  },
+  "wood-crane": {
+   "title": "Crane",
+   "author": "sam_ogon",
+   "source": "https://sketchfab.com/3d-models/crane-764c69861341491ab6872dc50b7a2ae7",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a wooden lifting crane by the south wall's scaffold (the repairs)",
+   "scale": 2.621565,
+   "sourceTris": 1640,
+   "size": [
+    3.2,
+    7,
+    4.72
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wood-crane.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 36,
+     "size": [
+      3.2,
+      7,
+      4.72
+     ]
+    },
+    {
+     "file": "/fps/br/models/wood-crane.lod1.glb",
+     "tris": 522,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.2,
+      7,
+      4.72
+     ]
+    },
+    {
+     "file": "/fps/br/models/wood-crane.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.2,
+      7,
+      4.72
      ]
     }
    ]

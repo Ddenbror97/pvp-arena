@@ -1178,7 +1178,22 @@ function groundPlacer(
     const onPad =
       poi?.padHeight !== undefined &&
       pts.every(([px, pz]) => Math.abs(ctx.heightAt(px, pz) - poi.padHeight!) < 1.5);
-    const y = onPad ? poi!.padHeight! : low;
+    // (Never over the ground: within 1.5 m of the pad's height counts as on the pad, and where
+    // the ground there lies lower than the pad, a model at the pad's height stood in the air,
+    // 0.2–1.4 m at the airfield's shelters, Forgotten Ruins' street and the hospital, owner
+    // 2026-11-18: "those items is placed above the ground … put them on the ground". It goes
+    // down to the ground's lowest point under it, as off the pads.)
+    // (Painted markings lie on the ground's highest point under them instead: a 5 cm line laid
+    // lower is buried where the ground rises, and its edges come and go through the ground as
+    // the camera moves.)
+    const markingTop = () => {
+      let top = -Infinity;
+      for (let i = 0; i <= 12; i++)
+        for (let j = 0; j <= 6; j++)
+          top = Math.max(top, ctx.heightAt(x - w / 2 + (w * i) / 12, z - d / 2 + (d * j) / 6));
+      return top;
+    };
+    const y = model === "lot-lines" ? markingTop() : onPad ? Math.min(poi!.padHeight!, low) : low;
     // Its doors: outside them, clear of everything and level with the building (never dug in).
     const doors = apronsOf(model, x, z, turn);
     for (const [ax, az] of doors) {
@@ -2213,6 +2228,13 @@ const FOOT: Record<string, [number, number]> = {
   "bay-planter": [0.5, 0.5],
   "bay-bike-stand": [1.6, 0.4],
   // The Old Fortress's downloads (2026-11-17).
+  barrow: [0.7, 2],
+  "cheval-de-frise": [2.3, 3.6],
+  "cell-grate": [1.1, 0.3],
+  "medieval-chest-b": [1.2, 0.6],
+  trebuchet: [24.9, 8.3],
+  "trebuchet-b": [12.4, 15.6],
+  "wood-crane": [3.2, 4.8],
   anvil: [0.6, 1.0],
   "anvil-trough": [3.2, 2.3],
   "arch-door": [3.4, 2.1],
@@ -7175,6 +7197,7 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
   rel(K, "tavern-stool", -7.8, 12, 2.8);
   rel(K, "lantern-iron", -7, 12.92, 2);
   rel(K, "old-chest-b", 6, 12, -11.1);
+  rel(K, "medieval-chest-b", 9, 12, -11.4);
   rel(K, "tavern-table", 6, 12, 6);
   rel(K, "tavern-stool", 5, 12, 5.1);
   rel(K, "tavern-stool", 7, 12, 6.9);
@@ -7253,6 +7276,7 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
   at("market-stall", 32, 10, -16, 3);
   at("market-stall-b", 31.5, 10, -6, 3);
   at("wooden-cart", -34, 10, -46);
+  at("barrow", -30, 10, -40);
   at("catapult-b", -46, 10, 6, 2);
   for (const [x, z] of [
     [61, -20],
@@ -7284,6 +7308,8 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
   for (const c of [-50, -30, 10, 40]) at("hay-bale", c + 1.8, 0, 48.4, 1);
   for (const c of [-20, 30]) at("old-chest-b", c - 2.4, 0, 48.4, 2);
   at("cove-barrel", 47.5, 0, 48.4);
+  // Two cells shut by their grates (the owner's dungeon props).
+  for (const c of [-40, 20]) at("cell-grate", c, 0, 42);
   at("skull-pile", -10, 0, 47.5);
   // The corridor: torches along its north wall, arched doors at its ends.
   for (const x of [-45, -35, -25, -17, -5, 5, 15, 25, 35, 45]) torch(BASE, x, 1.5, 38, 0);
@@ -7297,6 +7323,7 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
     torch(BASE, 22, 1.5, z, 3);
   }
   for (const z of [-23, -25]) at("old-chest-b", -21.2, 0, z, 1);
+  at("medieval-chest-b", -21.4, 0, -18.4, 1);
   // Arched doors on its side walls (to stores never built).
   at("arch-door", -20.99, 0, -14, 1);
   at("arch-door", 20.99, 0, -14, 3);
@@ -7358,6 +7385,14 @@ function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
   at("old-well", 100, 0, 50, 3);
   at("old-cart", 14, 10, -120);
   at("wooden-cart", -14, 10, -118, 1);
+  // The besiegers' trebuchets (south and west ledges), chevaux de frise at the bridgehead and
+  // before the breach, the repairs' crane and barrows by the scaffold.
+  at("trebuchet", 60, 0, 92);
+  at("trebuchet-b", -98, 0, 55, 1);
+  for (const x of [-17, 17]) at("cheval-de-frise", x, 10, -122, 1);
+  for (const z of [16, 38]) at("cheval-de-frise", 106, 0, z, 1);
+  at("wood-crane", -36, 0, 86);
+  at("barrow", -29, 0, 90.5, 1);
 }
 
 const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void> = {
@@ -11349,7 +11384,10 @@ function estates(out: Placement[], ctx: Context) {
   ];
   for (const [m, dx, dz, t, rough] of park)
     kit.search(3195 + dx, -1280 + dz, 24, 9_800 + dx * 7 + dz, (x, z) =>
-      kit.put(m, x, z, t, { rough, gap: 1, poi: "estate", apron: rough < 1 ? 3 : 0 }),
+      // (The bays' paint on its highest ground, on ground level enough for it.)
+      m === "lot-lines"
+        ? kit.put(m, x, z, t, { rough: 0.25, gap: 1, poi: "estate", top: true })
+        : kit.put(m, x, z, t, { rough, gap: 1, poi: "estate", apron: rough < 1 ? 3 : 0 }),
     );
   const cars = ["car-sedan", "car-pickup", "cargo-van", "car-cruiser", "car-sedan", "box-truck"];
   for (let k = 0; k < 14; k++) {

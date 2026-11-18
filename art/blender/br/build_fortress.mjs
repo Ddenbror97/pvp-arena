@@ -915,6 +915,14 @@ await squareTower("fort-tower-sally", { sally: true });
     cuts.push([x - 0.6, F[2] + 1.4, -14.1, x + 0.6, F[2] + 3.6, -12.4]);
   mass([-14, F[0], -14, 14, F[3], 0], cuts, { m: STONE, top: FLOOR });
   mass([-5.6, 0, 0, 5.6, F[3], 6.3], cuts, { m: STONE, top: FLOOR });
+  // The portcullis, raised in its slot: its spiked foot hangs a metre below the passage's roof
+  // (drawn only; well over a head).
+  for (let x = -PW + 0.25; x < PW - 0.1; x += 0.42)
+    k.box([x - 0.05, F[0] + 4.3, 3.67, x + 0.05, F[0] + 5.19, 3.83], PAINT, DARK, {
+      lod: 0,
+      collide: false,
+    });
+  k.box([-PW, F[0] + 4.55, 3.66, PW, F[0] + 4.67, 3.84], PAINT, DARK, { lod: 0, collide: false });
   // The portcullis's slot (a dark band across the passage's roof) and the murder holes.
   k.quad(
     [-PW, F[0] + 5.19, 3.6],
