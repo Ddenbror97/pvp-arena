@@ -68,6 +68,17 @@ const page = await browser.newPage({ viewport: { width: W, height: H } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+// CLOCK_MS=16.7: each view is drawn one frame (that many ms) after the last, on a stopped
+// clock, so a sequence of views measures what a player sees from frame to frame and not the
+// water's motion over the seconds a capture takes.
+if (process.env.CLOCK_MS) {
+  await page.addInitScript(() => {
+    const real = performance.now.bind(performance);
+    let stopped = null;
+    window.__stopClock = (ms) => (stopped = ms);
+    performance.now = () => stopped ?? real();
+  });
+}
 // QUERY=tier=low (or any of the explorer's options) captures that configuration.
 await page.goto(
   `http://127.0.0.1:${server.address().port}/${process.env.FLAT ? "?flat=1" : process.env.QUERY ? `?${process.env.QUERY}` : ""}`,
@@ -473,8 +484,14 @@ const views = await page.evaluate(() => {
 const report = { loadMs, views: {} };
 // VIEWS=4,9,12 captures only the views whose names start with those numbers.
 const only = process.env.VIEWS?.split(",");
+const clockStart = process.env.CLOCK_MS ? await page.evaluate(() => performance.now()) : 0;
+let frame = 0;
 for (const [name, [pos, look]] of Object.entries(customViews ?? views)) {
   if (only && !only.some((v) => name.startsWith(`${v}-`))) continue;
+  if (process.env.CLOCK_MS) {
+    const at = clockStart + frame++ * Number(process.env.CLOCK_MS);
+    await page.evaluate((ms) => window.__stopClock(ms), at);
+  }
   const s = await page.evaluate(([p, l]) => window.explorer.view(p, l), [pos, look]);
   // SHOT=png: lossless frames (for frame-to-frame flicker measures; JPEG noise swamps them).
   if (process.env.SHOT === "png") await page.screenshot({ path: path.join(outDir, `${name}.png`) });

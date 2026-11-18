@@ -1,0 +1,24 @@
+{
+  "base": "bay-v1",
+  "version": "bay-v1",
+  "revision": "bay-v1",
+  "models": {
+    "shed": [
+      {
+        "replace": [-2.59, 0.9, -1.121, -2.4, 1.2, -0.595],
+        "with": [],
+        "why": "owner 2026-11-18 (shed door tight, laggy inside): a box with nothing drawn in it, 19 cm into the side room at chest height"
+      },
+      {
+        "replace": [-2.7, 1.2, -1.121, -2.4, 3, -0.821],
+        "with": [[-2.7, 1.2, -1.121, -2.59, 3, -0.821]],
+        "why": "the side room's window frame is 2 cm proud of the wall: the scan's column reached 30 cm into the room"
+      },
+      {
+        "replace": [-2.59, 2.1, -0.821, -2.4, 2.22, -0.595],
+        "with": [],
+        "why": "empty, above the window frame, 19 cm into the room"
+      }
+    ]
+  }
+}

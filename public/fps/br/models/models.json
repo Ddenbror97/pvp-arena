@@ -2995,7 +2995,7 @@
    "sourceTris": 9130,
    "lods": [
     {
-     "file": "/fps/br/models/bay-apartments.coast-v1.lod0.glb",
+     "file": "/fps/br/models/bay-apartments.coast-v2.lod0.glb",
      "tris": 9130,
      "draws": 4,
      "textureMB": 0.5,
@@ -3007,7 +3007,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-apartments.coast-v1.lod1.glb",
+     "file": "/fps/br/models/bay-apartments.coast-v2.lod1.glb",
      "tris": 4556,
      "draws": 3,
      "textureMB": 0.06,
@@ -3019,7 +3019,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-apartments.coast-v1.lod2.glb",
+     "file": "/fps/br/models/bay-apartments.coast-v2.lod2.glb",
      "tris": 120,
      "draws": 1,
      "textureMB": 0,
@@ -3050,7 +3050,7 @@
    "sourceTris": 2158,
    "lods": [
     {
-     "file": "/fps/br/models/bay-beach-club.coast-v1.lod0.glb",
+     "file": "/fps/br/models/bay-beach-club.coast-v2.lod0.glb",
      "tris": 2158,
      "draws": 5,
      "textureMB": 0.75,
@@ -3062,7 +3062,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-beach-club.coast-v1.lod1.glb",
+     "file": "/fps/br/models/bay-beach-club.coast-v2.lod1.glb",
      "tris": 1016,
      "draws": 4,
      "textureMB": 0.13,
@@ -3074,7 +3074,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-beach-club.coast-v1.lod2.glb",
+     "file": "/fps/br/models/bay-beach-club.coast-v2.lod2.glb",
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
@@ -4293,7 +4293,7 @@
    "sourceTris": 4802,
    "lods": [
     {
-     "file": "/fps/br/models/bay-townhouse-pink.coast-v1.lod0.glb",
+     "file": "/fps/br/models/bay-townhouse-pink.coast-v2.lod0.glb",
      "tris": 4802,
      "draws": 4,
      "textureMB": 0.5,
@@ -4305,7 +4305,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-townhouse-pink.coast-v1.lod1.glb",
+     "file": "/fps/br/models/bay-townhouse-pink.coast-v2.lod1.glb",
      "tris": 2324,
      "draws": 3,
      "textureMB": 0.06,
@@ -4317,7 +4317,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-townhouse-pink.coast-v1.lod2.glb",
+     "file": "/fps/br/models/bay-townhouse-pink.coast-v2.lod2.glb",
      "tris": 96,
      "draws": 1,
      "textureMB": 0,
@@ -4348,7 +4348,7 @@
    "sourceTris": 4802,
    "lods": [
     {
-     "file": "/fps/br/models/bay-townhouse-yellow.coast-v1.lod0.glb",
+     "file": "/fps/br/models/bay-townhouse-yellow.coast-v2.lod0.glb",
      "tris": 4802,
      "draws": 4,
      "textureMB": 0.5,
@@ -4360,7 +4360,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-townhouse-yellow.coast-v1.lod1.glb",
+     "file": "/fps/br/models/bay-townhouse-yellow.coast-v2.lod1.glb",
      "tris": 2324,
      "draws": 3,
      "textureMB": 0.06,
@@ -4372,7 +4372,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-townhouse-yellow.coast-v1.lod2.glb",
+     "file": "/fps/br/models/bay-townhouse-yellow.coast-v2.lod2.glb",
      "tris": 96,
      "draws": 1,
      "textureMB": 0,
@@ -4457,7 +4457,7 @@
    "sourceTris": 3258,
    "lods": [
     {
-     "file": "/fps/br/models/bay-villa-cream.coast-v1.lod0.glb",
+     "file": "/fps/br/models/bay-villa-cream.coast-v2.lod0.glb",
      "tris": 3258,
      "draws": 4,
      "textureMB": 0.5,
@@ -4469,7 +4469,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-villa-cream.coast-v1.lod1.glb",
+     "file": "/fps/br/models/bay-villa-cream.coast-v2.lod1.glb",
      "tris": 1556,
      "draws": 3,
      "textureMB": 0.06,
@@ -4481,7 +4481,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-villa-cream.coast-v1.lod2.glb",
+     "file": "/fps/br/models/bay-villa-cream.coast-v2.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -4512,7 +4512,7 @@
    "sourceTris": 4170,
    "lods": [
     {
-     "file": "/fps/br/models/bay-villa-white.coast-v1.lod0.glb",
+     "file": "/fps/br/models/bay-villa-white.coast-v2.lod0.glb",
      "tris": 4170,
      "draws": 5,
      "textureMB": 0.75,
@@ -4524,7 +4524,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-villa-white.coast-v1.lod1.glb",
+     "file": "/fps/br/models/bay-villa-white.coast-v2.lod1.glb",
      "tris": 2072,
      "draws": 4,
      "textureMB": 0.13,
@@ -4536,7 +4536,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/bay-villa-white.coast-v1.lod2.glb",
+     "file": "/fps/br/models/bay-villa-white.coast-v2.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -10620,11 +10620,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/car-pickup.lod0.glb",
-     "tris": 2493,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 14,
+     "file": "/fps/br/models/car-pickup.pickup-v2.lod0.glb",
+     "tris": 5973,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 122,
      "size": [
       4.9,
       1.91,
@@ -10632,23 +10632,23 @@
      ]
     },
     {
-     "file": "/fps/br/models/car-pickup.lod1.glb",
-     "tris": 860,
+     "file": "/fps/br/models/car-pickup.pickup-v2.lod1.glb",
+     "tris": 2988,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 63,
+     "size": [
+      4.9,
+      1.91,
+      2.13
+     ]
+    },
+    {
+     "file": "/fps/br/models/car-pickup.pickup-v2.lod2.glb",
+     "tris": 995,
      "draws": 1,
      "textureMB": 0,
      "kB": 7,
-     "size": [
-      4.9,
-      1.91,
-      2.13
-     ]
-    },
-    {
-     "file": "/fps/br/models/car-pickup.lod2.glb",
-     "tris": 248,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 4,
      "size": [
       4.9,
       1.91,
@@ -14727,7 +14727,7 @@
    "sourceTris": 2406,
    "lods": [
     {
-     "file": "/fps/br/models/cove-house-blue.coast-v1.lod0.glb",
+     "file": "/fps/br/models/cove-house-blue.coast-v2.lod0.glb",
      "tris": 2406,
      "draws": 5,
      "textureMB": 0.75,
@@ -14739,7 +14739,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-blue.coast-v1.lod1.glb",
+     "file": "/fps/br/models/cove-house-blue.coast-v2.lod1.glb",
      "tris": 1226,
      "draws": 4,
      "textureMB": 0.13,
@@ -14751,7 +14751,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-blue.coast-v1.lod2.glb",
+     "file": "/fps/br/models/cove-house-blue.coast-v2.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -14782,7 +14782,7 @@
    "sourceTris": 2718,
    "lods": [
     {
-     "file": "/fps/br/models/cove-house-green.coast-v1.lod0.glb",
+     "file": "/fps/br/models/cove-house-green.coast-v2.lod0.glb",
      "tris": 2718,
      "draws": 5,
      "textureMB": 0.75,
@@ -14794,7 +14794,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-green.coast-v1.lod1.glb",
+     "file": "/fps/br/models/cove-house-green.coast-v2.lod1.glb",
      "tris": 1454,
      "draws": 4,
      "textureMB": 0.13,
@@ -14806,7 +14806,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-green.coast-v1.lod2.glb",
+     "file": "/fps/br/models/cove-house-green.coast-v2.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -14837,7 +14837,7 @@
    "sourceTris": 2766,
    "lods": [
     {
-     "file": "/fps/br/models/cove-house-orange.coast-v1.lod0.glb",
+     "file": "/fps/br/models/cove-house-orange.coast-v2.lod0.glb",
      "tris": 2766,
      "draws": 5,
      "textureMB": 0.75,
@@ -14849,7 +14849,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-orange.coast-v1.lod1.glb",
+     "file": "/fps/br/models/cove-house-orange.coast-v2.lod1.glb",
      "tris": 1466,
      "draws": 4,
      "textureMB": 0.13,
@@ -14861,7 +14861,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-orange.coast-v1.lod2.glb",
+     "file": "/fps/br/models/cove-house-orange.coast-v2.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -14892,7 +14892,7 @@
    "sourceTris": 2358,
    "lods": [
     {
-     "file": "/fps/br/models/cove-house-red.coast-v1.lod0.glb",
+     "file": "/fps/br/models/cove-house-red.coast-v2.lod0.glb",
      "tris": 2358,
      "draws": 5,
      "textureMB": 0.75,
@@ -14904,7 +14904,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-red.coast-v1.lod1.glb",
+     "file": "/fps/br/models/cove-house-red.coast-v2.lod1.glb",
      "tris": 1202,
      "draws": 4,
      "textureMB": 0.13,
@@ -14916,7 +14916,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-red.coast-v1.lod2.glb",
+     "file": "/fps/br/models/cove-house-red.coast-v2.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -14947,7 +14947,7 @@
    "sourceTris": 3674,
    "lods": [
     {
-     "file": "/fps/br/models/cove-house-salmon.coast-v1.lod0.glb",
+     "file": "/fps/br/models/cove-house-salmon.coast-v2.lod0.glb",
      "tris": 3674,
      "draws": 6,
      "textureMB": 1,
@@ -14959,7 +14959,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-salmon.coast-v1.lod1.glb",
+     "file": "/fps/br/models/cove-house-salmon.coast-v2.lod1.glb",
      "tris": 1778,
      "draws": 4,
      "textureMB": 0.13,
@@ -14971,7 +14971,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-salmon.coast-v1.lod2.glb",
+     "file": "/fps/br/models/cove-house-salmon.coast-v2.lod2.glb",
      "tris": 96,
      "draws": 1,
      "textureMB": 0,
@@ -15002,7 +15002,7 @@
    "sourceTris": 2742,
    "lods": [
     {
-     "file": "/fps/br/models/cove-house-white.coast-v1.lod0.glb",
+     "file": "/fps/br/models/cove-house-white.coast-v2.lod0.glb",
      "tris": 2742,
      "draws": 5,
      "textureMB": 0.75,
@@ -15014,7 +15014,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-white.coast-v1.lod1.glb",
+     "file": "/fps/br/models/cove-house-white.coast-v2.lod1.glb",
      "tris": 1442,
      "draws": 4,
      "textureMB": 0.13,
@@ -15026,7 +15026,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-white.coast-v1.lod2.glb",
+     "file": "/fps/br/models/cove-house-white.coast-v2.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -15057,7 +15057,7 @@
    "sourceTris": 4262,
    "lods": [
     {
-     "file": "/fps/br/models/cove-house-yellow.coast-v1.lod0.glb",
+     "file": "/fps/br/models/cove-house-yellow.coast-v2.lod0.glb",
      "tris": 4262,
      "draws": 5,
      "textureMB": 0.75,
@@ -15069,7 +15069,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-yellow.coast-v1.lod1.glb",
+     "file": "/fps/br/models/cove-house-yellow.coast-v2.lod1.glb",
      "tris": 2162,
      "draws": 4,
      "textureMB": 0.13,
@@ -15081,7 +15081,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-house-yellow.coast-v1.lod2.glb",
+     "file": "/fps/br/models/cove-house-yellow.coast-v2.lod2.glb",
      "tris": 96,
      "draws": 1,
      "textureMB": 0,

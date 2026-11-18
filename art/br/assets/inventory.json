@@ -80489,12 +80489,12 @@
    "list_match": null,
    "zips": [
     {
-     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a6d72d1b-1793720902327_lightbody_lifted_85_-_low_poly_model.zip",
+     "path": "/mnt/user-data/uploads/bf578ab9-lightbody_lifted_85_-_low_poly_model.zip",
      "sha256": "0d9609f60c5cc8435df4c309ebe358c0024280d711c8a8408ee69862af5cc495",
      "size": 11313838,
      "mtime": "2026-11-03T12:48:36-03:00",
      "batch": "2026-11-03",
-     "present": false
+     "present": true
     }
    ],
    "duplicate": false,

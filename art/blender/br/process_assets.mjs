@@ -58,6 +58,9 @@ const inventory = JSON.parse(fs.readFileSync("art/br/assets/inventory.json", "ut
 const assets = Array.isArray(inventory.assets) ? inventory.assets : Object.values(inventory.assets);
 const byKey = new Map(assets.map((a) => [a.key, a]));
 const OUT = path.join(REPO, "public/fps/br/models");
+// TAG=<name>: a rebuilt model's files are <id>.<name>.lod<N>.glb, so the files an older world
+// revision (and a cached client) reads stay as they are (the pickup's rebuild, 2026-11-18).
+const FILE_TAG = process.env.TAG ? `.${process.env.TAG}` : "";
 fs.mkdirSync(OUT, { recursive: true });
 const manifestPath = path.join(OUT, "models.json");
 const manifest = fs.existsSync(manifestPath)
@@ -609,10 +612,10 @@ for (const item of work) {
       );
     }
     await doc.transform(prune(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
-    const out = path.join(OUT, `${item.id}.lod${level}.glb`);
+    const out = path.join(OUT, `${item.id}${FILE_TAG}.lod${level}.glb`);
     await io.write(out, doc);
     lods.push({
-      file: `/fps/br/models/${item.id}.lod${level}.glb`,
+      file: `/fps/br/models/${item.id}${FILE_TAG}.lod${level}.glb`,
       tris: triangles(doc),
       draws: draws(doc),
       textureMB: +textureMB(doc).toFixed(2),

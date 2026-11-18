@@ -42,6 +42,13 @@ const manifestArg = args.find((a) => !a.startsWith("--"));
 if (!manifestArg) throw new Error("usage: offset_coplanar.mjs <manifest.json> [--tag=<name>]");
 const manifestFile = path.join(dir, manifestArg);
 const manifest = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
+// `--only=a,b,c`: just these model ids (a fix for one district leaves the rest as they are).
+const ONLY = args
+  .find((a) => a.startsWith("--only="))
+  ?.slice(7)
+  .split(",");
+// `--why`: list each lifted face (its normal, centre and area) for checking against a report.
+const WHY = args.includes("--why");
 const CLASSES = new Set(["building", "structure", "dwelling", "outbuilding", "hero"]);
 /** How far the smaller face is lifted (m): beyond the depth buffer's step at LOD distances. */
 const LIFT = 0.015;
@@ -122,6 +129,7 @@ const MIN_OVERLAP = 0.0004;
 const report = [];
 for (const [id, model] of Object.entries(manifest.models)) {
   if (!CLASSES.has(model.class)) continue;
+  if (ONLY && !ONLY.includes(id)) continue;
   for (const [level, lod] of model.lods.entries()) {
     const doc = await io.read(modelFile(lod.file));
     await doc.transform(dequantize(), unweld());
@@ -209,6 +217,11 @@ for (const [id, model] of Object.entries(manifest.models)) {
       }
     }
     report.push(`${id} lod${level}: ${lift.size} faces lifted`);
+    if (WHY)
+      for (const t of lift)
+        report.push(
+          `  n ${t.n.map((x) => x.toFixed(2))} at ${t.c.map((x) => x.toFixed(2))} area ${t.area.toFixed(3)}`,
+        );
     if (dry) continue;
     await doc.transform(
       prune({ keepAttributes: true }),

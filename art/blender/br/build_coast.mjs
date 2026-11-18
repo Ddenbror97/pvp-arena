@@ -24,7 +24,8 @@ import fs from "node:fs";
 import { makeBuilding } from "./building-kit.mjs";
 import { publishTextured } from "./textured-kit.mjs";
 
-const TAG = "coast-v1";
+// A rebuild gets new files (TAG=coast-v2 …): older world revisions keep reading theirs.
+const TAG = process.env.TAG ?? "coast-v1";
 /** Flight length for a storey of `h` (risers ≤ 0.19, treads 0.27). */
 const L = (h) => Math.ceil(h / 0.19) * 0.27;
 const paint = (tint) => ({ m: "paint", tint });
@@ -431,7 +432,9 @@ const PLAN = "src/lib/fps/br/location-buildings.json";
 const plan = JSON.parse(fs.readFileSync(PLAN, "utf8"));
 for (const [id, def] of Object.entries(B)) {
   if (only.length && !only.includes(id)) continue;
-  const b = makeBuilding(def.spec);
+  // The plinth 3 cm proud of the walls (owner, 2026-11-18: Bayview's houses flickered along
+  // the bottom: flush, its sides lay in the walls' faces).
+  const b = makeBuilding({ plinthOut: 0.03, ...def.spec });
   await publishTextured(id, b.k, b.far, {
     tag: TAG,
     title: def.title,
