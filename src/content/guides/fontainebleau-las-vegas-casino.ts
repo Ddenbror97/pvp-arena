@@ -189,7 +189,7 @@ The $38 net is a Purple win after our fee. It is not a comp, not a cage slip, an
   related: [
     "las-vegas-history",
     "house-edge",
-    "slot-machine-odds",
+    "best-casinos-in-vegas",
     "las-vegas-strip-map",
     "biggest-casino-in-the-world",
   ],

@@ -208,7 +208,7 @@ PVPspinArena's slot game is P2P Slott, a 1v1 duel. If you want published odds an
     "crypto-jackpot",
     "slot-machine-odds",
     "crypto-dice-game",
-    "dice-roll-probability",
+    "online-slots-real-money",
     "mines-game-casino",
     "golden-goddess-slot",
     "zeus-vs-hades-slot",

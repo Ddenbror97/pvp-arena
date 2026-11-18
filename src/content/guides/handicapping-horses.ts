@@ -172,13 +172,13 @@ In the same cluster, see also [quick pick](/guides/quick-pick-lottery), [pull ta
   related: [
     "crypto-horse-racing-betting",
     "nfl-betting",
-    "how-to-win-at-sports-betting",
+    "pick-6-horse-racing",
     "expected-value-gambling",
     "house-edge",
-    "survivor-pool",
-    "quick-pick-lottery",
-    "pull-tabs",
-    "lucky-numbers-gambling",
+    "horse-racing-odds-explained",
+    "how-to-bet-on-horse-racing",
+    "kentucky-derby-betting",
+    "horse-racing-terms",
   ],
   updated: "2026-09-27",
 };

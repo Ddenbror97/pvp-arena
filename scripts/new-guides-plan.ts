@@ -3547,7 +3547,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Rooms and apps",
     "stake-poker",
     "stake poker",
-    "Card room only. stake-casino-review keeps the lobby. /poker on their site returned 404.",
+    "Card room only. /poker on their site returned 404.",
   ),
 
   p(
@@ -4115,7 +4115,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "8-ball-pool-hub",
     "8 ball pool online",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4123,7 +4123,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "pool-betting",
     "pool betting",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4131,7 +4131,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "crypto-8-ball-pool",
     "8 ball pool crypto",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4139,7 +4139,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "pool-games-for-money",
     "play pool for money",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
 
   p(
@@ -4148,7 +4148,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "is-8-ball-pool-rigged",
     "is 8 ball pool rigged",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4156,7 +4156,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "pool-hustling",
     "pool hustler",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4164,7 +4164,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "skill-games-for-money-pool",
     "skill games for money",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4172,7 +4172,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "8-ball-pool-free-coins",
     "8 ball pool free coins",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4180,7 +4180,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "8-ball-pool-unblocked",
     "8 ball pool unblocked",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4188,7 +4188,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "8-ball-pool-rules",
     "8 ball pool rules",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4196,7 +4196,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "pool-scratch-rules",
     "pool scratch rules",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4204,7 +4204,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "9-ball-rules",
     "9 ball rules",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4212,7 +4212,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "10-ball-pool",
     "10 ball pool",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4220,7 +4220,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "straight-pool",
     "straight pool",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4228,7 +4228,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "cutthroat-pool",
     "cutthroat pool",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4236,7 +4236,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "one-pocket-pool",
     "one pocket",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4244,7 +4244,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "bank-pool",
     "bank pool",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4252,7 +4252,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "killer-pool",
     "killer pool",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4260,7 +4260,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool rules",
     "pool-vs-snooker",
     "pool vs snooker",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4268,7 +4268,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "how-to-win-8-ball-pool",
     "8 ball pool tips",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4276,7 +4276,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "8-ball-pool-break",
     "8 ball pool break",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4284,7 +4284,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "8-ball-pool-aim",
     "8 ball pool aim",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4292,7 +4292,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "pool-shots",
     "pool shots",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4300,7 +4300,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "pool-terminology",
     "pool terminology",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4308,7 +4308,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "fargo-rate",
     "fargo rate",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4316,7 +4316,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "best-pool-cue",
     "best pool cue",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4324,7 +4324,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "pool-table-size",
     "pool table size",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4332,7 +4332,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool events",
     "pool-tournaments",
     "pool tournaments",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4340,7 +4340,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool events",
     "us-open-pool",
     "us open pool",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4348,7 +4348,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool events",
     "mosconi-cup",
     "mosconi cup",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4356,7 +4356,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "Pool events",
     "apa-pool-league",
     "apa pool",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4364,7 +4364,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "8-ball-pool-1v1",
     "8 ball pool 2 player",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4372,7 +4372,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "8-ball-pool-casino",
     "8 ball pool casino",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4380,7 +4380,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "best-pool-games",
     "best pool games",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
 
   p(
@@ -4389,7 +4389,7 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "8-ball-pool-discord",
     "8 ball pool discord",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
   p(
     32,
@@ -4397,6 +4397,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "8-ball money",
     "8-ball-pool-rank",
     "8 ball pool rank",
-    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money or pool-payday-review.",
+    "8-ball cluster, October 2026. Does not replace 8-ball-pool-for-money.",
   ),
 ];

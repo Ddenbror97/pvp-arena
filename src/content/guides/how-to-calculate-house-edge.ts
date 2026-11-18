@@ -293,7 +293,7 @@ Once you have the percentage, the [law of large numbers](/guides/law-of-large-nu
     "expected-value-gambling",
     "rtp-calculator",
     "law-of-large-numbers-gambling",
-    "regression-to-the-mean-gambling",
+    "crash-vs-plinko",
   ],
   updated: "2026-09-26",
 };

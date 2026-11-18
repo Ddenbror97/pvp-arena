@@ -202,7 +202,7 @@ In the same cluster, see also [casino etiquette](/guides/casino-etiquette) and [
     "casino-host",
     "vip-casino-programs",
     "casino-comps",
-    "risk-of-ruin",
+    "pit-boss",
     "casino-surveillance",
     "casino-etiquette",
     "casino-dress-code",

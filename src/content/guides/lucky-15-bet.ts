@@ -227,7 +227,7 @@ The Commission page does not promise a return, and neither does this note. If th
     "parlay-betting-explained",
     "what-is-sports-betting",
     "vig-betting",
-    "lottery-taxes",
+    "bonus-bets-explained",
     "double-chance-bet",
   ],
   updated: "2026-10-20",

@@ -190,7 +190,7 @@ The trust model is different from the Ridotto’s. Instead of a patrician dealin
     "stardust-casino",
     "casino-dress-code",
     "gamblers-fallacy",
-    "roulette-odds-chart",
+    "biggest-casino-in-the-world",
   ],
   updated: "2026-09-27",
 };

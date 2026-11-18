@@ -200,7 +200,7 @@ Who should stay away: minors, anyone who wants a winning script, anyone who will
     "heads-up-poker-strategy",
     "what-is-a-crypto-casino",
     "house-edge",
-    "vig-betting",
+    "poker-equity-calculator",
     "provably-fair-casino",
   ],
   updated: "2026-10-20",

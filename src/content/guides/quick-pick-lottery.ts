@@ -199,12 +199,12 @@ In the same cluster, see also [bingo patterns](/guides/bingo-patterns) and [bing
   ],
   related: [
     "lucky-numbers-gambling",
-    "pull-tabs",
+    "how-to-play-powerball",
     "bingo-patterns",
     "crypto-lottery",
     "progressive-jackpot-odds",
     "illusion-of-control",
-    "bingo-caller",
+    "pick-3-lottery",
   ],
   updated: "2026-09-27",
 };

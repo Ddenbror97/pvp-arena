@@ -188,7 +188,7 @@ In the same cluster, see also [quick pick](/guides/quick-pick-lottery) and [bing
   related: [
     "lucky-numbers-gambling",
     "lucky-colors-gambling",
-    "quick-pick-lottery",
+    "chuck-a-luck",
     "illusion-of-control",
     "gamblers-fallacy",
     "bingo-patterns",

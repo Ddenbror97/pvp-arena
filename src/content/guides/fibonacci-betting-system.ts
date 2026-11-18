@@ -189,7 +189,7 @@ A written-line progression in the same family is the [Labouchere system](/guides
     "crypto-jackpot",
     "kelly-criterion",
     "blackjack-basic-strategy",
-    "card-counting",
+    "dalembert-strategy",
     "gamblers-fallacy",
     "labouchere-system",
     "flat-betting",
