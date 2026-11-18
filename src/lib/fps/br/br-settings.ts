@@ -27,7 +27,10 @@ export const BR_ACTIONS = {
   grenade: { label: "Grenade", group: "Actions", key: "Digit5" },
   medkit: { label: "Medkit", group: "Actions", key: "Digit6" },
   bandage: { label: "Bandage", group: "Actions", key: "Digit7" },
-  inspect: { label: "Inspect knife", group: "Actions", key: "KeyF" },
+  inspect: { label: "Inspect knife / aircraft engine", group: "Actions", key: "KeyF" },
+  // The aircraft (aircraft-client.ts): W / S throttle, A / D roll, Q / R rudder, Space brakes,
+  // C camera and Alt free look share the movement keys; the flap lever has its own.
+  flaps: { label: "Aircraft flaps", group: "Actions", key: "KeyG" },
   inventory: { label: "Inventory", group: "Screens", key: "KeyB" },
   map: { label: "Map", group: "Screens", key: "KeyM" },
   tablet: { label: "Tactical Tablet", group: "Screens", key: "KeyT" },
