@@ -19,8 +19,9 @@ import type { WorldMeta } from "./world";
  * pilot's controls, and the chase cameras.
  *
  * Controls (owner's spec, 2026-11-17): W / S the throttle lever, A / D roll, the mouse up and
- * down the elevator (nose up / down: a virtual stick that springs back to neutral when the mouse
- * rests), Q / R the rudder, Space the brakes, G the flaps (up, 10°, 30°), F the engine, C the
+ * down the elevator (nose up / down: hold the left mouse button to hold the nose angle you choose;
+ * release to centre the elevator). Arrow Up / Down are an alternate pitch control.
+ * Q / R the rudder, Space the brakes, G the flaps (up, 10°, 30°), F the engine, C the
  * camera, Alt held
  * to look around, E in and out.
  */
@@ -33,6 +34,8 @@ export type FlightKeys = {
   rudderLeft: boolean;
   rudderRight: boolean;
   brake: boolean;
+  pitchUp?: boolean;
+  pitchDown?: boolean;
 };
 /** The wire's flight fields (match.ts BrInput). */
 export type FlightWire = {
@@ -140,6 +143,19 @@ export class AircraftClient {
   private camPitch = 0;
   /** Whether the pilot asked for the engine since boarding (auto-start on getting in). */
   autoStarted = false;
+  /** Left mouse holds a pitch target; the elevator eases off as the nose reaches it. */
+  private pitchHeld = false;
+  private pitchTarget = 0;
+
+  holdPitch(held: boolean) {
+    const next = held && this.seat === 0 && !this.look.held;
+    if (next && !this.pitchHeld) {
+      const a = this.predicted ?? this.server;
+      this.pitchTarget = a ? attitude(a).pitch : 0;
+    }
+    if (!next && this.pitchHeld) this.controls.stick = this.controls.elev = 0;
+    this.pitchHeld = next;
+  }
 
   /** A view arrived: the aircraft's row (if it changed) and this player's seat. */
   apply(row: readonly number[] | undefined, flying: 0 | 1 | undefined, at: number) {
@@ -152,9 +168,11 @@ export class AircraftClient {
     const was = this.seat;
     this.seat = flying ?? null;
     if (this.seat === null) {
+      this.holdPitch(false);
       this.predicted = null;
       this.autoStarted = false;
-    } else if (was === null && this.server) {
+    } else if (was !== this.seat && this.server) {
+      this.holdPitch(false);
       // Just in: the levers where they are in the cockpit.
       this.controls.thr = this.server.throttle;
       this.controls.flaps = this.server.flaps;
@@ -201,7 +219,8 @@ export class AircraftClient {
 
   /**
    * This frame's controls from the keys (dt seconds): the throttle lever moves while W / S is
-   * held, roll and rudder ramp in and back, the mouse's stick springs back to neutral.
+   * held, roll and rudder ramp in and back. Holding LMB retains a mouse pitch target; the
+   * arrow keys give the same elevator input without needing repeated mouse movement.
    */
   steer(k: FlightKeys, dt: number): FlightWire {
     const c = this.controls;
@@ -211,8 +230,19 @@ export class AircraftClient {
     c.ail = toward(c.ail, roll, (roll ? 3.2 : 5) * dt);
     const yaw = Number(k.rudderRight) - Number(k.rudderLeft);
     c.rud = toward(c.rud, yaw, (yaw ? 2.6 : 4) * dt);
-    c.stick *= Math.exp(-dt / 0.55);
-    c.elev = clamp(c.stick, -1, 1);
+    if (this.look.held) this.holdPitch(false);
+    const pitchKey = Number(!!k.pitchUp) - Number(!!k.pitchDown);
+    if (!this.pitchHeld) c.stick *= Math.exp(-dt / 0.55);
+    const a = this.predicted ?? this.server;
+    if (this.seat === 0 && !this.look.held && a && (this.pitchHeld || pitchKey)) {
+      // Hold an attitude, not raw elevator: a held pull must not keep rotating into a stall.
+      // Wait for rotation speed so a long drag during the ground roll cannot scrape the tail.
+      const target = pitchKey ? (pitchKey * Math.PI) / 15 : this.pitchTarget;
+      c.elev =
+        a.grounded && aero(a).V < 27
+          ? 0
+          : clamp((target - attitude(a).pitch) * 3 - a.wx * 0.6, -1, 1);
+    } else c.elev = this.look.held ? 0 : clamp(c.stick, -1, 1);
     return {
       elev: r2(c.elev),
       ail: r2(c.ail),
@@ -230,7 +260,14 @@ export class AircraftClient {
       return;
     }
     if (this.seat !== 0) return;
-    this.controls.stick = clamp(this.controls.stick - dy * sensitivity * 0.0045, -1, 1);
+    // A normal short drag must produce useful elevator travel at the default 0.5 sensitivity.
+    if (this.pitchHeld) {
+      this.pitchTarget = clamp(
+        this.pitchTarget - dy * sensitivity * 0.004,
+        -Math.PI / 12,
+        Math.PI / 15,
+      );
+    } else this.controls.stick = clamp(this.controls.stick - dy * sensitivity * 0.0045, -1, 1);
   }
 
   /** G: the flap lever's next notch (up → 10° → 30° → up). */

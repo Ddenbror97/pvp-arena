@@ -1503,6 +1503,13 @@ export function createBrArena(
       return;
     }
     if (e.code === "Tab" || e.code === binds.walk || e.code === "AltLeft") e.preventDefault();
+    if (
+      flight.seat === 0 &&
+      locked() &&
+      !inventoryOpen &&
+      (e.code === "ArrowUp" || e.code === "ArrowDown")
+    )
+      e.preventDefault();
     if (down && !keys.has(e.code)) {
       edges.add(e.code);
       // The hand changes at once (a click right after 4 throws, it never fires the gun).
@@ -1590,6 +1597,12 @@ export function createBrArena(
       e.preventDefault();
       return;
     }
+    if (flight.seat !== null) {
+      // In the cockpit LMB holds the pitch stick; it never latches the gun trigger.
+      if (button === 0) flight.holdPitch(true);
+      e.preventDefault();
+      return;
+    }
     if (nadeHand) {
       // Grenade in hand: the buttons throw (left overhand, right underhand, both medium).
       if (button === 0) nadeButtons.left = nadeButtons.tapLeft = true;
@@ -1614,6 +1627,7 @@ export function createBrArena(
   };
   const onUp = (e: MouseEvent) => {
     const button = buttonOf(e, false);
+    if (button === 0) flight.holdPitch(false);
     if (e.button === 0) ctrlClick = false;
     if (button === 2) canopyLook.release();
     if (button === 0) fireHeld = nadeButtons.left = false;
@@ -1682,6 +1696,7 @@ export function createBrArena(
     takeMouse();
   };
   const clearHeldControls = () => {
+    flight.holdPitch(false);
     canopyLook.release();
     keys.clear();
     edges.clear();
@@ -1907,6 +1922,8 @@ export function createBrArena(
                     rudderLeft: false,
                     rudderRight: false,
                     brake: false,
+                    pitchUp: false,
+                    pitchDown: false,
                   }
                 : {
                     throttleUp: keys.has(binds.forward),
@@ -1916,6 +1933,8 @@ export function createBrArena(
                     rudderLeft: keys.has(binds.dive),
                     rudderRight: keys.has(binds.reload),
                     brake: keys.has(binds.jump),
+                    pitchUp: keys.has("ArrowUp"),
+                    pitchDown: keys.has("ArrowDown"),
                   },
               TICK_MS / 1000,
             )
@@ -4720,6 +4739,7 @@ export function createBrArena(
       sensitivity = value;
     },
     setBinds(next) {
+      flight.holdPitch(false);
       binds = { ...next };
       keys.clear();
       edges.clear();
@@ -4744,6 +4764,7 @@ export function createBrArena(
       scenePresented = presented;
     },
     setInventoryOpen(open) {
+      if (open) flight.holdPitch(false);
       inventoryOpen = open;
       fireHeld = fireTapped = predictTap = aimHeld = false;
       if (open) {
