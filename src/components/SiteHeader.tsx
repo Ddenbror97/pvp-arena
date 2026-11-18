@@ -285,6 +285,17 @@ function InstagramMark() {
   );
 }
 
+function TikTokMark() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0">
+      <path
+        fill="currentColor"
+        d="M16.7 1h-3.4v14.8a3.2 3.2 0 1 1-2.8-3.2V9.1a6.7 6.7 0 1 0 6.3 6.7V8.1a8.3 8.3 0 0 0 4.9 1.6V6.3A5.2 5.2 0 0 1 16.7 1Z"
+      />
+    </svg>
+  );
+}
+
 export function SiteFooter({ className }: { className?: string }) {
   const qc = useQueryClient();
   const socialLink =
@@ -371,6 +382,15 @@ export function SiteFooter({ className }: { className?: string }) {
               >
                 <InstagramMark />
                 Instagram
+              </a>
+              <a
+                href="https://www.tiktok.com/@pvpspinarena?lang=en"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(socialLink, "bg-[#151515] ring-1 ring-white/20 hover:bg-[#292929]")}
+              >
+                <TikTokMark />
+                TikTok
               </a>
             </div>
           </div>
