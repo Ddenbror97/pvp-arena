@@ -63,10 +63,10 @@ function ResponsiblePage() {
         when you win some of them.
       </p>
       <p>
-        <Link to="/fps-duel">PvPStrike Practice</Link> is a free first-to-seven match against a bot
-        with no cash payout. Use it to try the controls without a stake. Beating the bot does not
-        predict results against human opponents. Pause between sessions and avoid chasing losses
-        with rematches or higher entries.
+        <Link to="/">PvPStrike Practice</Link> is a free first-to-seven match against a bot with no
+        cash payout. Use it to try the controls without a stake. Beating the bot does not predict
+        results against human opponents. Pause between sessions and avoid chasing losses with
+        rematches or higher entries.
       </p>
       <p>
         The <Link to="/terms">Terms</Link> explain the game rules and fees in more detail.

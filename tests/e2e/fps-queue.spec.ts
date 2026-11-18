@@ -31,7 +31,7 @@ test("a hosting human can warm up against a free bot and accept the human join i
     await p.locator("#password").fill(user.password);
     await p.locator("button[type=submit]").click();
     await expect.poll(() => p.url()).not.toContain("/auth");
-    await p.goto("/fps-duel");
+    await p.goto("/");
   }
   try {
     await cleanup();
@@ -42,7 +42,7 @@ test("a hosting human can warm up against a free bot and accept the human join i
     await page.getByLabel("I accept this entry", { exact: false }).check();
     await page.getByRole("button", { name: "Create game", exact: true }).click();
     await expect(page.getByText("Your human-only cash room is open.")).toBeVisible();
-    await expect(page).toHaveURL(/\/fps-duel$/);
+    await expect(page).toHaveURL("/");
     const cash = (
       await sql`select id from fps_matches where creator_id=${users[0].id} and status='WAITING'`
     )[0].id;

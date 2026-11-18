@@ -3,6 +3,6 @@ import { FpsLobbyPage } from "@/components/fps/FpsLobbyPage";
 import { fpsLobbyHead } from "@/lib/seo/fps-lobby";
 
 export const Route = createFileRoute("/")({
-  head: () => fpsLobbyHead(true),
+  head: () => fpsLobbyHead(),
   component: FpsLobbyPage,
 });

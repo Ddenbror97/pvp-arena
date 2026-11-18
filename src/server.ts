@@ -4,6 +4,7 @@ import { applyWorkerEnv } from "./lib/worker-env";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { canonicalHostRedirect, httpsRedirect, withSecurityHeaders } from "./lib/security-headers";
+import { fpsLobbyRedirect } from "./lib/seo/fps-lobby-redirect";
 import { retiredGuideResponse } from "./lib/guides/retired";
 
 type ServerEntry = {
@@ -53,7 +54,10 @@ function movedRedirect(request: Request): Response | null {
 
 async function handle(request: Request, env: unknown, ctx: unknown): Promise<Response> {
   const redirect =
-    canonicalHostRedirect(request) ?? httpsRedirect(request) ?? movedRedirect(request);
+    canonicalHostRedirect(request) ??
+    httpsRedirect(request) ??
+    fpsLobbyRedirect(request) ??
+    movedRedirect(request);
   if (redirect) return redirect;
   applyWorkerEnv(env);
   applyWorkerEnv(typeof process !== "undefined" ? process.env : undefined);

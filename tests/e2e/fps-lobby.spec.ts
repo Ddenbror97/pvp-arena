@@ -6,7 +6,7 @@ test("PvPStrike shows the supplied full-screen arena with separate creation and 
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/fps-duel");
+  await page.goto("/");
   await expect(page.getByRole("heading", { name: "PvPStrike", exact: true })).toBeVisible();
   const hero = page.locator(".strike-stage");
   await expect(hero.getByText("Server-validated hits", { exact: true })).toBeVisible();
@@ -94,10 +94,7 @@ test("signed-out direct Battle Royale route asks to sign in without requesting a
     "href",
     "/auth",
   );
-  await expect(page.getByRole("link", { name: "Back to PvPStrike" })).toHaveAttribute(
-    "href",
-    "/fps-duel",
-  );
+  await expect(page.getByRole("link", { name: "Back to PvPStrike" })).toHaveAttribute("href", "/");
   await expect(page.getByText("Admin preview", { exact: true })).toHaveCount(0);
   await expect(page.locator("canvas")).toHaveCount(0);
   expect(admissionRequests).toEqual([]);
@@ -131,7 +128,7 @@ for (const desktop of [true, false]) {
       }),
     );
     await page.route("**/rest/v1/rpc/fps_stats", (route) => route.fulfill({ json: [] }));
-    await page.goto("/fps-duel");
+    await page.goto("/");
     const solo = page.getByRole("button", { name: "Practice vs Bot", exact: true });
     const bomb = page.getByRole("link", { name: "Practice Defuse the Bomb", exact: true });
     if (desktop) {

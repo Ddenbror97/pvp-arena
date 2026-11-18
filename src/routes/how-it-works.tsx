@@ -260,7 +260,7 @@ function HowItWorksPage() {
           <GameTile
             icon={<Swords className="h-5 w-5" />}
             name="PvPStrike FPS"
-            to="/fps-duel"
+            to="/"
             tag="1v1 · Bomb Defusal · Battle Royale"
           >
             Human cash duels, free first-to-seven bot Practice, Bomb Defusal training and free
@@ -539,7 +539,7 @@ function HowItWorksPage() {
                 now alert when matched. Offline waiting rooms are cancelled and refunded.
               </li>
             </ol>
-            <SeoLink to="/fps-duel">Open PvPStrike and Practice</SeoLink>
+            <SeoLink to="/">Open PvPStrike and Practice</SeoLink>
             <SeoLink to="/fps-1v1">1v1 rules, fees and public results</SeoLink>
           </SeoCard>
           <div id="bomb-defusal" className="scroll-mt-24">
@@ -554,7 +554,7 @@ function HowItWorksPage() {
                 its own maps and rules, rather than a CS2 server.
               </p>
               <SeoLink to="/fps-bomb">Practice 5v5 Bomb Defusal</SeoLink>
-              <SeoLink to="/fps-duel">Compare PvPStrike modes</SeoLink>
+              <SeoLink to="/">Compare PvPStrike modes</SeoLink>
             </SeoCard>
           </div>
           <SeoCard icon={<Target className="h-5 w-5" />} title="Project Island Battle Royale">

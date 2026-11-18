@@ -101,7 +101,7 @@ For the broader FPS category, use [FPS games for money](/guides/fps-for-money-hu
 | Bomb Defusal Practice | No | Teams with bots filling seats; plant or defuse |
 | Cash 1v1 aim duel | Eligible accounts only | Human opponent; win the series under the published rules |
 
-The [PvPStrike lobby](/fps-duel) separates these modes. The cash entry and 5% pot fee described on our 1v1 product page belong to **1v1 duels**. Cash Battle Royale is coming soon, but its entry amounts, prizes, fee and launch date have not been announced. Those details will be published before cash entry opens; the 1v1 fee must not be assumed to apply to BR. Free BR results also cannot be presented as paid-match settlements.
+The [PvPStrike lobby](/) separates these modes. The cash entry and 5% pot fee described on our 1v1 product page belong to **1v1 duels**. Cash Battle Royale is coming soon, but its entry amounts, prizes, fee and launch date have not been announced. Those details will be published before cash entry opens; the 1v1 fee must not be assumed to apply to BR. Free BR results also cannot be presented as paid-match settlements.
 
 To see the format first, open [Project Island](/fps-br). It has a plane route, a parachute insertion, equipment to collect and a shrinking safe area. The room targets 100 total seats, with bots filling empty positions. A full room therefore does not prove that 100 humans joined. The [browser Battle Royale guide](/guides/browser-battle-royale) explains access and controls without assuming a wager.`,
       ],
@@ -174,7 +174,7 @@ If your actual goal is finding a game to play, start with [Battle Royale games b
     sources: [
       {
         label: "PVPspinArena: PvPStrike lobby and current modes",
-        url: "https://pvpspinarena.com/fps-duel",
+        url: "https://pvpspinarena.com/",
       },
       {
         label: "PVPspinArena: published cash 1v1 rules, distinct from BR",
@@ -255,7 +255,7 @@ Our [Battle Royale for money hub](/guides/battle-royale-for-money-hub) separates
       ],
       [
         "Project Island's actual browser format",
-        `Project Island is accessed through the [PvPStrike lobby](/fps-duel) or its [Battle Royale entry](/fps-br). It is our own game, not a PUBG client, Fortnite mode or Apex server. It uses desktop mouse-and-keyboard controls and a first-person 3D world, with a plane route and parachute insertion before on-foot survival.
+        `Project Island is accessed through the [PvPStrike lobby](/) or its [Battle Royale entry](/fps-br). It is our own game, not a PUBG client, Fortnite mode or Apex server. It uses desktop mouse-and-keyboard controls and a first-person 3D world, with a plane route and parachute insertion before on-foot survival.
 
 The room targets 100 total participants and fills empty seats with bots. That gives a different matchmaking experience from waiting for 100 humans; it is important if your priority is a human-only competitive field. The island has towns and other named locations, vehicles, equipment to collect and a gas-zone schedule. A configured full-zone schedule is not a promise that you will survive for the whole session.
 
@@ -346,7 +346,7 @@ For the full category rather than web access alone, see [Battle Royale games](/g
       ],
       [
         "Three starting points with different viewpoints",
-        `Project Island is a first-person 3D island on PVPspinArena. Enter through the [PvPStrike lobby](/fps-duel), choose Battle Royale and sign in when asked. The game prepares its map and equipment before showing the live room. Browser assets still have to arrive, so a first visit and a cached return can have different loading times.
+        `Project Island is a first-person 3D island on PVPspinArena. Enter through the [PvPStrike lobby](/), choose Battle Royale and sign in when asked. The game prepares its map and equipment before showing the live room. Browser assets still have to arrive, so a first visit and a cached return can have different loading times.
 
 ZombsRoyale's official site is a top-down 2D entry. Its published instructions describe keyboard movement, mouse firing and interaction with doors or loot. Suroi is another browser-based 2D survival game with its own controls and modes. Do not assume that a key binding or strategy from one transfers unchanged to the other.
 
@@ -618,7 +618,7 @@ On PVPspinArena, the [graphics guide](/fps-graphics-guide) helps identify which 
         "Project Island as an alternative, with the differences stated",
         `Project Island is our separate first-person Battle Royale in a desktop browser. It uses a plane route, parachute insertion, equipment collection, vehicles and a shrinking playable area. Its rooms target 100 total participants, with bots filling seats not taken by humans. Those are product facts, not a claim to reproduce PUBG's mechanics or human matchmaking population.
 
-Enter through the [PvPStrike lobby](/fps-duel) and choose Battle Royale. Use free play to test loading, mouse capture and movement. The current Project Island mode has no cash entry, no BR platform fee and no victory credit to withdraw.
+Enter through the [PvPStrike lobby](/) and choose Battle Royale. Use free play to test loading, mouse capture and movement. The current Project Island mode has no cash entry, no BR platform fee and no victory credit to withdraw.
 
 The plan for a browser session should therefore be explicit: play PUBG through a verified supported route, or choose a different browser game because that is the experience you want. Calling the alternative PUBG would give the wrong expectation about its weapons, map, recoil, accounts and competition rules.`,
       ],
@@ -662,7 +662,7 @@ Before using any new access route, verify the title and domain, check the requir
       { label: "PUBG: official game and current platform links", url: "https://www.pubg.com/" },
       {
         label: "PVPspinArena: independent PvPStrike game and modes",
-        url: "https://pvpspinarena.com/fps-duel",
+        url: "https://pvpspinarena.com/",
       },
     ],
     related: [

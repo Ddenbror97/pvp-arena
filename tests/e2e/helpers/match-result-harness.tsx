@@ -29,7 +29,7 @@ export function mountResult(host: Element, extra: Partial<MatchResultProps> = {}
             setBusy(true);
             document.body.dataset.replay = String(Number(document.body.dataset.replay ?? 0) + 1);
           }}
-          lobbyLink={<a href="/fps-duel">Back to lobby</a>}
+          lobbyLink={<a href="/">Back to lobby</a>}
           walletLink={<a href="/wallet">Open wallet</a>}
         />
       </div>

@@ -249,7 +249,7 @@ function RootComponent() {
   const poolLobby = pathname === "/8-ball-pool" || pathname === "/8-ball-pool/";
   const poolMatch = /^\/pool\/[^/]+\/?$/.test(pathname);
   const fpsMatch = /^\/fps\/[^/]+\/?$/.test(pathname) || /^\/fps-(bomb|br)\/?$/.test(pathname);
-  const fpsLobby = pathname === "/" || pathname === "/fps-duel" || pathname === "/fps-duel/";
+  const fpsLobby = pathname === "/";
   useLayoutEffect(() => {
     if (!slottLobby) return;
     const apply = () =>

@@ -51,7 +51,7 @@ test("solo Practice completes seven rounds, reconnects and starts again without 
     await page.locator("#password").fill(user.password);
     await page.locator("button[type=submit]").click();
     await expect.poll(() => page.url(), { timeout: 45000 }).not.toContain("/auth");
-    await page.goto("/fps-duel");
+    await page.goto("/");
     await expect(page.getByRole("button", { name: "Practice vs bot" })).toBeEnabled();
     await page.getByRole("button", { name: "Practice vs bot" }).click();
     await expect.poll(() => page.url()).toMatch(/\/fps\/[a-f0-9-]{36}/);

@@ -58,7 +58,7 @@ test("cold lobby holds its full-screen plate and controls while image and data a
   page,
 }, info) => {
   await observe(page);
-  await page.goto("/fps-duel");
+  await page.goto("/");
   await expect(page.getByRole("tab", { name: "Create game", exact: true })).toBeEnabled();
   await expect(page.locator(".strike-stage-room img")).toHaveJSProperty("naturalWidth", 1672);
   await page.waitForTimeout(2500);

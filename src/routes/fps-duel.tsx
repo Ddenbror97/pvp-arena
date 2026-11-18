@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { FpsLobbyPage } from "@/components/fps/FpsLobbyPage";
-import { fpsLobbyHead } from "@/lib/seo/fps-lobby";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
+/** Old bookmarks and cached clients go to the sole FPS lobby URL. */
 export const Route = createFileRoute("/fps-duel")({
-  head: () => fpsLobbyHead(false),
-  component: FpsLobbyPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/", search: true, hash: true, statusCode: 301, replace: true });
+  },
 });

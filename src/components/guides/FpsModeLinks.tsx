@@ -22,7 +22,7 @@ export function FpsModeLinks({ preferred = "duel" }: { preferred?: FpsMode }) {
           <p className="mt-2 text-sm text-muted-foreground">
             Practise against a bot or choose a cash duel.
           </p>
-          <Link to="/fps-duel" preload="intent" className={play}>
+          <Link to="/" preload="intent" className={play}>
             Open 1v1
           </Link>
           <div>

@@ -203,8 +203,8 @@ function TermsPage() {
       </p>
       <p>
         Review the <Link to="/fps-1v1">FPS rules and public results</Link>, or open the{" "}
-        <Link to="/fps-duel">PvPStrike lobby and free Practice</Link>. These FPS waiting and
-        disconnect rules are separate from the 8-ball rules above.
+        <Link to="/">PvPStrike lobby and free Practice</Link>. These FPS waiting and disconnect
+        rules are separate from the 8-ball rules above.
       </p>
 
       <h3>Roulette</h3>

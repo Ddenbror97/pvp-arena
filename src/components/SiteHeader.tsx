@@ -50,7 +50,7 @@ function warmStrikePages(router: AnyRouter, qc: QueryClient, userId: string | nu
   ).connection;
   if (connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType ?? "")) return;
   warmStrikeShowcase();
-  const route = (router.routesByPath as unknown as Record<string, unknown>)["/fps-duel"];
+  const route = (router.routesByPath as unknown as Record<string, unknown>)["/"];
   if (route) void router.loadRouteChunk(route as never)?.catch(() => {});
   void qc.prefetchQuery({
     queryKey: ["fps-lobby", userId],
@@ -225,7 +225,7 @@ export function SiteHeader({ className }: { className?: string }) {
 
 function DiscordMark() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5">
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0">
       <path
         fill="currentColor"
         d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.36-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02C2.44 9.42 1.69 13.38 2.06 17.3c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.08.22.17.33.25c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"
@@ -236,17 +236,59 @@ function DiscordMark() {
 
 function RedditMark() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-4 w-4 shrink-0"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m12 8 1-5 5 1" />
+      <circle cx="19.5" cy="4" r="1.5" />
+      <path d="M4 11a2 2 0 1 0-1 4m17-4a2 2 0 1 1 1 4" />
+      <ellipse cx="12" cy="14.5" rx="9" ry="6.5" />
+      <circle cx="8.5" cy="14" r="1" fill="currentColor" stroke="none" />
+      <circle cx="15.5" cy="14" r="1" fill="currentColor" stroke="none" />
+      <path d="M8.5 17.5c2 1.5 5 1.5 7 0" />
+    </svg>
+  );
+}
+
+function FacebookMark() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0">
       <path
         fill="currentColor"
-        d="M14.5 3.3a1.2 1.2 0 0 1 1.38.98l.22 1.24a4.4 4.4 0 0 1 2.28.86 2.25 2.25 0 1 1 1.5 3.98c0 .172.16.0.3 1.33 0 3.13-3.36 5.66-7.5 5.66S4.8 14.82 4.8 11.7c0-.46.06-.9.16-1.33a2.25 2.25 0 1 1 1.5-3.98 4.4 4.4 0 0 1 2.28-.86l.22-1.24A1.2 1.2 0 0 1 10.34 3l3.16.56a.3.3 0 0 1 .24.3l-.16.88 1.02-.18a.3.3 0 0 1 .3.24l.22 1.24a.3.3 0 0 1-.24.35l-1.06.19c.10.20.0.2.28.5.96 0 1.74.78 1.74 1.74S13.96 10.6 13 10.6s-1.74-.78-1.74-1.74c0-.3.08-.59.22-.83H12c-2.9 0-5.26 1.86-5.26 4.16S9.1 16.35 12 16.35s5.26-1.86 5.26-4.16c0-1.76-1.38-3.28-3.38-3.84l-.06-.34.68-.12ZM9.7 12.05a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Zm4.6 0a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Zm-4.42 3.2a.4.4 0 0 0-.1.55c.64.9 1.86 1.5 3.22 1.5s2.58-.6 3.22-1.5a.4.4 0 1 0-.64-.48c-.5.68-1.46 1.14-2.58 1.14s-2.08-.46-2.58-1.14a.4.4 0 0 0-.54-.07Z"
+        d="M13.8 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.5 1.6-1.5h1.7V4.1a21 21 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3v2.3H7.6v3.2h2.8V22z"
       />
+    </svg>
+  );
+}
+
+function InstagramMark() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-4 w-4 shrink-0"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
     </svg>
   );
 }
 
 export function SiteFooter({ className }: { className?: string }) {
   const qc = useQueryClient();
+  const socialLink =
+    "inline-flex min-h-9 items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
   const footerLink = "text-sm text-muted-foreground transition-colors hover:text-primary";
 
   return (
@@ -295,7 +337,7 @@ export function SiteFooter({ className }: { className?: string }) {
                 href="https://discord.gg/yKktkxB7jW"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#5865F2] px-2.5 py-1 text-xs font-semibold text-white transition-colors hover:bg-[#4752C4]"
+                className={cn(socialLink, "bg-[#5865F2] hover:bg-[#4752C4]")}
               >
                 <DiscordMark />
                 Join Discord
@@ -304,10 +346,31 @@ export function SiteFooter({ className }: { className?: string }) {
                 href="https://www.reddit.com/r/PvPSpinArena/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#FF4500] px-2.5 py-1 text-xs font-semibold text-white transition-colors hover:bg-[#E03D00]"
+                className={cn(socialLink, "bg-[#FF4500] hover:bg-[#E03D00]")}
               >
                 <RedditMark />
                 Join Reddit
+              </a>
+              <a
+                href="https://www.facebook.com/profile.php?id=61596384014389"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(socialLink, "bg-[#1877F2] hover:bg-[#1669D9]")}
+              >
+                <FacebookMark />
+                Facebook
+              </a>
+              <a
+                href="https://www.instagram.com/pvpspinarena/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  socialLink,
+                  "bg-gradient-to-r from-[#833AB4] via-[#C13584] to-[#E1306C] hover:brightness-110",
+                )}
+              >
+                <InstagramMark />
+                Instagram
               </a>
             </div>
           </div>

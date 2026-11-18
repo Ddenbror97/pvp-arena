@@ -9,7 +9,6 @@ export const GUIDE_SITE_PATHS = [
   "/poker",
   "/8-ball-pool",
   "/fps-1v1",
-  "/fps-duel",
   "/fps-bomb",
   "/fps-br",
   "/fps-graphics-guide",

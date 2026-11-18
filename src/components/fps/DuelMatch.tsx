@@ -648,7 +648,7 @@ export function DuelMatch({
         qc.setQueryData(["fps-view", r.id, userId], r);
       void qc.invalidateQueries({ queryKey: ["wallet"] });
       void qc.invalidateQueries({ queryKey: ["fps-lobby"] });
-      if (kind === "cancel") await navigate({ to: "/fps-duel" });
+      if (kind === "cancel") await navigate({ to: "/" });
       else
         await navigate({
           to: "/fps/$matchId",
@@ -1064,7 +1064,7 @@ export function DuelMatch({
           busy={busy}
           error={error}
           onPlayAgain={() => void perform("rematch")}
-          lobbyLink={<Link to="/fps-duel">Back to lobby</Link>}
+          lobbyLink={<Link to="/">Back to lobby</Link>}
           walletLink={<Link to="/wallet">Open wallet</Link>}
         />
       )}
@@ -1096,7 +1096,7 @@ export function DuelMatch({
                   This competitive mode requires a mouse and keyboard. Your wallet and other games
                   remain available on mobile.
                 </p>
-                <Link className="duel-primary" to="/fps-duel">
+                <Link className="duel-primary" to="/">
                   Back to lobby
                 </Link>
               </>
@@ -1152,7 +1152,7 @@ export function DuelMatch({
                   <br />
                   Both players confirm readiness before the first round.
                 </p>
-                <Link className="duel-secondary" to="/fps-duel">
+                <Link className="duel-secondary" to="/">
                   Browse or play free Practice while waiting
                 </Link>
                 {match?.private && (

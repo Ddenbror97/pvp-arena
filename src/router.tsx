@@ -25,7 +25,6 @@ const ONE_CLICK_AWAY = [
   "/slott",
   "/poker",
   "/8-ball-pool",
-  "/fps-duel",
   "/fairness",
   "/leaderboards",
   "/auth",
