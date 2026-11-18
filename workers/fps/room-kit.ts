@@ -103,6 +103,14 @@ export async function readAdmission(
  * that cannot be called at all says so (ENFORCEMENT_UNAVAILABLE, alerted by session-auth.ts).
  */
 export function admissionUnavailable(error: unknown) {
+  const code = (error as { code?: unknown } | null)?.code;
+  console.error(
+    JSON.stringify({
+      event: "fps_admission_check_failed",
+      kind: error instanceof EnforcementUnavailable ? "enforcement" : "session",
+      code: typeof code === "string" ? code.slice(0, 64) : "UNKNOWN",
+    }),
+  );
   return json(
     {
       error:
