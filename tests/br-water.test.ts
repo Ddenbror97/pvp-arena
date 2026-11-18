@@ -77,7 +77,7 @@ describe("battle royale water", () => {
     expect(f).toMatch(/if \(see > 0\.0\)/);
     expect(f).toMatch(/if \(waterDepth < 1\.1 && shoreNear > 0\.0 && vStill < 0\.5\)/);
     // (With the shore's depth bias for logarithmic depth: depth-bias.ts.)
-    expect(material.customProgramCacheKey()).toBe(`br-water-v8-depth|log-bias-${LOG_BIAS.water}`);
+    expect(material.customProgramCacheKey()).toBe(`br-water-v9-depth|log-bias-${LOG_BIAS.water}`);
   });
 
   // Owner, 2026-11-13: "in the parachute ... the edges of the water rivers is too white, looks

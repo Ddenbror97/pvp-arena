@@ -288,6 +288,10 @@ export function createWater(
             : `float groundAt(vec2 uv) { return -40.0; }`
         }
         float wHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        // How much of a wave layer of this cell size (m) a pixel covering foot m can show:
+        // all of it to a cell over 12 pixels, none under 4 (edge-on, a wave a few pixels tall
+        // still flipped the mirror from the bank to the sky in 1-pixel lines).
+        float wResolved(float cell, float foot) { return 1.0 - smoothstep(cell * 0.08, cell * 0.25, foot); }
         float wNoise(vec2 p) {
           vec2 i = floor(p), f = fract(p);
           vec2 u = f * f * (3.0 - 2.0 * f);
@@ -315,21 +319,27 @@ export function createWater(
           // swell (45 m) that still reads from 500 m up; lakes are calmer than the sea.
           wNear = 1.0 - smoothstep(150.0, 1200.0, wDist);
           float calm = mix(1.0, 0.55, vLake) * (1.0 - 0.85 * vStill);
+          // Each layer also fades as its cells shrink to a couple of pixels on screen (owner,
+          // 2026-11-18: "bright/white flicker on top of the water"): by distance alone they
+          // stayed in view edge-on, where from a swimmer's or a boat's height a pixel 100 m
+          // off covers 5–10 m of water along the view; there a ripple turned the mirror from
+          // the dark bank to the white sky and back from one pixel to the next, and crawled.
+          float wFoot = max(length(dFdx(vMapUv)), length(dFdy(vMapUv))) * ${WORLD_SIZE.toFixed(1)};
           vec2 q = vMapUv * 2600.0;
           if (wNear > 0.0) {
             vec2 q1 = q + uTime * vec2(0.42, 0.27);
-            wRipple = (wNoise(q1) - wNoise(q1 + vec2(0.37, 0.71))) * calm;
+            wRipple = (wNoise(q1) - wNoise(q1 + vec2(0.37, 0.71))) * calm * wResolved(3.85, wFoot);
           }
           // Wavelets at your feet (0.9 m cells, within 70 m): what the surface looks like
           // from the bank or swimming, where the larger waves are only a slow tilt.
           if (wDist < 70.0) {
             vec2 q0 = q * 4.3 + uTime * vec2(-0.9, 0.6);
-            wFine = (wNoise(q0) - wNoise(q0 + vec2(0.4, 0.6))) * calm * (1.0 - smoothstep(25.0, 70.0, wDist));
+            wFine = (wNoise(q0) - wNoise(q0 + vec2(0.4, 0.6))) * calm * (1.0 - smoothstep(25.0, 70.0, wDist)) * wResolved(0.9, wFoot);
           }
           vec2 q2 = q * 0.31 + uTime * vec2(-0.13, 0.19) + 5.0;
-          wChop = (wNoise(q2) - wNoise(q2 + vec2(0.6, -0.8))) * calm;
+          wChop = (wNoise(q2) - wNoise(q2 + vec2(0.6, -0.8))) * calm * wResolved(12.4, wFoot);
           vec2 q3 = q * 0.085 + uTime * vec2(0.05, 0.035) + 11.0;
-          wSwell = (wNoise(q3) - wNoise(q3 + vec2(0.5, 0.4))) * calm;
+          wSwell = (wNoise(q3) - wNoise(q3 + vec2(0.5, 0.4))) * calm * wResolved(45.0, wFoot);
           // The trains: a swell from the open sea, wind waves across it, short waves near.
           // Each fades out before its length is a couple of pixels (it would only shimmer),
           // and the noise above breaks their crests up so no two look alike. Inland water
@@ -341,11 +351,15 @@ export function createWater(
             float f2 = 1.0 - smoothstep(450.0, 1300.0, wDist);
             float f3 = 1.0 - smoothstep(160.0, 520.0, wDist);
             float f4 = 1.0 - smoothstep(60.0, 220.0, wDist);
+            f1 *= wResolved(41.0, wFoot);
+            f2 *= wResolved(23.0, wFoot);
+            f3 *= wResolved(9.7, wFoot);
+            f4 *= wResolved(4.1, wFoot);
             if (f1 > 0.0) wTrain(wp, vec2(0.8, 0.6), 41.0, 0.34 * f1 * sea);
             if (f2 > 0.0) wTrain(wp, vec2(0.35, 0.937), 23.0, 0.17 * f2 * mix(1.0, 0.35, vLake));
             if (f3 > 0.0) wTrain(wp, vec2(0.96, -0.28), 9.7, 0.075 * f3 * calm);
             if (f4 > 0.0) wTrain(wp, vec2(-0.287, 0.958), 4.1, 0.03 * f4 * calm);
-            float f5 = 1.0 - smoothstep(25.0, 90.0, wDist);
+            float f5 = (1.0 - smoothstep(25.0, 90.0, wDist)) * wResolved(1.7, wFoot);
             if (f5 > 0.0) wTrain(wp, vec2(0.6, 0.8), 1.7, 0.011 * f5 * calm);
           }
           // Depth (2026-11-12 references): turquoise over the shallows, teal, then deep blue
@@ -393,6 +407,11 @@ export function createWater(
           rip += vec3(wSwell * 0.07 + wChop * 0.03, 0.0, wSwell * 0.05 - wChop * 0.03) * (1.0 - 0.6 * wNear);
           // The trains' own slope (a height field's normal leans against its slope).
           rip -= vec3(wSlope.x - wFine * 0.1, 0.0, wSlope.y + wFine * 0.08);
+          // Seen nearly edge-on (a swimmer or a boat looking across a lake) a slope of a few
+          // per cent swings the mirror between the far bank and the sky; there the waves only
+          // break up the image, never flip it (owner, 2026-11-18: white speckle in the far band).
+          float wGraze = (cameraPosition.y - vWaterY) / max(wDist, 1.0);
+          rip *= mix(0.3, 1.0, smoothstep(0.006, 0.045, wGraze));
           normal = normalize(normal + (viewMatrix * vec4(rip, 0.0)).xyz);
         }`,
       )
@@ -421,9 +440,12 @@ export function createWater(
           skyImage = mix(skyImage, ${LAKE_BANK_GLSL}, bank * 0.8);
           float reflects = clamp(0.2 + fres - 0.2 * bottom, 0.0, 0.84) * (1.0 - 0.7 * film);
           // The clouds' image where the water is mirror enough to show it (two lookups).
-          if (reflects > 0.3 && mirror.y > 0.03) {
+          // (Eased in: switched on at a threshold, ripples flipped single pixels between the
+          // blue sky and a white cloud.)
+          float clouded = smoothstep(0.22, 0.34, reflects) * smoothstep(0.02, 0.06, mirror.y);
+          if (clouded > 0.0) {
             float cover = brCloudCover(brCloudDensity(brCloudAt(mirror), false), mirror);
-            skyImage = mix(skyImage, vec3(0.9, 0.91, 0.92), cover * 0.5);
+            skyImage = mix(skyImage, vec3(0.9, 0.91, 0.92), cover * 0.5 * clouded);
           }
           outgoingLight = mix(outgoingLight, skyImage * 0.94, reflects);
           // The sun's image (2026-11-12 references and checklist): a path of glitter under
@@ -494,7 +516,7 @@ export function createWater(
         }`,
       );
   };
-  material.customProgramCacheKey = () => `br-water-v8-${ground ? "depth" : "flat"}`;
+  material.customProgramCacheKey = () => `br-water-v9-${ground ? "depth" : "flat"}`;
   // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
   biasLogDepth(material, LOG_BIAS.water);
   const mesh = new THREE.Mesh(geometry, material);

@@ -6,6 +6,7 @@
  * with the new revision (its meshes are unchanged).
  *
  *   node art/blender/br/patch_collision.mjs art/br/collision-patch-v21.json
+ *   (spec: { base, version, revision?, models: { id: [{ replace, with, why } | { add, why }] } })
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -16,7 +17,10 @@ const manifest = JSON.parse(fs.readFileSync(path.join(dir, `models.${spec.base}.
 const collision = JSON.parse(
   fs.readFileSync(path.join(dir, `collision.${spec.base}.json`), "utf8"),
 );
-manifest.worldRevision = collision.worldRevision = `building-${spec.version}`;
+// `revision`: the world revision the files carry (world.ts WORLD_ASSETS.revision); without it
+// the older patches' building-<version>. A patch may write over its base (base = version) while
+// that revision is still unpublished.
+manifest.worldRevision = collision.worldRevision = spec.revision ?? `building-${spec.version}`;
 const same = (a, b) => a.length === b.length && a.every((v, i) => Math.abs(v - b[i]) < 0.0015);
 for (const [model, edits] of Object.entries(spec.models)) {
   const boxes = collision.models[model];

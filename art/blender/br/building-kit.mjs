@@ -12,6 +12,9 @@
  * Spec:
  *   w, d          outer size (m)
  *   floors        storeys (1..6), fh storey height (3.0), base plinth (0.15), wt walls (0.25)
+ *   plinthOut     how far the plinth stands proud of the walls (0: flush, as the older builds;
+ *                 flush, its sides lie in the walls' faces and the two fight for the bottom
+ *                 15 cm of every wall)
  *   wall          { m, tint } outer walls (material and colour), inner { m, tint } partitions
  *   floorM        floor finish material (wood), floorTint
  *   doors         [{ side: "front"|"back"|"left"|"right", at, w = 1.3, h = 2.3, floor = 0,
@@ -270,7 +273,8 @@ export function makeBuilding(S) {
     }
   }
   // Plinth and its finish.
-  k.box([-X, 0, -Z, X, base, Z], "concrete", S.plinthTint ?? [0.6, 0.6, 0.58]);
+  const po = S.plinthOut ?? 0;
+  k.box([-X - po, 0, -Z - po, X + po, base, Z + po], "concrete", S.plinthTint ?? [0.6, 0.6, 0.58]);
   k.box([IN.x0, base - 0.02, IN.z0, IN.x1, base + 0.005, IN.z1], finish(0).floor, finish(0).ft, {
     lod: 0,
     collide: false,
