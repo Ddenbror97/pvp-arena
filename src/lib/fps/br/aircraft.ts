@@ -73,23 +73,26 @@ export const AIRCRAFT = {
   /** Never-exceed speed (m/s): beyond it the airframe takes harm. */
   vne: 84,
   health: 1200,
-  /** The gear (body frame, m): main wheels left/right, the nose wheel; spring and damper. */
+  /**
+   * The gear (body frame, m, measured from the model: art/br/plane-c172.json): main wheels
+   * left/right, the nose wheel; spring and damper.
+   */
   wheels: [
-    { at: [-1.25, -1.1, 0.4], k: 70000, c: 7000, nose: false },
-    { at: [1.25, -1.1, 0.4], k: 70000, c: 7000, nose: false },
-    { at: [0, -1.1, -1.38], k: 45000, c: 4500, nose: true },
+    { at: [-1.2, -1.1, 0.3], k: 70000, c: 7000, nose: false },
+    { at: [1.2, -1.1, 0.3], k: 70000, c: 7000, nose: false },
+    { at: [0, -1.1, -1.44], k: 45000, c: 4500, nose: true },
   ] as const,
   /** Where the rest of it meets the world: nose, tail, wing tips, cabin roof, belly, fin. */
   hull: [
-    [0, -0.1, -2.6],
-    [0, 0.2, 5.5],
-    [-5.4, 0.85, 0.2],
-    [5.4, 0.85, 0.2],
+    [0, -0.1, -2.5],
+    [0, 0.2, 5.7],
+    [-5.45, 0.9, 0.9],
+    [5.45, 0.9, 0.9],
     [0, 1.05, -0.4],
     [0, -0.75, 0.2],
-    [0, 1.5, 5.6],
-    [-1.7, 0.1, 5.3],
-    [1.7, 0.1, 5.3],
+    [0, 1.55, 5.6],
+    [-1.55, 0.2, 5.1],
+    [1.55, 0.2, 5.1],
   ] as const,
   /** Touchdown sink rate (m/s): above `hard` the gear is hurt, above `crash` it gives way. */
   touchdown: { hard: 2.8, crash: 6 },
