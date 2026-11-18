@@ -21,11 +21,11 @@ export function rootHead(notFound: boolean, stylesheet: string) {
     );
   } else {
     meta.push(
-      { title: "FPS Duel: 1v1, 5v5 & Battle Royale | PVPspinArena" },
+      { title: "Free Browser FPS Game – 1v1, 5v5 & Battle Royale | PvPStrike" },
       {
         name: "description",
         content:
-          "Play PvPStrike browser FPS: 1v1 duels, 5v5 Bomb Defusal and Project Island Battle Royale. Practise free or enter cash 1v1 duels. No download needed.",
+          "Play PvPStrike, a free browser FPS featuring an action-packed Battle Royale with a massive island, plus 1v1 duels and 5v5 Bomb Defusal. No download needed.",
       },
     );
   }
