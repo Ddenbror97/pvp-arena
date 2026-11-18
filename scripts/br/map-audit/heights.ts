@@ -1,7 +1,7 @@
 /** Map audit helper: terrain heights along short lines (argv: "x0,z0,x1,z1" …). */
 import { readFileSync } from "node:fs";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
-const f = readFileSync("public/fps/br/height.v4.hf");
+const f = readFileSync("public/fps/br/height.v5.hf");
 const hf = await decodeHeightfield(f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength));
 for (const arg of process.argv.slice(2)) {
   const [x0, z0, x1, z1] = arg.split(",").map(Number) as [number, number, number, number];

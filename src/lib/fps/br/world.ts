@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "fort-v2",
+  revision: "roads-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -23,9 +23,13 @@ export const WORLD_ASSETS = {
   // height.v4, landcover.v3, world.v3 (2026-11-17, art/br/old_fortress.py): the Old Fortress's
   // hill (the ledge round its base, the ditch on the north and the bridgehead), the field of fire
   // cleared round it, and the POI.
-  height: "/fps/br/height.v4.hf",
-  landcover: "/fps/br/landcover.v3.lc",
-  meta: "/fps/br/world.v3.json",
+  // height.v5, landcover.v4, world.v4 (2026-11-18, art/br/polish_roads.py): the roads audited:
+  // hooks and spikes at the junctions gone, doubled roads and stubs to nowhere removed, roads
+  // short of a bridge joined to it, the quarry's haul roads onto the network, longer dead ends
+  // given a site; their ground eased smooth along them (bumps over 35 cm: 33 → 7).
+  height: "/fps/br/height.v5.hf",
+  landcover: "/fps/br/landcover.v4.lc",
+  meta: "/fps/br/world.v4.json",
   // sites-v1 (the facades-v1 manifest, its mid-distance LODs of 54 models on the facade atlas,
   // with the 2026-11-11 location models added by add_models.mjs; "sites" because a
   // locations-v1 revision already existed) with the works halls' fit-outs measured again and
@@ -140,8 +144,9 @@ export const WORLD_ASSETS = {
   // old buildings' do; the fortress's tower roofs, door reveals, floor undersides and the keep's
   // plinth; the towers' lift shaft open through their roofs (skyline-v4); coplanar faces that
   // only overlap at their edges lifted too (zfix-v11); the car parks' bay lines drawn near only.
-  models: "/fps/br/models/models.fort-v2.json",
-  collision: "/fps/br/models/collision.fort-v2.json",
+  // roads-v1: the fort-v2 models and collision on the polished roads (the same files).
+  models: "/fps/br/models/models.roads-v1.json",
+  collision: "/fps/br/models/collision.roads-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

@@ -19,9 +19,9 @@ const buffer = (path: string) => {
 };
 let hf: Heightfield, cover: LandCoverMap, meta: WorldMeta, world: VegetationWorld;
 beforeAll(async () => {
-  hf = await decodeHeightfield(buffer("public/fps/br/height.v4.hf"));
-  cover = await decodeLandCover(buffer("public/fps/br/landcover.v3.lc"));
-  meta = JSON.parse(readFileSync("public/fps/br/world.v3.json", "utf8")) as WorldMeta;
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v5.hf"));
+  cover = await decodeLandCover(buffer("public/fps/br/landcover.v4.lc"));
+  meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as WorldMeta;
   world = vegetationWorld(hf, cover, meta);
 });
 

@@ -18,7 +18,7 @@ const buffer = (path: string) => {
   const f = readFileSync(path);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const meta = JSON.parse(readFileSync("public/fps/br/world.v3.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
@@ -28,9 +28,9 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")) 
 let hf: Heightfield, world: StaticWorld, layout: Placement[];
 let roadGrade: ReturnType<typeof createRoadGrade>;
 beforeAll(async () => {
-  hf = await decodeHeightfield(buffer("public/fps/br/height.v4.hf"));
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v5.hf"));
   roadGrade = createRoadGrade(meta, (x, z) => hf.heightAt(x, z));
-  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v3.lc"));
+  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v4.lc"));
   ({ layout, solid: world } = buildIsland(hf, cover, meta, collision));
 }, 60_000);
 
@@ -169,11 +169,15 @@ describe("Project Island static world", () => {
           expect(h, `${p.model} relief buried`).toBeLessThan(20);
         } else {
           // On the terrain (cabins, farms, summits): never floating, buried at most a few metres
-          // on the uphill side. (Guardrails stand on the road's edge: on its surface.)
+          // on the uphill side. (Guardrails stand on the road's edge: on its surface; so does a
+          // car or a wreck whose middle is on a carriageway, layout.ts standOnRoads.)
+          const carriage = roadGrade.at(p.x, p.z, true, 0);
           const ground =
             p.model === "guardrail"
               ? (roadGrade.at(x!, z!) ?? hf.heightAt(x!, z!)) + ROAD_GRADE.lift
-              : hf.heightAt(x!, z!);
+              : carriage !== null && /car|truck|wreck|sedan|pickup|van|bus/.test(p.model)
+                ? Math.max(hf.heightAt(x!, z!), carriage + ROAD_GRADE.lift)
+                : hf.heightAt(x!, z!);
           const h = ground - p.y;
           expect(h, `${p.model} @${p.poi} floats`).toBeGreaterThan(-0.6);
           expect(h, `${p.model} @${p.poi} buried`).toBeLessThan(4);
