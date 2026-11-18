@@ -18,7 +18,7 @@ const buffer = (path: string) => {
   const f = readFileSync(path);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v3.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
@@ -28,9 +28,9 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")) 
 let hf: Heightfield, world: StaticWorld, layout: Placement[];
 let roadGrade: ReturnType<typeof createRoadGrade>;
 beforeAll(async () => {
-  hf = await decodeHeightfield(buffer("public/fps/br/height.v3.hf"));
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v4.hf"));
   roadGrade = createRoadGrade(meta, (x, z) => hf.heightAt(x, z));
-  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v2.lc"));
+  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v3.lc"));
   ({ layout, solid: world } = buildIsland(hf, cover, meta, collision));
 }, 60_000);
 
@@ -108,7 +108,19 @@ describe("Project Island static world", () => {
         [x0, z1],
         [x1, z1],
       ])
-        if (p.poi === "blackwater-moat" || p.poi === "blackwater-wall")
+        if (p.poi === "old-fortress") {
+          // The Old Fortress: its towers, gatehouse and bridge stand on the ledge (the pad), the
+          // walls, the keep and the courtyard's buildings on its base, its dressing on its floors
+          // and roofs (tests/br-fortress.test.ts walks them); nothing below the ledge, and what
+          // stands at the ledge's level stands on it. (The bridge spans the ditch from the ledge to
+          // the bridgehead, P + BASE.)
+          expect(p.y, `${p.model} @${p.poi}`).toBeGreaterThanOrEqual(poi.padHeight! - 0.01);
+          if (p.y < poi.padHeight! + 0.5 && p.model !== "fort-bridge")
+            expect(
+              Math.abs(hf.heightAt(x!, z!) - poi.padHeight!),
+              `${p.model} @${p.poi}`,
+            ).toBeLessThan(1.6);
+        } else if (p.poi === "blackwater-moat" || p.poi === "blackwater-wall")
           // Blackwater Prison's keep, its quay and bridges stand in the moat at the yard's level
           // (their walls go down to the moat's bed), the keep's rooms on its floors; the razor
           // wire on the wall's top.
@@ -263,7 +275,13 @@ describe("Project Island static world", () => {
           (big[j]!.model === "arena" && INSIDE_ARENA.has(big[i]!.model)) ||
           // Blackwater Prison's keep in its quay, the bridges over the moat, the courtyard's
           // barricades: one structure (build_blackwater.mjs).
-          (big[i]!.poi === "blackwater-moat" && big[j]!.poi === "blackwater-moat");
+          (big[i]!.poi === "blackwater-moat" && big[j]!.poi === "blackwater-moat") ||
+          // The Old Fortress's base, towers, walls, gatehouse and the ways in: one structure
+          // (build_fortress.mjs), its towers and walls standing into the base's outline.
+          (big[i]!.poi === "old-fortress" &&
+            big[j]!.poi === "old-fortress" &&
+            big[i]!.model.startsWith("fort-") &&
+            big[j]!.model.startsWith("fort-"));
         if (
           !apart &&
           !moored &&

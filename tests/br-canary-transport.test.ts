@@ -53,7 +53,7 @@ describe("canary transport safety boundaries", () => {
   });
 
   it("uses the same mask for real hidden players, preserves their audio rows, and reveals them after a peek", () => {
-    const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
+    const meta = JSON.parse(readFileSync("public/fps/br/world.v3.json", "utf8")) as WorldMeta;
     const state = createBrMatch(meta, 7, () => 0);
     state.phase = "active";
     for (const s of state.seats) {

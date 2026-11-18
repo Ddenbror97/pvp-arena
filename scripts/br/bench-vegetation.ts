@@ -15,9 +15,9 @@ const b = (p: string) => {
   const f = readFileSync(p);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const hf = await decodeHeightfield(b("public/fps/br/height.v3.hf"));
-const cover = await decodeLandCover(b("public/fps/br/landcover.v2.lc"));
-const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8"));
+const hf = await decodeHeightfield(b("public/fps/br/height.v4.hf"));
+const cover = await decodeLandCover(b("public/fps/br/landcover.v3.lc"));
+const meta = JSON.parse(readFileSync("public/fps/br/world.v3.json", "utf8"));
 const veg = createVegetation(vegetationWorld(hf, cover, meta));
 const cam = new THREE.PerspectiveCamera(70, 16 / 9, 0.5, 14000);
 const speed = Number(process.argv[2] ?? 6),

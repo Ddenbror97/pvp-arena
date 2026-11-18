@@ -18,7 +18,11 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { createTexturedKit, publishTextured } from "./textured-kit.mjs";
 
-const TAG = "ruins-v1";
+// ruins-v2 (2026-11-18): the pyramid (its tier mouldings a ring, not a slab across the inner
+// stair) and the stairs' balustrades closed at their tops (pyramid, temples A and B, acropolis):
+// TAG=ruins-v2 node build_ruins.mjs ruin-pyramid ruin-temple-a ruin-temple-b ruin-acropolis.
+// The other models keep ruins-v1.
+const TAG = process.env.TAG ?? "ruins-v1";
 const only = process.argv.slice(2);
 const PLAN = "src/lib/fps/br/location-buildings.json";
 const plan = JSON.parse(fs.readFileSync(PLAN, "utf8"));
@@ -172,26 +176,35 @@ function kit(mid = "solid") {
   };
   /** A floor of flagstones (drawn, a thin collision slab under it). */
   const floor = (x0, z0, x1, z1, y = 0.04) => {
-    k.quad([x0, y, z0], [x0, y, z1], [x1, y, z1], [x1, y, z0], FLAG, WHITE, { n: [0, 1, 0], lod: 0 });
+    k.quad([x0, y, z0], [x0, y, z1], [x1, y, z1], [x1, y, z0], FLAG, WHITE, {
+      n: [0, 1, 0],
+      lod: 0,
+    });
     k.box([x0, y - 0.3, z0, x1, y, z1], STONE, WHITE, { visible: false });
   };
   /**
    * A straight stair of solid steps (each from `base` up to its tread), along +z or −z (dir),
    * x0..x1 wide, from z `a` rising `rise` with risers `r` and treads `t`. Returns its end.
    */
-  const stair = (x0, x1, a, dir, y, rise, { r = 0.25, t = 0.3, base = 0, m = STONE, lod = 1 } = {}) => {
+  const stair = (
+    x0,
+    x1,
+    a,
+    dir,
+    y,
+    rise,
+    { r = 0.25, t = 0.3, base = 0, m = STONE, lod = 1 } = {},
+  ) => {
     const n = Math.round(rise / r);
     const rr = rise / n;
     for (let s = 0; s < n; s++) {
       const za = a + dir * s * t,
         zb = a + dir * (s + 1) * t;
       const top = y + (s + 1) * rr;
-      k.box(
-        [x0, base, Math.min(za, zb), x1, top, Math.max(za, zb)],
-        m,
-        WHITE,
-        { lod, ...(base <= 0.001 ? { skip: ["bottom"] } : {}) },
-      );
+      k.box([x0, base, Math.min(za, zb), x1, top, Math.max(za, zb)], m, WHITE, {
+        lod,
+        ...(base <= 0.001 ? { skip: ["bottom"] } : {}),
+      });
     }
     return a + dir * n * t;
   };
@@ -228,6 +241,12 @@ function kit(mid = "solid") {
     });
     k.quad([x0, 0, zFoot], [x1, 0, zFoot], [x1, A[1], zFoot], [x0, A[1], zFoot], STONE, WHITE, {
       n: [0, 0, Math.sign(zFoot - zTop)],
+    });
+    // Its top end, facing the platform (owner, 2026-11-18: "a temple top of the stair a wall on
+    // the side of the stairs" looked invisible and not completed: without it the balustrade was
+    // open at the top, hollow, and from the platform one saw through its sides).
+    k.quad([x0, 0, zTop], [x1, 0, zTop], [x1, B[1], zTop], [x0, B[1], zTop], STONE, WHITE, {
+      n: [0, 0, Math.sign(zTop - zFoot)],
     });
     const n = Math.max(1, Math.ceil(Math.abs(zTop - zFoot) / 0.6));
     for (let s = 0; s < n; s++) {
@@ -370,16 +389,21 @@ const publish = async (id, K, entry, foot) => {
       [-h, crown, -h, h, (t + 1) * TH, h],
       [...cuts, ...erode(h, crown, (t + 1) * TH, 100 + t, t < TIERS - 1 ? 4 : 2, [[-5.7, 5.7, 1]])],
     );
-    // A projecting moulding along each tier's top edge.
-    K.k.box(
-      [-h - 0.12, (t + 1) * TH - 0.35, -h - 0.12, h + 0.12, (t + 1) * TH - 0.05, h + 0.12],
-      STONE,
-      WHITE,
-      {
-        collide: false,
-        skip: ["top"],
-      },
-    );
+    // A projecting moulding along each tier's top edge: a ring round the edge (owner,
+    // 2026-11-18: "inside the temple the stairs have a wall so it looks like there is no more
+    // stairs": drawn as one slab over the whole tier, it crossed the inner stair's shaft and the
+    // chamber at every tier's top).
+    const y0 = (t + 1) * TH - 0.35,
+      y1 = (t + 1) * TH - 0.05,
+      o = h + 0.12,
+      w = 0.6;
+    for (const b of [
+      [-o, y0, -o, o, y1, -h + w],
+      [-o, y0, h - w, o, y1, o],
+      [-o, y0, -h + w, -h + w, y1, h - w],
+      [h - w, y0, -h + w, o, y1, h - w],
+    ])
+      K.k.box(b, STONE, WHITE, { collide: false, skip: ["top"] });
   }
   floor(-B0, -0.9, B0, 0.9);
   floor(-4, -4, 4, 4);
@@ -747,7 +771,10 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
       wz = below ? -1.7 : 1.7 - runB;
     for (const p of s === 0
       ? [[-X + W, 0, -X + W, X - W, 1, X - W]]
-      : carve([-X + W, 0, -X + W, X - W, 1, X - W], [[wx, -1, wz - 0.01, wx + 1.3, 2, wz + runB + 0.01]]))
+      : carve(
+          [-X + W, 0, -X + W, X - W, 1, X - W],
+          [[wx, -1, wz - 0.01, wx + 1.3, 2, wz + runB + 0.01]],
+        ))
       floor(p[0], p[2], p[3], p[5], y0 + 0.04);
     const even = s % 2 === 0;
     const run = Math.round(S / 0.25) * 0.3;
@@ -1148,7 +1175,14 @@ for (const [id, len, h, seed, corner] of [
     const P = (u, w) => (s === 0 ? [u, w] : s === 1 ? [w, -u] : s === 2 ? [-u, -w] : [-w, u]);
     const a = P(u0, w0),
       c = P(u1, w1);
-    return [Math.min(a[0], c[0]), y0, Math.min(a[1], c[1]), Math.max(a[0], c[0]), y1, Math.max(a[1], c[1])];
+    return [
+      Math.min(a[0], c[0]),
+      y0,
+      Math.min(a[1], c[1]),
+      Math.max(a[0], c[0]),
+      y1,
+      Math.max(a[1], c[1]),
+    ];
   };
   const all = (b) => [0, 1, 2, 3].map((s) => side(b, s));
   // Outer enclosure.
@@ -1175,7 +1209,8 @@ for (const [id, len, h, seed, corner] of [
   ])
     cuts.push(...all([-(OA - 0.6), y, OA - OW + 0.6 + i, OA - 0.6, y + 0.35, OA - 0.6 - i]));
   for (let u = -OA + 4; u <= OA - 4; u += 4)
-    if (Math.abs(u) > 7) cuts.push(...all([u - 1.1, 0, OA - OW - 0.1, u + 1.1, 2.6, OA - OW + 0.7]));
+    if (Math.abs(u) > 7)
+      cuts.push(...all([u - 1.1, 0, OA - OW - 0.1, u + 1.1, 2.6, OA - OW + 0.7]));
   for (let u = -OA + 6; u <= OA - 6; u += 6)
     if (Math.abs(u) > 8) cuts.push(...all([u - 0.5, 1.1, OA - 0.7, u + 0.5, 2.1, OA + 0.1]));
   // The inner gallery on its terrace, the same way.
@@ -1187,9 +1222,11 @@ for (const [id, len, h, seed, corner] of [
   ])
     cuts.push(...all([-(IA - 0.6), y, IA - IW + 0.6 + i, IA - 0.6, y + 0.35, IA - 0.6 - i]));
   for (let u = -IA + 4; u <= IA - 4; u += 4)
-    if (Math.abs(u) > 6) cuts.push(...all([u - 1.0, TH, IA - IW - 0.1, u + 1.0, TH + 2.5, IA - IW + 0.7]));
+    if (Math.abs(u) > 6)
+      cuts.push(...all([u - 1.0, TH, IA - IW - 0.1, u + 1.0, TH + 2.5, IA - IW + 0.7]));
   for (let u = -IA + 5; u <= IA - 5; u += 5)
-    if (Math.abs(u) > 6) cuts.push(...all([u - 0.45, TH + 1.1, IA - 0.7, u + 0.45, TH + 2.0, IA + 0.1]));
+    if (Math.abs(u) > 6)
+      cuts.push(...all([u - 0.45, TH + 1.1, IA - 0.7, u + 0.45, TH + 2.0, IA + 0.1]));
   // Gate passages through both galleries (and the gate towers over them).
   cuts.push(...all([-1.6, 0, OA - OW - 4, 1.6, 3.4, OA + 4]));
   cuts.push(...all([-1.2, 0.2, OA - OW - 4, 1.2, 3.9, OA + 4]));
@@ -1197,11 +1234,15 @@ for (const [id, len, h, seed, corner] of [
   // The inner roof's walk goes on through each inner gate tower (a passage at roof level).
   cuts.push(...all([-5.2, IR, IA - IW + 0.8, 5.2, IR + 2.4, IA - 0.8]));
   // …and on the east and west it opens onto the bridges over to the platform.
-  for (const s of [1, 3]) cuts.push(side([-1.6, IR, IA - IW - 0.3, 1.6, IR + 2.4, IA - IW + 1.0], s));
+  for (const s of [1, 3])
+    cuts.push(side([-1.6, IR, IA - IW - 0.3, 1.6, IR + 2.4, IA - IW + 1.0], s));
   // The outer roof's walk goes on through the outer gate towers.
   cuts.push(...all([-7.2, OR, OA - OW + 0.6, 7.2, OR + 2.4, OA - 0.6]));
   // The fallen stretch: the outer gallery's roof gone along the north-east, its wall broken.
-  const fallen = [side([8, 3.3, OA - OW - 0.1, 24, OR + 6, OA + 0.1], 1), side([12, 1.8, OA - 0.7, 17, OR + 1, OA + 0.1], 1)];
+  const fallen = [
+    side([8, 3.3, OA - OW - 0.1, 24, OR + 6, OA + 0.1], 1),
+    side([12, 1.8, OA - 0.7, 17, OR + 1, OA + 0.1], 1),
+  ];
   // The galleries' masses: each side's strip runs past one corner and stops short of the
   // other (a pinwheel), so the corners are built once.
   const ring = (a, w, y0, y1, extra) => {
@@ -1227,8 +1268,14 @@ for (const [id, len, h, seed, corner] of [
   // Gate towers: outer (taller, over the passage, side rooms) and inner.
   for (let s = 0; s < 4; s++) {
     const g = [-7, 0, OA - 7, 7, 8.4, OA + 3];
-    const rooms = [side([-6.2, 0, OA - 6.2, -2.4, 3.2, OA + 2.2], s), side([2.4, 0, OA - 6.2, 6.2, 3.2, OA + 2.2], s)];
-    const doors = [side([-2.5, 0, OA - 3, -1.5, 2.4, OA - 1.8], s), side([1.5, 0, OA - 3, 2.5, 2.4, OA - 1.8], s)];
+    const rooms = [
+      side([-6.2, 0, OA - 6.2, -2.4, 3.2, OA + 2.2], s),
+      side([2.4, 0, OA - 6.2, 6.2, 3.2, OA + 2.2], s),
+    ];
+    const doors = [
+      side([-2.5, 0, OA - 3, -1.5, 2.4, OA - 1.8], s),
+      side([1.5, 0, OA - 3, 2.5, 2.4, OA - 1.8], s),
+    ];
     mass(side(g, s), [...cuts, ...rooms, ...doors]);
     const t = side([-7, 6.8, OA - 7, 7, 7.8, OA + 3], s);
     frieze(t[0], t[2], t[3], t[5], 6.8, 7.8);
@@ -1241,29 +1288,59 @@ for (const [id, len, h, seed, corner] of [
     // The inner gate tower.
     mass(side([-5, TH, IA - IW, 5, TH + 6.6, IA + 1], s), [...cuts]);
     for (let i = 0; i < 2; i++)
-      mass(side([-3.6 + i * 1.2, TH + 6.6 + i * 1.6, IA - 3.5 + i * 0.8, 3.6 - i * 1.2, TH + 8.2 + i * 1.6, IA - 0.5 - i * 0.8], s), []);
+      mass(
+        side(
+          [
+            -3.6 + i * 1.2,
+            TH + 6.6 + i * 1.6,
+            IA - 3.5 + i * 0.8,
+            3.6 - i * 1.2,
+            TH + 8.2 + i * 1.6,
+            IA - 0.5 - i * 0.8,
+          ],
+          s,
+        ),
+        [],
+      );
     // Stairs from the outer court onto the terrace at the inner gate.
     for (let k2 = 0; k2 < 8; k2++) {
       const w1 = IT + 2.4 - k2 * 0.3;
-      k.box(side([-2.4, 0, w1 - 0.3, 2.4, (k2 + 1) * 0.3, w1], s), STONE, WHITE, { skip: ["bottom"] });
+      k.box(side([-2.4, 0, w1 - 0.3, 2.4, (k2 + 1) * 0.3, w1], s), STONE, WHITE, {
+        skip: ["bottom"],
+      });
     }
     // Stairs up onto the outer gallery's roof (in the outer court, against its wall) and onto
     // the inner gallery's roof (in the inner court).
     for (let k2 = 0; k2 < Math.round(OR / 0.25); k2++) {
       const u0 = 9 + k2 * 0.3;
-      k.box(side([u0, 0, OA - OW - 1.6, u0 + 0.3, (k2 + 1) * (OR / Math.round(OR / 0.25)), OA - OW], s), STONE, WHITE, { skip: ["bottom"] });
+      k.box(
+        side([u0, 0, OA - OW - 1.6, u0 + 0.3, (k2 + 1) * (OR / Math.round(OR / 0.25)), OA - OW], s),
+        STONE,
+        WHITE,
+        { skip: ["bottom"] },
+      );
     }
     const ir = IR - TH;
     for (let k2 = 0; k2 < Math.round(ir / 0.25); k2++) {
       const u0 = -8 - k2 * 0.3;
-      k.box(side([u0 - 0.3, TH, IA - IW - 1.6, u0, TH + (k2 + 1) * (ir / Math.round(ir / 0.25)), IA - IW], s), STONE, WHITE);
+      k.box(
+        side(
+          [u0 - 0.3, TH, IA - IW - 1.6, u0, TH + (k2 + 1) * (ir / Math.round(ir / 0.25)), IA - IW],
+          s,
+        ),
+        STONE,
+        WHITE,
+      );
     }
   }
   // The central platform: three tiers, stairs up from the inner court north and south,
   // bridges from the inner gallery's roof east and west; the crypt inside with tunnels in from
   // the east and west.
   const crypt = vault(-4, -4, 4, 4, TH, TH + 2.6, { steps: 3, ci: 0.6, cr: 0.4 });
-  const tunnels = [side([-0.8, TH, 3.9, 0.8, TH + 2.3, 11.6], 1), side([-0.8, TH, 3.9, 0.8, TH + 2.3, 11.6], 3)];
+  const tunnels = [
+    side([-0.8, TH, 3.9, 0.8, TH + 2.3, 11.6], 1),
+    side([-0.8, TH, 3.9, 0.8, TH + 2.3, 11.6], 3),
+  ];
   for (let t = 0; t < 3; t++) {
     const h = CT[t];
     mass([-h, TH + t * 1.6, -h, h, TH + (t + 1) * 1.6, h], [...crypt, ...tunnels]);
@@ -1276,8 +1353,10 @@ for (const [id, len, h, seed, corner] of [
     }
   for (const s of [1, 3]) {
     k.box(side([-1.6, CY - 0.35, CT[2] - 0.2, 1.6, CY - 0.05, IA - IW + 0.1], s), STONE, WHITE);
-    for (const w of [12.5, 15.2]) k.box(side([-1.2, TH, w - 0.4, -0.6, CY - 0.35, w + 0.4], s), STONE, WHITE);
-    for (const w of [12.5, 15.2]) k.box(side([0.6, TH, w - 0.4, 1.2, CY - 0.35, w + 0.4], s), STONE, WHITE);
+    for (const w of [12.5, 15.2])
+      k.box(side([-1.2, TH, w - 0.4, -0.6, CY - 0.35, w + 0.4], s), STONE, WHITE);
+    for (const w of [12.5, 15.2])
+      k.box(side([0.6, TH, w - 0.4, 1.2, CY - 0.35, w + 0.4], s), STONE, WHITE);
   }
   // The tower: a chamber (doors south, north and east, the stair up the west wall and along the
   // south), the lookout room in its crown with a window on every side.
@@ -1295,12 +1374,15 @@ for (const [id, len, h, seed, corner] of [
     // The lookout room.
     [-2.9, BODY, -2.9, 2.9, BODY + TT - 0.4, 2.9],
   ];
-  for (const s of [0, 1, 2, 3]) towerCuts.push(side([-0.5, BODY + 0.5, 2.7, 0.5, BODY + 1.8, 3.8], s));
+  for (const s of [0, 1, 2, 3])
+    towerCuts.push(side([-0.5, BODY + 0.5, 2.7, 0.5, BODY + 1.8, 3.8], s));
   mass([-TX, CY, -TX, TX, BODY, TX], towerCuts, { top: STONE });
   frieze(-TX, -TX, TX, TX, BODY - 1.1, BODY - 0.2);
   for (let i = 0; i < 4; i++) {
     const h = TX - 0.8 * (i + 1);
-    mass([-h, BODY + i * TT, -h, h, BODY + (i + 1) * TT, h], i === 0 ? towerCuts : [], { top: i === 3 ? MOSS : STONE });
+    mass([-h, BODY + i * TT, -h, h, BODY + (i + 1) * TT, h], i === 0 ? towerCuts : [], {
+      top: i === 3 ? MOSS : STONE,
+    });
   }
   floor(-3.5, -3.5, 3.5, 3.5, CY + 0.04);
   // The stair: up the west wall (north to south… along +z), a landing in the corner, along the
@@ -1354,9 +1436,14 @@ function arcadeHouse({ bays, storeys, seed }) {
   // The plinth and its steps along the front.
   mass([-X - 0.4, 0, Z0 - 0.4, X + 0.4, P, Z1 + 0.4], [], { top: STONE });
   for (let i = 0; i < 3; i++)
-    k.box([-X + 1, 0, Z1 + 0.4 + (2 - i) * 0.35, X - 1, (i + 1) * 0.3, Z1 + 0.4 + (3 - i) * 0.35], STONE, WHITE, {
-      skip: ["bottom"],
-    });
+    k.box(
+      [-X + 1, 0, Z1 + 0.4 + (2 - i) * 0.35, X - 1, (i + 1) * 0.3, Z1 + 0.4 + (3 - i) * 0.35],
+      STONE,
+      WHITE,
+      {
+        skip: ["bottom"],
+      },
+    );
   const cuts = [];
   const rooms = Math.max(2, Math.round(bays / 2));
   const rw = (2 * (X - W) - (rooms - 1) * 0.4) / rooms;
@@ -1385,7 +1472,8 @@ function arcadeHouse({ bays, storeys, seed }) {
     sx0 = ex1 - 1.3;
   const run = Math.round(SH / 0.25) * 0.3;
   const s0 = 1.0;
-  if (storeys === 2) cuts.push([sx0, P + SH - 0.4, s0 - run - 0.01, ex1, P + SH + 0.1, s0 - run + 3.6]);
+  if (storeys === 2)
+    cuts.push([sx0, P + SH - 0.4, s0 - run - 0.01, ex1, P + SH + 0.1, s0 - run + 3.6]);
   // The roof: gone upstairs (two storeys: the walls end raggedly), flat over one.
   const ragged = storeys === 2 ? erode(X, top - 1.6, top, seed, 5) : [];
   mass([-X, P, Z0, X, top, Z1], [...cuts, ...ragged]);
@@ -1393,12 +1481,28 @@ function arcadeHouse({ bays, storeys, seed }) {
     // The upper floor's open sky: no roof slab (the top storey's rooms were cut to y1).
     // A pediment over the middle bays (a triangle on the front wall).
     const pw = Math.min(X - 1, BAY * 1.6);
-    k.quad([-pw, top - 0.3, Z1 + 0.02], [pw, top - 0.3, Z1 + 0.02], [0, top + 1.8, Z1 + 0.02], [0, top + 1.8, Z1 + 0.02], GLYPH, WHITE, {
-      n: [0, 0, 1],
-    });
-    k.quad([-pw, top - 0.3, Z1 - W - 0.02], [pw, top - 0.3, Z1 - W - 0.02], [0, top + 1.8, Z1 - W - 0.02], [0, top + 1.8, Z1 - W - 0.02], STONE, WHITE, {
-      n: [0, 0, -1],
-    });
+    k.quad(
+      [-pw, top - 0.3, Z1 + 0.02],
+      [pw, top - 0.3, Z1 + 0.02],
+      [0, top + 1.8, Z1 + 0.02],
+      [0, top + 1.8, Z1 + 0.02],
+      GLYPH,
+      WHITE,
+      {
+        n: [0, 0, 1],
+      },
+    );
+    k.quad(
+      [-pw, top - 0.3, Z1 - W - 0.02],
+      [pw, top - 0.3, Z1 - W - 0.02],
+      [0, top + 1.8, Z1 - W - 0.02],
+      [0, top + 1.8, Z1 - W - 0.02],
+      STONE,
+      WHITE,
+      {
+        n: [0, 0, -1],
+      },
+    );
     // The upper floor (the slab between the storeys) with the stair's well.
     stair(sx0, ex1, s0, -1, P, SH, { r: 0.25, t: 0.3, base: P, lod: 0 });
   } else {
@@ -1465,9 +1569,14 @@ for (const [id, w, d, two, seed] of [
     H = 3.2;
   K.mass([-X - 0.5, 0, -Z - 0.5, X + 0.5, P, Z + 0.5], [], { top: STONE });
   for (let i = 0; i < 2; i++)
-    K.k.box([-1.2, 0, Z + 0.5 + (1 - i) * 0.3, 1.2, (i + 1) * 0.2, Z + 0.5 + (2 - i) * 0.3], STONE, WHITE, {
-      skip: ["bottom"],
-    });
+    K.k.box(
+      [-1.2, 0, Z + 0.5 + (1 - i) * 0.3, 1.2, (i + 1) * 0.2, Z + 0.5 + (2 - i) * 0.3],
+      STONE,
+      WHITE,
+      {
+        skip: ["bottom"],
+      },
+    );
   const cuts = [[-X + 0.6, P, -Z + 0.6, X - 0.6, P + H + 1, Z - 0.6]];
   cuts.push([-0.6, P, Z - 0.7, 0.6, P + 2.3, Z + 0.1]);
   cuts.push([X - 0.7, P + 1.0, -0.5, X + 0.1, P + 2.0, 0.5]);
@@ -1503,9 +1612,14 @@ for (const [id, w, d, two, seed] of [
     X = 3.2;
   K.mass([-4.2, 0, -4.2, 4.2, B, 4.2], [], { top: MOSS });
   for (let i = 0; i < 4; i++)
-    K.k.box([-1.2, 0, 4.2 + (3 - i) * 0.3, 1.2, ((i + 1) * B) / 4, 4.2 + (4 - i) * 0.3], STONE, WHITE, {
-      skip: ["bottom"],
-    });
+    K.k.box(
+      [-1.2, 0, 4.2 + (3 - i) * 0.3, 1.2, ((i + 1) * B) / 4, 4.2 + (4 - i) * 0.3],
+      STONE,
+      WHITE,
+      {
+        skip: ["bottom"],
+      },
+    );
   const room = [
     [-2.2, B, -2.2, 2.2, B + 3.2, 2.2],
     [-1.8, B + 3.2, -1.8, 1.8, B + 3.7, 1.8],
@@ -1516,7 +1630,9 @@ for (const [id, w, d, two, seed] of [
   K.frieze(-X, -X, X, X, B + 4.1, B + 4.9);
   for (let i = 0; i < 3; i++) {
     const h = X - 0.7 * (i + 1);
-    K.mass([-h, B + 5 + i * 1.5, -h, h, B + 5 + (i + 1) * 1.5, h], [], { top: i === 2 ? MOSS : STONE });
+    K.mass([-h, B + 5 + i * 1.5, -h, h, B + 5 + (i + 1) * 1.5, h], [], {
+      top: i === 2 ? MOSS : STONE,
+    });
   }
   K.floor(-2.2, -2.2, 2.2, 2.2, B + 0.04);
   await publish(

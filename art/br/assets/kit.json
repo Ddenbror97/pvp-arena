@@ -9599,6 +9599,864 @@
       },
       "collision": "none",
       "use": "East Works (2026-11-17): a valve wheel on the pipes"
+    },
+    {
+      "id": "battering-ram",
+      "key": "sf:55c6a09f8d394661abb83d428bd997e4",
+      "class": "prop",
+      "fit": {
+        "max": 6.5
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a battering ram on its wheeled frame before the gate and at the breach",
+      "lodTris": [
+        1940,
+        900,
+        300
+      ]
+    },
+    {
+      "id": "kings-throne",
+      "key": "sf:fed880724d3a4caeb7695654b1740b71",
+      "class": "prop",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): the king's throne in the keep's great chamber",
+      "lodTris": [
+        6600,
+        1800,
+        500
+      ],
+      "ring": "furniture"
+    },
+    {
+      "id": "throne",
+      "key": "sf:bfc6d2989bb0411d9572733d35c3e6d1",
+      "class": "small",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): the lord's chair on the great hall's dais",
+      "lodTris": [
+        2500,
+        900,
+        300
+      ],
+      "ring": "furniture"
+    },
+    {
+      "id": "cannon",
+      "key": "sf:e954129fa8a1452786ce829930b3992d",
+      "class": "prop",
+      "fit": {
+        "max": 2.3
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): bronze cannon on its carriage, on the towers' roofs",
+      "lodTris": [
+        2500,
+        900,
+        300
+      ]
+    },
+    {
+      "id": "cannon-b",
+      "key": "sf:838fe97c38e84d98a730629cc86015a8",
+      "class": "prop",
+      "fit": {
+        "max": 2.6
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): iron cannon on a wheeled carriage, on the gatehouse roof and the keep",
+      "lodTris": [
+        2500,
+        900,
+        300
+      ]
+    },
+    {
+      "id": "catapult",
+      "key": "sf:7ba477f91a58492991c13106b787c76d",
+      "class": "structure",
+      "fit": {
+        "max": 7
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a siege catapult in the besiegers' camp"
+    },
+    {
+      "id": "catapult-b",
+      "key": "sf:9b41be30f9fe4a48818201660704d1d0",
+      "class": "structure",
+      "fit": {
+        "max": 6
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a small catapult in the courtyard and the camp"
+    },
+    {
+      "id": "city-gate",
+      "key": "sf:e379d065c2674a5db7c437eef98e2a23",
+      "class": "building",
+      "fit": {
+        "y": 13
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): the outer gate (barbican) on the road up to the bridge",
+      "lodTris": [
+        4070,
+        1500,
+        400
+      ],
+      "texture": 512
+    },
+    {
+      "id": "mortar",
+      "key": "sf:a931843c33b048359019263b70168207",
+      "class": "prop",
+      "fit": {
+        "max": 1.8
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a siege mortar on the round towers' roofs",
+      "lodTris": [
+        2500,
+        900,
+        300
+      ]
+    },
+    {
+      "id": "siege-tower",
+      "key": "sf:f2a5079841c24db19e348cc121fac539",
+      "class": "structure",
+      "fit": {
+        "y": 15
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a wheeled siege tower abandoned before the walls"
+    },
+    {
+      "id": "siege-tower-b",
+      "key": "sf:f2363930fd1b424ba896697528e1c82b",
+      "class": "structure",
+      "fit": {
+        "y": 13
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a second siege tower in the besiegers' camp"
+    },
+    {
+      "id": "ballista",
+      "key": "sf:a92a4eb4ab04409dbf40344f5f63925a",
+      "class": "prop",
+      "fit": {
+        "max": 2.4
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a ballista on the square towers' roofs",
+      "lodTris": [
+        2500,
+        900,
+        300
+      ]
+    },
+    {
+      "id": "ballista-b",
+      "key": "sf:8ca1e906cb10447e81aca3b78472f5f8",
+      "class": "prop",
+      "fit": {
+        "max": 4.2
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a wheeled siege ballista in the camp",
+      "lodTris": [
+        3000,
+        1100,
+        350
+      ]
+    },
+    {
+      "id": "arch-door",
+      "key": "sf:ec7569d78704433aa864a6def0c6f368",
+      "class": "prop",
+      "fit": {
+        "y": 3.4
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a plank door in a stone arch, set against the vault's and the dungeon's walls",
+      "ring": "furniture",
+      "lodTris": [
+        1500,
+        1200,
+        700
+      ]
+    },
+    {
+      "id": "gargoyle",
+      "key": "sf:2968dda3e7e740cc8d8b61400441ea8f",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a gargoyle on the keep's and the chapel's corners",
+      "lodTris": [
+        1500,
+        600,
+        200
+      ]
+    },
+    {
+      "id": "bookshelves",
+      "key": "sf:e82d56dacd4b4defbc2847a4ce685cba",
+      "class": "prop",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): the library's shelves in the keep",
+      "ring": "furniture"
+    },
+    {
+      "id": "chandelier-ring",
+      "key": "sf:dd8b8bd637b5420badb323d5ec82a948",
+      "class": "small",
+      "fit": {
+        "max": 1.8
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a ring chandelier hanging in the great hall and the chapel",
+      "ring": "furniture"
+    },
+    {
+      "id": "spear-rack",
+      "key": "sf:3e19bc906fda4ff6ba8c1a9aa3724c1f",
+      "class": "small",
+      "fit": {
+        "max": 1.9
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a rack of spears in the barracks and the guard rooms",
+      "ring": "furniture"
+    },
+    {
+      "id": "tavern-bench",
+      "key": "sf:5ea3b0ee834648f0a59c1faf59747359",
+      "class": "small",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): an oak bench at the hall's and the barracks' tables",
+      "ring": "furniture"
+    },
+    {
+      "id": "tavern-stool",
+      "key": "sf:e45c33dd0db2428d8402870268009a21",
+      "class": "small",
+      "fit": {
+        "y": 0.48
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): an oak stool",
+      "ring": "furniture"
+    },
+    {
+      "id": "tavern-table",
+      "key": "sf:8226d387383d47d0a0dd6a884fdaa7ac",
+      "class": "small",
+      "fit": {
+        "max": 2.2
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): an oak trestle table in the hall, the barracks and the guard rooms",
+      "ring": "furniture"
+    },
+    {
+      "id": "knight-statue",
+      "key": "sf:0fc5cab9917d490abab14c6204df963e",
+      "class": "prop",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a mossy knight's statue in the courtyard and the chapel",
+      "lodTris": [
+        2500,
+        900,
+        300
+      ]
+    },
+    {
+      "id": "rusted-chandelier",
+      "key": "sf:0b116d7adcdb4427a9a30b28f86e7051",
+      "class": "small",
+      "fit": {
+        "max": 1.4
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a rusted chandelier in the dungeon's torture room and the vault",
+      "lodTris": [
+        1500,
+        600,
+        200
+      ],
+      "ring": "furniture"
+    },
+    {
+      "id": "weapon-rack",
+      "key": "sf:aa826f9d2e13449bbdcaaed48c05d1ba",
+      "class": "small",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): an old weapon rack in the barracks and the armoury",
+      "ring": "furniture"
+    },
+    {
+      "id": "weapon-rack-b",
+      "key": "sf:c7ab4de9a61c49879a8d9083d0792567",
+      "class": "small",
+      "fit": {
+        "y": 2.0
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a wood-and-iron weapon rack in the guard rooms",
+      "ring": "furniture"
+    },
+    {
+      "id": "anvil-trough",
+      "key": "sf:fddb4946ae574427a2d4ccc1fb17e33a",
+      "class": "prop",
+      "fit": {
+        "max": 3.2
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): the smithy's anvil, bucket and water trough",
+      "ring": "furniture"
+    },
+    {
+      "id": "anvil",
+      "key": "sf:e63f1154ee0b41f8a797db683526142a",
+      "class": "small",
+      "fit": {
+        "max": 1.0
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): an anvil on its block in the smithy",
+      "ring": "furniture"
+    },
+    {
+      "id": "bell",
+      "key": "sf:b2e02b7b964d4ee0b0e7292ed102270d",
+      "class": "small",
+      "fit": {
+        "y": 1.5
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): the chapel's bell in the belfry",
+      "lodTris": [
+        1500,
+        600,
+        200
+      ]
+    },
+    {
+      "id": "hay-bale",
+      "key": "sf:e01a6a0f9ed843279adfac2427c99679",
+      "class": "small",
+      "fit": {
+        "max": 1.6
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): hay bales by the stables"
+    },
+    {
+      "id": "cauldron",
+      "key": "sf:bf6ccff9968f49bfbe483b5d2fa1cedd",
+      "class": "small",
+      "fit": {
+        "max": 1.0
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): an iron cauldron in the hall's hearth, the smithy and the dungeon",
+      "ring": "furniture",
+      "lodTris": [
+        600,
+        600,
+        250
+      ]
+    },
+    {
+      "id": "prison-cage",
+      "key": "sf:133ab66f21de45f0848b2602e014a00f",
+      "class": "prop",
+      "fit": {
+        "y": 2.4
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): an iron cage in the torture room",
+      "ring": "furniture"
+    },
+    {
+      "id": "lantern-iron",
+      "key": "sf:b4153c682da44e93bff273dc47e362c9",
+      "class": "small",
+      "fit": {
+        "y": 0.55
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): an iron lantern on tables and ledges",
+      "ring": "furniture"
+    },
+    {
+      "id": "market-stall",
+      "key": "sf:b5d87398b87a4e7ab8959da2c6a47056",
+      "class": "prop",
+      "fit": {
+        "max": 4.9
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a market stall in the courtyard",
+      "lodTris": [
+        3000,
+        1600,
+        900
+      ]
+    },
+    {
+      "id": "wooden-cart",
+      "key": "sf:b7b7ab6a72a84304ab07e474fd04d038",
+      "class": "prop",
+      "fit": {
+        "max": 4.6
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a covered wooden cart in the courtyard and on the road",
+      "lodTris": [
+        3000,
+        1100,
+        350
+      ]
+    },
+    {
+      "id": "old-well",
+      "key": "sf:8fd46747612b4d16aec0b95257b5b8d1",
+      "class": "prop",
+      "fit": {
+        "max": 2.6
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): an old well at the besiegers' camp"
+    },
+    {
+      "id": "old-cart",
+      "key": "sf:61fb887cf1e94c7d8b55332a5b6d48f6",
+      "class": "prop",
+      "fit": {
+        "max": 3.6
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): an old farm cart on the approach road"
+    },
+    {
+      "id": "smith-workbench",
+      "key": "sf:0f358eaab21d4e70836ad855de34c423",
+      "class": "prop",
+      "fit": {
+        "max": 2.7
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): the smithy's workbench with its tools",
+      "piece": "Workbench",
+      "ring": "furniture"
+    },
+    {
+      "id": "market-stall-b",
+      "key": "sf:006ffc4ac5f34a1782f567b07e6605f2",
+      "class": "prop",
+      "fit": {
+        "max": 4.4
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a plain market stall in the courtyard",
+      "piece": "Stall"
+    },
+    {
+      "id": "bookshelf",
+      "key": "sf:3ffd93b0ae984f5c8efba9f80e88f519",
+      "class": "prop",
+      "fit": {
+        "y": 2.0
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a full bookshelf in the keep's library",
+      "lodTris": [
+        3000,
+        1100,
+        350
+      ],
+      "ring": "furniture"
+    },
+    {
+      "id": "crusader-shield",
+      "key": "sf:912a2eeb752a457c8b877e59599049b7",
+      "class": "small",
+      "fit": {
+        "y": 1.1
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a crusader's shield hung on the hall's and the keep's walls",
+      "ring": "furniture"
+    },
+    {
+      "id": "heater-shield",
+      "key": "sf:2a3aba2c1ef041168fab0c595e2e5882",
+      "class": "small",
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a wooden heater shield hung on the barracks' walls",
+      "ring": "furniture"
+    },
+    {
+      "id": "old-chest-b",
+      "key": "sf:d280b6c1a64d4fd2a1872e232ea1581a",
+      "class": "small",
+      "fit": {
+        "max": 0.95
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): an old metal-bound chest in the dungeon cells and the towers",
+      "lodTris": [
+        1500,
+        600,
+        200
+      ],
+      "ring": "furniture"
+    },
+    {
+      "id": "hanging-banner",
+      "key": "sf:81ce658d58494768b98a31e9bf1157d3",
+      "class": "prop",
+      "fit": {
+        "y": 5
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): long banners hung on the keep's courtyard face"
+    },
+    {
+      "id": "fort-barracks",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: the barracks against the east wall, two storeys of rooms and the roof behind a parapet, stairs at both ends, the stair down to the east cellar (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-base",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: the masonry base the fortress stands on, the courtyard on top; the cellars (undercroft, galleries), the vaults (pillared hall, dungeon, torture and guard rooms) and the tunnels out (west postern, sally port, culvert) inside it (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-bridge",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Old Fortress: the stone bridge over the ditch to the gatehouse, on arches, the last stretch a timber drawbridge (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-cellar-stair",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Old Fortress: the little house over a courtyard stair down to the cellars (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-chapel",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: the chapel (nave, altar, benches) and its bell tower, a stair of five flights to the belfry's open arches at 20 m under a slate spire (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-gatehouse",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: the gatehouse over the ditch, two drum towers with slate cones, the gate passage, the guard room, the murder room over the passage, the upper room at the walks' level and the roof (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-hall",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: the great hall against the west wall, a tall hall under a slate roof, its hearth, the dais and a timber gallery, the stair down to the west cellar (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-keep",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: the keep, four storeys (the great chamber, the hall with its hearth, the chambers, the top storey) and the roof behind battlements, corner turrets with slate cones; a stair from the ground to the roof, the stair down to the undercroft (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-rubble",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Old Fortress: the fallen masonry heaped against the base's east face, up to the breached wall's crest (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-scaffold",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Old Fortress: a timber scaffold up the south face, four flights to the broken parapet of the wall-walk (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-stables",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Old Fortress: the stables along the south wall, a timber lean-to over stalls, the smithy's forge and chimney (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-tower-round",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a round tower at a corner of the walls, three storeys over a solid foot, the battlements on top; doors to the courtyard and both wall-walks, a stair to the top (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-tower-sally",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a square tower astride the curtain wall, three storeys over a solid foot, the roof behind battlements; doors to the courtyard and both wall-walks, a stair to the roof; the sally port's tunnel through its foot (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-tower-square",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a square tower astride the curtain wall, three storeys over a solid foot, the roof behind battlements; doors to the courtyard and both wall-walks, a stair to the roof (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-wall-24",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a 24 m stretch of the curtain wall, the wall-walk on top behind its crenellations, a stair up its inner face (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-wall-28",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a 28 m stretch of the curtain wall, the wall-walk on top behind its crenellations (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-wall-28s",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a 28 m stretch of the curtain wall, the wall-walk on top behind its crenellations, a stair up its inner face (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-wall-32",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a 32 m stretch of the curtain wall, the wall-walk on top behind its crenellations, a stair up its inner face (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-wall-32g",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a 32 m stretch of the curtain wall, the wall-walk on top behind its crenellations, the parapet broken where the scaffold lands (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-wall-42",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a 42 m stretch of the curtain wall, the wall-walk on top behind its crenellations (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-wall-62",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a 62 m stretch of the curtain wall, the wall-walk on top behind its crenellations (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-wall-62s",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a 62 m stretch of the curtain wall, the wall-walk on top behind its crenellations, a stair up its inner face (procedural, 2026-11-17)"
+    },
+    {
+      "id": "fort-wall-breach",
+      "procedural": "art/blender/br/build_fortress.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Old Fortress: a 26 m stretch of the curtain wall, the wall-walk on top behind its crenellations, broken down to a rubble crest (the east breach) (procedural, 2026-11-17)"
+    },
+    {
+      "id": "cannonballs",
+      "key": "sf:610f471eb04d42829e84c9d2f1e19657",
+      "class": "small",
+      "fit": {
+        "max": 1.2
+      },
+      "collision": "solid",
+      "lodTris": [
+        1200,
+        500,
+        150
+      ],
+      "use": "Old Fortress (2026-11-17): a pyramid of cannonballs beside the cannons"
+    },
+    {
+      "id": "castle-flag-blue",
+      "key": "sf:6cba851b85554a8099a9d59506b9dc3d",
+      "class": "small",
+      "fit": {
+        "y": 6
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a blue flag on its pole on the towers' roofs"
+    },
+    {
+      "id": "castle-flag-red",
+      "key": "sf:1ed25d3659c742cfa887c52b14fe1283",
+      "class": "small",
+      "fit": {
+        "y": 6
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a red flag on its pole on the keep's turrets and the gatehouse"
+    },
+    {
+      "id": "arched-door",
+      "key": "sf:c31f74412c884fe0b3d92faadaec3356",
+      "class": "small",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "none",
+      "ring": "furniture",
+      "use": "Old Fortress (2026-11-17): an arched plank door set against the dungeon's and the keep's walls (blind doors)"
+    },
+    {
+      "id": "barrow",
+      "key": "sf:5b8d975b31e44fb7a93d66ef649bbfad",
+      "class": "small",
+      "fit": {
+        "max": 2.0
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): a wooden wheelbarrow in the courtyard and by the scaffold"
+    },
+    {
+      "id": "cheval-de-frise",
+      "key": "sf:bd0f03f1d8de446b94140e5ddb80a4ff",
+      "class": "prop",
+      "fit": {
+        "max": 3.6
+      },
+      "collision": "solid",
+      "use": "Old Fortress (2026-11-17): spiked chevaux de frise barring the approach and the besiegers' camp"
+    },
+    {
+      "id": "wood-crane",
+      "key": "sf:764c69861341491ab6872dc50b7a2ae7",
+      "class": "prop",
+      "fit": {
+        "y": 7
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a wooden lifting crane by the south wall's scaffold (the repairs)"
+    },
+    {
+      "id": "medieval-chest-b",
+      "key": "sf:1be4b664c1774fb080a9b0520c3ac786",
+      "class": "small",
+      "fit": {
+        "max": 1.2
+      },
+      "collision": "solid",
+      "ring": "furniture",
+      "use": "Old Fortress (2026-11-17): an iron-bound chest in the keep, the vault and the barracks"
+    },
+    {
+      "id": "trebuchet",
+      "key": "sf:b87ea7a2b30a4a39a2aae7374bec91a4",
+      "class": "structure",
+      "fit": {
+        "y": 11
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): the besiegers' trebuchet on the south ledge"
+    },
+    {
+      "id": "trebuchet-b",
+      "key": "sf:cba06d74dac24c7eb236fb73753243a4",
+      "class": "structure",
+      "fit": {
+        "y": 9
+      },
+      "collision": "voxel",
+      "use": "Old Fortress (2026-11-17): a second trebuchet on the west ledge"
+    },
+    {
+      "id": "cell-grate",
+      "key": "sf:62ccabc4e78b4822ac8c5af74fe9c66a",
+      "piece": "Portcullis_3",
+      "class": "small",
+      "fit": {
+        "y": 2.2
+      },
+      "collision": "solid",
+      "ring": "furniture",
+      "use": "Old Fortress (2026-11-17): an iron grate shut across a dungeon cell's door (from the owner's Modular Dungeon Props)",
+      "lodTris": [
+        900,
+        600,
+        400
+      ]
     }
   ],
   "skipped": [
@@ -9982,6 +10840,86 @@
       "key": "sf:4c50439bcbc247629fe2194862d7acc9",
       "title": "bw-wall-lamp (removed 2026-11-16)",
       "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Blackwater Prison (2026-11-14): bulkhead lamps on the walls"
+    },
+    {
+      "key": "sf:32e4ebebee634b70a2bbd68781590bfe",
+      "title": "castle-door (Old Fortress, 2026-11-17)",
+      "reason": "a grey low-poly castle-wall segment, not a door; out of style"
+    },
+    {
+      "key": "sf:11f07326f25642738254c392ddfd974a",
+      "title": "chandelier-iron (Old Fortress, 2026-11-17)",
+      "reason": "scattered tiny pieces after fitting (the model's parts float apart)"
+    },
+    {
+      "key": "sf:aabfa0a089ae4df0a3830bf7a0acfca6",
+      "title": "flags-pack (Old Fortress, 2026-11-17)",
+      "reason": "five loose flags and poles at random heights (a showcase scene), untextured"
+    },
+    {
+      "key": "sf:46f64ce7a6614bf7b59e887d58bcbffa",
+      "title": "hand-cart (Old Fortress, 2026-11-17)",
+      "reason": "broken near LOD (wheel and bed parts misplaced)"
+    },
+    {
+      "key": "sf:9d28917fb9eb4fefabb559aac6ae66ba",
+      "title": "tower-ballista (Old Fortress, 2026-11-17)",
+      "reason": "a whole stylised tower with a ballista; its LODs shatter"
+    },
+    {
+      "key": "sf:1129cebe176442d19aee2ef2459e1e1f",
+      "title": "treadwheel-crane (Old Fortress, 2026-11-17)",
+      "reason": "a diorama on its own ground island; its far LOD is empty"
+    },
+    {
+      "key": "sf:05bd47ad4bc64c19bcb32a56a0d3c7f4",
+      "title": "trebuchet (Old Fortress, 2026-11-17)",
+      "reason": "a diorama on a white display disc"
+    },
+    {
+      "key": "sf:c3e3712fd5164e44abdab658981cb395",
+      "title": "stone-knight (Old Fortress, 2026-11-17)",
+      "reason": "cartoonish; its far LOD is empty"
+    },
+    {
+      "key": "sf:16f7515eb2c3413b83222df00066c76a",
+      "title": "wood-door (Old Fortress, 2026-11-17)",
+      "reason": "the scan's texture is lost at the middle and far LOD (a grey slab)"
+    },
+    {
+      "key": "sf:96367f88d0e6461e9d11b4af38c649cc",
+      "title": "well-stone (Old Fortress, 2026-11-17)",
+      "reason": "its middle LOD loses the well's ring (old-well used instead)"
+    },
+    {
+      "key": "sf:7d9b2922dd0941dab820c4763078c789",
+      "title": "food-stall (Old Fortress, 2026-11-17)",
+      "reason": "a grey ground sheet under the stall"
+    },
+    {
+      "key": "sf:6c1d9d0a212241269e6f213ef736497b",
+      "title": "medieval-chest (Old Fortress, 2026-11-17)",
+      "reason": "untextured: a plain brown box"
+    },
+    {
+      "key": "sf:63903c85a6d142f7a81f63e77abad0ce",
+      "title": "spike-barricade (Old Fortress, 2026-11-17)",
+      "reason": "untextured: a bone-white barricade"
+    },
+    {
+      "key": "sf:eaa80cf29ceb4c0099698a5f5c7aea8d",
+      "title": "medieval-tents (Old Fortress, 2026-11-17)",
+      "reason": "market tents; the middle LOD loses the cloth"
+    },
+    {
+      "key": "sf:976a3f158bcb4f4ea90f18d1fa78ca0c",
+      "title": "portcullis (Old Fortress, 2026-11-17)",
+      "reason": "a stone gate wall with a closed portcullis, not a portcullis to hang in the gate's slot"
+    },
+    {
+      "key": "sf:63105b753af54ba096de83866c192d90",
+      "title": "barrel-oak (Old Fortress, 2026-11-17)",
+      "reason": "its mesh would not simplify (3.4k triangles at every LOD); Fisher's Cove's barrel (cove-barrel) stands in the fortress instead"
     }
   ]
 }

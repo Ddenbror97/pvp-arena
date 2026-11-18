@@ -23,7 +23,27 @@ export const SHARPEN = {
   scaledStrength: 0.55,
   /** How far past its neighbours' range a pixel may go, as a share of that range. */
   overshoot: 0.35,
+  /**
+   * Contrast (the neighbours' luminance range, 0–1) over which sharpening fades out (owner,
+   * 2026-11-18: "white items seems to flicker on distance eg: stripes on the airfield road,
+   * white objects some part on white apartments from the parachute"). A bright line a pixel or
+   * less wide (runway paint, a frame, a white wall's edge far off) moves between pixels as the
+   * camera moves; pushed away from its neighbours too, each step was a flash. Measured on the
+   * airfield's runway from 1.7 m, 0.5 cm steps: sharpening every pixel doubled the frame-to-frame
+   * change on the far paint (0.77 against 0.45 of 255; its brightest flashes 13 against 8).
+   * Faded out over this band: 0.60, flashes 8.4, and the ground keeps 84 % of the detail the
+   * pass adds (fine detail, ground grain and the aerial map from the parachute, is low in
+   * contrast and keeps its full sharpening).
+   */
+  edge: [0.05, 0.25],
 } as const;
+
+/** GLSL: the sharpening's weight at a pixel whose neighbours span lo..hi (contrast-adaptive). */
+export const SHARPEN_WEIGHT_GLSL = /* glsl */ `
+  float sharpenWeight(vec3 lo, vec3 hi) {
+    float range = dot(hi - lo, vec3(0.299, 0.587, 0.114));
+    return 1.0 - smoothstep(${SHARPEN.edge[0].toFixed(2)}, ${SHARPEN.edge[1].toFixed(2)}, range);
+  }`;
 
 /** The player's or tester's switch: localStorage "br-sharpen" = "off" (never throws). */
 export function sharpenWanted(): boolean {
@@ -63,6 +83,7 @@ export function createSharpen(renderer: THREE.WebGLRenderer): Sharpen {
       uniform vec2 uTexel;
       uniform float uStrength;
       varying vec2 vUv;
+      ${SHARPEN_WEIGHT_GLSL}
       void main() {
         vec3 c = texture2D(tFrame, vUv).rgb;
         vec3 n = texture2D(tFrame, vUv + vec2(0.0, uTexel.y)).rgb;
@@ -72,7 +93,7 @@ export function createSharpen(renderer: THREE.WebGLRenderer): Sharpen {
         vec3 lo = min(c, min(min(n, s), min(e, w)));
         vec3 hi = max(c, max(max(n, s), max(e, w)));
         vec3 margin = (hi - lo) * ${SHARPEN.overshoot.toFixed(2)};
-        vec3 sharp = c + uStrength * (4.0 * c - n - s - e - w);
+        vec3 sharp = c + uStrength * sharpenWeight(lo, hi) * (4.0 * c - n - s - e - w);
         gl_FragColor = vec4(clamp(sharp, lo - margin, hi + margin), 1.0);
       }`,
     depthTest: false,

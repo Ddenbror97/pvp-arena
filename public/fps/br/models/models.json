@@ -813,6 +813,114 @@
     }
    ]
   },
+  "anvil": {
+   "title": "Blacksmith Anvil (game ready asset)",
+   "author": "Pixel Life",
+   "source": "https://sketchfab.com/3d-models/blacksmith-anvil-game-ready-asset-e63f1154ee0b41f8a797db683526142a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an anvil on its block in the smithy",
+   "scale": 0.003987,
+   "sourceTris": 4520,
+   "size": [
+    0.57,
+    0.48,
+    1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/anvil.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 26,
+     "size": [
+      0.57,
+      0.48,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/anvil.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      0.57,
+      0.48,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/anvil.lod2.glb",
+     "tris": 65,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.57,
+      0.48,
+      1
+     ]
+    }
+   ]
+  },
+  "anvil-trough": {
+   "title": "Anvil, Water Bucket And Water Trough",
+   "author": "RBG_illustrations",
+   "source": "https://sketchfab.com/3d-models/anvil-water-bucket-and-water-trough-fddb4946ae574427a2d4ccc1fb17e33a",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): the smithy's anvil, bucket and water trough",
+   "scale": 0.009878,
+   "sourceTris": 2042,
+   "size": [
+    3.2,
+    1.39,
+    2.28
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/anvil-trough.lod0.glb",
+     "tris": 1499,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 57,
+     "size": [
+      3.2,
+      1.39,
+      2.28
+     ]
+    },
+    {
+     "file": "/fps/br/models/anvil-trough.lod1.glb",
+     "tris": 576,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      3.2,
+      1.39,
+      2.28
+     ]
+    },
+    {
+     "file": "/fps/br/models/anvil-trough.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.2,
+      1.39,
+      2.28
+     ]
+    }
+   ]
+  },
   "apache": {
    "title": "Boeing AH-64D Apache Combat Helicopter",
    "author": "Muhamad Mirza Arrafi",
@@ -921,6 +1029,60 @@
     }
    ]
   },
+  "arch-door": {
+   "title": "stone arch wooden plank door",
+   "author": "BritDingo",
+   "source": "https://sketchfab.com/3d-models/stone-arch-wooden-plank-door-ec7569d78704433aa864a6def0c6f368",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): a plank door in a stone arch, set against the vault's and the dungeon's walls",
+   "scale": 0.277705,
+   "sourceTris": 25228,
+   "size": [
+    3.32,
+    3.4,
+    2.02
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/arch-door.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      3.32,
+      3.4,
+      2.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/arch-door.lod1.glb",
+     "tris": 1200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      3.32,
+      3.4,
+      2.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/arch-door.lod2.glb",
+     "tris": 700,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.32,
+      3.4,
+      2.02
+     ]
+    }
+   ]
+  },
   "arch-ruins": {
    "title": "Stone Arch Pillars - Ruins",
    "author": "Unreal Designer",
@@ -971,6 +1133,60 @@
       17.5,
       4.93,
       4.08
+     ]
+    }
+   ]
+  },
+  "arched-door": {
+   "title": "Medieval Arched Wooden Door",
+   "author": "Kigha",
+   "source": "https://sketchfab.com/3d-models/medieval-arched-wooden-door-c31f74412c884fe0b3d92faadaec3356",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an arched plank door set against the dungeon's and the keep's walls (blind doors)",
+   "scale": 0.016088,
+   "sourceTris": 1466,
+   "size": [
+    1.34,
+    2.6,
+    0.15
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/arched-door.lod0.glb",
+     "tris": 554,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      1.34,
+      2.6,
+      0.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/arched-door.lod1.glb",
+     "tris": 214,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.34,
+      2.6,
+      0.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/arched-door.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.34,
+      2.6,
+      0.15
      ]
     }
    ]
@@ -1894,6 +2110,114 @@
     }
    ]
   },
+  "ballista": {
+   "title": "Roman Ballista - free game asset",
+   "author": "Andy woodhead",
+   "source": "https://sketchfab.com/3d-models/roman-ballista-free-game-asset-a92a4eb4ab04409dbf40344f5f63925a",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a ballista on the square towers' roofs",
+   "scale": 1.889203,
+   "sourceTris": 19792,
+   "size": [
+    1.84,
+    2.23,
+    2.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ballista.lod0.glb",
+     "tris": 2497,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 73,
+     "size": [
+      1.84,
+      2.23,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/ballista.lod1.glb",
+     "tris": 899,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 32,
+     "size": [
+      1.84,
+      2.23,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/ballista.lod2.glb",
+     "tris": 298,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.84,
+      2.23,
+      2.4
+     ]
+    }
+   ]
+  },
+  "ballista-b": {
+   "title": "Siege Ballista",
+   "author": "Hjorskrim",
+   "source": "https://sketchfab.com/3d-models/siege-ballista-8ca1e906cb10447e81aca3b78472f5f8",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a wheeled siege ballista in the camp",
+   "scale": 0.652421,
+   "sourceTris": 17536,
+   "size": [
+    3.42,
+    1.9,
+    4.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ballista-b.lod0.glb",
+     "tris": 3512,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 115,
+     "size": [
+      3.42,
+      1.9,
+      4.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ballista-b.lod1.glb",
+     "tris": 1079,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      3.42,
+      1.9,
+      4.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ballista-b.lod2.glb",
+     "tris": 342,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.42,
+      1.9,
+      4.2
+     ]
+    }
+   ]
+  },
   "bamboo-clump": {
    "title": "Bamboo Bush",
    "author": "sujirour",
@@ -2328,6 +2652,60 @@
     }
    ]
   },
+  "barrow": {
+   "title": "Barrow",
+   "author": "blazejjura95",
+   "source": "https://sketchfab.com/3d-models/barrow-5b8d975b31e44fb7a93d66ef649bbfad",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): a wooden wheelbarrow in the courtyard and by the scaffold",
+   "scale": 0.939315,
+   "sourceTris": 3646,
+   "size": [
+    0.62,
+    0.63,
+    2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/barrow.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      0.62,
+      0.63,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/barrow.lod1.glb",
+     "tris": 198,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.62,
+      0.63,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/barrow.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.62,
+      0.63,
+      2
+     ]
+    }
+   ]
+  },
   "basketball-hoop": {
    "title": "Basketball Hoop",
    "author": "paethon",
@@ -2486,6 +2864,60 @@
       1.7,
       0.65,
       0.82
+     ]
+    }
+   ]
+  },
+  "battering-ram": {
+   "title": "Battering ram",
+   "author": "Vitaliy Kovalchuk",
+   "source": "https://sketchfab.com/3d-models/battering-ram-55c6a09f8d394661abb83d428bd997e4",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a battering ram on its wheeled frame before the gate and at the breach",
+   "scale": 0.01651,
+   "sourceTris": 1940,
+   "size": [
+    6.5,
+    2.16,
+    6.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/battering-ram.lod0.glb",
+     "tris": 1940,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 54,
+     "size": [
+      6.5,
+      2.16,
+      6.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/battering-ram.lod1.glb",
+     "tris": 900,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 29,
+     "size": [
+      6.5,
+      2.16,
+      6.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/battering-ram.lod2.glb",
+     "tris": 300,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.5,
+      2.16,
+      6.5
      ]
     }
    ]
@@ -4387,6 +4819,60 @@
     }
    ]
   },
+  "bell": {
+   "title": "Classic Bell 3D Model",
+   "author": "LukeModels75",
+   "source": "https://sketchfab.com/3d-models/classic-bell-3d-model-b2e02b7b964d4ee0b0e7292ed102270d",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): the chapel's bell in the belfry",
+   "scale": 0.429788,
+   "sourceTris": 32640,
+   "size": [
+    0.68,
+    1.5,
+    0.68
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bell.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      0.68,
+      1.5,
+      0.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/bell.lod1.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      0.68,
+      1.5,
+      0.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/bell.lod2.glb",
+     "tris": 200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.68,
+      1.5,
+      0.68
+     ]
+    }
+   ]
+  },
   "bench": {
    "title": "Park Bench",
    "author": "RBG_illustrations",
@@ -5248,6 +5734,114 @@
       2.3,
       2.1,
       1.12
+     ]
+    }
+   ]
+  },
+  "bookshelf": {
+   "title": "Bookshelf",
+   "author": "A9908244",
+   "source": "https://sketchfab.com/3d-models/bookshelf-3ffd93b0ae984f5c8efba9f80e88f519",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): a full bookshelf in the keep's library",
+   "scale": 1,
+   "sourceTris": 101702,
+   "size": [
+    1.73,
+    2,
+    0.65
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bookshelf.lod0.glb",
+     "tris": 1118,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      1.73,
+      2,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/bookshelf.lod1.glb",
+     "tris": 1084,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      1.73,
+      2,
+      0.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/bookshelf.lod2.glb",
+     "tris": 1084,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      1.73,
+      2,
+      0.65
+     ]
+    }
+   ]
+  },
+  "bookshelves": {
+   "title": "Medieval Bookshelves",
+   "author": "AnyRPG",
+   "source": "https://sketchfab.com/3d-models/medieval-bookshelves-e82d56dacd4b4defbc2847a4ce685cba",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): the library's shelves in the keep",
+   "scale": 0.741174,
+   "sourceTris": 656,
+   "size": [
+    2.43,
+    2.6,
+    0.74
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bookshelves.lod0.glb",
+     "tris": 656,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 130,
+     "size": [
+      2.43,
+      2.6,
+      0.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/bookshelves.lod1.glb",
+     "tris": 580,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 41,
+     "size": [
+      2.43,
+      2.6,
+      0.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/bookshelves.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.43,
+      2.6,
+      0.74
      ]
     }
    ]
@@ -9739,6 +10333,168 @@
     }
    ]
   },
+  "cannon": {
+   "title": "Medieval Cannon",
+   "author": "leone.giulio.92",
+   "source": "https://sketchfab.com/3d-models/medieval-cannon-e954129fa8a1452786ce829930b3992d",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): bronze cannon on its carriage, on the towers' roofs",
+   "scale": 1.50459,
+   "sourceTris": 34364,
+   "size": [
+    1.28,
+    1.24,
+    2.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cannon.lod0.glb",
+     "tris": 2500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      1.28,
+      1.24,
+      2.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/cannon.lod1.glb",
+     "tris": 897,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.28,
+      1.24,
+      2.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/cannon.lod2.glb",
+     "tris": 276,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.28,
+      1.24,
+      2.3
+     ]
+    }
+   ]
+  },
+  "cannon-b": {
+   "title": "Medieval Cannon | FREE",
+   "author": "Sem",
+   "source": "https://sketchfab.com/3d-models/medieval-cannon-free-838fe97c38e84d98a730629cc86015a8",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): iron cannon on a wheeled carriage, on the gatehouse roof and the keep",
+   "scale": 1.191527,
+   "sourceTris": 50298,
+   "size": [
+    2.6,
+    1.19,
+    1.41
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cannon-b.lod0.glb",
+     "tris": 2535,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 80,
+     "size": [
+      2.6,
+      1.19,
+      1.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/cannon-b.lod1.glb",
+     "tris": 937,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 30,
+     "size": [
+      2.6,
+      1.19,
+      1.41
+     ]
+    },
+    {
+     "file": "/fps/br/models/cannon-b.lod2.glb",
+     "tris": 937,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 30,
+     "size": [
+      2.6,
+      1.19,
+      1.41
+     ]
+    }
+   ]
+  },
+  "cannonballs": {
+   "title": "Cannon Balls",
+   "author": "jvalentine",
+   "source": "https://sketchfab.com/3d-models/cannon-balls-610f471eb04d42829e84c9d2f1e19657",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): a pyramid of cannonballs beside the cannons",
+   "scale": 0.19904,
+   "sourceTris": 13440,
+   "size": [
+    1.2,
+    0.95,
+    1.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cannonballs.lod0.glb",
+     "tris": 1242,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      1.2,
+      0.95,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cannonballs.lod1.glb",
+     "tris": 560,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      1.2,
+      0.95,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cannonballs.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.2,
+      0.95,
+      1.2
+     ]
+    }
+   ]
+  },
   "canoe": {
    "title": "Low-Poly Canoe",
    "author": "Osaze Shears",
@@ -10279,6 +11035,276 @@
     }
    ]
   },
+  "castle-flag-blue": {
+   "title": "Castle-flag-blue",
+   "author": "Pixel",
+   "source": "https://sketchfab.com/3d-models/castle-flag-blue-6cba851b85554a8099a9d59506b9dc3d",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): a blue flag on its pole on the towers' roofs",
+   "scale": 0.906561,
+   "sourceTris": 220,
+   "size": [
+    1.34,
+    6,
+    4.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/castle-flag-blue.lod0.glb",
+     "tris": 220,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      1.34,
+      6,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/castle-flag-blue.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      1.34,
+      6,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/castle-flag-blue.lod2.glb",
+     "tris": 62,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.34,
+      6,
+      4.95
+     ]
+    }
+   ]
+  },
+  "castle-flag-red": {
+   "title": "Castle-flag-red",
+   "author": "Pixel",
+   "source": "https://sketchfab.com/3d-models/castle-flag-red-1ed25d3659c742cfa887c52b14fe1283",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): a red flag on its pole on the keep's turrets and the gatehouse",
+   "scale": 0.906561,
+   "sourceTris": 220,
+   "size": [
+    2.54,
+    6,
+    4.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/castle-flag-red.lod0.glb",
+     "tris": 220,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      2.54,
+      6,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/castle-flag-red.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      2.54,
+      6,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/castle-flag-red.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.54,
+      6,
+      4.5
+     ]
+    }
+   ]
+  },
+  "catapult": {
+   "title": "Medieval Catapult",
+   "author": "Bagadanga",
+   "source": "https://sketchfab.com/3d-models/medieval-catapult-7ba477f91a58492991c13106b787c76d",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Old Fortress (2026-11-17): a siege catapult in the besiegers' camp",
+   "scale": 0.34184,
+   "sourceTris": 21386,
+   "size": [
+    6.32,
+    6.98,
+    7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/catapult.lod0.glb",
+     "tris": 7043,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 290,
+     "size": [
+      6.32,
+      6.98,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/catapult.lod1.glb",
+     "tris": 1577,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      6.32,
+      6.98,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/catapult.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      6.32,
+      6.98,
+      7
+     ]
+    }
+   ]
+  },
+  "catapult-b": {
+   "title": "Medieval Catapult",
+   "author": "DigitalBirb",
+   "source": "https://sketchfab.com/3d-models/medieval-catapult-9b41be30f9fe4a48818201660704d1d0",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Old Fortress (2026-11-17): a small catapult in the courtyard and the camp",
+   "scale": 0.666358,
+   "sourceTris": 9252,
+   "size": [
+    4.94,
+    3.38,
+    6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/catapult-b.lod0.glb",
+     "tris": 3993,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 96,
+     "size": [
+      4.94,
+      3.38,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/catapult-b.lod1.glb",
+     "tris": 1381,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 41,
+     "size": [
+      4.94,
+      3.38,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/catapult-b.lod2.glb",
+     "tris": 391,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.94,
+      3.38,
+      6
+     ]
+    }
+   ]
+  },
+  "cauldron": {
+   "title": "Iron Cauldron (game ready asset)",
+   "author": "Pixel Life",
+   "source": "https://sketchfab.com/3d-models/iron-cauldron-game-ready-asset-bf6ccff9968f49bfbe483b5d2fa1cedd",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an iron cauldron in the hall's hearth, the smithy and the dungeon",
+   "scale": 0.017336,
+   "sourceTris": 7456,
+   "size": [
+    0.97,
+    0.87,
+    1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cauldron.lod0.glb",
+     "tris": 616,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      0.97,
+      0.87,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/cauldron.lod1.glb",
+     "tris": 616,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 17,
+     "size": [
+      0.97,
+      0.87,
+      1
+     ]
+    },
+    {
+     "file": "/fps/br/models/cauldron.lod2.glb",
+     "tris": 247,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.97,
+      0.87,
+      1
+     ]
+    }
+   ]
+  },
   "cell-bars": {
    "title": "Prison cell door",
    "author": "Rivaldragon",
@@ -10329,6 +11355,60 @@
       3.5,
       2.72,
       0.16
+     ]
+    }
+   ]
+  },
+  "cell-grate": {
+   "title": "Modular Dungeon Props",
+   "author": "Logan Thomas",
+   "source": "https://sketchfab.com/3d-models/modular-dungeon-props-62ccabc4e78b4822ac8c5af74fe9c66a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an iron grate shut across a dungeon cell's door (from the owner's Modular Dungeon Props)",
+   "scale": 1.009179,
+   "sourceTris": 1324,
+   "size": [
+    1.01,
+    2.2,
+    0.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cell-grate.lod0.glb",
+     "tris": 902,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 28,
+     "size": [
+      1.01,
+      2.2,
+      0.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/cell-grate.lod1.glb",
+     "tris": 886,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 22,
+     "size": [
+      1.01,
+      2.2,
+      0.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/cell-grate.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.01,
+      2.2,
+      0.26
      ]
     }
    ]
@@ -10765,6 +11845,60 @@
     }
    ]
   },
+  "chandelier-ring": {
+   "title": "Medieval Chandelier",
+   "author": "Kevin.Popescu",
+   "source": "https://sketchfab.com/3d-models/medieval-chandelier-dd8b8bd637b5420badb323d5ec82a948",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): a ring chandelier hanging in the great hall and the chapel",
+   "scale": 0.046498,
+   "sourceTris": 13053,
+   "size": [
+    1.8,
+    1.97,
+    1.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/chandelier-ring.lod0.glb",
+     "tris": 596,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.8,
+      1.97,
+      1.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/chandelier-ring.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.8,
+      1.97,
+      1.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/chandelier-ring.lod2.glb",
+     "tris": 50,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.8,
+      1.97,
+      1.8
+     ]
+    }
+   ]
+  },
   "changing-bench": {
    "title": "Locker room bench",
    "author": "tboiston",
@@ -10976,6 +12110,60 @@
       2.87,
       5.95,
       6.5
+     ]
+    }
+   ]
+  },
+  "cheval-de-frise": {
+   "title": "Chevaux De Frise",
+   "author": "diverserp",
+   "source": "https://sketchfab.com/3d-models/chevaux-de-frise-bd0f03f1d8de446b94140e5ddb80a4ff",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): spiked chevaux de frise barring the approach and the besiegers' camp",
+   "scale": 1.412541,
+   "sourceTris": 1296,
+   "size": [
+    2.3,
+    2.3,
+    3.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cheval-de-frise.lod0.glb",
+     "tris": 1296,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 25,
+     "size": [
+      2.3,
+      2.3,
+      3.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cheval-de-frise.lod1.glb",
+     "tris": 726,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      2.3,
+      2.3,
+      3.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cheval-de-frise.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.3,
+      2.3,
+      3.6
      ]
     }
    ]
@@ -11246,6 +12434,60 @@
       0.66,
       1,
       0.66
+     ]
+    }
+   ]
+  },
+  "city-gate": {
+   "title": "Medieval City Gate",
+   "author": "Daan van Leeuwen",
+   "source": "https://sketchfab.com/3d-models/medieval-city-gate-e379d065c2674a5db7c437eef98e2a23",
+   "licence": "CC BY 4.0",
+   "class": "building",
+   "ring": "building",
+   "use": "Old Fortress (2026-11-17): the outer gate (barbican) on the road up to the bridge",
+   "scale": 0.688449,
+   "sourceTris": 4070,
+   "size": [
+    5.92,
+    13,
+    13.12
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/city-gate.lod0.glb",
+     "tris": 4070,
+     "draws": 3,
+     "textureMB": 4,
+     "kB": 187,
+     "size": [
+      5.92,
+      13,
+      13.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/city-gate.lod1.glb",
+     "tris": 1496,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 19,
+     "size": [
+      5.92,
+      13,
+      13.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/city-gate.lod2.glb",
+     "tris": 368,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 16,
+     "size": [
+      5.92,
+      13,
+      13.12
      ]
     }
    ]
@@ -14713,6 +15955,60 @@
       3.58,
       1.05,
       0.73
+     ]
+    }
+   ]
+  },
+  "crusader-shield": {
+   "title": "Сlaymore & Crusader Shield",
+   "author": "extr3_me",
+   "source": "https://sketchfab.com/3d-models/laymore-crusader-shield-912a2eeb752a457c8b877e59599049b7",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): a crusader's shield hung on the hall's and the keep's walls",
+   "scale": 0.905851,
+   "sourceTris": 7598,
+   "size": [
+    0.96,
+    1.1,
+    0.31
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/crusader-shield.lod0.glb",
+     "tris": 617,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      0.96,
+      1.1,
+      0.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/crusader-shield.lod1.glb",
+     "tris": 213,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.96,
+      1.1,
+      0.31
+     ]
+    },
+    {
+     "file": "/fps/br/models/crusader-shield.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.96,
+      1.1,
+      0.31
      ]
     }
    ]
@@ -18616,6 +19912,1271 @@
     }
    ]
   },
+  "fort-barracks": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: barracks",
+   "use": "Old Fortress: the barracks against the east wall, two storeys of rooms and the roof behind a parapet, stairs at both ends, the stair down to the east cellar (procedural, 2026-11-17)",
+   "size": [
+    16.5,
+    11.4,
+    36
+   ],
+   "sourceTris": 1472,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-barracks.fort-v1.lod0.glb",
+     "tris": 1472,
+     "draws": 3,
+     "textureMB": 3,
+     "kB": 106,
+     "size": [
+      16.5,
+      11.4,
+      36
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-barracks.fort-v1.lod1.glb",
+     "tris": 660,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 29,
+     "size": [
+      16.5,
+      11.4,
+      36
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-barracks.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      16.5,
+      11.4,
+      36
+     ]
+    }
+   ]
+  },
+  "fort-base": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: the base",
+   "use": "Old Fortress: the masonry base the fortress stands on, the courtyard on top; the cellars (undercroft, galleries), the vaults (pillared hall, dungeon, torture and guard rooms) and the tunnels out (west postern, sally port, culvert) inside it (procedural, 2026-11-17)",
+   "size": [
+    174,
+    10,
+    154
+   ],
+   "sourceTris": 3336,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-base.fort-v1.lod0.glb",
+     "tris": 3336,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 174,
+     "size": [
+      174,
+      10,
+      154
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-base.fort-v1.lod1.glb",
+     "tris": 404,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 35,
+     "size": [
+      174,
+      10,
+      154
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-base.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      174,
+      10,
+      154
+     ]
+    }
+   ]
+  },
+  "fort-bridge": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: bridge and drawbridge",
+   "use": "Old Fortress: the stone bridge over the ditch to the gatehouse, on arches, the last stretch a timber drawbridge (procedural, 2026-11-17)",
+   "size": [
+    7,
+    11,
+    24.7
+   ],
+   "sourceTris": 232,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-bridge.fort-v1.lod0.glb",
+     "tris": 232,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 136,
+     "size": [
+      7,
+      11,
+      24.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-bridge.fort-v1.lod1.glb",
+     "tris": 232,
+     "draws": 4,
+     "textureMB": 1,
+     "kB": 51,
+     "size": [
+      7,
+      11,
+      24.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-bridge.fort-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7,
+      11,
+      24.7
+     ]
+    }
+   ]
+  },
+  "fort-cellar-stair": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: cellar stair house",
+   "use": "Old Fortress: the little house over a courtyard stair down to the cellars (procedural, 2026-11-17)",
+   "size": [
+    3.3,
+    3.8,
+    7
+   ],
+   "sourceTris": 46,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-cellar-stair.fort-v1.lod0.glb",
+     "tris": 46,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 29,
+     "size": [
+      3.3,
+      3.8,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-cellar-stair.fort-v1.lod1.glb",
+     "tris": 46,
+     "draws": 3,
+     "textureMB": 0.19,
+     "kB": 15,
+     "size": [
+      3.3,
+      3.8,
+      7
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-cellar-stair.fort-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      3.3,
+      3.8,
+      7
+     ]
+    }
+   ]
+  },
+  "fort-chapel": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: chapel and bell tower",
+   "use": "Old Fortress: the chapel (nave, altar, benches) and its bell tower, a stair of five flights to the belfry's open arches at 20 m under a slate spire (procedural, 2026-11-17)",
+   "size": [
+    20,
+    31.7,
+    22
+   ],
+   "sourceTris": 1988,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-chapel.fort-v1.lod0.glb",
+     "tris": 1988,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 141,
+     "size": [
+      20,
+      31.7,
+      22
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-chapel.fort-v1.lod1.glb",
+     "tris": 652,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 40,
+     "size": [
+      20,
+      31.7,
+      22
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-chapel.fort-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      20,
+      31.7,
+      22
+     ]
+    }
+   ]
+  },
+  "fort-gatehouse": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: gatehouse",
+   "use": "Old Fortress: the gatehouse over the ditch, two drum towers with slate cones, the gate passage, the guard room, the murder room over the passage, the upper room at the walks' level and the roof (procedural, 2026-11-17)",
+   "size": [
+    31.2,
+    37.5,
+    22.4
+   ],
+   "sourceTris": 3768,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-gatehouse.fort-v1.lod0.glb",
+     "tris": 3768,
+     "draws": 6,
+     "textureMB": 5,
+     "kB": 203,
+     "size": [
+      31.2,
+      37.5,
+      22.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-gatehouse.fort-v1.lod1.glb",
+     "tris": 2554,
+     "draws": 5,
+     "textureMB": 1,
+     "kB": 85,
+     "size": [
+      31.2,
+      37.5,
+      22.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-gatehouse.fort-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      31.2,
+      37.5,
+      22.4
+     ]
+    }
+   ]
+  },
+  "fort-hall": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: great hall",
+   "use": "Old Fortress: the great hall against the west wall, a tall hall under a slate roof, its hearth, the dais and a timber gallery, the stair down to the west cellar (procedural, 2026-11-17)",
+   "size": [
+    17.3,
+    15.5,
+    48.8
+   ],
+   "sourceTris": 752,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-hall.fort-v1.lod0.glb",
+     "tris": 752,
+     "draws": 5,
+     "textureMB": 4,
+     "kB": 119,
+     "size": [
+      17.3,
+      15.5,
+      48.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-hall.fort-v1.lod1.glb",
+     "tris": 324,
+     "draws": 3,
+     "textureMB": 0.75,
+     "kB": 34,
+     "size": [
+      17.3,
+      15.5,
+      48.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-hall.fort-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      17.3,
+      15.5,
+      48.8
+     ]
+    }
+   ]
+  },
+  "fort-keep": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: keep",
+   "use": "Old Fortress: the keep, four storeys (the great chamber, the hall with its hearth, the chambers, the top storey) and the roof behind battlements, corner turrets with slate cones; a stair from the ground to the roof, the stair down to the undercroft (procedural, 2026-11-17)",
+   "size": [
+    35.4,
+    36.5,
+    29.4
+   ],
+   "sourceTris": 5760,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-keep.fort-v1.lod0.glb",
+     "tris": 5760,
+     "draws": 5,
+     "textureMB": 4,
+     "kB": 213,
+     "size": [
+      35.4,
+      36.5,
+      29.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-keep.fort-v1.lod1.glb",
+     "tris": 3720,
+     "draws": 4,
+     "textureMB": 0.75,
+     "kB": 98,
+     "size": [
+      35.4,
+      36.5,
+      29.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-keep.fort-v1.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      35.4,
+      36.5,
+      29.4
+     ]
+    }
+   ]
+  },
+  "fort-rubble": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: the breach's rubble",
+   "use": "Old Fortress: the fallen masonry heaped against the base's east face, up to the breached wall's crest (procedural, 2026-11-17)",
+   "size": [
+    26,
+    14.8,
+    11
+   ],
+   "sourceTris": 1580,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-rubble.fort-v1.lod0.glb",
+     "tris": 1580,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 86,
+     "size": [
+      26,
+      14.8,
+      11
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-rubble.fort-v1.lod1.glb",
+     "tris": 560,
+     "draws": 1,
+     "textureMB": 0.25,
+     "kB": 23,
+     "size": [
+      26,
+      14.8,
+      11
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-rubble.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      26,
+      14.8,
+      11
+     ]
+    }
+   ]
+  },
+  "fort-scaffold": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: scaffold",
+   "use": "Old Fortress: a timber scaffold up the south face, four flights to the broken parapet of the wall-walk (procedural, 2026-11-17)",
+   "size": [
+    9.6,
+    23,
+    6.2
+   ],
+   "sourceTris": 1360,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-scaffold.fort-v1.lod0.glb",
+     "tris": 1360,
+     "draws": 1,
+     "textureMB": 1,
+     "kB": 64,
+     "size": [
+      9.6,
+      23,
+      6.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-scaffold.fort-v1.lod1.glb",
+     "tris": 1360,
+     "draws": 1,
+     "textureMB": 0.25,
+     "kB": 39,
+     "size": [
+      9.6,
+      23,
+      6.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-scaffold.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      9.6,
+      23,
+      6.2
+     ]
+    }
+   ]
+  },
+  "fort-stables": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: stables and smithy",
+   "use": "Old Fortress: the stables along the south wall, a timber lean-to over stalls, the smithy's forge and chimney (procedural, 2026-11-17)",
+   "size": [
+    22.8,
+    8.5,
+    10.5
+   ],
+   "sourceTris": 220,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-stables.fort-v1.lod0.glb",
+     "tris": 220,
+     "draws": 5,
+     "textureMB": 4,
+     "kB": 116,
+     "size": [
+      22.8,
+      8.5,
+      10.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-stables.fort-v1.lod1.glb",
+     "tris": 158,
+     "draws": 4,
+     "textureMB": 1,
+     "kB": 41,
+     "size": [
+      22.8,
+      8.5,
+      10.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-stables.fort-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      22.8,
+      8.5,
+      10.5
+     ]
+    }
+   ]
+  },
+  "fort-tower-round": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: round corner tower",
+   "use": "Old Fortress: a round tower at a corner of the walls, three storeys over a solid foot, the battlements on top; doors to the courtyard and both wall-walks, a stair to the top (procedural, 2026-11-17)",
+   "size": [
+    19.2,
+    29.8,
+    19.2
+   ],
+   "sourceTris": 3834,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-tower-round.fort-v1.lod0.glb",
+     "tris": 3834,
+     "draws": 5,
+     "textureMB": 4,
+     "kB": 184,
+     "size": [
+      19.2,
+      29.8,
+      19.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-tower-round.fort-v1.lod1.glb",
+     "tris": 2144,
+     "draws": 4,
+     "textureMB": 0.75,
+     "kB": 72,
+     "size": [
+      19.2,
+      29.8,
+      19.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-tower-round.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      19.2,
+      29.8,
+      19.2
+     ]
+    }
+   ]
+  },
+  "fort-tower-sally": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: square tower (sally port)",
+   "use": "Old Fortress: a square tower astride the curtain wall, three storeys over a solid foot, the roof behind battlements; doors to the courtyard and both wall-walks, a stair to the roof; the sally port's tunnel through its foot (procedural, 2026-11-17)",
+   "size": [
+    13.2,
+    29.8,
+    14.6
+   ],
+   "sourceTris": 1760,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-tower-sally.fort-v1.lod0.glb",
+     "tris": 1760,
+     "draws": 5,
+     "textureMB": 4,
+     "kB": 139,
+     "size": [
+      13.2,
+      29.8,
+      14.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-tower-sally.fort-v1.lod1.glb",
+     "tris": 702,
+     "draws": 4,
+     "textureMB": 0.75,
+     "kB": 40,
+     "size": [
+      13.2,
+      29.8,
+      14.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-tower-sally.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      13.2,
+      29.8,
+      14.6
+     ]
+    }
+   ]
+  },
+  "fort-tower-square": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: square tower",
+   "use": "Old Fortress: a square tower astride the curtain wall, three storeys over a solid foot, the roof behind battlements; doors to the courtyard and both wall-walks, a stair to the roof (procedural, 2026-11-17)",
+   "size": [
+    13.2,
+    29.8,
+    14.6
+   ],
+   "sourceTris": 1728,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-tower-square.fort-v1.lod0.glb",
+     "tris": 1728,
+     "draws": 5,
+     "textureMB": 4,
+     "kB": 139,
+     "size": [
+      13.2,
+      29.8,
+      14.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-tower-square.fort-v1.lod1.glb",
+     "tris": 666,
+     "draws": 4,
+     "textureMB": 0.75,
+     "kB": 39,
+     "size": [
+      13.2,
+      29.8,
+      14.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-tower-square.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      13.2,
+      29.8,
+      14.6
+     ]
+    }
+   ]
+  },
+  "fort-wall-24": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: curtain wall (24 m)",
+   "use": "Old Fortress: a 24 m stretch of the curtain wall, the wall-walk on top behind its crenellations, a stair up its inner face (procedural, 2026-11-17)",
+   "size": [
+    24,
+    13.8,
+    4.95
+   ],
+   "sourceTris": 652,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-wall-24.fort-v1.lod0.glb",
+     "tris": 652,
+     "draws": 3,
+     "textureMB": 2,
+     "kB": 63,
+     "size": [
+      24,
+      13.8,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-24.fort-v1.lod1.glb",
+     "tris": 652,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 33,
+     "size": [
+      24,
+      13.8,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-24.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      24,
+      13.8,
+      4.95
+     ]
+    }
+   ]
+  },
+  "fort-wall-28": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: curtain wall (28 m)",
+   "use": "Old Fortress: a 28 m stretch of the curtain wall, the wall-walk on top behind its crenellations (procedural, 2026-11-17)",
+   "size": [
+    28,
+    13.8,
+    3.5
+   ],
+   "sourceTris": 186,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-wall-28.fort-v1.lod0.glb",
+     "tris": 186,
+     "draws": 3,
+     "textureMB": 2,
+     "kB": 53,
+     "size": [
+      28,
+      13.8,
+      3.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-28.fort-v1.lod1.glb",
+     "tris": 186,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 23,
+     "size": [
+      28,
+      13.8,
+      3.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-28.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      28,
+      13.8,
+      3.5
+     ]
+    }
+   ]
+  },
+  "fort-wall-28s": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: curtain wall (28 m)",
+   "use": "Old Fortress: a 28 m stretch of the curtain wall, the wall-walk on top behind its crenellations, a stair up its inner face (procedural, 2026-11-17)",
+   "size": [
+    28,
+    13.8,
+    4.95
+   ],
+   "sourceTris": 678,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-wall-28s.fort-v1.lod0.glb",
+     "tris": 678,
+     "draws": 3,
+     "textureMB": 2,
+     "kB": 64,
+     "size": [
+      28,
+      13.8,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-28s.fort-v1.lod1.glb",
+     "tris": 678,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 33,
+     "size": [
+      28,
+      13.8,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-28s.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      28,
+      13.8,
+      4.95
+     ]
+    }
+   ]
+  },
+  "fort-wall-32": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: curtain wall (32 m)",
+   "use": "Old Fortress: a 32 m stretch of the curtain wall, the wall-walk on top behind its crenellations, a stair up its inner face (procedural, 2026-11-17)",
+   "size": [
+    32,
+    13.8,
+    4.95
+   ],
+   "sourceTris": 704,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-wall-32.fort-v1.lod0.glb",
+     "tris": 704,
+     "draws": 3,
+     "textureMB": 2,
+     "kB": 64,
+     "size": [
+      32,
+      13.8,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-32.fort-v1.lod1.glb",
+     "tris": 704,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 34,
+     "size": [
+      32,
+      13.8,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-32.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      32,
+      13.8,
+      4.95
+     ]
+    }
+   ]
+  },
+  "fort-wall-32g": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: curtain wall (32 m)",
+   "use": "Old Fortress: a 32 m stretch of the curtain wall, the wall-walk on top behind its crenellations, the parapet broken where the scaffold lands (procedural, 2026-11-17)",
+   "size": [
+    32,
+    13.8,
+    3.5
+   ],
+   "sourceTris": 200,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-wall-32g.fort-v1.lod0.glb",
+     "tris": 200,
+     "draws": 3,
+     "textureMB": 2,
+     "kB": 54,
+     "size": [
+      32,
+      13.8,
+      3.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-32g.fort-v1.lod1.glb",
+     "tris": 200,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 23,
+     "size": [
+      32,
+      13.8,
+      3.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-32g.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      32,
+      13.8,
+      3.5
+     ]
+    }
+   ]
+  },
+  "fort-wall-42": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: curtain wall (42 m)",
+   "use": "Old Fortress: a 42 m stretch of the curtain wall, the wall-walk on top behind its crenellations (procedural, 2026-11-17)",
+   "size": [
+    42,
+    13.8,
+    3.5
+   ],
+   "sourceTris": 262,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-wall-42.fort-v1.lod0.glb",
+     "tris": 262,
+     "draws": 3,
+     "textureMB": 2,
+     "kB": 55,
+     "size": [
+      42,
+      13.8,
+      3.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-42.fort-v1.lod1.glb",
+     "tris": 262,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 25,
+     "size": [
+      42,
+      13.8,
+      3.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-42.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      42,
+      13.8,
+      3.5
+     ]
+    }
+   ]
+  },
+  "fort-wall-62": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: curtain wall (62 m)",
+   "use": "Old Fortress: a 62 m stretch of the curtain wall, the wall-walk on top behind its crenellations (procedural, 2026-11-17)",
+   "size": [
+    62,
+    13.8,
+    3.5
+   ],
+   "sourceTris": 366,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-wall-62.fort-v1.lod0.glb",
+     "tris": 366,
+     "draws": 3,
+     "textureMB": 2,
+     "kB": 57,
+     "size": [
+      62,
+      13.8,
+      3.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-62.fort-v1.lod1.glb",
+     "tris": 366,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 27,
+     "size": [
+      62,
+      13.8,
+      3.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-62.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      62,
+      13.8,
+      3.5
+     ]
+    }
+   ]
+  },
+  "fort-wall-62s": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: curtain wall (62 m)",
+   "use": "Old Fortress: a 62 m stretch of the curtain wall, the wall-walk on top behind its crenellations, a stair up its inner face (procedural, 2026-11-17)",
+   "size": [
+    62,
+    13.8,
+    4.95
+   ],
+   "sourceTris": 858,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-wall-62s.fort-v1.lod0.glb",
+     "tris": 858,
+     "draws": 3,
+     "textureMB": 2,
+     "kB": 67,
+     "size": [
+      62,
+      13.8,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-62s.fort-v1.lod1.glb",
+     "tris": 858,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 36,
+     "size": [
+      62,
+      13.8,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-62s.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      62,
+      13.8,
+      4.95
+     ]
+    }
+   ]
+  },
+  "fort-wall-breach": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural): art/blender/br/make_fortress_textures.py; cobble and wood: Poly Haven (CC0)",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_fortress.mjs",
+   "title": "Old Fortress: curtain wall (26 m, breached)",
+   "use": "Old Fortress: a 26 m stretch of the curtain wall, the wall-walk on top behind its crenellations, broken down to a rubble crest (the east breach) (procedural, 2026-11-17)",
+   "size": [
+    26,
+    13.8,
+    10.7
+   ],
+   "sourceTris": 738,
+   "lods": [
+    {
+     "file": "/fps/br/models/fort-wall-breach.fort-v1.lod0.glb",
+     "tris": 738,
+     "draws": 2,
+     "textureMB": 2,
+     "kB": 65,
+     "size": [
+      26,
+      13.8,
+      10.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-breach.fort-v1.lod1.glb",
+     "tris": 298,
+     "draws": 2,
+     "textureMB": 0.5,
+     "kB": 24,
+     "size": [
+      26,
+      13.8,
+      10.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/fort-wall-breach.fort-v1.lod2.glb",
+     "tris": 12,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      26,
+      13.8,
+      10.7
+     ]
+    }
+   ]
+  },
   "fountain": {
    "title": "Concrete Fountain",
    "author": "Kless Gyzen",
@@ -18990,6 +21551,60 @@
       5.019,
       3.083,
       8
+     ]
+    }
+   ]
+  },
+  "gargoyle": {
+   "title": "Gargoyle",
+   "author": "joshuakanegreer",
+   "source": "https://sketchfab.com/3d-models/gargoyle-2968dda3e7e740cc8d8b61400441ea8f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): a gargoyle on the keep's and the chapel's corners",
+   "scale": 0.007607,
+   "sourceTris": 80044,
+   "size": [
+    0.77,
+    1.1,
+    0.82
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/gargoyle.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      0.77,
+      1.1,
+      0.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/gargoyle.lod1.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      0.77,
+      1.1,
+      0.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/gargoyle.lod2.glb",
+     "tris": 200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.77,
+      1.1,
+      0.82
      ]
     }
    ]
@@ -19965,6 +22580,60 @@
     }
    ]
   },
+  "hanging-banner": {
+   "title": "Renaissance Hanging Banner",
+   "author": "Sunbox Games",
+   "source": "https://sketchfab.com/3d-models/renaissance-hanging-banner-81ce658d58494768b98a31e9bf1157d3",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): long banners hung on the keep's courtyard face",
+   "scale": 0.763441,
+   "sourceTris": 14112,
+   "size": [
+    5.67,
+    5,
+    0.11
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hanging-banner.lod0.glb",
+     "tris": 623,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 18,
+     "size": [
+      5.67,
+      5,
+      0.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/hanging-banner.lod1.glb",
+     "tris": 523,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 13,
+     "size": [
+      5.67,
+      5,
+      0.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/hanging-banner.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      5.67,
+      5,
+      0.11
+     ]
+    }
+   ]
+  },
   "harbour-office": {
    "author": "PvPSpinArena",
    "licence": "Original work (procedural)",
@@ -20074,6 +22743,60 @@
     }
    ]
   },
+  "hay-bale": {
+   "title": "Hay bale",
+   "author": "NoodlePoodle",
+   "source": "https://sketchfab.com/3d-models/hay-bale-e01a6a0f9ed843279adfac2427c99679",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): hay bales by the stables",
+   "scale": 0.895567,
+   "sourceTris": 9492,
+   "size": [
+    0.88,
+    0.87,
+    1.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/hay-bale.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 79,
+     "size": [
+      0.88,
+      0.87,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/hay-bale.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 24,
+     "size": [
+      0.88,
+      0.87,
+      1.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/hay-bale.lod2.glb",
+     "tris": 54,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.88,
+      0.87,
+      1.6
+     ]
+    }
+   ]
+  },
   "hay-bales": {
    "title": "Hay Bales",
    "author": "FrodoUndead",
@@ -20124,6 +22847,60 @@
       3.55,
       1.81,
       2.42
+     ]
+    }
+   ]
+  },
+  "heater-shield": {
+   "title": "Medieval Wood Heater Shield",
+   "author": "iedalton",
+   "source": "https://sketchfab.com/3d-models/medieval-wood-heater-shield-2a3aba2c1ef041168fab0c595e2e5882",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): a wooden heater shield hung on the barracks' walls",
+   "scale": 0.505931,
+   "sourceTris": 5348,
+   "size": [
+    0.82,
+    1,
+    0.32
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/heater-shield.lod0.glb",
+     "tris": 596,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      0.82,
+      1,
+      0.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/heater-shield.lod1.glb",
+     "tris": 212,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.82,
+      1,
+      0.32
+     ]
+    },
+    {
+     "file": "/fps/br/models/heater-shield.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.82,
+      1,
+      0.32
      ]
     }
    ]
@@ -23642,6 +26419,60 @@
     }
    ]
   },
+  "kings-throne": {
+   "title": "Kings Throne",
+   "author": "Hui Ling Ng",
+   "source": "https://sketchfab.com/3d-models/kings-throne-fed880724d3a4caeb7695654b1740b71",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): the king's throne in the keep's great chamber",
+   "scale": 0.64549,
+   "sourceTris": 10534,
+   "size": [
+    1.87,
+    2.6,
+    1.44
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/kings-throne.lod0.glb",
+     "tris": 6595,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 152,
+     "size": [
+      1.87,
+      2.6,
+      1.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/kings-throne.lod1.glb",
+     "tris": 1799,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      1.87,
+      2.6,
+      1.44
+     ]
+    },
+    {
+     "file": "/fps/br/models/kings-throne.lod2.glb",
+     "tris": 499,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.87,
+      2.6,
+      1.44
+     ]
+    }
+   ]
+  },
   "kiosk": {
    "title": "Post-Soviet Kiosk (psx style)",
    "author": "youpzdev",
@@ -23804,6 +26635,60 @@
     }
    ]
   },
+  "knight-statue": {
+   "title": "Old mossy statue of a knight",
+   "author": "elawadisalaheddine",
+   "source": "https://sketchfab.com/3d-models/old-mossy-statue-of-a-knight-0fc5cab9917d490abab14c6204df963e",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a mossy knight's statue in the courtyard and the chapel",
+   "scale": 1.202176,
+   "sourceTris": 9998,
+   "size": [
+    1.01,
+    2.4,
+    0.78
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/knight-statue.lod0.glb",
+     "tris": 2702,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 120,
+     "size": [
+      1.01,
+      2.4,
+      0.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/knight-statue.lod1.glb",
+     "tris": 890,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.01,
+      2.4,
+      0.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/knight-statue.lod2.glb",
+     "tris": 298,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.01,
+      2.4,
+      0.78
+     ]
+    }
+   ]
+  },
   "kukulcan": {
    "title": "Kukulcán Pyramid",
    "author": "SPLEEN VISION",
@@ -23908,6 +26793,60 @@
       1.47,
       1.8,
       0.96
+     ]
+    }
+   ]
+  },
+  "lantern-iron": {
+   "title": "Medieval Lantern",
+   "author": "GetDeadEntertainment",
+   "source": "https://sketchfab.com/3d-models/medieval-lantern-b4153c682da44e93bff273dc47e362c9",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an iron lantern on tables and ledges",
+   "scale": 0.00943,
+   "sourceTris": 1990,
+   "size": [
+    0.29,
+    0.55,
+    0.29
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/lantern-iron.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      0.29,
+      0.55,
+      0.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/lantern-iron.lod1.glb",
+     "tris": 218,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.29,
+      0.55,
+      0.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/lantern-iron.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.29,
+      0.55,
+      0.29
      ]
     }
    ]
@@ -25370,6 +28309,114 @@
     }
    ]
   },
+  "market-stall": {
+   "title": "Medieval Market Stall",
+   "author": "AspectStudios",
+   "source": "https://sketchfab.com/3d-models/medieval-market-stall-b5d87398b87a4e7ab8959da2c6a47056",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a market stall in the courtyard",
+   "scale": 1.003685,
+   "sourceTris": 21706,
+   "size": [
+    2.74,
+    2.69,
+    4.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/market-stall.lod0.glb",
+     "tris": 3000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 16,
+     "size": [
+      2.74,
+      2.69,
+      4.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/market-stall.lod1.glb",
+     "tris": 1528,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      2.74,
+      2.69,
+      4.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/market-stall.lod2.glb",
+     "tris": 890,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      2.74,
+      2.69,
+      4.9
+     ]
+    }
+   ]
+  },
+  "market-stall-b": {
+   "title": "Medieval Market Asset Pack",
+   "author": "vmatthew",
+   "source": "https://sketchfab.com/3d-models/medieval-market-asset-pack-006ffc4ac5f34a1782f567b07e6605f2",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a plain market stall in the courtyard",
+   "scale": 1.015766,
+   "sourceTris": 1310,
+   "size": [
+    4.4,
+    5.46,
+    1.88
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/market-stall-b.lod0.glb",
+     "tris": 1310,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 32,
+     "size": [
+      4.4,
+      5.46,
+      1.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/market-stall-b.lod1.glb",
+     "tris": 555,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 14,
+     "size": [
+      4.4,
+      5.46,
+      1.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/market-stall-b.lod2.glb",
+     "tris": 168,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.4,
+      5.46,
+      1.88
+     ]
+    }
+   ]
+  },
   "maya-head": {
    "title": "Maya Statue,Mexico",
    "author": "ar15044",
@@ -25852,6 +28899,60 @@
       0.45,
       0.43,
       0.43
+     ]
+    }
+   ]
+  },
+  "medieval-chest-b": {
+   "title": "Medieval Chest",
+   "author": "Melon Polygons",
+   "source": "https://sketchfab.com/3d-models/medieval-chest-1be4b664c1774fb080a9b0520c3ac786",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an iron-bound chest in the keep, the vault and the barracks",
+   "scale": 0.230363,
+   "sourceTris": 4418,
+   "size": [
+    1.2,
+    0.5,
+    0.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/medieval-chest-b.lod0.glb",
+     "tris": 552,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.2,
+      0.5,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/medieval-chest-b.lod1.glb",
+     "tris": 198,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.2,
+      0.5,
+      0.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/medieval-chest-b.lod2.glb",
+     "tris": 50,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.2,
+      0.5,
+      0.54
      ]
     }
    ]
@@ -26883,6 +29984,60 @@
     }
    ]
   },
+  "mortar": {
+   "title": "Medieval Mortier",
+   "author": "ViktorKom",
+   "source": "https://sketchfab.com/3d-models/medieval-mortier-a931843c33b048359019263b70168207",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a siege mortar on the round towers' roofs",
+   "scale": 0.011409,
+   "sourceTris": 6004,
+   "size": [
+    1.8,
+    1.22,
+    1.29
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mortar.lod0.glb",
+     "tris": 2780,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 82,
+     "size": [
+      1.8,
+      1.22,
+      1.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/mortar.lod1.glb",
+     "tris": 909,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 31,
+     "size": [
+      1.8,
+      1.22,
+      1.29
+     ]
+    },
+    {
+     "file": "/fps/br/models/mortar.lod2.glb",
+     "tris": 298,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.8,
+      1.22,
+      1.29
+     ]
+    }
+   ]
+  },
   "mossy-log": {
    "title": "Mossy old tree log",
    "author": "Julian Malik",
@@ -27909,6 +31064,60 @@
     }
    ]
   },
+  "old-cart": {
+   "title": "Old wooden cart (revamp)",
+   "author": "NoodlePoodle",
+   "source": "https://sketchfab.com/3d-models/old-wooden-cart-revamp-61fb887cf1e94c7d8b55332a5b6d48f6",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): an old farm cart on the approach road",
+   "scale": 0.010625,
+   "sourceTris": 20084,
+   "size": [
+    1.32,
+    1.53,
+    3.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/old-cart.lod0.glb",
+     "tris": 2568,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 83,
+     "size": [
+      1.32,
+      1.53,
+      3.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-cart.lod1.glb",
+     "tris": 522,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.32,
+      1.53,
+      3.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-cart.lod2.glb",
+     "tris": 134,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.32,
+      1.53,
+      3.6
+     ]
+    }
+   ]
+  },
   "old-chest": {
    "title": "Old wooden chest",
    "author": "Yury Misiyuk",
@@ -27959,6 +31168,60 @@
       1,
       0.78,
       0.64
+     ]
+    }
+   ]
+  },
+  "old-chest-b": {
+   "title": "Old Chest",
+   "author": "SebastianSosnowski",
+   "source": "https://sketchfab.com/3d-models/old-chest-d280b6c1a64d4fd2a1872e232ea1581a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an old metal-bound chest in the dungeon cells and the towers",
+   "scale": 1.007594,
+   "sourceTris": 21404,
+   "size": [
+    0.95,
+    0.58,
+    0.59
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/old-chest-b.lod0.glb",
+     "tris": 1494,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 23,
+     "size": [
+      0.95,
+      0.58,
+      0.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-chest-b.lod1.glb",
+     "tris": 568,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      0.95,
+      0.58,
+      0.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-chest-b.lod2.glb",
+     "tris": 198,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.95,
+      0.58,
+      0.59
      ]
     }
    ]
@@ -28229,6 +31492,60 @@
       2.21,
       3.72,
       12
+     ]
+    }
+   ]
+  },
+  "old-well": {
+   "title": "Old well",
+   "author": "NoodlePoodle",
+   "source": "https://sketchfab.com/3d-models/old-well-8fd46747612b4d16aec0b95257b5b8d1",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): an old well at the besiegers' camp",
+   "scale": 0.01306,
+   "sourceTris": 6084,
+   "size": [
+    2.6,
+    3.4,
+    1.86
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/old-well.lod0.glb",
+     "tris": 1972,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 72,
+     "size": [
+      2.6,
+      3.4,
+      1.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-well.lod1.glb",
+     "tris": 518,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.6,
+      3.4,
+      1.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/old-well.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.6,
+      3.4,
+      1.86
      ]
     }
    ]
@@ -31148,6 +34465,60 @@
     }
    ]
   },
+  "prison-cage": {
+   "title": "Low-Poly Prison Cage – Free Game Asset",
+   "author": "BuntyS",
+   "source": "https://sketchfab.com/3d-models/low-poly-prison-cage-free-game-asset-133ab66f21de45f0848b2602e014a00f",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an iron cage in the torture room",
+   "scale": 0.009877,
+   "sourceTris": 2290,
+   "size": [
+    2.5,
+    2.4,
+    2.97
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/prison-cage.lod0.glb",
+     "tris": 1716,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 80,
+     "size": [
+      2.5,
+      2.4,
+      2.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/prison-cage.lod1.glb",
+     "tris": 591,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      2.5,
+      2.4,
+      2.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/prison-cage.lod2.glb",
+     "tris": 149,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.5,
+      2.4,
+      2.97
+     ]
+    }
+   ]
+  },
   "prison-tower": {
    "title": "The Prison",
    "author": "Veterock",
@@ -33916,11 +37287,11 @@
     9.4,
     40.93
    ],
-   "sourceTris": 2878,
+   "sourceTris": 2882,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-acropolis.ruins-v1.lod0.glb",
-     "tris": 2878,
+     "file": "/fps/br/models/ruin-acropolis.ruins-v2.lod0.glb",
+     "tris": 2882,
      "draws": 4,
      "textureMB": 4,
      "kB": 219,
@@ -33931,8 +37302,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-acropolis.ruins-v1.lod1.glb",
-     "tris": 456,
+     "file": "/fps/br/models/ruin-acropolis.ruins-v2.lod1.glb",
+     "tris": 460,
      "draws": 3,
      "textureMB": 0.75,
      "kB": 50,
@@ -33943,7 +37314,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-acropolis.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-acropolis.ruins-v2.lod2.glb",
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
@@ -34521,14 +37892,14 @@
     27.6,
     43.2
    ],
-   "sourceTris": 5670,
+   "sourceTris": 5854,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-pyramid.ruins-v1.lod0.glb",
-     "tris": 5670,
+     "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod0.glb",
+     "tris": 5854,
      "draws": 4,
      "textureMB": 4,
-     "kB": 265,
+     "kB": 268,
      "size": [
       37,
       27.6,
@@ -34536,11 +37907,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-pyramid.ruins-v1.lod1.glb",
-     "tris": 1058,
+     "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod1.glb",
+     "tris": 1242,
      "draws": 3,
      "textureMB": 0.75,
-     "kB": 61,
+     "kB": 64,
      "size": [
       37,
       27.6,
@@ -34548,7 +37919,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-pyramid.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod2.glb",
      "tris": 168,
      "draws": 1,
      "textureMB": 0,
@@ -34686,11 +38057,11 @@
     16.4,
     22.799999999999997
    ],
-   "sourceTris": 1924,
+   "sourceTris": 1928,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-temple-a.ruins-v1.lod0.glb",
-     "tris": 1924,
+     "file": "/fps/br/models/ruin-temple-a.ruins-v2.lod0.glb",
+     "tris": 1928,
      "draws": 4,
      "textureMB": 4,
      "kB": 202,
@@ -34701,8 +38072,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-a.ruins-v1.lod1.glb",
-     "tris": 542,
+     "file": "/fps/br/models/ruin-temple-a.ruins-v2.lod1.glb",
+     "tris": 546,
      "draws": 3,
      "textureMB": 0.75,
      "kB": 51,
@@ -34713,7 +38084,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-a.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-temple-a.ruins-v2.lod2.glb",
      "tris": 120,
      "draws": 1,
      "textureMB": 0,
@@ -34741,11 +38112,11 @@
     10.200000000000001,
     18
    ],
-   "sourceTris": 1512,
+   "sourceTris": 1516,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-temple-b.ruins-v1.lod0.glb",
-     "tris": 1512,
+     "file": "/fps/br/models/ruin-temple-b.ruins-v2.lod0.glb",
+     "tris": 1516,
      "draws": 3,
      "textureMB": 3,
      "kB": 145,
@@ -34756,8 +38127,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-b.ruins-v1.lod1.glb",
-     "tris": 478,
+     "file": "/fps/br/models/ruin-temple-b.ruins-v2.lod1.glb",
+     "tris": 482,
      "draws": 2,
      "textureMB": 0.5,
      "kB": 34,
@@ -34768,7 +38139,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-b.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-temple-b.ruins-v2.lod2.glb",
      "tris": 84,
      "draws": 1,
      "textureMB": 0,
@@ -35754,6 +39125,60 @@
       2.86,
       1.74,
       4.8
+     ]
+    }
+   ]
+  },
+  "rusted-chandelier": {
+   "title": "Rusted Medieval Chandelier",
+   "author": "matthew.baldini",
+   "source": "https://sketchfab.com/3d-models/rusted-medieval-chandelier-0b116d7adcdb4427a9a30b28f86e7051",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): a rusted chandelier in the dungeon's torture room and the vault",
+   "scale": 1.123217,
+   "sourceTris": 97792,
+   "size": [
+    1.37,
+    0.78,
+    1.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/rusted-chandelier.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 21,
+     "size": [
+      1.37,
+      0.78,
+      1.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/rusted-chandelier.lod1.glb",
+     "tris": 560,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      1.37,
+      0.78,
+      1.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/rusted-chandelier.lod2.glb",
+     "tris": 200,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.37,
+      0.78,
+      1.4
      ]
     }
    ]
@@ -37109,6 +40534,114 @@
     }
    ]
   },
+  "siege-tower": {
+   "title": "Medieval siege tower",
+   "author": "Antokkk",
+   "source": "https://sketchfab.com/3d-models/medieval-siege-tower-f2a5079841c24db19e348cc121fac539",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Old Fortress (2026-11-17): a wheeled siege tower abandoned before the walls",
+   "scale": 0.35403,
+   "sourceTris": 46291,
+   "size": [
+    7.6,
+    15,
+    6.15
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/siege-tower.lod0.glb",
+     "tris": 3852,
+     "draws": 3,
+     "textureMB": 0.17,
+     "kB": 53,
+     "size": [
+      7.6,
+      15,
+      6.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/siege-tower.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      7.6,
+      15,
+      6.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/siege-tower.lod2.glb",
+     "tris": 390,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      7.6,
+      15,
+      6.15
+     ]
+    }
+   ]
+  },
+  "siege-tower-b": {
+   "title": "Siege Tower",
+   "author": "iedalton",
+   "source": "https://sketchfab.com/3d-models/siege-tower-f2363930fd1b424ba896697528e1c82b",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Old Fortress (2026-11-17): a second siege tower in the besiegers' camp",
+   "scale": 0.009022,
+   "sourceTris": 10944,
+   "size": [
+    6.13,
+    13,
+    6.7
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/siege-tower-b.lod0.glb",
+     "tris": 4000,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 20,
+     "size": [
+      6.13,
+      13,
+      6.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/siege-tower-b.lod1.glb",
+     "tris": 1374,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      6.13,
+      13,
+      6.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/siege-tower-b.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      6.13,
+      13,
+      6.7
+     ]
+    }
+   ]
+  },
   "sign-camping": {
    "title": "American Road Signs Pack",
    "author": "CGMeller",
@@ -37811,6 +41344,60 @@
     }
    ]
   },
+  "smith-workbench": {
+   "title": "Asset Pack - Blacksmith Equipment",
+   "author": "Mike Farrant",
+   "source": "https://sketchfab.com/3d-models/asset-pack-blacksmith-equipment-0f358eaab21d4e70836ad855de34c423",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): the smithy's workbench with its tools",
+   "scale": 1.005377,
+   "sourceTris": 9866,
+   "size": [
+    2.7,
+    1.95,
+    1.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/smith-workbench.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2.7,
+      1.95,
+      1.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/smith-workbench.lod1.glb",
+     "tris": 472,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.7,
+      1.95,
+      1.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/smith-workbench.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.7,
+      1.95,
+      1.26
+     ]
+    }
+   ]
+  },
   "smoke-stacks": {
    "title": "Industrial Smoke Stacks",
    "author": "FrodoUndead",
@@ -38131,6 +41718,60 @@
       9,
       0.17,
       9
+     ]
+    }
+   ]
+  },
+  "spear-rack": {
+   "title": "Medieval Fantasy - Spear Rack Asset",
+   "author": "Scott VanArsdale",
+   "source": "https://sketchfab.com/3d-models/medieval-fantasy-spear-rack-asset-3e19bc906fda4ff6ba8c1a9aa3724c1f",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): a rack of spears in the barracks and the guard rooms",
+   "scale": 0.95,
+   "sourceTris": 1138,
+   "size": [
+    1.9,
+    1.55,
+    0.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/spear-rack.lod0.glb",
+     "tris": 976,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 25,
+     "size": [
+      1.9,
+      1.55,
+      0.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/spear-rack.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.9,
+      1.55,
+      0.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/spear-rack.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.9,
+      1.55,
+      0.6
      ]
     }
    ]
@@ -41052,6 +44693,168 @@
     }
    ]
   },
+  "tavern-bench": {
+   "title": "Medieval Tavern Bench - Oak and Iron",
+   "author": "PlasticFly2781",
+   "source": "https://sketchfab.com/3d-models/medieval-tavern-bench-oak-and-iron-5ea3b0ee834648f0a59c1faf59747359",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an oak bench at the hall's and the barracks' tables",
+   "scale": 1.176471,
+   "sourceTris": 1128,
+   "size": [
+    2,
+    0.54,
+    0.35
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tavern-bench.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2,
+      0.54,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/tavern-bench.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      2,
+      0.54,
+      0.35
+     ]
+    },
+    {
+     "file": "/fps/br/models/tavern-bench.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2,
+      0.54,
+      0.35
+     ]
+    }
+   ]
+  },
+  "tavern-stool": {
+   "title": "Medieval Tavern Stool - Oak and Iron",
+   "author": "PlasticFly2781",
+   "source": "https://sketchfab.com/3d-models/medieval-tavern-stool-oak-and-iron-e45c33dd0db2428d8402870268009a21",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an oak stool",
+   "scale": 1.040675,
+   "sourceTris": 988,
+   "size": [
+    0.4,
+    0.48,
+    0.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tavern-stool.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      0.4,
+      0.48,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/tavern-stool.lod1.glb",
+     "tris": 240,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.4,
+      0.48,
+      0.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/tavern-stool.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.4,
+      0.48,
+      0.4
+     ]
+    }
+   ]
+  },
+  "tavern-table": {
+   "title": "Medieval Tavern Table - Oak and Iron",
+   "author": "PlasticFly2781",
+   "source": "https://sketchfab.com/3d-models/medieval-tavern-table-oak-and-iron-8226d387383d47d0a0dd6a884fdaa7ac",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an oak trestle table in the hall, the barracks and the guard rooms",
+   "scale": 1.096789,
+   "sourceTris": 4332,
+   "size": [
+    2.2,
+    0.92,
+    0.99
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/tavern-table.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 11,
+     "size": [
+      2.2,
+      0.92,
+      0.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/tavern-table.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.2,
+      0.92,
+      0.99
+     ]
+    },
+    {
+     "file": "/fps/br/models/tavern-table.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.2,
+      0.92,
+      0.99
+     ]
+    }
+   ]
+  },
   "taxi": {
    "title": "Canyon '75 Taxi - Low poly model",
    "author": "Daniel Zhabotinsky",
@@ -41478,6 +45281,60 @@
       2.34,
       2.19,
       2.6
+     ]
+    }
+   ]
+  },
+  "throne": {
+   "title": "Throne",
+   "author": "Nils Folker",
+   "source": "https://sketchfab.com/3d-models/throne-bfc6d2989bb0411d9572733d35c3e6d1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): the lord's chair on the great hall's dais",
+   "scale": 0.886344,
+   "sourceTris": 11556,
+   "size": [
+    0.72,
+    2.2,
+    1.03
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/throne.lod0.glb",
+     "tris": 2500,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 46,
+     "size": [
+      0.72,
+      2.2,
+      1.03
+     ]
+    },
+    {
+     "file": "/fps/br/models/throne.lod1.glb",
+     "tris": 900,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 21,
+     "size": [
+      0.72,
+      2.2,
+      1.03
+     ]
+    },
+    {
+     "file": "/fps/br/models/throne.lod2.glb",
+     "tris": 299,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.72,
+      2.2,
+      1.03
      ]
     }
    ]
@@ -42882,6 +46739,114 @@
       25.06,
       10.12,
       60
+     ]
+    }
+   ]
+  },
+  "trebuchet": {
+   "title": "Trebuchet",
+   "author": "BahamutFierce",
+   "source": "https://sketchfab.com/3d-models/trebuchet-b87ea7a2b30a4a39a2aae7374bec91a4",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Old Fortress (2026-11-17): the besiegers' trebuchet on the south ledge",
+   "scale": 13.0015,
+   "sourceTris": 5728,
+   "size": [
+    24.84,
+    11,
+    8.21
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trebuchet.lod0.glb",
+     "tris": 3996,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 180,
+     "size": [
+      24.84,
+      11,
+      8.21
+     ]
+    },
+    {
+     "file": "/fps/br/models/trebuchet.lod1.glb",
+     "tris": 1829,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 72,
+     "size": [
+      24.84,
+      11,
+      8.21
+     ]
+    },
+    {
+     "file": "/fps/br/models/trebuchet.lod2.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      24.84,
+      11,
+      8.21
+     ]
+    }
+   ]
+  },
+  "trebuchet-b": {
+   "title": "Trebuchet",
+   "author": "Ayden1994",
+   "source": "https://sketchfab.com/3d-models/trebuchet-cba06d74dac24c7eb236fb73753243a4",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Old Fortress (2026-11-17): a second trebuchet on the west ledge",
+   "scale": 0.114023,
+   "sourceTris": 2416,
+   "size": [
+    12.35,
+    9,
+    15.52
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/trebuchet-b.lod0.glb",
+     "tris": 2416,
+     "draws": 3,
+     "textureMB": 2.67,
+     "kB": 118,
+     "size": [
+      12.35,
+      9,
+      15.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/trebuchet-b.lod1.glb",
+     "tris": 1396,
+     "draws": 3,
+     "textureMB": 0.67,
+     "kB": 57,
+     "size": [
+      12.35,
+      9,
+      15.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/trebuchet-b.lod2.glb",
+     "tris": 398,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      12.35,
+      9,
+      15.52
      ]
     }
    ]
@@ -44369,6 +48334,114 @@
     }
    ]
   },
+  "weapon-rack": {
+   "title": "Weapon Rack Medieval old",
+   "author": "tavoxel",
+   "source": "https://sketchfab.com/3d-models/weapon-rack-medieval-old-aa826f9d2e13449bbdcaaed48c05d1ba",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an old weapon rack in the barracks and the armoury",
+   "scale": 1,
+   "sourceTris": 1016,
+   "size": [
+    2,
+    1.42,
+    0.87
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/weapon-rack.lod0.glb",
+     "tris": 622,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 28,
+     "size": [
+      2,
+      1.42,
+      0.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/weapon-rack.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2,
+      1.42,
+      0.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/weapon-rack.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2,
+      1.42,
+      0.87
+     ]
+    }
+   ]
+  },
+  "weapon-rack-b": {
+   "title": "Wooden And Iron Weapon Rack",
+   "author": "Reeeeeece",
+   "source": "https://sketchfab.com/3d-models/wooden-and-iron-weapon-rack-c7ab4de9a61c49879a8d9083d0792567",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): a wood-and-iron weapon rack in the guard rooms",
+   "scale": 1,
+   "sourceTris": 1240,
+   "size": [
+    1.65,
+    2,
+    1.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/weapon-rack-b.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 23,
+     "size": [
+      1.65,
+      2,
+      1.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/weapon-rack-b.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      1.65,
+      2,
+      1.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/weapon-rack-b.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.65,
+      2,
+      1.26
+     ]
+    }
+   ]
+  },
   "weight-set": {
    "title": "Weight Room Set 2",
    "author": "Tyler P Halterman",
@@ -44909,6 +48982,60 @@
     }
    ]
   },
+  "wood-crane": {
+   "title": "Crane",
+   "author": "sam_ogon",
+   "source": "https://sketchfab.com/3d-models/crane-764c69861341491ab6872dc50b7a2ae7",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a wooden lifting crane by the south wall's scaffold (the repairs)",
+   "scale": 2.621565,
+   "sourceTris": 1640,
+   "size": [
+    3.2,
+    7,
+    4.72
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wood-crane.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 36,
+     "size": [
+      3.2,
+      7,
+      4.72
+     ]
+    },
+    {
+     "file": "/fps/br/models/wood-crane.lod1.glb",
+     "tris": 522,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.2,
+      7,
+      4.72
+     ]
+    },
+    {
+     "file": "/fps/br/models/wood-crane.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3.2,
+      7,
+      4.72
+     ]
+    }
+   ]
+  },
   "wooden-boxes": {
    "title": "military wooden box",
    "author": "ForevereQ",
@@ -44959,6 +49086,60 @@
       1.42,
       1.94,
       4
+     ]
+    }
+   ]
+  },
+  "wooden-cart": {
+   "title": "Medieval Wooden Cart",
+   "author": "Nordic_Face",
+   "source": "https://sketchfab.com/3d-models/medieval-wooden-cart-b7b7ab6a72a84304ab07e474fd04d038",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Old Fortress (2026-11-17): a covered wooden cart in the courtyard and on the road",
+   "scale": 0.306996,
+   "sourceTris": 23816,
+   "size": [
+    1.85,
+    1.93,
+    4.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/wooden-cart.lod0.glb",
+     "tris": 3485,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 100,
+     "size": [
+      1.85,
+      1.93,
+      4.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/wooden-cart.lod1.glb",
+     "tris": 1238,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      1.85,
+      1.93,
+      4.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/wooden-cart.lod2.glb",
+     "tris": 350,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.85,
+      1.93,
+      4.6
      ]
     }
    ]

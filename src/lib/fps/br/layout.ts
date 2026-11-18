@@ -7,6 +7,7 @@ import arenaPlan from "./arena-plan.json";
 import hospitalPlan from "./hospital-plan.json";
 import blackwaterPlan from "./blackwater-plan.json";
 import locationBuildings from "./location-buildings.json";
+import { FORTRESS } from "./fortress-plan";
 import { condoTower, skyline } from "./skyline";
 import type { WorldMeta } from "./world";
 
@@ -1177,7 +1178,22 @@ function groundPlacer(
     const onPad =
       poi?.padHeight !== undefined &&
       pts.every(([px, pz]) => Math.abs(ctx.heightAt(px, pz) - poi.padHeight!) < 1.5);
-    const y = onPad ? poi!.padHeight! : low;
+    // (Never over the ground: within 1.5 m of the pad's height counts as on the pad, and where
+    // the ground there lies lower than the pad, a model at the pad's height stood in the air,
+    // 0.2–1.4 m at the airfield's shelters, Forgotten Ruins' street and the hospital, owner
+    // 2026-11-18: "those items is placed above the ground … put them on the ground". It goes
+    // down to the ground's lowest point under it, as off the pads.)
+    // (Painted markings lie on the ground's highest point under them instead: a 5 cm line laid
+    // lower is buried where the ground rises, and its edges come and go through the ground as
+    // the camera moves.)
+    const markingTop = () => {
+      let top = -Infinity;
+      for (let i = 0; i <= 12; i++)
+        for (let j = 0; j <= 6; j++)
+          top = Math.max(top, ctx.heightAt(x - w / 2 + (w * i) / 12, z - d / 2 + (d * j) / 6));
+      return top;
+    };
+    const y = model === "lot-lines" ? markingTop() : onPad ? Math.min(poi!.padHeight!, low) : low;
     // Its doors: outside them, clear of everything and level with the building (never dug in).
     const doors = apronsOf(model, x, z, turn);
     for (const [ax, az] of doors) {
@@ -2211,6 +2227,61 @@ const FOOT: Record<string, [number, number]> = {
   "bay-trash-can": [1.3, 1.1],
   "bay-planter": [0.5, 0.5],
   "bay-bike-stand": [1.6, 0.4],
+  // The Old Fortress's downloads (2026-11-17).
+  barrow: [0.7, 2],
+  "cheval-de-frise": [2.3, 3.6],
+  "cell-grate": [1.1, 0.3],
+  "medieval-chest-b": [1.2, 0.6],
+  trebuchet: [24.9, 8.3],
+  "trebuchet-b": [12.4, 15.6],
+  "wood-crane": [3.2, 4.8],
+  anvil: [0.6, 1.0],
+  "anvil-trough": [3.2, 2.3],
+  "arch-door": [3.4, 2.1],
+  "arched-door": [1.4, 0.2],
+  ballista: [1.9, 2.4],
+  "ballista-b": [3.5, 4.2],
+  "battering-ram": [6.5, 6.5],
+  bell: [0.7, 0.7],
+  bookshelf: [1.8, 0.7],
+  bookshelves: [2.5, 0.8],
+  cannon: [1.3, 2.3],
+  "cannon-b": [2.6, 1.5],
+  cannonballs: [1.2, 1.2],
+  "castle-flag-blue": [1.4, 5.0],
+  "castle-flag-red": [2.6, 4.5],
+  catapult: [6.4, 7.0],
+  "catapult-b": [5.0, 6.0],
+  cauldron: [1.0, 1.0],
+  "chandelier-ring": [1.8, 1.8],
+  "city-gate": [6.0, 13.2],
+  "crusader-shield": [1.0, 0.4],
+  gargoyle: [0.8, 0.9],
+  "hanging-banner": [5.7, 0.2],
+  "hay-bale": [0.9, 1.6],
+  "heater-shield": [0.9, 0.4],
+  "kings-throne": [1.9, 1.5],
+  "knight-statue": [1.1, 0.8],
+  "lantern-iron": [0.3, 0.3],
+  "market-stall": [2.8, 4.9],
+  "market-stall-b": [4.4, 1.9],
+  mortar: [1.8, 1.3],
+  "old-cart": [1.4, 3.6],
+  "old-chest-b": [1.0, 0.6],
+  "old-well": [2.6, 1.9],
+  "prison-cage": [2.5, 3.0],
+  "rusted-chandelier": [1.4, 1.4],
+  "siege-tower": [7.6, 6.2],
+  "siege-tower-b": [6.2, 6.7],
+  "smith-workbench": [2.7, 1.3],
+  "spear-rack": [1.9, 0.6],
+  "tavern-bench": [2.0, 0.4],
+  "tavern-stool": [0.4, 0.4],
+  "tavern-table": [2.2, 1.0],
+  throne: [0.8, 1.1],
+  "weapon-rack": [2.0, 0.9],
+  "weapon-rack-b": [1.7, 1.3],
+  "wooden-cart": [1.9, 4.6],
 };
 for (const [id, b] of Object.entries(locationBuildings)) FOOT[id] = b.foot as [number, number];
 /** A footprint turned by quarter turns: [x extent, z extent]. */
@@ -2250,7 +2321,7 @@ type TownPalettes = {
 };
 
 /**
- * A town on its concept-map street grid (world.v2.json `town`): every built block gets buildings
+ * A town on its concept-map street grid (world.v3.json `town`): every built block gets buildings
  * along its four street fronts, facing the street, as many as the block's roof density on the map
  * calls for, with yards between them; sparse blocks get a few farm buildings; parked cars line
  * the streets. `landmarks` (model, x, z offsets from the POI, turn) are placed first. Buildings
@@ -2855,7 +2926,7 @@ function quarry(poi: Poi, out: Placement[], ctx: Context) {
 
 /**
  * Iron Peaks (E–F1): sniper positions (spec §3) on the summit perches the world builder flattens
- * (world.v2.json `perches`, highest first): a radio mast on the top summit as the landmark seen
+ * (world.v3.json `perches`, highest first): a radio mast on the top summit as the landmark seen
  * across the map, then guard towers and sandbag nests with an ammo crate.
  */
 function ironPeaks(poi: Poi, out: Placement[], ctx: Context) {
@@ -7000,8 +7071,333 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
     }
 }
 
+/**
+ * The Old Fortress (owner, 2026-11-17: "An old stone fortress with towers, battlements,
+ * underground chambers, and a central courtyard. Multiple ways to breach the walls", "Build this
+ * complex fortress, large one. mutlible floors,tunnels,secret paths"): its buildings where
+ * fortress-plan.ts puts them, on the ledge old_fortress.py levelled at the POI's pad height, then
+ * the owner's downloads through them (the keep's throne room, hall, library and armoury, the
+ * great hall, the barracks, the guard rooms, the dungeon, the vault and the cellars, the smithy
+ * and stables, cannons and ballistae on the roofs, flags) and burning torches along every tunnel,
+ * vault, cellar and room (torch-flames.ts draws the fire). Outside: the siege the walls held off
+ * (siege towers, a catapult, a ballista, a battering ram) on the ledge, the outer gate tower and
+ * carts at the bridgehead.
+ */
+function oldFortress(poi: Poi, out: Placement[], _ctx: Context) {
+  type Frame = readonly [x: number, y: number, z: number, turn: number];
+  const P = poi.padHeight!;
+  /** A model at fortress coordinates (x east, z south, y up from the ledge). */
+  const at = (model: string, x: number, y: number, z: number, turn = 0) =>
+    out.push({
+      model,
+      x: +(poi.x + x).toFixed(2),
+      y: +(P + y).toFixed(2),
+      z: +(poi.z + z).toFixed(2),
+      turn: (turn & 3) as Placement["turn"],
+      poi: poi.id,
+    });
+  for (const [model, x, y, z, turn] of FORTRESS) at(model, x, y, z, turn);
+  /** A model at (lx, ly, lz) in a building's own frame, turned `turn` in it. */
+  const rel = (f: Frame, model: string, lx: number, ly: number, lz: number, turn = 0) => {
+    const [dx, dz] = turnXZ(lx, lz, f[3]);
+    at(model, f[0] + dx, f[1] + ly, f[2] + dz, f[3] + turn);
+  };
+  const frames = (model: string): Frame[] =>
+    FORTRESS.filter((p) => p[0] === model).map(([, x, y, z, t]) => [x, y, z, t] as const);
+  const BASE: Frame = [0, 0, 0, 0];
+  const [KEEP] = frames("fort-keep"),
+    [HALL] = frames("fort-hall"),
+    [BARRACKS] = frames("fort-barracks"),
+    [CHAPEL] = frames("fort-chapel"),
+    [GATE] = frames("fort-gatehouse"),
+    [SALLY] = frames("fort-tower-sally");
+  /** Burning wall torches: (lx, ly, lz) on the wall's face, facing `turn` (into the room), the
+   *  torch's head ~0.4 m over ly. Their wall is at −z, `back` behind their middle. */
+  const BACK = 0.182;
+  const torch = (f: Frame, lx: number, ly: number, lz: number, turn: number) => {
+    const [fx, fz] = turnXZ(0, BACK, turn);
+    rel(f, "torch-medieval", lx + fx, ly - 0.25, lz + fz, turn);
+  };
+  /** World turn → the turn in a frame. */
+  const facing = (f: Frame, world: number) => (world - f[3]) & 3;
+
+  // ---- The towers.
+  for (const [i, f] of frames("fort-tower-round").entries()) {
+    const north = f[2] < 0;
+    torch(f, -6.8, 11.5, 0, 1);
+    rel(f, "cove-barrel", -3.5, 10, 3.5);
+    rel(f, "old-chest-b", 2, 16, 4, 2);
+    rel(f, i % 2 ? "cannon" : "mortar", -2.5, 28, 2, facing(f, north ? 2 : 0));
+    rel(f, i % 2 ? "castle-flag-blue" : "castle-flag-red", 2.5, 28, 2.5);
+  }
+  for (const f of frames("fort-tower-square")) {
+    torch(f, -4.5, 11.5, 0, 1);
+    rel(f, "cove-barrel", -3.6, 10, 3.6);
+    rel(f, "cove-barrel", -2.7, 10, 3.8);
+    // Outward: the tower's own +z (it stands astride the wall, its door to the courtyard).
+    rel(f, "ballista", 0, 28, -3, 0);
+  }
+  torch(SALLY!, -4.5, 11.5, 0, 1);
+  rel(SALLY!, "cannon", 0, 28, -3, 0);
+
+  // ---- The gatehouse (its front, +z, to the north).
+  const G = GATE!;
+  rel(G, "tavern-table", 6.5, 10, -7, 1);
+  rel(G, "tavern-stool", 5.6, 10, -7.6);
+  rel(G, "tavern-stool", 7.4, 10, -6.4);
+  rel(G, "weapon-rack-b", 4.23, 10, -10, 1);
+  torch(G, 3.6, 11.5, -4, 1);
+  rel(G, "cauldron", -2, 16, -6);
+  rel(G, "cove-barrel", -11.5, 16, -11.5);
+  rel(G, "cove-barrel", -10.6, 16, -11.6);
+  torch(G, -6, 17.5, -12.5, 0);
+  torch(G, 4, 17.5, -12.5, 0);
+  rel(G, "old-chest-b", -10, 22, -11.9);
+  rel(G, "spear-rack", -6, 22, -12.2);
+  torch(G, 0, 23.5, -12.5, 0);
+  rel(G, "cannon-b", 0, 28, 3.2, 1);
+  rel(G, "mortar", -8, 28, -6);
+  rel(G, "cannonballs", -11, 28, -6);
+  rel(G, "castle-flag-red", -10, 28, -10);
+  for (const x of [-2.42, 2.42]) rel(G, "gargoyle", x, 29.8, 6.0);
+  // Banners on its courtyard face, over the guard room's door.
+  for (const x of [-6, 6]) rel(G, "red-banner", x, 15.6, -14.09, 2);
+
+  // ---- The keep (34 × 28 m, storeys at 0, 6, 12, 18, the roof at 24).
+  const K = KEEP!;
+  // Ground floor: the throne room.
+  rel(K, "kings-throne", -10, 0, 0, 1);
+  for (const z of [-6, 6]) rel(K, "chandelier-ring", 0, 3.63, z);
+  for (const z of [-4.5, 4.5]) torch(K, -15, 1.5, z, 1);
+  for (const z of [-8, 9]) torch(K, 15, 1.5, z, 3);
+  for (const x of [-8, 8]) {
+    torch(K, x, 1.5, -12, 0);
+    torch(K, x, 1.5, 12, 2);
+  }
+  for (const x of [-4.2, 4.2]) rel(K, "knight-statue", x, 0, -15, 2);
+  rel(K, "hanging-banner", 0, 4.7, -14.12, 2);
+  // The hall: tables and benches, the hearth's cauldron, shields.
+  for (const x of [-3, 3])
+    for (const z of [-5, 5]) {
+      rel(K, "tavern-table", x, 6, z);
+      rel(K, "tavern-bench", x, 6, z - 1);
+      rel(K, "tavern-bench", x, 6, z + 1);
+    }
+  rel(K, "cauldron", -12.4, 6, 0);
+  rel(K, "chandelier-ring", 0, 9.63, 0);
+  for (const x of [-7.5, 0, 7.5]) rel(K, "crusader-shield", x, 7.6, 11.84, 2);
+  for (const x of [-7.5, 0]) rel(K, "heater-shield", x, 7.6, -11.84);
+  torch(K, 15, 7.5, -8, 3);
+  for (const z of [-4.5, 4.5]) torch(K, -15, 7.5, z, 1);
+  // The chambers: the library (west), a study (east).
+  for (const z of [-9.8, 9.8]) rel(K, "bookshelves", -14.63, 12, z, 1);
+  for (const x of [-7.5, -2.5]) rel(K, "bookshelf", x, 12, -11.67);
+  rel(K, "tavern-table", -7, 12, 2, 1);
+  rel(K, "tavern-stool", -6.2, 12, 1.2);
+  rel(K, "tavern-stool", -7.8, 12, 2.8);
+  rel(K, "lantern-iron", -7, 12.92, 2);
+  rel(K, "old-chest-b", 6, 12, -11.1);
+  rel(K, "medieval-chest-b", 9, 12, -11.4);
+  rel(K, "tavern-table", 6, 12, 6);
+  rel(K, "tavern-stool", 5, 12, 5.1);
+  rel(K, "tavern-stool", 7, 12, 6.9);
+  for (const z of [-3.5, 3.5]) torch(K, -15, 13.5, z, 1);
+  torch(K, 15, 13.5, -8, 3);
+  // The top storey: the armoury.
+  rel(K, "weapon-rack", -9, 18, -11.5);
+  rel(K, "weapon-rack-b", -4, 18, -11.3);
+  for (const x of [-9, -4]) rel(K, "spear-rack", x, 18, 11.68, 2);
+  for (const z of [-4, 4]) rel(K, "heater-shield", -14.84, 19.6, z, 1);
+  rel(K, "old-chest-b", -13.5, 18, 0, 1);
+  rel(K, "cove-barrel", 5, 18, -11);
+  rel(K, "cove-barrel", 6.2, 18, -11.2);
+  rel(K, "cannonballs", 8, 18, 10);
+  torch(K, 15, 19.5, -8, 3);
+  for (const z of [-3.5, 3.5]) torch(K, -15, 19.5, z, 1);
+  // The roof.
+  rel(K, "cannon-b", -6, 24, -10, 1);
+  rel(K, "cannon", -6, 24, 10);
+  rel(K, "ballista", 6, 24, -10, 2);
+  rel(K, "cannonballs", -9, 24, -11.5);
+  rel(K, "castle-flag-red", -12, 24, -9.5);
+  rel(K, "castle-flag-blue", 12, 24, 9.5);
+
+  // ---- The great hall (against the west wall; its doors and windows to +x, the courtyard).
+  const H = HALL!;
+  rel(H, "throne", 1.5, 0.3, 21.6, 2);
+  for (const x of [-2, 1.5])
+    for (const z of [-15, -9, -3]) {
+      rel(H, "tavern-table", x, 0, z, 1);
+      rel(H, "tavern-bench", x - 0.9, 0, z, 1);
+      rel(H, "tavern-bench", x + 0.9, 0, z, 1);
+    }
+  rel(H, "cauldron", 0, 0, -20.9);
+  for (const z of [-12, 0, 12]) rel(H, "chandelier-ring", 0, 6, z);
+  for (const z of [-15, 0]) rel(H, "crusader-shield", 6.89, 1.8, z, 3);
+  rel(H, "heater-shield", 6.89, 1.8, 15, 3);
+  for (const z of [-14, 0, 9]) torch(H, -7.05, 1.5, z, 1);
+  for (const z of [-6, 6]) torch(H, -7.05, 6, z, 1);
+  for (const z of [-6.5, 6.5]) torch(H, 7.05, 1.5, z, 3);
+
+  // ---- The barracks (against the east wall; doors to −x).
+  const R = BARRACKS!;
+  rel(R, "tavern-table", 3, 0, -13, 1);
+  rel(R, "tavern-stool", 2.2, 0, -13.5);
+  rel(R, "tavern-stool", 3.8, 0, -12.5);
+  rel(R, "weapon-rack-b", 6.62, 0, -15.5, 3);
+  rel(R, "weapon-rack", 6.81, 0, -4.5, 3);
+  rel(R, "spear-rack", 6.95, 0, -0.5, 3);
+  rel(R, "tavern-table", 3, 0, 7, 1);
+  rel(R, "tavern-stool", 2.2, 0, 6.4);
+  rel(R, "tavern-stool", 3.8, 0, 7.6);
+  rel(R, "cove-barrel", 6.5, 0, 16.3);
+  rel(R, "cove-barrel", 5.6, 0, 16.4);
+  rel(R, "old-chest-b", 3, 0, 16.4, 2);
+  for (const z of [-7, 8]) torch(R, 7.25, 1.5, z, 3);
+  torch(R, 0, 1.5, -17, 0);
+  rel(R, "tavern-table", 2, 5, -13, 1);
+  for (const z of [-5, 6]) rel(R, "heater-shield", 7.09, 6.6, z, 3);
+  for (const z of [-12, 12]) torch(R, 7.25, 6.5, z, 3);
+  rel(R, "ballista", 2, 10, 0, 1);
+  rel(R, "cannonballs", 4, 10, 3);
+
+  // ---- The chapel and its bell tower.
+  const C = CHAPEL!;
+  for (const x of [-3.8, 3.8]) rel(C, "knight-statue", x, 0.3, 8.8, 2);
+  rel(C, "chandelier-ring", 0, 6.5, -2);
+  rel(C, "bell", -10, 21.9, -7);
+  for (const z of [-2.5, 2.5]) {
+    torch(C, -5, 1.5, z, 1);
+    torch(C, 5, 1.5, z, 3);
+  }
+
+  // ---- The courtyard (y 10): the well, a market, carts, a catapult, the smithy and stables.
+  at("old-well", -24, 10, -32);
+  at("market-stall", 32, 10, -16, 3);
+  at("market-stall-b", 31.5, 10, -6, 3);
+  at("wooden-cart", -34, 10, -46);
+  at("barrow", -30, 10, -40);
+  at("catapult-b", -46, 10, 6, 2);
+  for (const [x, z] of [
+    [61, -20],
+    [61, -21.1],
+    [60, -20.5],
+  ] as const)
+    at("cove-barrel", x, 10, z);
+  at("hay-bale", -70.4, 10, 66.8, 1);
+  at("hay-bale", -67.6, 10, 67, 1);
+  at("hay-bale", -64.9, 10, 66.6);
+  at("anvil", -57.5, 10, 63.5);
+  at("anvil-trough", -61, 10, 62.5);
+  at("smith-workbench", -54, 10, 68.3, 2);
+
+  // ---- Under the courtyard: the dungeon, the vault, the tunnels (B2, y 0) and the cellars (B1,
+  // y 5).
+  // The torture room and the guard room.
+  at("prison-cage", -16.6, 0, 32);
+  at("cauldron", -9, 0, 31.2);
+  at("rusted-chandelier", -12, 2.4, 33.5);
+  at("skull-pile", -18.6, 0, 35.8);
+  torch(BASE, -20, 1.5, 33.5, 1);
+  at("tavern-table", 12, 0, 32);
+  at("tavern-stool", 11, 0, 31.1);
+  at("tavern-stool", 13, 0, 32.9);
+  at("weapon-rack-b", 16.87, 0, 34.5, 3);
+  torch(BASE, 17.5, 1.5, 31.5, 3);
+  // The cells: straw, a chest, a barrel, bones.
+  for (const c of [-50, -30, 10, 40]) at("hay-bale", c + 1.8, 0, 48.4, 1);
+  for (const c of [-20, 30]) at("old-chest-b", c - 2.4, 0, 48.4, 2);
+  at("cove-barrel", 47.5, 0, 48.4);
+  // Two cells shut by their grates (the owner's dungeon props).
+  for (const c of [-40, 20]) at("cell-grate", c, 0, 42);
+  at("skull-pile", -10, 0, 47.5);
+  // The corridor: torches along its north wall, arched doors at its ends.
+  for (const x of [-45, -35, -25, -17, -5, 5, 15, 25, 35, 45]) torch(BASE, x, 1.5, 38, 0);
+  at("arched-door", -55.92, 0, 39.75, 1);
+  at("arched-door", 55.92, 0, 39.75, 3);
+  // The great vault.
+  for (const x of [-15, -5, 5, 15]) torch(BASE, x, 1.5, -34, 0);
+  for (const x of [-15, -6, 6, 15]) torch(BASE, x, 1.5, 6, 2);
+  for (const z of [-20, -8]) {
+    torch(BASE, -22, 1.5, z, 1);
+    torch(BASE, 22, 1.5, z, 3);
+  }
+  for (const z of [-23, -25]) at("old-chest-b", -21.2, 0, z, 1);
+  at("medieval-chest-b", -21.4, 0, -18.4, 1);
+  // Arched doors on its side walls (to stores never built).
+  at("arch-door", -20.99, 0, -14, 1);
+  at("arch-door", 20.99, 0, -14, 3);
+  for (const [x, z] of [
+    [21, -26],
+    [21, -24.9],
+    [20, -25.5],
+    [21, 2],
+    [21, 3.1],
+  ] as const)
+    at("cove-barrel", x, 0, z);
+  at("rusted-chandelier", -5.5, 3.5, -19);
+  at("rusted-chandelier", 5.5, 3.5, -9);
+  at("cannonballs", -20.8, 0, 3.6);
+  // The tunnels: the west postern and the sally port (the culvert stays dark).
+  for (const x of [-40, -60, -78]) torch(BASE, x, 1.4, -31.5, 0);
+  for (const z of [52, 66]) torch(BASE, -1.3, 1.4, z, 1);
+  // The keep's undercroft (B1).
+  for (const x of [-9, 9]) {
+    torch(BASE, x, 6.5, -2, 0);
+    torch(BASE, x, 6.5, 18, 2);
+  }
+  torch(BASE, 15, 6.5, 8, 3);
+  at("arched-door", 14.92, 5, 2, 3);
+  for (const [x, z] of [
+    [13.9, 16.6],
+    [12.9, 16.7],
+    [13.9, 15.6],
+    [13.9, -0.6],
+    [12.9, -0.7],
+  ] as const)
+    at("cove-barrel", x, 5, z);
+  // The galleries and the cellars under the hall and the barracks.
+  for (const x of [-65, -50, -30, -10, 10, 30, 50, 65]) torch(BASE, x, 6.5, 29.5, 2);
+  for (const x of [-60, -35, -10, 15, 40, 60]) torch(BASE, x, 6.5, -44, 0);
+  for (const z of [-30, -10, 10]) {
+    torch(BASE, -78, 6.5, z, 1);
+    torch(BASE, 78, 6.5, z, 3);
+  }
+  for (const [x, z] of [
+    [-77.3, -20],
+    [-77.3, -18.9],
+    [-76.3, -19.5],
+    [-77.3, 0],
+    [-77.3, 1.1],
+    [77.3, -20],
+    [77.3, -18.9],
+  ] as const)
+    at("cove-barrel", x, 5, z);
+  at("cannonballs", 76.8, 5, 20);
+
+  // ---- Outside: the siege on the ledge (y 0), the outer gate tower, carts at the bridgehead.
+  at("siege-tower", -100, 0, 30, 1);
+  at("siege-tower-b", 40, 0, 90, 2);
+  at("battering-ram", 100, 0, 5, 3);
+  at("catapult", -50, 0, 90, 2);
+  at("ballista-b", -100, 0, -5, 1);
+  at("city-gate", -99, 0, -60, 1);
+  at("old-well", 100, 0, 50, 3);
+  at("old-cart", 14, 10, -120);
+  at("wooden-cart", -14, 10, -118, 1);
+  // The besiegers' trebuchets (south and west ledges), chevaux de frise at the bridgehead and
+  // before the breach, the repairs' crane and barrows by the scaffold.
+  at("trebuchet", 60, 0, 92);
+  at("trebuchet-b", -98, 0, 55, 1);
+  for (const x of [-17, 17]) at("cheval-de-frise", x, 10, -122, 1);
+  for (const z of [16, 38]) at("cheval-de-frise", 106, 0, z, 1);
+  at("wood-crane", -36, 0, 86);
+  at("barrow", -29, 0, 90.5, 1);
+}
+
 const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void> = {
   "forgotten-ruins": forgottenRuins,
+  "old-fortress": oldFortress,
   "fishers-cove": fishersCove,
   bayview,
   eastport,
@@ -10988,7 +11384,10 @@ function estates(out: Placement[], ctx: Context) {
   ];
   for (const [m, dx, dz, t, rough] of park)
     kit.search(3195 + dx, -1280 + dz, 24, 9_800 + dx * 7 + dz, (x, z) =>
-      kit.put(m, x, z, t, { rough, gap: 1, poi: "estate", apron: rough < 1 ? 3 : 0 }),
+      // (The bays' paint on its highest ground, on ground level enough for it.)
+      m === "lot-lines"
+        ? kit.put(m, x, z, t, { rough: 0.25, gap: 1, poi: "estate", top: true })
+        : kit.put(m, x, z, t, { rough, gap: 1, poi: "estate", apron: rough < 1 ? 3 : 0 }),
     );
   const cars = ["car-sedan", "car-pickup", "cargo-van", "car-cruiser", "car-sedan", "box-truck"];
   for (let k = 0; k < 14; k++) {

@@ -11,7 +11,7 @@ const dir = "public/fps/br/ground/";
 const size = 4096,
   tileSize = 32;
 const meta = JSON.parse(fs.readFileSync(dir + "ground.json"));
-const cover = fs.readFileSync("public/fps/br/landcover.v2.lc");
+const cover = fs.readFileSync("public/fps/br/landcover.v3.lc");
 if (cover.toString("ascii", 0, 4) !== "PIC1") throw Error("Unexpected land cover");
 const width = cover.readUInt16LE(4),
   height = cover.readUInt16LE(6);
@@ -126,10 +126,10 @@ for (let row = 0; row < size; row++)
 // Raw RGB is decoded with the same square approximation as the existing tile arrays.
 await sharp(pixels, { raw: { width: size, height: size, channels: 3 } })
   .webp({ quality: 90, effort: 6 })
-  .toFile(dir + "surface-v2.webp");
+  .toFile(dir + "surface-v3.webp");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 fs.writeFileSync(
-  dir + "surface-v2.json",
+  dir + "surface-v3.json",
   JSON.stringify(
     {
       size,
@@ -138,12 +138,12 @@ fs.writeFileSync(
       sourceEncoding: "parsed-json-v1",
       palette: sha(JSON.stringify({ GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL })),
       sources: Object.fromEntries(
-        ["public/fps/br/landcover.v2.lc", dir + "ground.json", dir + "albedo.webp"].map((f) => [
+        ["public/fps/br/landcover.v3.lc", dir + "ground.json", dir + "albedo.webp"].map((f) => [
           f,
           surfaceSourceHash(f, fs.readFileSync(f)),
         ]),
       ),
-      output: sha(fs.readFileSync(dir + "surface-v2.webp")),
+      output: sha(fs.readFileSync(dir + "surface-v3.webp")),
     },
     null,
     2,
@@ -151,8 +151,8 @@ fs.writeFileSync(
 );
 console.log(
   JSON.stringify({
-    output: dir + "surface-v2.webp",
+    output: dir + "surface-v3.webp",
     size,
-    bytes: fs.statSync(dir + "surface-v2.webp").size,
+    bytes: fs.statSync(dir + "surface-v3.webp").size,
   }),
 );
