@@ -2235,7 +2235,7 @@ type TownPalettes = {
 };
 
 /**
- * A town on its concept-map street grid (world.v2.json `town`): every built block gets buildings
+ * A town on its concept-map street grid (world.v3.json `town`): every built block gets buildings
  * along its four street fronts, facing the street, as many as the block's roof density on the map
  * calls for, with yards between them; sparse blocks get a few farm buildings; parked cars line
  * the streets. `landmarks` (model, x, z offsets from the POI, turn) are placed first. Buildings
@@ -2840,7 +2840,7 @@ function quarry(poi: Poi, out: Placement[], ctx: Context) {
 
 /**
  * Iron Peaks (E–F1): sniper positions (spec §3) on the summit perches the world builder flattens
- * (world.v2.json `perches`, highest first): a radio mast on the top summit as the landmark seen
+ * (world.v3.json `perches`, highest first): a radio mast on the top summit as the landmark seen
  * across the map, then guard towers and sandbag nests with an ammo crate.
  */
 function ironPeaks(poi: Poi, out: Placement[], ctx: Context) {

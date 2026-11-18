@@ -5,7 +5,7 @@ import { BrSeatSync, BrSight, brViewFor, createBrMatch, seatHuman } from "@/lib/
 import { StaticWorld } from "@/lib/fps/br/static-world";
 import type { WorldMeta } from "@/lib/fps/br/world";
 
-const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v3.json", "utf8")) as WorldMeta;
 const hf = new Heightfield(2, 2, 10000, new Float32Array(4));
 const flat = new StaticWorld(hf, [], { voxel: 0.2, models: {} }, null, []);
 

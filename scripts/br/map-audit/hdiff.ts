@@ -6,7 +6,7 @@ const buf = (p: string) => {
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
 const a = await decodeHeightfield(buf(process.argv[2]!));
-const b = await decodeHeightfield(buf("public/fps/br/height.v3.hf"));
+const b = await decodeHeightfield(buf("public/fps/br/height.v4.hf"));
 const [x, z, r] = process.argv.slice(3).map(Number) as [number, number, number];
 let max = 0,
   at = "";

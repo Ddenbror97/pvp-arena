@@ -11,9 +11,9 @@ import {
 } from "@/lib/fps/br/world";
 
 let hf: Heightfield;
-const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v3.json", "utf8")) as WorldMeta;
 beforeAll(async () => {
-  const file = readFileSync("public/fps/br/height.v3.hf");
+  const file = readFileSync("public/fps/br/height.v4.hf");
   hf = await decodeHeightfield(
     file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength),
   );

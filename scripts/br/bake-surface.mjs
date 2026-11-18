@@ -11,7 +11,7 @@ const dir = "public/fps/br/ground/";
 const size = 4096,
   tileSize = 32;
 const meta = JSON.parse(fs.readFileSync(dir + "ground.json"));
-const cover = fs.readFileSync("public/fps/br/landcover.v2.lc");
+const cover = fs.readFileSync("public/fps/br/landcover.v3.lc");
 if (cover.toString("ascii", 0, 4) !== "PIC1") throw Error("Unexpected land cover");
 const width = cover.readUInt16LE(4),
   height = cover.readUInt16LE(6);
@@ -138,7 +138,7 @@ fs.writeFileSync(
       sourceEncoding: "parsed-json-v1",
       palette: sha(JSON.stringify({ GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL })),
       sources: Object.fromEntries(
-        ["public/fps/br/landcover.v2.lc", dir + "ground.json", dir + "albedo.webp"].map((f) => [
+        ["public/fps/br/landcover.v3.lc", dir + "ground.json", dir + "albedo.webp"].map((f) => [
           f,
           surfaceSourceHash(f, fs.readFileSync(f)),
         ]),

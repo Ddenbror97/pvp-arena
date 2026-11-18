@@ -37,6 +37,11 @@ export const MATERIALS = {
   mossstone: { tex: "mossstone", tile: 2.6, rough: 0.97 },
   flagstone: { tex: "flagstone", tile: 3.2, rough: 0.95 },
   glyphs: { tex: "glyphs", tile: 1.8, rough: 0.92 },
+  // Generated (make_fortress_textures.py, 2026-11-17): the Old Fortress.
+  castlestone: { tex: "castlestone", tile: 3.6, rough: 0.92 },
+  castlewall: { tex: "castlewall", tile: 4.2, rough: 0.94 },
+  slate: { tex: "slate", tile: 2.2, rough: 0.8 },
+  castlefloor: { tex: "castlefloor", tile: 3.6, rough: 0.9 },
   paint: { tex: null, rough: 0.85 },
   glass: { tex: null, rough: 0.15, glass: true },
 };

@@ -13,16 +13,19 @@ export const WORLD_HALF = WORLD_SIZE / 2;
 export const MAP_CELL = 1_000;
 export const MAP_COLUMNS = "ABCDEFGHIJ";
 
-/** Static data published with the world (public/fps/br/world.v2.json). */
+/** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
   revision: "ruins-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
   // its plaza, escarpment, cenote and rainforest, and the POI.
-  height: "/fps/br/height.v3.hf",
-  landcover: "/fps/br/landcover.v2.lc",
-  meta: "/fps/br/world.v2.json",
+  // height.v4, landcover.v3, world.v3 (2026-11-17, art/br/old_fortress.py): the Old Fortress's
+  // hill (the ledge round its base, the ditch on the north and the bridgehead), the field of fire
+  // cleared round it, and the POI.
+  height: "/fps/br/height.v4.hf",
+  landcover: "/fps/br/landcover.v3.lc",
+  meta: "/fps/br/world.v3.json",
   // sites-v1 (the facades-v1 manifest, its mid-distance LODs of 54 models on the facade atlas,
   // with the 2026-11-11 location models added by add_models.mjs; "sites" because a
   // locations-v1 revision already existed) with the works halls' fit-outs measured again and
@@ -170,7 +173,8 @@ export type PoiKind =
   | "residential"
   | "downtown"
   | "stadium"
-  | "ruins";
+  | "ruins"
+  | "fortress";
 
 export type WorldMeta = {
   version: number;
