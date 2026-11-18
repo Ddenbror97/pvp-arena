@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-17T23:57:18-03:00",
+ "generated": "2026-11-17T23:58:29-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -23695,6 +23695,152 @@
    "budget_ratio": 1.33
   },
   {
+   "key": "sf:610f471eb04d42829e84c9d2f1e19657",
+   "title": "Cannon Balls",
+   "author": "jvalentine",
+   "author_url": "https://sketchfab.com/jvalentine",
+   "source": "https://sketchfab.com/3d-models/cannon-balls-610f471eb04d42829e84c9d2f1e19657",
+   "uid": "610f471eb04d42829e84c9d2f1e19657",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/05bf1e2d-cannon_balls.zip",
+     "sha256": "85ca0d3fccdbb5a523bcd7c7b810613f40b7028c7ef94ae9d6faa5705fd3bf07",
+     "size": 22730,
+     "mtime": "2026-11-17T23:57:52-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 13440,
+    "verts": 7826,
+    "draws": 14,
+    "unique_tris": 13440,
+    "meshes": 14,
+    "primitives": 14,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 31,
+    "mesh_nodes": 14,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.029,
+     4.784,
+     6.029
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 14,
+    "max_piece_tris": 960,
+    "top_pieces": [
+     {
+      "name": "Sphere.001_0",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.002_1",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.003_2",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.004_3",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.005_4",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.006_5",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 14"
+   ],
+   "actions": [
+    "atlas materials (14 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:6486623945f44789ae1949e9add15268",
    "title": "Canoe",
    "author": "SkyeSladeUT",
@@ -25019,6 +25165,214 @@
    ],
    "actions": [
     "check scale (largest side 49.7 m; x0.01 would give 0.497 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:6cba851b85554a8099a9d59506b9dc3d",
+   "title": "Castle-flag-blue",
+   "author": "Pixel",
+   "author_url": "https://sketchfab.com/stefan.lengyel1",
+   "source": "https://sketchfab.com/3d-models/castle-flag-blue-6cba851b85554a8099a9d59506b9dc3d",
+   "uid": "6cba851b85554a8099a9d59506b9dc3d",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/7d469a20-castle-flag-blue.zip",
+     "sha256": "f4a46bbbfc9da5f0fa868ac27795144cb377852003a83fa1817e5a030bd62c2a",
+     "size": 151983,
+     "mtime": "2026-11-17T23:57:52-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 220,
+    "verts": 266,
+    "draws": 1,
+    "unique_tris": 220,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.475,
+     6.618,
+     5.462
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "76f1c68966574755822a2ea90a4236e3.fbx",
+     "RootNode",
+     "Castle-flag-blue",
+     "Object_4"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 220,
+    "top_pieces": [
+     {
+      "name": "Castle-flag-blue_Texture-base_0",
+      "tris": 220,
+      "draws": 1,
+      "size_m": [
+       1.475,
+       6.618,
+       5.462
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Texture-base_baseColor.jpeg",
+      "name": "textures/Texture-base_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:1ed25d3659c742cfa887c52b14fe1283",
+   "title": "Castle-flag-red",
+   "author": "Pixel",
+   "author_url": "https://sketchfab.com/stefan.lengyel1",
+   "source": "https://sketchfab.com/3d-models/castle-flag-red-1ed25d3659c742cfa887c52b14fe1283",
+   "uid": "1ed25d3659c742cfa887c52b14fe1283",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/319509d8-castle-flag-red.zip",
+     "sha256": "f82acfe3a2118ffc2ec85eeb97c1e2e195cbad66b49fbb0ca401fa86945de041",
+     "size": 151894,
+     "mtime": "2026-11-17T23:58:09-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 220,
+    "verts": 266,
+    "draws": 1,
+    "unique_tris": 220,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.803,
+     6.618,
+     4.961
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "1e5bc5372c61480db097badb38b9f5f3.fbx",
+     "RootNode",
+     "Castle-flag-red",
+     "Object_4"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 220,
+    "top_pieces": [
+     {
+      "name": "Castle-flag-red_Texture-base_0",
+      "tris": 220,
+      "draws": 1,
+      "size_m": [
+       2.803,
+       6.618,
+       4.961
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Texture-base_baseColor.jpeg",
+      "name": "textures/Texture-base_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -95417,6 +95771,127 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:c31f74412c884fe0b3d92faadaec3356",
+   "title": "Medieval Arched Wooden Door",
+   "author": "Kigha",
+   "author_url": "https://sketchfab.com/Kigha",
+   "source": "https://sketchfab.com/3d-models/medieval-arched-wooden-door-c31f74412c884fe0b3d92faadaec3356",
+   "uid": "c31f74412c884fe0b3d92faadaec3356",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/ad10ade2-medieval_arched_wooden_door.zip",
+     "sha256": "c16c7369b559516d1b6d5204118e9db66f04bb09aa5aa4a155022a4619fa8d2b",
+     "size": 11291392,
+     "mtime": "2026-11-17T23:57:53-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1466,
+    "verts": 1778,
+    "draws": 1,
+    "unique_tris": 1466,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     83.333,
+     161.607,
+     9.583
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Medival_Door.fbx",
+     "RootNode",
+     "Door_Medieval"
+    ],
+    "root_scale": 100.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1466,
+    "top_pieces": [
+     {
+      "name": "Door_Medieval_Door_Medieval_0",
+      "tris": 1466,
+      "draws": 1,
+      "size_m": [
+       83.333,
+       161.607,
+       9.583
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Door_Medieval_baseColor.png",
+      "name": "textures/Door_Medieval_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_Medieval_metallicRoughness.png",
+      "name": "textures/Door_Medieval_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_Medieval_normal.png",
+      "name": "textures/Door_Medieval_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 47.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 162 m",
+    "TEXMB 48"
+   ],
+   "actions": [
+    "check scale (largest side 162 m; x0.01 would give 1.62 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:0a87672db9ef4059ae559d25f199baf2",
    "title": "Medieval banner",
    "author": "ejtam",
@@ -99414,6 +99889,112 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:63903c85a6d142f7a81f63e77abad0ce",
+   "title": "Medieval Spike Barracade",
+   "author": "R3024374",
+   "author_url": "https://sketchfab.com/R3024374",
+   "source": "https://sketchfab.com/3d-models/medieval-spike-barracade-63903c85a6d142f7a81f63e77abad0ce",
+   "uid": "63903c85a6d142f7a81f63e77abad0ce",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/4351e546-medieval_spike_barracade.zip",
+     "sha256": "edfda21ee77757373aba3c8583aacedcccecc3b7bbd26a0495473eadc8627158",
+     "size": 31373,
+     "mtime": "2026-11-17T23:57:52-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2170,
+    "verts": 3712,
+    "draws": 1,
+    "unique_tris": 2170,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 10,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.32,
+     5.457,
+     9.108
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "ef920d9fea084afeae10f4613c6497f5.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 3,
+    "max_piece_tris": 2170,
+    "top_pieces": [
+     {
+      "name": "Cylinder.009",
+      "tris": 2170,
+      "draws": 1,
+      "size_m": [
+       4.32,
+       5.457,
+       9.108
+      ]
+     },
+     {
+      "name": "Light",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     },
+     {
+      "name": "Camera",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:95da3564dbd0489d9854ae89a7a51752",
    "title": "Medieval Tavern Asset Pack",
    "author": "Matthew Theobald",
@@ -100262,6 +100843,165 @@
    "actions": [
     "instance (InstancedMesh)",
     "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:eaa80cf29ceb4c0099698a5f5c7aea8d",
+   "title": "Medieval Tents",
+   "author": "AnyRPG",
+   "author_url": "https://sketchfab.com/anyrpg",
+   "source": "https://sketchfab.com/3d-models/medieval-tents-eaa80cf29ceb4c0099698a5f5c7aea8d",
+   "uid": "eaa80cf29ceb4c0099698a5f5c7aea8d",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/ce94d25b-medieval_tents.zip",
+     "sha256": "6784501d014590d8258cd916772b270c76873dac58a9dfd0fd873dafccc60eff",
+     "size": 1945390,
+     "mtime": "2026-11-17T23:58:09-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 5572,
+    "verts": 13450,
+    "draws": 8,
+    "unique_tris": 5572,
+    "meshes": 8,
+    "primitives": 8,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 19,
+    "mesh_nodes": 8,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     7.007,
+     1.871,
+     2.037
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 8,
+    "max_piece_tris": 2048,
+    "top_pieces": [
+     {
+      "name": "PolesClosed_6",
+      "tris": 2048,
+      "draws": 1,
+      "size_m": [
+       1.336,
+       0.979,
+       1.673
+      ]
+     },
+     {
+      "name": "PolesArched_5",
+      "tris": 1664,
+      "draws": 1,
+      "size_m": [
+       2.336,
+       1.849,
+       1.835
+      ]
+     },
+     {
+      "name": "PolesFlat_2",
+      "tris": 1280,
+      "draws": 1,
+      "size_m": [
+       2.383,
+       1.611,
+       1.835
+      ]
+     },
+     {
+      "name": "Table_3",
+      "tris": 172,
+      "draws": 1,
+      "size_m": [
+       1.379,
+       0.291,
+       0.598
+      ]
+     },
+     {
+      "name": "BaseBoards_0",
+      "tris": 144,
+      "draws": 1,
+      "size_m": [
+       2.154,
+       0.549,
+       1.733
+      ]
+     },
+     {
+      "name": "ClothClosed_7",
+      "tris": 136,
+      "draws": 1,
+      "size_m": [
+       1.16,
+       1.03,
+       1.677
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/WoodLight_baseColor.jpeg",
+      "name": "textures/WoodLight_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/ClothBrown_baseColor.jpeg",
+      "name": "textures/ClothBrown_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 6.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [],
+   "actions": [
+    "use as-is"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -129994,6 +130734,139 @@
     "downscale textures to 1K"
    ],
    "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:976a3f158bcb4f4ea90f18d1fa78ca0c",
+   "title": "Portcullis",
+   "author": "danywalters98",
+   "author_url": "https://sketchfab.com/danywalters98",
+   "source": "https://sketchfab.com/3d-models/portcullis-976a3f158bcb4f4ea90f18d1fa78ca0c",
+   "uid": "976a3f158bcb4f4ea90f18d1fa78ca0c",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/566ef9c3-portcullis.zip",
+     "sha256": "a3c9a38b409d70c9bc9ddb272382410400653a29a730640c0e613377e74237a7",
+     "size": 11933657,
+     "mtime": "2026-11-17T23:58:10-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 600,
+    "verts": 937,
+    "draws": 1,
+    "unique_tris": 600,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 8,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.237,
+     7.509,
+     8.478
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 600,
+    "top_pieces": [
+     {
+      "name": "Cube.001",
+      "tris": 600,
+      "draws": 1,
+      "size_m": [
+       1.237,
+       7.509,
+       8.478
+      ]
+     },
+     {
+      "name": "Sun",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     },
+     {
+      "name": "Point",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material.001_diffuse.png",
+      "name": "textures/Material.001_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_specularGlossiness.png",
+      "name": "textures/Material.001_specularGlossiness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_normal.jpeg",
+      "name": "textures/Material.001_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SPEC-GLOSS",
+    "TEXMB 64"
+   ],
+   "actions": [
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
    "budget_ratio": 0.0
   },
   {
@@ -188103,6 +188976,62 @@
    "size": 37554000,
    "mtime_ns": 1794969641887342186,
    "mtime": "2026-11-17T23:40:41-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/mnt/user-data/uploads/05bf1e2d-cannon_balls.zip": {
+   "sha256": "85ca0d3fccdbb5a523bcd7c7b810613f40b7028c7ef94ae9d6faa5705fd3bf07",
+   "size": 22730,
+   "mtime_ns": 1794970672776085783,
+   "mtime": "2026-11-17T23:57:52-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/mnt/user-data/uploads/319509d8-castle-flag-red.zip": {
+   "sha256": "f82acfe3a2118ffc2ec85eeb97c1e2e195cbad66b49fbb0ca401fa86945de041",
+   "size": 151894,
+   "mtime_ns": 1794970689646148477,
+   "mtime": "2026-11-17T23:58:09-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/mnt/user-data/uploads/4351e546-medieval_spike_barracade.zip": {
+   "sha256": "edfda21ee77757373aba3c8583aacedcccecc3b7bbd26a0495473eadc8627158",
+   "size": 31373,
+   "mtime_ns": 1794970672873109156,
+   "mtime": "2026-11-17T23:57:52-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/mnt/user-data/uploads/566ef9c3-portcullis.zip": {
+   "sha256": "a3c9a38b409d70c9bc9ddb272382410400653a29a730640c0e613377e74237a7",
+   "size": 11933657,
+   "mtime_ns": 1794970690447404515,
+   "mtime": "2026-11-17T23:58:10-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/mnt/user-data/uploads/7d469a20-castle-flag-blue.zip": {
+   "sha256": "f4a46bbbfc9da5f0fa868ac27795144cb377852003a83fa1817e5a030bd62c2a",
+   "size": 151983,
+   "mtime_ns": 1794970672990818741,
+   "mtime": "2026-11-17T23:57:52-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/mnt/user-data/uploads/ad10ade2-medieval_arched_wooden_door.zip": {
+   "sha256": "c16c7369b559516d1b6d5204118e9db66f04bb09aa5aa4a155022a4619fa8d2b",
+   "size": 11291392,
+   "mtime_ns": 1794970673751403523,
+   "mtime": "2026-11-17T23:57:53-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/mnt/user-data/uploads/ce94d25b-medieval_tents.zip": {
+   "sha256": "6784501d014590d8258cd916772b270c76873dac58a9dfd0fd873dafccc60eff",
+   "size": 1945390,
+   "mtime_ns": 1794970689836298927,
+   "mtime": "2026-11-17T23:58:09-03:00",
    "batch": "2026-11-17",
    "present": true
   }
@@ -340508,6 +341437,715 @@
    "sha256": "98bcdaaa688191be2288812ae91e66d92fc360e75f925824fa0b46b7fe97b885",
    "size": 37554000,
    "parsed_at": "2026-11-17T23:57:18-03:00"
+  },
+  "85ca0d3fccdbb5a523bcd7c7b810613f40b7028c7ef94ae9d6faa5705fd3bf07": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 438022,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.16.0",
+   "licence": {
+    "title": "Cannon Balls",
+    "source": "https://sketchfab.com/3d-models/cannon-balls-610f471eb04d42829e84c9d2f1e19657",
+    "author": "jvalentine (https://sketchfab.com/jvalentine)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 13440,
+    "verts": 7826,
+    "draws": 14,
+    "unique_tris": 13440,
+    "meshes": 14,
+    "primitives": 14,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 31,
+    "mesh_nodes": 14,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.029,
+     4.784,
+     6.029
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 14,
+    "max_piece_tris": 960,
+    "top_pieces": [
+     {
+      "name": "Sphere.001_0",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.002_1",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.003_2",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.004_3",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.005_4",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     },
+     {
+      "name": "Sphere.006_5",
+      "tris": 960,
+      "draws": 1,
+      "size_m": [
+       2.0,
+       2.0,
+       2.0
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "85ca0d3fccdbb5a523bcd7c7b810613f40b7028c7ef94ae9d6faa5705fd3bf07",
+   "size": 22730,
+   "parsed_at": "2026-11-17T23:58:29-03:00"
+  },
+  "f82acfe3a2118ffc2ec85eeb97c1e2e195cbad66b49fbb0ca401fa86945de041": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 165977,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.64.0",
+   "licence": {
+    "title": "Castle-flag-red",
+    "source": "https://sketchfab.com/3d-models/castle-flag-red-1ed25d3659c742cfa887c52b14fe1283",
+    "author": "Pixel (https://sketchfab.com/stefan.lengyel1)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 220,
+    "verts": 266,
+    "draws": 1,
+    "unique_tris": 220,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     2.803,
+     6.618,
+     4.961
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "1e5bc5372c61480db097badb38b9f5f3.fbx",
+     "RootNode",
+     "Castle-flag-red",
+     "Object_4"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 220,
+    "top_pieces": [
+     {
+      "name": "Castle-flag-red_Texture-base_0",
+      "tris": 220,
+      "draws": 1,
+      "size_m": [
+       2.803,
+       6.618,
+       4.961
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Texture-base_baseColor.jpeg",
+      "name": "textures/Texture-base_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f82acfe3a2118ffc2ec85eeb97c1e2e195cbad66b49fbb0ca401fa86945de041",
+   "size": 151894,
+   "parsed_at": "2026-11-17T23:58:29-03:00"
+  },
+  "edfda21ee77757373aba3c8583aacedcccecc3b7bbd26a0495473eadc8627158": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 150871,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.65.0",
+   "licence": {
+    "title": "Medieval Spike Barracade",
+    "source": "https://sketchfab.com/3d-models/medieval-spike-barracade-63903c85a6d142f7a81f63e77abad0ce",
+    "author": "R3024374 (https://sketchfab.com/R3024374)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2170,
+    "verts": 3712,
+    "draws": 1,
+    "unique_tris": 2170,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 10,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.32,
+     5.457,
+     9.108
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "ef920d9fea084afeae10f4613c6497f5.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 3,
+    "max_piece_tris": 2170,
+    "top_pieces": [
+     {
+      "name": "Cylinder.009",
+      "tris": 2170,
+      "draws": 1,
+      "size_m": [
+       4.32,
+       5.457,
+       9.108
+      ]
+     },
+     {
+      "name": "Light",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     },
+     {
+      "name": "Camera",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "edfda21ee77757373aba3c8583aacedcccecc3b7bbd26a0495473eadc8627158",
+   "size": 31373,
+   "parsed_at": "2026-11-17T23:58:29-03:00"
+  },
+  "a3c9a38b409d70c9bc9ddb272382410400653a29a730640c0e613377e74237a7": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 12042021,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Portcullis",
+    "source": "https://sketchfab.com/3d-models/portcullis-976a3f158bcb4f4ea90f18d1fa78ca0c",
+    "author": "danywalters98 (https://sketchfab.com/danywalters98)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 600,
+    "verts": 937,
+    "draws": 1,
+    "unique_tris": 600,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 8,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.237,
+     7.509,
+     8.478
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 600,
+    "top_pieces": [
+     {
+      "name": "Cube.001",
+      "tris": 600,
+      "draws": 1,
+      "size_m": [
+       1.237,
+       7.509,
+       8.478
+      ]
+     },
+     {
+      "name": "Sun",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     },
+     {
+      "name": "Point",
+      "tris": 0,
+      "draws": 0,
+      "size_m": null
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Material.001_diffuse.png",
+      "name": "textures/Material.001_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_specularGlossiness.png",
+      "name": "textures/Material.001_specularGlossiness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material.001_normal.jpeg",
+      "name": "textures/Material.001_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a3c9a38b409d70c9bc9ddb272382410400653a29a730640c0e613377e74237a7",
+   "size": 11933657,
+   "parsed_at": "2026-11-17T23:58:29-03:00"
+  },
+  "f4a46bbbfc9da5f0fa868ac27795144cb377852003a83fa1817e5a030bd62c2a": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 166045,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.64.0",
+   "licence": {
+    "title": "Castle-flag-blue",
+    "source": "https://sketchfab.com/3d-models/castle-flag-blue-6cba851b85554a8099a9d59506b9dc3d",
+    "author": "Pixel (https://sketchfab.com/stefan.lengyel1)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 220,
+    "verts": 266,
+    "draws": 1,
+    "unique_tris": 220,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 6,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.475,
+     6.618,
+     5.462
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "76f1c68966574755822a2ea90a4236e3.fbx",
+     "RootNode",
+     "Castle-flag-blue",
+     "Object_4"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 220,
+    "top_pieces": [
+     {
+      "name": "Castle-flag-blue_Texture-base_0",
+      "tris": 220,
+      "draws": 1,
+      "size_m": [
+       1.475,
+       6.618,
+       5.462
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Texture-base_baseColor.jpeg",
+      "name": "textures/Texture-base_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 1.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f4a46bbbfc9da5f0fa868ac27795144cb377852003a83fa1817e5a030bd62c2a",
+   "size": 151983,
+   "parsed_at": "2026-11-17T23:58:29-03:00"
+  },
+  "c16c7369b559516d1b6d5204118e9db66f04bb09aa5aa4a155022a4619fa8d2b": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 11384092,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Medieval Arched Wooden Door",
+    "source": "https://sketchfab.com/3d-models/medieval-arched-wooden-door-c31f74412c884fe0b3d92faadaec3356",
+    "author": "Kigha (https://sketchfab.com/Kigha)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1466,
+    "verts": 1778,
+    "draws": 1,
+    "unique_tris": 1466,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     83.333,
+     161.607,
+     9.583
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Medival_Door.fbx",
+     "RootNode",
+     "Door_Medieval"
+    ],
+    "root_scale": 100.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1466,
+    "top_pieces": [
+     {
+      "name": "Door_Medieval_Door_Medieval_0",
+      "tris": 1466,
+      "draws": 1,
+      "size_m": [
+       83.333,
+       161.607,
+       9.583
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Door_Medieval_baseColor.png",
+      "name": "textures/Door_Medieval_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_Medieval_metallicRoughness.png",
+      "name": "textures/Door_Medieval_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Door_Medieval_normal.png",
+      "name": "textures/Door_Medieval_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 47.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "c16c7369b559516d1b6d5204118e9db66f04bb09aa5aa4a155022a4619fa8d2b",
+   "size": 11291392,
+   "parsed_at": "2026-11-17T23:58:29-03:00"
+  },
+  "6784501d014590d8258cd916772b270c76873dac58a9dfd0fd873dafccc60eff": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 2357787,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Medieval Tents",
+    "source": "https://sketchfab.com/3d-models/medieval-tents-eaa80cf29ceb4c0099698a5f5c7aea8d",
+    "author": "AnyRPG (https://sketchfab.com/anyrpg)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 5572,
+    "verts": 13450,
+    "draws": 8,
+    "unique_tris": 5572,
+    "meshes": 8,
+    "primitives": 8,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 19,
+    "mesh_nodes": 8,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     7.007,
+     1.871,
+     2.037
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 8,
+    "max_piece_tris": 2048,
+    "top_pieces": [
+     {
+      "name": "PolesClosed_6",
+      "tris": 2048,
+      "draws": 1,
+      "size_m": [
+       1.336,
+       0.979,
+       1.673
+      ]
+     },
+     {
+      "name": "PolesArched_5",
+      "tris": 1664,
+      "draws": 1,
+      "size_m": [
+       2.336,
+       1.849,
+       1.835
+      ]
+     },
+     {
+      "name": "PolesFlat_2",
+      "tris": 1280,
+      "draws": 1,
+      "size_m": [
+       2.383,
+       1.611,
+       1.835
+      ]
+     },
+     {
+      "name": "Table_3",
+      "tris": 172,
+      "draws": 1,
+      "size_m": [
+       1.379,
+       0.291,
+       0.598
+      ]
+     },
+     {
+      "name": "BaseBoards_0",
+      "tris": 144,
+      "draws": 1,
+      "size_m": [
+       2.154,
+       0.549,
+       1.733
+      ]
+     },
+     {
+      "name": "ClothClosed_7",
+      "tris": 136,
+      "draws": 1,
+      "size_m": [
+       1.16,
+       1.03,
+       1.677
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/WoodLight_baseColor.jpeg",
+      "name": "textures/WoodLight_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/ClothBrown_baseColor.jpeg",
+      "name": "textures/ClothBrown_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 6.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "6784501d014590d8258cd916772b270c76873dac58a9dfd0fd873dafccc60eff",
+   "size": 1945390,
+   "parsed_at": "2026-11-17T23:58:29-03:00"
   }
  }
 }

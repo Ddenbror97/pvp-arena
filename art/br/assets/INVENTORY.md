@@ -1,21 +1,21 @@
 # Project Island asset inventory
 
-Generated 2026-11-17T23:57:18-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-17T23:58:29-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 112 |
-| Unique assets | 1018 |
-| Licence OK / REVIEW / REJECT | 971 / 34 / 13 |
+| Zip files scanned (present now) | 119 |
+| Unique assets | 1025 |
+| Licence OK / REVIEW / REJECT | 978 / 34 / 13 |
 | Assets with duplicate zips | 79 (89 extra files) |
-| Over budget (tris, per-piece, texture px or draws) | 543 |
+| Over budget (tris, per-piece, texture px or draws) | 544 |
 | Needs conversion (no glTF) | 8 |
 | Unparseable zips | 10 |
 | On the asset list: arrived / not yet | 0 / 0 (list has 0 items) |
-| Not on the asset list | 1018 |
-| Assets first seen in batch 2026-11-17 (today) | 214 |
+| Not on the asset list | 1025 |
+| Assets first seen in batch 2026-11-17 (today) | 221 |
 | Assets first seen in batch 2026-11-16 | 2 |
 | Assets first seen in batch 2026-11-15 | 37 |
 | Assets first seen in batch 2026-11-14 | 92 |
@@ -220,6 +220,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | C4 | photon (that one larry) | OK | prop | 27.9k | 11 | 2048 | 165 | 0.161×0.079×0.22 | TRIS>15k (1.9x), SKINNED, TEXMB 165 | decimate to 15k; downscale textures to 1K | 11-02 |
 | Camp 3d model free | iGauravRajput | OK | prop | 18.8k | 1 | 2048 | 21 | 0.998×0.596×0.998 | TRIS>15k (1.3x) | decimate to 15k | 11-09 |
 | Campfire | Mandrake | OK | prop | 20.0k | 8 | 4096 | 271 | 411×263×315 | TRIS>15k (1.3x), SCALE? 411 m, TEX 4096px, TEXMB 271 | decimate to 15k; check scale (largest side 411 m; x0.01 would give 4.11 m); downscale textures to 1K | 11-08 |
+| Cannon Balls | jvalentine | OK | prop | 13.4k | 14 | - | 0 | 6.03×4.78×6.03 | DRAWS 14 | atlas materials (14 draws to ≤12) | 11-17 |
 | Canoe | SkyeSladeUT | OK | prop | 906 | 4 | 1024 | 16 | 0.429×0.282×2 | - | use as-is | 11-17 |
 | Canyon '75 Taxi - Low poly model | Daniel Zhabotinsky | OK | prop | 20.0k | 28 | 2048 | 162 | 5.31×1.83×2.13 | TRIS>15k (1.3x), DRAWS 28, TEXMB 162 | decimate to 15k; atlas materials (28 draws to ≤12); downscale textures to 1K | 11-13 |
 | car | Lodgelus | OK | prop | 4.7k | 16 | - | 0 | 3.95×2.99×9.84 | DRAWS 16 | atlas materials (16 draws to ≤12) | 11-16 |
@@ -229,6 +230,8 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Cast of Aztec stone effigy | Bonn Center for Digital Humanities | OK | prop | 19.0k | 1 | 8192 | 1021 | 0.13×0.291×0.112 | TRIS>15k (1.3x), TEX 8192px, TEXMB 1021 | decimate to 15k; downscale textures to 1K | 11-17 |
 | Cast of Stela J, Copan | Alexandre Tokovinine | OK | prop | 50.0k | 1 | 8192 | 681 | 10.2×13.3×11.5 | TRIS>15k (3.3x), TEX 8192px, TEXMB 681 | decimate to 15k; downscale textures to 1K | 11-17 |
 | Castle Door | farooq.smurf | OK | prop | 8.0k | 7 | 512 | 1 | 49.7×20.5×7.27 | SCALE? 49.7 m | check scale (largest side 49.7 m; x0.01 would give 0.497 m) | 11-17 |
+| Castle-flag-blue | Pixel | OK | prop | 220 | 1 | 512 | 1 | 1.48×6.62×5.46 | - | use as-is | 11-17 |
+| Castle-flag-red | Pixel | OK | prop | 220 | 1 | 512 | 1 | 2.8×6.62×4.96 | - | use as-is | 11-17 |
 | castle-portcullis | madexc | OK | prop | 4.3k | 13 | 512 | 3 | 1×1×0.867 | DRAWS 13 | atlas materials (13 draws to ≤12) | 11-17 |
 | CC0 - Bicycle Stand 4 | plaggy | OK | prop | 7.5k | 1 | 4096 | 255 | 1.32×0.298×0.325 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-17 |
 | CC0 - Pool Ladder 3 | plaggy | OK | prop | 2.1k | 1 | 4096 | 255 | 0.59×1.13×0.431 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-13 |
@@ -622,6 +625,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Medical X-ray Image Viewer - 200 Uploads! | re1monsen | OK | prop | 12.5k | 18 | 4096 | 851 | 1.55×0.8×0.238 | DRAWS 18, TEX 4096px, TEXMB 851 | atlas materials (18 draws to ≤12); downscale textures to 1K | 11-13 |
 | Medicine Box | FertyFly | OK | prop | 1.4k | 2 | 2048 | 128 | 7.43×7.17×7.17 | TEXMB 128 | downscale textures to 1K | 11-13 |
 | Medicine Wall Cupboard, Hospital | BillyJJackson | OK | building | 354 | 1 | 1024 | 16 | 0.485×0.661×0.249 | SCALE? 0.661 m | check scale (largest side 0.661 m; x100 would give 66.1 m) | 11-13 |
+| Medieval Arched Wooden Door | Kigha | OK | prop | 1.5k | 1 | 2048 | 48 | 83.3×162×9.58 | SCALE? 162 m, TEXMB 48 | check scale (largest side 162 m; x0.01 would give 1.62 m); downscale textures to 1K | 11-17 |
 | Medieval banner ⧉ | ejtam | OK | prop | 2.5k | 8 | 4096 | 1277 | 0.5×1.2×0.077 | TEX 4096px, TEXMB 1277 | downscale textures to 1K | 11-17 |
 | Medieval Bookshelves | AnyRPG | OK | prop | 656 | 2 | 512 | 1 | 3.27×3.51×1 | - | use as-is | 11-17 |
 | Medieval Cannon | leone.giulio.92 | OK | prop | 34.4k | 11 | 1024 | 28 | 0.854×0.822×1.53 | TRIS>15k (2.3x), SPEC-GLOSS, TEXMB 28 | decimate to 15k; convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 1K | 11-17 |
@@ -639,10 +643,12 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Medieval Market Stall | AspectStudios | OK | prop | 21.7k | 9 | 2048 | 173 | 2.73×2.68×4.88 | TRIS>15k (1.4x), TEXMB 173 | decimate to 15k; downscale textures to 1K | 11-17 |
 | Medieval Mortier | ViktorKom | OK | prop | 6.0k | 26 | 2048 | 64 | 158×107×113 | DRAWS 26, SCALE? 158 m, TEXMB 64 | atlas materials (26 draws to ≤12); check scale (largest side 158 m; x0.01 would give 1.58 m); downscale textures to 1K | 11-17 |
 | Medieval siege tower | Antokkk | OK | building | 46.3k | 12 | 256 | 1 | 21.5×42.4×17.4 | - | use as-is | 11-17 |
+| Medieval Spike Barracade | R3024374 | OK | prop | 2.2k | 1 | - | 0 | 4.32×5.46×9.11 | - | use as-is | 11-17 |
 | Medieval Tavern Asset Pack | Matthew Theobald | OK | kit | 96.6k (18 pcs, max 38.2k) | 18 | 2048 | 575 | 0.15×0.068×0.276 | PIECE>15k (2.5x), SCALE? 0.038 m, TEXMB 575 | decimate heavy pieces to 15k; check scale (largest side 0.038 m; x100 would give 3.8 m); downscale textures to 1K | 11-17 |
 | Medieval Tavern Bench - Oak and Iron | PlasticFly2781 | OK | tree | 1.1k (2 pcs, max 696) | 2 | 1024 | 37 | 1.7×0.461×0.3 | TEXMB 37 | instance (InstancedMesh); downscale textures to 1K | 11-17 |
 | Medieval Tavern Stool - Oak and Iron | PlasticFly2781 | OK | tree | 988 (2 pcs, max 656) | 2 | 1024 | 37 | 0.38×0.461×0.38 | SCALE? 0.461 m, TEXMB 37 | check scale (largest side 0.461 m; x100 would give 46.1 m); instance (InstancedMesh); downscale textures to 1K | 11-17 |
 | Medieval Tavern Table - Oak and Iron | PlasticFly2781 | OK | tree | 4.3k (3 pcs, max 2.3k) | 3 | 1024 | 53 | 2.01×0.837×0.904 | TEXMB 53 | instance (InstancedMesh); downscale textures to 1K | 11-17 |
+| Medieval Tents | AnyRPG | OK | building | 5.6k | 8 | 1024 | 7 | 7.01×1.87×2.04 | - | use as-is | 11-17 |
 | Medieval Wall Torch | Kigha | OK | prop | 1.7k | 1 | 2048 | 32 | 37.6×62×16.1 | SCALE? 62 m, TEXMB 32 | check scale (largest side 62 m; x0.01 would give 0.62 m); downscale textures to 1K | 11-17 |
 | Medieval Well | Oscar Royo | OK | prop | 8.5k | 1 | 2048 | 64 | 4.38×5.42×4.38 | TEXMB 64 | downscale textures to 1K | 11-17 |
 | Medieval Wood Heater Shield | iedalton | OK | prop | 5.3k | 3 | 4096 | 766 | 1.66×2.03×0.746 | TEX 4096px, TEXMB 766 | downscale textures to 1K | 11-17 |
@@ -806,6 +812,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Popcorn Machine | Jared64 | OK | prop | 13.0k | 3 | 4096 | 426 | 1.8×2.02×0.887 | TEX 4096px, TEXMB 426 | downscale textures to 1K | 11-14 |
 | Port crane "Sokol" | Vitaliy Kovalchuk | OK | vehicle | 14.4k | 36 | 4096 | 383 | 43×42.3×19.7 | DRAWS 36, ANIM 1, TEX 4096px, TEXMB 383 | atlas materials (36 draws to ≤12); downscale textures to 2K | 11-08 |
 | Porta Potty \| Porta Loo | Sean Thomas | OK | prop | 2.1k | 26 | 4096 | 255 | 0.968×2×0.978 | DRAWS 26, TEX 4096px, TEXMB 255 | atlas materials (26 draws to ≤12); downscale textures to 1K | 11-08 |
+| Portcullis | danywalters98 | OK | prop | 600 | 1 | 2048 | 64 | 1.24×7.51×8.48 | SPEC-GLOSS, TEXMB 64 | convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension); downscale textures to 1K | 11-17 |
 | Post-Soviet Kiosk (psx style) | youpzdev | OK | prop | 98 | 1 | 1024 | 5 | 2.54×2.7×2.38 | - | use as-is | 11-13 |
 | Potted Plant | caridorka | OK | prop | 34.4k | 6 | 2048 | 24 | 0.327×0.277×0.329 | TRIS>15k (2.3x) | decimate to 15k | 11-10 |
 | Powe Poles | Gunnar Correa | OK | prop | 3.8k | 13 | 1024 | 181 | 2.36e+03×728×2.36e+03 | DRAWS 13, SCALE? 2.36e+03 m, TEXMB 181 | atlas materials (13 draws to ≤12); check scale (largest side 2.36e+03 m; x0.01 would give 23.6 m); downscale textures to 1K | 11-04 |

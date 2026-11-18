@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "works-v1",
+  revision: "fort-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -129,8 +129,15 @@ export const WORLD_ASSETS = {
   // control house, the workshop, domed tanks, a pipe rack, yard floors) and the owner's 14
   // downloads (smoke stacks, cooling cells, the tank farm, tanks, boilers, machines, cabinets,
   // conveyors, pipes, valves, warning lights).
-  models: "/fps/br/models/models.works-v1.json",
-  collision: "/fps/br/models/collision.works-v1.json",
+  // Then (fort-v1, 2026-11-17) the Old Fortress (build_fortress.mjs: the base with its cellars,
+  // vaults, dungeon and tunnels; curtain walls with wall-walks, the breach; round and square
+  // towers, the gatehouse, the keep, the great hall, the barracks, the chapel and its bell
+  // tower, the stables, the bridge, the rubble ramp and the scaffold) and the owner's downloads
+  // for it (siege engines, the city gate, thrones, tables, racks, shields, banners, chandeliers,
+  // the cage, the bell, the smithy, carts, flags); the new models' coplanar faces lifted
+  // (zfix-v9).
+  models: "/fps/br/models/models.fort-v1.json",
+  collision: "/fps/br/models/collision.fort-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

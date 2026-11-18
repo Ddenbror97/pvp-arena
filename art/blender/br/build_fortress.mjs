@@ -458,6 +458,7 @@ export const FORT = {
   add([-78, B1, 26, 78, B1T, 29.5]); // south gallery
   add([-78, B1, -44, -66, B1T, 29.5]); // west cellar (under the hall)
   add([66, B1, -44, 78, B1T, 29.5]); // east cellar (under the barracks)
+  add([66, B1, -47.5, 72, B1T, -43.9]); // the barracks stair's foot (its flight ends at −44)
   add([-78, B1, -44, 78, B1T, -40.5]); // north gallery
   add([-1.6, B1, 17.9, 1.6, 8, 26.1], [-1.6, B1, -40.6, 1.6, 8, -1.9]);
   // The courtyard's stair openings (through the top).
@@ -479,6 +480,7 @@ export const FORT = {
   floor(-22, -34, 22, 6, 0.02, FLOOR, { collide: false });
   floor(-56, 38, 56, 41.5, 0.02, FLOOR, { collide: false });
   floor(-78, -44, 78, -40.5, B1 + 0.02, FLOOR, { collide: false, holes: [holeOf(FORT.stairs.ne)] });
+  floor(66, -47.5, 72, -44, B1 + 0.02, FLOOR, { collide: false });
   floor(-78, 26, 78, 29.5, B1 + 0.02, FLOOR, { collide: false });
   floor(-15.4, -2, 15, 18, B1 + 0.02, FLOOR, { collide: false, holes: [holeOf(FORT.stairs.keep)] });
   // The stairs. Court → B1 (each foot on the cellar's floor, rising to the courtyard).
@@ -609,19 +611,21 @@ await curtain("fort-wall-breach", 26, { breach: [-4.5, 4.5] });
   // The foot: solid up to the courtyard.
   disc(0, 0, R0 + 0.05, F[0], { m: FLOOR, thick: F[0], lod: 1 });
   const holeA = [-3.7, -4.7, 3.3, -3.3],
-    holeB = [-4.7, -3.3, -3.3, 3.6];
+    holeB = [-4.7, -3.3, -3.3, 3.6],
+    holeC = [-2.5, -4.7, 4.9, -3.3];
   disc(0, 0, R0 + 0.05, F[1], { m: WOOD, holes: [holeA] });
   disc(0, 0, R0 + 0.05, F[2], { m: WOOD, holes: [holeB] });
-  disc(0, 0, R0 + 0.05, F[3], { m: FLOOR, holes: [holeA], lod: 1 });
+  disc(0, 0, R0 + 0.05, F[3], { m: FLOOR, holes: [holeC], lod: 1 });
   // Flights: A (10→16) along −x on the south side; B (16→22) along +z on the west side;
-  // C (22→28) along +x over A's line, to the roof.
+  // C (22→28) along +x over A's line, to the roof (its foot east of B's well, with room to turn
+  // onto it from B's top round the well).
   flight("x", 3.2, -1, -4.6, -3.4, F[0], 6, { base: F[0] });
   flight("z", -3.2, 1, -4.6, -3.4, F[1], 6, { base: F[1] });
-  flight("x", -3.2, 1, -4.6, -3.4, F[2], 6, { base: F[2], lod: 0 });
+  flight("x", -2.0, 1, -4.6, -3.4, F[2], 6, { base: F[2], lod: 0 });
   // Rails round the roof's hatch and along the floors' holes (the side away from the flight's
   // top end).
-  k.box([-3.7, F[3], -3.3, 2.2, F[3] + 1, -3.1], STONE, WHITE, { lod: 0 });
-  k.box([-3.7, F[1], -3.3, 2.0, F[1] + 1, -3.1], WOOD, WHITE, { lod: 0 });
+  k.box([-2.5, F[3], -3.3, 3.4, F[3] + 1, -3.1], STONE, WHITE, { lod: 0 });
+  k.box([-3.3, F[1], -3.3, 2.0, F[1] + 1, -3.1], WOOD, WHITE, { lod: 0 }); // clear of B's foot
   k.box([-3.3, F[2], -2.0, -3.1, F[2] + 1, 3.6], WOOD, WHITE, { lod: 0 });
   // Slits round the storeys (the courtyard's quarter has the door and the walls).
   for (const y of [F[1] + 1.6, F[2] + 1.6, F[3] - 3.6])

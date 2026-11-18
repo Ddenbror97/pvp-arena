@@ -1137,6 +1137,60 @@
     }
    ]
   },
+  "arched-door": {
+   "title": "Medieval Arched Wooden Door",
+   "author": "Kigha",
+   "source": "https://sketchfab.com/3d-models/medieval-arched-wooden-door-c31f74412c884fe0b3d92faadaec3356",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Old Fortress (2026-11-17): an arched plank door set against the dungeon's and the keep's walls (blind doors)",
+   "scale": 0.016088,
+   "sourceTris": 1466,
+   "size": [
+    1.34,
+    2.6,
+    0.15
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/arched-door.lod0.glb",
+     "tris": 554,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      1.34,
+      2.6,
+      0.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/arched-door.lod1.glb",
+     "tris": 214,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.34,
+      2.6,
+      0.15
+     ]
+    },
+    {
+     "file": "/fps/br/models/arched-door.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.34,
+      2.6,
+      0.15
+     ]
+    }
+   ]
+  },
   "archery-target": {
    "title": "Low Poly Archery Target",
    "author": "Misfit_Games",
@@ -10387,6 +10441,60 @@
     }
    ]
   },
+  "cannonballs": {
+   "title": "Cannon Balls",
+   "author": "jvalentine",
+   "source": "https://sketchfab.com/3d-models/cannon-balls-610f471eb04d42829e84c9d2f1e19657",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): a pyramid of cannonballs beside the cannons",
+   "scale": 0.19904,
+   "sourceTris": 13440,
+   "size": [
+    1.2,
+    0.95,
+    1.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cannonballs.lod0.glb",
+     "tris": 1242,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 14,
+     "size": [
+      1.2,
+      0.95,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cannonballs.lod1.glb",
+     "tris": 560,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      1.2,
+      0.95,
+      1.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cannonballs.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.2,
+      0.95,
+      1.2
+     ]
+    }
+   ]
+  },
   "canoe": {
    "title": "Low-Poly Canoe",
    "author": "Osaze Shears",
@@ -10922,6 +11030,114 @@
      "size": [
       4.4,
       1.65,
+      4.5
+     ]
+    }
+   ]
+  },
+  "castle-flag-blue": {
+   "title": "Castle-flag-blue",
+   "author": "Pixel",
+   "source": "https://sketchfab.com/3d-models/castle-flag-blue-6cba851b85554a8099a9d59506b9dc3d",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): a blue flag on its pole on the towers' roofs",
+   "scale": 0.906561,
+   "sourceTris": 220,
+   "size": [
+    1.34,
+    6,
+    4.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/castle-flag-blue.lod0.glb",
+     "tris": 220,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 16,
+     "size": [
+      1.34,
+      6,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/castle-flag-blue.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      1.34,
+      6,
+      4.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/castle-flag-blue.lod2.glb",
+     "tris": 62,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.34,
+      6,
+      4.95
+     ]
+    }
+   ]
+  },
+  "castle-flag-red": {
+   "title": "Castle-flag-red",
+   "author": "Pixel",
+   "source": "https://sketchfab.com/3d-models/castle-flag-red-1ed25d3659c742cfa887c52b14fe1283",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Old Fortress (2026-11-17): a red flag on its pole on the keep's turrets and the gatehouse",
+   "scale": 0.906561,
+   "sourceTris": 220,
+   "size": [
+    2.54,
+    6,
+    4.5
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/castle-flag-red.lod0.glb",
+     "tris": 220,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      2.54,
+      6,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/castle-flag-red.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      2.54,
+      6,
+      4.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/castle-flag-red.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.54,
+      6,
       4.5
      ]
     }
@@ -19658,11 +19874,11 @@
     10,
     154
    ],
-   "sourceTris": 3322,
+   "sourceTris": 3336,
    "lods": [
     {
      "file": "/fps/br/models/fort-base.fort-v1.lod0.glb",
-     "tris": 3322,
+     "tris": 3336,
      "draws": 4,
      "textureMB": 4,
      "kB": 174,
@@ -20227,7 +20443,7 @@
      "tris": 2094,
      "draws": 4,
      "textureMB": 0.75,
-     "kB": 70,
+     "kB": 71,
      "size": [
       19.2,
       29.8,

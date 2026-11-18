@@ -10349,6 +10349,52 @@
       "ring": "building",
       "collision": "boxes",
       "use": "Old Fortress: a 26 m stretch of the curtain wall, the wall-walk on top behind its crenellations, broken down to a rubble crest (the east breach) (procedural, 2026-11-17)"
+    },
+    {
+      "id": "cannonballs",
+      "key": "sf:610f471eb04d42829e84c9d2f1e19657",
+      "class": "small",
+      "fit": {
+        "max": 1.2
+      },
+      "collision": "solid",
+      "lodTris": [
+        1200,
+        500,
+        150
+      ],
+      "use": "Old Fortress (2026-11-17): a pyramid of cannonballs beside the cannons"
+    },
+    {
+      "id": "castle-flag-blue",
+      "key": "sf:6cba851b85554a8099a9d59506b9dc3d",
+      "class": "small",
+      "fit": {
+        "y": 6
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a blue flag on its pole on the towers' roofs"
+    },
+    {
+      "id": "castle-flag-red",
+      "key": "sf:1ed25d3659c742cfa887c52b14fe1283",
+      "class": "small",
+      "fit": {
+        "y": 6
+      },
+      "collision": "none",
+      "use": "Old Fortress (2026-11-17): a red flag on its pole on the keep's turrets and the gatehouse"
+    },
+    {
+      "id": "arched-door",
+      "key": "sf:c31f74412c884fe0b3d92faadaec3356",
+      "class": "small",
+      "fit": {
+        "y": 2.6
+      },
+      "collision": "none",
+      "ring": "furniture",
+      "use": "Old Fortress (2026-11-17): an arched plank door set against the dungeon's and the keep's walls (blind doors)"
     }
   ],
   "skipped": [
@@ -10734,11 +10780,6 @@
       "reason": "processed but never placed on the island; removed in the final frontend cleanup. Was: Blackwater Prison (2026-11-14): bulkhead lamps on the walls"
     },
     {
-      "key": "sf:005e0d60c6e447a6bb86ceb80a4c712a",
-      "title": "cannonballs (Old Fortress, 2026-11-17)",
-      "reason": "the 'cannonball' download is a small cannon on a dirt patch, not a pile of balls"
-    },
-    {
       "key": "sf:32e4ebebee634b70a2bbd68781590bfe",
       "title": "castle-door (Old Fortress, 2026-11-17)",
       "reason": "a grey low-poly castle-wall segment, not a door; out of style"
@@ -10757,11 +10798,6 @@
       "key": "sf:46f64ce7a6614bf7b59e887d58bcbffa",
       "title": "hand-cart (Old Fortress, 2026-11-17)",
       "reason": "broken near LOD (wheel and bed parts misplaced)"
-    },
-    {
-      "key": "sf:f7c8b10b044143e9a3c46b31175cd1ed",
-      "title": "portcullis (Old Fortress, 2026-11-17)",
-      "reason": "the download is a blocky placeholder mesh, not a portcullis"
     },
     {
       "key": "sf:9d28917fb9eb4fefabb559aac6ae66ba",
@@ -10802,6 +10838,21 @@
       "key": "sf:6c1d9d0a212241269e6f213ef736497b",
       "title": "medieval-chest (Old Fortress, 2026-11-17)",
       "reason": "untextured: a plain brown box"
+    },
+    {
+      "key": "sf:63903c85a6d142f7a81f63e77abad0ce",
+      "title": "spike-barricade (Old Fortress, 2026-11-17)",
+      "reason": "untextured: a bone-white barricade"
+    },
+    {
+      "key": "sf:eaa80cf29ceb4c0099698a5f5c7aea8d",
+      "title": "medieval-tents (Old Fortress, 2026-11-17)",
+      "reason": "market tents; the middle LOD loses the cloth"
+    },
+    {
+      "key": "sf:976a3f158bcb4f4ea90f18d1fa78ca0c",
+      "title": "portcullis (Old Fortress, 2026-11-17)",
+      "reason": "a stone gate wall with a closed portcullis, not a portcullis to hang in the gate's slot"
     }
   ]
 }
