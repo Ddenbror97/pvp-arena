@@ -16,7 +16,7 @@ const buffer = (path: string) => {
   const f = readFileSync(path);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
@@ -26,8 +26,8 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")).
 >;
 let layout: Placement[], vegetation: VegetationWorld;
 beforeAll(async () => {
-  const hf = await decodeHeightfield(buffer("public/fps/br/height.v2.hf"));
-  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
+  const hf = await decodeHeightfield(buffer("public/fps/br/height.v3.hf"));
+  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v2.lc"));
   ({ layout, vegetation } = buildIsland(hf, cover, meta, collision));
 }, 120_000);
 

@@ -13,14 +13,16 @@ export const WORLD_HALF = WORLD_SIZE / 2;
 export const MAP_CELL = 1_000;
 export const MAP_COLUMNS = "ABCDEFGHIJ";
 
-/** Static data published with the world (public/fps/br/world.v1.json). */
+/** Static data published with the world (public/fps/br/world.v2.json). */
 export const WORLD_ASSETS = {
-  revision: "coast-v1",
+  revision: "ruins-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
-  height: "/fps/br/height.v2.hf",
-  landcover: "/fps/br/landcover.v1.lc",
-  meta: "/fps/br/world.v1.json",
+  // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
+  // its plaza, escarpment, cenote and rainforest, and the POI.
+  height: "/fps/br/height.v3.hf",
+  landcover: "/fps/br/landcover.v2.lc",
+  meta: "/fps/br/world.v2.json",
   // sites-v1 (the facades-v1 manifest, its mid-distance LODs of 54 models on the facade atlas,
   // with the 2026-11-11 location models added by add_models.mjs; "sites" because a
   // locations-v1 revision already existed) with the works halls' fit-outs measured again and
@@ -114,8 +116,13 @@ export const WORLD_ASSETS = {
   // pictures: Fisher's Cove a painted fishing harbour village, Bayview a white Mediterranean
   // marina town (build_coast.mjs: 13 enterable houses; the owner's 42 downloads for their quays,
   // marina, promenade and beach: boats, nets, pots, palms, lamps, terrace furniture).
-  models: "/fps/br/models/models.coast-v1.json",
-  collision: "/fps/br/models/collision.coast-v1.json",
+  // And then (ruins-v1, 2026-11-17) Forgotten Ruins: 13 procedural Maya buildings
+  // (build_ruins.mjs: the pyramid and its tunnel, the palace, the tower, temples, the acropolis's
+  // tunnels, the ball court, the arch, walls, stelae, paving) and the owner's downloads for its
+  // rainforest (two tree species, the jungle and palm, with impostors), undergrowth, statues and
+  // stelae, rocks and the expedition's camp.
+  models: "/fps/br/models/models.ruins-v1.json",
+  collision: "/fps/br/models/collision.ruins-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
@@ -131,7 +138,7 @@ export function assertIslandRevision(...parts: Array<{ worldRevision?: string }>
     throw new Error("Island assets version mismatch");
 }
 
-/** Land-cover classes in landcover.v1.lc (byte value = class id). */
+/** Land-cover classes in landcover.v1.lc and v2.lc (byte value = class id). */
 export const LAND_COVER = [
   "water",
   "sand",
@@ -162,7 +169,8 @@ export type PoiKind =
   | "airfield"
   | "residential"
   | "downtown"
-  | "stadium";
+  | "stadium"
+  | "ruins";
 
 export type WorldMeta = {
   version: number;

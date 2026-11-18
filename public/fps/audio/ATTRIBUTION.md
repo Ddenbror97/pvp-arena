@@ -285,6 +285,17 @@ Each was cut with its last 2.5 s cross-faded (equal power) into its start so it 
 seam, levelled to −24 dBFS RMS, and stored between copies of its own last and first 0.25 s
 (MP3 at 80 kb/s); the game loops the middle (`AMBIENCE_LOOPS` in br-audio.ts).
 
+### Forgotten Ruins jungle ambience (2026-11-17)
+
+The owner's supplied recording, battle royale only, played in and near Forgotten Ruins
+(src/lib/fps/br/br-arena.ts: full within the location's radius, gone 90 m beyond it; it takes
+the forest loop's place there), only near the ground:
+
+- `br-jungle-loop-v1.mp3` ("Jungle_sound.mp3", 9:49): 60 s from 2:05 (its steadiest stretch:
+  birds, insects and frogs without close calls), stereo 22.05 kHz. Cut with its last 2.5 s
+  cross-faded (equal power) into its start, levelled to −24 dBFS RMS, stored between copies of
+  its own last and first 0.25 s (MP3 at 80 kb/s), like the forest loop.
+
 ### Removed superseded files (cleanup 2026-11-10)
 
 `br-m4-v1.wav` (silent; replaced by `br-m4-v2.wav`), `br-ak47-silenced-v2.wav` and

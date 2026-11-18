@@ -3,9 +3,9 @@ import { readFileSync } from "node:fs";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import type { WorldMeta } from "@/lib/fps/br/world";
 import { planZone, setZoneFirstReach } from "@/lib/fps/br/zone";
-const f = readFileSync("public/fps/br/height.v2.hf");
+const f = readFileSync("public/fps/br/height.v3.hf");
 const hf = await decodeHeightfield(f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength));
-const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
 for (const reach of process.argv.slice(2).map(Number)) {
   setZoneFirstReach(reach);
   let island = 0,
