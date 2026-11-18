@@ -440,50 +440,10 @@
   margin-bottom: 8px;
 }
 .strike-rule-grid p,
-.strike-rankings > p,
 .strike-live > p {
   font-size: 12px;
   line-height: 1.9;
   color: #a99ab7;
-}
-.strike-rankings {
-  border-top: 1px solid #ffffff12;
-  padding-top: 28px;
-}
-.strike-rankings > p {
-  margin: 12px 0 24px;
-}
-.strike-rankings ol {
-  list-style: none;
-  padding: 0;
-}
-.strike-rankings li {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #ffffff0b;
-  font-size: 12px;
-}
-.strike-rankings li > span {
-  color: #a16bcf;
-}
-.strike-rankings li strong {
-  flex: 1;
-}
-.strike-rankings li small {
-  color: #a899b6;
-}
-.strike-rankings-loading li {
-  height: 15px;
-  box-sizing: content-box;
-}
-.strike-rankings-loading li::before {
-  content: "";
-  width: 40%;
-  height: 10px;
-  border-radius: 4px;
-  background: linear-gradient(100deg, #ffffff06, #ffffff10, #ffffff06);
 }
 .strike-live {
   margin-bottom: 36px;
@@ -558,12 +518,6 @@
   max-width: 1600px;
   margin: auto;
   padding: 40px 28px;
-}
-.strike-rankings {
-  min-height: 150px;
-}
-.strike-rankings ol {
-  min-height: 100px;
 }
 @media (max-width: 1300px) {
   .strike-stage-body {
@@ -660,12 +614,6 @@
   .strike-rule-grid {
     grid-template-columns: 1fr;
     gap: 24px;
-  }
-  .strike-rankings li {
-    gap: 10px;
-  }
-  .strike-rankings li small {
-    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {

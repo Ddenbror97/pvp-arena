@@ -14,7 +14,7 @@ import {
 import { PlayerAvatar } from "@/components/jackpot/Avatar";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
-import { fetchDuelAvatars, fetchDuelLobby, fetchDuelRankings, duelError } from "@/lib/fps/api";
+import { fetchDuelAvatars, fetchDuelLobby, duelError } from "@/lib/fps/api";
 import { duelAction, duelAdmission } from "@/lib/fps/duel.functions";
 import { duelMoney, duelQuote, type DuelLobbyData } from "@/lib/fps/quote";
 import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
@@ -107,12 +107,6 @@ export function DuelLobby() {
     retry: 1,
   });
   const wallet = useQuery({ ...walletQuery(userId), enabled: !!userId, retry: 1 });
-  const rankings = useQuery({
-    queryKey: ["fps-rankings"],
-    queryFn: fetchDuelRankings,
-    staleTime: 60000,
-    retry: false,
-  });
   const [panel, setPanel] = useState<"games" | "create">("games");
   const [mode, setMode] = useState<StrikeMode>("duel");
   const [stake, setStake] = useState(100);
@@ -975,40 +969,6 @@ export function DuelLobby() {
               </p>
             </article>
           </div>
-        </section>
-        <section className="strike-rankings">
-          <h2>Competitive ladder</h2>
-          {rankings.isPending ? (
-            // Placeholder rows while the ladder loads (no text that a list then replaces).
-            <ol
-              className="strike-rankings-loading"
-              aria-busy="true"
-              aria-label="Loading the ladder"
-            >
-              {[0, 1, 2, 3, 4].map((n) => (
-                <li key={n} aria-hidden />
-              ))}
-            </ol>
-          ) : rankings.data?.length ? (
-            <ol>
-              {rankings.data.map((row, index) => (
-                <li key={row.id}>
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <strong>{row.username}</strong>
-                  <b>{row.rating} Elo</b>
-                  <small>
-                    {row.wins} wins / {row.played} matches
-                  </small>
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <p>
-              {rankings.isError
-                ? "Rankings are temporarily unavailable."
-                : "Only verified public cash results count toward your rank."}
-            </p>
-          )}
         </section>
         <p className="strike-fineprint">
           <a href="/fps-1v1">PvPStrike rules, fees and public results</a> ·{" "}
