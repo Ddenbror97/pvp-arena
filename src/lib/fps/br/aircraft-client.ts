@@ -18,9 +18,9 @@ import type { WorldMeta } from "./world";
  * simulation, aircraft.ts, replayed over the inputs the server has not applied yet), the
  * pilot's controls, and the chase cameras.
  *
- * Controls (owner's spec, 2026-11-17): W / S the throttle lever, A / D roll, the mouse up and
- * down the elevator (nose up / down: hold the left mouse button to hold the nose angle you choose;
- * release to centre the elevator). Arrow Up / Down are an alternate pitch control.
+ * Controls: W / S the throttle lever; hold left mouse and drag up/down for pitch, left/right
+ * for banking (nose-wheel steering on the ground). Release for wings-level, gentle cruise.
+ * A / D and Arrow Up / Down remain alternate roll and pitch controls.
  * Q / R the rudder, Space the brakes, G the flaps (up, 10°, 30°), F the engine, C the
  * camera, Alt held
  * to look around, E in and out.
@@ -146,14 +146,24 @@ export class AircraftClient {
   /** Left mouse holds a pitch target; the elevator eases off as the nose reaches it. */
   private pitchHeld = false;
   private pitchTarget = 0;
+  private bankTarget = 0;
+  private levelOnRelease = false;
 
   holdPitch(held: boolean) {
     const next = held && this.seat === 0 && !this.look.held;
     if (next && !this.pitchHeld) {
+      this.levelOnRelease = false;
       const a = this.predicted ?? this.server;
       this.pitchTarget = a ? attitude(a).pitch : 0;
+      this.bankTarget = a ? clamp(attitude(a).bank, -Math.PI / 6, Math.PI / 6) : 0;
     }
-    if (!next && this.pitchHeld) this.controls.stick = this.controls.elev = 0;
+    if (!next && this.pitchHeld) {
+      this.controls.stick = this.controls.elev = 0;
+      const a = this.predicted ?? this.server;
+      this.pitchTarget = a ? clamp(attitude(a).pitch, Math.PI / 60, Math.PI / 36) : 0;
+      this.levelOnRelease = true;
+    }
+    if (!next) this.bankTarget = 0;
     this.pitchHeld = next;
   }
 
@@ -169,10 +179,12 @@ export class AircraftClient {
     this.seat = flying ?? null;
     if (this.seat === null) {
       this.holdPitch(false);
+      this.levelOnRelease = false;
       this.predicted = null;
       this.autoStarted = false;
     } else if (was !== this.seat && this.server) {
       this.holdPitch(false);
+      this.levelOnRelease = false;
       // Just in: the levers where they are in the cockpit.
       this.controls.thr = this.server.throttle;
       this.controls.flaps = this.server.flaps;
@@ -224,17 +236,35 @@ export class AircraftClient {
    */
   steer(k: FlightKeys, dt: number): FlightWire {
     const c = this.controls;
+    const a = this.predicted ?? this.server;
+    if (this.look.held) this.holdPitch(false);
     if (k.throttleUp) c.thr = Math.min(1, c.thr + 0.55 * dt);
     if (k.throttleDown) c.thr = Math.max(0, c.thr - 0.55 * dt);
     const roll = Number(k.rollRight) - Number(k.rollLeft);
-    c.ail = toward(c.ail, roll, (roll ? 3.2 : 5) * dt);
+    // Mouse steering selects a modest bank. On release the wings ease back to level;
+    // A/D remain a manual override. Taxiing uses the nose wheel instead of banking.
+    const bankControl =
+      this.seat === 0 && a
+        ? a.grounded
+          ? 0
+          : clamp((this.bankTarget - attitude(a).bank) * 2 + a.wz * 0.5, -0.65, 0.65)
+        : 0;
+    const ail = a?.grounded ? 0 : roll || bankControl;
+    c.ail = toward(c.ail, ail, (roll ? 3.2 : 2.2) * dt);
+    if (roll && a && !a.grounded)
+      this.bankTarget = clamp(attitude(a).bank, -Math.PI / 6, Math.PI / 6);
     const yaw = Number(k.rudderRight) - Number(k.rudderLeft);
-    c.rud = toward(c.rud, yaw, (yaw ? 2.6 : 4) * dt);
-    if (this.look.held) this.holdPitch(false);
+    const rud =
+      yaw || (a?.grounded ? roll || clamp(this.bankTarget / (Math.PI / 6), -0.65, 0.65) : 0);
+    c.rud = toward(c.rud, rud, (rud ? 2.6 : 4) * dt);
     const pitchKey = Number(!!k.pitchUp) - Number(!!k.pitchDown);
     if (!this.pitchHeld) c.stick *= Math.exp(-dt / 0.55);
-    const a = this.predicted ?? this.server;
-    if (this.seat === 0 && !this.look.held && a && (this.pitchHeld || pitchKey)) {
+    if (
+      this.seat === 0 &&
+      !this.look.held &&
+      a &&
+      (this.pitchHeld || pitchKey || this.levelOnRelease)
+    ) {
       // Hold an attitude, not raw elevator: a held pull must not keep rotating into a stall.
       // Wait for rotation speed so a long drag during the ground roll cannot scrape the tail.
       // At full power a small, deliberate upward drag asks to rotate, not for a barely
@@ -274,8 +304,16 @@ export class AircraftClient {
     // Aircraft pitch has its own gain: a low on-foot aiming sensitivity must not prevent
     // takeoff. Ten raw mouse counts are enough for a deliberate upward command.
     if (this.pitchHeld) {
-      this.pitchTarget = clamp(this.pitchTarget - dy * 0.012, -Math.PI / 12, Math.PI / 15);
-    } else this.controls.stick = clamp(this.controls.stick - dy * sensitivity * 0.0045, -1, 1);
+      // Keep runway rotation responsive, but give small airborne corrections more travel.
+      // In particular, lowering the mouse a little should not abruptly request a dive.
+      const a = this.predicted ?? this.server;
+      const gain = dy > 0 ? 0.004 : a?.grounded ? 0.012 : 0.006;
+      this.bankTarget = clamp(this.bankTarget + dx * 0.004, -Math.PI / 6, Math.PI / 6);
+      this.pitchTarget = clamp(this.pitchTarget - dy * gain, -Math.PI / 12, Math.PI / 15);
+    } else {
+      if (dy) this.levelOnRelease = false;
+      this.controls.stick = clamp(this.controls.stick - dy * sensitivity * 0.0045, -1, 1);
+    }
   }
 
   /** G: the flap lever's next notch (up → 10° → 30° → up). */

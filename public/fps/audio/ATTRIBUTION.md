@@ -359,10 +359,10 @@ src/lib/fps/br/aircraft-audio.ts), mono 44.1 kHz, MP3 at 128 kb/s, peaks at -1 d
   region 0.25–12.25 s. Mono 48 kHz, MP3 128 kb/s, RMS no louder than -12 dBFS and peak
   no higher than -2 dBFS before encoding. Built by `scripts/fps/build-aircraft-takeoff-audio.mjs`.
   Replaces v1 for the ground engine and takeoff roll. RPM/speed control its pitch and gain;
-  it fades into the existing flight loop after lift-off. Startup and flight recordings unchanged.
+  as of 2026-11-18 the same loop continues in flight. The start-up recording is unchanged.
 - `br-plane-drive-loop-v1.mp3` ("Driving_airplane_sound.mp3", 45.7 s): 22 s from 0:21, the
   following 1.2 s cross-faded into its start, stored the same way. The engine and propeller in
-  flight (and the idle under it, slowed).
+  flight (and the idle under it, slowed). Retained for older clients; no longer requested by the current client.
 
 ### Climbing rope (2026-11-12)
 

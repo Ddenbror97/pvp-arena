@@ -1847,16 +1847,15 @@ export function BrFlight({ hud }: { hud: BrHud }) {
           <>
             <span>
               <kbd>W</kbd>
-              <kbd>S</kbd> throttle
+              <kbd>S</kbd> accelerate / slow down
             </span>
             <span>
-              <kbd>A</kbd>
-              <kbd>D</kbd> roll
+              Hold <kbd>Left mouse</kbd> + drag <kbd>← / →</kbd> steer
             </span>
             <span>
-              Hold <kbd>Left mouse</kbd> + small <kbd>↑ / ↓</kbd> drag to pitch
+              Drag <kbd>↑ / ↓</kbd> nose up / down
             </span>
-            <span>Pull up from 55 KT · arrow keys optional</span>
+            <span>Pull up from 55 KT · release mouse for steady flight</span>
             <span>
               <kbd>Q</kbd>
               <kbd>R</kbd> rudder

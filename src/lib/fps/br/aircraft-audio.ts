@@ -2,15 +2,14 @@ import { AIRCRAFT, type Aircraft } from "./aircraft";
 
 /**
  * The aircraft's engine (owner, 2026-11-17: "use the 3 sound, sync them correctly to sound good
- * and real"): the owner's three recordings as one engine.
+ * and real"): the owner's start-up and take-off recordings as one engine.
  *
  * - The start-up (the starter cranking, the catch, the first idle) plays from the starter's own
  *   moment on the server's clock (`startAt`): its catch falls 4.5 s in, when the simulation's
  *   engine runs (AIRCRAFT.startS), for the pilot and for everyone near.
  * - On the ground the take-off run's recording (a loop of its loudest stretch) is the engine:
  *   quiet and low at idle, up in pitch and level with the RPM and the speed of the roll.
- * - In the air the driving recording (the steady drone of engine and propeller) takes over,
- *   cross-faded over the lift-off; on the ground, slowed and low, it is the idle under the roll.
+ * - In the air the same take-off recording continues without a second engine layer.
  *
  * Everything follows the RPM (never the throttle key): the propeller spools up and winds down
  * as the simulation's does, so the sound never runs ahead of the picture. Inside (pilot and
@@ -20,13 +19,11 @@ import { AIRCRAFT, type Aircraft } from "./aircraft";
 export const AIRCRAFT_SAMPLES = {
   planeStart: "br-plane-start-v1.mp3",
   planeRoll: "br-plane-roll-loop-v2.mp3",
-  planeDrive: "br-plane-drive-loop-v1.mp3",
 } as const;
 type Sample = keyof typeof AIRCRAFT_SAMPLES;
 /** The loops' regions in their files (s): stored between copies of their own ends. */
 const LOOPS = {
   planeRoll: { pad: 0.25, length: 12 },
-  planeDrive: { pad: 0.25, length: 22 },
 } as const;
 /** The start-up's catch (s into the file) and its length. */
 const START = { catch: AIRCRAFT.startS, length: 11.9 } as const;
@@ -69,11 +66,9 @@ export function createAircraftAudio(
     else cabin.connect(panner).connect(output);
     placed = want;
   };
-  let start: Voice | undefined, roll: Voice | undefined, drive: Voice | undefined;
+  let start: Voice | undefined, roll: Voice | undefined;
   let startedFor = NaN;
-  let ground = 1;
   let horn: { osc: OscillatorNode; gain: GainNode } | undefined;
-  let last = 0;
   let disposed = false;
   const voice = (key: Sample, loop: boolean, offset = 0): Voice | undefined => {
     const recording = buffer(key);
@@ -106,8 +101,7 @@ export function createAircraftAudio(
   const silence = () => {
     stop(start);
     stop(roll);
-    stop(drive);
-    start = roll = drive = undefined;
+    start = roll = undefined;
     startedFor = NaN;
     if (horn) {
       horn.gain.gain.setTargetAtTime(0, context.currentTime, 0.02);
@@ -128,12 +122,11 @@ export function createAircraftAudio(
       frameMs = performance.now(),
     ) {
       if (disposed) return;
-      const dt = last ? Math.min(0.25, (frameMs - last) / 1000) : 0;
-      last = frameMs;
+      void frameMs;
       const far =
         !a || (!inside && Math.hypot(a.x - listener.x, a.z - listener.z) > AIRCRAFT_HEAR_M + 100);
       if (far || context.state !== "running") {
-        if (start || roll || drive) silence();
+        if (start || roll) silence();
         return;
       }
       route(inside);
@@ -173,13 +166,10 @@ export function createAircraftAudio(
         }
       }
       roll ??= voice("planeRoll", true, Math.random() * 3);
-      drive ??= voice("planeDrive", true, Math.random() * 20);
       // Power: the engine firing (after the catch) at this RPM.
       const firing = a.engine === "running" && !a.destroyed;
       const rpm = clamp01(a.rpm);
       const power = clamp01((rpm - AIRCRAFT.idleRpm) / (1 - AIRCRAFT.idleRpm));
-      // Lift-off: from the ground's sound to the air's over about two seconds.
-      ground += ((a.grounded ? 1 : 0) - ground) * (1 - Math.exp(-dt / 0.9));
       const speed = Math.hypot(a.vx, a.vy, a.vz);
       // While the start-up's own idle still sounds, the loops come in under it.
       const afterCatch = sinceStart - START.catch;
@@ -190,20 +180,9 @@ export function createAircraftAudio(
       // Without power the propeller still turns (windmilling, winding down): a fading rush.
       const turning = firing ? 1 : clamp01(rpm / 0.35) * 0.35;
       const level = Math.min(1, under) * turning;
-      roll?.gain.gain.setTargetAtTime(ground * (0.18 + 0.62 * power) * level, t, 0.12);
+      roll?.gain.gain.setTargetAtTime((0.18 + 0.62 * power) * level, t, 0.12);
       roll?.source.playbackRate.setTargetAtTime(
         0.78 + 0.3 * power + Math.min(0.1, speed / 300),
-        t,
-        0.15,
-      );
-      const air = 1 - ground;
-      drive?.gain.gain.setTargetAtTime(
-        (air * (0.42 + 0.48 * power) + ground * 0.14 * (1 - 0.6 * power)) * level,
-        t,
-        0.12,
-      );
-      drive?.source.playbackRate.setTargetAtTime(
-        ground * 0.64 + air * (0.72 + 0.34 * power) + (firing ? 0 : -0.15),
         t,
         0.15,
       );

@@ -36,6 +36,7 @@ it.each([
   "large drag",
   "arrows",
   "early pull",
+  "mouse release",
 ])("takes off at Island Airfield with %s input", (mode) => {
   const a = aircraftSpawn(meta, world)!;
   const c = new AircraftClient();
@@ -56,6 +57,7 @@ it.each([
         );
       }
     }
+    if (mode === "mouse release" && i === 650) c.holdPitch(false);
     const wire = c.steer(
       {
         throttleUp: false,
@@ -74,7 +76,8 @@ it.each([
   }
   expect(pulled).toBe(true);
   expect(a.grounded).toBe(false);
-  expect(heightAboveGround(world, a)).toBeGreaterThan(25);
+  // Release selects gentle cruise rather than the held climb; it must stay clear of the runway.
+  expect(heightAboveGround(world, a)).toBeGreaterThan(mode === "mouse release" ? 5 : 25);
   expect(aero(a).V).toBeGreaterThan(30);
   expect(maxPitch).toBeLessThan((15 * Math.PI) / 180);
   expect(a.health).toBe(a.maxHealth);
