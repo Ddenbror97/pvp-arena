@@ -1854,11 +1854,9 @@ export function BrFlight({ hud }: { hud: BrHud }) {
               <kbd>D</kbd> roll
             </span>
             <span>
-              Hold <kbd>Left mouse</kbd> + move <kbd>↑ / ↓</kbd> pitch
+              Hold <kbd>Left mouse</kbd> + small <kbd>↑ / ↓</kbd> drag to pitch
             </span>
-            <span>
-              <kbd>↑ / ↓</kbd> keys pitch · pull up from 55 KT
-            </span>
+            <span>Pull up from 55 KT · arrow keys optional</span>
             <span>
               <kbd>Q</kbd>
               <kbd>R</kbd> rudder
