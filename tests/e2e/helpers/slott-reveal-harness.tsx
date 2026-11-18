@@ -14,7 +14,13 @@ import { scoreGrid } from "../../../src/lib/slott/paytable";
 
 const grid = Array(20).fill(17) as number[];
 const scored = scoreGrid(grid);
-const lines = scored.lines.slice(0, 1);
+const params = new URLSearchParams(window.location.search);
+const previewScore = Number(params.get("lineScore"));
+const lines = scored.lines.slice(0, 1).map((line) => ({
+  ...line,
+  score: previewScore || line.score,
+}));
+const bonus = params.has("bonus") ? { tier: "WILD", cents: 100 } : null;
 const highlights = hitCells(lines, true);
 let serial = 0;
 let timer: ReturnType<typeof setTimeout>;
@@ -64,7 +70,8 @@ export function Fixture() {
                   grid={grid}
                   lines={lines}
                   score={lines[0]!.score}
-                  who="Preview"
+                  who="ddenbror97"
+                  bonus={bonus}
                 />
               ) : null
             }
