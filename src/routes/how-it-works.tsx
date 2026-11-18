@@ -212,7 +212,7 @@ function HowItWorksPage() {
           <GameTile
             icon={<Dices className="h-5 w-5" />}
             name="Jackpot"
-            to="/"
+            to="/jackpot"
             tag="PVP · shared pot"
           >
             Everyone adds to one pot. One cent is one ticket. One winner takes the pot.
@@ -386,7 +386,7 @@ function HowItWorksPage() {
               <li>The winning ticket is computed from the committed seed.</li>
               <li>Its owner receives the pot minus a 5% fee; the seed is revealed.</li>
             </ol>
-            <SeoLink to="/">Explore Jackpot</SeoLink>
+            <SeoLink to="/jackpot">Explore Jackpot</SeoLink>
           </SeoCard>
           <SeoCard icon={<Coins className="h-5 w-5" />} title="Coinflip" accent="gold">
             <ol className="list-decimal space-y-1 pl-5">

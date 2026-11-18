@@ -2,6 +2,7 @@
  * sign-in pages (/wallet, /profile, /prestige) redirect a signed-out reader to /auth. */
 export const GUIDE_SITE_PATHS = [
   "/",
+  "/jackpot",
   "/coinflip",
   "/roulette",
   "/slott",

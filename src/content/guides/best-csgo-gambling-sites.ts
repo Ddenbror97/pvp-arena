@@ -223,6 +223,6 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     title: "The CS:GO classics, with USDC",
     text: "Create a free account and play Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot with results you can verify.",
     primary: { to: "/auth", label: "Sign in" },
-    secondary: { to: "/", label: "Jackpot" },
+    secondary: { to: "/jackpot", label: "Jackpot" },
   },
 };

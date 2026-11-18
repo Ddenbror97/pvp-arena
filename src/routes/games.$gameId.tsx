@@ -64,7 +64,7 @@ function GamePage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+      <Link to="/jackpot" className="text-sm text-muted-foreground hover:text-foreground">
         ← Back to jackpot
       </Link>
       <div className="mt-3 flex flex-wrap items-baseline gap-3">

@@ -19,6 +19,7 @@ function preloadMode(): "intent" | false {
 /** Pages the header and tab bar link to: their code is warmed on every page but a match. */
 const ONE_CLICK_AWAY = [
   "/",
+  "/jackpot",
   "/coinflip",
   "/roulette",
   "/slott",
@@ -71,7 +72,7 @@ export const getRouter = () => {
       if (scope !== "all") return;
       warmStrikeShowcase();
       void import("@/lib/leaderboard/paint").then((m) => m.prefetchPublicList(queryClient));
-      prefetchGamePage(queryClient, "/");
+      prefetchGamePage(queryClient, "/jackpot");
       prefetchGamePage(queryClient, "/coinflip");
       prefetchGamePage(queryClient, "/roulette");
       prefetchGamePage(queryClient, "/slott");

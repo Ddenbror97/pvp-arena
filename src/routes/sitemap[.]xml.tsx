@@ -6,6 +6,7 @@ const BASE_URL = "https://pvpspinarena.com";
 // per-round game pages are intentionally excluded (they carry noindex).
 export const STATIC_PATHS = [
   "/",
+  "/jackpot",
   "/coinflip",
   "/roulette",
   "/slott",

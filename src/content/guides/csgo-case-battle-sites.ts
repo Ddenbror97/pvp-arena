@@ -205,6 +205,6 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     title: "Head-to-head, without the case edge",
     text: "Create a free account and try Jackpot or Coinflip, where the pot goes to the players.",
     primary: { to: "/auth", label: "Sign in" },
-    secondary: { to: "/", label: "Jackpot" },
+    secondary: { to: "/jackpot", label: "Jackpot" },
   },
 };
