@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Blackjack",
   keyword: "blackjack crypto",
   secondary: ["crypto blackjack", "bitcoin blackjack", "blackjack rtp", "online blackjack"],
-  title: "Crypto Blackjack: Rules That Change RTP and Fair Play",
+  title: "Crypto Blackjack: Rules, RTP and Provably Fair Tables",
   description:
     "How crypto blackjack works: the rule changes that move RTP, RNG versus live tables, why card counting fails online, side bet costs and what to check first.",
   h1: "Blackjack crypto: rules, RTP and what you can actually verify",

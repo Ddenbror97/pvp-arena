@@ -5,10 +5,10 @@ export const guide: Guide = {
   cluster: "Crypto payments",
   keyword: "ton casino",
   secondary: ["toncoin casino", "telegram casino ton", "gamble with ton", "toncoin gambling"],
-  title: "TON Casino Guide: Toncoin, Telegram Wallets and Fees",
+  title: "TON Casinos: Toncoin Deposits, Telegram Wallets and Fees",
   description:
     "How a TON casino works: which wallets hold Toncoin, why fees are tiny, what Telegram mini-app casinos still need to prove, and how to test a small deposit.",
-  h1: "TON casino: Toncoin wallets, fees and Telegram habits",
+  h1: "TON casinos: Toncoin wallets, fees and Telegram habits",
   answer:
     "A TON casino accepts Toncoin on the TON blockchain. Fees are low and transfers are quick, and the usual wallets are TON wallets such as Tonkeeper, not MetaMask. A casino inside Telegram is still a casino with an operator, an edge and withdrawal rules. PVPspinArena does not accept TON and is not a Telegram bot.",
   facts: [

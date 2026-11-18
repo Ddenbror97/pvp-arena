@@ -6,7 +6,7 @@ export const guide: Guide = {
   pillar: true,
   keyword: "crypto jackpot",
   secondary: ["jackpot game", "jackpot odds", "csgo jackpot", "jackpot gambling"],
-  title: "Crypto Jackpot Games: How the Pot and Odds Work",
+  title: "Crypto Jackpot: How Pot Games Pay and the Real Odds",
   description:
     "How crypto jackpot games build a pot, how your share sets your win chance, what the fee is and how to verify the winner of every round.",
   h1: "Crypto jackpot games: how the pot and odds work",

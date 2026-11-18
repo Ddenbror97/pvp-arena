@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Esports betting",
   keyword: "csgo odds",
   secondary: ["cs2 odds", "csgo betting odds", "cs2 map handicap", "csgo series odds"],
-  title: "CSGO Odds Explained: CS2 Maps, Series, Handicaps",
+  title: "CS:GO and CS2 Betting Odds Explained: Maps and Series",
   description:
     "CSGO odds on CS2 matches: how series, maps and handicaps are priced, how to read implied chance, and how this page differs from the CS2 betting guide.",
   h1: "CSGO odds: CS2 maps, series formats and handicaps",

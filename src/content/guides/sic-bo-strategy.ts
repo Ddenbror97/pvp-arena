@@ -5,10 +5,10 @@ export const guide: Guide = {
   cluster: "Casino games",
   keyword: "sic bo strategy",
   secondary: ["best sic bo bets", "sic bo big small", "sic bo house edge", "sic bo tips"],
-  title: "Sic Bo Strategy: Best Bets, House Edge Chart and Bankroll",
+  title: "Sic Bo Strategy: Best Bets, Systems and the House Edge",
   description:
     "Sic bo strategy by the numbers: Big and Small at 2.78%, why triples and doubles cost 14–33%, how to check any paytable, and a bankroll plan that fits.",
-  h1: "Sic bo strategy: which bets are least bad and how to size them",
+  h1: "Sic bo strategy: the best bets, betting systems and stake sizing",
   answer:
     "The best sic bo strategy is to stick to Big or Small (or Odd/Even where offered), which lose only on triples and carry a 2.78% house edge, and to avoid specific triples, doubles and most totals, which usually cost 9% to 33%. Check the paytable, because the same bet can pay differently from table to table. Nothing about the dice history predicts the next roll.",
   facts: [

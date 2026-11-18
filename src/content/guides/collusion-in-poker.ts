@@ -10,7 +10,7 @@ export const guide: Guide = {
     "report poker collusion",
     "poker cheating",
   ],
-  title: "Collusion in Poker: Soft Play, Teams and Reports",
+  title: "Collusion in Poker: Soft Play, Chip Dumping and Reports",
   description:
     "Collusion in poker is two or more players sharing an interest against the rest of the table. See soft play, teams, and how to report it.",
   h1: "Collusion in poker: soft play, teams, and reports",

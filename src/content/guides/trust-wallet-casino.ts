@@ -10,10 +10,10 @@ export const guide: Guide = {
     "trust wallet base",
     "trust wallet deposit",
   ],
-  title: "Trust Wallet Casino Guide: Deposits and Networks",
+  title: "Trust Wallet Casinos: Deposits, Networks and Approvals",
   description:
     "How a Trust Wallet casino deposit works: networks, dapp browser risks, token approvals, and moving USDC onto Base without sending to the wrong chain.",
-  h1: "Trust Wallet casino deposits: networks, dapps and approvals",
+  h1: "Trust Wallet casinos: deposits, networks, dapps and approvals",
   answer:
     "A Trust Wallet casino deposit is a normal on-chain send from a Trust Wallet you control, on the network the site actually watches. Trust Wallet holds many chains in one app, which is convenient and easy to mis-tap. For PVPspinArena you verify the EVM address by signing a message, then send USDC or ETH on Base from that same address. The dapp browser is optional and is the riskiest part of the app if you follow random links.",
   facts: [

@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Poker",
   keyword: "big o poker",
   secondary: ["big o poker rules", "big o poker strategy", "big o poker tips"],
-  title: "Big O Poker Rules: Five-Card Pot-Limit Omaha",
+  title: "Big O Poker Rules: Five-Card Pot-Limit Omaha Hi-Lo",
   description:
     "Big O poker rules for five-card pot-limit Omaha: pick two hole cards from five, why equity is harder than four-card PLO, and the Hold'em this site deals.",
   h1: "Big O poker: five hole cards, and you still play exactly two",

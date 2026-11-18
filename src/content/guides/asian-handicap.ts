@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Sports betting",
   keyword: "asian handicap",
   secondary: ["quarter line", "split stake handicap", "AH 0.25", "level ball"],
-  title: "Asian Handicap Explained: Quarter Lines and Payouts",
+  title: "Asian Handicap Explained: Quarter Lines, -0.25 and Payouts",
   description:
     "Asian handicap betting explained with tables for 0, 0.25, 0.5 and full-goal lines, split stakes, refunds and why sharp soccer bettors prefer it.",
   h1: "Asian Handicap Explained: Quarter Lines and Payouts",
