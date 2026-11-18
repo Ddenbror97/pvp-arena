@@ -290,14 +290,10 @@ function superstore(poi: Poi, out: Placement[]) {
   lot(lotXs, [80, 102, 124, 146], 0.16, 412);
   scatter("trolley", 26, 0, 53, 170, 12, 403);
   scatter("trolley", 10, 0, -240, 400, 14, 406);
-  // Service yard behind the store (inside the loop road): trailers at the docks, two of them
-  // stacked, dumpsters, pallets, the forklift.
+  // Service yard behind the store (inside the loop road): trailers at the docks, dumpsters,
+  // pallets, the forklift. (Never stacked: CONTAINER_STACK.)
   for (let i = 0; i < 6; i++) {
     at("container-40", -62 + i * 9, -55, 1);
-    if (i === 1 || i === 4) {
-      at("container-40", -62 + i * 9, -55, 1);
-      lift(4.2);
-    }
   }
   for (let i = 0; i < 3; i++) at("dumpsters", 30 + i * 7, -50, 0);
   scatter("pallets", 10, 55, -75, 40, 22, 404);
@@ -429,10 +425,6 @@ function superstore(poi: Poi, out: Placement[]) {
   for (let i = 0; i < 4; i++) {
     at("container-40", -480, -20 + i * 5, 0);
     at("container-40", 380, 130 + i * 5, 0);
-    if (i % 2) {
-      at("container-40", 380, 130 + i * 5, 0);
-      lift(4.2);
-    }
   }
   for (let i = 0; i < 4; i++) at("rural-trailer", 470 + i * 5, -95, 0);
   at("fuel-tank", 520, 30, 0);
@@ -3123,7 +3115,7 @@ const containerYard: Feature["build"] = (b, put) => {
       if (hash(701, k) < 0.2) continue;
       const big = hash(702, k) < 0.7;
       if (!put(big ? "container-40" : "container-20", x, z, 0, 0.8)) continue;
-      if (big && hash(703, k) < 0.35) put("container-40", x, z, 0, 0, 4.2);
+      if (!big && hash(703, k) < 0.35) put("container-20", x, z, 0, 0, CONTAINER_STACK);
       if (hash(704, k) < 0.15) put("forklift", x, z + 5, 1, 0.3);
       else if (hash(705, k) < 0.2) put("pallets", x + 4, z + 5, 1, 0.3);
     }
@@ -4137,7 +4129,6 @@ function blackwater(poi: Poi, out: Placement[], ctx: Context) {
   // prison farm's machinery and hay north-west.
   at("container-40", -96, 76, 1);
   at("container-40", -88, 76, 1);
-  at("container-40", -96, 76, 1, 4.2);
   at("container-20", -78, 92, 0);
   at("military-crate", -84, 98, 0);
   at("military-crate", -100, 98, 1);
@@ -10331,8 +10322,9 @@ function quarryUpgrade(out: Placement[], ctx: Context) {
         hash(9_970 + row, k) < 0.3
       ) {
         const base = out[before]!;
-        // (Two high: a 40 ft box on a 40 ft box, 4.2 m as modelled.)
-        if (base.model === "container-40") out.push({ ...base, y: +(base.y + 4.2).toFixed(2) });
+        // (Two high: a 20 ft box on a 20 ft box: CONTAINER_STACK.)
+        if (base.model === "container-20")
+          out.push({ ...base, y: +(base.y + CONTAINER_STACK).toFixed(2) });
       }
     }
   // Floodlight masts round the floor's edge; machines and cover scattered over it.
@@ -10382,13 +10374,7 @@ function quarryUpgrade(out: Placement[], ctx: Context) {
         for (let k = 0; k < 3; k++) {
           const before = out.length;
           const m = hash(salt, 10 + k) < 0.4 ? "rust-container" : "container-40";
-          if (
-            putXZ(m, x, z + k * 7.5, 0, { ...o, gap: 1.5 }) &&
-            m === "container-40" &&
-            k === 1 &&
-            hash(salt, 9) < 0.5
-          )
-            out.push({ ...out[before]!, y: +(out[before]!.y + 4.2).toFixed(2) });
+          putXZ(m, x, z + k * 7.5, 0, { ...o, gap: 1.5 });
         }
       } else if (kind === 2) {
         putXZ("gravel-mound", x, z, t, { ...o, sink: 0.2, rough: 4 });
@@ -11501,17 +11487,22 @@ function landmarks(out: Placement[], ctx: Context) {
         roads: false,
         y: Math.max(0.6, ctx.heightAt(qx + 48, qz - 14)),
       });
-      // The container yard behind the cranes: stacks two high.
+      // The container yard behind the cranes (owner, 2026-11-18: "mostly all items in fisher
+      // gove stands in the air … fix the entire yard/crane"): it stacked `container-40`, which
+      // is not a shipping container but a pair of military crates, one with its lid up, 4.2 m
+      // to the lid's top, so the upper tier stood 2 m over the lower crates. Now 20 ft shipping
+      // containers, two end to end in each bay, some two high on the one below.
       for (let r = 0; r < 3; r++)
         for (let k = 0; k < 5; k++) {
           const x = qx - 10 + k * 14,
             z = qz - 44 - r * 6;
-          if (
-            kit.put("container-40", x, z, 0, { rough: 1.5, gap: 0.4, poi: "shore" }) &&
-            hash(r * 7 + k, 811) < 0.55
-          ) {
-            const base = out[out.length - 1]!;
-            out.push({ ...base, y: +(base.y + 4.2).toFixed(2) });
+          for (const dx of [-3.05, 3.05]) {
+            if (!kit.put("container-20", x + dx, z, 0, { rough: 0.6, gap: 0.1, poi: "shore" }))
+              continue;
+            if (hash(r * 7 + k, 811) < 0.55) {
+              const base = out[out.length - 1]!;
+              out.push({ ...base, y: +(base.y + CONTAINER_STACK).toFixed(2) });
+            }
           }
         }
       // A coaster at the quay (parallel to the shore), a container ship at anchor in the bay.
@@ -11728,6 +11719,13 @@ const SHED_FLOOR_SAMPLES: Array<[number, number]> = [
 ];
 
 /** A model-space point turned like the placement (three.js rotation.y = turn · π/2). */
+/**
+ * A 20 ft container (`container-20`, 2.34 m tall as modelled) stacked on another: the height
+ * the upper one stands at. (`container-40` is a pair of military crates, one with its lid up:
+ * nothing stands on it, owner 2026-11-18.)
+ */
+const CONTAINER_STACK = 2.34;
+
 function turnXZ(x: number, z: number, turn: number): [number, number] {
   switch (turn & 3) {
     case 1:

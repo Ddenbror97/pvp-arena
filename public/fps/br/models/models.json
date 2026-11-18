@@ -15327,11 +15327,11 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/cove-street-light.lod0.glb",
-     "tris": 782,
+     "file": "/fps/br/models/cove-street-light.pole-v1.lod0.glb",
+     "tris": 1799,
      "draws": 1,
      "textureMB": 0.17,
-     "kB": 22,
+     "kB": 34,
      "size": [
       0.82,
       4.5,
@@ -15339,23 +15339,23 @@
      ]
     },
     {
-     "file": "/fps/br/models/cove-street-light.lod1.glb",
-     "tris": 208,
+     "file": "/fps/br/models/cove-street-light.pole-v1.lod1.glb",
+     "tris": 499,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.82,
+      4.5,
+      0.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-street-light.pole-v1.lod2.glb",
+     "tris": 160,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
-     "size": [
-      0.82,
-      4.5,
-      0.82
-     ]
-    },
-    {
-     "file": "/fps/br/models/cove-street-light.lod2.glb",
-     "tris": 60,
-     "draws": 1,
-     "textureMB": 0,
-     "kB": 2,
      "size": [
       0.82,
       4.5,

@@ -855,9 +855,18 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
         `#include <color_fragment>
         if (vPaintAt.z > 0.0) diffuseColor.rgb = mix(diffuseColor.rgb, vec3(${RUNWAY_PAINT.colour.map((c) => c.toFixed(2)).join(", ")}), runwayPaint(vPaintAt));
         ${roadGrainGlsl("1.0")}`,
+      )
+      // Lit by the ground's normal from either side (owner, 2026-11-18: "the black line that
+      // renders on the edge of the roads cross the map in some camera angels only"). The
+      // material is double-sided and three turns the normal over on a face seen from behind;
+      // the skirts on one side of every road are wound the other way, so from the road that
+      // skirt's sliver above the ground was lit as facing down: a black line along that edge.
+      .replace(
+        "#include <normal_fragment_begin>",
+        "#include <normal_fragment_begin>\nnormal = normalize(vNormal);\nnonPerturbedNormal = normal;",
       );
   };
-  material.customProgramCacheKey = () => "br-roads-v8";
+  material.customProgramCacheKey = () => "br-roads-v9";
   // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
   biasLogDepth(material, LOG_BIAS.road);
   const mesh = new THREE.Mesh(g, material);
