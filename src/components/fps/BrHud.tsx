@@ -1854,7 +1854,7 @@ export function BrFlight({ hud }: { hud: BrHud }) {
               <kbd>D</kbd> roll
             </span>
             <span>
-              <kbd>Mouse</kbd> pitch
+              <kbd>Mouse ↑</kbd> nose up · <kbd>↓</kbd> nose down
             </span>
             <span>
               <kbd>Q</kbd>
