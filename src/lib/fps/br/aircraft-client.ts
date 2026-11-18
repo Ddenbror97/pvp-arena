@@ -237,6 +237,17 @@ export class AircraftClient {
     if (this.seat === 0 && !this.look.held && a && (this.pitchHeld || pitchKey)) {
       // Hold an attitude, not raw elevator: a held pull must not keep rotating into a stall.
       // Wait for rotation speed so a long drag during the ground roll cannot scrape the tail.
+      // At full power a small, deliberate upward drag asks to rotate, not for a barely
+      // perceptible trim change. Keep that shallow climb target after the wheels leave.
+      if (
+        this.pitchHeld &&
+        !pitchKey &&
+        a.grounded &&
+        c.thr >= 0.8 &&
+        aero(a).V >= 27 &&
+        this.pitchTarget > Math.PI / 90
+      )
+        this.pitchTarget = Math.PI / 15;
       const target = pitchKey ? (pitchKey * Math.PI) / 15 : this.pitchTarget;
       c.elev =
         a.grounded && aero(a).V < 27
@@ -260,13 +271,10 @@ export class AircraftClient {
       return;
     }
     if (this.seat !== 0) return;
-    // A normal short drag must produce useful elevator travel at the default 0.5 sensitivity.
+    // Aircraft pitch has its own gain: a low on-foot aiming sensitivity must not prevent
+    // takeoff. Ten raw mouse counts are enough for a deliberate upward command.
     if (this.pitchHeld) {
-      this.pitchTarget = clamp(
-        this.pitchTarget - dy * sensitivity * 0.004,
-        -Math.PI / 12,
-        Math.PI / 15,
-      );
+      this.pitchTarget = clamp(this.pitchTarget - dy * 0.012, -Math.PI / 12, Math.PI / 15);
     } else this.controls.stick = clamp(this.controls.stick - dy * sensitivity * 0.0045, -1, 1);
   }
 
