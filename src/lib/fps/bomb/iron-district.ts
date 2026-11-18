@@ -80,6 +80,19 @@ export const IRON_DISTRICT_DEFINITION: MapDefinition = {
       // up into the pocket (tun-exit, z 9.8..11) pass straight through that plane, and from
       // either side it read as a dead end (owner, 2026-11-16).
       open: [
+        // The four cables strung over the upper town (owner, 2026-11-18, screenshots by T
+        // spawn): the build hung every cable at 7.0–7.6 m less a 0.5 m sag, high over the 1.2
+        // and 2.4 m streets but 1.1–1.7 m over the upper town's 5.4 m floor, so they crossed
+        // its lanes at chest height, "objects in the air". Each box holds one cable's 64
+        // triangles and nothing else of its material.
+        ...(
+          [
+            [-10.3, -9.7, 6.4, 7.8, 29.8, 36.2],
+            [7.7, 8.3, 6.4, 7.6, 33.8, 38.2],
+            [23.8, 26.2, 6.4, 7.4, 29.8, 36.2],
+            [39.8, 44.2, 6.4, 7.4, 19.8, 22.2],
+          ] as const
+        ).map((box) => ({ node: "Upper_Town", materials: ["metal"], box })),
         {
           node: "Tunnel",
           materials: ["brick-tun", "concrete-tun", "pipe", "metal"],
