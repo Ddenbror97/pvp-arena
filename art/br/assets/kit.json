@@ -9332,6 +9332,273 @@
       "ring": "dwelling",
       "collision": "boxes",
       "use": "Bayview: the glass-fronted beach club on the promenade, a roof terrace over the sea (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-boiler-tower",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "East Works (2026-11-17): a 7-storey red-brick boiler house with its chimney stack, stairs to every floor and the roof (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-chimney",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "East Works (2026-11-17): a 36 m square brick chimney stack, a stair up every storey inside to the lookout on its top (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-control-house",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "East Works (2026-11-17): the control and office block, three floors of rooms in their own colours, a roof terrace (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-turbine-hall",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "East Works (2026-11-17): the long turbine hall, blue-grey cladding over a brick plinth, a gateway, a gallery along its back up a steel stair (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-workshop",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "East Works (2026-11-17): a two-storey brick workshop and stores block, rooms on both floors, a flat roof up the stair (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-tank-white",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "structure",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "East Works (2026-11-17): a round storage tank, its domed top railed and reached up a stair on its side (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-tank-grey",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "structure",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "East Works (2026-11-17): a smaller round tank, a stair up its side on to the railed top (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-pipe-rack",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "East Works (2026-11-17): a steel pipe bridge on portal frames between the buildings, five pipes in two decks (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-yard",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "none",
+      "use": "East Works (2026-11-17): 20 m of yard concrete in 4 m bays, drawn only (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-yard-lines",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "none",
+      "use": "East Works (2026-11-17): 20 m of yard concrete with painted lanes and bays, drawn only (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-road",
+      "procedural": "art/blender/br/build_works.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "none",
+      "use": "East Works (2026-11-17): 20 m of asphalt road with its lines, drawn only (procedural, 2026-11-17)"
+    },
+    {
+      "id": "ew-smoke-stacks",
+      "key": "sf:80e8c4e08223401ea829423778241df3",
+      "class": "structure",
+      "ring": "hero",
+      "fit": {
+        "y": 44
+      },
+      "collision": "voxel",
+      "voxel": 0.8,
+      "use": "East Works (2026-11-17): three round smoke stacks by the boiler towers (landmark)"
+    },
+    {
+      "id": "ew-cooling-tower",
+      "key": "sf:c9f71e367c5b4bb38277a9cf3640c304",
+      "class": "structure",
+      "ring": "building",
+      "lodTris": [
+        4000,
+        1500,
+        400
+      ],
+      "fit": {
+        "y": 12
+      },
+      "collision": "voxel",
+      "use": "East Works (2026-11-17): mechanical-draft cooling tower cells by the turbine hall"
+    },
+    {
+      "id": "ew-tank-farm",
+      "key": "sf:bd3ac97071104b64bc388a155b64f79e",
+      "class": "structure",
+      "ring": "building",
+      "lodTris": [
+        8000,
+        3000,
+        800
+      ],
+      "draws": 4,
+      "fit": {
+        "max": 30
+      },
+      "collision": "voxel",
+      "use": "East Works (2026-11-17): a cluster of large storage tanks on legs with their stairs (the tank farm)"
+    },
+    {
+      "id": "ew-horizontal-tank",
+      "key": "sf:738781e96e2c47f3b5bed04da3125940",
+      "class": "structure",
+      "fit": {
+        "max": 12
+      },
+      "collision": "voxel",
+      "use": "East Works (2026-11-17): a horizontal storage tank on legs (cover in the yards)"
+    },
+    {
+      "id": "ew-boiler",
+      "key": "sf:82d77b2f4fe346f3b662929d763f1cdc",
+      "class": "prop",
+      "fit": {
+        "y": 3.8
+      },
+      "collision": "solid",
+      "use": "East Works (2026-11-17): an old upright boiler in the boiler towers and the yards"
+    },
+    {
+      "id": "ew-machine",
+      "key": "sf:585d12f0fc384d24ac874dc54278a924",
+      "piece": "device64 rusted",
+      "class": "prop",
+      "lodTris": [
+        5000,
+        1200,
+        400
+      ],
+      "fit": {
+        "max": 4.3
+      },
+      "collision": "solid",
+      "use": "East Works (2026-11-17): a rusted machinery set in the halls"
+    },
+    {
+      "id": "ew-control-cabinet",
+      "key": "sf:bea0fc94bec448e8a778c2b5685cd5ed",
+      "class": "small",
+      "fit": {
+        "y": 1.6
+      },
+      "collision": "solid",
+      "use": "East Works (2026-11-17): retro control cabinets in the control house and the towers"
+    },
+    {
+      "id": "ew-electrical-box",
+      "key": "sf:de13c96dad014bf098df03030f314fee",
+      "class": "small",
+      "fit": {
+        "y": 1.5
+      },
+      "collision": "solid",
+      "use": "East Works (2026-11-17): an electrical box with its battery by the walls"
+    },
+    {
+      "id": "ew-warning-light",
+      "key": "sf:7b12be1b4bd74ee0b10511ddcabf5cc8",
+      "exclude": [
+        "broken_grid",
+        "broken_pipers",
+        "broken_glasse"
+      ],
+      "class": "small",
+      "fit": {
+        "y": 0.4
+      },
+      "collision": "none",
+      "use": "East Works (2026-11-17): a caged warning light on the halls' walls"
+    },
+    {
+      "id": "ew-conveyor",
+      "key": "sf:a3c3b8a28e004ad7bc97ac84f4a12fee",
+      "piece": "Conveyor_belt",
+      "class": "prop",
+      "fit": {
+        "max": 8
+      },
+      "collision": "solid",
+      "use": "East Works (2026-11-17): a conveyor belt in the halls and yards"
+    },
+    {
+      "id": "ew-roller",
+      "key": "sf:4736d0c18e7047969639988883f0ad56",
+      "class": "small",
+      "fit": {
+        "max": 3
+      },
+      "collision": "solid",
+      "use": "East Works (2026-11-17): a roller conveyor section"
+    },
+    {
+      "id": "ew-pipe-bend",
+      "key": "sf:a532274175804ee1addf49a078607336",
+      "piece": "Special Pipe 3_15",
+      "class": "prop",
+      "fit": {
+        "max": 7.6
+      },
+      "collision": "voxel",
+      "use": "East Works (2026-11-17): a big pipe bend coming out of the ground by the tanks",
+      "colour": [
+        0.5,
+        0.44,
+        0.38
+      ]
+    },
+    {
+      "id": "ew-pipe-run",
+      "key": "sf:a532274175804ee1addf49a078607336",
+      "piece": "Port Pipe_8",
+      "class": "prop",
+      "fit": {
+        "max": 14.6
+      },
+      "collision": "voxel",
+      "use": "East Works (2026-11-17): a pipe run with its ports along the ground",
+      "colour": [
+        0.5,
+        0.44,
+        0.38
+      ]
+    },
+    {
+      "id": "ew-valve",
+      "key": "sf:0af6bae239bc48f0a17ef3da3f1b9563",
+      "class": "small",
+      "fit": {
+        "max": 0.7
+      },
+      "collision": "none",
+      "use": "East Works (2026-11-17): a valve wheel on the pipes"
     }
   ],
   "skipped": [

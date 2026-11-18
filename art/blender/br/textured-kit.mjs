@@ -37,6 +37,9 @@ export const MATERIALS = {
   mossstone: { tex: "mossstone", tile: 2.6, rough: 0.97 },
   flagstone: { tex: "flagstone", tile: 3.2, rough: 0.95 },
   glyphs: { tex: "glyphs", tile: 1.8, rough: 0.92 },
+  // Generated (make_works_textures.py, 2026-11-17): East Works' yard concrete and asphalt.
+  yard: { tex: "yard", tile: 8, rough: 0.92 },
+  asphalt: { tex: "asphalt", tile: 6, rough: 0.95 },
   paint: { tex: null, rough: 0.85 },
   glass: { tex: null, rough: 0.15, glass: true },
 };
