@@ -141,7 +141,10 @@ export function withAircraft(world: StaticWorld, aircraft: () => Aircraft | null
 export function aircraftSpawn(meta: WorldMeta, world: StaticWorld, id = 0): Aircraft | null {
   // The airfield's runway: the one nearest the Island Airfield (else the longest).
   const field = meta.pois?.find((p) => p.kind === "airfield");
-  const mid = (r: { a: number[]; b: number[] }) => [(r.a[0]! + r.b[0]!) / 2, (r.a[1]! + r.b[1]!) / 2];
+  const mid = (r: { a: number[]; b: number[] }) => [
+    (r.a[0]! + r.b[0]!) / 2,
+    (r.a[1]! + r.b[1]!) / 2,
+  ];
   const runway = [...(meta.runways ?? [])].sort((p, q) =>
     field
       ? Math.hypot(mid(p)[0]! - field.x, mid(p)[1]! - field.z) -
@@ -192,9 +195,7 @@ export const EXIT = { groundSpeed: 4, bailAgl: 60 } as const;
 
 /** On its wheels (or its belly): the gear's springs may lift it a moment off the ground. */
 export function onGround(world: StaticWorld, a: Aircraft) {
-  return (
-    a.grounded || a.y + AIRCRAFT.wheels[0]!.at[1] - world.supportAt(a.x, a.z, 0.5, a.y) < 0.6
-  );
+  return a.grounded || a.y + AIRCRAFT.wheels[0]!.at[1] - world.supportAt(a.x, a.z, 0.5, a.y) < 0.6;
 }
 
 /**

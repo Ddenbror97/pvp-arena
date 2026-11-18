@@ -1839,7 +1839,8 @@ function aircraftAct(
     if (s.dead || s.body.phase !== "ground") return res(false, "Land first");
     if (a.destroyed) return res(false, "Destroyed");
     if (!nearDoor(a, s.body.x, s.body.y + 0.9, s.body.z)) return res(false, "Too far");
-    if (!onGround(world, a) || Math.hypot(a.vx, a.vy, a.vz) > EXIT.groundSpeed) return res(false, "Moving");
+    if (!onGround(world, a) || Math.hypot(a.vx, a.vy, a.vz) > EXIT.groundSpeed)
+      return res(false, "Moving");
     const seat = a.pilot < 0 ? 0 : a.passenger < 0 ? 1 : null;
     if (seat === null) return res(false, "Full");
     if (seat === 0) a.pilot = s.seat;
