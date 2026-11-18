@@ -45,6 +45,7 @@ function warmPoolPages(router: AnyRouter) {
 }
 
 function warmStrikePages(router: AnyRouter, qc: QueryClient, userId: string | null) {
+  if (!matchMedia("(any-pointer:fine) and (any-hover:hover)").matches) return;
   const connection = (
     navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
   ).connection;
