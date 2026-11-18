@@ -117,7 +117,9 @@ describe("Project Island models", () => {
     // stilt houses, the jeep, the rope bridge, banners, skulls, vases), ~2 MB; the last 30 of the
     // owner's downloads for it (palms, a cypress, a tall tree, ferns, bushes, banana and tropical
     // plants, hanging vines ~2.7 MB of it, rocks, shrines, pillars, chests), ~6.9 MB; its
-    // torches, Chac Mool, skeletons and ladders, ~0.3 MB, 2026-11-17).
-    expect(total / 1024).toBeLessThan(80.5);
+    // torches, Chac Mool, skeletons and ladders, ~0.3 MB, 2026-11-17; East Works rebuilt: 11
+    // procedural models (boiler towers, chimneys, halls, tanks, the yard floor) and the owner's
+    // 14 downloads for it, ~2.8 MB, 2026-11-17).
+    expect(total / 1024).toBeLessThan(84);
   });
 });

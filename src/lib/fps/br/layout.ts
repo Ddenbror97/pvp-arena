@@ -2064,6 +2064,21 @@ const FOOT: Record<string, [number, number]> = {
   "palm-young-b": [3.0, 3.3],
   "palm-clump": [6.1, 6.5],
   "tall-tree": [2.0, 2.0],
+  // East Works (2026-11-17): the owner's downloads.
+  "ew-smoke-stacks": [3.3, 11],
+  "ew-cooling-tower": [13.4, 8],
+  "ew-tank-farm": [25.5, 30],
+  "ew-horizontal-tank": [12, 4.3],
+  "ew-boiler": [1.6, 1.6],
+  "ew-machine": [2.2, 4.3],
+  "ew-control-cabinet": [0.6, 0.9],
+  "ew-electrical-box": [1.15, 1.0],
+  "ew-warning-light": [0.21, 0.12],
+  "ew-conveyor": [8, 2.1],
+  "ew-roller": [3, 1.1],
+  "ew-pipe-bend": [7.6, 7.3],
+  "ew-pipe-run": [2.8, 14.6],
+  "ew-valve": [0.7, 0.43],
   "torch-stake": [0.4, 0.4],
   "torch-medieval": [0.2, 0.36],
   "torch-holder": [0.31, 0.35],
@@ -4485,23 +4500,146 @@ function blackwaterRocks(out: Placement[], ctx: Context) {
   }
 }
 
-/** East Works (J7): tank farm, silos, cranes, the hangar, pump house, office block and terminal. */
+/**
+ * East Works (J7), rebuilt as the location's card draws it (owner, 2026-11-17: "poolish east
+ * works. build new enterble buildings with levels, new colors and floor … there are some tower
+ * buildings, should look like the attached image", "skorstenar should be enterble maybe with
+ * stairs"): a power station. Across the middle three red-brick boiler towers (7 storeys, a
+ * chimney stack on each roof) with an enterable chimney either side (a stair to a lookout 36 m
+ * up) and three round smoke stacks behind; a pipe rack before them; the turbine hall, the
+ * control house and the cooling cells to the south; the domed tanks, the tank farm and the
+ * workshop to the north (build_works.mjs, and the owner's downloads). The yards between are
+ * floored: concrete in bays, painted lanes, an asphalt avenue. The outer ring (sheds, lots,
+ * the loading yard) is eastWorksUpgrade's.
+ */
 function eastWorks(poi: Poi, out: Placement[], ctx: Context) {
-  const { at, scatter } = builder(poi, out);
-  for (let i = 0; i < 3; i++)
-    for (let j = 0; j < 2; j++) at("ind-tank", -80 + i * 24, -70 + j * 24, 0);
-  for (let i = 0; i < 6; i++) at("ind-silo", 10 + i * 6, -80, 0);
-  at("ind-hangar", 70, 0, 0);
-  at("ind-warehouse-3", -60, 50, 0);
-  at("ind-portal-crane", 10, 60, 0);
-  for (let i = 0; i < 4; i++) at("container-40", 40 + (i % 2) * 14, 50 + Math.floor(i / 2) * 5, 0);
-  at("ind-office-trailer", -10, 20, 0);
-  scatter("pallets", 8, 0, 100, 60, 20, 608);
-  // Pump house, the works office block and the loading terminal.
-  at("ind-warehouse-1", -70, 0, 0);
-  at("ind-building-1", 110, -80, 0);
-  at("ind-terminal", 90, 90, 0);
-  void ctx;
+  const kit = siteKit(ctx, out);
+  const y = poi.padHeight!;
+  /** On the pad at (dx, dz) (exactly: the pad is level here), clear of what stands and of roads. */
+  const at = (model: string, dx: number, dz: number, turn: Placement["turn"] = 0, gap = 2) => {
+    if (!kit.put(model, poi.x + dx, poi.z + dz, turn, { poi: poi.id, y, gap, rough: 0.6 }))
+      return null;
+    const p = out[out.length - 1]!;
+    reserveDoors(kit, p);
+    return p;
+  };
+  /** Inside (or on) a building: model-local (lx, ly, lz), turned with it. */
+  const inPlace = (
+    model: string,
+    base: Placement | null,
+    lx: number,
+    ly: number,
+    lz: number,
+    turn = 0,
+  ) => {
+    if (!base) return;
+    const [dx, dz] = turnXZ(lx, lz, base.turn);
+    out.push({
+      model,
+      x: +(base.x + dx).toFixed(2),
+      y: +(base.y + ly).toFixed(2),
+      z: +(base.z + dz).toFixed(2),
+      turn: ((base.turn + turn) & 3) as Placement["turn"],
+      poi: poi.id,
+    });
+  };
+  // ---- The power station's spine: the boiler towers, the chimneys, the smoke stacks.
+  const towers = [-40, 0, 40].map((dx) => at("ew-boiler-tower", dx, -40, 0, 1));
+  for (const t of towers) {
+    // Boilers on the ground floor, control cabinets on the floors up the stair.
+    inPlace("ew-boiler", t, 3.3, 0.2, -4.3);
+    inPlace("ew-boiler", t, -0.8, 0.2, -4.3);
+    inPlace("ew-control-cabinet", t, -6.25, 0.2, 3.6, 1);
+    inPlace("ew-control-cabinet", t, -6.25, 8.2, -3.6, 1);
+    inPlace("ew-control-cabinet", t, -6.25, 16.2, 3.6, 1);
+    inPlace("ew-warning-light", t, -3, 3.1, 6.06);
+  }
+  const chimneys = [-68, 66].map((dx) => at("ew-chimney", dx, -42, 0, 1));
+  for (const c of chimneys) inPlace("ew-warning-light", c, -1.6, 2.9, 4.06);
+  at("ew-smoke-stacks", 0, -72, 1, 1);
+  for (const dx of [-20, 20]) at("ew-pipe-rack", dx, -24, 0, 0.5);
+  // ---- South: the turbine hall, the control house, the cooling cells.
+  const hall = at("ew-turbine-hall", 0, 24, 0, 2);
+  inPlace("ew-machine", hall, -19, 0.15, 8);
+  inPlace("ew-machine", hall, 19, 0.15, 8);
+  inPlace("ew-control-cabinet", hall, -2, 5.0, -9.6);
+  inPlace("ew-control-cabinet", hall, 2, 5.0, -9.6);
+  for (const lx of [-16, 0, 16]) inPlace("ew-warning-light", hall, lx, 6.2, 11.06);
+  const control = at("ew-control-house", -56, 26, 1, 2);
+  for (const [lx, ly, lz] of [
+    [10.5, 0.15, -4.5],
+    [3, 3.55, -5.2],
+    [-9, 3.55, -5.2],
+    [3, 6.95, -5.2],
+  ] as const)
+    inPlace("ew-control-cabinet", control, lx, ly, lz);
+  for (const dx of [36, 51]) at("ew-cooling-tower", dx, 50, 0, 1);
+  // ---- North: the domed tanks, the tank farm, the workshop.
+  const tanks = [
+    at("ew-tank-white", 22, -102, 0),
+    at("ew-tank-white", 50, -102, 0),
+    at("ew-tank-grey", 36, -128, 2),
+  ];
+  for (const t of tanks) inPlace("ew-valve", t, -3, 0, -9.2, 2);
+  at("ew-tank-farm", -40, -118, 0, 3);
+  for (const dz of [-92, -84]) at("ew-horizontal-tank", -78, dz, 0, 1);
+  const shop = at("ew-workshop", -72, -66, 1, 2);
+  inPlace("ew-machine", shop, -6, 0.15, -1.5, 1);
+  inPlace("ew-roller", shop, -6, 0.15, 2.8);
+  // Pipes coming up out of the ground by the tanks, valves on them.
+  at("ew-pipe-bend", 4, -118, 1, 1);
+  at("ew-pipe-run", 66, -122, 0, 1);
+  at("ew-pipe-run", -8, -96, 1, 1);
+  // Yard kit: rollers and conveyors, electrical boxes, boilers by the walls.
+  for (const [m, dx, dz, t] of [
+    ["ew-conveyor", -26, 54, 0],
+    ["ew-roller", -14, 54, 0],
+    ["ew-roller", -10, 54, 0],
+    ["ew-electrical-box", -26, -30, 0],
+    ["ew-electrical-box", 14, -30, 0],
+    ["ew-electrical-box", -60, 8, 1],
+    ["ew-boiler", 62, -76, 0],
+    ["ew-boiler", 66, -76, 0],
+    ["ew-horizontal-tank", 70, 20, 1],
+  ] as const)
+    at(m, dx, dz, t as Placement["turn"], 1);
+  // (The yards' floor is laid last, over the whole works: eastWorksFloor.)
+}
+
+/**
+ * East Works' floor (owner, 2026-11-17: "new colors and floor"): 20 m squares of yard concrete
+ * over the pad (drawn only, 5 cm proud: the pad under them is the walk), wherever no road runs
+ * and nothing big stands on the square's middle; an asphalt avenue across the works between the
+ * boiler towers and the turbine hall, painted lanes and bays before the hall and the tanks and
+ * here and there in the outer yards. Laid after everything else on the pad (the siteKit would
+ * take every square for an obstacle).
+ */
+function eastWorksFloor(out: Placement[], ctx: Context, poi: Poi) {
+  const y = poi.padHeight!;
+  const grid = placementGrid(out, 60);
+  for (let gx = -240; gx <= 240; gx += 20)
+    for (let gz = -240; gz <= 240; gz += 20) {
+      if (Math.hypot(gx, gz) > 250) continue;
+      const x = poi.x + gx,
+        z = poi.z + gz;
+      // Off the roads (and their verges), on the level pad.
+      if (roadDistance(ctx.meta, x, z, 30) < 15) continue;
+      if (Math.abs(ctx.heightAt(x, z) - y) > 0.25) continue;
+      if (
+        grid.some(x, z, x, z, (p) => {
+          const [w, d] = footAt(p.model, p.turn);
+          return Math.max(w, d) > 6 && Math.abs(p.x - x) < w / 2 && Math.abs(p.z - z) < d / 2;
+        })
+      )
+        continue;
+      const model =
+        gz === 0 && gx >= -100 && gx <= 90
+          ? "ew-road"
+          : ((gz === 60 || gz === -80) && Math.abs(gx) <= 100) || hash(gx * 31 + gz, 12_900) < 0.15
+            ? "ew-yard-lines"
+            : "ew-yard";
+      out.push({ model, x: +x.toFixed(2), y, z: +z.toFixed(2), turn: 0, poi: poi.id });
+    }
 }
 
 /** Put one model on the terrain where it is buildable (the low point of its footprint). */
@@ -10239,6 +10377,8 @@ function eastWorksUpgrade(out: Placement[], ctx: Context) {
         d = 40 + Math.sqrt(hash(salt, 2)) * 210;
       if (near(model, Math.cos(a) * d, Math.sin(a) * d, turnOfSalt(salt), { gap: 2 }, 1)) placed++;
     }
+
+  eastWorksFloor(out, ctx, poi);
 
   // The island round the works: a coastal battery on the east coast (bunkers, sandbag nests and
   // towers behind hesco walls) and a radar station on its highest ground.

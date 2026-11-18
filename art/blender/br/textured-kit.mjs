@@ -42,6 +42,9 @@ export const MATERIALS = {
   castlewall: { tex: "castlewall", tile: 4.2, rough: 0.94 },
   slate: { tex: "slate", tile: 2.2, rough: 0.8 },
   castlefloor: { tex: "castlefloor", tile: 3.6, rough: 0.9 },
+  // Generated (make_works_textures.py, 2026-11-17): East Works' yard concrete and asphalt.
+  yard: { tex: "yard", tile: 8, rough: 0.92 },
+  asphalt: { tex: "asphalt", tile: 6, rough: 0.95 },
   paint: { tex: null, rough: 0.85 },
   glass: { tex: null, rough: 0.15, glass: true },
 };

@@ -5,11 +5,11 @@
  *   1. list.ts: the doors, their openings and where each one's picture comes from;
  *   2. page.ts in Chromium: the painted door photographed off the untouched import (or a drawn
  *      door for procedural buildings), and the wall's depth either side of the opening;
- *   3. here: packed into one atlas (public/fps/br/models/doors.v25.webp) with doors.v25.json.
+ *   3. here: packed into one atlas (public/fps/br/models/doors.v26.webp) with doors.v26.json.
  *
  *   node scripts/br/doors/bake.mjs [--chromium=/path/to/chrome]
  *
- * Incremental: BASE=doors.v24 ONLY=id,id bakes just those models' doors and packs them into
+ * Incremental: BASE=doors.v25 ONLY=id,id bakes just those models' doors and packs them into
  * the free rows under the base atlas, keeping every other door's tile and look as it was (the
  * untouched imports a full bake photographs are not all kept in the repository).
  * KEEP=1 with them: a door those models already had in the base keeps its tile too (only the
@@ -173,7 +173,7 @@ for (const t of tiles)
 await sharp(atlas, { raw: { width: ATLAS_W, height: H, channels: 4 } })
   .removeAlpha()
   .webp({ quality: 88, effort: 6 })
-  .toFile(path.join(OUT, "doors.v25.webp"));
+  .toFile(path.join(OUT, "doors.v26.webp"));
 const models = Object.fromEntries(Object.entries(base.models).map(([k, v]) => [k, [...v]]));
 for (const t of tiles) {
   const j = t.job;
@@ -196,9 +196,9 @@ for (const t of tiles) {
   };
 }
 fs.writeFileSync(
-  path.join(OUT, "doors.v25.json"),
+  path.join(OUT, "doors.v26.json"),
   JSON.stringify({ atlas: [ATLAS_W, H], lining: LINING, models }) + "\n",
 );
 console.log(
-  `doors.v25: ${tiles.length} doors, atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v25.webp")).size / 1024)} kB`,
+  `doors.v26: ${tiles.length} doors, atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v26.webp")).size / 1024)} kB`,
 );

@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "ruins-v1",
+  revision: "works-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -124,15 +124,21 @@ export const WORLD_ASSETS = {
   // tunnels, the ball court, the arch, walls, stelae, paving) and the owner's downloads for its
   // rainforest (two tree species, the jungle and palm, with impostors), undergrowth, statues and
   // stelae, rocks and the expedition's camp.
-  models: "/fps/br/models/models.ruins-v1.json",
-  collision: "/fps/br/models/collision.ruins-v1.json",
+  // Then (works-v1, 2026-11-17) East Works rebuilt as its card draws it: the power station
+  // (build_works.mjs: three brick boiler towers, two enterable chimneys, the turbine hall, the
+  // control house, the workshop, domed tanks, a pipe rack, yard floors) and the owner's 14
+  // downloads (smoke stacks, cooling cells, the tank farm, tanks, boilers, machines, cabinets,
+  // conveyors, pipes, valves, warning lights).
+  models: "/fps/br/models/models.works-v1.json",
+  collision: "/fps/br/models/collision.works-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
   // v25 (2026-11-17): v24 with the coastal towns' 13 houses' doors (build_coast.mjs).
-  meta: "/fps/br/models/doors.v25.json",
-  atlas: "/fps/br/models/doors.v25.webp",
+  // v26 (2026-11-17): v25 with East Works' 13 new doors (build_works.mjs).
+  meta: "/fps/br/models/doors.v26.json",
+  atlas: "/fps/br/models/doors.v26.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

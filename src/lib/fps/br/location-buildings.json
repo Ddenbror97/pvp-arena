@@ -177,6 +177,47 @@
       [-8.2, -2.5]
     ]
   },
+  "ew-boiler-tower": {
+    "foot": [14.1, 12.1],
+    "aprons": [
+      [-3, 7.2],
+      [-3, -7.2],
+      [-8.2, 0]
+    ]
+  },
+  "ew-chimney": { "foot": [8.1, 8.1], "aprons": [[-1.6, 5.2]] },
+  "ew-control-house": {
+    "foot": [24.1, 12.1],
+    "aprons": [
+      [-5, 7.2],
+      [4, -7.2],
+      [-13.2, -2]
+    ]
+  },
+  "ew-pipe-rack": { "foot": [32, 4.2], "aprons": [] },
+  "ew-road": { "foot": [20, 20], "aprons": [] },
+  "ew-tank-grey": { "foot": [13.6, 16.4], "aprons": [] },
+  "ew-tank-white": { "foot": [16.6, 19.4], "aprons": [] },
+  "ew-turbine-hall": {
+    "foot": [45, 23],
+    "aprons": [
+      [-11, 14],
+      [6, 12.2],
+      [12, -12.2],
+      [-23.2, 4],
+      [23.2, -4]
+    ]
+  },
+  "ew-workshop": {
+    "foot": [18.1, 10.1],
+    "aprons": [
+      [-4, 8],
+      [2, 6.2],
+      [-2, -6.2]
+    ]
+  },
+  "ew-yard": { "foot": [20, 20], "aprons": [] },
+  "ew-yard-lines": { "foot": [20, 20], "aprons": [] },
   "fish-market": {
     "foot": [25.6, 13.6],
     "aprons": [

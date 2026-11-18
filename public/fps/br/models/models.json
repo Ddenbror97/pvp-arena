@@ -16715,6 +16715,1367 @@
     }
    ]
   },
+  "ew-boiler": {
+   "title": "Old Industrial Boiler",
+   "author": "CatgirlNotLive",
+   "source": "https://sketchfab.com/3d-models/old-industrial-boiler-82d77b2f4fe346f3b662929d763f1cdc",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "East Works (2026-11-17): an old upright boiler in the boiler towers and the yards",
+   "scale": 1.006626,
+   "sourceTris": 1778,
+   "size": [
+    1.57,
+    3.8,
+    1.57
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-boiler.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 53,
+     "size": [
+      1.57,
+      3.8,
+      1.57
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-boiler.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 22,
+     "size": [
+      1.57,
+      3.8,
+      1.57
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-boiler.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.57,
+      3.8,
+      1.57
+     ]
+    }
+   ]
+  },
+  "ew-boiler-tower": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Boiler tower",
+   "source": "art/blender/br/build_works.mjs",
+   "use": "East Works: a 7-storey red-brick boiler house with its chimney stack, stairs to every floor and the roof (procedural, 2026-11-17)",
+   "size": [
+    14.1,
+    29.38,
+    12.1
+   ],
+   "sourceTris": 11234,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-boiler-tower.works-v1.lod0.glb",
+     "tris": 11234,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 211,
+     "size": [
+      14.1,
+      29.38,
+      12.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-boiler-tower.works-v1.lod1.glb",
+     "tris": 1088,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 30,
+     "size": [
+      14.1,
+      29.38,
+      12.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-boiler-tower.works-v1.lod2.glb",
+     "tris": 204,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      14.1,
+      29.38,
+      12.1
+     ]
+    }
+   ]
+  },
+  "ew-chimney": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Chimney (enterable)",
+   "source": "art/blender/br/build_works.mjs",
+   "use": "East Works: a 36 m square brick chimney stack, a stair up every storey inside to the lookout on its top (procedural, 2026-11-17)",
+   "size": [
+    8.1,
+    37.43,
+    8.1
+   ],
+   "sourceTris": 10516,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-chimney.works-v1.lod0.glb",
+     "tris": 10516,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 209,
+     "size": [
+      8.1,
+      37.43,
+      8.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-chimney.works-v1.lod1.glb",
+     "tris": 962,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 28,
+     "size": [
+      8.1,
+      37.43,
+      8.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-chimney.works-v1.lod2.glb",
+     "tris": 276,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      8.1,
+      37.43,
+      8.1
+     ]
+    }
+   ]
+  },
+  "ew-control-cabinet": {
+   "title": "Retro Industrial Control Cabinet",
+   "author": "meipal",
+   "source": "https://sketchfab.com/3d-models/retro-industrial-control-cabinet-bea0fc94bec448e8a778c2b5685cd5ed",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "East Works (2026-11-17): retro control cabinets in the control house and the towers",
+   "scale": 1.130526,
+   "sourceTris": 4347,
+   "size": [
+    0.59,
+    1.6,
+    0.91
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-control-cabinet.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.59,
+      1.6,
+      0.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-control-cabinet.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.59,
+      1.6,
+      0.91
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-control-cabinet.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.59,
+      1.6,
+      0.91
+     ]
+    }
+   ]
+  },
+  "ew-control-house": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Works control house",
+   "source": "art/blender/br/build_works.mjs",
+   "use": "East Works: the control and office block, three floors of rooms in their own colours, a roof terrace (procedural, 2026-11-17)",
+   "size": [
+    24.1,
+    11.43,
+    12.1
+   ],
+   "sourceTris": 9266,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-control-house.works-v1.lod0.glb",
+     "tris": 9266,
+     "draws": 4,
+     "textureMB": 0.5,
+     "kB": 138,
+     "size": [
+      24.1,
+      11.43,
+      12.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-control-house.works-v1.lod1.glb",
+     "tris": 616,
+     "draws": 2,
+     "textureMB": 0.06,
+     "kB": 16,
+     "size": [
+      24.1,
+      11.43,
+      12.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-control-house.works-v1.lod2.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      24.1,
+      11.43,
+      12.1
+     ]
+    }
+   ]
+  },
+  "ew-conveyor": {
+   "title": "Industrial Conveyor Belt",
+   "author": "Juan Sebastian Solano",
+   "source": "https://sketchfab.com/3d-models/industrial-conveyor-belt-a3c3b8a28e004ad7bc97ac84f4a12fee",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "East Works (2026-11-17): a conveyor belt in the halls and yards",
+   "scale": 0.023092,
+   "sourceTris": 892,
+   "size": [
+    8,
+    2.24,
+    2.1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-conveyor.lod0.glb",
+     "tris": 892,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 15,
+     "size": [
+      8,
+      2.24,
+      2.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-conveyor.lod1.glb",
+     "tris": 661,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 13,
+     "size": [
+      8,
+      2.24,
+      2.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-conveyor.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      8,
+      2.24,
+      2.1
+     ]
+    }
+   ]
+  },
+  "ew-cooling-tower": {
+   "title": "Cooling Tower (Mechanical Draft, Counterflow)",
+   "author": "dubey.ujjwal1994",
+   "source": "https://sketchfab.com/3d-models/cooling-tower-mechanical-draft-counterflow-c9f71e367c5b4bb38277a9cf3640c304",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "building",
+   "use": "East Works (2026-11-17): mechanical-draft cooling tower cells by the turbine hall",
+   "scale": 325.368817,
+   "sourceTris": 14671,
+   "size": [
+    13.36,
+    12,
+    7.97
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-cooling-tower.lod0.glb",
+     "tris": 7872,
+     "draws": 3,
+     "textureMB": 0,
+     "kB": 85,
+     "size": [
+      13.36,
+      12,
+      7.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-cooling-tower.lod1.glb",
+     "tris": 1492,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      13.36,
+      12,
+      7.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-cooling-tower.lod2.glb",
+     "tris": 396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      13.36,
+      12,
+      7.97
+     ]
+    }
+   ]
+  },
+  "ew-electrical-box": {
+   "title": "Industrial Electrical Box",
+   "author": "VRTESTER",
+   "source": "https://sketchfab.com/3d-models/industrial-electrical-box-de13c96dad014bf098df03030f314fee",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "East Works (2026-11-17): an electrical box with its battery by the walls",
+   "scale": 2.938923,
+   "sourceTris": 8740,
+   "size": [
+    1.14,
+    1.5,
+    1.01
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-electrical-box.lod0.glb",
+     "tris": 576,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.14,
+      1.5,
+      1.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-electrical-box.lod1.glb",
+     "tris": 290,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.14,
+      1.5,
+      1.01
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-electrical-box.lod2.glb",
+     "tris": 290,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.14,
+      1.5,
+      1.01
+     ]
+    }
+   ]
+  },
+  "ew-horizontal-tank": {
+   "title": "Industrial Storage Tank",
+   "author": "SebastianLee",
+   "source": "https://sketchfab.com/3d-models/industrial-storage-tank-738781e96e2c47f3b5bed04da3125940",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "East Works (2026-11-17): a horizontal storage tank on legs (cover in the yards)",
+   "scale": 0.805757,
+   "sourceTris": 7060,
+   "size": [
+    12,
+    5.46,
+    4.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-horizontal-tank.lod0.glb",
+     "tris": 3999,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 50,
+     "size": [
+      12,
+      5.46,
+      4.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-horizontal-tank.lod1.glb",
+     "tris": 1400,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      12,
+      5.46,
+      4.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-horizontal-tank.lod2.glb",
+     "tris": 399,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      12,
+      5.46,
+      4.3
+     ]
+    }
+   ]
+  },
+  "ew-machine": {
+   "title": "Machinery device",
+   "author": "maxpsr",
+   "source": "https://sketchfab.com/3d-models/machinery-device-585d12f0fc384d24ac874dc54278a924",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "East Works (2026-11-17): a rusted machinery set in the halls",
+   "scale": 1.199547,
+   "sourceTris": 23464,
+   "size": [
+    2.18,
+    1.44,
+    4.3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-machine.lod0.glb",
+     "tris": 5280,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 127,
+     "size": [
+      2.18,
+      1.44,
+      4.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-machine.lod1.glb",
+     "tris": 1157,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      2.18,
+      1.44,
+      4.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-machine.lod2.glb",
+     "tris": 395,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.18,
+      1.44,
+      4.3
+     ]
+    }
+   ]
+  },
+  "ew-pipe-bend": {
+   "title": "Dirty Pipes",
+   "author": "soularts1702",
+   "source": "https://sketchfab.com/3d-models/dirty-pipes-a532274175804ee1addf49a078607336",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "East Works (2026-11-17): a big pipe bend coming out of the ground by the tanks",
+   "scale": 0.995232,
+   "sourceTris": 516,
+   "size": [
+    7.6,
+    7.61,
+    7.27
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-pipe-bend.lod0.glb",
+     "tris": 516,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      7.6,
+      7.61,
+      7.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-pipe-bend.lod1.glb",
+     "tris": 516,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 8,
+     "size": [
+      7.6,
+      7.61,
+      7.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-pipe-bend.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.6,
+      7.61,
+      7.27
+     ]
+    }
+   ]
+  },
+  "ew-pipe-rack": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "source": "art/blender/br/build_works.mjs",
+   "title": "Pipe rack",
+   "use": "East Works: a steel pipe bridge on portal frames between the buildings, five pipes in two decks (procedural, 2026-11-17)",
+   "size": [
+    32,
+    8.9,
+    4.2
+   ],
+   "sourceTris": 360,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-pipe-rack.works-v1.lod0.glb",
+     "tris": 360,
+     "draws": 3,
+     "textureMB": 0.5,
+     "kB": 47,
+     "size": [
+      32,
+      8.9,
+      4.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-pipe-rack.works-v1.lod1.glb",
+     "tris": 300,
+     "draws": 2,
+     "textureMB": 0.06,
+     "kB": 13,
+     "size": [
+      32,
+      8.9,
+      4.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-pipe-rack.works-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      32,
+      8.9,
+      4.2
+     ]
+    }
+   ]
+  },
+  "ew-pipe-run": {
+   "title": "Dirty Pipes",
+   "author": "soularts1702",
+   "source": "https://sketchfab.com/3d-models/dirty-pipes-a532274175804ee1addf49a078607336",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "East Works (2026-11-17): a pipe run with its ports along the ground",
+   "scale": 0.996665,
+   "sourceTris": 370,
+   "size": [
+    2.76,
+    3.25,
+    14.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-pipe-run.lod0.glb",
+     "tris": 370,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.76,
+      3.25,
+      14.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-pipe-run.lod1.glb",
+     "tris": 370,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      2.76,
+      3.25,
+      14.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-pipe-run.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.76,
+      3.25,
+      14.6
+     ]
+    }
+   ]
+  },
+  "ew-road": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "source": "art/blender/br/build_works.mjs",
+   "title": "Works road (asphalt)",
+   "use": "East Works: 20 m of asphalt road with its lines, drawn only (procedural, 2026-11-17)",
+   "size": [
+    20,
+    0.06999999999999999,
+    20
+   ],
+   "sourceTris": 14,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-road.works-v1.lod0.glb",
+     "tris": 14,
+     "draws": 2,
+     "textureMB": 1,
+     "kB": 62,
+     "size": [
+      20,
+      0.06999999999999999,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-road.works-v1.lod1.glb",
+     "tris": 2,
+     "draws": 1,
+     "textureMB": 0.25,
+     "kB": 8,
+     "size": [
+      20,
+      0.06999999999999999,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-road.works-v1.lod2.glb",
+     "tris": 2,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      20,
+      0.06999999999999999,
+      20
+     ]
+    }
+   ]
+  },
+  "ew-roller": {
+   "title": "Industrial Conveyer Roller (modular)",
+   "author": "atharva_parab",
+   "source": "https://sketchfab.com/3d-models/industrial-conveyer-roller-modular-4736d0c18e7047969639988883f0ad56",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "East Works (2026-11-17): a roller conveyor section",
+   "scale": 91.035383,
+   "sourceTris": 2434,
+   "size": [
+    3,
+    0.79,
+    1.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-roller.lod0.glb",
+     "tris": 598,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3,
+      0.79,
+      1.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-roller.lod1.glb",
+     "tris": 211,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3,
+      0.79,
+      1.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-roller.lod2.glb",
+     "tris": 52,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      3,
+      0.79,
+      1.07
+     ]
+    }
+   ]
+  },
+  "ew-smoke-stacks": {
+   "title": "Industrial Smoke Stack Pack",
+   "author": "PolyDavid",
+   "source": "https://sketchfab.com/3d-models/industrial-smoke-stack-pack-80e8c4e08223401ea829423778241df3",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "hero",
+   "use": "East Works (2026-11-17): three round smoke stacks by the boiler towers (landmark)",
+   "scale": 1.069332,
+   "sourceTris": 3060,
+   "size": [
+    3.3,
+    44,
+    10.97
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-smoke-stacks.lod0.glb",
+     "tris": 3060,
+     "draws": 3,
+     "textureMB": 4,
+     "kB": 186,
+     "size": [
+      3.3,
+      44,
+      10.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-smoke-stacks.lod1.glb",
+     "tris": 1821,
+     "draws": 3,
+     "textureMB": 1,
+     "kB": 74,
+     "size": [
+      3.3,
+      44,
+      10.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-smoke-stacks.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.3,
+      44,
+      10.97
+     ]
+    }
+   ]
+  },
+  "ew-tank-farm": {
+   "title": "Large Industrial Storage Tanks",
+   "author": "Duane's Mind",
+   "source": "https://sketchfab.com/3d-models/large-industrial-storage-tanks-bd3ac97071104b64bc388a155b64f79e",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "building",
+   "use": "East Works (2026-11-17): a cluster of large storage tanks on legs with their stairs (the tank farm)",
+   "scale": 0.896827,
+   "sourceTris": 9811,
+   "size": [
+    25.49,
+    12.9,
+    30
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-tank-farm.lod0.glb",
+     "tris": 7995,
+     "draws": 4,
+     "textureMB": 4,
+     "kB": 300,
+     "size": [
+      25.49,
+      12.9,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-tank-farm.lod1.glb",
+     "tris": 3066,
+     "draws": 4,
+     "textureMB": 1,
+     "kB": 105,
+     "size": [
+      25.49,
+      12.9,
+      30
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-tank-farm.lod2.glb",
+     "tris": 910,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      25.49,
+      12.9,
+      30
+     ]
+    }
+   ]
+  },
+  "ew-tank-grey": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_works.mjs",
+   "title": "Domed storage tank (grey)",
+   "use": "East Works: a smaller round tank, a stair up its side on to the railed top (procedural, 2026-11-17)",
+   "size": [
+    13.6,
+    10.1,
+    15.2
+   ],
+   "sourceTris": 1560,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-tank-grey.works-v1.lod0.glb",
+     "tris": 1560,
+     "draws": 4,
+     "textureMB": 0.75,
+     "kB": 82,
+     "size": [
+      13.6,
+      10.1,
+      15.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-tank-grey.works-v1.lod1.glb",
+     "tris": 720,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 35,
+     "size": [
+      13.6,
+      10.1,
+      15.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-tank-grey.works-v1.lod2.glb",
+     "tris": 192,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      13.6,
+      10.1,
+      15.2
+     ]
+    }
+   ]
+  },
+  "ew-tank-white": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "building",
+   "scale": 1,
+   "source": "art/blender/br/build_works.mjs",
+   "title": "Domed storage tank (white)",
+   "use": "East Works: a round storage tank, its domed top railed and reached up a stair on its side (procedural, 2026-11-17)",
+   "size": [
+    16.6,
+    12.1,
+    18.2
+   ],
+   "sourceTris": 1680,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-tank-white.works-v1.lod0.glb",
+     "tris": 1680,
+     "draws": 4,
+     "textureMB": 0.75,
+     "kB": 85,
+     "size": [
+      16.6,
+      12.1,
+      18.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-tank-white.works-v1.lod1.glb",
+     "tris": 720,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 35,
+     "size": [
+      16.6,
+      12.1,
+      18.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-tank-white.works-v1.lod2.glb",
+     "tris": 192,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      16.6,
+      12.1,
+      18.2
+     ]
+    }
+   ]
+  },
+  "ew-turbine-hall": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Turbine hall",
+   "source": "art/blender/br/build_works.mjs",
+   "use": "East Works: the long turbine hall, blue-grey cladding over a brick plinth, a gateway, a gallery along its back up a steel stair (procedural, 2026-11-17)",
+   "size": [
+    45,
+    13.69,
+    23
+   ],
+   "sourceTris": 2362,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-turbine-hall.works-v1.lod0.glb",
+     "tris": 2362,
+     "draws": 7,
+     "textureMB": 1.25,
+     "kB": 119,
+     "size": [
+      45,
+      13.69,
+      23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-turbine-hall.works-v1.lod1.glb",
+     "tris": 418,
+     "draws": 5,
+     "textureMB": 0.25,
+     "kB": 34,
+     "size": [
+      45,
+      13.69,
+      23
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-turbine-hall.works-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      45,
+      13.69,
+      23
+     ]
+    }
+   ]
+  },
+  "ew-valve": {
+   "title": "Water Valve - Industrial Pipe Fitting",
+   "author": "ARTEL_3D",
+   "source": "https://sketchfab.com/3d-models/water-valve-industrial-pipe-fitting-0af6bae239bc48f0a17ef3da3f1b9563",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "East Works (2026-11-17): a valve wheel on the pipes",
+   "scale": 2.727195,
+   "sourceTris": 4729,
+   "size": [
+    0.7,
+    0.87,
+    0.43
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-valve.lod0.glb",
+     "tris": 827,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 38,
+     "size": [
+      0.7,
+      0.87,
+      0.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-valve.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.7,
+      0.87,
+      0.43
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-valve.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.7,
+      0.87,
+      0.43
+     ]
+    }
+   ]
+  },
+  "ew-warning-light": {
+   "title": "Abandoned Factory Warning Light",
+   "author": "x4vier28",
+   "source": "https://sketchfab.com/3d-models/abandoned-factory-warning-light-7b12be1b4bd74ee0b10511ddcabf5cc8",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "East Works (2026-11-17): a caged warning light on the halls' walls",
+   "scale": 2.293476,
+   "sourceTris": 4648,
+   "size": [
+    0.21,
+    0.4,
+    0.12
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-warning-light.lod0.glb",
+     "tris": 648,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 29,
+     "size": [
+      0.21,
+      0.4,
+      0.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-warning-light.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.21,
+      0.4,
+      0.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-warning-light.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.21,
+      0.4,
+      0.12
+     ]
+    }
+   ]
+  },
+  "ew-workshop": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Workshop and stores",
+   "source": "art/blender/br/build_works.mjs",
+   "use": "East Works: a two-storey brick workshop and stores block, rooms on both floors, a flat roof up the stair (procedural, 2026-11-17)",
+   "size": [
+    18.1,
+    8.33,
+    10.1
+   ],
+   "sourceTris": 4704,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-workshop.works-v1.lod0.glb",
+     "tris": 4704,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 122,
+     "size": [
+      18.1,
+      8.33,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-workshop.works-v1.lod1.glb",
+     "tris": 426,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 23,
+     "size": [
+      18.1,
+      8.33,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-workshop.works-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      18.1,
+      8.33,
+      10.1
+     ]
+    }
+   ]
+  },
+  "ew-yard": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "source": "art/blender/br/build_works.mjs",
+   "title": "Yard concrete",
+   "use": "East Works: 20 m of yard concrete in 4 m bays, drawn only (procedural, 2026-11-17)",
+   "size": [
+    20,
+    0.06999999999999999,
+    20
+   ],
+   "sourceTris": 2,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-yard.works-v1.lod0.glb",
+     "tris": 2,
+     "draws": 1,
+     "textureMB": 1,
+     "kB": 36,
+     "size": [
+      20,
+      0.06999999999999999,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-yard.works-v1.lod1.glb",
+     "tris": 2,
+     "draws": 1,
+     "textureMB": 0.25,
+     "kB": 10,
+     "size": [
+      20,
+      0.06999999999999999,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-yard.works-v1.lod2.glb",
+     "tris": 2,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      20,
+      0.06999999999999999,
+      20
+     ]
+    }
+   ]
+  },
+  "ew-yard-lines": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "source": "art/blender/br/build_works.mjs",
+   "title": "Yard with markings",
+   "use": "East Works: 20 m of yard concrete with painted lanes and bays, drawn only (procedural, 2026-11-17)",
+   "size": [
+    20,
+    0.06999999999999999,
+    20
+   ],
+   "sourceTris": 36,
+   "lods": [
+    {
+     "file": "/fps/br/models/ew-yard-lines.works-v1.lod0.glb",
+     "tris": 36,
+     "draws": 2,
+     "textureMB": 1,
+     "kB": 37,
+     "size": [
+      20,
+      0.06999999999999999,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-yard-lines.works-v1.lod1.glb",
+     "tris": 2,
+     "draws": 1,
+     "textureMB": 0.25,
+     "kB": 10,
+     "size": [
+      20,
+      0.06999999999999999,
+      20
+     ]
+    },
+    {
+     "file": "/fps/br/models/ew-yard-lines.works-v1.lod2.glb",
+     "tris": 2,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      20,
+      0.06999999999999999,
+      20
+     ]
+    }
+   ]
+  },
   "excavator": {
    "title": "Excavator digger 3d model",
    "author": "Dioramass design",

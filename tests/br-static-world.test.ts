@@ -225,6 +225,9 @@ describe("Project Island static world", () => {
         p.model !== "kitchen-run" &&
         // Forgotten Ruins' rope bridge spans the great temple's fallen gallery roof.
         p.model !== "rope-bridge" &&
+        // East Works' yard floor (drawn only, 5 cm over the pad): buildings stand on it.
+        !p.model.startsWith("ew-yard") &&
+        p.model !== "ew-road" &&
         // Plants and trees (no collision): their leaves overlap, as in any jungle.
         models.models[p.model]!.class !== "bush" &&
         models.models[p.model]!.class !== "tree" &&

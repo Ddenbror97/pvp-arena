@@ -19,13 +19,13 @@ import { AIRCRAFT, type Aircraft } from "./aircraft";
  */
 export const AIRCRAFT_SAMPLES = {
   planeStart: "br-plane-start-v1.mp3",
-  planeRoll: "br-plane-roll-loop-v1.mp3",
+  planeRoll: "br-plane-roll-loop-v2.mp3",
   planeDrive: "br-plane-drive-loop-v1.mp3",
 } as const;
 type Sample = keyof typeof AIRCRAFT_SAMPLES;
 /** The loops' regions in their files (s): stored between copies of their own ends. */
 const LOOPS = {
-  planeRoll: { pad: 0.25, length: 3.4 },
+  planeRoll: { pad: 0.25, length: 12 },
   planeDrive: { pad: 0.25, length: 22 },
 } as const;
 /** The start-up's catch (s into the file) and its length. */
