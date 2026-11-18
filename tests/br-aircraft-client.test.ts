@@ -111,4 +111,44 @@ describe("BR aircraft on the client", () => {
     parked.passenger = 4;
     expect(boardable(parked, 1.5, 10, 0)).toBe("full");
   });
+
+  it("holds a mouse-selected climb, centres on release and isolates passenger/free look", () => {
+    const c = new AircraftClient();
+    const a = rolling();
+    a.grounded = false;
+    a.vz = -35;
+    c.apply(aircraftRow(a), 0, 1000);
+    const keys = {
+      throttleUp: false,
+      throttleDown: false,
+      rollLeft: false,
+      rollRight: false,
+      rudderLeft: false,
+      rudderRight: false,
+      brake: false,
+    };
+    c.holdPitch(true);
+    c.mouse(0, -100, 0.5);
+    const initial = c.steer(keys, 1 / 30).elev;
+    expect(initial).toBeGreaterThan(0.4);
+    for (let i = 0; i < 90; i++) expect(c.steer(keys, 1 / 30).elev).toBe(initial);
+    c.holdPitch(false);
+    expect(c.steer(keys, 1 / 30).elev).toBe(0);
+    c.holdPitch(true);
+    c.mouse(0, -100, 0.5);
+    c.look.held = true;
+    c.mouse(30, -100, 0.5);
+    expect(c.look.pitch).toBeGreaterThan(0);
+    expect(c.steer(keys, 1 / 30).elev).toBe(0);
+    c.look.held = false;
+    c.apply(aircraftRow(a), 1, 2000);
+    c.holdPitch(true);
+    c.mouse(0, -100, 0.5);
+    expect(c.steer(keys, 1 / 30).elev).toBe(0);
+    c.apply(aircraftRow(a), 0, 3000);
+    expect(c.steer({ ...keys, pitchUp: true }, 1 / 30).elev).toBeGreaterThan(0);
+    expect(c.steer({ ...keys, pitchDown: true }, 1 / 30).elev).toBeLessThan(0);
+    c.apply(undefined, undefined, 4000);
+    expect(c.steer(keys, 1 / 30).elev).toBe(0);
+  });
 });

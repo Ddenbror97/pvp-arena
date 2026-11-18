@@ -5,6 +5,7 @@ import {
   attitude,
   impactDamage,
   newAircraft,
+  stepAircraft,
   type Aircraft,
 } from "@/lib/fps/br/aircraft";
 import { fly, takeoffPilot, testWorld, wrap } from "@/lib/fps/br/flight-harness";
@@ -218,6 +219,40 @@ describe("aircraft flight model (Cessna 172SP)", () => {
     const hard = land(false, -7);
     expect(hard.r.maxImpact).toBeGreaterThan(AIRCRAFT.touchdown.hard);
     expect(hard.a.gear).toBeGreaterThan(0.3);
+  });
+
+  it("absorbs a hard wheels-first landing but still destroys the airframe in a severe slam", () => {
+    const land = (sink: number) => {
+      const a = newAircraft(0, 0, env.ground, 0, 0);
+      Object.assign(a, { y: env.ground + 1.3, vy: -sink, vz: -30, brake: false, grounded: false });
+      let damage = 0;
+      for (let i = 0; i < 150; i++) {
+        const impact = stepAircraft(
+          env.world,
+          env.meta,
+          a,
+          {
+            elev: 0,
+            ail: 0,
+            rud: 0,
+            thr: 0,
+            flaps: 0,
+            engine: false,
+            brake: false,
+          },
+          (i * 1000) / 30,
+          1000 / 30,
+        );
+        damage += impactDamage(impact);
+      }
+      return { a, damage };
+    };
+    const rough = land(5);
+    expect(rough.damage).toBeLessThan(AIRCRAFT.health * 0.05);
+    expect(rough.a.gear).toBeLessThan(0.7);
+    const crash = land(15);
+    expect(crash.damage).toBeGreaterThanOrEqual(AIRCRAFT.health);
+    expect(crash.a.gear).toBe(1);
   });
 
   it("crashes into what it hits instead of passing through (swept collision)", () => {

@@ -1854,8 +1854,9 @@ export function BrFlight({ hud }: { hud: BrHud }) {
               <kbd>D</kbd> roll
             </span>
             <span>
-              <kbd>Mouse ↑</kbd> nose up · <kbd>↓</kbd> nose down
+              Hold <kbd>Left mouse</kbd> + small <kbd>↑ / ↓</kbd> drag to pitch
             </span>
+            <span>Pull up from 55 KT · arrow keys optional</span>
             <span>
               <kbd>Q</kbd>
               <kbd>R</kbd> rudder
@@ -1867,7 +1868,7 @@ export function BrFlight({ hud }: { hud: BrHud }) {
               <kbd>Space</kbd> brakes
             </span>
             <span>
-              <kbd>F</kbd> engine
+              <kbd>F</kbd> engine on/off (auto-starts)
             </span>
           </>
         ) : (
