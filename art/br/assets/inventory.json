@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-17T21:13:29-03:00",
+ "generated": "2026-11-17T21:47:14-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/home/claude/fr-zips/*.zip",
@@ -8,7 +8,8 @@
   "/home/claude/fr-zips3/*.zip",
   "/home/claude/fr-zips4/*.zip",
   "/home/claude/fr-zips5/*.zip",
-  "/home/claude/fr-zips7/*.zip"
+  "/home/claude/fr-zips7/*.zip",
+  "/home/claude/ew-zips/*.zip"
  ],
  "asset_list": "/home/claude/br-assets/index.html",
  "budgets": {
@@ -319,6 +320,186 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:b63c31b9c6a04284b665af8a0a93d456",
+   "title": "1930s Heavy Industrial Wall Lamps",
+   "author": "Mad_Lobster_Workshop",
+   "author_url": "https://sketchfab.com/Mad_Lobster_Workshop",
+   "source": "https://sketchfab.com/3d-models/1930s-heavy-industrial-wall-lamps-b63c31b9c6a04284b665af8a0a93d456",
+   "uid": "b63c31b9c6a04284b665af8a0a93d456",
+   "licence": {
+    "string": "COPYRIGHT TO Mad_Lobster_Workshop",
+    "label": "COPYRIGHT TO Mad_Lobster_Workshop",
+    "link": null,
+    "file": "glTF asset.extras",
+    "verdict": "REVIEW",
+    "reason": "unrecognised licence string"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/1930s_heavy_industrial_wall_lamps.zip",
+     "sha256": "d6570c0ef448f3f5f7e60e0417bb9f4db80776ab9fbd50551729d99efb18efeb",
+     "size": 173993536,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 21400,
+    "verts": 18734,
+    "draws": 4,
+    "unique_tris": 21400,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 11,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.616,
+     0.324,
+     0.158
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 5542,
+    "top_pieces": [
+     {
+      "name": "1930s Heavy Industrial Wall Lamp Rusty_1",
+      "tris": 5542,
+      "draws": 1,
+      "size_m": [
+       0.36,
+       0.324,
+       0.158
+      ]
+     },
+     {
+      "name": "1930s Heavy Industrial Wall Lamp Painted Yellow_2",
+      "tris": 5542,
+      "draws": 1,
+      "size_m": [
+       0.36,
+       0.324,
+       0.158
+      ]
+     },
+     {
+      "name": "1930s Heavy Industrial Wall Lamp Painted Green_3",
+      "tris": 5542,
+      "draws": 1,
+      "size_m": [
+       0.36,
+       0.324,
+       0.158
+      ]
+     },
+     {
+      "name": "1930s Heavy Industrial Wall Lamp with Lens_0",
+      "tris": 4774,
+      "draws": 1,
+      "size_m": [
+       0.36,
+       0.324,
+       0.158
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 7,
+    "images": [
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_baseColor.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_metallicRoughness.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_normal.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_baseColor.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_metallicRoughness.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_normal.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Green_baseColor.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Green_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 595.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "LIC-REVIEW",
+    "TRIS>15k (1.4x)",
+    "TEX 4096px",
+    "TEXMB 596"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.43
   },
   {
    "key": "sf:413636af429d481daf9a8acf24a058db",
@@ -4638,6 +4819,225 @@
    ],
    "over_budget": true,
    "budget_ratio": 1.67
+  },
+  {
+   "key": "sf:7b12be1b4bd74ee0b10511ddcabf5cc8",
+   "title": "Abandoned Factory Warning Light",
+   "author": "x4vier28",
+   "author_url": "https://sketchfab.com/xs196441",
+   "source": "https://sketchfab.com/3d-models/abandoned-factory-warning-light-7b12be1b4bd74ee0b10511ddcabf5cc8",
+   "uid": "7b12be1b4bd74ee0b10511ddcabf5cc8",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/f32d331b-abandoned_factory_warning_light.zip",
+     "sha256": "daf84ced3fa9a96f15d6c85fa7de64a991a00266ea42022ac662e299d73bf661",
+     "size": 8356165,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 9222,
+    "verts": 7507,
+    "draws": 6,
+    "unique_tris": 9222,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 15,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.119,
+     0.188,
+     0.2
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "f67bddf781b547eab408061161b64242.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 6,
+    "max_piece_tris": 3840,
+    "top_pieces": [
+     {
+      "name": "grid",
+      "tris": 3840,
+      "draws": 1,
+      "size_m": [
+       0.039,
+       0.052,
+       0.039
+      ]
+     },
+     {
+      "name": "broken_grid",
+      "tris": 3610,
+      "draws": 1,
+      "size_m": [
+       0.047,
+       0.058,
+       0.039
+      ]
+     },
+     {
+      "name": "broken_pipers",
+      "tris": 844,
+      "draws": 1,
+      "size_m": [
+       0.118,
+       0.167,
+       0.052
+      ]
+     },
+     {
+      "name": "pipers",
+      "tris": 702,
+      "draws": 1,
+      "size_m": [
+       0.092,
+       0.16,
+       0.052
+      ]
+     },
+     {
+      "name": "broken_glasse",
+      "tris": 120,
+      "draws": 1,
+      "size_m": [
+       0.035,
+       0.046,
+       0.029
+      ]
+     },
+     {
+      "name": "glasse",
+      "tris": 106,
+      "draws": 1,
+      "size_m": [
+       0.029,
+       0.043,
+       0.029
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/material_baseColor.png",
+      "name": "textures/material_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_metallicRoughness.png",
+      "name": "textures/material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_emissive.png",
+      "name": "textures/material_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_normal.png",
+      "name": "textures/material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_transmission.png",
+      "name": "textures/material_transmission.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_baseColor.png",
+      "name": "textures/broken_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_metallicRoughness.png",
+      "name": "textures/broken_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_emissive.png",
+      "name": "textures/broken_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_normal.png",
+      "name": "textures/broken_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_transmission.png",
+      "name": "textures/broken_transmission.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 212.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 213"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
   },
   {
    "key": "sf:e9336043579c416c8c278e29f4ad3641",
@@ -31429,6 +31829,151 @@
    "budget_ratio": 1.36
   },
   {
+   "key": "sf:c9f71e367c5b4bb38277a9cf3640c304",
+   "title": "Cooling Tower (Mechanical Draft, Counterflow)",
+   "author": "dubey.ujjwal1994",
+   "author_url": "https://sketchfab.com/dubey.ujjwal1994",
+   "source": "https://sketchfab.com/3d-models/cooling-tower-mechanical-draft-counterflow-c9f71e367c5b4bb38277a9cf3640c304",
+   "uid": "c9f71e367c5b4bb38277a9cf3640c304",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/83d1c0e4-cooling_tower_mechanical_draft_counterflow.zip",
+     "sha256": "0463e4316778c0c0a70dea3a3a18ff4f73f88aa4eb7e9fe878501658da114bc4",
+     "size": 143445,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 14671,
+    "verts": 15319,
+    "draws": 11,
+    "unique_tris": 14671,
+    "meshes": 11,
+    "primitives": 11,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 26,
+    "mesh_nodes": 11,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.041,
+     0.037,
+     0.024
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 0.010699,
+    "pieces_count": 12,
+    "max_piece_tris": 7632,
+    "top_pieces": [
+     {
+      "name": "Cylinder",
+      "tris": 7632,
+      "draws": 1,
+      "size_m": [
+       0.035,
+       0.004,
+       0.017
+      ]
+     },
+     {
+      "name": "Plane",
+      "tris": 1800,
+      "draws": 1,
+      "size_m": [
+       0.035,
+       0.014,
+       0.024
+      ]
+     },
+     {
+      "name": "Plane.002",
+      "tris": 1800,
+      "draws": 1,
+      "size_m": [
+       0.035,
+       0.002,
+       0.024
+      ]
+     },
+     {
+      "name": "Plane.001",
+      "tris": 1615,
+      "draws": 1,
+      "size_m": [
+       0.036,
+       0.037,
+       0.024
+      ]
+     },
+     {
+      "name": "Cylinder.001",
+      "tris": 700,
+      "draws": 1,
+      "size_m": [
+       0.002,
+       0.005,
+       0.002
+      ]
+     },
+     {
+      "name": "Plane.012",
+      "tris": 416,
+      "draws": 1,
+      "size_m": [
+       0.019,
+       0.002,
+       0.02
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "SCALE? 0.041 m"
+   ],
+   "actions": [
+    "check scale (largest side 0.041 m; x100 would give 4.1 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:10187bc37c9e42ef8770b28452ee7cd3",
    "title": "Corn! Corn! Corn!",
    "author": "Tiia Tuulia",
@@ -37667,6 +38212,183 @@
     "downscale textures to 1K"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:a532274175804ee1addf49a078607336",
+   "title": "Dirty Pipes",
+   "author": "soularts1702",
+   "author_url": "https://sketchfab.com/soularts1702",
+   "source": "https://sketchfab.com/3d-models/dirty-pipes-a532274175804ee1addf49a078607336",
+   "uid": "a532274175804ee1addf49a078607336",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/982a6357-dirty_pipes.zip",
+     "sha256": "674f83a3afd7c253973a95f2625f5051cf5caa8d1d089c5ba8e9a08a52da5a30",
+     "size": 594001,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 7290,
+    "verts": 7222,
+    "draws": 31,
+    "unique_tris": 7290,
+    "meshes": 31,
+    "primitives": 31,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 58,
+    "mesh_nodes": 31,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     53.979,
+     7.649,
+     33.397
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 24,
+    "max_piece_tris": 616,
+    "top_pieces": [
+     {
+      "name": "Lever.004_19",
+      "tris": 616,
+      "draws": 2,
+      "size_m": [
+       1.067,
+       0.686,
+       1.32
+      ]
+     },
+     {
+      "name": "Special Pipe 3_15",
+      "tris": 516,
+      "draws": 1,
+      "size_m": [
+       7.636,
+       7.649,
+       7.309
+      ]
+     },
+     {
+      "name": "Quard Port_11",
+      "tris": 436,
+      "draws": 1,
+      "size_m": [
+       4.006,
+       3.755,
+       5.329
+      ]
+     },
+     {
+      "name": "Special Pipe 2_17",
+      "tris": 430,
+      "draws": 1,
+      "size_m": [
+       7.636,
+       5.211,
+       7.309
+      ]
+     },
+     {
+      "name": "Tripple Port_12",
+      "tris": 378,
+      "draws": 1,
+      "size_m": [
+       4.006,
+       3.235,
+       5.329
+      ]
+     },
+     {
+      "name": "Port Pipe_8",
+      "tris": 370,
+      "draws": 1,
+      "size_m": [
+       2.771,
+       3.263,
+       14.649
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Pipe_Meterial_emissive.jpeg",
+      "name": "textures/Pipe_Meterial_emissive.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Handle_emissive.jpeg",
+      "name": "textures/Handle_emissive.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Water_emissive.jpeg",
+      "name": "textures/Water_emissive.jpeg",
+      "w": 512,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Dial_Guage_emissive.png",
+      "name": "textures/Dial_Guage_emissive.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 7.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 31",
+    "SCALE? 54 m"
+   ],
+   "actions": [
+    "atlas materials (31 draws to ≤12)",
+    "check scale (largest side 54 m; x0.01 would give 0.54 m)"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -67712,6 +68434,1297 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:4736d0c18e7047969639988883f0ad56",
+   "title": "Industrial Conveyer Roller (modular)",
+   "author": "atharva_parab",
+   "author_url": "https://sketchfab.com/parabatharva4",
+   "source": "https://sketchfab.com/3d-models/industrial-conveyer-roller-modular-4736d0c18e7047969639988883f0ad56",
+   "uid": "4736d0c18e7047969639988883f0ad56",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/f900b13b-industrial_conveyer_roller_modular.zip",
+     "sha256": "4916c826a4455d76e27b1c46b815e1535404986574da3f6908907f8a76eab30f",
+     "size": 4055705,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2434,
+    "verts": 3524,
+    "draws": 1,
+    "unique_tris": 2434,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.033,
+     0.009,
+     0.012
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Conveyor roller 1.fbx",
+     "RootNode",
+     "Conveyor_roller_1:Conveyor_roller_1"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 2434,
+    "top_pieces": [
+     {
+      "name": "Conveyor_roller_1:Conveyor_roller_1_lambert1_0",
+      "tris": 2434,
+      "draws": 1,
+      "size_m": [
+       0.033,
+       0.009,
+       0.012
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/lambert1_baseColor.png",
+      "name": "textures/lambert1_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert1_emissive.png",
+      "name": "textures/lambert1_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert1_normal.png",
+      "name": "textures/lambert1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 0.033 m"
+   ],
+   "actions": [
+    "check scale (largest side 0.033 m; x100 would give 3.3 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:a3c3b8a28e004ad7bc97ac84f4a12fee",
+   "title": "Industrial Conveyor Belt",
+   "author": "Juan Sebastian Solano",
+   "author_url": "https://sketchfab.com/Juan.Sebastian.Solano",
+   "source": "https://sketchfab.com/3d-models/industrial-conveyor-belt-a3c3b8a28e004ad7bc97ac84f4a12fee",
+   "uid": "a3c3b8a28e004ad7bc97ac84f4a12fee",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/industrial_conveyor_belt.zip",
+     "sha256": "886da95d30d99f7b52a88404b98272bcd4899d81e1933f4a62a23c84174cefdd",
+     "size": 54679974,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 17853,
+    "verts": 12861,
+    "draws": 45,
+    "unique_tris": 17853,
+    "meshes": 45,
+    "primitives": 45,
+    "materials": 26,
+    "materials_used": 26,
+    "nodes": 94,
+    "mesh_nodes": 45,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     507.162,
+     192.328,
+     507.162
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "Machine_Conveyor_Belt"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 16593,
+    "top_pieces": [
+     {
+      "name": "Sorting_Machine",
+      "tris": 16593,
+      "draws": 33,
+      "size_m": [
+       140.861,
+       191.998,
+       154.641
+      ]
+     },
+     {
+      "name": "Conveyor_belt",
+      "tris": 892,
+      "draws": 10,
+      "size_m": [
+       346.437,
+       96.823,
+       90.748
+      ]
+     },
+     {
+      "name": "Vinyl_Cd_V2",
+      "tris": 360,
+      "draws": 1,
+      "size_m": [
+       51.467,
+       0.269,
+       51.467
+      ]
+     },
+     {
+      "name": "Floor_01",
+      "tris": 8,
+      "draws": 1,
+      "size_m": [
+       507.162,
+       0.0,
+       507.162
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 78,
+    "images": [
+     {
+      "member": "textures/MachineBase_Mat_baseColor.jpeg",
+      "name": "textures/MachineBase_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/MachineBase_Mat_metallicRoughness.png",
+      "name": "textures/MachineBase_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MachineBase_Mat_normal.png",
+      "name": "textures/MachineBase_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MachineBody_Bottom_Mat_baseColor.jpeg",
+      "name": "textures/MachineBody_Bottom_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/MachineBody_Bottom_Mat_metallicRoughness.png",
+      "name": "textures/MachineBody_Bottom_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MachineBody_Bottom_Mat_normal.png",
+      "name": "textures/MachineBody_Bottom_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Machine_Top_Body_baseColor.jpeg",
+      "name": "textures/Machine_Top_Body_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Machine_Top_Body_metallicRoughness.png",
+      "name": "textures/Machine_Top_Body_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Machine_Top_Body_normal.png",
+      "name": "textures/Machine_Top_Body_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corner_Bottom_Mat_baseColor.jpeg",
+      "name": "textures/Corner_Bottom_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Corner_Bottom_Mat_metallicRoughness.png",
+      "name": "textures/Corner_Bottom_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corner_Bottom_Mat_normal.png",
+      "name": "textures/Corner_Bottom_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/VentLeft_Material_baseColor.jpeg",
+      "name": "textures/VentLeft_Material_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/VentLeft_Material_metallicRoughness.png",
+      "name": "textures/VentLeft_Material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/VentLeft_Material_normal.png",
+      "name": "textures/VentLeft_Material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Lever_TubeBody_baseColor.jpeg",
+      "name": "textures/Lever_TubeBody_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Lever_TubeBody_metallicRoughness.png",
+      "name": "textures/Lever_TubeBody_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Lever_TubeBody_normal.png",
+      "name": "textures/Lever_TubeBody_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/BaseLever_Mat_baseColor.jpeg",
+      "name": "textures/BaseLever_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/BaseLever_Mat_metallicRoughness.png",
+      "name": "textures/BaseLever_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/BaseLever_Mat_normal.png",
+      "name": "textures/BaseLever_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Default_Material_baseColor.jpeg",
+      "name": "textures/Default_Material_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Default_Material_metallicRoughness.png",
+      "name": "textures/Default_Material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Default_Material_normal.png",
+      "name": "textures/Default_Material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corner_Top01_Mat_baseColor.jpeg",
+      "name": "textures/Corner_Top01_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Corner_Top01_Mat_metallicRoughness.png",
+      "name": "textures/Corner_Top01_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corner_Top01_Mat_normal.png",
+      "name": "textures/Corner_Top01_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PipeMaterial_baseColor.jpeg",
+      "name": "textures/PipeMaterial_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PipeMaterial_metallicRoughness.png",
+      "name": "textures/PipeMaterial_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PipeMaterial_normal.png",
+      "name": "textures/PipeMaterial_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PressureGague_HolderPlate1_baseColor.jpeg",
+      "name": "textures/PressureGague_HolderPlate1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PressureGague_HolderPlate1_metallicRoughness.png",
+      "name": "textures/PressureGague_HolderPlate1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PressureGague_HolderPlate1_normal.png",
+      "name": "textures/PressureGague_HolderPlate1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_Graphic_baseColor.jpeg",
+      "name": "textures/Gauge_Graphic_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Gauge_Graphic_metallicRoughness.png",
+      "name": "textures/Gauge_Graphic_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_Graphic_normal.png",
+      "name": "textures/Gauge_Graphic_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_MetalBody_baseColor.jpeg",
+      "name": "textures/Gauge_MetalBody_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Gauge_MetalBody_metallicRoughness.png",
+      "name": "textures/Gauge_MetalBody_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_MetalBody_normal.png",
+      "name": "textures/Gauge_MetalBody_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Screw_Gauge_Needle_baseColor.jpeg",
+      "name": "textures/Screw_Gauge_Needle_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Screw_Gauge_Needle_metallicRoughness.png",
+      "name": "textures/Screw_Gauge_Needle_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Screw_Gauge_Needle_normal.png",
+      "name": "textures/Screw_Gauge_Needle_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_Needle_baseColor.jpeg",
+      "name": "textures/Gauge_Needle_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Gauge_Needle_metallicRoughness.png",
+      "name": "textures/Gauge_Needle_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_Needle_normal.png",
+      "name": "textures/Gauge_Needle_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gague_Glass_baseColor.png",
+      "name": "textures/Gague_Glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gague_Glass_metallicRoughness.png",
+      "name": "textures/Gague_Glass_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gague_Glass_normal.png",
+      "name": "textures/Gague_Glass_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Light_Ring_Mat_baseColor.jpeg",
+      "name": "textures/Light_Ring_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Light_Ring_Mat_metallicRoughness.png",
+      "name": "textures/Light_Ring_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Light_Ring_Mat_normal.png",
+      "name": "textures/Light_Ring_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Machine_Light_Mat_baseColor.jpeg",
+      "name": "textures/Machine_Light_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Machine_Light_Mat_metallicRoughness.png",
+      "name": "textures/Machine_Light_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Machine_Light_Mat_emissive.jpeg",
+      "name": "textures/Machine_Light_Mat_emissive.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Machine_Light_Mat_normal.png",
+      "name": "textures/Machine_Light_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Main_Sign_Mat_baseColor.jpeg",
+      "name": "textures/Main_Sign_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Main_Sign_Mat_metallicRoughness.png",
+      "name": "textures/Main_Sign_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Main_Sign_Mat_normal.png",
+      "name": "textures/Main_Sign_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Legs_V2_baseColor.jpeg",
+      "name": "textures/Belt_Legs_V2_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Belt_Legs_V2_metallicRoughness.png",
+      "name": "textures/Belt_Legs_V2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Legs_V2_normal.png",
+      "name": "textures/Belt_Legs_V2_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Legs_V1_baseColor.jpeg",
+      "name": "textures/Belt_Legs_V1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Belt_Legs_V1_metallicRoughness.png",
+      "name": "textures/Belt_Legs_V1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Legs_V1_normal.png",
+      "name": "textures/Belt_Legs_V1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_SidePannel_baseColor.jpeg",
+      "name": "textures/Belt_SidePannel_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Belt_SidePannel_metallicRoughness.png",
+      "name": "textures/Belt_SidePannel_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_SidePannel_normal.png",
+      "name": "textures/Belt_SidePannel_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Exterior_baseColor.jpeg",
+      "name": "textures/Belt_Exterior_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Belt_Exterior_metallicRoughness.png",
+      "name": "textures/Belt_Exterior_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Exterior_normal.png",
+      "name": "textures/Belt_Exterior_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Conveyor_Screw_baseColor.jpeg",
+      "name": "textures/Conveyor_Screw_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Conveyor_Screw_metallicRoughness.png",
+      "name": "textures/Conveyor_Screw_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Conveyor_Screw_normal.png",
+      "name": "textures/Conveyor_Screw_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Floor_baseColor.jpeg",
+      "name": "textures/Floor_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Floor_metallicRoughness.png",
+      "name": "textures/Floor_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/VinylFace_02_HighPoly1_baseColor.jpeg",
+      "name": "textures/VinylFace_02_HighPoly1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/VinylFace_02_HighPoly1_metallicRoughness.png",
+      "name": "textures/VinylFace_02_HighPoly1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/VinylFace_02_HighPoly1_normal.png",
+      "name": "textures/VinylFace_02_HighPoly1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 1659.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (1.2x)",
+    "DRAWS 45",
+    "SCALE? 507 m",
+    "TEXMB 1660"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (45 draws to ≤12)",
+    "check scale (largest side 507 m; x0.01 would give 5.07 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 1.19
+  },
+  {
+   "key": "sf:de13c96dad014bf098df03030f314fee",
+   "title": "Industrial Electrical Box",
+   "author": "VRTESTER",
+   "author_url": "https://sketchfab.com/VRTESTER",
+   "source": "https://sketchfab.com/3d-models/industrial-electrical-box-de13c96dad014bf098df03030f314fee",
+   "uid": "de13c96dad014bf098df03030f314fee",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/ef372437-industrial_electrical_box.zip",
+     "sha256": "dd06c66a0bdfa14f5caede8de09137f28d824f49457a83e4e65e9a8441f890ce",
+     "size": 1806478,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 8740,
+    "verts": 9296,
+    "draws": 3,
+    "unique_tris": 8740,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 9,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.387,
+     0.51,
+     0.345
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "SkrzynkaElektryczna.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 5918,
+    "top_pieces": [
+     {
+      "name": "Electrical Box",
+      "tris": 5918,
+      "draws": 1,
+      "size_m": [
+       0.098,
+       0.51,
+       0.345
+      ]
+     },
+     {
+      "name": "Akumulator",
+      "tris": 1796,
+      "draws": 1,
+      "size_m": [
+       0.076,
+       0.142,
+       0.141
+      ]
+     },
+     {
+      "name": "Electrical Door",
+      "tris": 1026,
+      "draws": 1,
+      "size_m": [
+       0.297,
+       0.441,
+       0.137
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/ElecticalBox_baseColor.png",
+      "name": "textures/ElecticalBox_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ElecticalBox_metallicRoughness.png",
+      "name": "textures/ElecticalBox_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 42.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 43"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:116baf2d9f3949c482737b08b8e00a75",
+   "title": "Industrial Pipes pack",
+   "author": "Skotchet",
+   "author_url": "https://sketchfab.com/Skotcher",
+   "source": "https://sketchfab.com/3d-models/industrial-pipes-pack-116baf2d9f3949c482737b08b8e00a75",
+   "uid": "116baf2d9f3949c482737b08b8e00a75",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/fec58f0c-industrial_pipes_pack.zip",
+     "sha256": "f83c49e75eac02e680782301ba88e6be4f4bf04d8bf031d47eea317e5c583060",
+     "size": 12775967,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 24498,
+    "verts": 27911,
+    "draws": 35,
+    "unique_tris": 24498,
+    "meshes": 35,
+    "primitives": 35,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 73,
+    "mesh_nodes": 35,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     920.202,
+     235.115,
+     1305.681
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "482a2f28b2b44746a994ae80e70280d3.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 25,
+    "max_piece_tris": 2880,
+    "top_pieces": [
+     {
+      "name": "Cylinder.040",
+      "tris": 2880,
+      "draws": 1,
+      "size_m": [
+       176.516,
+       81.284,
+       175.289
+      ]
+     },
+     {
+      "name": "Torus.001",
+      "tris": 2876,
+      "draws": 11,
+      "size_m": [
+       80.991,
+       83.8,
+       80.991
+      ]
+     },
+     {
+      "name": "Cylinder.011",
+      "tris": 2528,
+      "draws": 1,
+      "size_m": [
+       81.284,
+       101.047,
+       111.442
+      ]
+     },
+     {
+      "name": "Cylinder.044",
+      "tris": 1536,
+      "draws": 1,
+      "size_m": [
+       182.252,
+       182.252,
+       1003.509
+      ]
+     },
+     {
+      "name": "Cylinder.036",
+      "tris": 1536,
+      "draws": 1,
+      "size_m": [
+       81.284,
+       81.284,
+       405.198
+      ]
+     },
+     {
+      "name": "Cylinder.038",
+      "tris": 1536,
+      "draws": 1,
+      "size_m": [
+       81.284,
+       81.284,
+       1005.198
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Pipe_baseColor.png",
+      "name": "textures/Pipe_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Pipe_metallicRoughness.png",
+      "name": "textures/Pipe_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Pipe_normal.png",
+      "name": "textures/Pipe_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "kit",
+   "flags": [
+    "SCALE? 1.01e+03 m"
+   ],
+   "actions": [
+    "check scale (largest side 1.01e+03 m; x0.01 would give 10.1 m)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:80e8c4e08223401ea829423778241df3",
+   "title": "Industrial Smoke Stack Pack",
+   "author": "PolyDavid",
+   "author_url": "https://sketchfab.com/PolyDavid",
+   "source": "https://sketchfab.com/3d-models/industrial-smoke-stack-pack-80e8c4e08223401ea829423778241df3",
+   "uid": "80e8c4e08223401ea829423778241df3",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/f9787b87-industrial_smoke_stack_pack.zip",
+     "sha256": "1c013ea4022e3210fd94c05574e9086cd93022e12aa81dbb70b0961efd481000",
+     "size": 26720135,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3060,
+    "verts": 4800,
+    "draws": 9,
+    "unique_tris": 3060,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 15,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.081,
+     41.147,
+     10.255
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 1020,
+    "top_pieces": [
+     {
+      "name": "Circle_0",
+      "tris": 1020,
+      "draws": 3,
+      "size_m": [
+       3.081,
+       41.147,
+       3.081
+      ]
+     },
+     {
+      "name": "Circle.001_1",
+      "tris": 1020,
+      "draws": 3,
+      "size_m": [
+       3.081,
+       31.592,
+       3.081
+      ]
+     },
+     {
+      "name": "Circle.002_2",
+      "tris": 1020,
+      "draws": 3,
+      "size_m": [
+       3.081,
+       35.448,
+       3.081
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/Rust_baseColor.jpeg",
+      "name": "textures/Rust_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Rust_metallicRoughness.png",
+      "name": "textures/Rust_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Rust_normal.jpeg",
+      "name": "textures/Rust_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Rust_specularf0.png",
+      "name": "textures/Rust_specularf0.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Rust_3.001_baseColor.jpeg",
+      "name": "textures/Rust_3.001_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Rust_3.001_metallicRoughness.png",
+      "name": "textures/Rust_3.001_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Rust_3.001_normal.jpeg",
+      "name": "textures/Rust_3.001_normal.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Light_iron_baseColor.jpeg",
+      "name": "textures/Light_iron_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Light_iron_metallicRoughness.png",
+      "name": "textures/Light_iron_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Light_iron_normal.jpeg",
+      "name": "textures/Light_iron_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 192.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 41.1 m",
+    "TEXMB 193"
+   ],
+   "actions": [
+    "check scale (largest side 41.1 m; x0.01 would give 0.411 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:ffaf6bfbd8b84eb985dee2a35ba79440",
    "title": "Industrial Smoke Stacks",
    "author": "FrodoUndead",
@@ -67826,6 +69839,175 @@
      {
       "member": "textures/Material.001_normal.png",
       "name": "textures/Material.001_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:738781e96e2c47f3b5bed04da3125940",
+   "title": "Industrial Storage Tank",
+   "author": "SebastianLee",
+   "author_url": "https://sketchfab.com/SebastianLee",
+   "source": "https://sketchfab.com/3d-models/industrial-storage-tank-738781e96e2c47f3b5bed04da3125940",
+   "uid": "738781e96e2c47f3b5bed04da3125940",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/d1da3837-industrial_storage_tank.zip",
+     "sha256": "25d075ab47ad02cee8a1abb904768fc6de7f8015ec755e0c74405fa9c179b76f",
+     "size": 26429367,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 7060,
+    "verts": 4664,
+    "draws": 6,
+    "unique_tris": 7060,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 15,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     14.893,
+     6.773,
+     5.334
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "074a5e0c08aa48549bc5228a97c4bb93.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 6,
+    "max_piece_tris": 4276,
+    "top_pieces": [
+     {
+      "name": "RetryTank_low",
+      "tris": 4276,
+      "draws": 1,
+      "size_m": [
+       14.649,
+       6.27,
+       5.334
+      ]
+     },
+     {
+      "name": "Hooks_low",
+      "tris": 872,
+      "draws": 1,
+      "size_m": [
+       7.758,
+       0.72,
+       0.88
+      ]
+     },
+     {
+      "name": "TankEnd_low",
+      "tris": 672,
+      "draws": 1,
+      "size_m": [
+       0.236,
+       1.487,
+       1.487
+      ]
+     },
+     {
+      "name": "TankLegs_low",
+      "tris": 640,
+      "draws": 1,
+      "size_m": [
+       11.568,
+       1.33,
+       4.057
+      ]
+     },
+     {
+      "name": "SideBolts_low",
+      "tris": 300,
+      "draws": 1,
+      "size_m": [
+       0.053,
+       1.077,
+       1.229
+      ]
+     },
+     {
+      "name": "TankTopBolts_low",
+      "tris": 300,
+      "draws": 1,
+      "size_m": [
+       1.427,
+       0.07,
+       1.628
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_metallicRoughness.png",
+      "name": "textures/Scene_-_Root_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_normal.png",
+      "name": "textures/Scene_-_Root_normal.png",
       "w": 4096,
       "h": 4096,
       "format": "PNG"
@@ -72468,10 +74650,18 @@
      "mtime": "2026-11-03T12:31:29-03:00",
      "batch": "2026-11-03",
      "present": false
+    },
+    {
+     "path": "/home/claude/ew-zips/78015d1d-large_industrial_storage_tanks.zip",
+     "sha256": "10199137807983b8f7e53ccae3ec38dbfc6c869fe4c8526fd7f67178603766c4",
+     "size": 10780763,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-03",
    "formats": [
     "gltf+bin"
@@ -87026,6 +89216,158 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:585d12f0fc384d24ac874dc54278a924",
+   "title": "Machinery device",
+   "author": "maxpsr",
+   "author_url": "https://sketchfab.com/maxpsr",
+   "source": "https://sketchfab.com/3d-models/machinery-device-585d12f0fc384d24ac874dc54278a924",
+   "uid": "585d12f0fc384d24ac874dc54278a924",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/machinery_device.zip",
+     "sha256": "30fe23263c33459f4789bd35a7a2d1a727d6aa4769e219a36b5d4b4027eb83fe",
+     "size": 35456157,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 46928,
+    "verts": 44032,
+    "draws": 2,
+    "unique_tris": 46928,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.301,
+     1.201,
+     3.585
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "713ea67458fd4ba78a62ced42797f98a.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 2,
+    "max_piece_tris": 23464,
+    "top_pieces": [
+     {
+      "name": "device64",
+      "tris": 23464,
+      "draws": 1,
+      "size_m": [
+       1.818,
+       1.201,
+       3.585
+      ]
+     },
+     {
+      "name": "device64 rusted",
+      "tris": 23464,
+      "draws": 1,
+      "size_m": [
+       1.818,
+       1.201,
+       3.585
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/device64_baseColor.jpeg",
+      "name": "textures/device64_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/device64_metallicRoughness.png",
+      "name": "textures/device64_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/device64_normal.png",
+      "name": "textures/device64_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/device64_rusted_baseColor.jpeg",
+      "name": "textures/device64_rusted_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/device64_rusted_metallicRoughness.png",
+      "name": "textures/device64_rusted_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/device64_rusted_normal.png",
+      "name": "textures/device64_rusted_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (3.1x)",
+    "TEX 4096px",
+    "TEXMB 255"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 3.13
   },
   {
    "key": "sf:c32d977c14e04e5ebc1fbef9b6111957",
@@ -105604,6 +107946,123 @@
     "downscale textures to 1K"
    ],
    "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:82d77b2f4fe346f3b662929d763f1cdc",
+   "title": "Old Industrial Boiler",
+   "author": "CatgirlNotLive",
+   "author_url": "https://sketchfab.com/CatgirlNotLive",
+   "source": "https://sketchfab.com/3d-models/old-industrial-boiler-82d77b2f4fe346f3b662929d763f1cdc",
+   "uid": "82d77b2f4fe346f3b662929d763f1cdc",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/1eae0d94-old_industrial_boiler.zip",
+     "sha256": "16ddd0f982f13215fcbb3d243245cb61ec84559aca00da7a9276bb2807511733",
+     "size": 3301127,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1778,
+    "verts": 1748,
+    "draws": 1,
+    "unique_tris": 1778,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.562,
+     3.775,
+     1.562
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "b505d61477a245daab71afaedf492fc2.fbx",
+     "RootNode",
+     "Boiler"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1778,
+    "top_pieces": [
+     {
+      "name": "Boiler__0",
+      "tris": 1778,
+      "draws": 1,
+      "size_m": [
+       1.562,
+       3.775,
+       1.562
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_metallicRoughness.png",
+      "name": "textures/Scene_-_Root_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_normal.png",
+      "name": "textures/Scene_-_Root_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
    "budget_ratio": 0.0
   },
   {
@@ -126262,6 +128721,136 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:bea0fc94bec448e8a778c2b5685cd5ed",
+   "title": "Retro Industrial Control Cabinet",
+   "author": "meipal",
+   "author_url": "https://sketchfab.com/ashabbugaev12",
+   "source": "https://sketchfab.com/3d-models/retro-industrial-control-cabinet-bea0fc94bec448e8a778c2b5685cd5ed",
+   "uid": "bea0fc94bec448e8a778c2b5685cd5ed",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/a21fe8a2-retro_industrial_control_cabinet.zip",
+     "sha256": "1c92207d93ca220bc13856a3d7fef66e5d0f4ad89f00bf072f2fa674fd7caa31",
+     "size": 13181365,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4347,
+    "verts": 7786,
+    "draws": 1,
+    "unique_tris": 4347,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.525,
+     1.415,
+     0.805
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "������������������.010_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 4347,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 4347,
+      "draws": 1,
+      "size_m": [
+       0.525,
+       1.415,
+       0.805
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/.013_baseColor.png",
+      "name": "textures/.013_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.013_metallicRoughness.png",
+      "name": "textures/.013_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.013_emissive.png",
+      "name": "textures/.013_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.013_normal.png",
+      "name": "textures/.013_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 149.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "building",
+   "flags": [
+    "TEX 4096px",
+    "TEXMB 149"
+   ],
+   "actions": [
+    "downscale textures to 2K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:2e563be97b3147879df2f298e467e624",
    "title": "Riot shield",
    "author": "Xilgimesh",
@@ -130300,10 +132889,18 @@
      "mtime": "2026-11-03T12:31:28-03:00",
      "batch": "2026-11-03",
      "present": false
+    },
+    {
+     "path": "/home/claude/ew-zips/533b4644-rusted_tank_storage.zip",
+     "sha256": "3a17cab87cbd31889816ab8e1280da10882884b582da49e379e8bfa243963342",
+     "size": 13582899,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-03",
    "formats": [
     "gltf+bin"
@@ -161087,6 +163684,116 @@
    "budget_ratio": 1.27
   },
   {
+   "key": "sf:0af6bae239bc48f0a17ef3da3f1b9563",
+   "title": "Water Valve - Industrial Pipe Fitting",
+   "author": "ARTEL_3D",
+   "author_url": "https://sketchfab.com/artel_3D",
+   "source": "https://sketchfab.com/3d-models/water-valve-industrial-pipe-fitting-0af6bae239bc48f0a17ef3da3f1b9563",
+   "uid": "0af6bae239bc48f0a17ef3da3f1b9563",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/ew-zips/6760254e-water_valve_-_industrial_pipe_fitting.zip",
+     "sha256": "4d7b73512f967955f04c76f6b7bbaa859c82541d08f0e443a1d575d04099e42e",
+     "size": 6582317,
+     "mtime": "2026-11-17T21:47:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4729,
+    "verts": 3970,
+    "draws": 1,
+    "unique_tris": 4729,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.319,
+     0.343,
+     0.219
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "material_0"
+    ],
+    "root_scale": 0.285095,
+    "pieces_count": 1,
+    "max_piece_tris": 4729,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 4729,
+      "draws": 1,
+      "size_m": [
+       0.319,
+       0.343,
+       0.219
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Material.001_diffuse.jpeg",
+      "name": "textures/Material.001_diffuse.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 85.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SPEC-GLOSS",
+    "TEX 4096px",
+    "TEXMB 85"
+   ],
+   "actions": [
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:1d18318c3e81407b8321159fb3424026",
    "title": "Weight Room Set 1",
    "author": "Tyler P Halterman",
@@ -173144,6 +175851,134 @@
    "size": 109210757,
    "mtime_ns": 1794958449656507340,
    "mtime": "2026-11-17T20:34:09-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/1930s_heavy_industrial_wall_lamps.zip": {
+   "sha256": "d6570c0ef448f3f5f7e60e0417bb9f4db80776ab9fbd50551729d99efb18efeb",
+   "size": 173993536,
+   "mtime_ns": 1794962833611782364,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/1eae0d94-old_industrial_boiler.zip": {
+   "sha256": "16ddd0f982f13215fcbb3d243245cb61ec84559aca00da7a9276bb2807511733",
+   "size": 3301127,
+   "mtime_ns": 1794962833550297964,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/533b4644-rusted_tank_storage.zip": {
+   "sha256": "3a17cab87cbd31889816ab8e1280da10882884b582da49e379e8bfa243963342",
+   "size": 13582899,
+   "mtime_ns": 1794962833555782361,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/6760254e-water_valve_-_industrial_pipe_fitting.zip": {
+   "sha256": "4d7b73512f967955f04c76f6b7bbaa859c82541d08f0e443a1d575d04099e42e",
+   "size": 6582317,
+   "mtime_ns": 1794962833558762917,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/78015d1d-large_industrial_storage_tanks.zip": {
+   "sha256": "10199137807983b8f7e53ccae3ec38dbfc6c869fe4c8526fd7f67178603766c4",
+   "size": 10780763,
+   "mtime_ns": 1794962833547782361,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/83d1c0e4-cooling_tower_mechanical_draft_counterflow.zip": {
+   "sha256": "0463e4316778c0c0a70dea3a3a18ff4f73f88aa4eb7e9fe878501658da114bc4",
+   "size": 143445,
+   "mtime_ns": 1794962833526039260,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/982a6357-dirty_pipes.zip": {
+   "sha256": "674f83a3afd7c253973a95f2625f5051cf5caa8d1d089c5ba8e9a08a52da5a30",
+   "size": 594001,
+   "mtime_ns": 1794962833526114820,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/a21fe8a2-retro_industrial_control_cabinet.zip": {
+   "sha256": "1c92207d93ca220bc13856a3d7fef66e5d0f4ad89f00bf072f2fa674fd7caa31",
+   "size": 13181365,
+   "mtime_ns": 1794962833551782361,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/d1da3837-industrial_storage_tank.zip": {
+   "sha256": "25d075ab47ad02cee8a1abb904768fc6de7f8015ec755e0c74405fa9c179b76f",
+   "size": 26429367,
+   "mtime_ns": 1794962833543782360,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/ef372437-industrial_electrical_box.zip": {
+   "sha256": "dd06c66a0bdfa14f5caede8de09137f28d824f49457a83e4e65e9a8441f890ce",
+   "size": 1806478,
+   "mtime_ns": 1794962833527555983,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/f32d331b-abandoned_factory_warning_light.zip": {
+   "sha256": "daf84ced3fa9a96f15d6c85fa7de64a991a00266ea42022ac662e299d73bf661",
+   "size": 8356165,
+   "mtime_ns": 1794962833523782359,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/f900b13b-industrial_conveyer_roller_modular.zip": {
+   "sha256": "4916c826a4455d76e27b1c46b815e1535404986574da3f6908907f8a76eab30f",
+   "size": 4055705,
+   "mtime_ns": 1794962833526295495,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/f9787b87-industrial_smoke_stack_pack.zip": {
+   "sha256": "1c013ea4022e3210fd94c05574e9086cd93022e12aa81dbb70b0961efd481000",
+   "size": 26720135,
+   "mtime_ns": 1794962833535782360,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/fec58f0c-industrial_pipes_pack.zip": {
+   "sha256": "f83c49e75eac02e680782301ba88e6be4f4bf04d8bf031d47eea317e5c583060",
+   "size": 12775967,
+   "mtime_ns": 1794962833528060387,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/industrial_conveyor_belt.zip": {
+   "sha256": "886da95d30d99f7b52a88404b98272bcd4899d81e1933f4a62a23c84174cefdd",
+   "size": 54679974,
+   "mtime_ns": 1794962833627782365,
+   "mtime": "2026-11-17T21:47:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/ew-zips/machinery_device.zip": {
+   "sha256": "30fe23263c33459f4789bd35a7a2d1a727d6aa4769e219a36b5d4b4027eb83fe",
+   "size": 35456157,
+   "mtime_ns": 1794962833639782366,
+   "mtime": "2026-11-17T21:47:13-03:00",
    "batch": "2026-11-17",
    "present": true
   }
@@ -313152,6 +315987,2340 @@
    "sha256": "de0f1f21785f2d20095a553aed4c6470c7e8eafe02cedcbd418d413e1b202e52",
    "size": 63544751,
    "parsed_at": "2026-11-17T21:13:27-03:00"
+  },
+  "d6570c0ef448f3f5f7e60e0417bb9f4db80776ab9fbd50551729d99efb18efeb": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 11,
+   "uncompressed_bytes": 174697242,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.7.0",
+   "licence": {
+    "title": "1930s Heavy Industrial Wall Lamps",
+    "file": "glTF asset.extras",
+    "author": "Mad_Lobster_Workshop (https://sketchfab.com/Mad_Lobster_Workshop)",
+    "source": "https://sketchfab.com/3d-models/1930s-heavy-industrial-wall-lamps-b63c31b9c6a04284b665af8a0a93d456",
+    "licence": "COPYRIGHT TO Mad_Lobster_Workshop"
+   },
+   "model": {
+    "tris": 21400,
+    "verts": 18734,
+    "draws": 4,
+    "unique_tris": 21400,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 11,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.616,
+     0.324,
+     0.158
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 5542,
+    "top_pieces": [
+     {
+      "name": "1930s Heavy Industrial Wall Lamp Rusty_1",
+      "tris": 5542,
+      "draws": 1,
+      "size_m": [
+       0.36,
+       0.324,
+       0.158
+      ]
+     },
+     {
+      "name": "1930s Heavy Industrial Wall Lamp Painted Yellow_2",
+      "tris": 5542,
+      "draws": 1,
+      "size_m": [
+       0.36,
+       0.324,
+       0.158
+      ]
+     },
+     {
+      "name": "1930s Heavy Industrial Wall Lamp Painted Green_3",
+      "tris": 5542,
+      "draws": 1,
+      "size_m": [
+       0.36,
+       0.324,
+       0.158
+      ]
+     },
+     {
+      "name": "1930s Heavy Industrial Wall Lamp with Lens_0",
+      "tris": 4774,
+      "draws": 1,
+      "size_m": [
+       0.36,
+       0.324,
+       0.158
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 7,
+    "images": [
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_baseColor.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_metallicRoughness.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_normal.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Rusty_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_baseColor.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_metallicRoughness.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_normal.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Yellow_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Green_baseColor.png",
+      "name": "textures/1930s_Heavy_Industrial_Wall_Lamp_Painted_Green_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 595.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "d6570c0ef448f3f5f7e60e0417bb9f4db80776ab9fbd50551729d99efb18efeb",
+   "size": 173993536,
+   "parsed_at": "2026-11-17T21:47:13-03:00"
+  },
+  "16ddd0f982f13215fcbb3d243245cb61ec84559aca00da7a9276bb2807511733": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 3357042,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.86.0",
+   "licence": {
+    "title": "Old Industrial Boiler",
+    "source": "https://sketchfab.com/3d-models/old-industrial-boiler-82d77b2f4fe346f3b662929d763f1cdc",
+    "author": "CatgirlNotLive (https://sketchfab.com/CatgirlNotLive)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1778,
+    "verts": 1748,
+    "draws": 1,
+    "unique_tris": 1778,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     1.562,
+     3.775,
+     1.562
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "b505d61477a245daab71afaedf492fc2.fbx",
+     "RootNode",
+     "Boiler"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1778,
+    "top_pieces": [
+     {
+      "name": "Boiler__0",
+      "tris": 1778,
+      "draws": 1,
+      "size_m": [
+       1.562,
+       3.775,
+       1.562
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_metallicRoughness.png",
+      "name": "textures/Scene_-_Root_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_normal.png",
+      "name": "textures/Scene_-_Root_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "16ddd0f982f13215fcbb3d243245cb61ec84559aca00da7a9276bb2807511733",
+   "size": 3301127,
+   "parsed_at": "2026-11-17T21:47:13-03:00"
+  },
+  "4d7b73512f967955f04c76f6b7bbaa859c82541d08f0e443a1d575d04099e42e": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 6669079,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-0.17.0",
+   "licence": {
+    "title": "Water Valve - Industrial Pipe Fitting",
+    "source": "https://sketchfab.com/3d-models/water-valve-industrial-pipe-fitting-0af6bae239bc48f0a17ef3da3f1b9563",
+    "author": "ARTEL_3D (https://sketchfab.com/artel_3D)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4729,
+    "verts": 3970,
+    "draws": 1,
+    "unique_tris": 4729,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.319,
+     0.343,
+     0.219
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "material_0"
+    ],
+    "root_scale": 0.285095,
+    "pieces_count": 1,
+    "max_piece_tris": 4729,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 4729,
+      "draws": 1,
+      "size_m": [
+       0.319,
+       0.343,
+       0.219
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Material.001_diffuse.jpeg",
+      "name": "textures/Material.001_diffuse.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 85.1,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "4d7b73512f967955f04c76f6b7bbaa859c82541d08f0e443a1d575d04099e42e",
+   "size": 6582317,
+   "parsed_at": "2026-11-17T21:47:13-03:00"
+  },
+  "0463e4316778c0c0a70dea3a3a18ff4f73f88aa4eb7e9fe878501658da114bc4": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 563940,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Cooling Tower (Mechanical Draft, Counterflow)",
+    "source": "https://sketchfab.com/3d-models/cooling-tower-mechanical-draft-counterflow-c9f71e367c5b4bb38277a9cf3640c304",
+    "author": "dubey.ujjwal1994 (https://sketchfab.com/dubey.ujjwal1994)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 14671,
+    "verts": 15319,
+    "draws": 11,
+    "unique_tris": 14671,
+    "meshes": 11,
+    "primitives": 11,
+    "materials": 5,
+    "materials_used": 5,
+    "nodes": 26,
+    "mesh_nodes": 11,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.041,
+     0.037,
+     0.024
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Root"
+    ],
+    "root_scale": 0.010699,
+    "pieces_count": 12,
+    "max_piece_tris": 7632,
+    "top_pieces": [
+     {
+      "name": "Cylinder",
+      "tris": 7632,
+      "draws": 1,
+      "size_m": [
+       0.035,
+       0.004,
+       0.017
+      ]
+     },
+     {
+      "name": "Plane",
+      "tris": 1800,
+      "draws": 1,
+      "size_m": [
+       0.035,
+       0.014,
+       0.024
+      ]
+     },
+     {
+      "name": "Plane.002",
+      "tris": 1800,
+      "draws": 1,
+      "size_m": [
+       0.035,
+       0.002,
+       0.024
+      ]
+     },
+     {
+      "name": "Plane.001",
+      "tris": 1615,
+      "draws": 1,
+      "size_m": [
+       0.036,
+       0.037,
+       0.024
+      ]
+     },
+     {
+      "name": "Cylinder.001",
+      "tris": 700,
+      "draws": 1,
+      "size_m": [
+       0.002,
+       0.005,
+       0.002
+      ]
+     },
+     {
+      "name": "Plane.012",
+      "tris": 416,
+      "draws": 1,
+      "size_m": [
+       0.019,
+       0.002,
+       0.02
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "0463e4316778c0c0a70dea3a3a18ff4f73f88aa4eb7e9fe878501658da114bc4",
+   "size": 143445,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "674f83a3afd7c253973a95f2625f5051cf5caa8d1d089c5ba8e9a08a52da5a30": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 881542,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.68.0",
+   "licence": {
+    "title": "Dirty Pipes",
+    "source": "https://sketchfab.com/3d-models/dirty-pipes-a532274175804ee1addf49a078607336",
+    "author": "soularts1702 (https://sketchfab.com/soularts1702)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 7290,
+    "verts": 7222,
+    "draws": 31,
+    "unique_tris": 7290,
+    "meshes": 31,
+    "primitives": 31,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 58,
+    "mesh_nodes": 31,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     53.979,
+     7.649,
+     33.397
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 24,
+    "max_piece_tris": 616,
+    "top_pieces": [
+     {
+      "name": "Lever.004_19",
+      "tris": 616,
+      "draws": 2,
+      "size_m": [
+       1.067,
+       0.686,
+       1.32
+      ]
+     },
+     {
+      "name": "Special Pipe 3_15",
+      "tris": 516,
+      "draws": 1,
+      "size_m": [
+       7.636,
+       7.649,
+       7.309
+      ]
+     },
+     {
+      "name": "Quard Port_11",
+      "tris": 436,
+      "draws": 1,
+      "size_m": [
+       4.006,
+       3.755,
+       5.329
+      ]
+     },
+     {
+      "name": "Special Pipe 2_17",
+      "tris": 430,
+      "draws": 1,
+      "size_m": [
+       7.636,
+       5.211,
+       7.309
+      ]
+     },
+     {
+      "name": "Tripple Port_12",
+      "tris": 378,
+      "draws": 1,
+      "size_m": [
+       4.006,
+       3.235,
+       5.329
+      ]
+     },
+     {
+      "name": "Port Pipe_8",
+      "tris": 370,
+      "draws": 1,
+      "size_m": [
+       2.771,
+       3.263,
+       14.649
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/Pipe_Meterial_emissive.jpeg",
+      "name": "textures/Pipe_Meterial_emissive.jpeg",
+      "w": 256,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Handle_emissive.jpeg",
+      "name": "textures/Handle_emissive.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Water_emissive.jpeg",
+      "name": "textures/Water_emissive.jpeg",
+      "w": 512,
+      "h": 256,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Dial_Guage_emissive.png",
+      "name": "textures/Dial_Guage_emissive.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 7.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "674f83a3afd7c253973a95f2625f5051cf5caa8d1d089c5ba8e9a08a52da5a30",
+   "size": 594001,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "1c92207d93ca220bc13856a3d7fef66e5d0f4ad89f00bf072f2fa674fd7caa31": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 8,
+   "uncompressed_bytes": 13729313,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-0.13.0",
+   "licence": {
+    "title": "Retro Industrial Control Cabinet",
+    "source": "https://sketchfab.com/3d-models/retro-industrial-control-cabinet-bea0fc94bec448e8a778c2b5685cd5ed",
+    "author": "meipal (https://sketchfab.com/ashabbugaev12)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4347,
+    "verts": 7786,
+    "draws": 1,
+    "unique_tris": 4347,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.525,
+     1.415,
+     0.805
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode",
+     "������������������.010_0"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 4347,
+    "top_pieces": [
+     {
+      "name": "Object_4",
+      "tris": 4347,
+      "draws": 1,
+      "size_m": [
+       0.525,
+       1.415,
+       0.805
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 4,
+    "images": [
+     {
+      "member": "textures/.013_baseColor.png",
+      "name": "textures/.013_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.013_metallicRoughness.png",
+      "name": "textures/.013_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.013_emissive.png",
+      "name": "textures/.013_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/.013_normal.png",
+      "name": "textures/.013_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 149.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "1c92207d93ca220bc13856a3d7fef66e5d0f4ad89f00bf072f2fa674fd7caa31",
+   "size": 13181365,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "25d075ab47ad02cee8a1abb904768fc6de7f8015ec755e0c74405fa9c179b76f": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 26611164,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.17.0",
+   "licence": {
+    "title": "Industrial Storage Tank",
+    "source": "https://sketchfab.com/3d-models/industrial-storage-tank-738781e96e2c47f3b5bed04da3125940",
+    "author": "SebastianLee (https://sketchfab.com/SebastianLee)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 7060,
+    "verts": 4664,
+    "draws": 6,
+    "unique_tris": 7060,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 15,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     14.893,
+     6.773,
+     5.334
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "074a5e0c08aa48549bc5228a97c4bb93.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 6,
+    "max_piece_tris": 4276,
+    "top_pieces": [
+     {
+      "name": "RetryTank_low",
+      "tris": 4276,
+      "draws": 1,
+      "size_m": [
+       14.649,
+       6.27,
+       5.334
+      ]
+     },
+     {
+      "name": "Hooks_low",
+      "tris": 872,
+      "draws": 1,
+      "size_m": [
+       7.758,
+       0.72,
+       0.88
+      ]
+     },
+     {
+      "name": "TankEnd_low",
+      "tris": 672,
+      "draws": 1,
+      "size_m": [
+       0.236,
+       1.487,
+       1.487
+      ]
+     },
+     {
+      "name": "TankLegs_low",
+      "tris": 640,
+      "draws": 1,
+      "size_m": [
+       11.568,
+       1.33,
+       4.057
+      ]
+     },
+     {
+      "name": "SideBolts_low",
+      "tris": 300,
+      "draws": 1,
+      "size_m": [
+       0.053,
+       1.077,
+       1.229
+      ]
+     },
+     {
+      "name": "TankTopBolts_low",
+      "tris": 300,
+      "draws": 1,
+      "size_m": [
+       1.427,
+       0.07,
+       1.628
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Scene_-_Root_baseColor.png",
+      "name": "textures/Scene_-_Root_baseColor.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_metallicRoughness.png",
+      "name": "textures/Scene_-_Root_metallicRoughness.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Scene_-_Root_normal.png",
+      "name": "textures/Scene_-_Root_normal.png",
+      "w": 4096,
+      "h": 4096,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "25d075ab47ad02cee8a1abb904768fc6de7f8015ec755e0c74405fa9c179b76f",
+   "size": 26429367,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "dd06c66a0bdfa14f5caede8de09137f28d824f49457a83e4e65e9a8441f890ce": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 6,
+   "uncompressed_bytes": 2078871,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.72.0",
+   "licence": {
+    "title": "Industrial Electrical Box",
+    "source": "https://sketchfab.com/3d-models/industrial-electrical-box-de13c96dad014bf098df03030f314fee",
+    "author": "VRTESTER (https://sketchfab.com/VRTESTER)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 8740,
+    "verts": 9296,
+    "draws": 3,
+    "unique_tris": 8740,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 9,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.387,
+     0.51,
+     0.345
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "SkrzynkaElektryczna.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 5918,
+    "top_pieces": [
+     {
+      "name": "Electrical Box",
+      "tris": 5918,
+      "draws": 1,
+      "size_m": [
+       0.098,
+       0.51,
+       0.345
+      ]
+     },
+     {
+      "name": "Akumulator",
+      "tris": 1796,
+      "draws": 1,
+      "size_m": [
+       0.076,
+       0.142,
+       0.141
+      ]
+     },
+     {
+      "name": "Electrical Door",
+      "tris": 1026,
+      "draws": 1,
+      "size_m": [
+       0.297,
+       0.441,
+       0.137
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 2,
+    "images": [
+     {
+      "member": "textures/ElecticalBox_baseColor.png",
+      "name": "textures/ElecticalBox_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/ElecticalBox_metallicRoughness.png",
+      "name": "textures/ElecticalBox_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 42.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "dd06c66a0bdfa14f5caede8de09137f28d824f49457a83e4e65e9a8441f890ce",
+   "size": 1806478,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "daf84ced3fa9a96f15d6c85fa7de64a991a00266ea42022ac662e299d73bf661": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 14,
+   "uncompressed_bytes": 8767649,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.17.0",
+   "licence": {
+    "title": "Abandoned Factory Warning Light",
+    "source": "https://sketchfab.com/3d-models/abandoned-factory-warning-light-7b12be1b4bd74ee0b10511ddcabf5cc8",
+    "author": "x4vier28 (https://sketchfab.com/xs196441)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 9222,
+    "verts": 7507,
+    "draws": 6,
+    "unique_tris": 9222,
+    "meshes": 6,
+    "primitives": 6,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 15,
+    "mesh_nodes": 6,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.119,
+     0.188,
+     0.2
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "f67bddf781b547eab408061161b64242.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 6,
+    "max_piece_tris": 3840,
+    "top_pieces": [
+     {
+      "name": "grid",
+      "tris": 3840,
+      "draws": 1,
+      "size_m": [
+       0.039,
+       0.052,
+       0.039
+      ]
+     },
+     {
+      "name": "broken_grid",
+      "tris": 3610,
+      "draws": 1,
+      "size_m": [
+       0.047,
+       0.058,
+       0.039
+      ]
+     },
+     {
+      "name": "broken_pipers",
+      "tris": 844,
+      "draws": 1,
+      "size_m": [
+       0.118,
+       0.167,
+       0.052
+      ]
+     },
+     {
+      "name": "pipers",
+      "tris": 702,
+      "draws": 1,
+      "size_m": [
+       0.092,
+       0.16,
+       0.052
+      ]
+     },
+     {
+      "name": "broken_glasse",
+      "tris": 120,
+      "draws": 1,
+      "size_m": [
+       0.035,
+       0.046,
+       0.029
+      ]
+     },
+     {
+      "name": "glasse",
+      "tris": 106,
+      "draws": 1,
+      "size_m": [
+       0.029,
+       0.043,
+       0.029
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_transmission"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/material_baseColor.png",
+      "name": "textures/material_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_metallicRoughness.png",
+      "name": "textures/material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_emissive.png",
+      "name": "textures/material_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_normal.png",
+      "name": "textures/material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/material_transmission.png",
+      "name": "textures/material_transmission.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_baseColor.png",
+      "name": "textures/broken_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_metallicRoughness.png",
+      "name": "textures/broken_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_emissive.png",
+      "name": "textures/broken_emissive.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_normal.png",
+      "name": "textures/broken_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/broken_transmission.png",
+      "name": "textures/broken_transmission.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 212.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "daf84ced3fa9a96f15d6c85fa7de64a991a00266ea42022ac662e299d73bf661",
+   "size": 8356165,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "4916c826a4455d76e27b1c46b815e1535404986574da3f6908907f8a76eab30f": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 4201599,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.33.0",
+   "licence": {
+    "title": "Industrial Conveyer Roller (modular)",
+    "source": "https://sketchfab.com/3d-models/industrial-conveyer-roller-modular-4736d0c18e7047969639988883f0ad56",
+    "author": "atharva_parab (https://sketchfab.com/parabatharva4)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2434,
+    "verts": 3524,
+    "draws": 1,
+    "unique_tris": 2434,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.033,
+     0.009,
+     0.012
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Conveyor roller 1.fbx",
+     "RootNode",
+     "Conveyor_roller_1:Conveyor_roller_1"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 2434,
+    "top_pieces": [
+     {
+      "name": "Conveyor_roller_1:Conveyor_roller_1_lambert1_0",
+      "tris": 2434,
+      "draws": 1,
+      "size_m": [
+       0.033,
+       0.009,
+       0.012
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/lambert1_baseColor.png",
+      "name": "textures/lambert1_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert1_emissive.png",
+      "name": "textures/lambert1_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert1_normal.png",
+      "name": "textures/lambert1_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "4916c826a4455d76e27b1c46b815e1535404986574da3f6908907f8a76eab30f",
+   "size": 4055705,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "1c013ea4022e3210fd94c05574e9086cd93022e12aa81dbb70b0961efd481000": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 14,
+   "uncompressed_bytes": 27163601,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.17.0",
+   "licence": {
+    "title": "Industrial Smoke Stack Pack",
+    "source": "https://sketchfab.com/3d-models/industrial-smoke-stack-pack-80e8c4e08223401ea829423778241df3",
+    "author": "PolyDavid (https://sketchfab.com/PolyDavid)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3060,
+    "verts": 4800,
+    "draws": 9,
+    "unique_tris": 3060,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 3,
+    "materials_used": 3,
+    "nodes": 15,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     3.081,
+     41.147,
+     10.255
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 3,
+    "max_piece_tris": 1020,
+    "top_pieces": [
+     {
+      "name": "Circle_0",
+      "tris": 1020,
+      "draws": 3,
+      "size_m": [
+       3.081,
+       41.147,
+       3.081
+      ]
+     },
+     {
+      "name": "Circle.001_1",
+      "tris": 1020,
+      "draws": 3,
+      "size_m": [
+       3.081,
+       31.592,
+       3.081
+      ]
+     },
+     {
+      "name": "Circle.002_2",
+      "tris": 1020,
+      "draws": 3,
+      "size_m": [
+       3.081,
+       35.448,
+       3.081
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 10,
+    "images": [
+     {
+      "member": "textures/Rust_baseColor.jpeg",
+      "name": "textures/Rust_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Rust_metallicRoughness.png",
+      "name": "textures/Rust_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Rust_normal.jpeg",
+      "name": "textures/Rust_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Rust_specularf0.png",
+      "name": "textures/Rust_specularf0.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Rust_3.001_baseColor.jpeg",
+      "name": "textures/Rust_3.001_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Rust_3.001_metallicRoughness.png",
+      "name": "textures/Rust_3.001_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Rust_3.001_normal.jpeg",
+      "name": "textures/Rust_3.001_normal.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Light_iron_baseColor.jpeg",
+      "name": "textures/Light_iron_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Light_iron_metallicRoughness.png",
+      "name": "textures/Light_iron_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Light_iron_normal.jpeg",
+      "name": "textures/Light_iron_normal.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 192.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "1c013ea4022e3210fd94c05574e9086cd93022e12aa81dbb70b0961efd481000",
+   "size": 26720135,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "f83c49e75eac02e680782301ba88e6be4f4bf04d8bf031d47eea317e5c583060": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 14182064,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Industrial Pipes pack",
+    "source": "https://sketchfab.com/3d-models/industrial-pipes-pack-116baf2d9f3949c482737b08b8e00a75",
+    "author": "Skotchet (https://sketchfab.com/Skotcher)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 24498,
+    "verts": 27911,
+    "draws": 35,
+    "unique_tris": 24498,
+    "meshes": 35,
+    "primitives": 35,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 73,
+    "mesh_nodes": 35,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     920.202,
+     235.115,
+     1305.681
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "482a2f28b2b44746a994ae80e70280d3.fbx",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 25,
+    "max_piece_tris": 2880,
+    "top_pieces": [
+     {
+      "name": "Cylinder.040",
+      "tris": 2880,
+      "draws": 1,
+      "size_m": [
+       176.516,
+       81.284,
+       175.289
+      ]
+     },
+     {
+      "name": "Torus.001",
+      "tris": 2876,
+      "draws": 11,
+      "size_m": [
+       80.991,
+       83.8,
+       80.991
+      ]
+     },
+     {
+      "name": "Cylinder.011",
+      "tris": 2528,
+      "draws": 1,
+      "size_m": [
+       81.284,
+       101.047,
+       111.442
+      ]
+     },
+     {
+      "name": "Cylinder.044",
+      "tris": 1536,
+      "draws": 1,
+      "size_m": [
+       182.252,
+       182.252,
+       1003.509
+      ]
+     },
+     {
+      "name": "Cylinder.036",
+      "tris": 1536,
+      "draws": 1,
+      "size_m": [
+       81.284,
+       81.284,
+       405.198
+      ]
+     },
+     {
+      "name": "Cylinder.038",
+      "tris": 1536,
+      "draws": 1,
+      "size_m": [
+       81.284,
+       81.284,
+       1005.198
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Pipe_baseColor.png",
+      "name": "textures/Pipe_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Pipe_metallicRoughness.png",
+      "name": "textures/Pipe_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Pipe_normal.png",
+      "name": "textures/Pipe_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f83c49e75eac02e680782301ba88e6be4f4bf04d8bf031d47eea317e5c583060",
+   "size": 12775967,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "886da95d30d99f7b52a88404b98272bcd4899d81e1933f4a62a23c84174cefdd": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 82,
+   "uncompressed_bytes": 57280516,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.45.0",
+   "licence": {
+    "title": "Industrial Conveyor Belt",
+    "source": "https://sketchfab.com/3d-models/industrial-conveyor-belt-a3c3b8a28e004ad7bc97ac84f4a12fee",
+    "author": "Juan Sebastian Solano (https://sketchfab.com/Juan.Sebastian.Solano)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 17853,
+    "verts": 12861,
+    "draws": 45,
+    "unique_tris": 17853,
+    "meshes": 45,
+    "primitives": 45,
+    "materials": 26,
+    "materials_used": 26,
+    "nodes": 94,
+    "mesh_nodes": 45,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     507.162,
+     192.328,
+     507.162
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "Machine_Conveyor_Belt"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 16593,
+    "top_pieces": [
+     {
+      "name": "Sorting_Machine",
+      "tris": 16593,
+      "draws": 33,
+      "size_m": [
+       140.861,
+       191.998,
+       154.641
+      ]
+     },
+     {
+      "name": "Conveyor_belt",
+      "tris": 892,
+      "draws": 10,
+      "size_m": [
+       346.437,
+       96.823,
+       90.748
+      ]
+     },
+     {
+      "name": "Vinyl_Cd_V2",
+      "tris": 360,
+      "draws": 1,
+      "size_m": [
+       51.467,
+       0.269,
+       51.467
+      ]
+     },
+     {
+      "name": "Floor_01",
+      "tris": 8,
+      "draws": 1,
+      "size_m": [
+       507.162,
+       0.0,
+       507.162
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 78,
+    "images": [
+     {
+      "member": "textures/MachineBase_Mat_baseColor.jpeg",
+      "name": "textures/MachineBase_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/MachineBase_Mat_metallicRoughness.png",
+      "name": "textures/MachineBase_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MachineBase_Mat_normal.png",
+      "name": "textures/MachineBase_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MachineBody_Bottom_Mat_baseColor.jpeg",
+      "name": "textures/MachineBody_Bottom_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/MachineBody_Bottom_Mat_metallicRoughness.png",
+      "name": "textures/MachineBody_Bottom_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/MachineBody_Bottom_Mat_normal.png",
+      "name": "textures/MachineBody_Bottom_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Machine_Top_Body_baseColor.jpeg",
+      "name": "textures/Machine_Top_Body_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Machine_Top_Body_metallicRoughness.png",
+      "name": "textures/Machine_Top_Body_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Machine_Top_Body_normal.png",
+      "name": "textures/Machine_Top_Body_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corner_Bottom_Mat_baseColor.jpeg",
+      "name": "textures/Corner_Bottom_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Corner_Bottom_Mat_metallicRoughness.png",
+      "name": "textures/Corner_Bottom_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corner_Bottom_Mat_normal.png",
+      "name": "textures/Corner_Bottom_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/VentLeft_Material_baseColor.jpeg",
+      "name": "textures/VentLeft_Material_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/VentLeft_Material_metallicRoughness.png",
+      "name": "textures/VentLeft_Material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/VentLeft_Material_normal.png",
+      "name": "textures/VentLeft_Material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Lever_TubeBody_baseColor.jpeg",
+      "name": "textures/Lever_TubeBody_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Lever_TubeBody_metallicRoughness.png",
+      "name": "textures/Lever_TubeBody_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Lever_TubeBody_normal.png",
+      "name": "textures/Lever_TubeBody_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/BaseLever_Mat_baseColor.jpeg",
+      "name": "textures/BaseLever_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/BaseLever_Mat_metallicRoughness.png",
+      "name": "textures/BaseLever_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/BaseLever_Mat_normal.png",
+      "name": "textures/BaseLever_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Default_Material_baseColor.jpeg",
+      "name": "textures/Default_Material_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Default_Material_metallicRoughness.png",
+      "name": "textures/Default_Material_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Default_Material_normal.png",
+      "name": "textures/Default_Material_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corner_Top01_Mat_baseColor.jpeg",
+      "name": "textures/Corner_Top01_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Corner_Top01_Mat_metallicRoughness.png",
+      "name": "textures/Corner_Top01_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Corner_Top01_Mat_normal.png",
+      "name": "textures/Corner_Top01_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PipeMaterial_baseColor.jpeg",
+      "name": "textures/PipeMaterial_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PipeMaterial_metallicRoughness.png",
+      "name": "textures/PipeMaterial_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PipeMaterial_normal.png",
+      "name": "textures/PipeMaterial_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PressureGague_HolderPlate1_baseColor.jpeg",
+      "name": "textures/PressureGague_HolderPlate1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/PressureGague_HolderPlate1_metallicRoughness.png",
+      "name": "textures/PressureGague_HolderPlate1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/PressureGague_HolderPlate1_normal.png",
+      "name": "textures/PressureGague_HolderPlate1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_Graphic_baseColor.jpeg",
+      "name": "textures/Gauge_Graphic_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Gauge_Graphic_metallicRoughness.png",
+      "name": "textures/Gauge_Graphic_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_Graphic_normal.png",
+      "name": "textures/Gauge_Graphic_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_MetalBody_baseColor.jpeg",
+      "name": "textures/Gauge_MetalBody_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Gauge_MetalBody_metallicRoughness.png",
+      "name": "textures/Gauge_MetalBody_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_MetalBody_normal.png",
+      "name": "textures/Gauge_MetalBody_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Screw_Gauge_Needle_baseColor.jpeg",
+      "name": "textures/Screw_Gauge_Needle_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Screw_Gauge_Needle_metallicRoughness.png",
+      "name": "textures/Screw_Gauge_Needle_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Screw_Gauge_Needle_normal.png",
+      "name": "textures/Screw_Gauge_Needle_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_Needle_baseColor.jpeg",
+      "name": "textures/Gauge_Needle_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Gauge_Needle_metallicRoughness.png",
+      "name": "textures/Gauge_Needle_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gauge_Needle_normal.png",
+      "name": "textures/Gauge_Needle_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gague_Glass_baseColor.png",
+      "name": "textures/Gague_Glass_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gague_Glass_metallicRoughness.png",
+      "name": "textures/Gague_Glass_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Gague_Glass_normal.png",
+      "name": "textures/Gague_Glass_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Light_Ring_Mat_baseColor.jpeg",
+      "name": "textures/Light_Ring_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Light_Ring_Mat_metallicRoughness.png",
+      "name": "textures/Light_Ring_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Light_Ring_Mat_normal.png",
+      "name": "textures/Light_Ring_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Machine_Light_Mat_baseColor.jpeg",
+      "name": "textures/Machine_Light_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Machine_Light_Mat_metallicRoughness.png",
+      "name": "textures/Machine_Light_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Machine_Light_Mat_emissive.jpeg",
+      "name": "textures/Machine_Light_Mat_emissive.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Machine_Light_Mat_normal.png",
+      "name": "textures/Machine_Light_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Main_Sign_Mat_baseColor.jpeg",
+      "name": "textures/Main_Sign_Mat_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Main_Sign_Mat_metallicRoughness.png",
+      "name": "textures/Main_Sign_Mat_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Main_Sign_Mat_normal.png",
+      "name": "textures/Main_Sign_Mat_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Legs_V2_baseColor.jpeg",
+      "name": "textures/Belt_Legs_V2_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Belt_Legs_V2_metallicRoughness.png",
+      "name": "textures/Belt_Legs_V2_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Legs_V2_normal.png",
+      "name": "textures/Belt_Legs_V2_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Legs_V1_baseColor.jpeg",
+      "name": "textures/Belt_Legs_V1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Belt_Legs_V1_metallicRoughness.png",
+      "name": "textures/Belt_Legs_V1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Legs_V1_normal.png",
+      "name": "textures/Belt_Legs_V1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_SidePannel_baseColor.jpeg",
+      "name": "textures/Belt_SidePannel_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Belt_SidePannel_metallicRoughness.png",
+      "name": "textures/Belt_SidePannel_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_SidePannel_normal.png",
+      "name": "textures/Belt_SidePannel_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Exterior_baseColor.jpeg",
+      "name": "textures/Belt_Exterior_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Belt_Exterior_metallicRoughness.png",
+      "name": "textures/Belt_Exterior_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Belt_Exterior_normal.png",
+      "name": "textures/Belt_Exterior_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Conveyor_Screw_baseColor.jpeg",
+      "name": "textures/Conveyor_Screw_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Conveyor_Screw_metallicRoughness.png",
+      "name": "textures/Conveyor_Screw_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Conveyor_Screw_normal.png",
+      "name": "textures/Conveyor_Screw_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Floor_baseColor.jpeg",
+      "name": "textures/Floor_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Floor_metallicRoughness.png",
+      "name": "textures/Floor_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/VinylFace_02_HighPoly1_baseColor.jpeg",
+      "name": "textures/VinylFace_02_HighPoly1_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/VinylFace_02_HighPoly1_metallicRoughness.png",
+      "name": "textures/VinylFace_02_HighPoly1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/VinylFace_02_HighPoly1_normal.png",
+      "name": "textures/VinylFace_02_HighPoly1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 1659.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "886da95d30d99f7b52a88404b98272bcd4899d81e1933f4a62a23c84174cefdd",
+   "size": 54679974,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
+  },
+  "30fe23263c33459f4789bd35a7a2d1a727d6aa4769e219a36b5d4b4027eb83fe": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 36933635,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.30.0",
+   "licence": {
+    "title": "Machinery device",
+    "source": "https://sketchfab.com/3d-models/machinery-device-585d12f0fc384d24ac874dc54278a924",
+    "author": "maxpsr (https://sketchfab.com/maxpsr)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 46928,
+    "verts": 44032,
+    "draws": 2,
+    "unique_tris": 46928,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 7,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     4.301,
+     1.201,
+     3.585
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "713ea67458fd4ba78a62ced42797f98a.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 2,
+    "max_piece_tris": 23464,
+    "top_pieces": [
+     {
+      "name": "device64",
+      "tris": 23464,
+      "draws": 1,
+      "size_m": [
+       1.818,
+       1.201,
+       3.585
+      ]
+     },
+     {
+      "name": "device64 rusted",
+      "tris": 23464,
+      "draws": 1,
+      "size_m": [
+       1.818,
+       1.201,
+       3.585
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/device64_baseColor.jpeg",
+      "name": "textures/device64_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/device64_metallicRoughness.png",
+      "name": "textures/device64_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/device64_normal.png",
+      "name": "textures/device64_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/device64_rusted_baseColor.jpeg",
+      "name": "textures/device64_rusted_baseColor.jpeg",
+      "w": 4096,
+      "h": 4096,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/device64_rusted_metallicRoughness.png",
+      "name": "textures/device64_rusted_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/device64_rusted_normal.png",
+      "name": "textures/device64_rusted_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 4096,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "30fe23263c33459f4789bd35a7a2d1a727d6aa4769e219a36b5d4b4027eb83fe",
+   "size": 35456157,
+   "parsed_at": "2026-11-17T21:47:14-03:00"
   }
  }
 }
