@@ -23,7 +23,7 @@ import { arenaLogo } from "@/assets/media";
 import { TokenMark } from "@/components/wallet/TokenMark";
 import { SoundToggle } from "@/components/SoundToggle";
 import { warmStrikeShowcase } from "@/lib/fps/showcase";
-import { fetchDuelLobby, fetchDuelRankings } from "@/lib/fps/api";
+import { fetchDuelLobby } from "@/lib/fps/api";
 import { cn } from "@/lib/utils";
 import { TOPIC_NAV } from "@/lib/guides/topic-nav";
 
@@ -57,11 +57,6 @@ function warmStrikePages(router: AnyRouter, qc: QueryClient, userId: string | nu
     queryKey: ["fps-lobby", userId],
     queryFn: fetchDuelLobby,
     staleTime: 5000,
-  });
-  void qc.prefetchQuery({
-    queryKey: ["fps-rankings"],
-    queryFn: fetchDuelRankings,
-    staleTime: 60000,
   });
 }
 
