@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { aircraftRow, newAircraft, stepAircraft, type Aircraft } from "@/lib/fps/br/aircraft";
+import {
+  aircraftRow,
+  attitude,
+  newAircraft,
+  stepAircraft,
+  type Aircraft,
+} from "@/lib/fps/br/aircraft";
 import { AircraftClient, boardable, flightHud, flightOf } from "@/lib/fps/br/aircraft-client";
 import { testWorld, TICK } from "@/lib/fps/br/flight-harness";
 
@@ -91,6 +97,33 @@ describe("BR aircraft on the client", () => {
     expect(c.controls.flaps).toBe(2);
     c.nextFlaps();
     expect(c.controls.flaps).toBe(0);
+  });
+
+  it("a small downward mouse correction lowers the nose gently in flight", () => {
+    const a = newAircraft(0, 0, env.ground, 0, 0);
+    Object.assign(a, { y: 300, vz: -35, grounded: false, engine: "running", rpm: 1, throttle: 1 });
+    const c = new AircraftClient();
+    c.apply(aircraftRow(a), 0, 0);
+    c.holdPitch(true);
+    c.mouse(0, 10, 0.5);
+    for (let i = 0; i < 30; i++) {
+      c.apply(aircraftRow(a), 0, i * TICK);
+      const wire = c.steer(
+        {
+          throttleUp: false,
+          throttleDown: false,
+          rollLeft: false,
+          rollRight: false,
+          rudderLeft: false,
+          rudderRight: false,
+          brake: false,
+        },
+        TICK / 1000,
+      );
+      stepAircraft(env.world, env.meta, a, flightOf(wire, a), i * TICK, TICK);
+    }
+    expect(attitude(a).pitch).toBeLessThan(0);
+    expect(attitude(a).pitch).toBeGreaterThan((-3 * Math.PI) / 180);
   });
 
   it("says what E does from the seat, finds the door on foot", () => {

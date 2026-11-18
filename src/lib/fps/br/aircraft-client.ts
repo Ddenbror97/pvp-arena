@@ -274,7 +274,11 @@ export class AircraftClient {
     // Aircraft pitch has its own gain: a low on-foot aiming sensitivity must not prevent
     // takeoff. Ten raw mouse counts are enough for a deliberate upward command.
     if (this.pitchHeld) {
-      this.pitchTarget = clamp(this.pitchTarget - dy * 0.012, -Math.PI / 12, Math.PI / 15);
+      // Keep runway rotation responsive, but give small airborne corrections more travel.
+      // In particular, lowering the mouse a little should not abruptly request a dive.
+      const a = this.predicted ?? this.server;
+      const gain = dy > 0 ? 0.004 : a?.grounded ? 0.012 : 0.006;
+      this.pitchTarget = clamp(this.pitchTarget - dy * gain, -Math.PI / 12, Math.PI / 15);
     } else this.controls.stick = clamp(this.controls.stick - dy * sensitivity * 0.0045, -1, 1);
   }
 
