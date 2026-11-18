@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "stilt-v1",
+  revision: "harbor-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -151,8 +151,10 @@ export const WORLD_ASSETS = {
   // stray shelf boxes out of the collision.
   // stilt-v1 (2026-11-18): the rusty stilt house enterable (doorways, an upper floor, authored
   // collision with ramped stairs: art/blender/br/rusty_house.mjs).
-  models: "/fps/br/models/models.stilt-v1.json",
-  collision: "/fps/br/models/collision.stilt-v1.json",
+  // harbor-v1 (2026-11-18): Fisher's Cove's street lights rebuilt with their posts (pole-v1:
+  // the near LOD had lost them, the lamps hung in the air); the harbour yard's containers.
+  models: "/fps/br/models/models.harbor-v1.json",
+  collision: "/fps/br/models/collision.harbor-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

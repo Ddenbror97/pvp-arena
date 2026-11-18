@@ -8932,7 +8932,12 @@
         "y": 4.5
       },
       "collision": "voxel",
-      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: old street lights along the harbour front"
+      "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: old street lights along the harbour front",
+      "lodTris": [
+        1800,
+        500,
+        160
+      ]
     },
     {
       "id": "cove-fishing-rod",
