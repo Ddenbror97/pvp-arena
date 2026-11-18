@@ -1,4 +1,4 @@
-import { memo, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { memo, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { BOMB, REELS, ROWS, WILD, SYMBOLS } from "@/lib/slott/paytable";
 import { warmSlotStage, SLOT_STAGE } from "@/lib/slott/stage";
 import { SYMBOL_IMG } from "@/lib/slott/symbols";
@@ -118,6 +118,7 @@ function Reel({
 }) {
   const strip = useRef<HTMLDivElement>(null);
   const ran = useRef<string | null>(null);
+  const [finishedSpin, setFinishedSpin] = useState<string | null>(null);
   const k = FILLER_BASE + reel * FILLER_STEP;
   const head = spin ? spin.prev.slice(reel * ROWS, reel * ROWS + ROWS) : [];
   const blur = spin
@@ -136,7 +137,10 @@ function Reel({
   if (spin && mount.current?.key !== spin.key)
     mount.current = { key: spin.key, since: Date.now() - spin.startAt };
   const since = spin ? mount.current!.since : Infinity;
-  const live = !!spin && !calm && (spin.pending || since < stop);
+  // `since` is only the pinned CSS-delay offset, not a running clock. Restore the
+  // symbol treatment when this reel actually finishes, even while the others roll.
+  const live =
+    !!spin && !calm && !landed && (spin.pending || (finishedSpin !== spin.key && since < stop));
 
   useLayoutEffect(() => {
     const el = strip.current;
@@ -174,6 +178,12 @@ function Reel({
             fill: "forwards",
           },
         );
+    if (!spin.pending)
+      void anim.finished
+        .then(() => {
+          if (ran.current === token) setFinishedSpin(spin.key);
+        })
+        .catch(() => {}); // Cancelling an old/pending run rejects its finished promise.
     return () => {
       anim.cancel();
       releaseReelRun(ran, token);
@@ -263,11 +273,15 @@ function Reel({
           {teaseStyle ? (
             <div className="slott-tease-glow absolute inset-0" style={teaseStyle} />
           ) : null}
-          <div
-            className="slott-stop-flash absolute inset-0"
-            style={{ animationDelay: at(stop - 40) }}
-          />
         </div>
+      ) : null}
+      {spin && !spin.pending && !calm && since < stop + 380 ? (
+        <div
+          key={`${spin.key}:stop`}
+          aria-hidden
+          className="slott-stop-flash pointer-events-none absolute inset-0"
+          style={{ animationDelay: at(stop - 40) }}
+        />
       ) : null}
     </div>
   );
