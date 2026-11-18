@@ -61,6 +61,12 @@ export const getRouter = () => {
   // reading page, nothing during a match.
   if (typeof window !== "undefined" && mode) {
     const warm = () => {
+      // The mobile FPS homepage is an introduction, not a playable lobby.
+      if (
+        window.location.pathname === "/" &&
+        matchMedia("(max-width: 767px), (any-pointer: coarse) and (any-hover: none)").matches
+      )
+        return;
       const scope = warmScope(window.location.pathname);
       if (scope === "none") return;
       const pages = scope === "all" ? [...ONE_CLICK_AWAY, ...BEHIND_A_LOBBY] : ONE_CLICK_AWAY;
