@@ -1,3 +1,4 @@
+import { seagullAreas, seagullPresence } from "./seagulls";
 import { clampPitch, mouseLook, moveAxes } from "@/lib/fps/look";
 import { isMacOS, MouseResampler } from "@/lib/fps/mouse-resample";
 import { BrAimRecoil, type BrRecoilState } from "./aim-recoil";
@@ -1955,6 +1956,8 @@ export function createBrArena(
   let shotAtAt = -Infinity;
   /** When the ambience was last measured (ms, frame clock). */
   let ambienceAt = -Infinity;
+  /** The seagull towns' areas, measured from the layout once the island is in. */
+  let seagulls: ReturnType<typeof seagullAreas> | null = null;
   /** Last frame's position, for the swimming sound's stroke. */
   let swimFromX = 0,
     swimFromZ = 0;
@@ -2502,6 +2505,7 @@ export function createBrArena(
       ambienceAt = now;
       const cover = island.island.vegetation.cover,
         hf = solid().hf;
+      seagulls ??= seagullAreas(island.island.layout);
       let trees = 0;
       for (let i = -2; i <= 2; i++)
         for (let j = -2; j <= 2; j++)
@@ -2526,6 +2530,10 @@ export function createBrArena(
         plane ? 0 : near * smooth(0.12, 0.6, trees / 25),
         plane ? 0 : near * smooth(SNOW_AMBIENCE[0], SNOW_AMBIENCE[1], ground),
         plane ? 0 : (1 - smooth(40, 120, body.y - ground)) * jungle,
+        // (Over the rooftops too: gulls are heard from higher up than the forest.)
+        plane
+          ? 0
+          : (1 - smooth(40, 120, body.y - ground)) * seagullPresence(seagulls, body.x, body.z),
       );
       // Waves on the shore (owner, 2026-11-12: "should hear it when getting 10-15 yards away
       // from any water with waves, light sound"): the nearest water, looked for along eight

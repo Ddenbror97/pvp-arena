@@ -333,6 +333,17 @@ river: src/lib/fps/br/br-arena.ts):
   (`AMBIENCE_LOOPS.waves` in br-audio.ts), stereo 32 kHz, MP3 at 96 kb/s. Its two waves come in
   2 s and 10.6 s into the loop; the wash on the shore runs on the same clock (water-clock.ts).
 
+### Seagulls over the towns by the sea (2026-11-17)
+
+The owner's supplied recording, battle royale only (all over Fisher's Cove, Bayview and Eastport
+and their waterfronts, fading out 150 m beyond them, on the ground and over the rooftops:
+src/lib/fps/br/seagulls.ts, br-arena.ts):
+
+- `br-seagulls-loop-v1.mp3` ("scottishperson-sound-effect-seagulls-157829.mp3", 47.2 s): 40 s
+  from 0:01, the following 2.5 s cross-faded (equal power) into its start so it loops without a
+  seam, levelled to -24 dBFS RMS, stored between copies of its own last and first 0.25 s
+  (`AMBIENCE_LOOPS.seagulls` in br-audio.ts), mono 22.05 kHz, MP3 at 80 kb/s.
+
 ### Climbing rope (2026-11-12)
 
 The owner's supplied recording, battle royale only (the Iron Peaks climbing ropes,

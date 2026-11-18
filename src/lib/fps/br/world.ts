@@ -112,6 +112,10 @@ export const WORLD_ASSETS = {
   // collision voxelised again without them, and its access-v14 fit-out applied again
   // (access-v26: decks, salon, flybridge, the stair down, the lower deck's cabins and doors);
   // its coplanar faces lifted (zfix-v7).
+  // Then (coast-v1, 2026-11-17, add_models.mjs) the coastal towns rebuilt like the owner's
+  // pictures: Fisher's Cove a painted fishing harbour village, Bayview a white Mediterranean
+  // marina town (build_coast.mjs: 13 enterable houses; the owner's 42 downloads for their quays,
+  // marina, promenade and beach: boats, nets, pots, palms, lamps, terrace furniture).
   // And then (ruins-v1, 2026-11-17) Forgotten Ruins: 13 procedural Maya buildings
   // (build_ruins.mjs: the pyramid and its tunnel, the palace, the tower, temples, the acropolis's
   // tunnels, the ball court, the arch, walls, stelae, paving) and the owner's downloads for its
@@ -123,8 +127,9 @@ export const WORLD_ASSETS = {
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
-  meta: "/fps/br/models/doors.v24.json",
-  atlas: "/fps/br/models/doors.v24.webp",
+  // v25 (2026-11-17): v24 with the coastal towns' 13 houses' doors (build_coast.mjs).
+  meta: "/fps/br/models/doors.v25.json",
+  atlas: "/fps/br/models/doors.v25.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

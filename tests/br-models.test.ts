@@ -109,13 +109,15 @@ describe("Project Island models", () => {
     // the locations upgrade's 32 downloads (Eastport's cranes, ships and port machines, the
     // military base's aircraft and launchers, the airfield's aircraft, the villages' huts and
     // market), its 22 enterable buildings and the terminal's containers, ~7.6 MB, 2026-11-15;
-    // Forgotten Ruins' 13 procedural Maya buildings and the owner's 64 downloads for its
-    // rainforest (two tree species, undergrowth, statues, stelae, rocks, the camp), ~7.9 MB, and
-    // its great temple and temple town (8 procedural buildings) and 6 more downloads (the stilt
-    // houses, the jeep, the rope bridge, banners, skulls, vases), ~2 MB, 2026-11-17; the last
-    // 30 of the owner's downloads for it (palms, a cypress, a tall tree, ferns, bushes, banana
-    // and tropical plants, hanging vines ~2.7 MB of it, rocks, shrines, pillars, chests),
-    // ~6.9 MB, 2026-11-17).
-    expect(total / 1024).toBeLessThan(77);
+    // the super yacht textured, ~1 MB, and the coastal towns' 13 enterable houses and the owner's
+    // 42 downloads for Fisher's Cove's quay and Bayview's marina and seafront, ~3.6 MB,
+    // 2026-11-17; Forgotten Ruins' 13 procedural Maya buildings and the owner's 64 downloads for
+    // its rainforest (two tree species, undergrowth, statues, stelae, rocks, the camp), ~7.9 MB,
+    // and its great temple and temple town (8 procedural buildings) and 6 more downloads (the
+    // stilt houses, the jeep, the rope bridge, banners, skulls, vases), ~2 MB; the last 30 of the
+    // owner's downloads for it (palms, a cypress, a tall tree, ferns, bushes, banana and tropical
+    // plants, hanging vines ~2.7 MB of it, rocks, shrines, pillars, chests), ~6.9 MB; its
+    // torches, Chac Mool, skeletons and ladders, ~0.3 MB, 2026-11-17).
+    expect(total / 1024).toBeLessThan(80.5);
   });
 });

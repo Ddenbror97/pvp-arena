@@ -63,6 +63,7 @@ const FILES: Record<
   | "jungle"
   | "waves"
   | "snow"
+  | "seagulls"
   | keyof typeof VEHICLE_SAMPLES,
   string
 > = {
@@ -126,6 +127,8 @@ const FILES: Record<
   // The owner's recording of light waves on a shore (2026-11-12, ATTRIBUTION.md).
   waves: "br-waves-loop-v1.mp3",
   snow: "br-snow-loop-v1.mp3",
+  // The owner's seagulls (2026-11-17, ATTRIBUTION.md): over the towns by the sea.
+  seagulls: "br-seagulls-loop-v1.mp3",
   // The owner's zip-line recordings (2026-11-11, ATTRIBUTION.md): taking hold, and the glide.
   zipEnter: "br-zip-enter-v1.mp3",
   zipGlide: "br-zip-glide-loop-v1.mp3",
@@ -160,9 +163,10 @@ const AMBIENCE_LOOPS = {
   snow: { pad: 0.25, length: 30 },
   zipGlide: { pad: 0.25, length: 5.45 },
   waves: { pad: 0.25, length: WAVES_LOOP_S },
+  seagulls: { pad: 0.25, length: 40 },
 } as const;
 /** Ambience levels at full presence: under the footsteps and the guns, felt more than heard. */
-const AMBIENCE_GAIN = { forest: 0.2, snow: 0.17, jungle: 0.26 } as const;
+const AMBIENCE_GAIN = { forest: 0.2, snow: 0.17, jungle: 0.26, seagulls: 0.18 } as const;
 /** The waves at the water's edge: a light sound under everything else. */
 const WAVES_GAIN = 0.3;
 
@@ -501,17 +505,19 @@ export function createBrAudio(base: string) {
     },
     /**
      * Where you are (each 0..1): among trees (`forest`), up on the snow mountain (`snow`), in or
-     * near Forgotten Ruins' jungle (`jungle`, which takes the forest's place there). Each
-     * loop starts once it is wanted and drifts to its level over a couple of seconds, so walking
-     * into a wood or up the mountain fades it in rather than switching it on.
+     * near Forgotten Ruins' jungle (`jungle`, which takes the forest's place there), in a town by
+     * the sea (`seagulls`). Each loop starts once it is wanted and drifts to its level over a
+     * couple of seconds, so walking into a wood, up the mountain or into a harbour town fades it
+     * in rather than switching it on.
      */
-    setAmbience(forest: number, snow: number, jungle = 0) {
+    setAmbience(forest: number, snow: number, jungle = 0, seagulls = 0) {
       const c = ctx;
       if (!c || c.state !== "running") return;
       for (const [key, amount] of [
         ["forest", forest * (1 - jungle)],
         ["snow", snow],
         ["jungle", jungle],
+        ["seagulls", seagulls],
       ] as const) {
         const level = AMBIENCE_GAIN[key] * Math.max(0, Math.min(1, amount));
         if (!ambience[key] && level <= 0.001) continue;

@@ -14,6 +14,7 @@
  * Writes public/fps/br/models/<id>.<tag>.lod{0,1,2}.glb, the models.json entry and
  * art/br/procedural/<id>.boxes.json; footprints in src/lib/fps/br/location-buildings.json.
  */
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { createTexturedKit, publishTextured } from "./textured-kit.mjs";
 
@@ -1542,3 +1543,5 @@ fs.writeFileSync(
       .join(",\n") +
     "\n}\n",
 );
+// (The repository keeps it as prettier writes it.)
+execFileSync("npx", ["prettier", "--write", PLAN], { stdio: "ignore" });

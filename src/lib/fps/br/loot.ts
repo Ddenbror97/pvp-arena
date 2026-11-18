@@ -129,6 +129,24 @@ put("residential", "indoor", 3, ["camp-cabin"]);
 put("residential", "indoor", 10, ["pool-villa"]);
 put("residential", "indoor", 8, ["modern-house"]);
 put("military", "indoor", 12, ["lux-yacht"]);
+// The coastal towns' houses (art/blender/br/build_coast.mjs, 2026-11-17): Fisher's Cove's
+// harbour houses and chandlery, Bayview's villas, town houses, flats and beach club.
+put("residential", "indoor", 6, [
+  "cove-house-red",
+  "cove-house-blue",
+  "cove-house-white",
+  "cove-house-orange",
+  "bay-villa-white",
+  "bay-villa-cream",
+]);
+put("residential", "indoor", 8, [
+  "cove-house-yellow",
+  "cove-house-salmon",
+  "bay-townhouse-pink",
+  "bay-townhouse-yellow",
+]);
+put("city", "indoor", 6, ["cove-house-green", "bay-beach-club"]);
+put("residential", "indoor", 14, ["bay-apartments"]);
 // Initial ground loot belongs inside buildings. Vehicles and outdoor props must not
 // create roadside piles that look like misplaced house loot. Player drops/airdrops remain.
 
@@ -149,7 +167,13 @@ export const LOOT = {
     "island-superstore": 1.15,
     crossroads: 0.65,
     riverwood: 0.7,
-    bayview: 0.8,
+    // Bayview and Fisher's Cove rebuilt (2026-11-17) with more enterable houses (Bayview's grid,
+    // its seafront on the bluff, the cove's quay terrace and village): each spot holds loot less
+    // often, so the two hold a little more than before in all and the match checkpoint stays
+    // under its 1.5 MB (it went 0.5 % over at 0.8 and 1).
+    bayview: 0.6,
+    "bayview-seafront": 0.6,
+    "fishers-cove": 0.6,
     northfield: 0.8,
     "southern-military-base": 1.25,
     // The island village and the airfield's cargo district grew by hundreds of buildings

@@ -2545,6 +2545,1686 @@
     }
    ]
   },
+  "bay-apartments": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Marina apartments",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Bayview: a white block of flats over the marina, four floors, balconies, a roof terrace (procedural, 2026-11-17)",
+   "size": [
+    16.1,
+    13.23,
+    11.1
+   ],
+   "sourceTris": 9130,
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-apartments.coast-v1.lod0.glb",
+     "tris": 9130,
+     "draws": 4,
+     "textureMB": 0.5,
+     "kB": 137,
+     "size": [
+      16.1,
+      13.23,
+      11.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-apartments.coast-v1.lod1.glb",
+     "tris": 4556,
+     "draws": 3,
+     "textureMB": 0.06,
+     "kB": 54,
+     "size": [
+      16.1,
+      13.23,
+      11.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-apartments.coast-v1.lod2.glb",
+     "tris": 120,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      16.1,
+      13.23,
+      11.1
+     ]
+    }
+   ]
+  },
+  "bay-beach-club": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Beach club",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Bayview: the glass-fronted beach club on the promenade, a roof terrace over the sea (procedural, 2026-11-17)",
+   "size": [
+    14.1,
+    4.63,
+    9.1
+   ],
+   "sourceTris": 2158,
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-beach-club.coast-v1.lod0.glb",
+     "tris": 2158,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 81,
+     "size": [
+      14.1,
+      4.63,
+      9.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-beach-club.coast-v1.lod1.glb",
+     "tris": 1016,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 27,
+     "size": [
+      14.1,
+      4.63,
+      9.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-beach-club.coast-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.1,
+      4.63,
+      9.1
+     ]
+    }
+   ]
+  },
+  "bay-beach-flag": {
+   "title": "Low Poly Beach Assets",
+   "author": "EdwinRC",
+   "source": "https://sketchfab.com/3d-models/low-poly-beach-assets-66c18ecd7a834d4a99dabc46b5ee6e4a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: the lifeguards' flags on the beach",
+   "scale": 0.337151,
+   "sourceTris": 132,
+   "size": [
+    0.25,
+    3,
+    1.73
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-beach-flag.lod0.glb",
+     "tris": 132,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.25,
+      3,
+      1.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-beach-flag.lod1.glb",
+     "tris": 132,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.25,
+      3,
+      1.73
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-beach-flag.lod2.glb",
+     "tris": 68,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.25,
+      3,
+      1.73
+     ]
+    }
+   ]
+  },
+  "bay-beach-table": {
+   "title": "Beach table",
+   "author": "Jayson Stauffer",
+   "source": "https://sketchfab.com/3d-models/beach-table-e559392994e04527b3f5ee35a8c3c418",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: tables under parasols at the beach bar",
+   "scale": 0.113629,
+   "sourceTris": 3376,
+   "size": [
+    2.14,
+    2.4,
+    2.14
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-beach-table.lod0.glb",
+     "tris": 564,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.14,
+      2.4,
+      2.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-beach-table.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.14,
+      2.4,
+      2.14
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-beach-table.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.14,
+      2.4,
+      2.14
+     ]
+    }
+   ]
+  },
+  "bay-bike-stand": {
+   "title": "CC0 - Bicycle Stand 4",
+   "author": "plaggy",
+   "source": "https://sketchfab.com/3d-models/cc0-bicycle-stand-4-597656d383f94bca8fa098905a126ee1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: bicycle stands on the promenade",
+   "scale": 1.212121,
+   "sourceTris": 7456,
+   "size": [
+    1.6,
+    0.36,
+    0.39
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-bike-stand.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 18,
+     "size": [
+      1.6,
+      0.36,
+      0.39
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-bike-stand.lod1.glb",
+     "tris": 182,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      1.6,
+      0.36,
+      0.39
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-bike-stand.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.6,
+      0.36,
+      0.39
+     ]
+    }
+   ]
+  },
+  "bay-coconut-palm": {
+   "title": "Coconut Palm",
+   "author": "evolveduk",
+   "source": "https://sketchfab.com/3d-models/coconut-palm-26e787f2ff2e4c0fb004c3b0210805a3",
+   "licence": "CC BY 4.0",
+   "class": "tree",
+   "ring": "bush",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: leaning coconut palms on the beach",
+   "scale": 1.193522,
+   "sourceTris": 3472,
+   "size": [
+    7.51,
+    7.5,
+    4.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-coconut-palm.lod0.glb",
+     "tris": 1999,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 75,
+     "size": [
+      7.51,
+      7.5,
+      4.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-coconut-palm.lod1.glb",
+     "tris": 697,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 31,
+     "size": [
+      7.51,
+      7.5,
+      4.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-coconut-palm.lod2.glb",
+     "tris": 198,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 14,
+     "size": [
+      7.51,
+      7.5,
+      4.8
+     ]
+    }
+   ]
+  },
+  "bay-cruiser": {
+   "title": "Free Low Poly Yacth",
+   "author": "MarkoJantti",
+   "source": "https://sketchfab.com/3d-models/free-low-poly-yacth-fafb7f55aeae460a8dbac92968a9a141",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: small cabin cruisers in the marina",
+   "scale": 1.133622,
+   "sourceTris": 5298,
+   "size": [
+    3.34,
+    2.47,
+    11
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-cruiser.lod0.glb",
+     "tris": 1499,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      3.34,
+      2.47,
+      11
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-cruiser.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      3.34,
+      2.47,
+      11
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-cruiser.lod2.glb",
+     "tris": 146,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.34,
+      2.47,
+      11
+     ]
+    }
+   ]
+  },
+  "bay-jetski": {
+   "title": "UNDERPOLY: Free Jet-Ski + Trailer",
+   "author": "UNDERPOLY Project",
+   "source": "https://sketchfab.com/3d-models/underpoly-free-jet-ski-trailer-c9e324b0a9284904b4a442080fc2a6ef",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: jet skis on the beach and the slipway",
+   "scale": 1.004459,
+   "sourceTris": 3710,
+   "size": [
+    0.97,
+    1,
+    3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-jetski.lod0.glb",
+     "tris": 616,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      0.97,
+      1,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-jetski.lod1.glb",
+     "tris": 207,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.97,
+      1,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-jetski.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.97,
+      1,
+      3
+     ]
+    }
+   ]
+  },
+  "bay-jetski-trailer": {
+   "title": "UNDERPOLY: Free Jet-Ski + Trailer",
+   "author": "UNDERPOLY Project",
+   "source": "https://sketchfab.com/3d-models/underpoly-free-jet-ski-trailer-c9e324b0a9284904b4a442080fc2a6ef",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: jet ski trailers on the slipway",
+   "scale": 0.993802,
+   "sourceTris": 5996,
+   "size": [
+    1.69,
+    1,
+    4.1
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-jetski-trailer.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.69,
+      1,
+      4.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-jetski-trailer.lod1.glb",
+     "tris": 207,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.69,
+      1,
+      4.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-jetski-trailer.lod2.glb",
+     "tris": 58,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.69,
+      1,
+      4.1
+     ]
+    }
+   ]
+  },
+  "bay-kayak": {
+   "title": "Day3_kayak",
+   "author": "Muru",
+   "source": "https://sketchfab.com/3d-models/day3-kayak-8af477241e61413785ec8906f08bd2e9",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: kayaks on the beach",
+   "scale": 0.995445,
+   "sourceTris": 824,
+   "size": [
+    2.14,
+    0.94,
+    4.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-kayak.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 18,
+     "size": [
+      2.14,
+      0.94,
+      4.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-kayak.lod1.glb",
+     "tris": 212,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      2.14,
+      0.94,
+      4.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-kayak.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.14,
+      0.94,
+      4.9
+     ]
+    }
+   ]
+  },
+  "bay-lifeguard-chair": {
+   "title": "Lifeguard Chair",
+   "author": "pixelated_stars",
+   "source": "https://sketchfab.com/3d-models/lifeguard-chair-48c2980846c542a3bbd75bd36b2c3a61",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: the beach's lifeguard chairs",
+   "scale": 0.050964,
+   "sourceTris": 2684,
+   "size": [
+    1.15,
+    2.8,
+    1.45
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-lifeguard-chair.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 59,
+     "size": [
+      1.15,
+      2.8,
+      1.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-lifeguard-chair.lod1.glb",
+     "tris": 563,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      1.15,
+      2.8,
+      1.45
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-lifeguard-chair.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.15,
+      2.8,
+      1.45
+     ]
+    }
+   ]
+  },
+  "bay-lounge-chair": {
+   "title": "Lounge Set",
+   "author": "AnnikaVeksø",
+   "source": "https://sketchfab.com/3d-models/lounge-set-6a6c0f882e0e444c9d95dee1b0cadda1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: terrace armchairs at the villas and the beach club",
+   "scale": 0.970333,
+   "sourceTris": 1162,
+   "size": [
+    1.03,
+    0.85,
+    1.05
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-lounge-chair.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      1.03,
+      0.85,
+      1.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-lounge-chair.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.03,
+      0.85,
+      1.05
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-lounge-chair.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.03,
+      0.85,
+      1.05
+     ]
+    }
+   ]
+  },
+  "bay-lounge-sofa": {
+   "title": "Lounge Set",
+   "author": "AnnikaVeksø",
+   "source": "https://sketchfab.com/3d-models/lounge-set-6a6c0f882e0e444c9d95dee1b0cadda1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: terrace sofas at the villas and the beach club",
+   "scale": 1.085814,
+   "sourceTris": 2182,
+   "size": [
+    1.6,
+    0.95,
+    0.83
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-lounge-sofa.lod0.glb",
+     "tris": 612,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 9,
+     "size": [
+      1.6,
+      0.95,
+      0.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-lounge-sofa.lod1.glb",
+     "tris": 236,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      1.6,
+      0.95,
+      0.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-lounge-sofa.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.6,
+      0.95,
+      0.83
+     ]
+    }
+   ]
+  },
+  "bay-lounge-table": {
+   "title": "Lounge Set",
+   "author": "AnnikaVeksø",
+   "source": "https://sketchfab.com/3d-models/lounge-set-6a6c0f882e0e444c9d95dee1b0cadda1",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "furniture",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: terrace tables at the villas and the beach club",
+   "scale": 0.636154,
+   "sourceTris": 188,
+   "size": [
+    1.2,
+    0.32,
+    0.59
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-lounge-table.lod0.glb",
+     "tris": 188,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 12,
+     "size": [
+      1.2,
+      0.32,
+      0.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-lounge-table.lod1.glb",
+     "tris": 188,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      1.2,
+      0.32,
+      0.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-lounge-table.lod2.glb",
+     "tris": 54,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.2,
+      0.32,
+      0.59
+     ]
+    }
+   ]
+  },
+  "bay-palm": {
+   "title": "Palm Trees",
+   "author": "Erroratten",
+   "source": "https://sketchfab.com/3d-models/palm-trees-55690379305145488e20afb05fc687e6",
+   "licence": "CC BY 4.0",
+   "class": "tree",
+   "ring": "bush",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: palms along the promenade and the streets",
+   "scale": 1.505485,
+   "sourceTris": 1140,
+   "size": [
+    7.08,
+    8,
+    4.78
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-palm.lod0.glb",
+     "tris": 1140,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 26,
+     "size": [
+      7.08,
+      8,
+      4.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-palm.lod1.glb",
+     "tris": 698,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 16,
+     "size": [
+      7.08,
+      8,
+      4.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-palm.lod2.glb",
+     "tris": 198,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 9,
+     "size": [
+      7.08,
+      8,
+      4.78
+     ]
+    }
+   ]
+  },
+  "bay-palm-2": {
+   "title": "Palm Trees",
+   "author": "Erroratten",
+   "source": "https://sketchfab.com/3d-models/palm-trees-55690379305145488e20afb05fc687e6",
+   "licence": "CC BY 4.0",
+   "class": "tree",
+   "ring": "bush",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: palms in the gardens and the squares",
+   "scale": 1.36298,
+   "sourceTris": 563,
+   "size": [
+    4.19,
+    6.5,
+    4.36
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-palm-2.lod0.glb",
+     "tris": 563,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 19,
+     "size": [
+      4.19,
+      6.5,
+      4.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-palm-2.lod1.glb",
+     "tris": 563,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 13,
+     "size": [
+      4.19,
+      6.5,
+      4.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-palm-2.lod2.glb",
+     "tris": 199,
+     "draws": 2,
+     "textureMB": 0.04,
+     "kB": 8,
+     "size": [
+      4.19,
+      6.5,
+      4.36
+     ]
+    }
+   ]
+  },
+  "bay-parasol": {
+   "title": "Low Poly Beach Assets",
+   "author": "EdwinRC",
+   "source": "https://sketchfab.com/3d-models/low-poly-beach-assets-66c18ecd7a834d4a99dabc46b5ee6e4a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: beach parasols",
+   "scale": 0.170849,
+   "sourceTris": 86,
+   "size": [
+    2.49,
+    2.4,
+    2.65
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-parasol.lod0.glb",
+     "tris": 86,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      2.49,
+      2.4,
+      2.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-parasol.lod1.glb",
+     "tris": 86,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      2.49,
+      2.4,
+      2.65
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-parasol.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.49,
+      2.4,
+      2.65
+     ]
+    }
+   ]
+  },
+  "bay-pergola": {
+   "title": "Pergola",
+   "author": "alex999m",
+   "source": "https://sketchfab.com/3d-models/pergola-eca838f2af7b4969813747fbc64f207f",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: pergolas over the villas' terraces and the promenade",
+   "scale": 1.273653,
+   "sourceTris": 1857,
+   "size": [
+    4.27,
+    2.8,
+    4.83
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-pergola.lod0.glb",
+     "tris": 1857,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 129,
+     "size": [
+      4.27,
+      2.8,
+      4.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-pergola.lod1.glb",
+     "tris": 1486,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 68,
+     "size": [
+      4.27,
+      2.8,
+      4.83
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-pergola.lod2.glb",
+     "tris": 362,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.27,
+      2.8,
+      4.83
+     ]
+    }
+   ]
+  },
+  "bay-planter": {
+   "title": "Vase Flower Pot - 24 MB",
+   "author": "Mehdi Shahsavan",
+   "source": "https://sketchfab.com/3d-models/vase-flower-pot-24-mb-5f29539fda3748789361bb57e6b3c3e7",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: flower pots on the terraces and the promenade",
+   "scale": 1.056313,
+   "sourceTris": 6394,
+   "size": [
+    0.48,
+    1,
+    0.48
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-planter.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 26,
+     "size": [
+      0.48,
+      1,
+      0.48
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-planter.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.48,
+      1,
+      0.48
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-planter.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.48,
+      1,
+      0.48
+     ]
+    }
+   ]
+  },
+  "bay-sailboat": {
+   "title": "Sailboat",
+   "author": "Sergei",
+   "source": "https://sketchfab.com/3d-models/sailboat-76d0b1e24be14d2f9a524bfce3001aeb",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: sailing yachts on the pontoons",
+   "scale": 0.005324,
+   "sourceTris": 2532,
+   "size": [
+    2.69,
+    13,
+    9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-sailboat.lod0.glb",
+     "tris": 1496,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 44,
+     "size": [
+      2.69,
+      13,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-sailboat.lod1.glb",
+     "tris": 524,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      2.69,
+      13,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-sailboat.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.69,
+      13,
+      9
+     ]
+    }
+   ]
+  },
+  "bay-speedboat": {
+   "title": "Speedboat",
+   "author": "3DDomino",
+   "source": "https://sketchfab.com/3d-models/speedboat-ee69bea3e40849909d73f6a896e7382a",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: speedboats on the pontoons",
+   "scale": 0.028509,
+   "sourceTris": 562,
+   "size": [
+    6.5,
+    1.62,
+    2.42
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-speedboat.lod0.glb",
+     "tris": 562,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      6.5,
+      1.62,
+      2.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-speedboat.lod1.glb",
+     "tris": 522,
+     "draws": 2,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      6.5,
+      1.62,
+      2.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-speedboat.lod2.glb",
+     "tris": 166,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      6.5,
+      1.62,
+      2.42
+     ]
+    }
+   ]
+  },
+  "bay-street-lamp": {
+   "title": "Street Lamp",
+   "author": "bez_glaza",
+   "source": "https://sketchfab.com/3d-models/street-lamp-6881aa1e84b047d79860fa9297e05e22",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: modern lamps along the promenade and the marina",
+   "scale": 0.112753,
+   "sourceTris": 7810,
+   "size": [
+    0.8,
+    5.5,
+    0.36
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-street-lamp.lod0.glb",
+     "tris": 590,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.8,
+      5.5,
+      0.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-street-lamp.lod1.glb",
+     "tris": 205,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.8,
+      5.5,
+      0.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-street-lamp.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.8,
+      5.5,
+      0.36
+     ]
+    }
+   ]
+  },
+  "bay-sunbed": {
+   "title": "Low Poly Beach Assets",
+   "author": "EdwinRC",
+   "source": "https://sketchfab.com/3d-models/low-poly-beach-assets-66c18ecd7a834d4a99dabc46b5ee6e4a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: sunbeds under the parasols",
+   "scale": 0.139215,
+   "sourceTris": 400,
+   "size": [
+    1.9,
+    0.91,
+    0.84
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-sunbed.lod0.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      1.9,
+      0.91,
+      0.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-sunbed.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.9,
+      0.91,
+      0.84
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-sunbed.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.9,
+      0.91,
+      0.84
+     ]
+    }
+   ]
+  },
+  "bay-surfboard": {
+   "title": "Low Poly Beach Assets",
+   "author": "EdwinRC",
+   "source": "https://sketchfab.com/3d-models/low-poly-beach-assets-66c18ecd7a834d4a99dabc46b5ee6e4a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: surfboards stood in the sand",
+   "scale": 0.204095,
+   "sourceTris": 80,
+   "size": [
+    0.88,
+    2.1,
+    0.75
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-surfboard.lod0.glb",
+     "tris": 80,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.88,
+      2.1,
+      0.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-surfboard.lod1.glb",
+     "tris": 80,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.88,
+      2.1,
+      0.75
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-surfboard.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.88,
+      2.1,
+      0.75
+     ]
+    }
+   ]
+  },
+  "bay-townhouse-pink": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Town house (pink)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Bayview: a narrow pink town house, three floors and a roof terrace (procedural, 2026-11-17)",
+   "size": [
+    7.1,
+    10.23,
+    10.1
+   ],
+   "sourceTris": 4802,
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-townhouse-pink.coast-v1.lod0.glb",
+     "tris": 4802,
+     "draws": 4,
+     "textureMB": 0.5,
+     "kB": 94,
+     "size": [
+      7.1,
+      10.23,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-townhouse-pink.coast-v1.lod1.glb",
+     "tris": 2324,
+     "draws": 3,
+     "textureMB": 0.06,
+     "kB": 34,
+     "size": [
+      7.1,
+      10.23,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-townhouse-pink.coast-v1.lod2.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.1,
+      10.23,
+      10.1
+     ]
+    }
+   ]
+  },
+  "bay-townhouse-yellow": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Town house (yellow)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Bayview: a narrow pale-yellow town house, three floors and a roof terrace (procedural, 2026-11-17)",
+   "size": [
+    7.1,
+    10.23,
+    10.1
+   ],
+   "sourceTris": 4802,
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-townhouse-yellow.coast-v1.lod0.glb",
+     "tris": 4802,
+     "draws": 4,
+     "textureMB": 0.5,
+     "kB": 94,
+     "size": [
+      7.1,
+      10.23,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-townhouse-yellow.coast-v1.lod1.glb",
+     "tris": 2324,
+     "draws": 3,
+     "textureMB": 0.06,
+     "kB": 34,
+     "size": [
+      7.1,
+      10.23,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-townhouse-yellow.coast-v1.lod2.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.1,
+      10.23,
+      10.1
+     ]
+    }
+   ]
+  },
+  "bay-trash-can": {
+   "title": "Trash can",
+   "author": "bazz4r",
+   "source": "https://sketchfab.com/3d-models/trash-can-3836ff67877248c2a820e6a969984aac",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: wheelie bins by the houses",
+   "scale": 0.846317,
+   "sourceTris": 2010,
+   "size": [
+    1.27,
+    1.1,
+    1.11
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-trash-can.lod0.glb",
+     "tris": 588,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      1.27,
+      1.1,
+      1.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-trash-can.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.27,
+      1.1,
+      1.11
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-trash-can.lod2.glb",
+     "tris": 57,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.27,
+      1.1,
+      1.11
+     ]
+    }
+   ]
+  },
+  "bay-villa-cream": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Villa (cream)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Bayview: a cream villa with terracotta trim, two floors, a roof terrace (procedural, 2026-11-17)",
+   "size": [
+    10.1,
+    7.23,
+    9.1
+   ],
+   "sourceTris": 3258,
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-villa-cream.coast-v1.lod0.glb",
+     "tris": 3258,
+     "draws": 4,
+     "textureMB": 0.5,
+     "kB": 80,
+     "size": [
+      10.1,
+      7.23,
+      9.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-villa-cream.coast-v1.lod1.glb",
+     "tris": 1556,
+     "draws": 3,
+     "textureMB": 0.06,
+     "kB": 27,
+     "size": [
+      10.1,
+      7.23,
+      9.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-villa-cream.coast-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10.1,
+      7.23,
+      9.1
+     ]
+    }
+   ]
+  },
+  "bay-villa-white": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Villa (white)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Bayview: a white two-storey villa, a pergola over the front terrace, a roof terrace (procedural, 2026-11-17)",
+   "size": [
+    12.1,
+    7.23,
+    10.1
+   ],
+   "sourceTris": 4170,
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-villa-white.coast-v1.lod0.glb",
+     "tris": 4170,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 102,
+     "size": [
+      12.1,
+      7.23,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-villa-white.coast-v1.lod1.glb",
+     "tris": 2072,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 37,
+     "size": [
+      12.1,
+      7.23,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-villa-white.coast-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12.1,
+      7.23,
+      10.1
+     ]
+    }
+   ]
+  },
+  "bay-volley-net": {
+   "title": "Low Poly Beach Assets",
+   "author": "EdwinRC",
+   "source": "https://sketchfab.com/3d-models/low-poly-beach-assets-66c18ecd7a834d4a99dabc46b5ee6e4a",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: the beach volleyball court's net",
+   "scale": 0.480332,
+   "sourceTris": 120,
+   "size": [
+    9,
+    4.17,
+    0.13
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-volley-net.lod0.glb",
+     "tris": 120,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      9,
+      4.17,
+      0.13
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-volley-net.lod1.glb",
+     "tris": 120,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      9,
+      4.17,
+      0.13
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-volley-net.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      9,
+      4.17,
+      0.13
+     ]
+    }
+   ]
+  },
+  "bay-yacht": {
+   "title": "Yacht",
+   "author": "Sergei",
+   "source": "https://sketchfab.com/3d-models/yacht-0dd451f295d049cea20c17d3ffa87ee3",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: motor yachts in the marina",
+   "scale": 0.595084,
+   "sourceTris": 8534,
+   "size": [
+    4.88,
+    9.32,
+    24
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/bay-yacht.lod0.glb",
+     "tris": 3956,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 84,
+     "size": [
+      4.88,
+      9.32,
+      24
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-yacht.lod1.glb",
+     "tris": 1396,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 7,
+     "size": [
+      4.88,
+      9.32,
+      24
+     ]
+    },
+    {
+     "file": "/fps/br/models/bay-yacht.lod2.glb",
+     "tris": 390,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      4.88,
+      9.32,
+      24
+     ]
+    }
+   ]
+  },
   "beach-wreck": {
    "title": "shipwreck low poly",
    "author": "compost the second",
@@ -11189,6 +12869,1471 @@
       9.9,
       5.73,
       7.9
+     ]
+    }
+   ]
+  },
+  "cove-barrel": {
+   "title": "Crates And Barrels",
+   "author": "Mateusz Woliński",
+   "source": "https://sketchfab.com/3d-models/crates-and-barrels-5ae3c72285474862a89d69c2f2ad2246",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: barrels on the quay",
+   "scale": 0.941052,
+   "sourceTris": 764,
+   "size": [
+    0.63,
+    1,
+    0.63
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-barrel.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      0.63,
+      1,
+      0.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-barrel.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.63,
+      1,
+      0.63
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-barrel.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.63,
+      1,
+      0.63
+     ]
+    }
+   ]
+  },
+  "cove-bench": {
+   "title": "Bench Wooden 01",
+   "author": "randombug",
+   "source": "https://sketchfab.com/3d-models/bench-wooden-01-1400c9340d5049589deb43601462ac55",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: wooden benches on the harbour front",
+   "scale": 1.476543,
+   "sourceTris": 590,
+   "size": [
+    1.6,
+    0.69,
+    0.59
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-bench.lod0.glb",
+     "tris": 590,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 35,
+     "size": [
+      1.6,
+      0.69,
+      0.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-bench.lod1.glb",
+     "tris": 234,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.6,
+      0.69,
+      0.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-bench.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.6,
+      0.69,
+      0.59
+     ]
+    }
+   ]
+  },
+  "cove-bucket": {
+   "title": "Fishing Supplies Set",
+   "author": "FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/fishing-supplies-set-8742c7af23584443a42c24e52d25b60c",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: bait buckets on the quay",
+   "scale": 0.013522,
+   "sourceTris": 792,
+   "size": [
+    0.34,
+    0.42,
+    0.36
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-bucket.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 20,
+     "size": [
+      0.34,
+      0.42,
+      0.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-bucket.lod1.glb",
+     "tris": 278,
+     "draws": 1,
+     "textureMB": 0.04,
+     "kB": 11,
+     "size": [
+      0.34,
+      0.42,
+      0.36
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-bucket.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.34,
+      0.42,
+      0.36
+     ]
+    }
+   ]
+  },
+  "cove-dock-cleat": {
+   "title": "Dock Cleat",
+   "author": "buggyprince",
+   "source": "https://sketchfab.com/3d-models/dock-cleat-421736f05c1a452f8f25b21ab6a020f0",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: mooring cleats along the quay edge",
+   "scale": 0.072392,
+   "sourceTris": 612,
+   "size": [
+    0.45,
+    0.11,
+    0.12
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-dock-cleat.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 18,
+     "size": [
+      0.45,
+      0.11,
+      0.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-dock-cleat.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.45,
+      0.11,
+      0.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-dock-cleat.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.45,
+      0.11,
+      0.12
+     ]
+    }
+   ]
+  },
+  "cove-fish-crate": {
+   "title": "[LOW POLY] Fish Crate",
+   "author": "Lil Boneng",
+   "source": "https://sketchfab.com/3d-models/low-poly-fish-crate-59c85ab9efec436fb017b4c7805f9770",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: fish crates stacked at the market",
+   "scale": 1.010101,
+   "sourceTris": 285,
+   "size": [
+    0.52,
+    0.41,
+    0.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-fish-crate.lod0.glb",
+     "tris": 285,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.52,
+      0.41,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fish-crate.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.52,
+      0.41,
+      0.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fish-crate.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.52,
+      0.41,
+      0.8
+     ]
+    }
+   ]
+  },
+  "cove-fisher-boat": {
+   "title": "Fisher boat",
+   "author": "Batuhan13",
+   "source": "https://sketchfab.com/3d-models/fisher-boat-385b039e95754dca8d8c045ed0c515cf",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: wooden fishing boats moored at the piers",
+   "scale": 0.019565,
+   "sourceTris": 9136,
+   "size": [
+    3.61,
+    6.32,
+    9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-fisher-boat.lod0.glb",
+     "tris": 3028,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 95,
+     "size": [
+      3.61,
+      6.32,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fisher-boat.lod1.glb",
+     "tris": 1266,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 42,
+     "size": [
+      3.61,
+      6.32,
+      9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fisher-boat.lod2.glb",
+     "tris": 392,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      3.61,
+      6.32,
+      9
+     ]
+    }
+   ]
+  },
+  "cove-fishing-boat": {
+   "title": "Fishing boat",
+   "author": "Pabooklas",
+   "source": "https://sketchfab.com/3d-models/fishing-boat-f4b38ccf5ffb46018aa7931c0e106654",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: small open fishing boats on the slipway and moored",
+   "scale": 2.3,
+   "sourceTris": 7244,
+   "size": [
+    2.05,
+    0.94,
+    4.6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-fishing-boat.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 46,
+     "size": [
+      2.05,
+      0.94,
+      4.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fishing-boat.lod1.glb",
+     "tris": 530,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 19,
+     "size": [
+      2.05,
+      0.94,
+      4.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fishing-boat.lod2.glb",
+     "tris": 143,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      2.05,
+      0.94,
+      4.6
+     ]
+    }
+   ]
+  },
+  "cove-fishing-net": {
+   "title": "Fishing net (Rede de pesca)",
+   "author": "Alex Martire",
+   "source": "https://sketchfab.com/3d-models/fishing-net-rede-de-pesca-cab12e62c8dd46cdbb6b250c2a3c1306",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: nets hung to dry on the net racks",
+   "scale": 0.074035,
+   "sourceTris": 112,
+   "size": [
+    0.09,
+    1.26,
+    6
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-fishing-net.lod0.glb",
+     "tris": 112,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 24,
+     "size": [
+      0.09,
+      1.26,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fishing-net.lod1.glb",
+     "tris": 112,
+     "draws": 2,
+     "textureMB": 0.17,
+     "kB": 11,
+     "size": [
+      0.09,
+      1.26,
+      6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fishing-net.lod2.glb",
+     "tris": 112,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.09,
+      1.26,
+      6
+     ]
+    }
+   ]
+  },
+  "cove-fishing-rod": {
+   "title": "Stylized Old Fishing Rod Low Poly",
+   "author": "alexi.smnd",
+   "source": "https://sketchfab.com/3d-models/stylized-old-fishing-rod-low-poly-82973c905293422b8c47e0bf82170757",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: fishing rods at the pier ends",
+   "scale": 2.333295,
+   "sourceTris": 5718,
+   "size": [
+    0.15,
+    1.19,
+    2.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-fishing-rod.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      0.15,
+      1.19,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fishing-rod.lod1.glb",
+     "tris": 206,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.15,
+      1.19,
+      2.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-fishing-rod.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.15,
+      1.19,
+      2.2
+     ]
+    }
+   ]
+  },
+  "cove-hand-net": {
+   "title": "Fishing Supplies Set",
+   "author": "FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/fishing-supplies-set-8742c7af23584443a42c24e52d25b60c",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: landing nets leant on the sheds",
+   "scale": 0.024241,
+   "sourceTris": 554,
+   "size": [
+    0.47,
+    1.5,
+    0.51
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-hand-net.lod0.glb",
+     "tris": 554,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 19,
+     "size": [
+      0.47,
+      1.5,
+      0.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-hand-net.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.04,
+     "kB": 9,
+     "size": [
+      0.47,
+      1.5,
+      0.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-hand-net.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.47,
+      1.5,
+      0.51
+     ]
+    }
+   ]
+  },
+  "cove-harbour-buoy": {
+   "title": "Harbor Navigation Buoy",
+   "author": "MisterH",
+   "source": "https://sketchfab.com/3d-models/harbor-navigation-buoy-62f7c151f4c048508b8cf5526f8588f9",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: channel buoys at the harbour mouth",
+   "scale": 0.487272,
+   "sourceTris": 11029,
+   "size": [
+    0.97,
+    2.6,
+    0.97
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-harbour-buoy.lod0.glb",
+     "tris": 667,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.97,
+      2.6,
+      0.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-harbour-buoy.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.97,
+      2.6,
+      0.97
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-harbour-buoy.lod2.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.97,
+      2.6,
+      0.97
+     ]
+    }
+   ]
+  },
+  "cove-house-blue": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Harbour house (blue)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Fisher's Cove: a blue harbour house, two floors, a balcony over the door (procedural, 2026-11-17)",
+   "size": [
+    7.7,
+    8.98,
+    8.7
+   ],
+   "sourceTris": 2406,
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-house-blue.coast-v1.lod0.glb",
+     "tris": 2406,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 77,
+     "size": [
+      7.7,
+      8.98,
+      8.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-blue.coast-v1.lod1.glb",
+     "tris": 1226,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 28,
+     "size": [
+      7.7,
+      8.98,
+      8.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-blue.coast-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.7,
+      8.98,
+      8.7
+     ]
+    }
+   ]
+  },
+  "cove-house-green": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Harbour shop (green)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Fisher's Cove: the green chandlery on the quay, a shop window and an awning, a flat over it (procedural, 2026-11-17)",
+   "size": [
+    8.7,
+    8.22,
+    8.7
+   ],
+   "sourceTris": 2718,
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-house-green.coast-v1.lod0.glb",
+     "tris": 2718,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 81,
+     "size": [
+      8.7,
+      8.22,
+      8.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-green.coast-v1.lod1.glb",
+     "tris": 1454,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 30,
+     "size": [
+      8.7,
+      8.22,
+      8.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-green.coast-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      8.7,
+      8.22,
+      8.7
+     ]
+    }
+   ]
+  },
+  "cove-house-orange": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Harbour house (orange)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Fisher's Cove: an orange harbour house, two floors, a balcony to the sea (procedural, 2026-11-17)",
+   "size": [
+    7.2,
+    8.77,
+    9.2
+   ],
+   "sourceTris": 2766,
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-house-orange.coast-v1.lod0.glb",
+     "tris": 2766,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 79,
+     "size": [
+      7.2,
+      8.77,
+      9.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-orange.coast-v1.lod1.glb",
+     "tris": 1466,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 30,
+     "size": [
+      7.2,
+      8.77,
+      9.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-orange.coast-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.2,
+      8.77,
+      9.2
+     ]
+    }
+   ]
+  },
+  "cove-house-red": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Harbour house (red)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Fisher's Cove: a narrow red harbour house, two floors under a clay-tile gable (procedural, 2026-11-17)",
+   "size": [
+    7.2,
+    8.77,
+    8.7
+   ],
+   "sourceTris": 2358,
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-house-red.coast-v1.lod0.glb",
+     "tris": 2358,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 74,
+     "size": [
+      7.2,
+      8.77,
+      8.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-red.coast-v1.lod1.glb",
+     "tris": 1202,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 27,
+     "size": [
+      7.2,
+      8.77,
+      8.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-red.coast-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.2,
+      8.77,
+      8.7
+     ]
+    }
+   ]
+  },
+  "cove-house-salmon": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Harbour house (salmon)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Fisher's Cove: a tall salmon-pink harbour house, three floors (procedural, 2026-11-17)",
+   "size": [
+    6.7,
+    11.46,
+    8.7
+   ],
+   "sourceTris": 3674,
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-house-salmon.coast-v1.lod0.glb",
+     "tris": 3674,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 105,
+     "size": [
+      6.7,
+      11.46,
+      8.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-salmon.coast-v1.lod1.glb",
+     "tris": 1778,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 32,
+     "size": [
+      6.7,
+      11.46,
+      8.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-salmon.coast-v1.lod2.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      6.7,
+      11.46,
+      8.7
+     ]
+    }
+   ]
+  },
+  "cove-house-white": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Harbour house (white)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Fisher's Cove: a white harbour house with blue shutters' trim, two floors (procedural, 2026-11-17)",
+   "size": [
+    7.7,
+    9.11,
+    9.7
+   ],
+   "sourceTris": 2742,
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-house-white.coast-v1.lod0.glb",
+     "tris": 2742,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 78,
+     "size": [
+      7.7,
+      9.11,
+      9.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-white.coast-v1.lod1.glb",
+     "tris": 1442,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 30,
+     "size": [
+      7.7,
+      9.11,
+      9.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-white.coast-v1.lod2.glb",
+     "tris": 72,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.7,
+      9.11,
+      9.7
+     ]
+    }
+   ]
+  },
+  "cove-house-yellow": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Harbour house (ochre)",
+   "source": "art/blender/br/build_coast.mjs",
+   "use": "Fisher's Cove: a tall ochre harbour house, three floors, a balcony over the harbour (procedural, 2026-11-17)",
+   "size": [
+    6.7,
+    11.69,
+    9.7
+   ],
+   "sourceTris": 4262,
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-house-yellow.coast-v1.lod0.glb",
+     "tris": 4262,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 95,
+     "size": [
+      6.7,
+      11.69,
+      9.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-yellow.coast-v1.lod1.glb",
+     "tris": 2162,
+     "draws": 4,
+     "textureMB": 0.13,
+     "kB": 36,
+     "size": [
+      6.7,
+      11.69,
+      9.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-house-yellow.coast-v1.lod2.glb",
+     "tris": 96,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      6.7,
+      11.69,
+      9.7
+     ]
+    }
+   ]
+  },
+  "cove-lifebuoy": {
+   "title": "Classic Lifebuoy Ring",
+   "author": "VladPim",
+   "source": "https://sketchfab.com/3d-models/classic-lifebuoy-ring-0325cc64f5be4dbf935206c90cf9da7e",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: lifebuoys on their posts along the quay",
+   "scale": 0.739574,
+   "sourceTris": 17226,
+   "size": [
+    0.75,
+    0.58,
+    0.51
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-lifebuoy.lod0.glb",
+     "tris": 592,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      0.75,
+      0.58,
+      0.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-lifebuoy.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.75,
+      0.58,
+      0.51
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-lifebuoy.lod2.glb",
+     "tris": 64,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.75,
+      0.58,
+      0.51
+     ]
+    }
+   ]
+  },
+  "cove-lobster-pot": {
+   "title": "Lobster Pot",
+   "author": "Orricle",
+   "source": "https://sketchfab.com/3d-models/lobster-pot-52d43940c5874950804855ce6889315c",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: lobster pots stacked on the quay",
+   "scale": 0.012854,
+   "sourceTris": 1176,
+   "size": [
+    0.88,
+    0.45,
+    0.9
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-lobster-pot.lod0.glb",
+     "tris": 640,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 12,
+     "size": [
+      0.88,
+      0.45,
+      0.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-lobster-pot.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.88,
+      0.45,
+      0.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-lobster-pot.lod2.glb",
+     "tris": 54,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.88,
+      0.45,
+      0.9
+     ]
+    }
+   ]
+  },
+  "cove-old-rowboat": {
+   "title": "Old Rowboat",
+   "author": "TooManyDemons",
+   "source": "https://sketchfab.com/3d-models/old-rowboat-9922d5678af84adeb1c9b479856446ca",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: old rowboats pulled up on the shingle",
+   "scale": 0.006254,
+   "sourceTris": 5484,
+   "size": [
+    4.12,
+    1.23,
+    4.2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-old-rowboat.lod0.glb",
+     "tris": 1500,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 49,
+     "size": [
+      4.12,
+      1.23,
+      4.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-old-rowboat.lod1.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      4.12,
+      1.23,
+      4.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-old-rowboat.lod2.glb",
+     "tris": 166,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      4.12,
+      1.23,
+      4.2
+     ]
+    }
+   ]
+  },
+  "cove-rope-coil": {
+   "title": "Coiled Rope 2",
+   "author": "TepidGames",
+   "source": "https://sketchfab.com/3d-models/coiled-rope-2-e6fe8fedd3d04b1dac3e32e0dd515cbb",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: coiled ropes on the piers",
+   "scale": 0.027828,
+   "sourceTris": 19988,
+   "size": [
+    0.7,
+    0.2,
+    0.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-rope-coil.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      0.7,
+      0.2,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-rope-coil.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      0.7,
+      0.2,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-rope-coil.lod2.glb",
+     "tris": 42,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.7,
+      0.2,
+      0.67
+     ]
+    }
+   ]
+  },
+  "cove-street-light": {
+   "title": "Street Light",
+   "author": "Vaughan.Staehr",
+   "source": "https://sketchfab.com/3d-models/street-light-04a47d898e704e1a809d24433c409bf5",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "small",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: old street lights along the harbour front",
+   "scale": 0.28638,
+   "sourceTris": 4468,
+   "size": [
+    0.82,
+    4.5,
+    0.82
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-street-light.lod0.glb",
+     "tris": 782,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 22,
+     "size": [
+      0.82,
+      4.5,
+      0.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-street-light.lod1.glb",
+     "tris": 208,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      0.82,
+      4.5,
+      0.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-street-light.lod2.glb",
+     "tris": 60,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.82,
+      4.5,
+      0.82
+     ]
+    }
+   ]
+  },
+  "cove-tackle-box": {
+   "title": "Fishing Supplies Set",
+   "author": "FrodoUndead",
+   "source": "https://sketchfab.com/3d-models/fishing-supplies-set-8742c7af23584443a42c24e52d25b60c",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "detail",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: tackle boxes by the boats",
+   "scale": 0.015274,
+   "sourceTris": 476,
+   "size": [
+    0.55,
+    0.23,
+    0.27
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-tackle-box.lod0.glb",
+     "tris": 476,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 18,
+     "size": [
+      0.55,
+      0.23,
+      0.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-tackle-box.lod1.glb",
+     "tris": 210,
+     "draws": 1,
+     "textureMB": 0.04,
+     "kB": 9,
+     "size": [
+      0.55,
+      0.23,
+      0.27
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-tackle-box.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.55,
+      0.23,
+      0.27
+     ]
+    }
+   ]
+  },
+  "cove-tarp-crates": {
+   "title": "Crates And Barrels",
+   "author": "Mateusz Woliński",
+   "source": "https://sketchfab.com/3d-models/crates-and-barrels-5ae3c72285474862a89d69c2f2ad2246",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: crates under a tarp on the quay (cover)",
+   "scale": 1.022405,
+   "sourceTris": 3347,
+   "size": [
+    2.3,
+    0.98,
+    2.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-tarp-crates.lod0.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 27,
+     "size": [
+      2.3,
+      0.98,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-tarp-crates.lod1.glb",
+     "tris": 209,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 11,
+     "size": [
+      2.3,
+      0.98,
+      2.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-tarp-crates.lod2.glb",
+     "tris": 59,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      2.3,
+      0.98,
+      2.4
+     ]
+    }
+   ]
+  },
+  "cove-victorian-rowboat": {
+   "title": "Victorian Row Boat",
+   "author": "Ashley Aslett",
+   "source": "https://sketchfab.com/3d-models/victorian-row-boat-3e9093b6f0ce474da4d8cfea7e01f420",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: rowboats moored along the quay",
+   "scale": 1.9,
+   "sourceTris": 7046,
+   "size": [
+    1.48,
+    1.25,
+    3.8
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-victorian-rowboat.lod0.glb",
+     "tris": 1500,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 54,
+     "size": [
+      1.48,
+      1.25,
+      3.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-victorian-rowboat.lod1.glb",
+     "tris": 522,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 24,
+     "size": [
+      1.48,
+      1.25,
+      3.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-victorian-rowboat.lod2.glb",
+     "tris": 150,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.48,
+      1.25,
+      3.8
+     ]
+    }
+   ]
+  },
+  "cove-walkway": {
+   "title": "Wooden Walkway LowPoly",
+   "author": "5CNG5",
+   "source": "https://sketchfab.com/3d-models/wooden-walkway-lowpoly-02c44b1c549d46d995174fc5e3f66e78",
+   "licence": "CC BY 4.0",
+   "class": "structure",
+   "ring": "structure",
+   "use": "Coastal towns (owner's 2026-11-17 downloads): Fisher's Cove harbour village: railed timber boardwalk along the shore",
+   "scale": 1.002357,
+   "sourceTris": 24984,
+   "size": [
+    8.72,
+    2.51,
+    9.4
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-walkway.lod0.glb",
+     "tris": 3998,
+     "draws": 2,
+     "textureMB": 2.67,
+     "kB": 196,
+     "size": [
+      8.72,
+      2.51,
+      9.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-walkway.lod1.glb",
+     "tris": 1398,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 62,
+     "size": [
+      8.72,
+      2.51,
+      9.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-walkway.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      8.72,
+      2.51,
+      9.4
      ]
     }
    ]
