@@ -107,3 +107,33 @@ test("reduced motion shows the resolved symbols without moving reels", async ({ 
   await expect(page.locator(".slott-reel-live")).toHaveCount(0);
   await expect(page.locator(".slott-stop-flash")).toHaveCount(0);
 });
+
+for (const lineScore of [20, 75, 250]) {
+  test(`player points replace the legacy win banner at line score ${lineScore}`, async ({
+    page,
+  }) => {
+    await page.goto(`${origin}/?lineScore=${lineScore}`);
+    await page.waitForFunction(() => typeof (window as SlotWindow).startSlotSpin === "function");
+    await page.evaluate(() => (window as SlotWindow).startSlotSpin());
+    await expect(page.locator(".slott-score-burst-name")).toHaveText("ddenbror97", {
+      timeout: 8000,
+    });
+    await expect(page.locator(".slott-score-burst-num")).toHaveText(`+${lineScore}`);
+    await expect(page.locator(".slott-score-burst")).toHaveCount(1);
+    await expect(page.locator(".slott-banner")).toHaveCount(0);
+    await expect(page.locator(".slott-score-burst")).toHaveAttribute("data-parked", "false");
+    if (lineScore === 250)
+      await page.screenshot({ path: test.info().outputPath("single-score.png") });
+  });
+}
+
+test("cash bonus stays separate from the player points", async ({ page }) => {
+  await page.goto(`${origin}/?lineScore=250&bonus=1`);
+  await page.waitForFunction(() => typeof (window as SlotWindow).startSlotSpin === "function");
+  await page.evaluate(() => (window as SlotWindow).startSlotSpin());
+  await expect(page.locator(".slott-score-burst-name")).toHaveText("ddenbror97", { timeout: 8000 });
+  await expect(page.locator(".slott-banner")).toHaveCount(1);
+  await expect(page.locator(".slott-banner")).toContainText("WILD BONUS");
+  await expect(page.locator(".slott-banner")).toContainText("to the pot");
+  await expect(page.locator(".slott-score-burst")).toHaveAttribute("data-parked", "true");
+});

@@ -38,7 +38,8 @@ export const SpinFx = memo(function SpinFx({
   const tier = fxTier(lineScore, !!bonus);
   const done = hitsDoneMs(lines);
   const bannerAt = tier === "medium" ? done + 40 : done + 80;
-  const parked = !!bonus || (tier !== "none" && tier !== "small");
+  // Only a cash bonus needs a separate banner; points use the single player callout.
+  const parked = !!bonus;
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-10">
       <div className="absolute inset-0 overflow-hidden rounded-lg">
@@ -185,21 +186,6 @@ export const SpinFx = memo(function SpinFx({
                 </div>
                 <div className="tabular mt-1 rounded-full bg-black/60 px-3 py-0.5 font-display text-[clamp(0.8rem,2.6vw,1.15rem)] text-gold">
                   +{formatUsd(bonus.cents)} to the pot
-                </div>
-              </div>
-            ) : tier === "medium" ? (
-              <div
-                className="slott-banner slott-banner-mid"
-                style={{ animationDelay: `${bannerAt}ms` }}
-              >
-                <div className="slott-banner-title font-display text-[clamp(1.2rem,4.5vw,2rem)] leading-none">
-                  WIN
-                </div>
-              </div>
-            ) : tier === "large" || tier === "exceptional" ? (
-              <div className="slott-banner" style={{ animationDelay: `${bannerAt}ms` }}>
-                <div className="slott-banner-title font-display text-[clamp(1.5rem,6.5vw,3.2rem)] leading-none">
-                  {tier === "exceptional" ? "MEGA WIN" : "BIG WIN"}
                 </div>
               </div>
             ) : null}
