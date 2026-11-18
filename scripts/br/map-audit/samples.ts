@@ -1,7 +1,7 @@
 /** Prints the heightfield reference samples tests/br-world.test.ts pins (grid i, j and world 0, 0). */
 import { readFileSync } from "node:fs";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
-const f = readFileSync("public/fps/br/height.v4.hf");
+const f = readFileSync("public/fps/br/height.v5.hf");
 const hf = await decodeHeightfield(f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength));
 const at = (i: number, j: number) => hf.heightAt(-5000 + i * hf.spacing, -5000 + j * hf.spacing);
 for (const [i, j] of [

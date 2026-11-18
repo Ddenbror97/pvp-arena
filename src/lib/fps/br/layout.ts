@@ -5949,7 +5949,9 @@ function westGateway(out: Placement[], ctx: Context) {
   // Highway lamps along the approach.
   for (let z = 120; z < 860; z += 55) {
     const [x] = at(z);
-    put("highway-lamp", x + 7.5, z, 3, { rough: 3, road: -1, gap: 0.5 });
+    // (Never on a road crossing the approach: one stood in a side road's carriageway, its foot
+    // a metre under the asphalt, 2026-11-18 road audit.)
+    put("highway-lamp", x + 7.5, z, 3, { rough: 3, road: 0, gap: 0.5 });
   }
 }
 
@@ -8918,7 +8920,7 @@ export function* islandLayoutSteps(
  * the road is drawn on its grade (road-grade.ts, the same function), which on a crest or a cross
  * slope stands above the ground there, and parked cars, wrecks, barriers, posts and lamps set on
  * the ground stood up to 1.3 m into it. A placement whose base falls on a carriageway and lies
- * below its surface (by less than 0.6 m) comes up to it.
+ * below its surface (by less than 0.6 m; a car or a wreck 1.5 m) comes up to it.
  */
 function standOnRoads(out: Placement[], ctx: Context) {
   const grade = createRoadGrade(ctx.meta, ctx.heightAt);
@@ -8928,7 +8930,10 @@ function standOnRoads(out: Placement[], ctx: Context) {
     const g = grade.at(p.x, p.z, true, 0);
     if (g === null) continue;
     const surface = g + ROAD_GRADE.lift;
-    if (p.y < surface - 0.01 && p.y > surface - 0.6) p.y = +surface.toFixed(2);
+    // (A car or a wreck up to 1.5 m: over a crest or along a cut they stood 0.6–1.2 m into the
+    // road, 2026-11-18 road audit. A post or a lamp at the edge keeps its foot in the verge.)
+    const reach = /car|truck|wreck|sedan|pickup|van|bus/.test(p.model) ? 1.5 : 0.6;
+    if (p.y < surface - 0.01 && p.y > surface - reach) p.y = +surface.toFixed(2);
   }
 }
 

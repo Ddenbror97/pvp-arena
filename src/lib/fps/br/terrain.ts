@@ -945,7 +945,7 @@ export function createTerrain(
       const [albedo, normal, surface] = await Promise.all([
         loadArray(base + "albedo.webp", meta.albedo, meta.layers.length),
         loadArray(base + "normal.webp", meta.normal, meta.layers.length),
-        new THREE.TextureLoader().loadAsync(base + "surface-v3.webp").catch(() => null),
+        new THREE.TextureLoader().loadAsync(base + "surface-v4.webp").catch(() => null),
       ]);
       if (disposed) {
         albedo.dispose();

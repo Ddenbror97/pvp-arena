@@ -8,13 +8,13 @@ import { prepareFoliageMaterial } from "../src/lib/fps/br/foliage-material";
 import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "../src/lib/fps/br/ground-style";
 
 test("aerial surface matches the published land cover, palette and credited source textures", async () => {
-  const manifest = JSON.parse(readFileSync("public/fps/br/ground/surface-v3.json", "utf8"));
+  const manifest = JSON.parse(readFileSync("public/fps/br/ground/surface-v4.json", "utf8"));
   const sha = (v: string | Buffer) => createHash("sha256").update(v).digest("hex");
   expect(manifest.palette).toBe(sha(JSON.stringify({ GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL })));
   expect(manifest.sourceEncoding).toBe("parsed-json-v1");
   for (const [file, hash] of Object.entries(manifest.sources))
     expect(surfaceSourceHash(file, readFileSync(file)), file).toBe(hash);
-  const image = readFileSync("public/fps/br/ground/surface-v3.webp");
+  const image = readFileSync("public/fps/br/ground/surface-v4.webp");
   expect(sha(image)).toBe(manifest.output);
   const info = await sharp(image).metadata();
   expect([info.width, info.height, manifest.worldSize, manifest.flipY]).toEqual([
