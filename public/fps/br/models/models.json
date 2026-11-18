@@ -15828,10 +15828,10 @@
     },
     {
      "file": "/fps/br/models/ew-boiler-tower.works-v1.lod1.glb",
-     "tris": 6692,
-     "draws": 4,
+     "tris": 1088,
+     "draws": 3,
      "textureMB": 0.13,
-     "kB": 100,
+     "kB": 30,
      "size": [
       14.1,
       29.38,
@@ -15883,10 +15883,10 @@
     },
     {
      "file": "/fps/br/models/ew-chimney.works-v1.lod1.glb",
-     "tris": 5614,
-     "draws": 4,
+     "tris": 962,
+     "draws": 3,
      "textureMB": 0.13,
-     "kB": 87,
+     "kB": 28,
      "size": [
       8.1,
       37.43,
@@ -15992,10 +15992,10 @@
     },
     {
      "file": "/fps/br/models/ew-control-house.works-v1.lod1.glb",
-     "tris": 5060,
-     "draws": 3,
+     "tris": 616,
+     "draws": 2,
      "textureMB": 0.06,
-     "kB": 58,
+     "kB": 16,
      "size": [
       24.1,
       11.43,
@@ -16807,10 +16807,10 @@
     },
     {
      "file": "/fps/br/models/ew-turbine-hall.works-v1.lod1.glb",
-     "tris": 1892,
-     "draws": 6,
+     "tris": 418,
+     "draws": 5,
      "textureMB": 0.25,
-     "kB": 56,
+     "kB": 34,
      "size": [
       45,
       13.69,
@@ -16970,10 +16970,10 @@
     },
     {
      "file": "/fps/br/models/ew-workshop.works-v1.lod1.glb",
-     "tris": 2456,
-     "draws": 4,
+     "tris": 426,
+     "draws": 3,
      "textureMB": 0.13,
-     "kB": 51,
+     "kB": 23,
      "size": [
       18.1,
       8.33,

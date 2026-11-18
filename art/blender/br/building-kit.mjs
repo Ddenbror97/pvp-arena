@@ -165,7 +165,41 @@ export function makeBuilding(S) {
       y1 = Y(L + 1);
     for (const [side, s] of Object.entries(SIDES)) {
       const holes = holesOf(side, L);
-      run(s.axis, s.a0, s.a1, s.c0, s.c1, L === 0 ? 0 : y0, y1, holes, wall.m, wall.tint);
+      // `midShell` (the lag optimisation of Forgotten Ruins' monuments, for tall buildings): the
+      // walls with their openings near only; the middle LOD draws each storey's wall whole with
+      // the openings as dark panes on its face (a fraction of the triangles).
+      const near = S.midShell ? { lod: 0 } : {};
+      run(s.axis, s.a0, s.a1, s.c0, s.c1, L === 0 ? 0 : y0, y1, holes, wall.m, wall.tint, near);
+      if (S.midShell) {
+        const B =
+          s.axis === "x"
+            ? [s.a0, L === 0 ? 0 : y0, s.c0, s.a1, y1, s.c1]
+            : [s.c0, L === 0 ? 0 : y0, s.a0, s.c1, y1, s.a1];
+        k.box(B, wall.m, wall.tint, { lod: "mid", collide: false });
+        const o = s.out,
+          sg = o[0] + o[2],
+          f = (sg > 0 ? (s.axis === "x" ? s.c1 : s.c1) : s.c0) + sg * 0.015;
+        for (const h of holes) {
+          const tint = h[4]
+            ? (S.glassTint ?? [0.3, 0.4, 0.46]).map((v) => v * 0.7)
+            : [0.1, 0.09, 0.08];
+          const q =
+            s.axis === "x"
+              ? [
+                  [h[0], h[2], f],
+                  [h[1], h[2], f],
+                  [h[1], h[3], f],
+                  [h[0], h[3], f],
+                ]
+              : [
+                  [f, h[2], h[1]],
+                  [f, h[2], h[0]],
+                  [f, h[3], h[0]],
+                  [f, h[3], h[1]],
+                ];
+          k.quad(...q, "paint", tint, { lod: "mid", n: o });
+        }
+      }
       // Sills and door frames (drawn only), proud of the wall's outside.
       const o = s.out;
       const face = o[0] + o[2] > 0 ? s.c1 : s.c0;
@@ -178,11 +212,18 @@ export function makeBuilding(S) {
         if (h[4])
           k.box(pr(h[0] - 0.08, h[2] - 0.08, h[1] + 0.08, h[2], 0.1), "paint", trim, {
             collide: false,
+            ...near,
           });
         else if (h[1] - h[0] < 2.0) {
-          k.box(pr(h[0] - 0.1, h[2], h[0], h[3] + 0.1, 0.06), "paint", trim, { collide: false });
-          k.box(pr(h[1], h[2], h[1] + 0.1, h[3] + 0.1, 0.06), "paint", trim, { collide: false });
-          k.box(pr(h[0], h[3], h[1], h[3] + 0.1, 0.06), "paint", trim, { collide: false });
+          k.box(pr(h[0] - 0.1, h[2], h[0], h[3] + 0.1, 0.06), "paint", trim, {
+            collide: false,
+            ...near,
+          });
+          k.box(pr(h[1], h[2], h[1] + 0.1, h[3] + 0.1, 0.06), "paint", trim, {
+            collide: false,
+            ...near,
+          });
+          k.box(pr(h[0], h[3], h[1], h[3] + 0.1, 0.06), "paint", trim, { collide: false, ...near });
         }
       }
     }
