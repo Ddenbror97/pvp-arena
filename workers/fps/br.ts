@@ -420,7 +420,16 @@ export class BrRoom {
       return json({ error: "WORLD_UNAVAILABLE" }, 503);
     }
     const seat = seatHuman(state, claims.sub, sanitizeName(claims.name));
-    if (seat < 0) return json({ error: "MATCH_IN_PROGRESS" }, 409);
+    if (seat < 0) {
+      // Refused (the match took off, or every seat is taken). The lobby had sent this player
+      // here and remembers it as their match, so every retry came straight back to the same
+      // refusal until the client gave up: "The Battle Royale server is temporarily unavailable"
+      // (owner, 2026-11-18: "sometimes … stuck in loading screen"). Released before answering,
+      // so the next join finds an open match.
+      this.released.push(claims.sub);
+      await this.report();
+      return json({ error: "MATCH_IN_PROGRESS" }, 409);
+    }
     if (typeof claims.avatar === "string" && claims.avatar.length <= 2048)
       state.seats[seat]!.avatar = claims.avatar;
     else delete state.seats[seat]!.avatar;

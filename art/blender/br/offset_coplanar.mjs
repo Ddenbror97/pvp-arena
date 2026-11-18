@@ -66,6 +66,59 @@ function inside(t, p) {
   return !((d1 < 0 || d2 < 0 || d3 < 0) && (d1 > 0 || d2 > 0 || d3 > 0));
 }
 
+/**
+ * The area two triangles of one plane share (m², projected on the plane's main axis). Thin
+ * overlaps (a floor board's corner tucked over a wall's top, a sill's sliver along a roof) hold
+ * neither triangle's centre inside the other, so `inside` alone missed them (owner,
+ * 2026-11-18: the fortress's tower roofs flickered along their rims).
+ */
+function overlapArea(t, u) {
+  const n = t.n;
+  const ax =
+    Math.abs(n[0]) > Math.abs(n[1])
+      ? Math.abs(n[0]) > Math.abs(n[2])
+        ? 0
+        : 2
+      : Math.abs(n[1]) > Math.abs(n[2])
+        ? 1
+        : 2;
+  const [i, j] = [0, 1, 2].filter((k) => k !== ax);
+  const P = (v) => [v[i], v[j]];
+  const ccw = (q) => {
+    const a = (q[1][0] - q[0][0]) * (q[2][1] - q[0][1]) - (q[2][0] - q[0][0]) * (q[1][1] - q[0][1]);
+    return a < 0 ? [q[0], q[2], q[1]] : q;
+  };
+  let poly = ccw(t.v.map(P));
+  const clip = ccw(u.v.map(P));
+  for (let e = 0; e < 3 && poly.length; e++) {
+    const a = clip[e],
+      b = clip[(e + 1) % 3];
+    const side = (p) => (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]);
+    const out = [];
+    for (let k = 0; k < poly.length; k++) {
+      const p = poly[k],
+        q = poly[(k + 1) % poly.length];
+      const sp = side(p),
+        sq = side(q);
+      if (sp >= 0) out.push(p);
+      if (sp >= 0 !== sq >= 0) {
+        const f = sp / (sp - sq);
+        out.push([p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f]);
+      }
+    }
+    poly = out;
+  }
+  let area = 0;
+  for (let k = 0; k < poly.length; k++) {
+    const p = poly[k],
+      q = poly[(k + 1) % poly.length];
+    area += p[0] * q[1] - q[0] * p[1];
+  }
+  return Math.abs(area) / 2 / Math.max(1e-6, Math.abs(n[ax]));
+}
+/** Overlaps smaller than this (m²) are edges meeting, not faces fighting. */
+const MIN_OVERLAP = 0.0004;
+
 const report = [];
 for (const [id, model] of Object.entries(manifest.models)) {
   if (!CLASSES.has(model.class)) continue;
@@ -134,7 +187,7 @@ for (const [id, model] of Object.entries(manifest.models)) {
           if (u === t || lift.has(u)) continue;
           const dot = t.n[0] * u.n[0] + t.n[1] * u.n[1] + t.n[2] * u.n[2];
           if (dot < 0.999 || Math.abs(t.d - u.d) > PLANE) continue;
-          if (!(inside(t, u.c) || inside(u, t.c))) continue;
+          if (!(inside(t, u.c) || inside(u, t.c)) && overlapArea(t, u) < MIN_OVERLAP) continue;
           lift.add(u.area <= t.area ? u : t);
         }
     }

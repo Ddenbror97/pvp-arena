@@ -281,6 +281,36 @@ describe("Battle royale runtime (Phase 2)", () => {
     expect(latest(b.frames)!.you.seat).toBe(seat);
   }, 120_000);
 
+  it("a player refused by a match that took off is sent to another match, not back to it", async () => {
+    // Owner, 2026-11-18: "sometimes … stuck in loading screen: The Battle Royale server is
+    // temporarily unavailable". The lobby remembered the match it had handed out, so a player
+    // whose socket reached it after take-off was sent back to the same refusal on every retry.
+    const join = async (sub: string) => {
+      const r = await mf.dispatchFetch("https://runtime.test/internal/br/join", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${secret}`, "content-type": "application/json" },
+        body: JSON.stringify({ sub }),
+      });
+      return ((await r.json()) as { matchId: string }).matchId;
+    };
+    const first = crypto.randomUUID();
+    const matchId = await join(first);
+    const a = await open(matchId, first, "First");
+    await until(() => latest(a.frames), 30_000);
+    const late = crypto.randomUUID();
+    expect(await join(late)).toBe(matchId);
+    let state = await ticks(matchId, 300);
+    while (state.phase !== "plane") state = await ticks(matchId, 30);
+    const refused = await mf.dispatchFetch(
+      `https://runtime.test/br/${matchId}/socket?worldRevision=${WORLD_ASSETS.revision}&rulesVersion=${BR_RULESET_VERSION}&ticket=${await ticket(matchId, late, "Late")}`,
+      { headers: { Upgrade: "websocket", Origin: origin } },
+    );
+    expect(refused.status).toBe(409);
+    expect(await join(late)).not.toBe(matchId);
+    // The player who holds a seat still goes back to it.
+    expect(await join(first)).toBe(matchId);
+  }, 120_000);
+
   it("two players jump together and see each other's parachutes; early jumps and forged state are refused", async () => {
     const matchId = crypto.randomUUID();
     const a = await open(matchId, crypto.randomUUID(), "One");

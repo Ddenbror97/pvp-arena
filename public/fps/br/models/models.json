@@ -6345,14 +6345,14 @@
     5.8,
     24.2
    ],
-   "sourceTris": 810,
+   "sourceTris": 846,
    "lods": [
     {
-     "file": "/fps/br/models/brick-roof-a.skyline-v3.lod0.glb",
-     "tris": 810,
+     "file": "/fps/br/models/brick-roof-a.skyline-v4.lod0.glb",
+     "tris": 846,
      "draws": 2,
      "textureMB": 0,
-     "kB": 12,
+     "kB": 13,
      "size": [
       26,
       5.8,
@@ -6360,8 +6360,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-roof-a.skyline-v3.lod1.glb",
-     "tris": 492,
+     "file": "/fps/br/models/brick-roof-a.skyline-v4.lod1.glb",
+     "tris": 528,
      "draws": 2,
      "textureMB": 0,
      "kB": 9,
@@ -6372,7 +6372,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-roof-a.skyline-v3.lod2.glb",
+     "file": "/fps/br/models/brick-roof-a.skyline-v4.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -6399,14 +6399,14 @@
     3.8,
     24.2
    ],
-   "sourceTris": 822,
+   "sourceTris": 858,
    "lods": [
     {
-     "file": "/fps/br/models/brick-roof-b.skyline-v3.lod0.glb",
-     "tris": 822,
+     "file": "/fps/br/models/brick-roof-b.skyline-v4.lod0.glb",
+     "tris": 858,
      "draws": 2,
      "textureMB": 0,
-     "kB": 12,
+     "kB": 13,
      "size": [
       26,
       3.8,
@@ -6414,8 +6414,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-roof-b.skyline-v3.lod1.glb",
-     "tris": 504,
+     "file": "/fps/br/models/brick-roof-b.skyline-v4.lod1.glb",
+     "tris": 540,
      "draws": 2,
      "textureMB": 0,
      "kB": 9,
@@ -6426,7 +6426,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/brick-roof-b.skyline-v3.lod2.glb",
+     "file": "/fps/br/models/brick-roof-b.skyline-v4.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -13371,14 +13371,14 @@
     5.8,
     24.2
    ],
-   "sourceTris": 810,
+   "sourceTris": 846,
    "lods": [
     {
-     "file": "/fps/br/models/condo-roof-a.skyline-v3.lod0.glb",
-     "tris": 810,
+     "file": "/fps/br/models/condo-roof-a.skyline-v4.lod0.glb",
+     "tris": 846,
      "draws": 2,
      "textureMB": 0,
-     "kB": 12,
+     "kB": 13,
      "size": [
       26,
       5.8,
@@ -13386,8 +13386,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-a.skyline-v3.lod1.glb",
-     "tris": 492,
+     "file": "/fps/br/models/condo-roof-a.skyline-v4.lod1.glb",
+     "tris": 528,
      "draws": 2,
      "textureMB": 0,
      "kB": 9,
@@ -13398,7 +13398,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-a.skyline-v3.lod2.glb",
+     "file": "/fps/br/models/condo-roof-a.skyline-v4.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -13425,14 +13425,14 @@
     3.8,
     24.2
    ],
-   "sourceTris": 822,
+   "sourceTris": 858,
    "lods": [
     {
-     "file": "/fps/br/models/condo-roof-b.skyline-v3.lod0.glb",
-     "tris": 822,
+     "file": "/fps/br/models/condo-roof-b.skyline-v4.lod0.glb",
+     "tris": 858,
      "draws": 2,
      "textureMB": 0,
-     "kB": 12,
+     "kB": 13,
      "size": [
       26,
       3.8,
@@ -13440,8 +13440,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-b.skyline-v3.lod1.glb",
-     "tris": 504,
+     "file": "/fps/br/models/condo-roof-b.skyline-v4.lod1.glb",
+     "tris": 540,
      "draws": 2,
      "textureMB": 0,
      "kB": 9,
@@ -13452,7 +13452,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/condo-roof-b.skyline-v3.lod2.glb",
+     "file": "/fps/br/models/condo-roof-b.skyline-v4.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -19930,7 +19930,7 @@
    "sourceTris": 1472,
    "lods": [
     {
-     "file": "/fps/br/models/fort-barracks.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-barracks.fort-v2.lod0.glb",
      "tris": 1472,
      "draws": 3,
      "textureMB": 3,
@@ -19942,7 +19942,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-barracks.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-barracks.fort-v2.lod1.glb",
      "tris": 660,
      "draws": 2,
      "textureMB": 0.5,
@@ -19954,7 +19954,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-barracks.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-barracks.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -19985,7 +19985,7 @@
    "sourceTris": 3336,
    "lods": [
     {
-     "file": "/fps/br/models/fort-base.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-base.fort-v2.lod0.glb",
      "tris": 3336,
      "draws": 4,
      "textureMB": 4,
@@ -19997,7 +19997,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-base.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-base.fort-v2.lod1.glb",
      "tris": 404,
      "draws": 2,
      "textureMB": 0.5,
@@ -20009,7 +20009,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-base.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-base.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20040,7 +20040,7 @@
    "sourceTris": 232,
    "lods": [
     {
-     "file": "/fps/br/models/fort-bridge.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-bridge.fort-v2.lod0.glb",
      "tris": 232,
      "draws": 4,
      "textureMB": 4,
@@ -20052,7 +20052,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-bridge.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-bridge.fort-v2.lod1.glb",
      "tris": 232,
      "draws": 4,
      "textureMB": 1,
@@ -20064,7 +20064,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-bridge.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-bridge.fort-v2.lod2.glb",
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
@@ -20095,7 +20095,7 @@
    "sourceTris": 46,
    "lods": [
     {
-     "file": "/fps/br/models/fort-cellar-stair.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-cellar-stair.fort-v2.lod0.glb",
      "tris": 46,
      "draws": 3,
      "textureMB": 0.75,
@@ -20107,7 +20107,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-cellar-stair.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-cellar-stair.fort-v2.lod1.glb",
      "tris": 46,
      "draws": 3,
      "textureMB": 0.19,
@@ -20119,7 +20119,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-cellar-stair.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-cellar-stair.fort-v2.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
@@ -20150,7 +20150,7 @@
    "sourceTris": 1988,
    "lods": [
     {
-     "file": "/fps/br/models/fort-chapel.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-chapel.fort-v2.lod0.glb",
      "tris": 1988,
      "draws": 4,
      "textureMB": 4,
@@ -20162,7 +20162,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-chapel.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-chapel.fort-v2.lod1.glb",
      "tris": 652,
      "draws": 3,
      "textureMB": 0.75,
@@ -20174,7 +20174,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-chapel.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-chapel.fort-v2.lod2.glb",
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
@@ -20205,7 +20205,7 @@
    "sourceTris": 3768,
    "lods": [
     {
-     "file": "/fps/br/models/fort-gatehouse.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-gatehouse.fort-v2.lod0.glb",
      "tris": 3768,
      "draws": 6,
      "textureMB": 5,
@@ -20217,7 +20217,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-gatehouse.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-gatehouse.fort-v2.lod1.glb",
      "tris": 2554,
      "draws": 5,
      "textureMB": 1,
@@ -20229,7 +20229,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-gatehouse.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-gatehouse.fort-v2.lod2.glb",
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
@@ -20260,7 +20260,7 @@
    "sourceTris": 752,
    "lods": [
     {
-     "file": "/fps/br/models/fort-hall.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-hall.fort-v2.lod0.glb",
      "tris": 752,
      "draws": 5,
      "textureMB": 4,
@@ -20272,7 +20272,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-hall.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-hall.fort-v2.lod1.glb",
      "tris": 324,
      "draws": 3,
      "textureMB": 0.75,
@@ -20284,7 +20284,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-hall.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-hall.fort-v2.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
@@ -20312,14 +20312,14 @@
     36.5,
     29.4
    ],
-   "sourceTris": 5760,
+   "sourceTris": 5810,
    "lods": [
     {
-     "file": "/fps/br/models/fort-keep.fort-v1.lod0.glb",
-     "tris": 5760,
+     "file": "/fps/br/models/fort-keep.fort-v2.lod0.glb",
+     "tris": 5810,
      "draws": 5,
      "textureMB": 4,
-     "kB": 213,
+     "kB": 214,
      "size": [
       35.4,
       36.5,
@@ -20327,11 +20327,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-keep.fort-v1.lod1.glb",
-     "tris": 3720,
+     "file": "/fps/br/models/fort-keep.fort-v2.lod1.glb",
+     "tris": 3770,
      "draws": 4,
      "textureMB": 0.75,
-     "kB": 98,
+     "kB": 100,
      "size": [
       35.4,
       36.5,
@@ -20339,7 +20339,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-keep.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-keep.fort-v2.lod2.glb",
      "tris": 60,
      "draws": 1,
      "textureMB": 0,
@@ -20370,7 +20370,7 @@
    "sourceTris": 1580,
    "lods": [
     {
-     "file": "/fps/br/models/fort-rubble.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-rubble.fort-v2.lod0.glb",
      "tris": 1580,
      "draws": 2,
      "textureMB": 2,
@@ -20382,7 +20382,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-rubble.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-rubble.fort-v2.lod1.glb",
      "tris": 560,
      "draws": 1,
      "textureMB": 0.25,
@@ -20394,7 +20394,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-rubble.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-rubble.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20425,7 +20425,7 @@
    "sourceTris": 1360,
    "lods": [
     {
-     "file": "/fps/br/models/fort-scaffold.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-scaffold.fort-v2.lod0.glb",
      "tris": 1360,
      "draws": 1,
      "textureMB": 1,
@@ -20437,7 +20437,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-scaffold.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-scaffold.fort-v2.lod1.glb",
      "tris": 1360,
      "draws": 1,
      "textureMB": 0.25,
@@ -20449,7 +20449,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-scaffold.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-scaffold.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20480,7 +20480,7 @@
    "sourceTris": 220,
    "lods": [
     {
-     "file": "/fps/br/models/fort-stables.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-stables.fort-v2.lod0.glb",
      "tris": 220,
      "draws": 5,
      "textureMB": 4,
@@ -20492,7 +20492,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-stables.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-stables.fort-v2.lod1.glb",
      "tris": 158,
      "draws": 4,
      "textureMB": 1,
@@ -20504,7 +20504,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-stables.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-stables.fort-v2.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
@@ -20532,14 +20532,14 @@
     29.8,
     19.2
    ],
-   "sourceTris": 3834,
+   "sourceTris": 4104,
    "lods": [
     {
-     "file": "/fps/br/models/fort-tower-round.fort-v1.lod0.glb",
-     "tris": 3834,
+     "file": "/fps/br/models/fort-tower-round.fort-v2.lod0.glb",
+     "tris": 4104,
      "draws": 5,
      "textureMB": 4,
-     "kB": 184,
+     "kB": 189,
      "size": [
       19.2,
       29.8,
@@ -20547,11 +20547,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-tower-round.fort-v1.lod1.glb",
-     "tris": 2144,
+     "file": "/fps/br/models/fort-tower-round.fort-v2.lod1.glb",
+     "tris": 2256,
      "draws": 4,
      "textureMB": 0.75,
-     "kB": 72,
+     "kB": 74,
      "size": [
       19.2,
       29.8,
@@ -20559,7 +20559,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-tower-round.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-tower-round.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20590,7 +20590,7 @@
    "sourceTris": 1760,
    "lods": [
     {
-     "file": "/fps/br/models/fort-tower-sally.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-tower-sally.fort-v2.lod0.glb",
      "tris": 1760,
      "draws": 5,
      "textureMB": 4,
@@ -20602,7 +20602,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-tower-sally.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-tower-sally.fort-v2.lod1.glb",
      "tris": 702,
      "draws": 4,
      "textureMB": 0.75,
@@ -20614,7 +20614,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-tower-sally.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-tower-sally.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20645,7 +20645,7 @@
    "sourceTris": 1728,
    "lods": [
     {
-     "file": "/fps/br/models/fort-tower-square.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-tower-square.fort-v2.lod0.glb",
      "tris": 1728,
      "draws": 5,
      "textureMB": 4,
@@ -20657,7 +20657,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-tower-square.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-tower-square.fort-v2.lod1.glb",
      "tris": 666,
      "draws": 4,
      "textureMB": 0.75,
@@ -20669,7 +20669,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-tower-square.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-tower-square.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20700,7 +20700,7 @@
    "sourceTris": 652,
    "lods": [
     {
-     "file": "/fps/br/models/fort-wall-24.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-wall-24.fort-v2.lod0.glb",
      "tris": 652,
      "draws": 3,
      "textureMB": 2,
@@ -20712,7 +20712,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-24.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-wall-24.fort-v2.lod1.glb",
      "tris": 652,
      "draws": 3,
      "textureMB": 0.5,
@@ -20724,7 +20724,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-24.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-wall-24.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20755,7 +20755,7 @@
    "sourceTris": 186,
    "lods": [
     {
-     "file": "/fps/br/models/fort-wall-28.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-wall-28.fort-v2.lod0.glb",
      "tris": 186,
      "draws": 3,
      "textureMB": 2,
@@ -20767,7 +20767,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-28.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-wall-28.fort-v2.lod1.glb",
      "tris": 186,
      "draws": 3,
      "textureMB": 0.5,
@@ -20779,7 +20779,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-28.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-wall-28.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20810,7 +20810,7 @@
    "sourceTris": 678,
    "lods": [
     {
-     "file": "/fps/br/models/fort-wall-28s.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-wall-28s.fort-v2.lod0.glb",
      "tris": 678,
      "draws": 3,
      "textureMB": 2,
@@ -20822,7 +20822,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-28s.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-wall-28s.fort-v2.lod1.glb",
      "tris": 678,
      "draws": 3,
      "textureMB": 0.5,
@@ -20834,7 +20834,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-28s.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-wall-28s.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20865,7 +20865,7 @@
    "sourceTris": 704,
    "lods": [
     {
-     "file": "/fps/br/models/fort-wall-32.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-wall-32.fort-v2.lod0.glb",
      "tris": 704,
      "draws": 3,
      "textureMB": 2,
@@ -20877,7 +20877,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-32.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-wall-32.fort-v2.lod1.glb",
      "tris": 704,
      "draws": 3,
      "textureMB": 0.5,
@@ -20889,7 +20889,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-32.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-wall-32.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20920,7 +20920,7 @@
    "sourceTris": 200,
    "lods": [
     {
-     "file": "/fps/br/models/fort-wall-32g.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-wall-32g.fort-v2.lod0.glb",
      "tris": 200,
      "draws": 3,
      "textureMB": 2,
@@ -20932,7 +20932,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-32g.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-wall-32g.fort-v2.lod1.glb",
      "tris": 200,
      "draws": 3,
      "textureMB": 0.5,
@@ -20944,7 +20944,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-32g.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-wall-32g.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -20975,7 +20975,7 @@
    "sourceTris": 262,
    "lods": [
     {
-     "file": "/fps/br/models/fort-wall-42.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-wall-42.fort-v2.lod0.glb",
      "tris": 262,
      "draws": 3,
      "textureMB": 2,
@@ -20987,7 +20987,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-42.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-wall-42.fort-v2.lod1.glb",
      "tris": 262,
      "draws": 3,
      "textureMB": 0.5,
@@ -20999,7 +20999,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-42.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-wall-42.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -21030,7 +21030,7 @@
    "sourceTris": 366,
    "lods": [
     {
-     "file": "/fps/br/models/fort-wall-62.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-wall-62.fort-v2.lod0.glb",
      "tris": 366,
      "draws": 3,
      "textureMB": 2,
@@ -21042,7 +21042,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-62.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-wall-62.fort-v2.lod1.glb",
      "tris": 366,
      "draws": 3,
      "textureMB": 0.5,
@@ -21054,7 +21054,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-62.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-wall-62.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -21085,7 +21085,7 @@
    "sourceTris": 858,
    "lods": [
     {
-     "file": "/fps/br/models/fort-wall-62s.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-wall-62s.fort-v2.lod0.glb",
      "tris": 858,
      "draws": 3,
      "textureMB": 2,
@@ -21097,7 +21097,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-62s.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-wall-62s.fort-v2.lod1.glb",
      "tris": 858,
      "draws": 3,
      "textureMB": 0.5,
@@ -21109,7 +21109,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-62s.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-wall-62s.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -21140,7 +21140,7 @@
    "sourceTris": 738,
    "lods": [
     {
-     "file": "/fps/br/models/fort-wall-breach.fort-v1.lod0.glb",
+     "file": "/fps/br/models/fort-wall-breach.fort-v2.lod0.glb",
      "tris": 738,
      "draws": 2,
      "textureMB": 2,
@@ -21152,7 +21152,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-breach.fort-v1.lod1.glb",
+     "file": "/fps/br/models/fort-wall-breach.fort-v2.lod1.glb",
      "tris": 298,
      "draws": 2,
      "textureMB": 0.5,
@@ -21164,7 +21164,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/fort-wall-breach.fort-v1.lod2.glb",
+     "file": "/fps/br/models/fort-wall-breach.fort-v2.lod2.glb",
      "tris": 12,
      "draws": 1,
      "textureMB": 0,
@@ -30700,14 +30700,14 @@
     5.8,
     24.2
    ],
-   "sourceTris": 810,
+   "sourceTris": 846,
    "lods": [
     {
-     "file": "/fps/br/models/office-roof-a.skyline-v3.lod0.glb",
-     "tris": 810,
+     "file": "/fps/br/models/office-roof-a.skyline-v4.lod0.glb",
+     "tris": 846,
      "draws": 2,
      "textureMB": 0,
-     "kB": 12,
+     "kB": 13,
      "size": [
       26,
       5.8,
@@ -30715,8 +30715,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-roof-a.skyline-v3.lod1.glb",
-     "tris": 492,
+     "file": "/fps/br/models/office-roof-a.skyline-v4.lod1.glb",
+     "tris": 528,
      "draws": 2,
      "textureMB": 0,
      "kB": 9,
@@ -30727,7 +30727,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-roof-a.skyline-v3.lod2.glb",
+     "file": "/fps/br/models/office-roof-a.skyline-v4.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -30754,14 +30754,14 @@
     3.8,
     24.2
    ],
-   "sourceTris": 822,
+   "sourceTris": 858,
    "lods": [
     {
-     "file": "/fps/br/models/office-roof-b.skyline-v3.lod0.glb",
-     "tris": 822,
+     "file": "/fps/br/models/office-roof-b.skyline-v4.lod0.glb",
+     "tris": 858,
      "draws": 2,
      "textureMB": 0,
-     "kB": 12,
+     "kB": 13,
      "size": [
       26,
       3.8,
@@ -30769,8 +30769,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-roof-b.skyline-v3.lod1.glb",
-     "tris": 504,
+     "file": "/fps/br/models/office-roof-b.skyline-v4.lod1.glb",
+     "tris": 540,
      "draws": 2,
      "textureMB": 0,
      "kB": 9,
@@ -30781,7 +30781,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/office-roof-b.skyline-v3.lod2.glb",
+     "file": "/fps/br/models/office-roof-b.skyline-v4.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -37290,7 +37290,7 @@
    "sourceTris": 2882,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-acropolis.ruins-v2.lod0.glb",
+     "file": "/fps/br/models/ruin-acropolis.ruins-v3.lod0.glb",
      "tris": 2882,
      "draws": 4,
      "textureMB": 4,
@@ -37302,7 +37302,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-acropolis.ruins-v2.lod1.glb",
+     "file": "/fps/br/models/ruin-acropolis.ruins-v3.lod1.glb",
      "tris": 460,
      "draws": 3,
      "textureMB": 0.75,
@@ -37314,7 +37314,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-acropolis.ruins-v2.lod2.glb",
+     "file": "/fps/br/models/ruin-acropolis.ruins-v3.lod2.glb",
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
@@ -37345,7 +37345,7 @@
    "sourceTris": 2254,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-arcade-a.ruins-v1.lod0.glb",
+     "file": "/fps/br/models/ruin-arcade-a.ruins-v3.lod0.glb",
      "tris": 2254,
      "draws": 4,
      "textureMB": 4,
@@ -37357,7 +37357,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-arcade-a.ruins-v1.lod1.glb",
+     "file": "/fps/br/models/ruin-arcade-a.ruins-v3.lod1.glb",
      "tris": 1734,
      "draws": 3,
      "textureMB": 0.75,
@@ -37369,7 +37369,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-arcade-a.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-arcade-a.ruins-v3.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
@@ -37455,7 +37455,7 @@
    "sourceTris": 1734,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-arcade-c.ruins-v1.lod0.glb",
+     "file": "/fps/br/models/ruin-arcade-c.ruins-v3.lod0.glb",
      "tris": 1734,
      "draws": 4,
      "textureMB": 4,
@@ -37467,7 +37467,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-arcade-c.ruins-v1.lod1.glb",
+     "file": "/fps/br/models/ruin-arcade-c.ruins-v3.lod1.glb",
      "tris": 1290,
      "draws": 3,
      "textureMB": 0.75,
@@ -37479,7 +37479,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-arcade-c.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-arcade-c.ruins-v3.lod2.glb",
      "tris": 24,
      "draws": 1,
      "textureMB": 0,
@@ -37565,7 +37565,7 @@
    "sourceTris": 734,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-ballcourt.ruins-v1.lod0.glb",
+     "file": "/fps/br/models/ruin-ballcourt.ruins-v3.lod0.glb",
      "tris": 734,
      "draws": 4,
      "textureMB": 4,
@@ -37577,7 +37577,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-ballcourt.ruins-v1.lod1.glb",
+     "file": "/fps/br/models/ruin-ballcourt.ruins-v3.lod1.glb",
      "tris": 734,
      "draws": 4,
      "textureMB": 1,
@@ -37589,7 +37589,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-ballcourt.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-ballcourt.ruins-v3.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -37620,7 +37620,7 @@
    "sourceTris": 14496,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-great-temple.ruins-v1.lod0.glb",
+     "file": "/fps/br/models/ruin-great-temple.ruins-v3.lod0.glb",
      "tris": 14496,
      "draws": 4,
      "textureMB": 4,
@@ -37632,7 +37632,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-great-temple.ruins-v1.lod1.glb",
+     "file": "/fps/br/models/ruin-great-temple.ruins-v3.lod1.glb",
      "tris": 3546,
      "draws": 4,
      "textureMB": 1,
@@ -37644,7 +37644,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-great-temple.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-great-temple.ruins-v3.lod2.glb",
      "tris": 636,
      "draws": 1,
      "textureMB": 0,
@@ -37785,7 +37785,7 @@
    "sourceTris": 2598,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-palace.ruins-v1.lod0.glb",
+     "file": "/fps/br/models/ruin-palace.ruins-v3.lod0.glb",
      "tris": 2598,
      "draws": 4,
      "textureMB": 4,
@@ -37797,7 +37797,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-palace.ruins-v1.lod1.glb",
+     "file": "/fps/br/models/ruin-palace.ruins-v3.lod1.glb",
      "tris": 622,
      "draws": 4,
      "textureMB": 1,
@@ -37809,7 +37809,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-palace.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-palace.ruins-v3.lod2.glb",
      "tris": 72,
      "draws": 1,
      "textureMB": 0,
@@ -37895,7 +37895,7 @@
    "sourceTris": 5854,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod0.glb",
+     "file": "/fps/br/models/ruin-pyramid.ruins-v3.lod0.glb",
      "tris": 5854,
      "draws": 4,
      "textureMB": 4,
@@ -37907,7 +37907,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod1.glb",
+     "file": "/fps/br/models/ruin-pyramid.ruins-v3.lod1.glb",
      "tris": 1242,
      "draws": 3,
      "textureMB": 0.75,
@@ -37919,7 +37919,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod2.glb",
+     "file": "/fps/br/models/ruin-pyramid.ruins-v3.lod2.glb",
      "tris": 168,
      "draws": 1,
      "textureMB": 0,
@@ -38060,7 +38060,7 @@
    "sourceTris": 1928,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-temple-a.ruins-v2.lod0.glb",
+     "file": "/fps/br/models/ruin-temple-a.ruins-v3.lod0.glb",
      "tris": 1928,
      "draws": 4,
      "textureMB": 4,
@@ -38072,7 +38072,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-a.ruins-v2.lod1.glb",
+     "file": "/fps/br/models/ruin-temple-a.ruins-v3.lod1.glb",
      "tris": 546,
      "draws": 3,
      "textureMB": 0.75,
@@ -38084,7 +38084,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-a.ruins-v2.lod2.glb",
+     "file": "/fps/br/models/ruin-temple-a.ruins-v3.lod2.glb",
      "tris": 120,
      "draws": 1,
      "textureMB": 0,
@@ -38115,7 +38115,7 @@
    "sourceTris": 1516,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-temple-b.ruins-v2.lod0.glb",
+     "file": "/fps/br/models/ruin-temple-b.ruins-v3.lod0.glb",
      "tris": 1516,
      "draws": 3,
      "textureMB": 3,
@@ -38127,7 +38127,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-b.ruins-v2.lod1.glb",
+     "file": "/fps/br/models/ruin-temple-b.ruins-v3.lod1.glb",
      "tris": 482,
      "draws": 2,
      "textureMB": 0.5,
@@ -38139,7 +38139,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-b.ruins-v2.lod2.glb",
+     "file": "/fps/br/models/ruin-temple-b.ruins-v3.lod2.glb",
      "tris": 84,
      "draws": 1,
      "textureMB": 0,
@@ -38170,7 +38170,7 @@
    "sourceTris": 1932,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-tower.ruins-v1.lod0.glb",
+     "file": "/fps/br/models/ruin-tower.ruins-v3.lod0.glb",
      "tris": 1932,
      "draws": 3,
      "textureMB": 3,
@@ -38182,7 +38182,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-tower.ruins-v1.lod1.glb",
+     "file": "/fps/br/models/ruin-tower.ruins-v3.lod1.glb",
      "tris": 154,
      "draws": 3,
      "textureMB": 0.75,
@@ -38194,7 +38194,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-tower.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-tower.ruins-v3.lod2.glb",
      "tris": 60,
      "draws": 1,
      "textureMB": 0,

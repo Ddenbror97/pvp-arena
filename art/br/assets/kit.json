@@ -805,7 +805,7 @@
       "id": "lot-lines",
       "procedural": "art/blender/br/build_lot.mjs",
       "class": "small",
-      "ring": "small",
+      "ring": "marking",
       "collision": "boxes",
       "use": "painted parking bays (Island Superstore lots)"
     },

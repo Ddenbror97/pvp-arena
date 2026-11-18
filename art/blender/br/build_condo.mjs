@@ -30,7 +30,7 @@ import { COLOURS as C, createKit, publish } from "./procedural-kit.mjs";
 // moved by the game, lift-renderer.ts), a 1.6 m landing door with pockets for its leaves, stair
 // flights with soffits, stringers and open railings.
 // skyline-v3 (2026-11-14): the storeys' ceilings open over the stair well.
-const TAG = "skyline-v3";
+const TAG = process.env.TAG ?? "skyline-v3";
 /**
  * STYLE=office | brick (owner, 2026-11-14: "downtown needs to be expanded … diffrent designs and
  * heights"): the same storeys (core, stair, lift, rooms) under another skin, published as
@@ -680,7 +680,15 @@ function lobbyModel() {
 function roofModel(variant) {
   const { k, wallX, wallZ } = kitFor();
   const y = FL;
-  slab(k, -X, X, -Z, Z + BAL, 0, FL, [STAIR_HOLE], K.stone, {});
+  // The shaft open through the roof's slab, as through every storey's (owner, 2026-11-18: "the
+  // elevator in the sky building have a issue with a double floor passing while arrived at the
+  // top floor or going down"): the slab filled the shaft, so the cab's floor met the roof's at
+  // the top stop and the cab went down through it. Its collision stays (the cab stands on it at
+  // the top).
+  slab(k, -X, X, -Z, Z + BAL, 0, FL, [STAIR_HOLE, SHAFT_HOLE], K.stone, {});
+  k.box([SHAFT_HOLE[0], FL - 0.3, SHAFT_HOLE[2], SHAFT_HOLE[1], FL, SHAFT_HOLE[3]], K.stone, {
+    visible: false,
+  });
   // The core's roof house: the stair arrives in it, the lift stops in it; door south.
   const hx0 = CORE.x0,
     hx1 = CORE.x1,

@@ -25,10 +25,11 @@ await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO()
   .registerExtensions(ALL_EXTENSIONS)
   .registerDependencies({ "meshopt.decoder": MeshoptDecoder, "meshopt.encoder": MeshoptEncoder });
-const TAG = "glass-v1";
+// TAG / MANIFESTS: a rebuilt model gets new files (the glass-v1 ones stay for older revisions).
+const TAG = process.env.TAG ?? "glass-v1";
 const dry = process.argv.includes("--dry");
 const dir = "public/fps/br/models";
-const MANIFESTS = ["models.locations-v1.json", "models.json"];
+const MANIFESTS = process.env.MANIFESTS?.split(",") ?? ["models.locations-v1.json", "models.json"];
 /** Same plane: within this along the normal (m; stored positions step about 1 mm here). */
 const PLANE = 0.004;
 

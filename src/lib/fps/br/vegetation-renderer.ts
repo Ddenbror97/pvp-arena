@@ -188,6 +188,9 @@ function instanceShader(
         uniform vec3 uTreeCamera;${farOut ? "\n        uniform vec2 uTreeFarOut;" : ""}
         // The share of the dither this form draws: [x, y) (fadeShare).
         flat varying vec2 vTreeFade;
+        // The tree's foot and this vertex in clip space: the dither is laid from the foot.
+        flat varying vec4 vTreeFoot;
+        varying vec4 vTreeHere;
         varying float vTreeTint;
         varying float vTreeH;
         varying vec3 vTreeHue;
@@ -220,12 +223,20 @@ function instanceShader(
         vTreeFade = vec2(${farOut ? "clamp((treeDistance - uTreeFarOut.x) / (uTreeFarOut.y - uTreeFarOut.x), 0.0, 1.0)" : band(fade.out, "0.0")}, ${band(fade.in, "1.0")});
         // Nothing of it to draw at this distance: no triangles either.
         if (vTreeFade.x >= vTreeFade.y) transformed = vec3(0.0);`,
+      )
+      .replace(
+        "#include <project_vertex>",
+        `#include <project_vertex>
+        vTreeFoot = projectionMatrix * modelViewMatrix * vec4(aTreeA.xyz, 1.0);
+        vTreeHere = gl_Position;`,
       );
     shader.fragmentShader = shader.fragmentShader
       .replace(
         "#include <common>",
         `#include <common>
         flat varying vec2 vTreeFade;
+        flat varying vec4 vTreeFoot;
+        varying vec4 vTreeHere;
         varying float vTreeTint;
         varying float vTreeH;
         varying vec3 vTreeHue;`,
@@ -234,8 +245,20 @@ function instanceShader(
         "#include <clipping_planes_fragment>",
         `#include <clipping_planes_fragment>
         {
-          // Interleaved gradient noise (Jimenez): an even, fine-grained 0..1 per pixel.
-          float treeDither = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
+          // Interleaved gradient noise (Jimenez): an even, fine-grained 0..1 per pixel, laid on
+          // the screen from the tree's own foot, so it travels with the tree. Laid on the
+          // screen's own pixels it stood still while the tree slid across it: in the bands where
+          // a tree is two forms at once, each pixel of the trunk switched between the model's
+          // bark and the impostor's as the tree moved over it, a sparkle up and down the trunks
+          // of every tree 45–54 and 110–132 m ahead while running (owner, 2026-11-18: "while
+          // running there is some render/flicker issue for all trees ahead at the root/stomme
+          // of the tree"). Both forms of a tree lay it from the same foot, so at every pixel
+          // still exactly one of them draws.
+          vec2 hereNdc = vTreeHere.xy / vTreeHere.w;
+          vec2 perPixel = vec2(dFdx(hereNdc.x), dFdy(hereNdc.y));
+          perPixel = mix(vec2(1e-6), perPixel, step(vec2(1e-6), abs(perPixel)));
+          vec2 fromFoot = (hereNdc - vTreeFoot.xy / vTreeFoot.w) / perPixel;
+          float treeDither = fract(52.9829189 * fract(dot(floor(fromFoot) + 0.5, vec2(0.06711056, 0.00583715))));
           if (treeDither < vTreeFade.x || treeDither >= vTreeFade.y) discard;
         }`,
       )
@@ -566,6 +589,10 @@ export function createVegetation(
       material = new THREE.MeshStandardMaterial({
         map: imp.texture,
         alphaTest: 0.45,
+        // The trunks are a few pixels wide out here: cut by the alpha test alone their edges
+        // stepped a pixel at a time as you ran, a shimmer up and down every trunk ahead (owner,
+        // 2026-11-18). Coverage from the alpha instead, as the near models' leaves have.
+        alphaToCoverage: true,
         side: THREE.DoubleSide,
         roughness: 0.95,
       });

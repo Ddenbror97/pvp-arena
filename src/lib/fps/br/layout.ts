@@ -11853,16 +11853,19 @@ function straitShores(out: Placement[], ctx: Context) {
   // little inland (boulders), and on a rising bank (rock faces and cliffs).
   // (Not the shore ledge: a 2 m thick shelf of rock that hung 3–4 m over the water and the
   // sand; rock-ground.ts would take most of them out.)
+  // (Not the "shore-ridge" scan either: a hollow shell open underneath, it read as a flat grey
+  // slab with a hole in it lying in the water (owner, 2026-11-18, beside the bridge to the
+  // Superstore: "some broken ux at the water beside the bridge").)
   const WATERLINE = [
     "shore-slab",
-    "shore-ridge",
-    "shore-ridge",
+    "rock-big-2",
+    "shore-slab",
     "shore-slab",
     "rock-big-2",
     "big-boulder",
     "shore-cliff-b",
   ] as const;
-  const SECOND = ["shore-slab", "big-boulder", "shore-ridge", "rock-tall", "rock-big-2"] as const;
+  const SECOND = ["shore-slab", "big-boulder", "big-boulder", "rock-tall", "rock-big-2"] as const;
   const INLAND = ["rock-cluster", "rock-mid-1", "rock-big-1", "shore-slab", "rock-grey"] as const;
   const BANK = [
     "shore-cliff-a",

@@ -42,6 +42,11 @@ export type ModelManifest = {
 /** Distance (m) up to which each LOD is used, per class; beyond the last, not drawn. */
 export const RINGS: Record<string, [number, number, number]> = {
   small: [50, 180, 1000],
+  // Paint on the ground (the car parks' and aprons' bay lines, 12–16 cm wide). Past ~70 m a line
+  // is under a pixel wide, and seen along the ground under a tenth of one: drawn there it broke
+  // up and crawled as the camera moved (owner, 2026-11-18: "the white lines of the airfields
+  // asfalt … still render/flicker"). Near only.
+  marking: [40, 70, 70],
   // Clutter that neither hides nor stops a player (cones, bin bags, trolleys): near only, and
   // never the untextured far LOD (each LOD level drawn costs a draw call per model).
   detail: [25, 150, 150],
@@ -131,6 +136,7 @@ const FIXED_RINGS = new Set([
   "fitout",
   "furniture",
   "small",
+  "marking",
   "prop",
   "vehicle",
   "rock",

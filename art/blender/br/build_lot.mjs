@@ -36,7 +36,7 @@ await publish("lot-lines", lines, linesFar, {
   source: "art/blender/br/build_lot.mjs",
   use: "painted parking bays on the superstore lots",
   class: "small",
-  ring: "small",
+  ring: "marking",
   size: [BAYS * W, 0.05, 2 * L],
 });
 
