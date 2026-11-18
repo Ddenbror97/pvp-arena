@@ -12,6 +12,14 @@
  *  - "solid": one box around the whole model (crates, containers, barriers: hard cover);
  *  - "none": no collision (trolleys, parachutes);
  *  - "boxes": authored boxes from art/br/procedural/<id>.boxes.json (procedural models).
+ *  - "core": one box round the part above `coreAbove` m (default 0.15): a stump's moss patch or
+ *    a rock's gravel skirt lies flat on the ground and is walked over, not a 0.4 m kerb round it;
+ *  - "mound": a low rock in tiers of at most 0.3 m (each inset a little), so it is stepped over
+ *    on foot rather than met as a wall at the shin;
+ *  - "columns": the voxels as columns standing on the ground (none under an overhang, nothing
+ *    above `capHeight`, default 2.2 m): a fallen jungle log's branches and roots, voxelised, left
+ *    pockets and ledges a player stuck in (owner, 2026-11-18: "some bushes cant be walked over
+ *    character get stucks"); as columns it is one solid mass to walk round or jump on.
  * Writes public/fps/br/models/collision.json: { voxel, models: { id: [[x0,y0,z0,x1,y1,z1], …] } }.
  */
 import fs from "node:fs";
@@ -174,6 +182,90 @@ export async function buildCollision(only = process.env.ONLY?.split(",").filter(
       continue;
     }
     const tris = await triangles(modelFile(m.lods[0].file));
+    if (mode === "core" || mode === "mound") {
+      const min = [Infinity, Infinity, Infinity],
+        max = [-Infinity, -Infinity, -Infinity];
+      const floor = mode === "core" ? (a.coreAbove ?? 0.15) : -Infinity;
+      for (const t of tris)
+        for (const p of t)
+          if (p[1] >= floor)
+            for (let k = 0; k < 3; k++) {
+              min[k] = Math.min(min[k], p[k]);
+              max[k] = Math.max(max[k], p[k]);
+            }
+      min[1] = Math.max(0, Math.min(min[1], 0));
+      const tiers = mode === "mound" ? Math.max(1, Math.ceil(max[1] / 0.3)) : 1;
+      out.models[a.id] = [];
+      for (let i = 0; i < tiers; i++) {
+        // Each tier 0.3 m (or less) over the one below, inset a sixth of the way to the middle.
+        const f = (i * 0.5) / tiers;
+        const top = (max[1] * (i + 1)) / tiers;
+        const box = [
+          min[0] + ((max[0] - min[0]) * f) / 2,
+          0,
+          min[2] + ((max[2] - min[2]) * f) / 2,
+          max[0] - ((max[0] - min[0]) * f) / 2,
+          top,
+          max[2] - ((max[2] - min[2]) * f) / 2,
+        ];
+        out.models[a.id].push(box.map((v) => +v.toFixed(3)));
+      }
+      console.log(`${a.id.padEnd(18)} ${mode.padEnd(6)} ${out.models[a.id].length} boxes`);
+      continue;
+    }
+    if (mode === "columns") {
+      const size = a.voxel ?? VOXEL,
+        cap = a.capHeight ?? 2.2;
+      const cells = new Map();
+      for (const b of voxelBoxes(tris, undefined, size))
+        for (let x = b[0]; x < b[3] - 1e-6; x += size)
+          for (let z = b[2]; z < b[5] - 1e-6; z += size) {
+            const key = `${Math.round(x / size)},${Math.round(z / size)}`;
+            const c = cells.get(key) ?? {
+              x,
+              z,
+              x1: Math.min(x + size, b[3]),
+              z1: Math.min(z + size, b[5]),
+              spans: [],
+            };
+            c.spans.push([b[1], b[4]]);
+            cells.set(key, c);
+          }
+      const cols = [];
+      for (const c of cells.values()) {
+        c.spans.sort((p, q) => p[0] - q[0]);
+        // Standing on the ground (within a voxel and a half): solid from the ground to its
+        // highest voxel under the cap (a log's mesh is a hollow shell; filled, it is one mass).
+        if (c.spans[0][0] > size * 1.5) continue;
+        const top = Math.max(...c.spans.map(([, y1]) => y1));
+        cols.push([
+          +c.x.toFixed(3),
+          0,
+          +c.z.toFixed(3),
+          +c.x1.toFixed(3),
+          +Math.min(top, cap).toFixed(3),
+          +c.z1.toFixed(3),
+        ]);
+      }
+      // Merge runs along x of columns with the same top.
+      cols.sort((p, q) => p[2] - q[2] || p[4] - q[4] || p[0] - q[0]);
+      const merged = [];
+      for (const b of cols) {
+        const last = merged[merged.length - 1];
+        if (
+          last &&
+          last[2] === b[2] &&
+          last[5] === b[5] &&
+          last[4] === b[4] &&
+          Math.abs(last[3] - b[0]) < 1e-3
+        )
+          last[3] = b[3];
+        else merged.push([...b]);
+      }
+      out.models[a.id] = merged.filter((b) => b[4] > 0.35);
+      console.log(`${a.id.padEnd(18)} ${mode.padEnd(6)} ${out.models[a.id].length} boxes`);
+      continue;
+    }
     if (mode === "solid") {
       const min = [Infinity, Infinity, Infinity],
         max = [-Infinity, -Infinity, -Infinity];
