@@ -126,6 +126,69 @@ describe("BR aircraft on the client", () => {
     expect(attitude(a).pitch).toBeGreaterThan((-3 * Math.PI) / 180);
   });
 
+  it.each([-1, 1])(
+    "steers with a mouse drag (%s), then levels the wings on release",
+    (direction) => {
+      const a = newAircraft(0, 0, env.ground, 0, 0);
+      Object.assign(a, {
+        y: 300,
+        vz: -40,
+        grounded: false,
+        engine: "running",
+        rpm: 1,
+        throttle: 1,
+      });
+      const c = new AircraftClient();
+      c.apply(aircraftRow(a), 0, 0);
+      c.holdPitch(true);
+      c.mouse(direction * 80, 0, 0.5);
+      const keys = {
+        throttleUp: false,
+        throttleDown: false,
+        rollLeft: false,
+        rollRight: false,
+        rudderLeft: false,
+        rudderRight: false,
+        brake: false,
+      };
+      for (let i = 0; i < 90; i++) {
+        c.apply(aircraftRow(a), 0, i * TICK);
+        const wire = c.steer(keys, TICK / 1000);
+        stepAircraft(env.world, env.meta, a, flightOf(wire, a), i * TICK, TICK);
+      }
+      expect(attitude(a).bank * direction).toBeGreaterThan((10 * Math.PI) / 180);
+      expect(attitude(a).heading * direction).toBeLessThan(0);
+      c.holdPitch(false);
+      for (let i = 90; i < 240; i++) {
+        c.apply(aircraftRow(a), 0, i * TICK);
+        const wire = c.steer(keys, TICK / 1000);
+        stepAircraft(env.world, env.meta, a, flightOf(wire, a), i * TICK, TICK);
+      }
+      expect(Math.abs(attitude(a).bank)).toBeLessThan((3 * Math.PI) / 180);
+    },
+  );
+
+  it("uses mouse steering on the ground without rolling a wing into the runway", () => {
+    const c = new AircraftClient();
+    c.apply(aircraftRow(rolling()), 0, 0);
+    c.holdPitch(true);
+    c.mouse(80, 0, 0.5);
+    const wire = c.steer(
+      {
+        throttleUp: false,
+        throttleDown: false,
+        rollLeft: false,
+        rollRight: false,
+        rudderLeft: false,
+        rudderRight: false,
+        brake: false,
+      },
+      0.1,
+    );
+    expect(wire.rud).toBeGreaterThan(0);
+    expect(wire.ail).toBe(0);
+  });
+
   it("says what E does from the seat, finds the door on foot", () => {
     const a = newAircraft(0, 0, 10, 0, 0);
     expect(flightHud(env.world, a, 0, 0).exit).toBe("ground");
@@ -145,7 +208,7 @@ describe("BR aircraft on the client", () => {
     expect(boardable(parked, 1.5, 10, 0)).toBe("full");
   });
 
-  it("holds a mouse-selected climb, centres on release and isolates passenger/free look", () => {
+  it("holds a mouse-selected climb, eases on release and isolates passenger/free look", () => {
     const c = new AircraftClient();
     const a = rolling();
     a.grounded = false;
@@ -166,7 +229,7 @@ describe("BR aircraft on the client", () => {
     expect(initial).toBeGreaterThan(0.4);
     for (let i = 0; i < 90; i++) expect(c.steer(keys, 1 / 30).elev).toBe(initial);
     c.holdPitch(false);
-    expect(c.steer(keys, 1 / 30).elev).toBe(0);
+    expect(Math.abs(c.steer(keys, 1 / 30).elev)).toBeLessThan(initial);
     c.holdPitch(true);
     c.mouse(0, -100, 0.5);
     c.look.held = true;
