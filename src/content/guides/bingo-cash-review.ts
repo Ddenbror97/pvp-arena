@@ -78,7 +78,7 @@ Roulette is a 33-slot wheel: 16 Purple and 16 Silver pay 2x, and 1 Green pays 14
 
 P2P Slott takes 10% of the pot when you win, and a bomb means the house keeps both stakes. That is a third game with a harsher bad outcome. It is mentioned so a “player versus player” label is not assumed to mean one fee.
 
-The [skill wagers topic](/guides/topics/skill-wagers) is the cluster for cash contests of this family. The same app group holds [Solitaire Cash](/guides/solitaire-cash-review), [Papaya Games](/guides/papaya-games-review), and [Solitaire Clash](/guides/solitaire-clash-review). Bingo Cash lives there as a room with a rake, beside other ways of reading a prize list.`,
+The [skill wagers topic](/guides/topics/skill-wagers) is the cluster for cash contests of this family. The same app group holds [Papaya Games](/guides/papaya-games-review) and [Solitaire Clash](/guides/solitaire-clash-review). Bingo Cash lives there as a room with a rake, beside other ways of reading a prize list.`,
     },
     {
       id: "hall-versus-app",
@@ -157,7 +157,6 @@ Real money bingo against players pays the places on the list when the cashier wo
     { label: "Wikipedia: Bingo", url: "https://en.wikipedia.org/wiki/Bingo" },
   ],
   related: [
-    "solitaire-cash-review",
     "papaya-games-review",
     "solitaire-clash-review",
     "skillz-review",

@@ -30,7 +30,7 @@ export const guide: Guide = {
       title: "What the public ACR Poker site is claiming",
       body: `ACR Poker, also called America's Cardroom, uses acrpoker.eu to sell crypto online poker: play, tournaments, a download, and language about payouts. That is a room-shaped product. You are meant to deposit with the operator, sit with other players, and withdraw through a cashier the operator runs. It is not the same shape as a private club where a person in chat holds the chips.
 
-This [poker](/guides/topics/poker) page is for adults 18 or older. Other room pages are the [ClubGG review](/guides/clubgg-review), the [PokerBros review](/guides/pokerbros-review), and [real money poker apps](/guides/real-money-poker-apps). It is not legal advice. Whether ACR will accept you depends on its terms and on the law where you live. This review will not list allowed countries. A geo-block, a checkbox, or a refused cashier is the live answer. A paragraph here would be stale the week the terms change.
+This [poker](/guides/topics/poker) page is for adults 18 or older. Other poker apps are compared in [real money poker apps](/guides/real-money-poker-apps). It is not legal advice. Whether ACR will accept you depends on its terms and on the law where you live. This review will not list allowed countries. A geo-block, a checkbox, or a refused cashier is the live answer. A paragraph here would be stale the week the terms change.
 
 Ignore decorative totals on a marketing page. When the same large dollar figure is reused as if it were guarantees, players online, and monthly payouts, it is not a statistic you can take to the bank. Open the software. The lobby is the traffic document. The cashier is the money document. The promotion tab is the rakeback document, and only if it shows a formula.
 
@@ -166,6 +166,6 @@ Play only if those three documents are acceptable on the day you deposit. If one
     { label: "ACR Poker — official site", url: "https://www.acrpoker.eu/" },
     { label: "Wikipedia — Online poker", url: "https://en.wikipedia.org/wiki/Online_poker" },
   ],
-  related: ["clubgg-review", "pokerbros-review", "real-money-poker-apps", "crypto-poker"],
+  related: ["real-money-poker-apps", "crypto-poker"],
   updated: "2026-10-21",
 };

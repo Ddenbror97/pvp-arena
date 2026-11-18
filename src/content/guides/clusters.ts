@@ -247,22 +247,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Operator terms and comparisons",
-      slugs: [
-        "stake-vs-roobet",
-        "gamdom-alternatives",
-        "duelbits-alternatives",
-        "stake-originals-games",
-
-        "vavada-review",
-        "metawin-review",
-
-        "cloudbet-review",
-        "betfury-review",
-
-        "flush-casino-review",
-
-        "bitcasino-io-review",
-      ],
+      slugs: ["stake-originals-games", "vavada-review", "betfury-review", "bitcasino-io-review"],
     },
     {
       name: "Licenses and trust",
@@ -893,8 +878,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       name: "Rooms and apps",
       slugs: [
         "crypto-poker",
-        "clubgg-review",
-        "pokerbros-review",
 
         "acr-poker-review",
         "real-money-poker-apps",
@@ -941,7 +924,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "esports-odds-explained",
         "esports-sportsbook",
         "live-esports-betting",
-        "thunderpick-review",
       ],
     },
     {
@@ -1017,13 +999,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Cash-game apps",
       slugs: [
-        "solitaire-cash-review",
         "bingo-cash-review",
         "solitaire-clash-review",
         "papaya-games-review",
         "avia-games-review",
-        "blitz-win-cash-review",
-        "pocket7games-review",
       ],
     },
     {
@@ -1035,10 +1014,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "gin-rummy-for-money",
         "trivia-for-money",
       ],
-    },
-    {
-      name: "Skill cashiers",
-      slugs: ["worldwinner-review"],
     },
     {
       name: "Rewards apps",
@@ -1185,10 +1160,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "betting-exchange-explained",
         "matched-betting",
         "no-kyc-sportsbook",
-
-        "betonline-review",
-
-        "bovada-review",
       ],
     },
     {
@@ -1197,14 +1168,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Exchanges",
-      slugs: [
-        "novig-review",
-
-        "sporttrade-review",
-        "novig-vs-prophetx",
-        "smarkets-review",
-        "betdex-review",
-      ],
+      slugs: ["novig-review", "betdex-review"],
     },
     {
       name: "Fantasy and friend bets",
@@ -1762,9 +1726,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Pick'em and fantasy",
       slugs: [
-        "dabble-review",
-        "betr-picks-review",
-        "sleeper-picks-review",
         "prizepicks-promo-code",
         "how-does-prizepicks-work",
         "underdog-fantasy-review",
@@ -1778,7 +1739,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "polymarket-vs-kalshi",
         "polymarket-alternatives",
         "crypto-prediction-markets",
-        "kalshi-review",
         "is-kalshi-gambling",
         "how-does-polymarket-work",
         "election-betting-odds",

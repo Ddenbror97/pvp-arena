@@ -23,7 +23,7 @@ export const guide: Guide = {
     {
       id: "what-this-review-is",
       title: "What this novig review will and will not claim",
-      body: "A novig review has one job: explain how a peer sports price is built, how to read the cost, and how that object differs from a bookmaker's line and from a shared pot. It is not a coupon, a download pitch, or a map of where the app is legal. Novig's own about page describes a market aimed at traders and says the platform tries to show odds and limits in the open. That sentence is a company's description of itself. It is not a measurement of today's spread, and it is not a license opinion.\n\nThe ordinary ticket is explained in [what sports betting is](/guides/what-is-sports-betting), and the matching model is in [how a betting exchange matches people](/guides/betting-exchange-explained). Novig belongs in that family only when the screen matches you with another participant. This page does not list promo codes.\n\nFor the difference between a resting offer and a completed trade, start with [betting exchanges](/guides/betting-exchange-explained). The [sports betting guides](/guides/topics/sports-betting) separate exchange prices from bookmaker odds.\n\nFor a ticket-by-ticket comparison of headline prices, separate charges and order size, read [Novig versus ProphetX](/guides/novig-vs-prophetx). A lower displayed price alone does not establish the cheaper completed trade.",
+      body: "A novig review has one job: explain how a peer sports price is built, how to read the cost, and how that object differs from a bookmaker's line and from a shared pot. It is not a coupon, a download pitch, or a map of where the app is legal. Novig's own about page describes a market aimed at traders and says the platform tries to show odds and limits in the open. That sentence is a company's description of itself. It is not a measurement of today's spread, and it is not a license opinion.\n\nThe ordinary ticket is explained in [what sports betting is](/guides/what-is-sports-betting), and the matching model is in [how a betting exchange matches people](/guides/betting-exchange-explained). Novig belongs in that family only when the screen matches you with another participant. This page does not list promo codes.\n\nFor the difference between a resting offer and a completed trade, start with [betting exchanges](/guides/betting-exchange-explained). The [sports betting guides](/guides/topics/sports-betting) separate exchange prices from bookmaker odds.\n\nA lower displayed price alone does not establish the cheaper completed trade.",
     },
     {
       id: "no-vig-price",
@@ -92,6 +92,6 @@ export const guide: Guide = {
       url: "https://en.wikipedia.org/wiki/Betting_exchange",
     },
   ],
-  related: ["sporttrade-review", "novig-vs-prophetx", "betting-exchange-explained"],
+  related: ["betting-exchange-explained"],
   updated: "2026-11-15",
 };

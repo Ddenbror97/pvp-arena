@@ -13,6 +13,7 @@ import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { GUIDES, getGuide } from "../src/content/guides";
 import { CLUSTERS, CLUSTER_GROUPS, MIN_TOPIC_GUIDES } from "../src/content/guides/clusters";
 import type { Guide, GuideCluster } from "../src/content/guides/types";
+import { GONE_GUIDES, MOVED_GUIDES } from "../src/lib/guides/retired";
 import { GUIDE_SITE_PATHS } from "../src/lib/guides/site-links";
 
 type Issue = { kind: string; slug?: string; detail: string };
@@ -28,10 +29,16 @@ const published = new Set(
 );
 
 // ---------------------------------------------------------------- redirects and sign-in pages
-const server = readFileSync("src/server.ts", "utf8");
 const MOVED = new Map(
-  [...server.matchAll(/"(\/guides\/[^"]+)":\s*"(\/guides\/[^"]+)"/g)].map((m) => [m[1]!, m[2]!]),
+  Object.entries(MOVED_GUIDES).map(([from, to]) => [`/guides/${from}`, `/guides/${to}`]),
 );
+for (const [from, to] of MOVED) {
+  if (bySlug.has(from.slice(8))) add("retired", `${from} is published and also redirected`);
+  if (!bySlug.has(to.slice(8)))
+    add("retired", `${from} redirects to ${to}, which is not published`);
+}
+for (const s of GONE_GUIDES)
+  if (bySlug.has(s)) add("retired", `/guides/${s} is published and also 410`);
 const AUTH_ONLY = new Set(
   readdirSync("src/routes/_authenticated")
     .filter((f) => f.endsWith(".tsx") && f !== "route.tsx")
@@ -67,6 +74,7 @@ function checkLink(raw: string): string | null {
   if (/[A-Z]/.test(path)) return "upper case";
   if (path.includes("//")) return "double slash";
   if (MOVED.has(path)) return `moved: 301 to ${MOVED.get(path)}`;
+  if (path.startsWith("/guides/") && GONE_GUIDES.has(path.slice(8))) return "removed: 410";
   if (path.startsWith("/guides/topics/")) {
     const t = path.slice("/guides/topics/".length);
     return published.has(t) ? null : `topic ${t} not published (404)`;
@@ -275,6 +283,8 @@ writeFileSync(
   ".wrangler/guide-audit/report.json",
   JSON.stringify({ guides: GUIDES.length, topics: [...published], issues, slugWords }, null, 1),
 );
-console.log(`${GUIDES.length} guides, ${published.size} topic pages, ${MOVED.size} moved slugs`);
+console.log(
+  `${GUIDES.length} guides, ${published.size} topic pages, ${MOVED.size} moved and ${GONE_GUIDES.size} removed slugs`,
+);
 for (const [k, n] of byKind) console.log(`  ${k}: ${n}`);
 void getGuide;

@@ -2019,14 +2019,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     23,
     "Prediction markets",
     "Event contracts",
-    "kalshi-review",
-    "kalshi review",
-    "Fees and markets. polymarket-vs-kalshi keeps the comparison.",
-  ),
-  p(
-    23,
-    "Prediction markets",
-    "Event contracts",
     "is-kalshi-gambling",
     "is kalshi gambling",
     "Named-venue legal frame. prediction-market-legal-us stays general.",
@@ -2310,23 +2302,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
   p(
     25,
     "Sports betting",
-    "Exchanges",
-    "sporttrade-review",
-    "sporttrade",
-    "Sporttrade review of sports results traded like shares: read the fee on the ticket, and treat state access as whatever the screen allows.",
-  ),
-  p(
-    25,
-    "Sports betting",
-    "Exchanges",
-    "novig-vs-prophetx",
-    "novig vs prophetx",
-    "Novig vs ProphetX, with Sporttrade beside them: fees stay on the confirm screen, and states are each app's own answer today.",
-  ),
-
-  p(
-    25,
-    "Sports betting",
     "Fantasy and friend bets",
     "splash-sports-review",
     "splash sports",
@@ -2416,14 +2391,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     25,
     "Skill wagers",
     "Cash-game apps",
-    "solitaire-cash-review",
-    "solitaire cash",
-    "Is Solitaire Cash legit, and does it pay? A review of the cashier, the rake on the entry, and whether the field is who you think.",
-  ),
-  p(
-    25,
-    "Skill wagers",
-    "Cash-game apps",
     "bingo-cash-review",
     "bingo cash",
     "Bingo Cash review: real-money bingo against other players, how the prize comes from entries, and the three questions that decide if it is legit.",
@@ -2451,22 +2418,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "avia-games-review",
     "avia games",
     "Avia Games review of Solitaire Clash and Bingo Tour: cash matches, historical playthroughs, fees to read on the entry, and bot questions before you deposit.",
-  ),
-  p(
-    25,
-    "Skill wagers",
-    "Cash-game apps",
-    "blitz-win-cash-review",
-    "blitz win cash",
-    "Is Blitz Win Cash real payouts or hype? How cash games, bonus cash, fees, matchmaking, and withdrawals work before you fund the app.",
-  ),
-  p(
-    25,
-    "Skill wagers",
-    "Cash-game apps",
-    "pocket7games-review",
-    "pocket7games",
-    "Pocket7Games review of fees, withdrawals, and legitimacy: one wallet, many skill matches, and what to read before a cash entry.",
   ),
   p(
     25,
@@ -2507,22 +2458,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "trivia-for-money",
     "trivia for money",
     "Trivia for money apps that pay you to beat other players: entries, speed, ties, fees, and how a head-to-head pot differs from a survey.",
-  ),
-  p(
-    25,
-    "Poker",
-    "Rooms and apps",
-    "clubgg-review",
-    "clubgg",
-    "ClubGG review of private poker clubs: chip ledgers, host cash-outs, and what to read before you treat a balance as money you can spend.",
-  ),
-  p(
-    25,
-    "Poker",
-    "Rooms and apps",
-    "pokerbros-review",
-    "pokerbros",
-    "PokerBros review of clubs and agents: who may hold your chips, what cash-out safety can mean, and which screen to read before you pay.",
   ),
   p(
     25,
@@ -2837,15 +2772,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "swagbucks-games",
     "swagbucks games",
     "Swagbucks games sit in a points lobby. The points-per-dollar rate belongs on the redemption page, so none is printed here. No game is crowned the top payer.",
-  ),
-
-  p(
-    27,
-    "Skill wagers",
-    "Cash-game apps",
-    "worldwinner-review",
-    "worldwinner",
-    "WorldWinner is a skill-tournament brand. The fee per game is not published here. A 16-player suppose is only a suppose. Our Jackpot example uses a $52 pot.",
   ),
 
   p(
@@ -3444,14 +3370,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
   ),
   p(
     29,
-    "Esports betting",
-    "How to bet",
-    "thunderpick-review",
-    "thunderpick",
-    "thunderpick is a wave-2 page with its own primary keyword. Unpublished brand fees, RTPs, promo codes, and statute numbers stay off the page.",
-  ),
-  p(
-    29,
     "Casino knowledge",
     "Famous gamblers",
     "tom-dwan",
@@ -3517,39 +3435,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "prizepicks promo code",
     "Signup-string page only. how-does-prizepicks-work keeps the keyword prizepicks.",
   ),
-
-  p(
-    30,
-    "Sports betting",
-    "Pick'em apps",
-    "sleeper-picks-review",
-    "sleeper picks",
-    "Player-pool review from Sleeper help. prizepicks, underdog fantasy, and dfs strategy stay on their own pages.",
-  ),
-  p(
-    30,
-    "Sports betting",
-    "Pick'em apps",
-    "betr-picks-review",
-    "betr picks",
-    "Flex and no-sweat review from Betr help. Does not replace the PrizePicks explainer.",
-  ),
-  p(
-    30,
-    "Foundations",
-    "Crypto casinos",
-    "metawin-review",
-    "metawin",
-    "January 2026 terms plus two live registers and a revoked Curaçao certificate. curacao-gambling-license keeps the explainer.",
-  ),
-  p(
-    30,
-    "Sports betting",
-    "Pick'em apps",
-    "dabble-review",
-    "dabble",
-    "US pick'em rules v1.29. prizepicks and parlay betting explained stay on their own pages.",
-  ),
   p(
     30,
     "Poker",
@@ -3557,14 +3442,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "poker-solver",
     "poker solver",
     "What a solver prints. gto-poker-strategy keeps that keyword. No licence keys or cracked software.",
-  ),
-  p(
-    30,
-    "Sports betting",
-    "Exchanges",
-    "smarkets-review",
-    "smarkets",
-    "Commission and lay review from Smarkets help. betting-exchange-explained keeps the explainer.",
   ),
   p(
     30,
@@ -3655,15 +3532,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "hustler casino live",
     "Streamed cash game. Rake, buy-in, and biggest pot stay unpublished.",
   ),
-
-  p(
-    30,
-    "Foundations",
-    "Operator comparisons",
-    "cloudbet-review",
-    "cloudbet",
-    "Homepage clock versus the terms. Public bonus code stays unpublished. Handling can reach 5%.",
-  ),
   p(
     30,
     "Foundations",
@@ -3689,24 +3557,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "fliff-review",
     "fliff",
     "Promo page printed FLIFFBONUS. Not a state-licensed sportsbook.",
-  ),
-
-  p(
-    30,
-    "Sports betting",
-    "Books and exchanges",
-    "betonline-review",
-    "betonline",
-    "help.betonline.ag. Licence number and welcome percent stay unpublished. Not SportsBetting.ag.",
-  ),
-
-  p(
-    30,
-    "Sports betting",
-    "Books and exchanges",
-    "bovada-review",
-    "bovada review",
-    "bovada.lv pages. No licence number and no US state licence.",
   ),
 
   p(
@@ -3782,14 +3632,6 @@ export const NEW_GUIDES: PlannedGuide[] = [
     "csgo-trade-bot",
     "csgo trade bot",
     "Valve 2015 trading post. Not a how-to. Skin cashout stays a different page.",
-  ),
-  p(
-    30,
-    "Foundations",
-    "Operator comparisons",
-    "flush-casino-review",
-    "flush casino",
-    "Anjouan ALSI-202509008-FI1. Welcome chip 30x or 35x. Terms URL body not published.",
   ),
   p(
     30,

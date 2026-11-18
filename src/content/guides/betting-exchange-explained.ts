@@ -120,9 +120,7 @@ Date the betting exchange explained note on the same line as the stake and the l
 
 Prefer one small betting exchange explained test over many open tabs. Stake the cashier's minimum, on the asset and network it names, and withdraw a fraction before you add funds. Record the time and the id. Answer an identity question or leave. A betting exchange explained path that skips the question is a different product, and not a better one.
 
-Play only the games this site actually offers after you close the tab. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars, adults 18+ only. Another betting exchange explained account is not a reset of the last one.
-
-One exchange prints 2% of net market winnings, and a lay can risk more than the win. That help-center read is [the commission and lay pages](/guides/smarkets-review).`,
+Play only the games this site actually offers after you close the tab. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker settle in US dollars, adults 18+ only. Another betting exchange explained account is not a reset of the last one.`,
     },
   ],
   faqs: [

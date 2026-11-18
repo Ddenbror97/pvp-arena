@@ -73,8 +73,6 @@ describe("critical guide quality", () => {
     for (const slug of [
       "online-gambling-legal-kentucky",
       "online-gambling-legal-south-carolina",
-      "thunderpick-review",
-      "worldwinner-review",
       "how-to-withdraw-from-metamask",
       "metamask-swap-fees",
       "how-to-send-crypto",

@@ -84,7 +84,7 @@ Rating pools do the same quiet thing without any recording. Beat weak scores and
 
 [8 ball pool for money](/guides/8-ball-pool-for-money) meets the same matcher problem on a table. The rest of that table’s pages sit under [8 ball pool online](/guides/8-ball-pool-hub). [Play chess for money](/guides/play-chess-for-money) meets it with ratings that are at least public in serious pools. Solitaire apps are often less transparent than a chess rating. Pay less where you can see less.
 
-The [skill wagers topic](/guides/topics/skill-wagers) gathers those comparisons. Other stake pages are [spades for money](/guides/spades-for-money), [gin rummy for money](/guides/gin-rummy-for-money), and [trivia for money](/guides/trivia-for-money). The brand page is the [Solitaire Cash review](/guides/solitaire-cash-review). It will not log into your match and name the opponent.`,
+The [skill wagers topic](/guides/topics/skill-wagers) gathers those comparisons. Other stake pages are [spades for money](/guides/spades-for-money), [gin rummy for money](/guides/gin-rummy-for-money), and [trivia for money](/guides/trivia-for-money). The publisher page is the [Papaya Games review](/guides/papaya-games-review). It will not log into your match and name the opponent.`,
     },
     {
       id: "versus-pvp",
@@ -158,6 +158,6 @@ Keep the cards if you like the cards. Pay the gap with money that can go to zero
     },
     { label: "Game of skill (Wikipedia)", url: "https://en.wikipedia.org/wiki/Game_of_skill" },
   ],
-  related: ["spades-for-money", "gin-rummy-for-money", "trivia-for-money", "solitaire-cash-review"],
+  related: ["spades-for-money", "gin-rummy-for-money", "trivia-for-money"],
   updated: "2026-10-07",
 };

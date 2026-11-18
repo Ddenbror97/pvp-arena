@@ -128,8 +128,6 @@ One clean peer to peer sports betting test beats a pile of tabs. Use the smalles
 
 Close the tab when peer to peer sports betting is not on offer here. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars for adults 18 and older. A second profile does not make the earlier limit disappear.
 
-A named exchange still charges commission on the winner and can leave a lay unmatched. The dated note is [that 2% commission page](/guides/smarkets-review).
-
 A workplace sheet is a peer contest with no book. [The fee the group writes down](/guides/pick-em-pool) is the only cut that page will name.`,
     },
   ],

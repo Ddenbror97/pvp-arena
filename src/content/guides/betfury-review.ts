@@ -73,7 +73,7 @@ The withdrawal fee can change at any time without notice. The amount of the fee 
 
 You withdraw to the same wallet and the same network you used to deposit. A different destination can freeze the cash-out for extra checks.
 
-[Why a crypto cash-out stalls](/guides/crypto-casino-withdrawals) matches that wrong-chain line. [Halcyon's two-minute homepage claim](/guides/cloudbet-review) is a different operator and a different sentence.`,
+[Why a crypto cash-out stalls](/guides/crypto-casino-withdrawals) matches that wrong-chain line.`,
     },
     {
       id: "same",
@@ -211,7 +211,6 @@ We did not time a cash-out. BetFury is the wrong room if you need the bonus and 
     },
   ],
   related: [
-    "cloudbet-review",
 
     "what-is-a-crypto-casino",
     "crypto-casino-withdrawals",
