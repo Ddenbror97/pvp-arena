@@ -1,9 +1,9 @@
 import { STRIKE_SHOWCASE } from "@/lib/fps/showcase";
 import { indexableHead } from "./indexable-head";
 
-export const FPS_LOBBY_TITLE = "FPS Duel: 1v1, 5v5 & Battle Royale | PVPspinArena";
+export const FPS_LOBBY_TITLE = "Free Browser FPS Game – 1v1, 5v5 & Battle Royale | PvPStrike";
 export const FPS_LOBBY_DESCRIPTION =
-  "Play PvPStrike browser FPS: 1v1 duels, 5v5 Bomb Defusal and Project Island Battle Royale. Practise free or enter cash 1v1 duels. No download needed.";
+  "Play PvPStrike, a free browser FPS featuring an action-packed Battle Royale with a massive island, plus 1v1 duels and 5v5 Bomb Defusal. No download needed.";
 
 /** Complete metadata for the sole public FPS lobby at /. */
 export function fpsLobbyHead() {
