@@ -677,7 +677,7 @@ const LOBBY_TIPS = [
 ];
 
 /**
- * The warm-up bar before take-off (owner, 2026-11-04): solo matches start a one-minute
+ * The warm-up bar before take-off (owner, 2026-11-18): solo matches start a two-minute
  * countdown when the first real player joins; players warm up on the airfield, and bots take
  * every seat left, so a match can be one player and 99 bots.
  */

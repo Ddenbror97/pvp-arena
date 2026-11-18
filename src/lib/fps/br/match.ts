@@ -136,10 +136,10 @@ const wornLevel = (id: ItemId | null | undefined) =>
 export const BR_RULES = {
   seats: 100,
   /**
-   * Countdown once the first human is seated (owner, 2026-11-04: one minute). Humans who join
+   * Countdown once the first human is seated (owner, 2026-11-18: two minutes). Humans who join
    * meanwhile take bot seats in the same match; bots fill every seat left at take-off.
    */
-  countdownMs: 60_000,
+  countdownMs: 120_000,
   /**
    * Warm-up before take-off (owner, 2026-11-04): real players and this many bots on the airfield
    * runway with a rifle and endless ammunition; hits show, nobody is hurt; everyone is reset
