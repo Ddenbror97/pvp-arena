@@ -18,8 +18,10 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { createTexturedKit, publishTextured } from "./textured-kit.mjs";
 
-// ruins-v2 (2026-11-18): the pyramid rebuilt (its tier mouldings a ring, not a slab across the inner
-// stair); TAG=ruins-v2 node build_ruins.mjs ruin-pyramid. The other models keep ruins-v1.
+// ruins-v2 (2026-11-18): the pyramid (its tier mouldings a ring, not a slab across the inner
+// stair) and the stairs' balustrades closed at their tops (pyramid, temples A and B, acropolis):
+// TAG=ruins-v2 node build_ruins.mjs ruin-pyramid ruin-temple-a ruin-temple-b ruin-acropolis.
+// The other models keep ruins-v1.
 const TAG = process.env.TAG ?? "ruins-v1";
 const only = process.argv.slice(2);
 const PLAN = "src/lib/fps/br/location-buildings.json";
@@ -239,6 +241,12 @@ function kit(mid = "solid") {
     });
     k.quad([x0, 0, zFoot], [x1, 0, zFoot], [x1, A[1], zFoot], [x0, A[1], zFoot], STONE, WHITE, {
       n: [0, 0, Math.sign(zFoot - zTop)],
+    });
+    // Its top end, facing the platform (owner, 2026-11-18: "a temple top of the stair a wall on
+    // the side of the stairs" looked invisible and not completed: without it the balustrade was
+    // open at the top, hollow, and from the platform one saw through its sides).
+    k.quad([x0, 0, zTop], [x1, 0, zTop], [x1, B[1], zTop], [x0, B[1], zTop], STONE, WHITE, {
+      n: [0, 0, Math.sign(zTop - zFoot)],
     });
     const n = Math.max(1, Math.ceil(Math.abs(zTop - zFoot) / 0.6));
     for (let s = 0; s < n; s++) {

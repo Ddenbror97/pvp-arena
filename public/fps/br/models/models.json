@@ -37287,11 +37287,11 @@
     9.4,
     40.93
    ],
-   "sourceTris": 2878,
+   "sourceTris": 2882,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-acropolis.ruins-v1.lod0.glb",
-     "tris": 2878,
+     "file": "/fps/br/models/ruin-acropolis.ruins-v2.lod0.glb",
+     "tris": 2882,
      "draws": 4,
      "textureMB": 4,
      "kB": 219,
@@ -37302,8 +37302,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-acropolis.ruins-v1.lod1.glb",
-     "tris": 456,
+     "file": "/fps/br/models/ruin-acropolis.ruins-v2.lod1.glb",
+     "tris": 460,
      "draws": 3,
      "textureMB": 0.75,
      "kB": 50,
@@ -37314,7 +37314,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-acropolis.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-acropolis.ruins-v2.lod2.glb",
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
@@ -37892,11 +37892,11 @@
     27.6,
     43.2
    ],
-   "sourceTris": 5850,
+   "sourceTris": 5854,
    "lods": [
     {
      "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod0.glb",
-     "tris": 5850,
+     "tris": 5854,
      "draws": 4,
      "textureMB": 4,
      "kB": 268,
@@ -37908,7 +37908,7 @@
     },
     {
      "file": "/fps/br/models/ruin-pyramid.ruins-v2.lod1.glb",
-     "tris": 1238,
+     "tris": 1242,
      "draws": 3,
      "textureMB": 0.75,
      "kB": 64,
@@ -38057,11 +38057,11 @@
     16.4,
     22.799999999999997
    ],
-   "sourceTris": 1924,
+   "sourceTris": 1928,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-temple-a.ruins-v1.lod0.glb",
-     "tris": 1924,
+     "file": "/fps/br/models/ruin-temple-a.ruins-v2.lod0.glb",
+     "tris": 1928,
      "draws": 4,
      "textureMB": 4,
      "kB": 202,
@@ -38072,8 +38072,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-a.ruins-v1.lod1.glb",
-     "tris": 542,
+     "file": "/fps/br/models/ruin-temple-a.ruins-v2.lod1.glb",
+     "tris": 546,
      "draws": 3,
      "textureMB": 0.75,
      "kB": 51,
@@ -38084,7 +38084,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-a.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-temple-a.ruins-v2.lod2.glb",
      "tris": 120,
      "draws": 1,
      "textureMB": 0,
@@ -38112,11 +38112,11 @@
     10.200000000000001,
     18
    ],
-   "sourceTris": 1512,
+   "sourceTris": 1516,
    "lods": [
     {
-     "file": "/fps/br/models/ruin-temple-b.ruins-v1.lod0.glb",
-     "tris": 1512,
+     "file": "/fps/br/models/ruin-temple-b.ruins-v2.lod0.glb",
+     "tris": 1516,
      "draws": 3,
      "textureMB": 3,
      "kB": 145,
@@ -38127,8 +38127,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-b.ruins-v1.lod1.glb",
-     "tris": 478,
+     "file": "/fps/br/models/ruin-temple-b.ruins-v2.lod1.glb",
+     "tris": 482,
      "draws": 2,
      "textureMB": 0.5,
      "kB": 34,
@@ -38139,7 +38139,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ruin-temple-b.ruins-v1.lod2.glb",
+     "file": "/fps/br/models/ruin-temple-b.ruins-v2.lod2.glb",
      "tris": 84,
      "draws": 1,
      "textureMB": 0,
