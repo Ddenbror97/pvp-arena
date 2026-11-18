@@ -29,7 +29,7 @@ export const guide: Guide = {
       title: "What Wallet Connect is (and is not)",
       body: `Wallet Connect, often written WalletConnect, is a way for a website to talk to a mobile or desktop wallet over an encrypted session. You do not create a new account with “Wallet Connect.” You already have MetaMask, Coinbase Wallet, Trust Wallet or another compatible app. The protocol only carries requests.
 
-That matters at a [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) setup because many players browse on a laptop and keep keys on a phone. Pairing avoids exporting keys. It does not avoid reading prompts.
+That matters at a [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) setup because many players browse on a laptop and keep keys on a phone. Pairing avoids exporting keys. It does not avoid reading prompts.
 
 ### What a session can do
 

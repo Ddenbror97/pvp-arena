@@ -97,7 +97,6 @@ If you want the free game's progression, use that game's own store and accept th
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "best-pool-games",
     "best-pool-cue",

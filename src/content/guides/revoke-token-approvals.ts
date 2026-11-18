@@ -25,7 +25,7 @@ export const guide: Guide = {
       title: "What a token approval grants",
       body: `When you “approve” USDC for a contract, that contract may call transferFrom on your balance up to the allowance. You can set a exact amount or unlimited. Unlimited means future top-ups are also exposed.
 
-This guide sits in [crypto payments](/guides/topics/crypto-payments). Adults 18+. Pair with [self-custody wallet](/guides/self-custody-wallet) and [crypto wallet for gambling](/guides/crypto-wallet-for-gambling).
+This guide sits in [crypto payments](/guides/topics/crypto-payments). Adults 18+. Pair with [self-custody wallet](/guides/self-custody-wallet) and [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling).
 
 Connecting a site and signing a hello message is not an approval. Read the wallet prompt type every time.`,
     },
@@ -118,6 +118,11 @@ Unlimited allowances next to phishing sites are how delayed drains happen. Revok
       url: "https://support.metamask.io/manage-crypto/tokens/how-to-customize-spender-limits/",
     },
   ],
-  related: ["self-custody-wallet", "crypto-wallet-for-gambling", "seed-phrase", "is-metamask-safe"],
+  related: [
+    "self-custody-wallet",
+    "best-crypto-wallet-for-gambling",
+    "seed-phrase",
+    "is-metamask-safe",
+  ],
   updated: "2026-11-05",
 };

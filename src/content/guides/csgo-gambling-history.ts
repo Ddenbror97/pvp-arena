@@ -143,7 +143,7 @@ In September 2023, Counter-Strike 2 replaced CS:GO. Skins carried over, and the 
 
 ### Crypto PvP
 
-Many players who grew up with skin jackpots now look for the same formats with crypto stakes. Crypto brings exact values, transparent transfers and the ability to publish verifiable results. It also brings its own responsibilities around wallets, networks and security, covered in our [crypto wallet guide](/guides/crypto-wallet-for-gambling).`,
+Many players who grew up with skin jackpots now look for the same formats with crypto stakes. Crypto brings exact values, transparent transfers and the ability to publish verifiable results. It also brings its own responsibilities around wallets, networks and security, covered in our [crypto wallet guide](/guides/best-crypto-wallet-for-gambling).`,
     },
     {
       id: "today",

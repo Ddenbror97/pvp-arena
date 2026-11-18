@@ -3,6 +3,7 @@ import { GUIDES } from "@/content/guides";
 import {
   QUALITY_SCORE_CAP_WHEN_CRITICAL,
   criticalQualityFailures,
+  keywordStuffingFailure,
   repeatedGuideBodyFailures,
 } from "@/lib/guides/quality";
 
@@ -116,5 +117,15 @@ describe("critical guide quality", () => {
       expect(criticalQualityFailures(text), slug).toEqual([]);
       expect(guide!.sources.length, slug).toBeGreaterThan(0);
     }
+  });
+  it("flags exact-match keyword stuffing but not a name that repeats naturally", () => {
+    const filler = "the book prices the market and the exchange takes a fee ".repeat(20);
+    const stuffed = `${"A matched betting note is dated. ".repeat(12)}${filler}`;
+    expect(keywordStuffingFailure("matched betting", stuffed)).toMatch(/repeated 12 times/);
+    expect(keywordStuffingFailure("matched betting", `${filler} matched betting once`)).toBeNull();
+    expect(keywordStuffingFailure("bunco", "bunco ".repeat(50))).toBeNull();
+    expect(criticalQualityFailures("### Extra diligence notes\n\nDate the note.")).toContainEqual(
+      'skeleton phrase present: "extra diligence notes"',
+    );
   });
 });

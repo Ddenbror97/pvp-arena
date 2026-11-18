@@ -174,7 +174,7 @@ If you prefer a stablecoin with more frequent reporting and closer regulatory ov
     {
       id: "next",
       title: "Next steps",
-      body: `If you plan to play on PVPspinArena, you will need USDC or ETH on Base in a wallet you control. Our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling) covers setup, and [how it works](/how-it-works) explains how deposits become a dollar balance and how withdrawals are processed. You can also check any game result on the [Fairness page](/fairness) before you deposit anything.`,
+      body: `If you plan to play on PVPspinArena, you will need USDC or ETH on Base in a wallet you control. Our [crypto wallet for gambling guide](/guides/best-crypto-wallet-for-gambling) covers setup, and [how it works](/how-it-works) explains how deposits become a dollar balance and how withdrawals are processed. You can also check any game result on the [Fairness page](/fairness) before you deposit anything.`,
     },
     {
       id: "swap",

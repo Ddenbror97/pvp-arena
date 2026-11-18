@@ -135,9 +135,7 @@ Jackpot on the [home page](/) settles a round when the draw finishes, and your c
     "pvp-casino-games",
     "online-casino-real-money",
     "fake-casino-sites",
-
     "swagbucks-games",
-
     "diamonds-casino-game",
     "fps-for-money-hub",
     "browser-fps-games",

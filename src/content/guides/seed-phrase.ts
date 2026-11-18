@@ -45,7 +45,7 @@ If you lose your phone or computer, installing the wallet on a new device and en
 
 ### Other names
 
-You may see it called a recovery phrase, secret recovery phrase, mnemonic or backup phrase. They all mean the same thing. If you are new to wallets, start with our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling).`,
+You may see it called a recovery phrase, secret recovery phrase, mnemonic or backup phrase. They all mean the same thing. If you are new to wallets, start with our [crypto wallet for gambling guide](/guides/best-crypto-wallet-for-gambling).`,
     },
     {
       id: "how",
@@ -283,7 +283,7 @@ More crypto payments reading lives in our [Crypto payments guides](/guides/topic
   ],
   related: [
     "usdc-casino",
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "metamask-casino",
     "phantom-wallet-gambling",
     "coinbase-wallet-casino",

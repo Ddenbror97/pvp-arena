@@ -148,9 +148,6 @@ The dull line is the useful one. Read the entry, believe the gap, know whether t
       url: "https://www.prnewswire.com/news-releases/aviagames-unveils-new-brand-identity-to-reflect-enhanced-corporate-vision-and-accelerated-growth-aspirations-301958552.html",
     },
   ],
-  related: [
-    "solitaire-clash-review",
-    "skillz-review",
-  ],
+  related: ["solitaire-clash-review", "skillz-review"],
   updated: "2026-10-07",
 };

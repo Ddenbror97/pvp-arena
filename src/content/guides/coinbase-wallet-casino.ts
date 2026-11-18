@@ -27,7 +27,7 @@ export const guide: Guide = {
     {
       id: "two-products",
       title: "Coinbase Wallet versus the Coinbase exchange",
-      body: `People say “Coinbase” for two different things. The exchange at Coinbase.com is a custodial account: you log in with email, pass identity checks and Coinbase holds the coins. [Coinbase Wallet](/guides/crypto-wallet-for-gambling) is a separate app. You hold the recovery phrase. If you delete the app without the phrase, Coinbase cannot reset it like a password.
+      body: `People say “Coinbase” for two different things. The exchange at Coinbase.com is a custodial account: you log in with email, pass identity checks and Coinbase holds the coins. [Coinbase Wallet](/guides/best-crypto-wallet-for-gambling) is a separate app. You hold the recovery phrase. If you delete the app without the phrase, Coinbase cannot reset it like a password.
 
 Casinos that match deposits by sender address need a wallet you control. An exchange withdrawal often comes from a shared hot wallet. PVPspinArena cannot safely map that shared sender to your player account. The practical path is: buy or hold USDC on the exchange if you want, then withdraw to Coinbase Wallet or MetaMask on Base and deposit from the address you verified.
 

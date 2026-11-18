@@ -76,7 +76,7 @@ The 40-number game can still have a high overall RTP if it pays well on 3- and 4
       title: "How to play keno with crypto, step by step",
       body: `1. **Choose the coin.** USDC or another stablecoin keeps results in dollars. BTC or ETH adds price risk during the session.
 2. **Match the network.** Deposit on exactly the network the casino lists. A token sent on the wrong chain can be lost; [sent crypto to wrong network](/guides/sent-crypto-to-wrong-network) explains why.
-3. **Fund from your own wallet.** Buy on an exchange, withdraw to a wallet you control, then deposit. [Crypto wallet for gambling](/guides/crypto-wallet-for-gambling) compares options.
+3. **Fund from your own wallet.** Buy on an exchange, withdraw to a wallet you control, then deposit. [Crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) compares options.
 4. **Open the game info.** Find the RTP, the paytable for your number of picks and, for originals, the risk levels.
 5. **Set the stake and autoplay limits.** Pick a stake, a number of rounds and a stop-loss before starting. Autoplay without limits is the fastest way to lose track.
 6. **Withdraw a test amount early.** Learn the processing time and fees before you have a large balance on the site.

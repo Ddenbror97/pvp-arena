@@ -176,7 +176,6 @@ Points on one site are not points on the next. [The other survey lobby](/guides/
     "games-that-pay-real-money",
     "house-edge",
     "skill-based-gambling",
-
     "inboxdollars-games",
   ],
   updated: "2026-10-20",

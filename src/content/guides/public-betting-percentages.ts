@@ -211,7 +211,6 @@ IRS Topic 419 taxes gambling winnings. [How a US person reports a win](/guides/r
     "what-is-sports-betting",
     "house-edge",
     "gamblers-fallacy",
-
     "pick-em-pool",
   ],
   updated: "2026-10-20",

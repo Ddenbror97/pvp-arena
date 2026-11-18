@@ -32,7 +32,7 @@ This sits in the [crypto payments](/guides/topics/crypto-payments) cluster. It i
 
 Exchange accounts are a third category people call a wallet. They are custodial hot wallets you do not sign. Useful for buying USDC. Poor as the last hop if a casino matches a verified from-address, and poor as long-term storage.
 
-For the wider choice of apps, see [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). For the key-ownership idea, see [self custody wallet](/guides/self-custody-wallet). The cold-versus-hot split only applies after you already chose self-custody. An exchange "cold storage" marketing line is the company's cold storage, not yours.`,
+For the wider choice of apps, see [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling). For the key-ownership idea, see [self custody wallet](/guides/self-custody-wallet). The cold-versus-hot split only applies after you already chose self-custody. An exchange "cold storage" marketing line is the company's cold storage, not yours.`,
     },
     {
       id: "hot-risks",
@@ -178,7 +178,7 @@ A third model, neither a single hot key nor a hardware stick, is a [multisig wal
     "usdc-casino",
     "ledger-vs-trezor",
     "seed-phrase",
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "metamask-casino",
     "connect-ledger-to-metamask",
     "what-is-a-hardware-wallet",

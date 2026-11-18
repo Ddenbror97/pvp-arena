@@ -142,7 +142,7 @@ Also check that online gambling is legal where you live. Rules differ by country
 
 A simple way to score them is to give one point for each check a site passes clearly, half a point when the answer is unclear, and nothing when the answer is missing. A site that scores well on fairness, fees and withdrawals is usually a better choice than one with a big bonus and a low score everywhere else.
 
-Finally, try a small test. Deposit a small amount, play a few rounds, check one result on the verifier and make a small withdrawal. How a site handles your first withdrawal tells you more than any review. If anything feels wrong, stop there. Our [crypto wallet guide](/guides/crypto-wallet-for-gambling) explains how to keep your own funds safe while you test.`,
+Finally, try a small test. Deposit a small amount, play a few rounds, check one result on the verifier and make a small withdrawal. How a site handles your first withdrawal tells you more than any review. If anything feels wrong, stop there. Our [crypto wallet guide](/guides/best-crypto-wallet-for-gambling) explains how to keep your own funds safe while you test.`,
     },
     {
       id: "pvpspinarena",

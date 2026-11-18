@@ -96,7 +96,7 @@ Setup order matters. Initialise the hardware wallet first. Write the phrase on p
 
 When you sign a verification message, the device should show a message, not a token transfer. When you deposit, it should show the token, the amount, and the destination. If that destination is not the address on the real [wallet](/how-it-works#wallet) page, reject it.
 
-Gas on Base is small, but you still confirm on the device. Do not mash confirm because a round is about to lock. [Crypto wallet for gambling](/guides/crypto-wallet-for-gambling) is the longer checklist.`,
+Gas on Base is small, but you still confirm on the device. Do not mash confirm because a round is about to lock. [Crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) is the longer checklist.`,
     },
     {
       id: "casinos",
@@ -188,7 +188,7 @@ Jackpot and Coinflip are player-versus-player. Roulette is a house-banked wheel.
   ],
   related: [
     "metamask-casino",
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "self-custody-wallet",
     "seed-phrase",
     "how-to-install-metamask",

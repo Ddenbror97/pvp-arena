@@ -84,7 +84,7 @@ Buy from the official shop. Counterfeit units exist. A cheap “Ledger” from a
       title: "Which device you should connect to a casino — if either",
       body: `A ledger casino search usually means one of three things: a phishing kit wearing Ledger’s colours, a person who wants to plug their Nano into every site, or a genuine question about deposits.
 
-Connect a **hot gaming wallet** to the casino. Fund it with the amount you are willing to lose this month. Use the hardware wallet as savings. That split is the whole recommendation. The [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) guide is the broader wallet-choice page.
+Connect a **hot gaming wallet** to the casino. Fund it with the amount you are willing to lose this month. Use the hardware wallet as savings. That split is the whole recommendation. The [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) guide is the broader wallet-choice page.
 
 ### Why not the hardware wallet for every deposit
 
@@ -170,7 +170,7 @@ If gambling spend is past the number you set, stop. Savings on a Trezor will not
   related: [
     "usdc-casino",
     "seed-phrase",
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "metamask-casino",
     "phantom-wallet-gambling",
     "connect-ledger-to-metamask",

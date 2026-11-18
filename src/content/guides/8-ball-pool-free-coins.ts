@@ -102,7 +102,6 @@ No weekly tournament and no break-win rate are published. A coin leaderboard fro
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "best-pool-games",
     "8-ball-pool-hub",

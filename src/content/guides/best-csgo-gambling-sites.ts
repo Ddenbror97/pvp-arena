@@ -106,7 +106,7 @@ Remember that "legit" also depends on where you live. Some countries ban online 
 
 USDC removes most of this. It is a stablecoin designed to stay worth one US dollar, so a $5 stake is exactly $5. You deposit from your own wallet and withdraw back to it. Our [USDC casino guide](/guides/usdc-casino) explains how it works, and [how to buy USDC](/guides/how-to-buy-usdc) shows how to get started.
 
-The trade-off is that you need a crypto wallet. If you have never set one up, read our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling) first.`,
+The trade-off is that you need a crypto wallet. If you have never set one up, read our [crypto wallet for gambling guide](/guides/best-crypto-wallet-for-gambling) first.`,
     },
     {
       id: "pvp",

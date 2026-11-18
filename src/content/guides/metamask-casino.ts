@@ -163,7 +163,7 @@ Our upcoming [crypto casino withdrawals guide](/guides/crypto-casino-withdrawals
 - **Revoke old approvals.** Block explorer tools let you review and revoke token approvals you gave in the past.
 - **Use a hardware wallet for savings.** For larger amounts, keep funds on a hardware wallet and move only a gaming budget to a hot wallet.
 
-Our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling) compares wallet types in more detail.`,
+Our [crypto wallet for gambling guide](/guides/best-crypto-wallet-for-gambling) compares wallet types in more detail.`,
     },
     {
       id: "troubleshooting",

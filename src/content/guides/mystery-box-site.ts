@@ -4,144 +4,122 @@ export const guide: Guide = {
   slug: "mystery-box-site",
   cluster: "CS:GO heritage",
   keyword: "mystery box site",
-  secondary: ["mystery box site"],
-  title: "Mystery Box Sites: Odds, Skins and What You Buy",
+  secondary: [
+    "mystery box odds",
+    "online mystery boxes",
+    "are mystery boxes gambling",
+    "mystery box expected value",
+  ],
+  title: "Mystery Box Sites: Odds, Expected Value and Buyback",
   description:
-    "A mystery box site sells a paid chance at an item. The price is the missing odds and the resale gap. Not a recommendation. Adults 18+.",
-  h1: "Mystery box site: you are buying a chance, not an item",
+    "How mystery box sites work: published odds, a box's expected value worked out, buyback credit, shipping, and whether boxes count as gambling.",
+  h1: "Mystery box sites: odds, expected value and the buyback",
   answer:
-    "A mystery box site charges you to open a box that might contain an item, often a skin or a gadget, at stated or hidden odds. You are buying a probability, not the picture on the box. If the odds and the resale prices are not both visible, you cannot know the price. This is not a list of boxes to open.",
+    "A mystery box site sells a box at a fixed price that contains one random item from a published list, such as sneakers, electronics or game skins, each with a stated probability. You can usually ship the item or sell it back for site credit. The sum of each item's value times its probability is the box's expected value; on most sites it is below the box price, which is how the site makes money.",
   facts: [
-    "The product is a paid random draw.",
-    "Displayed item prices are not what you can sell the item for.",
-    "Hidden odds mean an unknown edge.",
-    "Case-style sites and loot boxes are the same family.",
-    "PVPspinArena does not sell mystery boxes.",
+    "You pay a fixed price for one random item from a list of possible prizes.",
+    "Expected value = sum of (item value × probability); compare it with the box price.",
+    "Buyback offers are usually below the item's resale value and paid in site credit.",
+    "Whether boxes are gambling depends on the country and on whether prizes can be cashed out.",
+    "The FTC has studied loot boxes and in 2025 settled a $20 million case over loot box practices.",
   ],
   sections: [
     {
-      id: "scope",
-      title: "What a mystery box site sells",
-      body: `The page shows a watch, a knife skin, or a console. The contract is a random roll. Mystery box site marketing leans on the picture. The maths leans on the probability of each picture. Those are different objects.
+      id: "how",
+      title: "How mystery box sites work",
+      body: `You choose a box (for example "sneaker box, $25"), the site shows the possible items and the odds for each, you pay and an animation reveals your item. Then you choose to:
 
-Put today's date on any mystery box site figure you keep. If the logged-in page does not show the mystery box site figure, leave the cell blank. A percent copied from a clip is not a mystery box site source.
+- **Ship it** to your address, often for a shipping fee, or
+- **Sell it back** for credit at a buyback rate, usually a percentage of the site's listed value, which you can spend on more boxes or withdraw if the site allows.
 
-You need to be 18, or older where local law sets a higher age, before any mystery box site stake. This mystery box site page is not legal advice, not a promo code, and not a pick. PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. It does not sell mystery box site, and a guide is not a licence.
-
-If a mystery box site session turns into chasing, stop. [Responsible gambling](/responsible-gambling) is the limit. A new login does not erase a mystery box site limit you already set.
-
-Start in [CS2 and CS:GO](/guides/topics/csgo-heritage). Related reading: [loot boxes and gambling](/guides/loot-boxes-and-gambling), [Roblox gambling](/guides/roblox-gambling), [Fortnite gambling](/guides/fortnite-gambling). The product on this site, if you wanted a hashed pot instead, is [fairness](/fairness).`,
+Many sites also run "upgrades" (stake an item for a chance at a better one) and "battles" (several players open the same boxes and the best total takes all). Those are the same mechanics as [CS2 case battles](/guides/cs2-case-battle) and [case opening](/guides/csgo-case-opening), with physical goods instead of skins.`,
     },
     {
-      id: "price",
-      title: "Odds or it is not a price",
-      body: `If the site will not show the chance of each item, you cannot compute an edge. 'Up to' a value is not a probability. A published table can still be stale. Date the table you use. One honest table beats a grid of prizes with no percents.
+      id: "ev",
+      title: "Working out a box's expected value",
+      body: `Take a $25 box with this published list (values are the site's own):
 
-Date the mystery box site note on the day you can still open the live page. Leave a blank when the mystery box site page has no figure. A video is a poor place to borrow a mystery box site percentage.
+| Item | Value | Probability | Value × probability |
+| --- | --- | --- | --- |
+| Rare sneakers | $400 | 1% | $4.00 |
+| Headphones | $120 | 4% | $4.80 |
+| Hoodie | $45 | 15% | $6.75 |
+| Phone case | $10 | 80% | $8.00 |
+| **Total** | | 100% | **$23.55** |
 
-Adults only, 18 or the higher local age. Nothing here is a lawyer's letter, a mystery box site code, or a selection. The games on this site, unlike mystery box site, are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars. Mystery box site is not one of them, and the article is not a licence.
+The expected value is $23.55 for a $25 box: on average you get back 94% of what you pay, before shipping. And that uses the site's listed values. If the buyback rate is 80% of value, the expected credit is about $18.84, or 75% of the price. The most likely result (80% here) is a $10 phone case.
 
-Stop a mystery box site session that has become a chase. The limit is [responsible gambling](/responsible-gambling). Another account does not clear the mystery box site session you already played.`,
+Check that the probabilities add up to 100% and that the listed values match real resale prices. A box that lists a $400 item at a value no shop would pay is not worth $23.55.`,
     },
     {
-      id: "rules",
-      title: "Resale is the real payout",
-      body: `An item listed at a catalog price may sell for much less on a real market. The payout that matters is the price you can get this week, after fees. A box priced below the catalog average and above the resale average is a loss wearing a bargain.
-
-When you record a mystery box site price, write the date beside it. A mystery box site cell with no logged-in source stays empty. Do not fill a mystery box site blank from a recording.
-
-Play only at 18, or older if your law requires it, including for mystery box site. This is a mystery box site explainer, not legal advice and not a code to redeem. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, separate from mystery box site. The desk does not offer mystery box site, and these paragraphs are not a licence.
-
-Chasing a mystery box site loss is the moment to stop. Use [responsible gambling](/responsible-gambling). A second profile is not a new budget.
-
-More on the surrounding ideas: [CS:GO gambling history](/guides/csgo-gambling-history), [skin gambling versus crypto](/guides/skin-gambling-vs-crypto).`,
+      id: "fair",
+      title: "Fairness claims",
+      body: `Some sites say their openings are "provably fair": they publish a hashed server seed before you open and reveal it afterwards, so you can check the result was not changed. That proves the draw matched the committed seed; it does not prove the odds table or the item values are reasonable. [Provably fair explained](/guides/provably-fair-casino) and [server and client seeds](/guides/server-seed-client-seed) show what a check covers. Look also for who ships the goods, the return policy for damaged items and how long withdrawals of credit take.`,
     },
     {
-      id: "cashier",
-      title: "Skins and chargebacks",
-      body: `Skin boxes sit next to case opening. The same problems apply: bot inventories, delayed trades, and sites that look like a brand you know. Read the loot-box and case pages on this site for the wider pattern. Do not send a card payment to a site that will not name a company.
+      id: "legal",
+      title: "Are mystery boxes gambling?",
+      body: `It depends on where you live. You pay money for a chance at a prize worth more or less than the price, which is the core of gambling in many legal definitions; the open questions are usually whether the prize counts as "money's worth" and whether it can be cashed out. Some countries treat paid random items that can be converted to money as gambling; others regulate them as consumer sales.
 
-Keep the mystery box site date on the same line as the figure. If you cannot open the mystery box site page while logged in, do not invent the percent. A borrowed mystery box site number is worse than a blank cell.
-
-The age floor for mystery box site is 18, or higher where you live. No mystery box site sentence here is a promo code, a pick, or legal advice. PVPspinArena settles six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott in US dollars, separate from mystery box site. It does not operate mystery box site, and a guide cannot license you.
-
-Leave the mystery box site session if it starts to feel like a chase. [Responsible gambling](/responsible-gambling) is that boundary. Switching accounts does not reset it.`,
+In the US, the FTC held a workshop on loot boxes in 2019 and in August 2020 published a [staff perspective](https://ftc.gov/news-events/press-releases/2020/08/ftc-staff-issue-perspective-paper-video-game-loot-boxes-workshop) warning that such mechanics can encourage overspending and hide costs. In January 2025 the FTC and the publisher of Genshin Impact settled a case over loot box marketing and children's privacy for $20 million; the FTC's [complaint](https://www.ftc.gov/system/files/ftc_gov/pdf/cognosphere_complaint.pdf) sets out the alleged practices. [Loot boxes and gambling](/guides/loot-boxes-and-gambling) covers the wider debate, and the [CS:GO heritage topic](/guides/topics/csgo-heritage) the skin-era sites.`,
     },
     {
-      id: "table",
-      title: "A table you can actually fill",
-      body: `Columns: cost per open, chance of each tier, resale of each tier after fees, and the company name. If resale is blank, the expected value is blank. Do not fill it with the site's own 'value' sticker.
+      id: "before",
+      title: "Before you open a box",
+      body: `- Read the odds table and calculate the expected value yourself.
+- Price the high-value items at a real shop or resale site.
+- Find the buyback rate and the shipping cost.
+- Check the age limit and whether the site is allowed in your country.
+- Set a budget first; boxes are fast, and a run of phone cases is the expected result.
 
-A mystery box site note without a date is a guess. Confirm the mystery box site figure on a page you can open, or leave the cell blank. Clips do not publish a mystery box site price you can rely on.
-
-Stay at 18-plus for mystery box site, or the older age your region sets. Treat this mystery box site page as explanation, not as advice, a code, or a tip. The live catalog, which does not include mystery box site, is Jackpot, Coinflip, six-max poker, Roulette, and P2P Slott, in US dollars. mystery box site is absent from that catalog, and the page is not a licence.
-
-A chase is a finished mystery box site decision. Stop, and read [responsible gambling](/responsible-gambling). Opening another mystery box site account is not a fresh bankroll.
-
-| Check | What to record for mystery box site |
-| --- | --- |
-| Price | The number on the screen today, not a memory |
-| Rules | Settlement, voids, and who can be refused |
-| Cashier | A small test, timed, with the transaction id |
-| Country | Whether you are allowed, without a workaround |
-| Stop | The loss limit, written before the deposit |`,
-    },
-    {
-      id: "stop",
-      title: "Not a jackpot pot",
-      body: `A jackpot on PVPspinArena is a pool of player stakes drawn by a hash. A mystery box is a house selling a random item. Opening a box is not entering that pool.
-
-Write the mystery box site source and the date before the conclusion. An empty mystery box site cell means the live page did not show the figure. That blank is more honest than a mystery box site percent from a video.
-
-Eighteen is the mystery box site minimum, unless local law is older. This mystery box site note is not legal advice, not a code, and not a recommendation. Poker at six-max, plus Jackpot, Coinflip, Roulette, and P2P Slott, is what settles in US dollars here, not mystery box site. The site does not sell mystery box site, and the text is not a licence.
-
-If mystery box site play becomes chasing, stop there. [Responsible gambling](/responsible-gambling) holds the limit. A replacement mystery box site account is not a clean record.`,
-    },
-    {
-      id: "close",
-      title: "A note you can keep",
-      body: "What a mystery box site sells. The page shows a watch, a knife skin, or a console. The contract is a random roll.\n\nOdds or it is not a price. If the site will not show the chance of each item, you cannot compute an edge. 'Up to' a value is not a probability.\n\nResale is the real payout. An item listed at a catalog price may sell for much less on a real market. The payout that matters is the price you can get this week, after fees.\n\nSkins and chargebacks. Skin boxes sit next to case opening. The same problems apply: bot inventories, delayed trades, and sites that look like a brand you know.\n\nA table you can actually fill. Columns: cost per open, chance of each tier, resale of each tier after fees, and the company name. If resale is blank, the expected value is blank.\n\nNot a jackpot pot. A jackpot on PVPspinArena is a pool of player stakes drawn by a hash. A mystery box is a house selling a random item.\n\nStart at the top of the mystery box site note and stop when a cell has no source. Leave it empty. Borrowing the missing line from a chat is how the note starts selling.\n\nFacts worth dating:\n\n- The product is a paid random draw.\n- Displayed item prices are not what you can sell the item for.\n- Hidden odds mean an unknown edge.\n- Case-style sites and loot boxes are the same family.\n- PVPspinArena does not sell mystery boxes.\n\nItems, skins and mystery drops are a poor bankroll because the resale price moves and an admin can halt the inventory. A server plugin is not an audited game. A 2016-era skin dispute is history to read, not a template to copy. Age rules still apply on a game whose audience includes minors. Adults only.\n\nIf the odds of each prize are not on the page, you do not have a price. If the company will not name itself, you do not have a counterparty. PVPspinArena does not take skins, run a Minecraft lobby, or sell a box.\n\nRun the mystery box site numbers first. The multiple times the chip is the stake you still have to place. A commission is deducted from the winner. Odds that hide a hold have already charged you. RTP, if printed, describes a long run and not this session. Missing inputs stay unknown. Urgency around mystery box site is not a reason to guess.\n\nWrite the mystery box site stake, the loss limit, and today's date together. Reach the limit and stop. Leave the rest unread for now. A finished stop is the point, because a fresh logo used as comfort becomes the next deposit.\n\nTest mystery box site once, cleanly, instead of collecting tabs. The smallest named stake, on the named asset and network, is enough, and a partial withdrawal comes before a larger deposit. Keep the time and the identifier. Identity questions get an answer or an exit. Skipping them is not a feature of mystery box site.\n\nThen close the tab or play only what this site actually offers. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars, for adults 18+ only. A new mystery box site login does not clear the limit you already hit.",
+Adults only. This page is not legal advice. PVPspinArena does not sell boxes; its Jackpot pays the whole pot, minus a 5% fee, to one player, with chance equal to stake share, as [how it works](/how-it-works) explains. If spending stops being a fixed, affordable amount, stop and read [responsible gambling](/responsible-gambling).`,
     },
   ],
   faqs: [
     {
-      q: "What is the point of this mystery box site page?",
-      a: "To name the product, the price, and the rule you must read before you stake. It is not a pick, a code, or a bypass.",
+      q: "Are mystery box sites legit?",
+      a: "Some ship real goods and publish odds, but the expected value of a box is usually below its price. Check the odds, the item values, the buyback rate and the shipping cost before buying.",
     },
     {
-      q: "Does PVPspinArena offer this?",
-      a: "No. The site runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
+      q: "How do I calculate a mystery box's value?",
+      a: "Multiply each item's value by its probability and add the results. In this guide's example, a $25 box has an expected value of $23.55 at the site's listed values.",
     },
     {
-      q: "Is this legal advice?",
-      a: "No. If a statute or a tax rule decides your case, use the primary source or a qualified professional.",
+      q: "Are mystery boxes gambling?",
+      a: "In many places they meet the basic idea of gambling (pay for a chance at a prize), but whether the law treats them as gambling depends on the country and on whether prizes can be cashed out.",
     },
     {
-      q: "What should I write down?",
-      a: "The price, the rule, the date, and your loss limit. Leave a blank rather than invent a number.",
+      q: "Is the buyback price fair?",
+      a: "Usually it is below resale value and paid as site credit. It is a convenience priced in the site's favour.",
     },
     {
-      q: "When should I stop?",
-      a: "When the note says you are not allowed, when you are chasing, or when the product is not the one you meant to use.",
+      q: "What does provably fair mean on a box site?",
+      a: "That the draw can be checked against a seed committed before opening. It does not make the odds or item values fair.",
     },
   ],
   sources: [
     {
-      label: "GambleAware",
-      url: "https://www.gambleaware.org/",
+      label: "FTC staff perspective on video game loot boxes (August 2020)",
+      url: "https://ftc.gov/news-events/press-releases/2020/08/ftc-staff-issue-perspective-paper-video-game-loot-boxes-workshop",
     },
+    {
+      label: "FTC complaint against Cognosphere (Genshin Impact)",
+      url: "https://www.ftc.gov/system/files/ftc_gov/pdf/cognosphere_complaint.pdf",
+    },
+    { label: "GambleAware", url: "https://www.gambleaware.org/" },
   ],
   related: [
     "loot-boxes-and-gambling",
-    "roblox-gambling",
-    "fortnite-gambling",
-    "csgo-gambling-history",
+    "csgo-case-opening",
+    "cs2-case-battle",
+    "provably-fair-casino",
+    "expected-value-gambling",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
   cta: {
-    title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
-    primary: { to: "/fairness", label: "Read fairness" },
-    secondary: { to: "/how-it-works", label: "How this site works" },
+    title: "One pot, odds you can see",
+    text: "In PVPspinArena's Jackpot your chance equals your share of the pot, and the 5% fee is the only cut.",
+    primary: { to: "/", label: "Jackpot" },
+    secondary: { to: "/guides/expected-value-gambling", label: "Expected value" },
   },
 };

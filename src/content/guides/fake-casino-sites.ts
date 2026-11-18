@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 Crypto makes the payoff immediate. There is no card network to reverse a Base transfer. If you approve a spender, the thief does not need your password again. That is why fake crypto casinos cluster around wallet pop-ups rather than "forgot password" emails alone.
 
-This guide is a how-to in our [foundations cluster](/guides/topics/foundations). Pair it with [are online casinos rigged](/guides/are-online-casinos-rigged) for edge-versus-cheat, [seed phrase](/guides/seed-phrase) for recovery-word attacks, and [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) for a cleaner setup. The [best crypto gambling sites](/guides/best-crypto-gambling-sites) checklist is the buying-side version of the same habit.
+This guide is a how-to in our [foundations cluster](/guides/topics/foundations). Pair it with [are online casinos rigged](/guides/are-online-casinos-rigged) for edge-versus-cheat, [seed phrase](/guides/seed-phrase) for recovery-word attacks, and [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) for a cleaner setup. The [best crypto gambling sites](/guides/best-crypto-gambling-sites) checklist is the buying-side version of the same habit.
 
 PVPspinArena will never DM you a "new domain" or ask you to re-enter a 12-word phrase. If someone does, they are not us.`,
     },
@@ -119,7 +119,7 @@ A ranking table cannot replace these clicks. If a listicle "best site" URL does 
 
 Do not pay a recovery firm that found you. Secondary scams target people who just got drained.
 
-Then decide whether you still want a casino open in that browser profile. If you do, use a dedicated wallet with only the session's funds, as the [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) guide describes.`,
+Then decide whether you still want a casino open in that browser profile. If you do, use a dedicated wallet with only the session's funds, as the [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) guide describes.`,
     },
     {
       id: "real",

@@ -207,7 +207,6 @@ This page is education. It is not an invitation to organize a book, and it is no
     "what-is-sports-betting",
     "sports-betting-legal-states",
     "peer-to-peer-sports-betting",
-
     "public-betting-percentages",
   ],
   updated: "2026-10-20",

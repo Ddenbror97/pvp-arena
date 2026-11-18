@@ -103,7 +103,6 @@ No skill level is stored, so the casino does not comp you a shorter race. No Far
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "pool-betting",
     "8-ball-pool-1v1",

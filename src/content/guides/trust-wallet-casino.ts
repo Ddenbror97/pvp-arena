@@ -27,7 +27,7 @@ export const guide: Guide = {
     {
       id: "fit",
       title: "When Trust Wallet is a reasonable casino wallet",
-      body: `Trust Wallet is a [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) if you already use it, if you can switch networks without guessing and if you keep only a gaming budget on the hot wallet. It is a poor choice if you treat the dapp browser like a search engine and sign whatever appears.
+      body: `Trust Wallet is a [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) if you already use it, if you can switch networks without guessing and if you keep only a gaming budget on the hot wallet. It is a poor choice if you treat the dapp browser like a search engine and sign whatever appears.
 
 The app stores a recovery phrase. That phrase restores every enabled coin account derived from it. The casino never needs those words. If a Trust Wallet casino page asks you to “validate” by entering the phrase, close it.
 

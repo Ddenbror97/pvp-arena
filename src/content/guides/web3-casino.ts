@@ -83,7 +83,7 @@ Deposits are ordinary token transfers from your wallet. Withdrawals are transfer
 
 ### Why it matters
 
-Because you control the wallet, you decide when funds move. That is a big change from card-based sites where the operator holds your payment details. It also means you are responsible for security: your recovery phrase is the master key, and nobody can recover it for you. Our [crypto wallet for gambling guide](/guides/crypto-wallet-for-gambling) covers safe setups.`,
+Because you control the wallet, you decide when funds move. That is a big change from card-based sites where the operator holds your payment details. It also means you are responsible for security: your recovery phrase is the master key, and nobody can recover it for you. Our [crypto wallet for gambling guide](/guides/best-crypto-wallet-for-gambling) covers safe setups.`,
     },
     {
       id: "chains",

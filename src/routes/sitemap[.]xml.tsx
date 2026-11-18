@@ -35,7 +35,12 @@ export const Route = createFileRoute("/sitemap.xml")({
         const { allGuideMeta, publishedTopics } = await import("@/lib/guides/catalog");
         const entries: string[] = STATIC_PATHS.map((p) => urlEntry(p));
         for (const g of allGuideMeta()) entries.push(urlEntry(`/guides/${g.slug}`, g.updated));
-        for (const t of publishedTopics()) entries.push(urlEntry(`/guides/topics/${t.slug}`));
+        // A topic page changes when one of its guides does: its lastmod is the newest of theirs.
+        const newest = new Map<string, string>();
+        for (const g of allGuideMeta())
+          if (g.updated > (newest.get(g.cluster) ?? "")) newest.set(g.cluster, g.updated);
+        for (const t of publishedTopics())
+          entries.push(urlEntry(`/guides/topics/${t.slug}`, newest.get(t.name)));
 
         const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join("\n")}\n</urlset>\n`;
         return new Response(body, {

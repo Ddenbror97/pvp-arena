@@ -21,6 +21,7 @@ export const MOVED_GUIDES: Record<string, string> = {
   "offshore-sportsbook": "sports-betting-legal-states",
   "penny-slots-las-vegas": "penny-slots-online",
   "skinport-review": "csfloat-vs-skinport",
+  "crypto-wallet-for-gambling": "best-crypto-wallet-for-gambling",
   ...removed20261118.redirects,
 };
 

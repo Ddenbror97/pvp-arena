@@ -124,7 +124,6 @@ No weekly crypto tournament is published here yet. A leaderboard of invented bra
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "crypto-8-ball-pool",
     "pool-betting",

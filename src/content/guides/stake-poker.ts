@@ -233,7 +233,6 @@ Read Stake poker caps on the card-room page before you buy in. If a later row is
   related: [
     "gto-poker-strategy",
     "texas-holdem-rules",
-
     "heads-up-poker-strategy",
     "crypto-casino-withdrawals",
     "what-is-a-crypto-casino",

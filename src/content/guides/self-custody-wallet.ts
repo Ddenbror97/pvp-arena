@@ -35,7 +35,7 @@ This [crypto payments](/guides/topics/crypto-payments) how-to is for adults aged
 
 "Not your keys" is a custody slogan, not a fairness slogan. Holding keys does not let you recompute a game. It lets you refuse a send and keep what you did not deposit.
 
-Related reading: [cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet), [seed phrase](/guides/seed-phrase), and [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). If you are still on an exchange-only setup, withdraw a test amount to a wallet you created yourself before you try a casino deposit. The test is cheap education. The first real send is a poor time to learn what a network dropdown is.`,
+Related reading: [cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet), [seed phrase](/guides/seed-phrase), and [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling). If you are still on an exchange-only setup, withdraw a test amount to a wallet you created yourself before you try a casino deposit. The test is cheap education. The first real send is a poor time to learn what a network dropdown is.`,
     },
     {
       id: "keys",
@@ -171,7 +171,7 @@ A common beginner self-custody app is [Exodus](/guides/exodus-wallet).`,
     "cold-wallet-vs-hot-wallet",
     "ledger-vs-trezor",
     "seed-phrase",
-    "crypto-wallet-for-gambling",
+    "best-crypto-wallet-for-gambling",
     "export-metamask-private-key",
     "how-to-delete-metamask-account",
     "how-to-create-a-crypto-wallet",

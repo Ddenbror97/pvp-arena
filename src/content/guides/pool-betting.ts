@@ -104,7 +104,6 @@ That is the whole betting model on this table. Skill can move the win rate. It c
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "8-ball-pool-hub",
     "is-crypto-gambling-legal",

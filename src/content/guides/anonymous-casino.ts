@@ -36,7 +36,7 @@ It is not a synonym for:
 - No way for an exchange to recognise a later deposit.
 - Legal cover if you are not allowed to gamble.
 
-A [crypto wallet for gambling](/guides/crypto-wallet-for-gambling) that you control is better for theft resistance than an exchange balance. It is worse for privacy than people think, because the address is a permanent label.
+A [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling) that you control is better for theft resistance than an exchange balance. It is worse for privacy than people think, because the address is a permanent label.
 
 PVPspinArena is honest about the label. You sign in, you verify a wallet, you send on Base. Explorers will show those sends. If you need more than that, this product is the wrong tool, not a puzzle to solve with mixers.
 

@@ -69,7 +69,6 @@ import { guide as metamaskCasino } from "./metamask-casino";
 import { guide as isMetamaskSafe } from "./is-metamask-safe";
 import { guide as buyUsdc } from "./how-to-buy-usdc";
 import { guide as addBase } from "./add-base-network-metamask";
-import { guide as cryptoWallet } from "./crypto-wallet-for-gambling";
 import { guide as seeds } from "./server-seed-client-seed";
 import { guide as pfRoulette } from "./provably-fair-roulette";
 import { guide as coinOdds } from "./coin-flip-odds";
@@ -435,8 +434,6 @@ import { guide as seoStakePoker } from "./stake-poker";
 
 import { guide as seoFliffReview } from "./fliff-review";
 
-
-
 import { guide as seoLuckyForLifeLottery } from "./lucky-for-life-lottery";
 import { guide as seoPick3Lottery } from "./pick-3-lottery";
 import { guide as seoPick4Lottery } from "./pick-4-lottery";
@@ -782,7 +779,6 @@ import { guide as ngWagerApp } from "./wager-app";
 import { guide as ngHighCardGame } from "./high-card-game";
 import { guide as ngNovigReview } from "./novig-review";
 
-
 import { guide as ngSplashSportsReview } from "./splash-sports-review";
 import { guide as ngFantasyFootballPayouts } from "./fantasy-football-payouts";
 import { guide as ngWolfGolfGame } from "./wolf-golf-game";
@@ -856,7 +852,6 @@ import { guide as lostOnlineGamblingLegalKentucky } from "./online-gambling-lega
 import { guide as lostPkInBetting } from "./pk-in-betting";
 
 import { guide as lostSwagbucksGames } from "./swagbucks-games";
-
 
 import { guide as lostBigBassBonanza } from "./big-bass-bonanza";
 import { guide as lostBigBassSplash } from "./big-bass-splash";
@@ -1096,7 +1091,6 @@ export const GUIDES: Guide[] = [
   isMetamaskSafe,
   buyUsdc,
   addBase,
-  cryptoWallet,
   seeds,
   pfRoulette,
   coinOdds,

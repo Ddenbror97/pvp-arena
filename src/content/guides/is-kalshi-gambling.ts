@@ -143,10 +143,6 @@ Adults 18+ only. Not legal, financial, or tax advice.`,
     { label: "Kalshi", url: "https://kalshi.com/" },
     { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
   ],
-  related: [
-    "prediction-market-legal-us",
-    "is-crypto-gambling-legal",
-    "polymarket-vs-kalshi",
-  ],
+  related: ["prediction-market-legal-us", "is-crypto-gambling-legal", "polymarket-vs-kalshi"],
   updated: "2026-10-21",
 };

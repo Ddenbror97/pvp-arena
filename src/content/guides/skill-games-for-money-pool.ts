@@ -111,7 +111,6 @@ The APA team manual bans gambling at APA functions: wagers, side bets, side pots
   ],
   related: [
     "8-ball-pool-for-money",
-
     "games-that-pay-real-money",
     "pool-betting",
     "is-8-ball-pool-rigged",

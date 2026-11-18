@@ -81,7 +81,7 @@ If you must move value between chains on purpose, decide that before you send, u
 
 There is no hidden reversal in the confirmation checkmark. The checkmark means the network you used accepted the payment. Choose the network as carefully as the amount. After the checkmark, tell the truth about which chain you used, protect the keys you still have, and treat recovery as uncertain unless the key holder on that chain can sign and agrees to.
 
-The rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [stuck crypto transaction](/guides/stuck-crypto-transaction), [crypto bridge](/guides/crypto-bridge), [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [wallet](/how-it-works#wallet) before you play.`,
+The rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [stuck crypto transaction](/guides/stuck-crypto-transaction), [crypto bridge](/guides/crypto-bridge), [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [wallet](/how-it-works#wallet) before you play.`,
     },
   ],
   faqs: [

@@ -156,7 +156,6 @@ In the same cluster, see also [phil ivey](/guides/phil-ivey) and [edward thorp](
     "kick-gambling-streamers",
     "twitch-slots-ban",
     "famous-gamblers",
-
     "bonus-buy-slots",
     "phil-ivey",
     "edward-thorp",

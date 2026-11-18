@@ -181,7 +181,7 @@ A site that never lets you see revealed seeds, or reveals them only on request, 
 - **"Seed predictors exist."** No working predictor exists for a properly implemented system. Tools sold as predictors are scams, often designed to steal accounts or wallets.
 - **"No client seed means not provably fair."** Not necessarily. Shared PvP rounds commit a seed before entries, which also prevents the site from choosing a result.
 
-For how to protect yourself from scams more broadly, see the [crypto wallet guide](/guides/crypto-wallet-for-gambling).`,
+For how to protect yourself from scams more broadly, see the [crypto wallet guide](/guides/best-crypto-wallet-for-gambling).`,
     },
     {
       id: "next",

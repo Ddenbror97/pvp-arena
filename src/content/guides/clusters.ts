@@ -616,7 +616,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Choosing a wallet",
       slugs: [
-        "crypto-wallet-for-gambling",
         "best-crypto-wallet-for-gambling",
         "metamask-casino",
         "is-metamask-safe",

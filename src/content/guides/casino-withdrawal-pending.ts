@@ -81,7 +81,7 @@ Set a reminder to check once after the site's stated window, not every five minu
 
 If the wait breaks your budget plans, stop depositing. A casino withdrawal pending is an operational state. It is not a reason to chase. When the transfer confirms, decide then whether you want the funds back in play. Until it confirms, or until the site returns the balance in writing, the amount is not a bankroll.
 
-The rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [crypto casino withdrawals](/guides/crypto-casino-withdrawals), [stuck crypto transaction](/guides/stuck-crypto-transaction), [crypto wallet for gambling](/guides/crypto-wallet-for-gambling). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [wallet](/how-it-works#wallet) before you play.`,
+The rest of this subject is on the [Crypto payments guides](/guides/topics/crypto-payments). See [crypto casino withdrawals](/guides/crypto-casino-withdrawals), [stuck crypto transaction](/guides/stuck-crypto-transaction), [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [wallet](/how-it-works#wallet) before you play.`,
     },
   ],
   faqs: [

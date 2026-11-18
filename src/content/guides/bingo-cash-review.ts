@@ -156,10 +156,6 @@ Real money bingo against players pays the places on the list when the cashier wo
     { label: "Papaya: Bingo Cash", url: "https://www.papaya.com/games/bingo-cash" },
     { label: "Wikipedia: Bingo", url: "https://en.wikipedia.org/wiki/Bingo" },
   ],
-  related: [
-    "papaya-games-review",
-    "solitaire-clash-review",
-    "skillz-review",
-  ],
+  related: ["papaya-games-review", "solitaire-clash-review", "skillz-review"],
   updated: "2026-10-07",
 };
