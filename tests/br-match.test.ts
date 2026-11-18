@@ -190,7 +190,7 @@ describe("Project Island match (Phase 2 core)", () => {
     const me = seatHuman(state, "user-w", "Warm");
     stepBrMatch(state, world, meta, new Map(), 0, TICK_MS);
     expect(state.phase).toBe("starting");
-    expect(BR_RULES.countdownMs).toBe(60_000);
+    expect(BR_RULES.countdownMs).toBe(120_000);
     const s = state.seats[me]!;
     expect(s.body.phase).toBe("ground");
     expect(

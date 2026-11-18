@@ -2696,7 +2696,7 @@ button.br-inv-cell:hover {
 }
 
 /* =====================================================================================
- * Pre-match lobby (owner, 2026-11-04): one-minute countdown from the first real player,
+ * Pre-match lobby (owner, 2026-11-18): two-minute countdown from the first real player,
  * bots fill the seats left at take-off.
  * ===================================================================================== */
 .br-lobby {
