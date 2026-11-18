@@ -60,6 +60,7 @@ const FILES: Record<
   | "shotAt"
   | "swim"
   | "forest"
+  | "jungle"
   | "waves"
   | "snow"
   | "seagulls"
@@ -120,6 +121,9 @@ const FILES: Record<
   // The owner's ambience recordings, made seamless loops (ATTRIBUTION.md): forests, the snow
   // mountain.
   forest: "br-forest-loop-v1.mp3",
+  // The owner's jungle recording (2026-11-17, "Jungle_sound.mp3", ATTRIBUTION.md): Forgotten
+  // Ruins' rainforest, birds, insects and frogs.
+  jungle: "br-jungle-loop-v1.mp3",
   // The owner's recording of light waves on a shore (2026-11-12, ATTRIBUTION.md).
   waves: "br-waves-loop-v1.mp3",
   snow: "br-snow-loop-v1.mp3",
@@ -155,13 +159,14 @@ const LADDER_STEPS = { pad: 0.1, slot: 0.35, count: 10 } as const;
  */
 const AMBIENCE_LOOPS = {
   forest: { pad: 0.25, length: 34 },
+  jungle: { pad: 0.25, length: 60 },
   snow: { pad: 0.25, length: 30 },
   zipGlide: { pad: 0.25, length: 5.45 },
   waves: { pad: 0.25, length: WAVES_LOOP_S },
   seagulls: { pad: 0.25, length: 40 },
 } as const;
 /** Ambience levels at full presence: under the footsteps and the guns, felt more than heard. */
-const AMBIENCE_GAIN = { forest: 0.2, snow: 0.17, seagulls: 0.18 } as const;
+const AMBIENCE_GAIN = { forest: 0.2, snow: 0.17, jungle: 0.26, seagulls: 0.18 } as const;
 /** The waves at the water's edge: a light sound under everything else. */
 const WAVES_GAIN = 0.3;
 
@@ -499,17 +504,19 @@ export function createBrAudio(base: string) {
       }
     },
     /**
-     * Where you are (each 0..1): among trees (`forest`), up on the snow mountain (`snow`), in a
-     * town by the sea (`seagulls`). Each loop starts once it is wanted and drifts to its level
-     * over a couple of seconds, so walking into a wood, up the mountain or into a harbour town
-     * fades it in rather than switching it on.
+     * Where you are (each 0..1): among trees (`forest`), up on the snow mountain (`snow`), in or
+     * near Forgotten Ruins' jungle (`jungle`, which takes the forest's place there), in a town by
+     * the sea (`seagulls`). Each loop starts once it is wanted and drifts to its level over a
+     * couple of seconds, so walking into a wood, up the mountain or into a harbour town fades it
+     * in rather than switching it on.
      */
-    setAmbience(forest: number, snow: number, seagulls = 0) {
+    setAmbience(forest: number, snow: number, jungle = 0, seagulls = 0) {
       const c = ctx;
       if (!c || c.state !== "running") return;
       for (const [key, amount] of [
-        ["forest", forest],
+        ["forest", forest * (1 - jungle)],
         ["snow", snow],
+        ["jungle", jungle],
         ["seagulls", seagulls],
       ] as const) {
         const level = AMBIENCE_GAIN[key] * Math.max(0, Math.min(1, amount));

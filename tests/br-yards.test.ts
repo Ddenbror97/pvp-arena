@@ -11,7 +11,7 @@ const buffer = (path: string) => {
   const f = readFileSync(path);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
   readFileSync("public/fps/br/models/collision.json", "utf8"),
 ) as CollisionData;
@@ -21,8 +21,8 @@ const manifest = JSON.parse(readFileSync("public/fps/br/models/models.json", "ut
 let island: Island;
 beforeAll(async () => {
   const [hf, cover] = await Promise.all([
-    decodeHeightfield(buffer("public/fps/br/height.v2.hf")),
-    decodeLandCover(buffer("public/fps/br/landcover.v1.lc")),
+    decodeHeightfield(buffer("public/fps/br/height.v3.hf")),
+    decodeLandCover(buffer("public/fps/br/landcover.v2.lc")),
   ]);
   island = buildIsland(hf, cover, meta, collision);
 }, 60_000);

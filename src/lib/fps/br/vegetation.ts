@@ -20,7 +20,11 @@ export const CELLS = WORLD_SIZE / CELL_SIZE;
 const STEP = 7;
 const STEPS_PER_CELL = Math.ceil(CELL_SIZE / STEP);
 
-export const SPECIES = ["pine", "broadleaf", "birch"] as const;
+/**
+ * The species. `jungle` and `palm` grow only in Forgotten Ruins' rainforest (owner, 2026-11-17:
+ * "amazon enviroment with gras/forest"): the POIs of kind "ruins".
+ */
+export const SPECIES = ["pine", "broadleaf", "birch", "jungle", "palm"] as const;
 export type Species = (typeof SPECIES)[number];
 
 /** Collision radius of a trunk at scale 1 (m), and its height to the crown base. */
@@ -28,6 +32,8 @@ export const TRUNK = {
   pine: { radius: 0.32, height: 15 },
   broadleaf: { radius: 0.45, height: 11 },
   birch: { radius: 0.22, height: 13 },
+  jungle: { radius: 0.55, height: 16 },
+  palm: { radius: 0.24, height: 11 },
 } as const satisfies Record<Species, { radius: number; height: number }>;
 
 /** Floats per tree in a cell's packed array: x, y (ground), z, scale, yaw (0..1), species. */
@@ -78,6 +84,8 @@ export type VegetationWorld = {
    * coarse raster, and trees stood on the roads where it missed them).
    */
   roads: Map<number, Float64Array>;
+  /** Rainforests (Forgotten Ruins): packed (x, z, r²); jungle species and a denser canopy there. */
+  jungles: Float64Array;
   /** Generated cells (bounded; oldest evicted). */
   cache: Map<number, Float32Array>;
   /** How many generated cells are kept (the renderer raises it for a long view; default 400). */
@@ -98,6 +106,8 @@ export function vegetationWorld(
 ): VegetationWorld {
   const circles: number[] = [];
   for (const p of meta.pois) if (p.padRadius) circles.push(p.x, p.z, (p.padRadius + 15) ** 2);
+  // Forgotten Ruins' plaza: its clearing in the rainforest (the paving, the monuments).
+  for (const p of meta.pois) if (p.kind === "ruins") circles.push(p.x, p.z, 118 ** 2);
   // Redstone Quarry's working floor (its rock cover grows a sparse scatter elsewhere).
   for (const p of meta.pois) if (p.id === "redstone-quarry") circles.push(p.x, p.z, 380 ** 2);
   // Runways and bridge approaches as chains of circles.
@@ -158,7 +168,10 @@ export function vegetationWorld(
   }
   const roads = new Map<number, Float64Array>();
   for (const [key, list] of roadLists) roads.set(key, Float64Array.from(list));
-  return { hf, cover, clear, planted, roads, cache: new Map() };
+  const jungles = Float64Array.from(
+    meta.pois.filter((p) => p.kind === "ruins").flatMap((p) => [p.x, p.z, (p.radius + 160) ** 2]),
+  );
+  return { hf, cover, clear, planted, roads, jungles, cache: new Map() };
 }
 
 /**
@@ -191,9 +204,18 @@ export function cellTrees(
       const cls = cover.classIdAt(x, z);
       let p = DENSITY[cls] ?? 0;
       if (p === 0) continue;
-      // Clumping: forests get clearings, open land gets groves and hedgerow clusters.
+      // In a rainforest (its forest cover, Forgotten Ruins' land-cover pass draws the edge).
+      let jungle = false;
+      if (cls === 4)
+        for (let k = 0; k < world.jungles.length; k += 3) {
+          const dx = x - world.jungles[k]!,
+            dz = z - world.jungles[k + 1]!;
+          if (dx * dx + dz * dz < world.jungles[k + 2]!) jungle = true;
+        }
+      // Clumping: forests get clearings, open land gets groves and hedgerow clusters; the
+      // rainforest's canopy closes (few clearings).
       const n = valueNoise(x, z, 140, SEED + 3);
-      p *= cls === 4 ? 0.35 + 1.1 * n : n * n * 3.2;
+      p *= jungle ? 0.85 + 0.5 * n : cls === 4 ? 0.35 + 1.1 * n : n * n * 3.2;
       if (hash(gi, gj, SEED + 4) >= p) continue;
       const y = hf.heightAt(x, z);
       if (y < 1.6) continue; // beaches, banks and water
@@ -227,9 +249,20 @@ export function cellTrees(
         }
       }
       if (blocked) continue;
-      // Species: pines dominate forests and high ground, broadleaf the lowland, birch near water.
+      // Species: pines dominate forests and high ground, broadleaf the lowland, birch near water;
+      // the rainforest's canopy trees and palms (a few broadleaf among them).
       const r = hash(gi, gj, SEED + 5);
-      const species = y > 120 || (cls === 4 && r < 0.62) ? 0 : r < 0.82 ? 1 : 2;
+      const species = jungle
+        ? r < 0.5
+          ? 3
+          : r < 0.82
+            ? 4
+            : 1
+        : y > 120 || (cls === 4 && r < 0.62)
+          ? 0
+          : r < 0.82
+            ? 1
+            : 2;
       const scale = 0.78 + 0.5 * hash(gi, gj, SEED + 6);
       out.push(x, y, z, scale, hash(gi, gj, SEED + 7), species);
     }

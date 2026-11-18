@@ -197,9 +197,10 @@ export function waterSurface(meta: WorldMeta, ground: number, x: number, z: numb
 
 /**
  * Still water: no waves on it, so no sound of them (owner, 2026-11-15: "remove the Waves sound
- * from water at prison no Waves there"): Blackwater's moat, walled in stone.
+ * from water at prison no Waves there"): Blackwater's moat, walled in stone; Forgotten Ruins'
+ * cenote, a still pool under its cliff.
  */
-export const STILL_WATER = new Set(["blackwater-moat"]);
+export const STILL_WATER = new Set(["blackwater-moat", "ruins-cenote"]);
 
 /** The water body (id) at x/z whose surface is above `ground`, "sea" for the sea, or null. */
 export function waterBodyAt(meta: WorldMeta, ground: number, x: number, z: number): string | null {

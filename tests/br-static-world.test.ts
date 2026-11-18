@@ -18,7 +18,7 @@ const buffer = (path: string) => {
   const f = readFileSync(path);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const meta = JSON.parse(readFileSync("public/fps/br/world.v1.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v2.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
@@ -28,9 +28,9 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")) 
 let hf: Heightfield, world: StaticWorld, layout: Placement[];
 let roadGrade: ReturnType<typeof createRoadGrade>;
 beforeAll(async () => {
-  hf = await decodeHeightfield(buffer("public/fps/br/height.v2.hf"));
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v3.hf"));
   roadGrade = createRoadGrade(meta, (x, z) => hf.heightAt(x, z));
-  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v1.lc"));
+  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v2.lc"));
   ({ layout, solid: world } = buildIsland(hf, cover, meta, collision));
 }, 60_000);
 
@@ -64,6 +64,20 @@ const walk = (
 /** Placed inside the arena (its pitch and concourses): not an overlap with it. */
 const INSIDE_ARENA = new Set(["escalator", "pitch-lines", "goal"]);
 
+/**
+ * Forgotten Ruins' trees that are props (trunk collision only): their canopies overhang the
+ * paving, the houses and each other as in any jungle, so only the trunk (2 m) stands on the
+ * ground and keeps clear of buildings (the layout's FOOT).
+ */
+const CANOPY = new Set([
+  "coconut-palm",
+  "bald-cypress",
+  "palm-tall",
+  "palm-fan",
+  "tall-tree",
+  "banana-grove",
+]);
+
 describe("Project Island static world", () => {
   it("places every layout model, each with collision data, on the flat building pads", () => {
     expect(layout.length).toBeGreaterThan(400);
@@ -85,7 +99,9 @@ describe("Project Island static world", () => {
       // the wall's (checked below).
       if (p.model === DAM.spillway.model) continue;
       const poi = meta.pois.find((q) => q.id === p.poi) ?? { padHeight: undefined };
-      const [x0, z0, x1, z1] = footprint(p);
+      const [x0, z0, x1, z1] = CANOPY.has(p.model)
+        ? [p.x - 1, p.z - 1, p.x + 1, p.z + 1]
+        : footprint(p);
       for (const [x, z] of [
         [x0, z0],
         [x1, z0],
@@ -206,7 +222,13 @@ describe("Project Island static world", () => {
         // The hospital fire station's engine stands in its bay.
         p.model !== "fire-truck" &&
         // Skyline Residences' flats: the kitchen runs along their walls, inside the storey.
-        p.model !== "kitchen-run"
+        p.model !== "kitchen-run" &&
+        // Forgotten Ruins' rope bridge spans the great temple's fallen gallery roof.
+        p.model !== "rope-bridge" &&
+        // Plants and trees (no collision): their leaves overlap, as in any jungle.
+        models.models[p.model]!.class !== "bush" &&
+        models.models[p.model]!.class !== "tree" &&
+        !CANOPY.has(p.model)
       );
     });
     // The placement data is immutable: calculate its footprint once, rather than

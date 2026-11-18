@@ -79,6 +79,10 @@ export const RINGS: Record<string, [number, number, number]> = {
   // conceal and draw to 600 m.
   rock: [60, 250, 1500],
   bush: [40, 160, 600],
+  // Forgotten Ruins' undergrowth (ferns, monstera, palms by the thousand under the canopy, owner
+  // 2026-11-17): it hides a crouching player, but under the trees it is unseen from farther off
+  // anyway; drawn alike for everyone, gone past 220 m.
+  undergrowth: [30, 100, 220],
   // House-lot fences (by the thousand in the towns): see-through and without collision, so
   // they neither hide nor stop anyone; boards up close, a panel mid-range, gone past 500 m.
   yard: [35, 140, 500],
@@ -131,6 +135,7 @@ const FIXED_RINGS = new Set([
   "vehicle",
   "rock",
   "bush",
+  "undergrowth",
   "yard",
 ]);
 /**

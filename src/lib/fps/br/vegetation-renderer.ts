@@ -86,7 +86,13 @@ export function fadeShare(fade: TreeFade, distance: number): [number, number] {
 export const CROWN_REACH = 10;
 
 /** Model ids per species (index = vegetation species id). */
-export const TREE_MODELS = ["tree-pine", "tree-oak", "tree-birch"] as const;
+export const TREE_MODELS = [
+  "tree-pine",
+  "tree-oak",
+  "tree-birch",
+  "tree-jungle",
+  "tree-palm",
+] as const;
 
 export type TreeAssets = {
   /** LOD0 glTF per species (TREE_MODELS order). */
@@ -441,7 +447,17 @@ export const LEAF_COLOUR: Record<
   pine: { hue: [0.72, 1.3, 0.45], k: 0.8, lift: 1.0 },
   broadleaf: { hue: [0.8, 1.22, 0.5], k: 0.45, lift: 1.05 },
   birch: { hue: [1, 1, 1], k: 0, lift: 1 },
+  // The rainforest's: a deep, lush green.
+  jungle: { hue: [0.62, 1.3, 0.42], k: 0.3, lift: 1.1 },
+  palm: { hue: [1, 1, 1], k: 0, lift: 1.05 },
 };
+
+/**
+ * Impostors baked darker than their trees look up close (the rainforest tree's leaf cards face
+ * away from the bake's light): brightened to match, so the canopy does not turn black from the
+ * air (Forgotten Ruins, 2026-11-17).
+ */
+const IMPOSTOR_GAIN: Partial<Record<(typeof SPECIES)[number], number>> = { jungle: 2.0, palm: 1.2 };
 
 export function createVegetation(
   world: VegetationWorld,
@@ -555,7 +571,7 @@ export function createVegetation(
       });
       // The side view is lit softly in the bake and again here with an up-facing normal:
       // lift it to match the real models' brightness.
-      material.color.setScalar(1.45);
+      material.color.setScalar(1.45 * (IMPOSTOR_GAIN[species] ?? 1));
     } else {
       base = placeholderTree(species, 1);
       material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 });
@@ -832,6 +848,16 @@ function placeholderTree(species: (typeof SPECIES)[number], ring: number): THREE
       parts.push(paint(at(new THREE.CylinderGeometry(0.3, 0.48, 6, 6, 1, true), 3), bark));
       parts.push(paint(at(new THREE.IcosahedronGeometry(4.2, 1), 9.5, 0.8), leaves));
     } else parts.push(paint(at(new THREE.IcosahedronGeometry(4.2, 0), 9, 0.85), leaves));
+  } else if (species === "jungle") {
+    if (ring === 0) {
+      parts.push(paint(at(new THREE.CylinderGeometry(0.4, 0.6, 12, 6, 1, true), 6), bark));
+      parts.push(paint(at(new THREE.IcosahedronGeometry(6, 1), 17, 0.6), leaves));
+    } else parts.push(paint(at(new THREE.IcosahedronGeometry(6, 0), 16, 0.65), leaves));
+  } else if (species === "palm") {
+    if (ring === 0) {
+      parts.push(paint(at(new THREE.CylinderGeometry(0.18, 0.26, 12, 5, 1, true), 6), bark));
+      parts.push(paint(at(new THREE.ConeGeometry(3.4, 1.6, 7, 1, true), 12.4), leaves));
+    } else parts.push(paint(at(new THREE.ConeGeometry(3.4, 1.6, 5, 1, true), 12.4), leaves));
   } else {
     if (ring === 0) {
       parts.push(paint(at(new THREE.CylinderGeometry(0.16, 0.24, 9, 5, 1, true), 4.5), birchBark));

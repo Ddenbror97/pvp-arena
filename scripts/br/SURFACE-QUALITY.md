@@ -21,7 +21,7 @@ node scripts/br/bake-surface.mjs
 npx vitest run tests/br-surface-quality.test.ts tests/br-terrain-lod.test.ts tests/br-vegetation.test.ts tests/br-fairness-boundary.test.ts
 ```
 
-Commit both `surface-v1.webp` and `surface-v1.json`. The latter records source/palette/output
+Commit both `surface-v2.webp` and `surface-v2.json`. The latter records source/palette/output
 hashes so tests detect a stale bake. JSON source hashes use parsed data, so Windows/Linux
 line endings and whitespace do not invalidate a correct bake; binary source and output hashes
 remain byte-exact. The texture's rows follow the heightfield's north-to-south order
