@@ -95,7 +95,7 @@ export const AIRCRAFT = {
     [1.55, 0.2, 5.1],
   ] as const,
   /** Touchdown sink rate (m/s): above `hard` the gear is hurt, above `crash` it gives way. */
-  touchdown: { hard: 2.8, crash: 6 },
+  touchdown: { hard: 4, crash: 8 },
   /** Control surfaces' travel rates (per s) and the nose wheel's lock (rad). */
   surfaceRate: 3.5,
   throttleRate: 0.6,
@@ -453,6 +453,7 @@ function subStep(world: StaticWorld, meta: WorldMeta, a: Aircraft, h: number): n
   M[2] += thrust * 0.004;
   // ---- the gear on the ground
   let worst = 0;
+  const wasGrounded = a.grounded;
   a.grounded = false;
   for (const wheel of P.wheels) {
     const broken = a.gear >= 1 || (wheel.nose ? a.gear > 0.7 : false);
@@ -474,12 +475,14 @@ function subStep(world: StaticWorld, meta: WorldMeta, a: Aircraft, h: number): n
     if (-cvy > P.touchdown.hard) {
       const sink = -cvy;
       worst = Math.max(worst, sink);
-      a.gear = Math.min(
-        1,
-        a.gear +
-          ((sink - P.touchdown.hard) / (P.touchdown.crash - P.touchdown.hard)) *
-            (wheel.nose ? 0.6 : 0.4),
-      );
+      // One landing impact, not fresh gear damage on every spring-compression substep.
+      if (!wasGrounded)
+        a.gear = Math.min(
+          1,
+          a.gear +
+            ((sink - P.touchdown.hard) / (P.touchdown.crash - P.touchdown.hard)) *
+              (wheel.nose ? 0.6 : 0.4),
+        );
     }
     const normal = Math.max(0, wheel.k * Math.min(depth, 0.5) - wheel.c * cvy);
     // Rolling direction: the body's forward on the ground, the nose wheel turned by the pedals
