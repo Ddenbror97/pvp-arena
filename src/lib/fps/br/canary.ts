@@ -137,7 +137,7 @@ export class BrCanaries {
    */
   step(state: BrMatchState, world: StaticWorld, now: number, humans: (seat: number) => boolean) {
     for (const s of state.seats) {
-      const onGround = !s.dead && s.vehicle === undefined && s.body.phase === "ground";
+      const onGround = !s.dead && s.vehicle === undefined && s.cockpit === undefined && s.body.phase === "ground";
       if (!onGround) this.groundedSince.delete(s.seat);
       else if (!this.groundedSince.has(s.seat)) this.groundedSince.set(s.seat, now);
     }
@@ -244,7 +244,7 @@ export class BrCanaries {
     const s = state.seats[seat]!;
     return (
       !s.dead &&
-      s.vehicle === undefined &&
+      s.vehicle === undefined && s.cockpit === undefined &&
       s.body.phase === "ground" &&
       now - (this.lastCombat.get(seat) ?? -1e9) >= CANARY.calmMs
     );
@@ -266,7 +266,7 @@ export class BrCanaries {
       (o) =>
         o.seat !== seat &&
         !o.dead &&
-        o.vehicle === undefined &&
+        o.vehicle === undefined && o.cockpit === undefined &&
         o.body.phase === "ground" &&
         now - (this.groundedSince.get(o.seat) ?? now) >= CANARY.donorGroundedMs &&
         (o.body.x - eye.x) ** 2 + (o.body.z - eye.z) ** 2 >= far2,

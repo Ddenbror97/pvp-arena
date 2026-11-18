@@ -5,6 +5,7 @@ import {
   planeRoute,
   routeMs,
   stepDrop,
+  waterSurface,
   type DropBody,
   type DropInput,
   type DropPhase,
@@ -65,6 +66,27 @@ import {
   withVehicles,
   type Vehicle,
 } from "./vehicles";
+import {
+  AIRCRAFT,
+  heightAboveGround,
+  impactDamage,
+  seatAt,
+  stepAircraft,
+  toWorld as aircraftToWorld,
+  type Aircraft,
+  type FlightInput,
+} from "./aircraft";
+import {
+  AIRCRAFT_HIT,
+  aircraftSpawn,
+  bailSpot,
+  EXIT,
+  exitSpots,
+  insideAircraft,
+  nearDoor,
+  onGround,
+  withAircraft,
+} from "./aircraft-world";
 import {
   brHeDamage,
   brNadeAdvance,
@@ -204,6 +226,8 @@ export type BrSeat = Fighter & {
   spectate?: number;
   /** The vehicle this player drives. */
   vehicle?: number;
+  /** In the aircraft: 0 the pilot's seat, 1 the passenger's (aircraft.ts SEATS). */
+  cockpit?: 0 | 1;
   /** Time spent in the gas (ms, decays inside the circle): raises its damage (zone.ts). */
   gasMs?: number;
   /** When they last took damage, and last hurt someone (server ms): "in combat" for perks. */
@@ -256,6 +280,13 @@ export type BrMatchState = {
   /** The winner's seat once the match ends (−1: nobody survived). */
   winner: number;
   vehicles: Vehicle[];
+  /**
+   * The match's one aircraft (aircraft.ts), placed at the Island Airfield on the first step
+   * (undefined: not yet; null: this map has no runway). Never respawns.
+   */
+  aircraft?: Aircraft | null;
+  /** The pilot pressed the engine switch (an act): applied on the next flight step. */
+  engineSwitch?: boolean;
   /** Supply drops (airdrops.ts), planned at take-off. */
   drops: Airdrop[];
   /** The island with this match's doors and vehicles (withDoors, withVehicles), made on first use. */
@@ -333,6 +364,15 @@ export type BrInput = DropInput & {
    * Karambit (key 4; the wire value predates the pistol slot).
    */
   slot?: 0 | 1 | 2 | 3;
+  /**
+   * Flying (the pilot only, aircraft.ts FlightInput): stick pitch (+ back) and roll (+ right),
+   * rudder (+ right), −1 … 1; the throttle lever 0 … 1; the flap lever. Space (jump) brakes.
+   */
+  elev?: number;
+  ail?: number;
+  rud?: number;
+  thr?: number;
+  flaps?: 0 | 1 | 2;
 };
 
 const BOT_NAMES = [
@@ -529,7 +569,8 @@ function stepWarmup(
   // Nobody can be hurt: health stays far above any hit during the shots, then back to full.
   state.history.record(now, state.seats);
   for (const seat of used.keys()) state.seats[seat]!.kit.hp = 1e6;
-  for (const [seat, input] of used) stepHands(state, world, state.seats[seat]!, input, [], now);
+  for (const [seat, input] of used)
+    stepHands(state, world, meta, state.seats[seat]!, input, [], now);
   state.combat.push(...state.projectiles.advance(state.seats, world, state.history, now, () => {}));
   for (const seat of used.keys()) {
     const s = state.seats[seat]!;
@@ -596,6 +637,11 @@ const INPUT_KEYS = [
   "aim",
   "reload",
   "slot",
+  "elev",
+  "ail",
+  "rud",
+  "thr",
+  "flaps",
 ] as const;
 const ALLOWED = new Set<string>(INPUT_KEYS);
 
@@ -626,6 +672,10 @@ export function validateBrInput(raw: unknown): BrInput | null {
   if (r.canopyYaw !== undefined && !num(r.canopyYaw, -Math.PI, Math.PI)) return null;
   if (r.slot !== undefined && r.slot !== 0 && r.slot !== 1 && r.slot !== 2 && r.slot !== 3)
     return null;
+  for (const k of ["elev", "ail", "rud"] as const)
+    if (r[k] !== undefined && !num(r[k], -1, 1)) return null;
+  if (r.thr !== undefined && !num(r.thr, 0, 1)) return null;
+  if (r.flaps !== undefined && r.flaps !== 0 && r.flaps !== 1 && r.flaps !== 2) return null;
   return {
     seq: r.seq as number,
     forward: r.forward as number,
@@ -645,7 +695,18 @@ export function validateBrInput(raw: unknown): BrInput | null {
     aim: r.aim === true,
     reload: r.reload === true,
     ...(r.slot !== undefined ? { slot: r.slot as 0 | 1 | 2 | 3 } : {}),
+    ...(r.elev !== undefined ? { elev: r.elev as number } : {}),
+    ...(r.ail !== undefined ? { ail: r.ail as number } : {}),
+    ...(r.rud !== undefined ? { rud: r.rud as number } : {}),
+    ...(r.thr !== undefined ? { thr: r.thr as number } : {}),
+    ...(r.flaps !== undefined ? { flaps: r.flaps as 0 | 1 | 2 } : {}),
   };
+}
+
+const AIRCRAFT_HEALTH = AIRCRAFT.health;
+/** In a seat (a vehicle's or the aircraft's): no walking, no weapons, no doors. */
+export function seated(s: Pick<BrSeat, "vehicle" | "cockpit">) {
+  return s.vehicle !== undefined || s.cockpit !== undefined;
 }
 
 /**
@@ -736,10 +797,14 @@ export function stepBrMatch(
     panes && state.paneBroken
       ? withPanes(island, panes, state.paneBroken, (id) => state.paneLog.push(id))
       : island;
-  world = state.solid ??= withVehicles(
-    doors && state.doorOpen ? withDoors(glazed, doors, state.doorOpen) : glazed,
-    () => state.vehicles,
-    () => state.tick,
+  if (state.aircraft === undefined) state.aircraft = aircraftSpawn(meta, glazed);
+  world = state.solid ??= withAircraft(
+    withVehicles(
+      doors && state.doorOpen ? withDoors(glazed, doors, state.doorOpen) : glazed,
+      () => state.vehicles,
+      () => state.tick,
+    ),
+    () => state.aircraft ?? null,
   );
   const planeMs = now - state.planeAt;
   // The zone runs from the take-off (RESEARCH.md: PUBG's first circle 120 s after the start).
@@ -753,6 +818,11 @@ export function stepBrMatch(
     if (s.vehicle !== undefined) {
       if (s.bot) leaveVehicle(state, s, world);
       continue; // driven below
+    }
+    if (s.cockpit !== undefined) {
+      // A bot in the cockpit (its human left): out as soon as that is safe.
+      if (s.bot) leaveAircraft(state, world, meta, s);
+      continue; // flown below
     }
     let human = s.bot ? undefined : inputs.get(s.seat);
     // Landed bots play like everyone else (bots.ts): the same input and actions.
@@ -804,6 +874,7 @@ export function stepBrMatch(
     }
   }
   stepVehicles(state, island, world, meta, inputs, now, dtMs);
+  stepFlight(state, island, world, meta, inputs, now, dtMs);
   botDoors(state, world);
   state.history.record(now, state.seats);
   for (const s of state.seats) {
@@ -812,6 +883,7 @@ export function stepBrMatch(
     stepHands(
       state,
       world,
+      meta,
       s,
       s.bot ? botInputs.get(s.seat) : inputs.get(s.seat),
       (s.bot ? botActs.get(s.seat) : acts.get(s.seat)) ?? [],
@@ -825,7 +897,10 @@ export function stepBrMatch(
       state.history,
       now,
       (victim) => dropGear(state, world, victim as BrSeat),
-      (id, damage, at) => hurtVehicle(state, world, id, damage, at),
+      (id, damage, at, by) =>
+        id === AIRCRAFT_HIT
+          ? hurtAircraft(state, world, damage, by as BrSeat | undefined)
+          : hurtVehicle(state, world, id, damage, at),
     );
     for (const e of impacts)
       if (e.type === "elim") {
@@ -966,8 +1041,7 @@ function perkEvents(state: BrMatchState, now: number) {
       }
     }
     // Footprints: a print each stride on foot, the last few kept, the old ones dropped.
-    if (s.dead || s.body.phase !== "ground" || !s.body.grounded || s.vehicle !== undefined)
-      continue;
+    if (s.dead || s.body.phase !== "ground" || !s.body.grounded || seated(s)) continue;
     const trails = (state.trails ??= new Map<number, number[]>());
     let tr = trails.get(s.seat);
     if (!tr) trails.set(s.seat, (tr = []));
@@ -1071,6 +1145,7 @@ export function brResult(state: BrMatchState) {
 function stepHands(
   state: BrMatchState,
   world: StaticWorld,
+  meta: WorldMeta,
   s: BrSeat,
   input: BrInput | undefined,
   acts: readonly BrAct[],
@@ -1096,25 +1171,30 @@ function stepHands(
     state.combat.push(
       a.act === "throw"
         ? throwNade(state, world, s, a, now)
-        : a.act === "enter" || a.act === "exit"
-          ? vehicleAct(state, world, s, a)
-          : a.act === "door"
-            ? doorAct(state, world, s, a)
-            : a.act === "zip"
-              ? zipAct(state, s, now)
-              : a.act === "ladder"
-                ? ladderAct(state, world, s, now)
-                : a.act === "rappel"
-                  ? rappelAct(state, world, s, now)
-                  : a.act === "lift"
-                    ? liftAct(state, world, s, a)
-                    : applyBrAct(s, a, state.loot, world, now),
+        : a.act === "board" ||
+            a.act === "seat" ||
+            a.act === "engine" ||
+            (a.act === "exit" && s.cockpit !== undefined)
+          ? aircraftAct(state, world, meta, s, a.act)
+          : a.act === "enter" || a.act === "exit"
+            ? vehicleAct(state, world, s, a)
+            : a.act === "door"
+              ? doorAct(state, world, s, a)
+              : a.act === "zip"
+                ? zipAct(state, s, now)
+                : a.act === "ladder"
+                  ? ladderAct(state, world, s, now)
+                  : a.act === "rappel"
+                    ? rappelAct(state, world, s, now)
+                    : a.act === "lift"
+                      ? liftAct(state, world, s, a)
+                      : applyBrAct(s, a, state.loot, world, now),
     );
   // Took the handle (or a ladder, a lift) this tick: nothing else (no shot or reload as it
   // starts).
   const took = s.body.phase as DropPhase;
   if (took === "zip" || took === "ladder" || took === "rappel" || took === "lift") return;
-  if (s.vehicle !== undefined) return; // driving: no weapons until out
+  if (seated(s)) return; // driving or flying: no weapons until out
   const onFoot = s.body.phase === "ground" || s.body.phase === "swim";
   if (!onFoot) return;
   const h = s.hands;
@@ -1187,7 +1267,10 @@ function stepHands(
       now,
       state.tick,
       (victim) => dropGear(state, world, victim as BrSeat),
-      (id, damage, at) => hurtVehicle(state, world, id, damage, at),
+      (id, damage, at) =>
+        id === AIRCRAFT_HIT
+          ? hurtAircraft(state, world, damage, s)
+          : hurtVehicle(state, world, id, damage, at),
       state.projectiles,
     );
     for (const e of events)
@@ -1202,6 +1285,15 @@ function stepHands(
 /** An eliminated player's gear falls where they stood (LOOT-SPEC §18). */
 function dropGear(state: BrMatchState, world: StaticWorld, victim: BrSeat) {
   leaveVehicle(state, victim, null);
+  // Eliminated in the aircraft: out of the seat, the body (and gear) on the ground below.
+  if (victim.cockpit !== undefined) {
+    clearCockpit(state, victim);
+    const b = victim.body;
+    b.y = world.supportAt(b.x, b.z, 0.35, b.y);
+    b.vx = b.vz = b.velocityY = 0;
+    b.phase = "ground";
+    b.grounded = true;
+  }
   // Eliminated on the zip-line: off the cable, down to the ground below (gear and body there).
   if (victim.body.phase === "zip") {
     dropFromZip(world, victim.body);
@@ -1286,7 +1378,7 @@ function doorAct(
   const set = doorsOf(world);
   const d = set?.doors[a.id];
   if (!d || !state.doorOpen) return res(false, "Gone");
-  if (s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
+  if (seated(s) || s.body.phase !== "ground") return res(false, "Not here");
   const b = s.body;
   if (Math.hypot(d.x - b.x, d.z - b.z) > DOOR_REACH + 0.5 || b.y > d.y1 || b.y < d.y0 - 1.5)
     return res(false, "Too far");
@@ -1305,7 +1397,7 @@ function botDoors(state: BrMatchState, world: StaticWorld) {
   const set = doorsOf(world);
   if (!set || !state.doorOpen) return;
   for (const s of state.seats) {
-    if (!s.bot || s.dead || s.body.phase !== "ground" || s.vehicle !== undefined) continue;
+    if (!s.bot || s.dead || s.body.phase !== "ground" || seated(s)) continue;
     for (const id of doorsNear(set, s.body.x, s.body.z, 1.2, botDoorIds))
       if (!state.doorOpen[id] && Math.abs(set.doors[id]!.y0 - s.body.y) < 1.5)
         setDoor(state, id, true);
@@ -1326,7 +1418,7 @@ function zipAct(state: BrMatchState, s: BrSeat, now: number): ActEvent {
     ok,
     ...(reason ? { reason } : {}),
   });
-  if (s.dead || s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
+  if (s.dead || seated(s) || s.body.phase !== "ground") return res(false, "Not here");
   // Whichever line's stand they are at (each line keeps its own spacing between riders).
   const line = zipLineAt(s.body.x, s.body.y, s.body.z);
   if (!line) return res(false, "Too far");
@@ -1368,7 +1460,7 @@ function liftAct(
     ok,
     ...(reason ? { reason } : {}),
   });
-  if (s.dead || s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
+  if (s.dead || seated(s) || s.body.phase !== "ground") return res(false, "Not here");
   // In the cab, or at its door on the landing (the call: you step in as the doors close).
   const at = liftCall(lifts(world.hf), s.body.x, s.body.y, s.body.z);
   if (!at) return res(false, "Too far");
@@ -1401,7 +1493,7 @@ function ladderAct(state: BrMatchState, world: StaticWorld, s: BrSeat, now: numb
     ok,
     ...(reason ? { reason } : {}),
   });
-  if (s.dead || s.vehicle !== undefined || s.body.phase !== "ground") return res(false, "Not here");
+  if (s.dead || seated(s) || s.body.phase !== "ground") return res(false, "Not here");
   const at = ladderReachable(world.hf, s.body.x, s.body.y, s.body.z);
   if (!at) return res(false, "Too far");
   // Just off one: a held or repeated E does not put you straight back on.
@@ -1463,8 +1555,7 @@ function rappelAct(state: BrMatchState, world: StaticWorld, s: BrSeat, now: numb
     ...(reason ? { reason } : {}),
   });
   const b = s.body;
-  if (s.dead || s.vehicle !== undefined || b.phase !== "ground" || !b.grounded)
-    return res(false, "Not here");
+  if (s.dead || seated(s) || b.phase !== "ground" || !b.grounded) return res(false, "Not here");
   // Just off one: a held or repeated E does not put you straight back on.
   if (now - (s.ladderOffAt ?? -Infinity) < RAPPEL.againMs) return res(false, "Not yet");
   const site = rappelSite(world, b.x, b.y, b.z, s.yaw);
@@ -1508,7 +1599,7 @@ function vehicleAct(
     if (s.vehicle === undefined) return res(false, "Not in a vehicle");
     return leaveVehicle(state, s, world) ? res(true) : res(false, "No room to get out");
   }
-  if (s.vehicle !== undefined) return res(false, "Already driving");
+  if (seated(s)) return res(false, "Already driving");
   if (s.body.phase !== "ground") return res(false, "Land first");
   const v = state.vehicles[a.id];
   if (!v) return res(false, "Gone");
@@ -1607,7 +1698,7 @@ function stepVehicles(
     if (speed > VEHICLES.crash.playerThreshold) {
       const s = spec(v.kind);
       for (const p of state.seats) {
-        if (p.dead || p.vehicle !== undefined || p.body.phase !== "ground") continue;
+        if (p.dead || seated(p) || p.body.phase !== "ground") continue;
         const dx = p.body.x - v.x,
           dz = p.body.z - v.z;
         if (dx * dx + dz * dz > (s.length / 2 + 0.6) ** 2 || Math.abs(p.body.y - v.y) > 1.5)
@@ -1635,6 +1726,278 @@ function stepVehicles(
       }
     }
   }
+}
+
+// ------------------------------------------------------------------ the aircraft (aircraft.ts)
+
+/** Out of the aircraft's seat (the seat's record only; the body is the caller's). */
+function clearCockpit(state: BrMatchState, s: BrSeat) {
+  const a = state.aircraft;
+  if (a) {
+    if (a.pilot === s.seat) a.pilot = -1;
+    if (a.passenger === s.seat) a.passenger = -1;
+  }
+  delete s.cockpit;
+  s.body.crouched = false;
+}
+
+/** Seated in the aircraft: the body rides the seat (lower hit volumes, as in a car). */
+function placeOccupant(a: Aircraft, s: BrSeat) {
+  const p = seatAt(a, s.cockpit ?? 0);
+  Object.assign(s.body, {
+    x: p.x,
+    y: p.y,
+    z: p.z,
+    vx: a.vx,
+    vz: a.vz,
+    velocityY: 0,
+    grounded: true,
+    crouched: true,
+    phase: "ground" as const,
+  });
+}
+
+/**
+ * Get out (E): on the ground below walking speed beside the door, in the water into it, in the
+ * air at least EXIT.bailAgl over the ground with the parachute (a freefall that opens on its
+ * own, drop.ts); anything else is unsafe and refused. Returns the refusal (null: out).
+ */
+function leaveAircraft(
+  state: BrMatchState,
+  world: StaticWorld,
+  meta: WorldMeta,
+  s: BrSeat,
+): string | null {
+  const a = state.aircraft;
+  if (!a || s.cockpit === undefined) {
+    delete s.cockpit;
+    return null;
+  }
+  const seat = s.cockpit;
+  const b = s.body;
+  const speed = Math.hypot(a.vx, a.vy, a.vz);
+  if (a.wet) {
+    const p = bailSpot(a, seat);
+    const bottom = world.hf.heightAt(p.x, p.z);
+    const surface = waterSurface(meta, bottom, p.x, p.z) ?? bottom;
+    clearCockpit(state, s);
+    Object.assign(b, { x: p.x, y: surface, z: p.z, vx: 0, vz: 0, velocityY: 0 });
+    b.phase = "swim";
+    b.grounded = false;
+    state.events.push({ seat: s.seat, phase: "swim" });
+    return null;
+  }
+  const down = onGround(world, a);
+  if (down && speed < EXIT.groundSpeed) {
+    for (const p of exitSpots(a, seat)) {
+      const y = world.supportAt(p.x, p.z, 0.35, p.y + 1.2);
+      if (Math.abs(y - p.y) > 1.5 || world.blocked(p.x, y, p.z, 1.8, 0.35)) continue;
+      clearCockpit(state, s);
+      Object.assign(b, { x: p.x, y, z: p.z, vx: 0, vz: 0, velocityY: 0, grounded: true });
+      b.phase = "ground";
+      return null;
+    }
+    return "No room to get out";
+  }
+  if (!down && heightAboveGround(world, a) >= EXIT.bailAgl) {
+    // Bail out: off the wing's edge with the aircraft's own speed, into a freefall that
+    // opens the parachute (drop.ts autoDeployAgl).
+    const p = bailSpot(a, seat);
+    clearCockpit(state, s);
+    Object.assign(b, { x: p.x, y: p.y, z: p.z, vx: a.vx, vz: a.vz, velocityY: Math.min(0, a.vy) });
+    b.phase = "freefall";
+    b.grounded = false;
+    state.events.push({ seat: s.seat, phase: "freefall" });
+    return null;
+  }
+  return down ? "Slow down to get out" : "Exit unsafe";
+}
+
+/** The aircraft's acts: board (E), move over (F as passenger), the engine (F), get out (E). */
+function aircraftAct(
+  state: BrMatchState,
+  world: StaticWorld,
+  meta: WorldMeta,
+  s: BrSeat,
+  act: "board" | "seat" | "engine" | "exit",
+): ActEvent {
+  const res = (ok: boolean, reason?: string): ActEvent => ({
+    type: "act",
+    seat: s.seat,
+    act,
+    ok,
+    ...(reason ? { reason } : {}),
+  });
+  const a = state.aircraft;
+  if (!a) return res(false, "Gone");
+  if (act === "exit") {
+    const why = leaveAircraft(state, world, meta, s);
+    return why ? res(false, why) : res(true);
+  }
+  if (act === "board") {
+    if (seated(s)) return res(false, "Already seated");
+    if (s.dead || s.body.phase !== "ground") return res(false, "Land first");
+    if (a.destroyed) return res(false, "Destroyed");
+    if (!nearDoor(a, s.body.x, s.body.y + 0.9, s.body.z)) return res(false, "Too far");
+    if (!onGround(world, a) || Math.hypot(a.vx, a.vy, a.vz) > EXIT.groundSpeed) return res(false, "Moving");
+    const seat = a.pilot < 0 ? 0 : a.passenger < 0 ? 1 : null;
+    if (seat === null) return res(false, "Full");
+    if (seat === 0) a.pilot = s.seat;
+    else a.passenger = s.seat;
+    s.cockpit = seat;
+    s.hands.heal = null;
+    s.hands.reloadUntil = 0;
+    s.hands.aimSince = 0;
+    s.kitVersion++;
+    placeOccupant(a, s);
+    return res(true);
+  }
+  if (act === "seat") {
+    if (s.cockpit !== 1) return res(false, "Not the passenger");
+    if (a.pilot >= 0) return res(false, "Pilot's seat taken");
+    a.passenger = -1;
+    a.pilot = s.seat;
+    s.cockpit = 0;
+    placeOccupant(a, s);
+    return res(true);
+  }
+  // The engine switch.
+  if (s.cockpit !== 0) return res(false, "Not the pilot");
+  if (a.destroyed || a.wet || a.engine === "dead") return res(false, "Engine dead");
+  if (a.engine === "off" && a.fuel <= 0) return res(false, "No fuel");
+  state.engineSwitch = true;
+  return res(true);
+}
+
+/** Harm to the aircraft from a shot or a crash; at none left it explodes. */
+function hurtAircraft(state: BrMatchState, world: StaticWorld, damage: number, by?: BrSeat) {
+  const a = state.aircraft;
+  if (!a || a.destroyed || !(damage > 0)) return;
+  a.health = Math.max(0, a.health - damage);
+  if (a.health > 0) return;
+  a.destroyed = true;
+  a.engine = "dead";
+  state.combat.push({ type: "boom", id: AIRCRAFT_BOOM, x: a.x, y: a.y, z: a.z });
+  // Nobody survives the fire inside; the blast reaches those near it.
+  for (const o of state.seats) {
+    if (o.dead) continue;
+    const inside = o.cockpit !== undefined;
+    const d = Math.hypot(o.body.x - a.x, o.body.y + 0.9 - a.y, o.body.z - a.z);
+    const raw = inside
+      ? 500
+      : d < AIRCRAFT_BLAST.radius
+        ? AIRCRAFT_BLAST.damage * (1 - d / AIRCRAFT_BLAST.radius)
+        : 0;
+    if (raw > 0) nadeDamage(state, world, o, by ?? o, raw, inside ? "vehicle" : "he");
+  }
+}
+/** The explosion's id in the combat events (vehicles use −1 − id; airdrops their own). */
+export const AIRCRAFT_BOOM = -1000;
+const AIRCRAFT_BLAST = { radius: 10, damage: 90 } as const;
+/** Harm to the occupants from an impact (m/s): none in a hard landing, death at ~21 m/s. */
+export function occupantHarm(impact: number) {
+  return impact < 7 ? 0 : (impact - 7) * 7.5;
+}
+
+const heldFlight = new WeakMap<BrMatchState, { input: BrInput; at: number }>();
+/** Fly the aircraft one step: the pilot's controls, crashes, the occupants in their seats. */
+function stepFlight(
+  state: BrMatchState,
+  island: StaticWorld,
+  world: StaticWorld,
+  meta: WorldMeta,
+  inputs: ReadonlyMap<number, BrInput>,
+  now: number,
+  dtMs: number,
+) {
+  const a = state.aircraft;
+  if (!a) return;
+  // Seats whose occupant died or left another way.
+  for (const role of ["pilot", "passenger"] as const) {
+    const o = a[role] >= 0 ? state.seats[a[role]] : undefined;
+    if (!o || o.dead || o.cockpit !== (role === "pilot" ? 0 : 1)) a[role] = -1;
+  }
+  const pilot = a.pilot >= 0 ? state.seats[a.pilot]! : undefined;
+  const switched = !!state.engineSwitch;
+  state.engineSwitch = false;
+  const moving =
+    !a.grounded ||
+    a.vx * a.vx + a.vy * a.vy + a.vz * a.vz > 1e-4 ||
+    a.wx * a.wx + a.wy * a.wy + a.wz * a.wz > 1e-4 ||
+    a.rpm > 0.003 ||
+    a.engine === "starting" ||
+    a.engine === "running";
+  if (!pilot && !moving && !switched) {
+    for (const role of ["passenger"] as const)
+      if (a[role] >= 0) placeOccupant(a, state.seats[a[role]]!);
+    return; // parked: nothing to step
+  }
+  // The pilot's last input carries a short gap (network jitter), as the client predicted.
+  let raw = pilot && !pilot.bot ? inputs.get(pilot.seat) : undefined;
+  if (raw) heldFlight.set(state, { input: raw, at: now });
+  else if (pilot && !pilot.bot) {
+    const held = heldFlight.get(state);
+    if (held && now - held.at <= 250) raw = held.input;
+  }
+  const input: FlightInput | null =
+    raw || switched
+      ? {
+          elev: raw?.elev ?? 0,
+          ail: raw?.ail ?? 0,
+          rud: raw?.rud ?? 0,
+          thr: raw?.thr ?? a.throttle,
+          flaps: raw?.flaps ?? a.flaps,
+          engine: switched,
+          brake: !!raw?.jump,
+        }
+      : null;
+  const impact = stepAircraft(island, meta, a, input, now, dtMs);
+  if (impact) {
+    hurtAircraft(state, world, impactDamage(impact), pilot);
+    const harm = occupantHarm(impact);
+    if (harm > 0)
+      for (const role of ["pilot", "passenger"] as const) {
+        const o = a[role] >= 0 ? state.seats[a[role]] : undefined;
+        if (o && !o.dead) nadeDamage(state, world, o, pilot ?? o, harm, "vehicle");
+      }
+  }
+  for (const role of ["pilot", "passenger"] as const) {
+    const o = a[role] >= 0 ? state.seats[a[role]] : undefined;
+    if (!o || o.dead) continue;
+    placeOccupant(a, o);
+    const own = o.bot ? undefined : inputs.get(o.seat);
+    if (own) {
+      // Free look: where the occupant's head turns (others see it).
+      o.yaw = own.yaw;
+      o.pitch = own.pitch ?? 0;
+    }
+  }
+  // On the ground at speed: anyone on foot in its way is struck (the propeller worst).
+  const speed = Math.hypot(a.vx, a.vz);
+  if (a.grounded && (speed > 3 || a.rpm > 0.2)) {
+    const nose = noseAt(a);
+    for (const p of state.seats) {
+      if (p.dead || seated(p) || p.body.phase !== "ground") continue;
+      const b = p.body;
+      if (Math.abs(b.x - a.x) > 7 || Math.abs(b.z - a.z) > 7) continue;
+      const atProp = a.rpm > 0.2 && Math.hypot(b.x - nose.x, b.y + 1 - nose.y, b.z - nose.z) < 1.2;
+      const struck = speed > 5 && insideAircraft(a, b.x, b.y + 0.9, b.z, 0.45);
+      if (!atProp && !struck) continue;
+      nadeDamage(state, world, p, pilot ?? p, atProp ? 120 : (speed - 5) * 4, "vehicle");
+      // Knocked aside, off the aircraft's track.
+      const side = Math.sign((b.x - a.x) * a.vz - (b.z - a.z) * a.vx) || 1;
+      const k = 1 / Math.max(0.1, speed);
+      b.x += -a.vz * k * side * 1.8;
+      b.z += a.vx * k * side * 1.8;
+      if (struck) hurtAircraft(state, world, speed * 3, pilot);
+    }
+  }
+}
+
+/** The propeller's hub in the world (aircraft.ts plane-c172: 2.26 m ahead of the CG). */
+function noseAt(a: Aircraft) {
+  const c = aircraftToWorld(a, [0, 0.13, -2.26]);
+  return { x: a.x + c[0], y: a.y + c[1], z: a.z + c[2] };
 }
 
 /**
@@ -2282,6 +2645,9 @@ export class BrSeatSync {
    * audit 2026-11-14). Vehicle ids are their index in the match's list.
    */
   readonly vehicles: Array<string | undefined> = [];
+  /** The aircraft's row last sent (undefined: none yet), and the tick it went out. */
+  aircraftKey?: string;
+  aircraftTick = -1;
   /** Doors: how much of the match's door log this connection has (−1: nothing yet). */
   doorsSent = -1;
   /** Panes: how much of the match's broken-pane log this connection has (−1: nothing yet). */
@@ -2327,6 +2693,88 @@ export function brFastEvents(events: readonly BrMatchState["combat"][number][]) 
 
 /** The parts of a player row that are not position or facing: a change is sent at once. */
 const ROW_STATE = [4, 6, 7, 8, 9, 10, 11, 12] as const;
+
+const ENGINE_CODES = ["off", "starting", "running", "dead"] as const;
+/**
+ * The aircraft's row (aircraft.ts Aircraft, read by aircraftFromRow): [x, y, z, qx, qy, qz, qw,
+ * vx, vy, vz, wx, wy, wz, engine (ENGINE_CODES), the starter's server ms, rpm, throttle, fuel
+ * (s), flap lever, flap travel, elevator, ailerons, rudder, health, gear harm, flags (1 on the
+ * ground, 2 destroyed, 4 in the water, 8 brakes), pilot seat, passenger seat (−1 empty)]. Full
+ * precision where the pilot's prediction resumes from it.
+ */
+export function aircraftRow(a: Aircraft) {
+  const r = (n: number, k: number) => Math.round(n * k) / k;
+  return [
+    r(a.x, 1000),
+    r(a.y, 1000),
+    r(a.z, 1000),
+    r(a.qx, 1e6),
+    r(a.qy, 1e6),
+    r(a.qz, 1e6),
+    r(a.qw, 1e6),
+    r(a.vx, 1000),
+    r(a.vy, 1000),
+    r(a.vz, 1000),
+    r(a.wx, 1e4),
+    r(a.wy, 1e4),
+    r(a.wz, 1e4),
+    ENGINE_CODES.indexOf(a.engine),
+    a.startAt,
+    r(a.rpm, 1e4),
+    r(a.throttle, 1e4),
+    r(a.fuel, 100),
+    a.flaps,
+    r(a.flap, 1e4),
+    r(a.elev, 1e4),
+    r(a.ail, 1e4),
+    r(a.rud, 1e4),
+    r(a.health, 10),
+    r(a.gear, 1e4),
+    (a.grounded ? 1 : 0) + (a.destroyed ? 2 : 0) + (a.wet ? 4 : 0) + (a.brake ? 8 : 0),
+    a.pilot,
+    a.passenger,
+  ];
+}
+/** The client's copy of the aircraft from its row (the inverse of aircraftRow). */
+export function aircraftFromRow(row: readonly number[], into?: Aircraft): Aircraft {
+  const a = into ?? ({ id: 0, maxHealth: AIRCRAFT_HEALTH } as Aircraft);
+  const f = row[25] ?? 0;
+  Object.assign(a, {
+    x: row[0],
+    y: row[1],
+    z: row[2],
+    qx: row[3],
+    qy: row[4],
+    qz: row[5],
+    qw: row[6],
+    vx: row[7],
+    vy: row[8],
+    vz: row[9],
+    wx: row[10],
+    wy: row[11],
+    wz: row[12],
+    engine: ENGINE_CODES[row[13] ?? 0] ?? "off",
+    startAt: row[14],
+    rpm: row[15],
+    throttle: row[16],
+    fuel: row[17],
+    flaps: (row[18] ?? 0) as 0 | 1 | 2,
+    flap: row[19],
+    elev: row[20],
+    ail: row[21],
+    rud: row[22],
+    health: row[23],
+    gear: row[24],
+    grounded: (f & 1) !== 0,
+    destroyed: (f & 2) !== 0,
+    wet: (f & 4) !== 0,
+    brake: (f & 8) !== 0,
+    pilot: row[26],
+    passenger: row[27],
+  });
+  a.maxHealth = AIRCRAFT_HEALTH;
+  return a;
+}
 
 const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
 /**
@@ -2399,6 +2847,7 @@ export type BrViewFrame = {
   rows: Array<number[] | undefined>;
   /** By vehicle id. */
   vehicles: Array<{ row: number[]; key: string } | undefined>;
+  aircraft?: { row: number[]; key: string };
   aboard: number;
   alive: number;
   humans: number;
@@ -2433,7 +2882,8 @@ function playerRow(s: BrSeat) {
     gun ? itemCode(gun.item) : -1,
     // Bit 1: crouched. Bit 2: Silent Steps on a run (the client hears it less far).
     (b.crouched ? 1 : 0) + (!s.sprinting && perkOn(perksOf(s.kit), "silent-steps") ? 2 : 0),
-    s.vehicle ?? -1,
+    // The vehicle driven, or the aircraft's seat as −2 (pilot) / −3 (passenger).
+    s.vehicle ?? (s.cockpit !== undefined ? -2 - s.cockpit : -1),
     // Attachments are visible on other players' guns (a scope or a silencer is information
     // everyone gets the same way).
     gun?.optic ? itemCode(gun.optic) : -1,
@@ -2480,8 +2930,7 @@ export function brViewFor(
   // Fog of war applies to a viewer on foot (BR_RULES.fogAlwaysM): from the air, a line or a
   // rope, or a vehicle's chase camera, the whole near ring can be in view.
   const onFoot =
-    watched.vehicle === undefined &&
-    (eye.phase === "ground" || eye.phase === "swim" || eye.phase === "lift");
+    !seated(watched) && (eye.phase === "ground" || eye.phase === "swim" || eye.phase === "lift");
   const rows: number[][] = [];
   /** Far players this view (half rate on), and those of them left out of it. */
   const far = new Set<number>(),
@@ -2493,14 +2942,18 @@ export function brViewFor(
     const d = Math.sqrt((b.x - eye.x) ** 2 + (b.z - eye.z) ** 2);
     // Riders on the zip-line hang high over the valley, seen against the sky like fliers.
     const airborne =
-      b.phase === "plane" || b.phase === "freefall" || b.phase === "parachute" || b.phase === "zip";
+      b.phase === "plane" ||
+      b.phase === "freefall" ||
+      b.phase === "parachute" ||
+      b.phase === "zip" ||
+      s.cockpit !== undefined;
     const send =
       s === watched ||
       airborne ||
       (d <= BR_RULES.alwaysSendM
         ? d <= BR_RULES.fogAlwaysM ||
           !onFoot ||
-          s.vehicle !== undefined ||
+          seated(s) ||
           state.phase !== "active" ||
           sight.near(world, eye, b, watched.seat, s.seat, now)
         : d <= BR_RULES.sightSendM && sight.visible(world, eye, b, watched.seat, s.seat, now));
@@ -2516,7 +2969,7 @@ export function brViewFor(
       state.phase === "active" &&
       s !== watched &&
       !airborne &&
-      s.vehicle === undefined &&
+      !seated(s) &&
       d <= BR_RULES.fogAlwaysM &&
       !sight.near(world, eye, b, watched.seat, s.seat, now)
     ) {
@@ -2577,6 +3030,7 @@ export function brViewFor(
   if (sync) sync.routeSent = true;
   let loot: { add: unknown[]; del: number[] } | undefined;
   let vehicles: { rows: number[][]; gone: number[] } | undefined;
+  let aircraft: number[] | undefined;
   let doors: { open?: number[]; changes?: number[] } | undefined;
   let panes: { broken: number[]; fresh?: boolean } | undefined;
   let kit: BrKitView | undefined;
@@ -2607,6 +3061,23 @@ export function brViewFor(
       }
     }
     if (rows.length || gone.length) vehicles = { rows, gone };
+    // The aircraft: every change near (it is seen across the island), every third tick far.
+    const a = state.aircraft;
+    if (a) {
+      const shared = (frame.aircraft ??= (() => {
+        const row = aircraftRow(a);
+        return { row, key: row.join(",") };
+      })());
+      const near = (a.x - eye.x) ** 2 + (a.z - eye.z) ** 2 < 1500 ** 2 || me.cockpit !== undefined;
+      if (
+        shared.key !== sync.aircraftKey &&
+        (near || sync.aircraftTick < 0 || state.tick - sync.aircraftTick >= 3 || a.destroyed)
+      ) {
+        sync.aircraftKey = shared.key;
+        sync.aircraftTick = state.tick;
+        aircraft = shared.row;
+      }
+    }
     // Doors: every open door on the first view, then only the changes (id · 2 + open).
     if (state.doorOpen) {
       if (sync.doorsSent < 0) {
@@ -2709,6 +3180,8 @@ export function brViewFor(
         }
       : {}),
     ...(vehicles ? { vehicles } : {}),
+    ...(aircraft ? { aircraft } : {}),
+    ...(me.cockpit !== undefined ? { flying: me.cockpit } : {}),
     ...(doors ? { doors } : {}),
     ...(panes ? { panes } : {}),
     ...(me.vehicle !== undefined ? { driving: me.vehicle } : {}),
@@ -2798,6 +3271,8 @@ export function checkpointBrMatch(state: BrMatchState, includeLoot = true) {
         [id, x, Math.round(y * 1000) / 1000, z, rest] as [number, number, number, number, Loose],
     ),
     vehicles: state.vehicles,
+    /** The aircraft (null: none on this map; absent: not placed yet). */
+    ...(state.aircraft !== undefined ? { aircraft: state.aircraft } : {}),
     drops: state.drops,
     minds: state.minds,
     /** Open door ids (null before the first tick made the door states). */
@@ -2863,6 +3338,7 @@ export function restoreBrMatch(
     drops: c.drops,
     minds: c.minds,
   });
+  if (c.aircraft !== undefined) state.aircraft = c.aircraft;
   c.seats.forEach((s, i) => Object.assign(state.seats[i]!, s));
   c.landed.forEach((l, i) => {
     if (state.bots[i]) state.bots[i]!.landed = l;

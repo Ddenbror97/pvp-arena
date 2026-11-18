@@ -48,6 +48,12 @@ export type BrAct =
   | { act: "rappel" }
   /** A floor button in a lift's cab: ride to that stop (lifts.ts, index from the bottom). */
   | { act: "lift"; floor: number }
+  /** E at the aircraft's door: board it (the pilot's seat if free, else the passenger's). */
+  | { act: "board" }
+  /** The passenger moves over to the empty pilot's seat (aircraft-world.ts). */
+  | { act: "seat" }
+  /** The pilot's engine switch (F): start when off, shut down when running. */
+  | { act: "engine" }
   | ({ act: "perk" } & PerkOp);
 
 const KEYS: Record<BrAct["act"], readonly string[]> = {
@@ -67,6 +73,9 @@ const KEYS: Record<BrAct["act"], readonly string[]> = {
   ladder: [],
   rappel: [],
   lift: ["floor"],
+  board: [],
+  seat: [],
+  engine: [],
   perk: ["op", "perk", "slot"],
 };
 const int = (v: unknown, lo: number, hi: number) =>
@@ -137,6 +146,12 @@ export function validateBrAct(raw: unknown): BrAct | null {
       return { act: "exit" };
     case "zip":
       return { act: "zip" };
+    case "board":
+      return { act: "board" };
+    case "seat":
+      return { act: "seat" };
+    case "engine":
+      return { act: "engine" };
     case "ladder":
       return { act: "ladder" };
     case "rappel":
@@ -314,6 +329,9 @@ export function applyBrAct(
     case "ladder":
     case "rappel":
     case "lift":
+    case "board":
+    case "seat":
+    case "engine":
       return res(false, "Not here"); // handled by the match (grenades in flight, vehicles)
     case "cancel": {
       if (f.hands.heal) {
