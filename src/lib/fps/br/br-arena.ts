@@ -139,6 +139,8 @@ import type { NadeEvent } from "./match";
 import { AircraftClient, boardable, flightHud, type FlightHud } from "./aircraft-client";
 import { createAircraftRenderer } from "./aircraft-renderer";
 import { withAircraft } from "./aircraft-world";
+import { aero } from "./aircraft";
+import type { AircraftSound } from "./aircraft-audio";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
 import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./attachment-fit";
@@ -856,6 +858,7 @@ export function createBrArena(
   let car: Vehicle | null = null;
   /** The Island Airfield's aircraft: rows, your seat, the pilot's prediction and cameras. */
   const flight = new AircraftClient();
+  const planeSound = { stallWarn: false } as AircraftSound;
   let aircraftFx: ReturnType<typeof createAircraftRenderer> | null = null;
   /** In a seat (a vehicle's or the aircraft's): no walking, no weapons. */
   const seatedMe = () => !!car || flight.seat !== null;
@@ -2701,11 +2704,11 @@ export function createBrArena(
     // The aircraft: the pilot's prediction, or everyone else's interpolation on the same clock.
     const plane3d = flight.sample(t, accumulator, dtMs);
     aircraftFx?.update(plane3d, dtMs, camera.position, now);
+    if (plane3d)
+      // (The stall horn sounds only inside; one shared object, no garbage each frame.)
+      planeSound.stallWarn = flight.seat !== null && !plane3d.grounded && aero(plane3d).warn;
     audio.aircraft(
-      plane3d && {
-        ...plane3d,
-        stallWarn: flight.seat !== null && !!island && flightHud(solid(), plane3d, 0, 0).stall,
-      },
+      plane3d ? Object.assign(planeSound, plane3d) : null,
       flight.seat !== null && !kit?.dead,
       serverClock(),
     );
