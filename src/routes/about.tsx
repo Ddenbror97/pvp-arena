@@ -299,7 +299,12 @@ function AboutPage() {
         }
       >
         <SeoGrid cols={3}>
-          <GameCard icon={<Dices className="h-5 w-5" />} name="Jackpot" to="/" cta="Play Jackpot">
+          <GameCard
+            icon={<Dices className="h-5 w-5" />}
+            name="Jackpot"
+            to="/jackpot"
+            cta="Play Jackpot"
+          >
             A shared pot where one cent equals one ticket. When the timer ends, entries lock, the
             wheel spins and one ticket wins the whole pot. Your chance is simply your share of the
             total.

@@ -169,7 +169,12 @@ const CLUSTER_PROMOTIONS: Record<GuideCluster, GuidePromotion> = {
     hook: "Explore a head-to-head coinflip.",
     label: "Explore",
   },
-  Lottery: { to: "/", name: "Jackpot", hook: "See how the shared pot works.", label: "Explore" },
+  Lottery: {
+    to: "/jackpot",
+    name: "Jackpot",
+    hook: "See how the shared pot works.",
+    label: "Explore",
+  },
   "Horse racing": {
     to: "/how-it-works",
     name: "PvP games",

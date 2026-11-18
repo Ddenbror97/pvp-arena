@@ -21,10 +21,11 @@ export function rootHead(notFound: boolean, stylesheet: string) {
     );
   } else {
     meta.push(
-      { title: "PVPspinArena — PvP Crypto Jackpot" },
+      { title: "FPS Duel: 1v1, 5v5 & Battle Royale | PVPspinArena" },
       {
         name: "description",
-        content: "Live PvP jackpot with provably fair, server-decided draws.",
+        content:
+          "Play PvPStrike browser FPS: 1v1 duels, 5v5 Bomb Defusal and Project Island Battle Royale. Practise free or enter cash 1v1 duels. No download needed.",
       },
     );
   }

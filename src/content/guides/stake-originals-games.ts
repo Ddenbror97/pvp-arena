@@ -103,7 +103,7 @@ Both can be verified; the difference is who holds the other side and how the cos
   cta: {
     title: "Play against players, not the house",
     text: "PVPspinArena's Jackpot pays the pot to one player, minus a 5% fee; chance equals your share.",
-    primary: { to: "/", label: "Jackpot" },
+    primary: { to: "/jackpot", label: "Jackpot" },
     secondary: { to: "/guides/house-edge", label: "House edge" },
   },
 };

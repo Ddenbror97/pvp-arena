@@ -16,7 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export function RecentGames() {
-  const paintedAt = getRouteApi("/").useLoaderData().recent?.at;
+  const paintedAt = getRouteApi("/jackpot").useLoaderData().recent?.at;
   const { rows, isLoading, page, hasNext, hasPrev, next, prev } = usePagedRecent(
     "recent-games",
     fetchRecentGames,

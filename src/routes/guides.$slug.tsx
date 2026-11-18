@@ -492,7 +492,7 @@ function GuideArticle({
             {...(g.cta ?? {
               title: "See it on a live round",
               text: "Choose a game and learn its rules.",
-              primary: { to: "/", label: "Jackpot" },
+              primary: { to: "/jackpot", label: "Jackpot" },
               secondary: { to: "/how-it-works", label: "How the games work" },
             })}
           />

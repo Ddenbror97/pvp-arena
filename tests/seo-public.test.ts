@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { canonicalUrl, indexableHead } from "@/lib/seo/indexable-head";
+import { fpsLobbyHead, FPS_LOBBY_TITLE, FPS_LOBBY_DESCRIPTION } from "@/lib/seo/fps-lobby";
 import { rootHead } from "@/lib/seo/root-head";
 import { GAME_FACT_PAGES } from "@/lib/seo/game-facts";
 import { STATIC_PATHS } from "@/routes/sitemap[.]xml";
@@ -35,6 +36,24 @@ describe("public SEO facts", () => {
     expect(llms).not.toContain("six games");
     expect(llms).not.toContain("three games");
     expect(llms).not.toContain("15-slot");
+  });
+
+  it("gives the FPS homepage and lobby alias one indexable canonical with complete metadata", () => {
+    for (const home of [true, false]) {
+      const head = fpsLobbyHead(home);
+      expect(head.links[0]).toEqual({ rel: "canonical", href: "https://pvpspinarena.com/" });
+      expect(head.meta).toContainEqual({ title: FPS_LOBBY_TITLE });
+      expect(head.meta).toContainEqual({ name: "description", content: FPS_LOBBY_DESCRIPTION });
+      expect(head.meta).toContainEqual({ name: "robots", content: "index, follow" });
+      expect(head.meta).toContainEqual({
+        property: "og:url",
+        content: "https://pvpspinarena.com/",
+      });
+      const graph = JSON.parse(String(head.scripts[0].children))["@graph"];
+      expect(graph.some((node: { "@type": string }) => node["@type"] === "WebSite")).toBe(home);
+    }
+    expect(STATIC_PATHS).toContain("/jackpot");
+    expect(STATIC_PATHS).not.toContain("/fps-duel");
   });
 
   it("canonicalises the apex host", () => {

@@ -119,7 +119,7 @@ Adults only. This page is not legal advice. PVPspinArena does not sell boxes; it
   cta: {
     title: "One pot, odds you can see",
     text: "In PVPspinArena's Jackpot your chance equals your share of the pot, and the 5% fee is the only cut.",
-    primary: { to: "/", label: "Jackpot" },
+    primary: { to: "/jackpot", label: "Jackpot" },
     secondary: { to: "/guides/expected-value-gambling", label: "Expected value" },
   },
 };

@@ -76,7 +76,7 @@ function NotFoundComponent() {
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
-            Back to the jackpot
+            Back to the FPS lobby
           </Link>
         </div>
       </div>
@@ -237,7 +237,7 @@ function RootComponent() {
   });
   const admin = pathname === "/admin";
   const wide =
-    pathname === "/" ||
+    pathname === "/jackpot" ||
     pathname === "/coinflip" ||
     pathname.startsWith("/coinflip/") ||
     pathname === "/roulette";
@@ -249,7 +249,7 @@ function RootComponent() {
   const poolLobby = pathname === "/8-ball-pool" || pathname === "/8-ball-pool/";
   const poolMatch = /^\/pool\/[^/]+\/?$/.test(pathname);
   const fpsMatch = /^\/fps\/[^/]+\/?$/.test(pathname) || /^\/fps-(bomb|br)\/?$/.test(pathname);
-  const fpsLobby = pathname === "/fps-duel" || pathname === "/fps-duel/";
+  const fpsLobby = pathname === "/" || pathname === "/fps-duel" || pathname === "/fps-duel/";
   useLayoutEffect(() => {
     if (!slottLobby) return;
     const apply = () =>

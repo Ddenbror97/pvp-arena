@@ -105,11 +105,21 @@ export function SiteHeader({ className }: { className?: string }) {
           />
           <Link
             to="/"
+            activeOptions={{ exact: true }}
+            className={link}
+            onMouseEnter={() => warmStrikePages(router, qc, userId)}
+            onFocus={() => warmStrikePages(router, qc, userId)}
+            onTouchStart={() => warmStrikePages(router, qc, userId)}
+          >
+            FPS Duel
+          </Link>
+          <Link
+            to="/jackpot"
             className={link}
             activeOptions={{ exact: true }}
-            onMouseEnter={() => prefetchGamePage(qc, "/")}
-            onFocus={() => prefetchGamePage(qc, "/")}
-            onTouchStart={() => prefetchGamePage(qc, "/")}
+            onMouseEnter={() => prefetchGamePage(qc, "/jackpot")}
+            onFocus={() => prefetchGamePage(qc, "/jackpot")}
+            onTouchStart={() => prefetchGamePage(qc, "/jackpot")}
           >
             Jackpot
           </Link>
@@ -166,15 +176,6 @@ export function SiteHeader({ className }: { className?: string }) {
             }}
           >
             8 Pool
-          </Link>
-          <Link
-            to="/fps-duel"
-            className={link}
-            onMouseEnter={() => warmStrikePages(router, qc, userId)}
-            onFocus={() => warmStrikePages(router, qc, userId)}
-            onTouchStart={() => warmStrikePages(router, qc, userId)}
-          >
-            PvPStrike
           </Link>
           <Link to="/fairness" className={link}>
             Fairness
@@ -422,9 +423,20 @@ export function MobileTabBar({ className }: { className?: string }) {
     >
       <Link
         to="/"
+        activeOptions={{ exact: true }}
+        className={tab}
+        onMouseEnter={() => warmStrikePages(router, qc, userId)}
+        onFocus={() => warmStrikePages(router, qc, userId)}
+        onTouchStart={() => warmStrikePages(router, qc, userId)}
+      >
+        <Crosshair className="h-5 w-5" />
+        FPS Duel
+      </Link>
+      <Link
+        to="/jackpot"
         className={tab}
         activeOptions={{ exact: true }}
-        onTouchStart={() => prefetchGamePage(qc, "/")}
+        onTouchStart={() => prefetchGamePage(qc, "/jackpot")}
       >
         <Dices className="h-5 w-5" />
         Jackpot
@@ -454,16 +466,6 @@ export function MobileTabBar({ className }: { className?: string }) {
         }}
       >
         <Circle className="h-5 w-5" />8 Pool
-      </Link>
-      <Link
-        to="/fps-duel"
-        className={tab}
-        onMouseEnter={() => warmStrikePages(router, qc, userId)}
-        onFocus={() => warmStrikePages(router, qc, userId)}
-        onTouchStart={() => warmStrikePages(router, qc, userId)}
-      >
-        <Crosshair className="h-5 w-5" />
-        PvPStrike
       </Link>
       <Link to="/fairness" className={tab}>
         <ShieldCheck className="h-5 w-5" />
