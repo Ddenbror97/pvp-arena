@@ -121,7 +121,7 @@ describe("Project Island models", () => {
     // procedural models (boiler towers, chimneys, halls, tanks, the yard floor) and the owner's
     // 14 downloads for it, ~2.8 MB, 2026-11-17; the Old Fortress: 23 procedural models (the
     // base and its vaults, towers, walls, gatehouse, keep, hall, barracks, chapel, stables, the
-    // bridge, the breach, the scaffold), ~3.3 MB, and the owner's 47 downloads to furnish and
+    // bridge, the breach, the scaffold), ~3.3 MB, and the owner's 54 downloads to furnish and
     // besiege it (siege engines, cannons, the outer gate, thrones, tables, racks, shields,
     // banners, chandeliers, the cage, the bell, the smithy, carts, flags), ~3.1 MB, 2026-11-17).
     expect(total / 1024).toBeLessThan(91);
