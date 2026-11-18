@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 test("Bomb artwork preloads independently from the 1v1 rotation", async ({ page }) => {
-  await page.goto("/fps-duel");
+  await page.goto("/");
   await expect(page.getByRole("link", { name: "Practice defuse the bomb" })).toBeVisible();
   await page.getByRole("link", { name: "Practice defuse the bomb" }).hover();
   const art = await page.evaluate(async () => {

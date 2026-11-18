@@ -114,7 +114,7 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
       await p.screenshot({ path: "test-results/staging-signin-failure.png" });
       throw e;
     }
-    await p.goto("/fps-duel");
+    await p.goto("/");
     await expect(p.getByRole("tab", { name: "Create game", exact: true })).toBeVisible();
   }
   const amount = async (id: string) =>
@@ -134,7 +134,7 @@ test("two authenticated browsers play a paid BO5 and reconcile the actual ledger
     const createAt = Date.now();
     await page.getByRole("button", { name: "Create game", exact: true }).click();
     await expect(page.getByText("Your human-only cash room is open.")).toBeVisible();
-    await expect(page).toHaveURL(/\/fps-duel$/);
+    await expect(page).toHaveURL("/");
     matchId = (
       await sql`select id from fps_matches where creator_id=${users[0].id} and status='WAITING'`
     )[0].id;

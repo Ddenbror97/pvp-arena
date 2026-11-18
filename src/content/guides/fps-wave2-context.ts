@@ -84,7 +84,7 @@ If you are checking whether a platform can run the game at all, read [CS2 on Mac
     title: "Measure a drill without turning it into a ranking",
     body: `A [mouse accuracy test](/guides/mouse-accuracy-test) can track a repeatable local drill, but its score does not predict a duel winner. [Valorant aim training](/guides/valorant-aim-trainer) addresses transfer to an ability shooter. Before adding an external sight to either game, review the permission and visibility questions in [crosshair overlays](/guides/crosshair-overlay).
 
-You can also start a bot duel in the [PvPStrike lobby](/fps-duel) to practise in our independent browser shooter. Its movement, recoil and hit rules differ from CS2, so compare progress within the same game rather than treating the scores as interchangeable.`,
+You can also start a bot duel in the [PvPStrike lobby](/) to practise in our independent browser shooter. Its movement, recoil and hit rules differ from CS2, so compare progress within the same game rather than treating the scores as interchangeable.`,
   },
   "cs2-economy": {
     id: "weapon-decisions",

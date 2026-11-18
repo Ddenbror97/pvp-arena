@@ -68,7 +68,7 @@ test("Practice and both human seats load the supplied WebP and enter without the
     await p.locator("#password").fill(user.password);
     await p.locator("button[type=submit]").click();
     await expect.poll(() => p.url()).not.toContain("/auth");
-    await p.goto("/fps-duel");
+    await p.goto("/");
   }
   async function expectReady(p: Page) {
     const screen = p.getByRole("region", { name: "Preparing PvPStrike match" });
@@ -134,7 +134,7 @@ test("Practice and both human seats load the supplied WebP and enter without the
     await page.waitForTimeout(1000);
     expect(snapshotCount - framesBefore).toBeGreaterThanOrEqual(25);
     await cleanup();
-    await page.goto("/fps-duel");
+    await page.goto("/");
     await login(other, users[1]);
     await page.getByRole("tab", { name: "Create game", exact: true }).click();
     await page.getByLabel("I accept this entry", { exact: false }).check();

@@ -743,7 +743,7 @@ export function BombMatch() {
           <section className="duel-match-card">
             <h1>Desktop only.</h1>
             <p>Bomb Defusal needs a mouse and keyboard.</p>
-            <Link className="duel-primary" to="/fps-duel">
+            <Link className="duel-primary" to="/">
               Back to PvPStrike
             </Link>
           </section>

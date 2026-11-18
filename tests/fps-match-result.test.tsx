@@ -17,7 +17,7 @@ const base: MatchResultProps = {
   busy: false,
   error: null,
   onPlayAgain: () => {},
-  lobbyLink: <a href="/fps-duel">Back to lobby</a>,
+  lobbyLink: <a href="/">Back to lobby</a>,
   walletLink: <a href="/wallet">Open wallet</a>,
 };
 const render = (extra: Partial<MatchResultProps> = {}) =>

@@ -16,7 +16,7 @@ export function BrAccessGate({ children }: { children: ReactNode }) {
       <Link to="/auth" className="strike-primary">
         Sign in
       </Link>
-      <Link to="/fps-duel" className="strike-secondary">
+      <Link to="/" className="strike-secondary">
         Back to PvPStrike
       </Link>
     </section>

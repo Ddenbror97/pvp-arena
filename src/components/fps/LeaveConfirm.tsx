@@ -12,7 +12,7 @@ export function LeaveConfirm({
   detail,
   stayLabel,
   leaveLabel,
-  to = "/fps-duel",
+  to = "/",
   onStay,
 }: {
   title: string;

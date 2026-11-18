@@ -353,7 +353,7 @@ function AboutPage() {
           <GameCard
             icon={<Swords className="h-5 w-5" />}
             name="PvPStrike FPS"
-            to="/fps-duel"
+            to="/"
             cta="Open PvPStrike"
           >
             Play best-of-thirteen cash duels against another person or free bot Practice across the

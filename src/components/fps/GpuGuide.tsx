@@ -77,7 +77,7 @@ export function GpuGuidePage() {
   return (
     <main className="gpu-guide-page">
       <div className="gpu-guide">
-        <Link className="gpu-guide-back" to="/fps-duel">
+        <Link className="gpu-guide-back" to="/">
           <ArrowLeft size={14} aria-hidden /> Back to PvPStrike
         </Link>
         <h1 className="gpu-guide-title">Play PvPStrike on your graphics card</h1>

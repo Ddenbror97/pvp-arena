@@ -411,7 +411,7 @@ export function BrMatch() {
           <section className="duel-match-card">
             <h1>Desktop only.</h1>
             <p>Battle royale needs a mouse and keyboard.</p>
-            <Link className="duel-primary" to="/fps-duel">
+            <Link className="duel-primary" to="/">
               Back to PvPStrike
             </Link>
           </section>
@@ -487,7 +487,7 @@ export function BrMatch() {
             out={feed.out}
             leave={
               hud.result ? (
-                <Link to="/fps-duel" className="duel-primary">
+                <Link to="/" className="duel-primary">
                   Back to lobby
                 </Link>
               ) : (

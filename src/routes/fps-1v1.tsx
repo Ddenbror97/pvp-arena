@@ -113,7 +113,7 @@ function Page() {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
-              to="/fps-duel"
+              to="/"
               preload="intent"
               className="rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground"
             >

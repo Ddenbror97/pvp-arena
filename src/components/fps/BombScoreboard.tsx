@@ -78,7 +78,7 @@ export function BombScoreboard({ view }: { view: BombView }) {
       ))}
       {view.phase === "completed" && (
         <footer>
-          A new match starts here in a few seconds. <Link to="/fps-duel">Back to lobby</Link>
+          A new match starts here in a few seconds. <Link to="/">Back to lobby</Link>
         </footer>
       )}
     </section>
