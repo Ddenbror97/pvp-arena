@@ -1,4 +1,4 @@
-import projectIslandLoading from "@/assets/fps/project-island-loading-v3.webp";
+import projectIslandLoading from "@/assets/fps/project-island-loading-v4.webp";
 
 /** Widescreen satellite loading art, preloaded on BR intent and displayed edge to edge. */
 export const BR_LOADING_IMAGE = projectIslandLoading;
