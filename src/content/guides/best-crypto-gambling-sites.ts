@@ -159,7 +159,9 @@ Finally, try a small test. Deposit a small amount, play a few rounds, check one 
 
 If that fits what you are looking for, you can create a free account, watch a few live rounds and check the results before you decide to deposit. Start with a small amount you are happy to lose, and stop when you reach your limit.
 
-More foundations reading lives in our [Foundations guides](/guides/topics/foundations).`,
+More foundations reading lives in our [Foundations guides](/guides/topics/foundations).
+
+See also: [Roobet Alternatives](/guides/roobet-alternatives).`,
     },
   ],
   faqs: [

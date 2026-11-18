@@ -3,7 +3,7 @@ import type { Guide } from "./types";
 export const guide: Guide = {
   slug: "crypto-casino-vs-traditional-casino",
   cluster: "Foundations",
-  keyword: "crypto casino",
+  keyword: "crypto casino vs traditional casino",
   secondary: [
     "crypto vs online casino",
     "bitcoin casino vs regular casino",

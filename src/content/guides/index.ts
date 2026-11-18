@@ -733,7 +733,6 @@ import { guide as ngPlayChessForMoney } from "./play-chess-for-money";
 import { guide as ngEightBallPoolForMoney } from "./8-ball-pool-for-money";
 import { guide as pool8BallPoolHub } from "./8-ball-pool-hub";
 import { guide as poolPoolBetting } from "./pool-betting";
-import { guide as pool8BallPoolRealMoney } from "./8-ball-pool-real-money";
 import { guide as poolCrypto8BallPool } from "./crypto-8-ball-pool";
 import { guide as poolPoolGamesForMoney } from "./pool-games-for-money";
 
@@ -1753,7 +1752,6 @@ export const GUIDES: Guide[] = [
   ngEightBallPoolForMoney,
   pool8BallPoolHub,
   poolPoolBetting,
-  pool8BallPoolRealMoney,
   poolCrypto8BallPool,
   poolPoolGamesForMoney,
 

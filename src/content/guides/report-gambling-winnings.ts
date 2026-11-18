@@ -88,7 +88,7 @@ We will not coach you to hide wins offshore or to break reporting rules.
     {
       id: "next",
       title: "Next steps",
-      body: "Export the ledger. Stamp FMV on volatile tokens. Separate deposits from results. File with current instructions or hire help.\n\nPlay [Jackpot](/) or [Roulette](/roulette) only if you can afford the entertainment cost and the paperwork. If wins are already funding chasing, stop — [gambling self-exclusion](/guides/gambling-self-exclusion).\n\nA jackpot withholding line is its own worksheet. [Lottery taxes](/guides/lottery-taxes) covers the cash option and the state share, separate from the form on this page.",
+      body: "Export the ledger. Stamp FMV on volatile tokens. Separate deposits from results. File with current instructions or hire help.\n\nPlay [Jackpot](/) or [Roulette](/roulette) only if you can afford the entertainment cost and the paperwork. If wins are already funding chasing, stop — [gambling self-exclusion](/guides/gambling-self-exclusion).\n\nA jackpot withholding line is its own worksheet. [Lottery taxes](/guides/lottery-taxes) covers the cash option and the state share, separate from the form on this page.\n\nSee also: [Form W-2G explained](/guides/w2g-form).",
     },
   ],
   faqs: [

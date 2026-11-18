@@ -153,7 +153,9 @@ Casino games and spread bets are separate legal questions in many places. A yes 
 
 [Write the stake down before the game starts](/responsible-gambling). A zero spread is not a small risk by nature. The $66.50 winner share is a coin flip after a fee. It is not a refund and not a PK payout.
 
-Read the ticket. That sentence is the legal-adjacent habit this glossary is willing to repeat, because the alternative is inventing a book's rule.`,
+Read the ticket. That sentence is the legal-adjacent habit this glossary is willing to repeat, because the alternative is inventing a book's rule.
+
+See also: [Middling in Betting](/guides/middling-in-betting), [NRFI Betting](/guides/nrfi-betting).`,
     },
   ],
   faqs: [

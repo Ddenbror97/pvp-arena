@@ -155,7 +155,9 @@ State rules differ, and they differ again between a sportsbook and a casino game
 
 [Put the loss limit in writing before the game](/responsible-gambling). A cover is not a refund of last week's miss. The $25 pot is not a hedge for a -3 ticket.
 
-The definition is the whole product of this page. The rest is a warning not to invent a record or a book's price.`,
+The definition is the whole product of this page. The rest is a warning not to invent a record or a book's price.
+
+See also: [what PK means in betting](/guides/pk-in-betting), [Middling in Betting](/guides/middling-in-betting).`,
     },
   ],
   faqs: [

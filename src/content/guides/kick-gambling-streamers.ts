@@ -146,7 +146,9 @@ Do not use this page as a directory. Do not use it to look for a stream that sti
 
 The useful sentence: **Kick gambling streamers are advertisers with a webcam.** Price the game, not the personality. If you cannot price it, you are not the customer of the casino. You are the product of the stream.
 
-If you only wanted to know whether Kick “allows it,” the answer is: more than Twitch, inside published rules, still under your law. If you wanted a name to follow, this page will not give you one. That refusal is the safety feature.`,
+If you only wanted to know whether Kick “allows it,” the answer is: more than Twitch, inside published rules, still under your law. If you wanted a name to follow, this page will not give you one. That refusal is the safety feature.
+
+See also: [Discord Gambling Bot](/guides/discord-gambling-bot).`,
     },
   ],
   faqs: [

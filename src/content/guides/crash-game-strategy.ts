@@ -3,7 +3,7 @@ import type { Guide } from "./types";
 export const guide: Guide = {
   slug: "crash-game-strategy",
   cluster: "Games & odds",
-  keyword: "crash gambling game",
+  keyword: "crash game strategy",
   secondary: ["crash cash out", "crash multiplier", "crash house edge", "auto cashout crash"],
   title: "Crash Game Strategy: Cashout Targets & EV",
   description:

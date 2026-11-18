@@ -191,7 +191,9 @@ For gambling limits, use [a place to set stops](/responsible-gambling). A cabine
 
 Real-money spins are available only where that casino is allowed to offer the digital or floor game you are using. A legal private sale of hardware, if one is legal near you, does not authorize online cash play. The cashier's location check still governs the spin.
 
-A dollar burst is not a volcano. [The volcano floor cabinet](/guides/cash-eruption-slot) is the other branded floor name.`,
+A dollar burst is not a volcano. [The volcano floor cabinet](/guides/cash-eruption-slot) is the other branded floor name.
+
+See also: [Floating Dragon slot](/guides/floating-dragon-slot).`,
     },
   ],
   faqs: [

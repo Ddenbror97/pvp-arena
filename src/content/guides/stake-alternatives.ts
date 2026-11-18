@@ -139,7 +139,7 @@ If the test succeeds, still wait a day before sizing up. Impulse “it worked, d
     {
       id: "bottom-line",
       title: "Bottom line",
-      body: "A Stake alternative is a comparison problem. Use fairness, price, withdrawal behaviour, licence verification and product fit. Ignore paid stars. Adults 18+ only. Not legal advice. PVPspinArena is one crypto PvP product with published rules — judge it with the same checklist you use on everyone else, and never treat a blog ranking as a regulator.\n\nRe-run the checklist whenever the site changes ownership language, payment coins or withdrawal limits. Alternatives are not a one-time decision. They are a recurring ops review you do with small money first.",
+      body: "A Stake alternative is a comparison problem. Use fairness, price, withdrawal behaviour, licence verification and product fit. Ignore paid stars. Adults 18+ only. Not legal advice. PVPspinArena is one crypto PvP product with published rules — judge it with the same checklist you use on everyone else, and never treat a blog ranking as a regulator.\n\nRe-run the checklist whenever the site changes ownership language, payment coins or withdrawal limits. Alternatives are not a one-time decision. They are a recurring ops review you do with small money first.\n\nSee also: [Roobet Alternatives](/guides/roobet-alternatives), [Stake Originals Games](/guides/stake-originals-games).",
     },
   ],
   faqs: [

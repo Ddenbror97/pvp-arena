@@ -132,7 +132,9 @@ PVPspinArena will not price your team. If you want a verifiable pot, use [P2P Sl
 
 Keep those products in different mental accounts so a bad Sunday slate does not become an excuse to "win it back" on a hashed wheel — or the other way around.
 
-One sport people try to fund with a coin is racing. [Crypto horse racing betting](/guides/crypto-horse-racing-betting) is still a book, and the coin does not change the tote or the track rules.`,
+One sport people try to fund with a coin is racing. [Crypto horse racing betting](/guides/crypto-horse-racing-betting) is still a book, and the coin does not change the tote or the track rules.
+
+See also: [BetDEX review](/guides/betdex-review), [Novig Review](/guides/novig-review), [Splash Sports Review](/guides/splash-sports-review).`,
     },
   ],
   faqs: [

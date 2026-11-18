@@ -110,7 +110,7 @@ We traced the voids to background tabs. Browsers slow timers in hidden tabs, and
     {
       id: "summary",
       title: "Summary: judge the deck, the fee and the room",
-      body: "Crypto poker is poker plus a crypto cashier. Most tables are RNG decks paid for by rake. Certificates and deck-hash schemes give you partial checks, and collusion sits outside both. Ask any room three questions: what was committed before the deal, what can I recompute afterwards, and what is the fee in one sentence.\n\nAt PVPspinArena the answers are short. The server seed hash is published before the deal and every dealt player adds a reveal. The Hands tab recomputes the deck. The fee is 5% of a pot, only after a flop. The [how to play poker](/guides/how-to-play-poker) guide covers the rules if you are new. Play only if you are 18 or over and can afford the downswings, and stop when the budget says stop.",
+      body: "Crypto poker is poker plus a crypto cashier. Most tables are RNG decks paid for by rake. Certificates and deck-hash schemes give you partial checks, and collusion sits outside both. Ask any room three questions: what was committed before the deal, what can I recompute afterwards, and what is the fee in one sentence.\n\nAt PVPspinArena the answers are short. The server seed hash is published before the deal and every dealt player adds a reveal. The Hands tab recomputes the deck. The fee is 5% of a pot, only after a flop. The [how to play poker](/guides/how-to-play-poker) guide covers the rules if you are new. Play only if you are 18 or over and can afford the downswings, and stop when the budget says stop.\n\nSee also: [Stake poker](/guides/stake-poker).",
     },
   ],
   faqs: [

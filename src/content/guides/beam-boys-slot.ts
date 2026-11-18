@@ -180,7 +180,9 @@ The note is not legal advice, not tax advice, and not a personal ranking of mode
 
 Open [limit tools for play](/responsible-gambling) when mode-hopping is how the session grows. Hopping feels like strategy. It is still a series of stakes.
 
-Real-money availability is only where that casino is allowed to offer the title and the buttons it shows you. A mode present in a review can be hidden in your region. Hidden means you do not buy it, not that you go looking for a mirror site.`,
+Real-money availability is only where that casino is allowed to offer the title and the buttons it shows you. A mode present in a review can be hidden in your region. Hidden means you do not buy it, not that you go looking for a mirror site.
+
+See also: [Piggy Bankin Slot](/guides/piggy-bankin-slot), [Stack 'Em slot](/guides/stack-em-slot).`,
     },
   ],
   faqs: [

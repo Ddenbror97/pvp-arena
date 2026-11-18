@@ -181,7 +181,9 @@ Nothing here is legal advice, tax advice, or a verdict on whether an extra bet i
 
 When the money stops being expendable, use [limit settings](/responsible-gambling). A bonus animation is not a cue to enable an extra toggle.
 
-The bank is a cash offer only where that operator is permitted to run it. A video of the bank breaking is not regional permission. If the site blocks you, the block stands.`,
+The bank is a cash offer only where that operator is permitted to run it. A video of the bank breaking is not regional permission. If the site blocks you, the block stands.
+
+See also: [Beam Boys slot](/guides/beam-boys-slot), [Stack 'Em slot](/guides/stack-em-slot).`,
     },
   ],
   faqs: [

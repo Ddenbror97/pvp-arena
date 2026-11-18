@@ -120,7 +120,9 @@ Pros. The licence is on a regulator certificate with a date and a status. The ca
 
 Cons. The certificate domain and the terms domain are not the same string. No hash method is described. Beginner caps are tight. The 35x roll is slots only, and a 10x win cap can erase the point of the match. Weekend payouts shrink. The account is not insured.
 
-Not for anyone who needs the whole balance tomorrow, and not for anyone who will play table games with an active slot bonus. Update the cap table if section 8.14 changes. A dead $1,000 daily line would be worse than no table.`,
+Not for anyone who needs the whole balance tomorrow, and not for anyone who will play table games with an active slot bonus. Update the cap table if section 8.14 changes. A dead $1,000 daily line would be worse than no table.
+
+See also: [Bitcasino.io review](/guides/bitcasino-io-review).`,
     },
   ],
   faqs: [

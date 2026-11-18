@@ -186,7 +186,9 @@ Three personalities, one price. If you cannot name the slider and the roll cap b
 
 PVPspinArena does not offer dice. If you want a result you can check and a stake that sits in a player pot or a counted wheel, use Coinflip, Jackpot or Roulette instead of a slider.
 
-A scored five-dice game with the same pips is [Farkle](/guides/farkle-rules).`,
+A scored five-dice game with the same pips is [Farkle](/guides/farkle-rules).
+
+See also: [Stake Originals Games](/guides/stake-originals-games).`,
     },
   ],
   faqs: [

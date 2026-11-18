@@ -22,11 +22,17 @@ export const MOVED_GUIDES: Record<string, string> = {
   "penny-slots-las-vegas": "penny-slots-online",
   "skinport-review": "csfloat-vs-skinport",
   "crypto-wallet-for-gambling": "best-crypto-wallet-for-gambling",
+  "8-ball-pool-real-money": "8-ball-pool-for-money",
   ...removed20261118.redirects,
 };
 
+/** Old slugs Search Console still listed that have no equivalent page (2026-11-18). */
+const LEGACY_GONE = ["csgo-upgrader"];
+
 export const GONE_GUIDES: ReadonlySet<string> = new Set(
-  [...removed20261115.removed, ...removed20261118.removed].filter((s) => !(s in MOVED_GUIDES)),
+  [...removed20261115.removed, ...removed20261118.removed, ...LEGACY_GONE].filter(
+    (s) => !(s in MOVED_GUIDES),
+  ),
 );
 
 /** The response for a retired guide path, or null when the path is not one. */

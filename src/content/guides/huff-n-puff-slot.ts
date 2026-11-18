@@ -176,7 +176,9 @@ The piece is an editorial review. It offers no code. A later outbound link is ad
 
 [Responsible play](/responsible-gambling) is the page for limits. A feature that looks like a story ending is not an ending you have to fund.
 
-A wolf and bricks are not a beanstalk. [The beanstalk glasses](/guides/jack-and-the-beanstalk-slot) cover a fairy tale more than one studio has used.`,
+A wolf and bricks are not a beanstalk. [The beanstalk glasses](/guides/jack-and-the-beanstalk-slot) cover a fairy tale more than one studio has used.
+
+See also: [Top Dollar Slot](/guides/top-dollar-slot).`,
     },
   ],
   faqs: [

@@ -60,7 +60,9 @@ More in the [crypto casino basics topic](/guides/topics/foundations).`,
       id: "tax",
       title: "Taxes",
       body: `Gambling winnings are taxable federally and in Missouri. See [report gambling winnings](/guides/report-gambling-winnings).
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Missouri. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Missouri. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).
+
+See also: [online gambling in Illinois](/guides/online-gambling-legal-illinois).`,
     },
   ],
   faqs: [
