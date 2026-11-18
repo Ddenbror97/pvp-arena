@@ -1,4 +1,8 @@
 import * as THREE from "three";
+import { readFileSync } from "node:fs";
+import { NodeIO } from "@gltf-transform/core";
+import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
+import { MeshoptDecoder } from "meshoptimizer";
 import { describe, expect, it } from "vitest";
 import { IRON_DISTRICT_DEFINITION } from "@/lib/fps/bomb/iron-district";
 import { applyScenePatches, withoutFaces } from "@/lib/fps/maps/scene-patches";
@@ -67,7 +71,9 @@ describe("faces a map's build drew across a way through", () => {
   });
 
   it("Iron District opens the tunnel's end wall where its risers climb into the pocket", () => {
-    const open = IRON_DISTRICT_DEFINITION.presentation.patches!.open!;
+    const open = IRON_DISTRICT_DEFINITION.presentation.patches!.open!.filter(
+      (o) => o.node === "Tunnel",
+    );
     expect(open).toHaveLength(1);
     const [x0, x1, y0, y1, z0, z1] = open[0]!.box;
     const exit = [...IRON_DISTRICT_DEFINITION.boxes, ...IRON_DISTRICT_DEFINITION.structures].filter(
@@ -85,5 +91,45 @@ describe("faces a map's build drew across a way through", () => {
     expect(y1).toBeGreaterThan(3.2);
     // The risers themselves are drawn in "concrete", which stays.
     expect(open[0]!.materials).not.toContain("concrete");
+  });
+
+  it("Iron District takes the cables out of the upper town, whole, and nothing else", async () => {
+    // Owner, 2026-11-18: cables across the lanes by T spawn at chest height. Each box must hold
+    // all of one cable's triangles (64: 8 lengths of a 4-sided tube) and no other metal there.
+    const boxes = IRON_DISTRICT_DEFINITION.presentation
+      .patches!.open!.filter((o) => o.node === "Upper_Town")
+      .map((o) => o.box);
+    expect(boxes).toHaveLength(4);
+    await MeshoptDecoder.ready;
+    const io = new NodeIO()
+      .registerExtensions(ALL_EXTENSIONS)
+      .registerDependencies({ "meshopt.decoder": MeshoptDecoder });
+    const url = IRON_DISTRICT_DEFINITION.presentation.modelUrl.split("?")[0]!;
+    const doc = await io.readBinary(new Uint8Array(readFileSync(`public${url}`)));
+    const inBox = new Array<number>(boxes.length).fill(0);
+    const v = [0, 0, 0];
+    for (const node of doc.getRoot().listNodes()) {
+      if (node.getName() !== "Upper_Town" || !node.getMesh()) continue;
+      const w = node.getWorldMatrix();
+      const at = (p: number[]) =>
+        [0, 1, 2].map((k) => w[k]! * p[0]! + w[4 + k]! * p[1]! + w[8 + k]! * p[2]! + w[12 + k]!);
+      for (const prim of node.getMesh()!.listPrimitives()) {
+        if (prim.getMaterial()?.getName() !== "metal") continue;
+        const pos = prim.getAttribute("POSITION")!,
+          index = prim.getIndices()!;
+        for (let i = 0; i < index.getCount(); i += 3) {
+          const tri = [0, 1, 2].map((k) => at(pos.getElement(index.getScalar(i + k), v)));
+          boxes.forEach(([x0, x1, y0, y1, z0, z1], b) => {
+            const inside = tri.filter(
+              ([x, y, z]) => x! >= x0 && x! <= x1 && y! >= y0 && y! <= y1 && z! >= z0 && z! <= z1,
+            ).length;
+            // A triangle half in a box would be left standing, cut off in the air.
+            expect(inside === 0 || inside === 3).toBe(true);
+            if (inside === 3) inBox[b]!++;
+          });
+        }
+      }
+    }
+    expect(inBox).toEqual([64, 64, 64, 64]);
   });
 });

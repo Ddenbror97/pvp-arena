@@ -1225,9 +1225,10 @@ def mountains():
 
 
 def cables():
-    for (a, b) in (((-10, 7.6, 30), (-10, 7.4, 36)), ((8, 7.0, 34), (8, 7.4, 38)), ((24, 7.2, 30), (26, 7.0, 36)),
-                   ((34, 6.8, 2), (39, 7.0, 0)), ((-32, 7.5, -2), (-36, 7.2, -4)), ((22, 7.6, -40), (18, 7.2, -36)),
-                   ((-4, 7.0, -10), (6, 7.0, -12)), ((40, 7.2, 20), (44, 7.0, 22))):
+    # (The upper town's four at 7.0-7.6 m hung at chest height over its 5.4 m floor; the game
+    # removes them with a scene patch, iron-district.ts `open`. A rebuild drops them here.)
+    for (a, b) in (((34, 6.8, 2), (39, 7.0, 0)), ((-32, 7.5, -2), (-36, 7.2, -4)), ((22, 7.6, -40), (18, 7.2, -36)),
+                   ((-4, 7.0, -10), (6, 7.0, -12))):
         area = area_at((a[0] + b[0]) / 2, (a[2] + b[2]) / 2)
         pts = [(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t - 0.5 * 4 * t * (1 - t), a[2] + (b[2] - a[2]) * t)
                for t in [q / 8 for q in range(9)]]
