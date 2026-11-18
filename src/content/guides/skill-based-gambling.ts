@@ -148,7 +148,7 @@ Do not use a skill label to justify underage play. Adults 18+ only on this site.
     "house-edge",
     "pvp-gambling",
     "fps-for-money-hub",
-    "cs2-anti-cheat",
+    "online-coin-flip-game",
   ],
   updated: "2026-10-31",
 };

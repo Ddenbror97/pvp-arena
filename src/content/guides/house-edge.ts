@@ -251,7 +251,7 @@ For example, 30 minutes of $1 roulette bets at one bet every 30 seconds is 60 be
     "how-do-online-casinos-make-money",
     "law-of-large-numbers-gambling",
     "french-roulette",
-    "frank-rosenthal",
+    "rtp-explained",
   ],
   updated: "2026-09-25",
 };

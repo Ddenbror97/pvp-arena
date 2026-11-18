@@ -233,6 +233,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Start here",
       slugs: [
+        "online-gambling",
         "what-is-a-crypto-casino",
         "web3-casino",
         "casino-terminology",
@@ -305,7 +306,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Player value",
       slugs: [
-        "online-gambling",
         "online-casino-real-money",
         "crypto-betting-sites",
         "free-casino-games",
@@ -320,7 +320,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "reload-bonus-casino",
         "casino-comps",
         "crypto-casino-affiliate-program",
-        "gambling-age-us",
       ],
     },
     {
@@ -337,6 +336,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "US casino law",
       slugs: [
+        "gambling-age-us",
         "is-online-casino-legal",
         "online-casino-legal-ohio",
         "online-casino-legal-florida",
@@ -1026,6 +1026,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Table games",
       slugs: [
+        "sic-bo-online",
         "baccarat-rules",
         "baccarat-squeeze",
         "craps-odds",
@@ -1064,7 +1065,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "double-or-nothing-game",
         "pai-gow-poker",
         "casino-war-game",
-        "sic-bo-online",
         "video-keno",
         "deal-or-no-deal-live",
       ],
@@ -1129,7 +1129,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "arbitrage-betting",
         "bet-tracker",
         "betting-units-explained",
-        "void-bet-meaning",
       ],
     },
     {
@@ -1194,6 +1193,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Line words and props",
       slugs: [
+        "void-bet-meaning",
         "first-touchdown-scorer-bets",
         "ats-in-betting",
         "pk-in-betting",

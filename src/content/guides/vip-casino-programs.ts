@@ -131,7 +131,7 @@ Chasing a tier is structurally the same as chasing a loss: a story about getting
 
 If play is no longer optional, status is irrelevant. Use tools, not a downgrade request.
 
-A partner who hears “I have to hit Platinum this week” is hearing a deadline the casino wrote. Share the earning rule with them if you want accountability. If you will not share it, that secrecy is a [sign](/guides/gambling-addiction-signs), not a privacy preference about badges.
+A partner who hears “I have to hit Platinum this week” is hearing a deadline the casino wrote. Share the earning rule with them if you want accountability. If you will not share it, that secrecy is a [warning sign of a gambling problem](/guides/gambling-addiction-signs), not a privacy preference about badges.
 
 Chasing a tier after a losing month is chase with a logo. The month already had a cost. Adding volume to “not waste” the points adds cost. Waste the points. Keep the money you still have.`,
     },

@@ -179,9 +179,9 @@ In the same cluster, see also [quick pick](/guides/quick-pick-lottery), [pull ta
     "what-is-sports-betting",
     "gambling-budget",
     "gamblers-fallacy",
-    "quick-pick-lottery",
+    "pick-em-pool",
     "pull-tabs",
-    "lucky-numbers-gambling",
+    "super-bowl-squares",
   ],
   updated: "2026-09-27",
 };

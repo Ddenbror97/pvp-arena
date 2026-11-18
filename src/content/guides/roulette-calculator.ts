@@ -245,7 +245,7 @@ The worksheet will still be here after you close the table. A bill will not wait
     "keno-odds",
     "online-craps",
     "hot-hand-fallacy",
-    "blackjack-basic-strategy",
+    "james-bond-roulette-strategy",
     "gamblers-fallacy",
   ],
   updated: "2026-10-20",

@@ -218,7 +218,7 @@ The Stardust skim story is not the Horseshoe. [The Horseshoe founder](/guides/be
     "house-edge",
     "gamblers-fallacy",
     "law-of-large-numbers-gambling",
-    "are-online-casinos-safe",
+    "stardust-casino",
     "benny-binion",
   ],
   updated: "2026-10-20",

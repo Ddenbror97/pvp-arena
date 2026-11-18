@@ -232,7 +232,7 @@ Cash-out here starts at $20 in BTC, USDC, or ETH. None of that is a system for t
     "horse-racing-odds-explained",
     "exacta-bet",
     "report-gambling-winnings",
-    "lottery-taxes",
+    "trifecta-bet",
   ],
   updated: "2026-10-20",
 };

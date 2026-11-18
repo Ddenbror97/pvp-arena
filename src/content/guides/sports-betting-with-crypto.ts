@@ -175,7 +175,7 @@ See also: [BetDEX review](/guides/betdex-review), [Novig Review](/guides/novig-r
     "plinko-gambling",
     "plinko-odds",
     "crypto-slots",
-    "slot-machine-odds",
+    "what-is-sports-betting",
   ],
   updated: "2026-10-21",
 };

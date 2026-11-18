@@ -168,7 +168,7 @@ See also [punchboards](/guides/punch-board-gambling).`,
   related: [
     "crypto-scratch-cards",
     "bingo-patterns",
-    "quick-pick-lottery",
+    "lucky-colors-gambling",
     "keno-odds",
     "bingo-caller",
     "lucky-numbers-gambling",

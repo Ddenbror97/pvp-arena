@@ -212,12 +212,6 @@ No caller, cage or seed changes the odds in anyone's favour after the fact. If m
       url: "https://en.wikipedia.org/wiki/Bingo_(American_version)",
     },
   ],
-  related: [
-    "bingo-patterns",
-    "crypto-bingo",
-    "lucky-numbers-gambling",
-    "pull-tabs",
-    "quick-pick-lottery",
-  ],
+  related: ["bingo-patterns", "crypto-bingo", "lucky-numbers-gambling", "pull-tabs", "bingo-odds"],
   updated: "2026-09-27",
 };

@@ -191,7 +191,7 @@ A map of the Strip is not an online license. [Whether the state's online offer m
   related: [
     "las-vegas-history",
     "house-edge",
-    "penny-slots-online",
+    "riviera-casino",
     "biggest-casino-in-the-world",
     "fontainebleau-las-vegas-casino",
     "online-gambling-legal-nevada",

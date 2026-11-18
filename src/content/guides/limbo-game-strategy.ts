@@ -217,7 +217,7 @@ A final comparison helps. Crash lets you flinch as the number rises; that flinch
     "crypto-jackpot",
     "crash-gambling",
     "crypto-blackjack",
-    "crypto-poker",
+    "crash-game-strategy",
     "crypto-lottery",
   ],
   updated: "2026-10-20",
