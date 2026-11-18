@@ -397,11 +397,26 @@ export class BrRoom {
         return new Response(null, { status: 101, webSocket: pair[0] });
       },
     );
-    if (claims instanceof Response) return claims;
+    if (claims instanceof Response) {
+      if (claims.status === 503)
+        console.error(
+          JSON.stringify({
+            event: "br_admission_unavailable",
+            reason: ((await claims.clone().json()) as { error?: string }).error,
+          }),
+        );
+      return claims;
+    }
     let state: BrMatchState;
     try {
       state = await this.ensureMatch(m[1]!);
-    } catch {
+    } catch (error) {
+      console.error(
+        JSON.stringify({
+          event: "br_world_unavailable",
+          reason: error instanceof Error ? error.message.slice(0, 200) : "Unknown startup failure",
+        }),
+      );
       return json({ error: "WORLD_UNAVAILABLE" }, 503);
     }
     const seat = seatHuman(state, claims.sub, sanitizeName(claims.name));
