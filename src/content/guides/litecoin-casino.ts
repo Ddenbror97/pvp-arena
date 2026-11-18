@@ -142,7 +142,7 @@ Need USDC for the first time? Use [how to buy USDC](/guides/how-to-buy-usdc) and
 - Withdrawing USDC on Litecoin (not a thing) or on Ethereum mainnet when the site asked for Base.
 - Trusting a chat that offers to "swap LTC inside the casino."
 
-Open the [wallet](/wallet) page only after you are on the real domain. Read [how it works](/how-it-works) so the three PvP games are clear before you fund them.
+Open the [wallet](/how-it-works#wallet) page only after you are on the real domain. Read [how it works](/how-it-works) so the three PvP games are clear before you fund them.
 
 A litecoin casino is a real category with faster blocks than Bitcoin. It is not what this site is. Convert to USDC on Base and keep the session in dollars.`,
     },

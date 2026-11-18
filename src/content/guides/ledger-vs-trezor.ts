@@ -94,7 +94,7 @@ Connect a **hot gaming wallet** to the casino. Fund it with the amount you are w
 
 ### How PVPspinArena actually connects
 
-You verify an address by signing a message, then send USDC or ETH on Base from that address. Withdrawals return to the verified address on the [wallet](/wallet) page. We never need a seed, a Ledger Recover share, or a Trezor Shamir share. Anyone who asks for those is not us.
+You verify an address by signing a message, then send USDC or ETH on Base from that address. Withdrawals return to the verified address on the [wallet](/how-it-works#wallet) page. We never need a seed, a Ledger Recover share, or a Trezor Shamir share. Anyone who asks for those is not us.
 
 If you insist on using a hardware wallet for the gaming address, create a **separate account** on the device with its own small balance. Do not use account 0 where the rest of your life lives. Still never export the seed.
 

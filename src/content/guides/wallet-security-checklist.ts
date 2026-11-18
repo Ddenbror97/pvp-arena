@@ -58,7 +58,7 @@ Anyone asking for the phrase to “unlock a bonus” is stealing.`,
       title: "Approval and signature discipline",
       body: `Read every prompt. Prefer message signatures and normal transfers. Reject unlimited token approvals for casino deposits. Periodically revoke stale allowances; [revoke token approvals](/guides/revoke-token-approvals) shows how to find and cancel them.
 
-PVPspinArena: verify wallet with a signature, deposit USDC or ETH on Base via transfer shown on the real [wallet](/wallet) page.`,
+PVPspinArena: verify wallet with a signature, deposit USDC or ETH on Base via transfer shown on the real [wallet](/how-it-works#wallet) page.`,
     },
     {
       id: "phishing",

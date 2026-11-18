@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "card-counting",
-  cluster: "Games & odds",
+  cluster: "Blackjack",
   keyword: "card counting",
   secondary: [
     "how to count cards",
@@ -111,7 +111,7 @@ If the chase is already bigger than the maths, open [responsible gambling](/resp
 - [Roulette](/roulette) — 33 slots, with a higher edge on Green than on Purple or Silver.
 - [Fairness](/fairness) — verify the seed, not a count.
 
-The [games and odds topic](/guides/topics/games-and-odds) is the right cluster for those prices. Use this guide only to understand why a live shoe can, in narrow conditions, move EV — and why your phone lobby is not that shoe.
+The [blackjack topic](/guides/topics/blackjack) has the rules, deck counts and charts that counting depends on. Use this guide only to understand why a live shoe can, in narrow conditions, move EV — and why your phone lobby is not that shoe.
 
 If a friend wants to “try counting tonight” on an app, ask three questions: When is the shoe rebuilt? How many decks? What does blackjack pay? If the answers are “every hand”, “eight or infinite”, and “6:5”, there is no project. Buy them this explanation instead of a bankroll. The kindness is the maths, not a pep talk about skill. A practice app that reshuffles every hand can still teach you to assign Hi-Lo tags quickly. That is typing practice. It is not shoe practice. Do not confuse fluency with an edge.`,
     },

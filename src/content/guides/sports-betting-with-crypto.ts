@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "sports-betting-with-crypto",
-  cluster: "Games & odds",
+  cluster: "Sports betting",
   keyword: "sports betting with crypto",
   secondary: [
     "crypto sportsbook",
@@ -29,7 +29,7 @@ export const guide: Guide = {
       title: "What a crypto sportsbook actually sells",
       body: `A crypto sportsbook is an online bookmaker with a blockchain cashier. You send coins, receive a betting balance, and strike prices on listed events: leagues, props, sometimes [esports betting](/guides/esports-betting). Cashouts go back out as crypto. The product is still a price on a future fact about a match, not a shuffled deck and not a PvP pot.
 
-This [games and odds](/guides/topics/games-and-odds) guide is for adults aged 18 or over. It explains deposits, implied odds and integrity risk, then contrasts that book with a verifiable round on PVPspinArena. This site does not take team bets. It runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.
+This [sports betting](/guides/topics/sports-betting) guide is for adults aged 18 or over. It explains deposits, implied odds and integrity risk, then contrasts that book with a verifiable round on PVPspinArena. This site does not take team bets. It runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.
 
 "Anonymous sports betting" in ads usually means a light sign-up and a crypto send. It does not mean the book has no records, that your chain activity is invisible, or that the bet is legal where you live. A public BTC payment to a known deposit cluster is a breadcrumb. A stablecoin send on a transparent ledger is a breadcrumb. If you need privacy, a sportsbook is the wrong tool; if you need a priced football market, accept that the book will know your account.
 
@@ -48,7 +48,7 @@ Live betting and cash-out buttons are still book products. Crypto settlement spe
 
 Finality of the send is not finality of the bet. A confirmed USDT transfer only proves the book received tokens. Settlement still depends on the book's rules: which data provider, when a market suspends, what happens if a match is abandoned.
 
-Network mistakes still destroy deposits. TRC-20 is not ERC-20. Bitcoin is not USDC on Base. If you intended to use this site instead of a book, send USDC or ETH on Base to the address on the [wallet](/wallet) page, not to a sportsbook invoice.
+Network mistakes still destroy deposits. TRC-20 is not ERC-20. Bitcoin is not USDC on Base. If you intended to use this site instead of a book, send USDC or ETH on Base to the address on the [wallet](/how-it-works#wallet) page, not to a sportsbook invoice.
 
 Limits and voids live in the house rules. A "crypto" book can still cap a max win, still void a bet struck after a red card the feed lagged on, still request extra checks before a first cashout. Read those paragraphs before the first $20. Speed of the inbound tx is not a waiver of those clauses.
 

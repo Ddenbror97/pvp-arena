@@ -154,7 +154,7 @@ The maths each round carries is the same kind a casino credit department uses to
 - In Coinflip, two players face a fair 50/50, and the winner takes the pot minus any fee shown before entry.
 - In Jackpot, your chance equals your share of the pot.
 
-Results come from committed seeds, and any settled round can be verified on the [fairness](/fairness) page. Players also earn XP as they wager and unlock cosmetic rewards through [Prestige](/prestige); those rewards are cosmetic, not a credit line.
+Results come from committed seeds, and any settled round can be verified on the [fairness](/fairness) page. Players also earn XP as they wager and unlock cosmetic rewards through Prestige; those rewards are cosmetic, not a credit line.
 
 Playing without credit does not make gambling safe, but it removes one of the fastest ways to lose more than you meant to. Play is for adults 18 and over. Set your limit in the wallet before you start, and treat it as the whole budget for the session.
 

@@ -48,7 +48,7 @@ Funding rules that save people money:
 
 - Use a method you understand. A card, an ACH and a USDC send fail in different ways.
 - If the cashier is crypto, read [sports betting with crypto](/guides/sports-betting-with-crypto). On-chain payment proof is not settlement proof.
-- If you meant to use this site instead, send USDC or ETH on Base to the address on the [wallet](/wallet) page, not to a sportsbook invoice.
+- If you meant to use this site instead, send USDC or ETH on Base to the address on the [wallet](/how-it-works#wallet) page, not to a sportsbook invoice.
 - Set deposit and loss limits in the book’s responsible-gambling tools on day one, not after a bad Sunday.
 
 Do not fund “the amount you want to win.” Fund a session budget. The stake on each slip should be a slice of that budget, not the whole deposit on one moneyline because the price “looks locked.”

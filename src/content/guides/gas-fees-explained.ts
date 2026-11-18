@@ -45,7 +45,7 @@ Exchanges charge a **withdrawal fee** that can be larger than on-chain gas. That
 
 ### Gas is not a tip to the casino
 
-Support will never need you to "prepay gas" to a personal address. The deposit is a normal transfer. The withdrawal is signed by the site's payout wallet. If gas were owed to the platform, it would appear as a published fee on the [wallet](/wallet) page, not as a chat instruction. Treat unexpected gas requests the way you treat seed-phrase requests: as theft.`,
+Support will never need you to "prepay gas" to a personal address. The deposit is a normal transfer. The withdrawal is signed by the site's payout wallet. If gas were owed to the platform, it would appear as a published fee on the [wallet](/how-it-works#wallet) page, not as a chat instruction. Treat unexpected gas requests the way you treat seed-phrase requests: as theft.`,
     },
     {
       id: "ethereum",

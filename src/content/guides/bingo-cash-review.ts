@@ -114,7 +114,7 @@ Suppose you move $20 from a bad bingo night into a coin. You have bought a secon
 
 Two extra habits. Cap the night in dollars before the first room, and stop when the cap hits, including the night you are “due.” Record misses. A log of only the bingos will convince you the room is kinder than it is.
 
-[Wallet](/wallet) on this site is a USD balance for a different set of games, funded with Bitcoin or USDC/ETH on Base. It will not cash a bingo card. It is named so the two cashiers stay distinct when you compare fees.`,
+[Wallet](/how-it-works#wallet) on this site is a USD balance for a different set of games, funded with Bitcoin or USDC/ETH on Base. It will not cash a bingo card. It is named so the two cashiers stay distinct when you compare fees.`,
     },
     {
       id: "live-block",

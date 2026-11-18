@@ -102,7 +102,7 @@ If you already sent to the wrong chain, do not send more. Save the transaction s
 2. Sell SOL for USDC (or for USD, then buy USDC).
 3. Withdraw USDC choosing **Base**.
 4. Receive it in MetaMask or another EVM wallet that has Base enabled.
-5. Deposit USDC on Base to the address on the [wallet page](/wallet).
+5. Deposit USDC on Base to the address on the [wallet page](/how-it-works#wallet).
 
 ### Wallet-to-wallet path
 

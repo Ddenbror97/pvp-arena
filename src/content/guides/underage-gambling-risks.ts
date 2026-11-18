@@ -194,7 +194,7 @@ Delay giving unsupervised crypto wallets. If teens need wallets for school proje
 
 ### PVPspinArena stance
 
-The site is adults 18+ only. Parents who discover minor access should report the account to support and secure payment paths on shared [wallet](/wallet) devices.
+The site is adults 18+ only. Parents who discover minor access should report the account to support and secure payment paths on shared [wallet](/how-it-works#wallet) devices.
 
 ### Browser profiles
 

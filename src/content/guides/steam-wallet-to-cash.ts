@@ -73,7 +73,7 @@ Protect yourself: trade only through transparent item markets, never share Guard
       title: "Legitimate alternatives",
       body: `Want cash from Counter-Strike value? Keep value in **tradable items**, then use a reputable trading site or cash desk. Want crypto for a casino deposit? Same path, then a normal on-chain transfer.
 
-Want to play on PVPspinArena? Buy USDC or ETH properly, send on Base to the address on the real [wallet](/wallet) page, and skip Steam balance entirely. Steam credit cannot bridge to Base.`,
+Want to play on PVPspinArena? Buy USDC or ETH properly, send on Base to the address on the real [wallet](/how-it-works#wallet) page, and skip Steam balance entirely. Steam credit cannot bridge to Base.`,
     },
     {
       id: "checklist",

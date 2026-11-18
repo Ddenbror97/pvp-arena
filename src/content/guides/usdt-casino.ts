@@ -141,7 +141,7 @@ If you want a second session later the same week, leave a little USDC and ETH on
 - USDT on Base, if your exchange offers it, unless the deposit page explicitly lists USDT — it does not.
 - Chat-offered "USDT conversion desks."
 
-Open the [wallet](/wallet) page on the real domain only. Read game rules on [how it works](/how-it-works) before you fund [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/).
+Open the [wallet](/how-it-works#wallet) page on the real domain only. Read game rules on [how it works](/how-it-works) before you fund [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), or [Jackpot](/).
 
 A USDT casino is a real, common product. This site is not one. Match the token and the network, or the transfer is just a successful send to the void.`,
     },

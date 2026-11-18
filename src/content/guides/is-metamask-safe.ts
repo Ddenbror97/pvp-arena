@@ -94,7 +94,7 @@ That split is the practical answer when people ask whether a hot wallet is safe 
 
 Setup order matters. Initialise the hardware wallet first. Write the phrase on paper. Only then connect it to MetaMask. Never type a hardware phrase into the extension. That import defeats the device.
 
-When you sign a verification message, the device should show a message, not a token transfer. When you deposit, it should show the token, the amount, and the destination. If that destination is not the address on the real [wallet](/wallet) page, reject it.
+When you sign a verification message, the device should show a message, not a token transfer. When you deposit, it should show the token, the amount, and the destination. If that destination is not the address on the real [wallet](/how-it-works#wallet) page, reject it.
 
 Gas on Base is small, but you still confirm on the device. Do not mash confirm because a round is about to lock. [Crypto wallet for gambling](/guides/crypto-wallet-for-gambling) is the longer checklist.`,
     },
@@ -109,7 +109,7 @@ Gas on Base is small, but you still confirm on the device. Do not mash confirm b
 
 If a site merges these into “approve and we’ll pull the deposit,” you have a different product. Unlimited approvals are how drainers work. Walk away, or cap the approval at the exact deposit and revoke it after. Most players are better off with a plain transfer.
 
-Check the network before every send. PVPspinArena credits USDC and ETH on Base. A mainnet USDC send to the same-looking address is not a Base deposit. Read the [wallet](/wallet) page on the real domain only.
+Check the network before every send. PVPspinArena credits USDC and ETH on Base. A mainnet USDC send to the same-looking address is not a Base deposit. Read the [wallet](/how-it-works#wallet) page on the real domain only.
 
 Keep the play wallet boring. No random NFT mints, no “airdrop claim” tabs, no signing while a streamer tells you the timer is fake urgency. [Gambling budget](/guides/gambling-budget) belongs next to the wallet, not instead of it. A safe key with no stop-loss is still a way to lose the money you meant to risk.
 

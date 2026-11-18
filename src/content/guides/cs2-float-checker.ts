@@ -141,7 +141,7 @@ This page will not quote a dollar for your AK. It will tell you whether you are 
 
 If you are valuing a whole backpack, use the [CS2 inventory value](/guides/cs2-inventory-value) adder after you know each wear. If you are comparing skins-as-chips to a dollar token, that is [skin gambling vs crypto](/guides/skin-gambling-vs-crypto).
 
-PVPspinArena will not ingest a float. Balances are USDC or ETH on Base. You can move them from a [wallet](/wallet) you control. The heritage cluster for leftover CS economy pages is [CS:GO heritage](/guides/topics/csgo-heritage). Use one checker for CS2 and leftover CS:GO floats. There is not a second page.
+PVPspinArena will not ingest a float. Balances are USDC or ETH on Base. You can move them from a [wallet](/how-it-works#wallet) you control. The heritage cluster for leftover CS economy pages is [CS:GO heritage](/guides/topics/csgo-heritage). Use one checker for CS2 and leftover CS:GO floats. There is not a second page.
 
 If someone offers a “float unlock” browser extension that wants your Steam login, close it. You only need a number and this box.
 

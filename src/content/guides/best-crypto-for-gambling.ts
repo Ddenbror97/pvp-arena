@@ -83,7 +83,7 @@ If the wallet cannot show a fee you understand, do not send a larger amount to t
 
 The costly version of this mistake is a wrong-network send. The address may look familiar, especially on Ethereum-style chains that share an address shape, and the tokens still do not arrive on the ledger the cashier is watching. Recovery is uncertain. Pause and match the network name character by character.
 
-PVPspinArena describes its own cashier on the [wallet](/wallet) page. Use that page for this site, not a general ranking. Other sites will list other assets. A coin that works here can be absent somewhere else, and a coin that works somewhere else can be absent here. That is normal. It is also why a single best crypto for gambling headline cannot survive contact with two cashiers.
+PVPspinArena describes its own cashier on the [wallet](/how-it-works#wallet) page. Use that page for this site, not a general ranking. Other sites will list other assets. A coin that works here can be absent somewhere else, and a coin that works somewhere else can be absent here. That is normal. It is also why a single best crypto for gambling headline cannot survive contact with two cashiers.
 
 ### A short cashier habit
 

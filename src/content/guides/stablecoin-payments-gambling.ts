@@ -128,7 +128,7 @@ After play, withdraw on the rules that exist: $250 daily cap, review over $25, U
       title: "Stablecoin payments on PVPspinArena",
       body: `Accepted: **USDC on Base**, **ETH on Base**. Not accepted: USDT on any chain, BTC, SOL, LTC, DOGE, mainnet USDC.
 
-Flow: verify wallet, send from that address, wait for confirmations and two providers, see dollars in the header. Cash out from the [wallet](/wallet) page. Game rules live on [how it works](/how-it-works).
+Flow: verify wallet, send from that address, wait for confirmations and two providers, see dollars in the header. Cash out from the [wallet](/how-it-works#wallet) page. Game rules live on [how it works](/how-it-works).
 
 Stablecoin payments are a rail, not a strategy. Use them to keep the budget in dollars, pick the network the screen names, and stop when the dollar limit you set is gone.`,
     },

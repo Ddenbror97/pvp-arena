@@ -114,7 +114,7 @@ PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with s
 - **Jackpot**: players add wagers to one pot, and your win chance equals your share.
 - **Roulette**: a 33-slot wheel, 16 Purple and 16 Silver slots paying 2x and 1 Green paying 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
 
-The same turnover maths applies. $1,000 wagered on [Roulette](/roulette) has an expected cost of about $66.70, no matter how the session feels. Results come from seeds committed before each round and revealed after settlement, so anyone can verify a settled round on the [fairness](/fairness) page. Players also earn XP and cosmetic rewards through [Prestige](/prestige); those are cosmetic and do not change the odds.
+The same turnover maths applies. $1,000 wagered on [Roulette](/roulette) has an expected cost of about $66.70, no matter how the session feels. Results come from seeds committed before each round and revealed after settlement, so anyone can verify a settled round on the [fairness](/fairness) page. Players also earn XP and cosmetic rewards through Prestige; those are cosmetic and do not change the odds.
 
 A stream is entertainment built around someone else's money and someone else's highlights. If watching is pushing you toward bigger stakes than you planned, set limits first with the [responsible gambling](/responsible-gambling) tools. Gambling is 18+.
 

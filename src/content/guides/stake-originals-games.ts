@@ -167,7 +167,7 @@ Close the tab when stake originals games is not on offer here. Six-max poker, Ja
   updated: "2026-09-27",
   cta: {
     title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
+    text: "PVPspinArena does not offer the product described on this page. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
     primary: { to: "/coinflip", label: "Open Coinflip" },
     secondary: { to: "/how-it-works", label: "How this site works" },
   },

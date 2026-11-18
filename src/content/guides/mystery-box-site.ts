@@ -140,7 +140,7 @@ If mystery box site play becomes chasing, stop there. [Responsible gambling](/re
   updated: "2026-10-21",
   cta: {
     title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
+    text: "PVPspinArena does not offer the product described on this page. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
     primary: { to: "/fairness", label: "Read fairness" },
     secondary: { to: "/how-it-works", label: "How this site works" },
   },

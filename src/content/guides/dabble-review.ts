@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "dabble-review",
-  cluster: "Sports betting",
+  cluster: "Prediction markets",
   keyword: "dabble",
   secondary: [
     "dabble pick em rules",
@@ -44,7 +44,7 @@ A later drug test does not rewrite a settled pick. An obvious bad line can be vo
 
 No affiliate link, and a signup does not pay this site. Public sources read 20 October 2026, and this is not legal advice or a win promise.
 
-If spending is already a chase, call 1-800-GAMBLER, which the help footer also prints. Open [responsible gambling](/responsible-gambling), and the cluster home is [Sports betting](/guides/topics/sports-betting).`,
+If spending is already a chase, call 1-800-GAMBLER, which the help footer also prints. Open [responsible gambling](/responsible-gambling), and the cluster home is [Prediction markets](/guides/topics/prediction-markets).`,
     },
     {
       id: "payscale",

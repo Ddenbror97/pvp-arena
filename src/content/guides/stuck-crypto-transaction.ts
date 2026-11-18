@@ -75,7 +75,7 @@ If drained via approval, revoke remaining allowances, move leftovers to a fresh 
       body: `1. Use wallet fee suggestions; add buffer when urgent.
 2. One transfer at a time until confirmed.
 3. Verify network name every signature.
-4. Test-deposit small to PVPspinArena’s [wallet](/wallet) address first.
+4. Test-deposit small to PVPspinArena’s [wallet](/how-it-works#wallet) address first.
 5. Keep Base ETH for gas so USDC sends do not stall for lack of fee token.
 
 Stuck deposits do not change game outcomes on [fairness](/fairness)—they only delay credit.

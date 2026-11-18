@@ -90,7 +90,7 @@ Both are accepted on PVPspinArena. USDC credits one-for-one into a dollar ledger
 2. **Get ETH on Base**, not on Ethereum mainnet. Withdraw ETH from an exchange choosing the Base network, or move ETH through a reputable bridge if you understand the extra risk.
 3. **Optional: get USDC on Base** if you prefer a stable chip. Many people deposit USDC and keep only a few dollars of ETH for gas.
 4. **Open your PVPspinArena profile**, connect the wallet and sign the verification message. The signature cannot move funds.
-5. **Copy the deposit address** from the [wallet](/wallet) page. Confirm the page says Base.
+5. **Copy the deposit address** from the [wallet](/how-it-works#wallet) page. Confirm the page says Base.
 6. **Send ETH on Base** (or USDC on Base) from that same verified address. In the wallet, the network selector must say Base before you confirm.
 7. **Wait for the site's confirmations** and dual-provider check. A typical credit is a minute or two after the Base transaction is safe.
 8. **Play only after the balance updates.** Open [Coinflip](/coinflip) or another listed game when the credit notice is on screen.

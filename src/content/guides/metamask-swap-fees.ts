@@ -44,7 +44,7 @@ Do not compare a wallet's final receive amount with an exchange's headline rate 
       title: "Check again if the route refreshes",
       body: `A quote can refresh before signing. Recheck the destination asset, network and amount rather than confirming an old preview from memory. For a bank payout, [withdrawing from MetaMask](/guides/how-to-withdraw-from-metamask) separates Send from Sell; a swap does not by itself send currency to a bank.
 
-The [crypto payments topic](/guides/topics/crypto-payments) groups these routes. PVPspinArena's [wallet](/wallet) instructions concern its own deposits; they do not set MetaMask's fees.`,
+The [crypto payments topic](/guides/topics/crypto-payments) groups these routes. PVPspinArena's [wallet](/how-it-works#wallet) instructions concern its own deposits; they do not set MetaMask's fees.`,
     },
   ],
   faqs: [

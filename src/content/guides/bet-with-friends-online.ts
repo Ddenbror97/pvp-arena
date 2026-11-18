@@ -76,7 +76,7 @@ Obvious is good. If the dollar cost feels too high for a friendship activity, sh
       body: `1. Confirm everyone is 18+.
 2. Write stake, rule, void cases.
 3. Decide private settle versus PvP room.
-4. If using PVPspinArena, deposit only the agreed stake via [wallet](/wallet).
+4. If using PVPspinArena, deposit only the agreed stake via [wallet](/how-it-works#wallet).
 5. Play one duel on [Coinflip](/coinflip), then stop unless a new written agreement exists.
 6. Read [how it works](/how-it-works) so nobody confuses Roulette’s house edge with a friend duel.
 

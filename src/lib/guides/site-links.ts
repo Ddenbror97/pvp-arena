@@ -1,4 +1,5 @@
-/** Keep the guide renderer and its publishing audit on the same real routes. */
+/** Keep the guide renderer and its publishing audit on the same real routes. Public routes only:
+ * sign-in pages (/wallet, /profile, /prestige) redirect a signed-out reader to /auth. */
 export const GUIDE_SITE_PATHS = [
   "/",
   "/coinflip",
@@ -11,15 +12,12 @@ export const GUIDE_SITE_PATHS = [
   "/fps-bomb",
   "/fps-br",
   "/fps-graphics-guide",
-  "/prestige",
   "/fairness",
   "/about",
   "/how-it-works",
   "/terms",
   "/privacy",
   "/responsible-gambling",
-  "/wallet",
-  "/profile",
   "/guides",
   "/auth",
 ] as const;

@@ -90,7 +90,7 @@ Minima force size. A $50 minimum on a $20 plan means you over-deposit or you lea
 
 ### What this site does
 
-PVPspinArena credits the dollar amount that arrives: USDC at one-to-one design, ETH converted at credit time, then held in cents. There is no extra deposit percent on the [wallet](/wallet) page. You still pay Base gas. Withdrawals have a $250 daily limit; amounts over $25 are reviewed.
+PVPspinArena credits the dollar amount that arrives: USDC at one-to-one design, ETH converted at credit time, then held in cents. There is no extra deposit percent on the [wallet](/how-it-works#wallet) page. You still pay Base gas. Withdrawals have a $250 daily limit; amounts over $25 are reviewed.
 
 “Zero deposit fee” is not “zero cost of play.” Roulette still has a published edge. Jackpot and Coinflip still show any platform fee before you join.`,
     },

@@ -127,7 +127,7 @@ Email sign-in ties a mailbox to the account. That mailbox may already identify y
 
 Withdrawals are capped at $250 per day and reviewed over $25. Those controls are visible policy, not a secret identity check. They still create timestamps in a database.
 
-If you want the money path without the privacy myth, use the [wallet](/wallet) page after you verify. Send USDC or ETH on Base. Expect the hash to exist forever.
+If you want the money path without the privacy myth, use the [wallet](/how-it-works#wallet) page after you verify. Send USDC or ETH on Base. Expect the hash to exist forever.
 
 Other players in a PvP pot can see that someone joined and what the pot did. They may not see your legal name. They may see enough timing to gossip. That is the social layer of P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette, not a bug in the cashier.
 

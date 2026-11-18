@@ -43,7 +43,7 @@ That design is useful if you already live on Solana. Many people buy SOL or Sola
 - It does not let the site sweep your balance later.
 - It does not prove you sent a deposit from that address unless the site also matches the on-chain sender.
 
-PVPspinArena uses a signed message on an EVM wallet to verify the sender, then matches deposits to that address. If you only have Phantom set up for Solana, you still need a Base-capable wallet and USDC or ETH on Base before the [wallet page](/wallet) can credit you.
+PVPspinArena uses a signed message on an EVM wallet to verify the sender, then matches deposits to that address. If you only have Phantom set up for Solana, you still need a Base-capable wallet and USDC or ETH on Base before the [wallet page](/how-it-works#wallet) can credit you.
 
 Players must be 18 or older. Treat Phantom as a payment tool, not as a way to hide play from yourself.`,
     },

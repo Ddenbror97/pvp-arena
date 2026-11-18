@@ -103,7 +103,7 @@ If head-to-head betting is starting to feel like a debt tool, open [responsible 
       title: "What PVPspinArena offers instead of a book",
       body: `There is no team moneyline here. The head-to-head product is Coinflip. Jackpot is a multiplayer pot, not a 1v1. Roulette is a house colour wheel on [Roulette](/roulette).
 
-Deposits use USDC or ETH on Base after you verify a wallet. The flow is on [how it works](/how-it-works) and [wallet](/wallet). If you want match markets, use a licensed book where that is legal for you. If you want a priced duel against another player’s dollars, use a PvP room you can verify.`,
+Deposits use USDC or ETH on Base after you verify a wallet. The flow is on [how it works](/how-it-works) and [wallet](/how-it-works#wallet). If you want match markets, use a licensed book where that is legal for you. If you want a priced duel against another player’s dollars, use a PvP room you can verify.`,
     },
   ],
   faqs: [

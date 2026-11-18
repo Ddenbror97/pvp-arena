@@ -88,7 +88,7 @@ This is not a how-to. It is a stop sign. If your OSRS gambling plan requires a g
 
 That clarity does not make you profitable. It makes the cost honest. A 5% fee on a coinflip pot is a number you can compute before pride gets involved. A vague “host tip” after a flower roll is harder to price.
 
-PVPspinArena offers Jackpot on the [home page](/), Coinflip on [Coinflip](/coinflip), and house-banked [Roulette](/roulette) with USDC or ETH on Base. Fairness notes: [Fairness](/fairness). Rails: [how it works](/how-it-works) and [wallet](/wallet).
+PVPspinArena offers Jackpot on the [home page](/), Coinflip on [Coinflip](/coinflip), and house-banked [Roulette](/roulette) with USDC or ETH on Base. Fairness notes: [Fairness](/fairness). Rails: [how it works](/how-it-works) and [wallet](/how-it-works#wallet).
 
 [House edge](/guides/house-edge) applies to Roulette. Fees apply to PvP pots. [Expected value gambling](/guides/expected-value-gambling) ties both to long-run cost. [Variance in gambling](/guides/variance-in-gambling) explains why a hot night does not rewrite that cost.`,
     },

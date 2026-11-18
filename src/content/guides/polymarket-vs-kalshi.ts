@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "polymarket-vs-kalshi",
-  cluster: "Foundations",
+  cluster: "Prediction markets",
   keyword: "polymarket vs kalshi",
   secondary: ["kalshi cftc", "polymarket us", "event contracts"],
   title: "Polymarket vs Kalshi: Event Markets, Not a Casino",
@@ -28,7 +28,7 @@ Kalshi's row says the organisation was designated on 3 November 2020. The remark
 
 Polymarket US is a different row: QCX LLC, doing business as Polymarket US, designated on 9 July 2025. The remark says QCX LLC operates under that assumed name. If you are not on that venue, you are not on that designation.
 
-This note lives in [Foundations](/guides/topics/foundations) because people search the brand pair. It is not a recommendation to trade either market. [Is Kalshi gambling](/guides/is-kalshi-gambling) takes the classification question. [How Polymarket works](/guides/how-does-polymarket-work) is the mechanics page for that brand.`,
+This note sits in the [prediction markets topic](/guides/topics/prediction-markets) because people search the brand pair. It is not a recommendation to trade either market. [Is Kalshi gambling](/guides/is-kalshi-gambling) takes the classification question. [How Polymarket works](/guides/how-does-polymarket-work) is the mechanics page for that brand.`,
     },
     {
       id: "two-polymarkets",

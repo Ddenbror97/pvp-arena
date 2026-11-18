@@ -170,7 +170,7 @@ A workplace sheet is a peer contest with no book. [The fee the group writes down
   updated: "2026-10-21",
   cta: {
     title: "This site is a pot, not that product",
-    text: "PVPspinArena does not offer the product described on this page. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
+    text: "PVPspinArena does not offer the product described on this page. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott settle in US dollars.",
     primary: { to: "/responsible-gambling", label: "Responsible gambling" },
     secondary: { to: "/how-it-works", label: "How this site works" },
   },

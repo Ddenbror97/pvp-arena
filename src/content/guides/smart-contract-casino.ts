@@ -59,7 +59,7 @@ PvP pots lock player stakes until a winner is chosen. The house may take a fee i
 
 ### Escrow versus infinite approval
 
-Some flows ask for a one-time deposit; others request a large token allowance so each bet is cheaper on gas. Unlimited approvals are convenient but dangerous if the contract is malicious or upgraded into something malicious. Revoke unused allowances after you stop playing, and keep a separate gambling wallet with limited funds on the [wallet](/wallet) page habits even when the site looks decentralised.
+Some flows ask for a one-time deposit; others request a large token allowance so each bet is cheaper on gas. Unlimited approvals are convenient but dangerous if the contract is malicious or upgraded into something malicious. Revoke unused allowances after you stop playing, and keep a separate gambling wallet with limited funds on the [wallet](/how-it-works#wallet) page habits even when the site looks decentralised.
 
 ### Proof of reserves off-chain
 
@@ -193,7 +193,7 @@ Speed, animation, responsible gambling tooling and chargeback-style support are 
 
 ### Hybrid strengths
 
-Fast loops, richer games, email recovery and clearer RG pages on licensed brands. PVPspinArena keeps multiplayer fairness on servers with HMAC commit-reveal while using familiar wallet deposits on [wallet](/wallet).
+Fast loops, richer games, email recovery and clearer RG pages on licensed brands. PVPspinArena keeps multiplayer fairness on servers with HMAC commit-reveal while using familiar wallet deposits on [wallet](/how-it-works#wallet).
 
 ### Hybrid weaknesses
 

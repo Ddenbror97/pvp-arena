@@ -82,7 +82,7 @@ Do not tattoo these as quotes. They sketch where money evaporates.`,
 
 **Session bankroll:** prefer direct Base USDC from exchange or wallet; avoid repeated card premiums.
 
-**Large:** split transfers, confirm limits and KYC early, keep savings offline, deposit only the session slice to the real [wallet](/wallet) address.
+**Large:** split transfers, confirm limits and KYC early, keep savings offline, deposit only the session slice to the real [wallet](/how-it-works#wallet) address.
 
 Play on [Coinflip](/coinflip) or other listed games only after credit posts. Payment method quality does not change odds.
 

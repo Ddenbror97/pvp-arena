@@ -77,7 +77,7 @@ Cloud screenshots of seeds are how “best wallet” lists become loss posts.`,
     {
       id: "by-bankroll",
       title: "Recommended setup by bankroll size",
-      body: `**Tiny weekly play:** hot wallet, Base ETH dust + USDC, bookmark deposits to [wallet](/wallet).
+      body: `**Tiny weekly play:** hot wallet, Base ETH dust + USDC, bookmark deposits to [wallet](/how-it-works#wallet).
 
 **Medium:** hot play + hardware savings; never connect hardware to random promos.
 

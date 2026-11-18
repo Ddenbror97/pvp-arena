@@ -84,7 +84,7 @@ If Base ETH is zero, Trust Wallet may still let you build a USDC send and then f
 - If a page immediately asks to approve USDC spending, leave. A [USDC casino](/guides/usdc-casino) deposit to an address does not need that.
 - Prefer WalletConnect from a desktop browser you already trust, if the phone browser feels noisy.
 
-PVPspinArena verification is a message on your [profile](/profile), not a contract you “enable” inside a random web view.
+PVPspinArena verification is a message on your [profile](/how-it-works#wallet), not a contract you “enable” inside a random web view.
 
 After you finish, clear the dapp session or lock the wallet. Do not leave an unknown tab sitting on a connect modal.
 

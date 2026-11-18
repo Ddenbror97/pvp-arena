@@ -144,7 +144,7 @@ The grid is a refusal to pretend the logos are different kinds of custody. They 
       title: "Which mismatch to avoid before you send",
       body: `Pick the mismatch that actually costs people money. The first is a chain the app does not show, solved by using the other app or by not depositing. The second is a chain both apps show, solved by reading the network name every time. The third is a phrase backup you postponed, which neither brand will repair. The fourth is a deposit how-to you half-remember, which is why the dedicated guides exist.
 
-PVPspinArena's own cashier is described on the [wallet](/wallet) page. Read it if you are sending to this site. This comparison does not override it. Other casinos publish other assets and other networks. A wallet that was right there can be wrong here.
+PVPspinArena's own cashier is described on the [wallet](/how-it-works#wallet) page. Read it if you are sending to this site. This comparison does not override it. Other casinos publish other assets and other networks. A wallet that was right there can be wrong here.
 
 Adults 18 or older only. Stake money you can lose. A wallet choice does not change the odds of the game. If you are switching apps because the last session lost, you are not solving a network problem. Stop. Check official MetaMask and Trust Wallet pages for product details that may have changed, and check the live quote for any fee. This is not financial advice.
 

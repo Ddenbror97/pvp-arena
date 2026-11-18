@@ -123,7 +123,7 @@ The table is why this site uses a dollar ledger. Meme energy belongs in a separa
 
 Wrong paths: DOGE to the 0x deposit address; USDC on Solana or Ethereum mainnet; a "DOGE swap bot" in comments.
 
-Check the [wallet](/wallet) page on the real domain. If play is no longer optional or fun, use [responsible gambling](/responsible-gambling) resources and stop.
+Check the [wallet](/how-it-works#wallet) page on the real domain. If play is no longer optional or fun, use [responsible gambling](/responsible-gambling) resources and stop.
 
 A dogecoin casino can process deposits quickly and cheaply. It cannot make DOGE a stable chip. If you want readable stakes, convert to USDC on Base first.`,
     },

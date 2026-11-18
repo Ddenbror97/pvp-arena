@@ -86,7 +86,7 @@ This is not tax advice. Rules vary. Records make any later conversation shorter.
 7. Wait both Steam and site clocks before spending the proceeds.
 8. Stop if anything asks for secrets, seeds or Guard codes.
 
-After a clean crypto cashout you may deposit on [wallet](/wallet) with a normal Base transfer. Or you may not. A finished cashout does not obligate a wager. More context sits under [CS:GO heritage](/guides/topics/csgo-heritage) and [responsible gambling](/responsible-gambling).
+After a clean crypto cashout you may deposit on [wallet](/how-it-works#wallet) with a normal Base transfer. Or you may not. A finished cashout does not obligate a wager. More context sits under [CS:GO heritage](/guides/topics/csgo-heritage) and [responsible gambling](/responsible-gambling).
 
 Cashout is a sale plus a payout ticket. The Steam trade is not the finish line until money arrives in an account you control.`,
     },

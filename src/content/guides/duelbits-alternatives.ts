@@ -150,7 +150,7 @@ Close the tab when duelbits alternatives is not on offer here. Six-max poker, Ja
     },
     {
       q: "Does PVPspinArena take sports bets?",
-      a: "No. six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, with USDC or ETH on Base.",
+      a: "No. Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, with USDC or ETH on Base.",
     },
     {
       q: "How many alternatives should I open?",

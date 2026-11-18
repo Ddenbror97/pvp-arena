@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "esports-betting",
-  cluster: "CS:GO heritage",
+  cluster: "Esports betting",
   keyword: "esports betting",
   secondary: ["esports odds", "cs2 betting", "lol betting", "esports bookmaker"],
   title: "Esports Betting Guide: Markets, Odds and Integrity",
@@ -26,7 +26,7 @@ export const guide: Guide = {
 
 The biggest titles are Counter-Strike 2, League of Legends, Dota 2, Valorant and a rotating set of fighting and sports games. A CS2 moneyline and a LoL betting market look similar on the slip: decimal odds, a stake box, and a live board that moves as the match unfolds. The underlying contest is still a human match with coaches, patches and, sometimes, last-minute stand-ins.
 
-This guide sits in our [CS:GO heritage topic](/guides/topics/csgo-heritage) because so many players first met betting through Counter-Strike. If you specifically want match markets for that title, the [CS2 betting guide](/guides/cs2-betting) goes deeper on maps, handicaps and skin-era leftovers.
+This guide sits in our [esports betting topic](/guides/topics/esports-betting). Many players first met betting through Counter-Strike. If you specifically want match markets for that title, the [CS2 betting guide](/guides/cs2-betting) goes deeper on maps, handicaps and skin-era leftovers.
 
 PVPspinArena is not an esports bookmaker. It does not price teams, take sides on a Major, or pay out when a roster wins. It runs cash-settled PvP formats and a coloured wheel. Keep that split in mind as you read: the rest of this page teaches the betting product first, then contrasts it with a game you can check yourself.`,
     },

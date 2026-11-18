@@ -78,7 +78,7 @@ PVPspinArena watches Base for USDC and ETH. If you withdraw USDC from an exchang
 
 ### How to stay on the right rail
 
-1. Open the [wallet](/wallet) page and confirm the network label is Base.
+1. Open the [wallet](/how-it-works#wallet) page and confirm the network label is Base.
 2. In the exchange or wallet, select USDC and Base, then paste the deposit address.
 3. Compare the first and last characters of the address before you confirm.
 4. Keep enough ETH on Base to pay the send.

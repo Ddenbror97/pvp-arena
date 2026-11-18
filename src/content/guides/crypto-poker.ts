@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "crypto-poker",
-  cluster: "Games & odds",
+  cluster: "Poker",
   keyword: "crypto poker",
   secondary: ["bitcoin poker", "crypto poker sites", "provably fair poker", "poker rake"],
   title: "Crypto Poker Guide: Rake, Fairness and Real Table Data",
@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "What crypto poker is — and what it is not",
       body: `Crypto poker is the familiar game of hole cards, streets and showdown, with deposits in digital assets. Bitcoin poker was the early brand. Today many rooms also take USDT or USDC. The rules at the table are still poker. The payment rail is crypto. The fairness story depends on how the cards are chosen.
 
-This is a [games and odds](/guides/topics/games-and-odds) guide for adults aged 18 or over. It explains how rooms usually run, then shows how [PVPspinArena poker](/poker) works and what its first real-money hands looked like. The site funds one US-dollar balance with Bitcoin, or with USDC or ETH on Base, and that balance is used at the poker tables as well as in Jackpot, Coinflip, Roulette and P2P Slott.
+This is a [poker](/guides/topics/poker) guide for adults aged 18 or over. It explains how rooms usually run, then shows how [PVPspinArena poker](/poker) works and what its first real-money hands looked like. The site funds one US-dollar balance with Bitcoin, or with USDC or ETH on Base, and that balance is used at the poker tables as well as in Jackpot, Coinflip, Roulette and P2P Slott.
 
 Marketing pages collapse "crypto," "provably fair" and "poker" into one phrase. Those are three separate claims: how you pay, what you can check, and which game you play. Judge each one on its own.`,
     },

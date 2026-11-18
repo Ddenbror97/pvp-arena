@@ -136,7 +136,7 @@ If anyone asks for your seed phrase for any reason, it is a scam.`,
 
 ### On PVPspinArena
 
-You verify your wallet by signing a message in MetaMask, which proves ownership without revealing any keys. Deposits from that verified address are then credited automatically. Withdrawals go back to your wallet from the [wallet page](/wallet). At no point do we ask for your seed phrase or private key, and our support will never ask for them. Our [MetaMask casino guide](/guides/metamask-casino) explains the flow.
+You verify your wallet by signing a message in MetaMask, which proves ownership without revealing any keys. Deposits from that verified address are then credited automatically. Withdrawals go back to your wallet from the [wallet page](/how-it-works#wallet). At no point do we ask for your seed phrase or private key, and our support will never ask for them. Our [MetaMask casino guide](/guides/metamask-casino) explains the flow.
 
 ### Red flag
 

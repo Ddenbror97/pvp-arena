@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "sleeper-picks-review",
-  cluster: "Sports betting",
+  cluster: "Prediction markets",
   keyword: "sleeper picks",
   secondary: ["sleeper player picks rules", "sleeper flex contest", "sleeper deposit match"],
   title: "Sleeper Picks Review: Match Cap and Cash-Out",
@@ -87,7 +87,7 @@ Team slips and player slips cannot be combined. Team products are described as C
 
 That registration is about event contracts. The same listing says the CFTC has not approved the products or the statements. A player-contest licence number was not on these pages.
 
-The hub is [Sports betting](/guides/topics/sports-betting). Deposits need an identity check and one balance per person.
+The hub is [Prediction markets](/guides/topics/prediction-markets). Deposits need an identity check and one balance per person.
 
 You must be in the United States or Canada, on a payment method in your name. If the app refuses the entry, stop.`,
     },

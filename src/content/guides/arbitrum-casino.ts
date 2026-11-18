@@ -139,7 +139,7 @@ If the $25 is meant for this site, acquire USDC on Base instead. Do not bridge t
       title: "Why PVPspinArena is Base, not Arbitrum",
       body: `PVPspinArena settled on Base so small dollar stakes do not die in mainnet gas and so the cashier has one watcher. It is a [USDC casino](/guides/usdc-casino) rail plus ETH on the same chain.
 
-Arbitrum One is a real, widely used L2. It is still the wrong network for this cashier. A correct Arbiscan link will not move the [wallet](/wallet) page.
+Arbitrum One is a real, widely used L2. It is still the wrong network for this cashier. A correct Arbiscan link will not move the [wallet](/how-it-works#wallet) page.
 
 If you already hold funds on Arbitrum and you want to play here, that is a bridge-or-exchange problem onto Base, then a USDC or ETH send to the address this site shows. The bridge guide covers the general risk; this page will not walk a deposit that this site cannot see.
 

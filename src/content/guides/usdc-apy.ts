@@ -80,7 +80,7 @@ CeFi: you may be an unsecured creditor. DeFi: a bug, an admin key, or an oracle 
 
 ### Liquidity and lockups
 
-Some products make you wait. A 30-day lock is not “the same as USDC in your wallet.” If you need the dollars for a deposit on the [wallet](/wallet) page this week, locked yield is the wrong pile.
+Some products make you wait. A 30-day lock is not “the same as USDC in your wallet.” If you need the dollars for a deposit on the [wallet](/how-it-works#wallet) page this week, locked yield is the wrong pile.
 
 ### Regulatory and regional risk
 

@@ -74,7 +74,7 @@ After you deposit, the casino holds a balance. That slice is no longer self-cust
 2. **Write the seed on paper, offline.** Confirm the wallet's quiz. Store the paper where a roommate or a photo backup will not leak it.
 3. **Add the Base network** if it is not already listed. You need Base for this site.
 4. **Fund the wallet** with USDC on Base and a little ETH for gas. Buy on an exchange, withdraw on Base, or swap carefully.
-5. **Open your [profile](/profile)** and connect the wallet. Sign the verification message. Read the message; it should not spend tokens.
+5. **Open your [profile](/how-it-works#wallet)** and connect the wallet. Sign the verification message. Read the message; it should not spend tokens.
 6. **Copy the deposit address** from the wallet page. Send a small USDC test, then the rest of the session budget.
 7. **Play only with a budget.** Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip can take the stake. Withdraw what you want to keep.
 

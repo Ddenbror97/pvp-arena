@@ -79,7 +79,7 @@ Some wrong-network sends are unrecoverable. Prevention is the real fix.`,
     {
       id: "confirm",
       title: "Confirming the deposit",
-      body: `On Base, verify balance. For PVPspinArena: sign in, verify wallet with a message signature, send a normal USDC or ETH transfer to the address on the real [wallet](/wallet) page. No token approval required.
+      body: `On Base, verify balance. For PVPspinArena: sign in, verify wallet with a message signature, send a normal USDC or ETH transfer to the address on the real [wallet](/how-it-works#wallet) page. No token approval required.
 
 Then play only what you budgeted on [Coinflip](/coinflip) or other listed games. Arrival success ≠ edge-free games.
 

@@ -382,11 +382,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       slugs: ["anjouan-gaming-license", "kahnawake-gaming-license", "aml-gambling"],
     },
     {
-      name: "Prediction markets",
-      slugs: ["crypto-prediction-markets", "polymarket-alternatives", "polymarket-vs-kalshi"],
-    },
-
-    {
       name: "Earn-by-playing",
       slugs: ["dogs-telegram", "pump-game-crypto", "x-empire-telegram"],
     },
@@ -449,13 +444,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Sites and alternatives",
-      slugs: [
-        "best-csgo-gambling-sites",
-        "csgo-coinflip-sites",
-        "csgo-case-battle-sites",
-        "esports-betting",
-        "cs2-betting",
-      ],
+      slugs: ["best-csgo-gambling-sites", "csgo-coinflip-sites", "csgo-case-battle-sites"],
     },
     {
       name: "Cases and odds",
@@ -551,6 +540,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Crash, plinko and mines",
       slugs: [
+        "mines-predictor",
         "plinko-gambling",
         "plinko-odds",
         "plinko-strategy",
@@ -567,7 +557,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Slots, dice and wheels",
       slugs: [
-        "crypto-slots",
         "slot-machine-odds",
         "crypto-dice-game",
         "dice-roll-probability",
@@ -582,17 +571,12 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Tables, tickets and bets",
       slugs: [
-        "crypto-blackjack",
-        "crypto-poker",
         "crypto-baccarat",
         "crypto-keno",
-        "crypto-lottery",
-        "bitcoin-lottery",
         "crypto-bingo",
         "bingo-odds",
         "crypto-scratch-cards",
         "crypto-horse-racing-betting",
-        "sports-betting-with-crypto",
       ],
     },
     {
@@ -605,8 +589,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "fibonacci-betting-system",
         "kelly-criterion",
         "kelly-criterion-calculator",
-        "blackjack-basic-strategy",
-        "card-counting",
         "gamblers-fallacy",
         "risk-of-ruin",
         "labouchere-system",
@@ -910,6 +892,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Rooms and apps",
       slugs: [
+        "crypto-poker",
         "clubgg-review",
         "pokerbros-review",
 
@@ -952,6 +935,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "How to bet",
       slugs: [
+        "esports-betting",
         "esports-betting-sites",
         "how-to-bet-on-esports",
         "esports-odds-explained",
@@ -963,6 +947,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "By title",
       slugs: [
+        "cs2-betting",
         "lol-betting",
         "valorant-betting",
         "csgo-betting-odds",
@@ -1195,6 +1180,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Books and exchanges",
       slugs: [
+        "sports-betting-with-crypto",
         "peer-to-peer-sports-betting",
         "betting-exchange-explained",
         "matched-betting",
@@ -1205,7 +1191,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "bovada-review",
       ],
     },
-    { name: "Office pools", slugs: ["bracket-pool", "super-bowl-squares", "pick-em-pool"] },
+    {
+      name: "Office pools",
+      slugs: ["survivor-pool", "bracket-pool", "super-bowl-squares", "pick-em-pool"],
+    },
     {
       name: "Exchanges",
       slugs: [
@@ -1219,15 +1208,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Fantasy and friend bets",
-      slugs: [
-        "splash-sports-review",
-        "fantasy-football-payouts",
-
-        "prizepicks-promo-code",
-        "sleeper-picks-review",
-        "betr-picks-review",
-        "dabble-review",
-      ],
+      slugs: ["splash-sports-review", "fantasy-football-payouts"],
     },
     {
       name: "Golf games",
@@ -1246,7 +1227,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "gambling-legal-minnesota",
         "sports-betting-legal-oklahoma",
         "how-old-to-sports-bet",
-        "prediction-market-legal-us",
       ],
     },
     {
@@ -1273,6 +1253,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Decisions",
       slugs: [
+        "card-counting",
+        "blackjack-basic-strategy",
         "blackjack-strategy-chart",
         "blackjack-simulator",
         "when-to-double-down-blackjack",
@@ -1286,13 +1268,20 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Variants",
-      slugs: ["free-bet-blackjack", "spanish-21", "blackjack-switch", "infinite-blackjack"],
+      slugs: [
+        "crypto-blackjack",
+        "free-bet-blackjack",
+        "spanish-21",
+        "blackjack-switch",
+        "infinite-blackjack",
+      ],
     },
   ],
   Slots: [
     {
       name: "How slots work",
       slugs: [
+        "crypto-slots",
         "free-slots",
         "how-to-play-slots",
         "how-do-slot-machines-work",
@@ -1565,7 +1554,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     },
     {
       name: "Crash and instant games",
-      slugs: ["jetx-game", "spaceman-game", "chicken-road-game", "mines-predictor"],
+      slugs: ["jetx-game", "spaceman-game", "chicken-road-game"],
     },
   ],
   "Games of chance": [
@@ -1680,13 +1669,10 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
         "lucky-numbers-gambling",
         "lucky-colors-gambling",
         "horseshoe-luck",
-        "quick-pick-lottery",
         "pull-tabs",
         "bingo-patterns",
         "bingo-caller",
         "pachislot",
-        "survivor-pool",
-        "handicapping-horses",
       ],
     },
     {
@@ -1707,6 +1693,8 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "Jackpot games",
       slugs: [
+        "crypto-lottery",
+        "bitcoin-lottery",
         "odds-of-winning-the-lottery",
         "which-lottery-has-the-best-odds",
         "powerball-odds",
@@ -1720,6 +1708,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "State games and scratchers",
       slugs: [
+        "quick-pick-lottery",
         "pick-3-strategy",
         "pick-3-lottery",
         "pick-4-lottery",
@@ -1747,6 +1736,7 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
     {
       name: "How to bet",
       slugs: [
+        "handicapping-horses",
         "how-to-bet-on-horse-racing",
         "horse-racing-odds-explained",
         "win-place-show-betting",
@@ -1771,11 +1761,23 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
   "Prediction markets": [
     {
       name: "Pick'em and fantasy",
-      slugs: ["how-does-prizepicks-work", "underdog-fantasy-review", "dfs-strategy"],
+      slugs: [
+        "dabble-review",
+        "betr-picks-review",
+        "sleeper-picks-review",
+        "prizepicks-promo-code",
+        "how-does-prizepicks-work",
+        "underdog-fantasy-review",
+        "dfs-strategy",
+      ],
     },
     {
       name: "Event contracts",
       slugs: [
+        "prediction-market-legal-us",
+        "polymarket-vs-kalshi",
+        "polymarket-alternatives",
+        "crypto-prediction-markets",
         "kalshi-review",
         "is-kalshi-gambling",
         "how-does-polymarket-work",

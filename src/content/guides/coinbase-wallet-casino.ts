@@ -58,7 +58,7 @@ If you keep a large balance on the exchange for convenience, withdraw only the g
 
 ### On PVPspinArena
 
-Sign in, open your profile, verify the wallet and sign the short message. That message cannot move USDC. The site then watches Base for transfers from that address to the deposit address shown on the [wallet](/wallet) page.
+Sign in, open your profile, verify the wallet and sign the short message. That message cannot move USDC. The site then watches Base for transfers from that address to the deposit address shown on the [wallet](/how-it-works#wallet) page.
 
 If you connect but never sign, the site does not have a verified sender. If you sign with account A and send from account B, the deposit will not match automatically.
 

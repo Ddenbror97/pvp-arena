@@ -140,7 +140,7 @@ Those omissions are on purpose. Duplicate walkthroughs rot. Duplicate issuer ess
 
 If you came from a search for “stablecoin casino deposit,” you still need the coin-specific guide. If you came from a search for “USDC vs USDT,” skip ahead to the comparison. If you came from a search for “what is a stablecoin,” start at the primer and come back to this tree.
 
-Open the [wallet](/wallet) page only after you know the chip is USDC or ETH on Base. Any other ticker is the wrong tab.`,
+Open the [wallet](/how-it-works#wallet) page only after you know the chip is USDC or ETH on Base. Any other ticker is the wrong tab.`,
     },
     {
       id: "here",

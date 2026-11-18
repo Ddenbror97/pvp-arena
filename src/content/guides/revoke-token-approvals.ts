@@ -79,7 +79,7 @@ If a casino requires unlimited USDC spend, leave. PVPspinArena does not.`,
 2. Clear unknown spenders.
 3. Disconnect dead site connections in the wallet.
 4. Confirm play wallet balance matches expectations.
-5. Only then deposit to the real [wallet](/wallet) page if you still want a session.
+5. Only then deposit to the real [wallet](/how-it-works#wallet) page if you still want a session.
 
 More checklist thinking lives under [crypto payments](/guides/topics/crypto-payments). Games on [how it works](/how-it-works) still need a budget.
 

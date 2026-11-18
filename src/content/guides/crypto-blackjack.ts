@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "crypto-blackjack",
-  cluster: "Games & odds",
+  cluster: "Blackjack",
   keyword: "blackjack crypto",
   secondary: ["crypto blackjack", "bitcoin blackjack", "blackjack rtp", "online blackjack"],
   title: "Crypto Blackjack: Rules That Change RTP and Fair Play",
@@ -108,7 +108,7 @@ That is a cleaner product surface: pots and a colour wheel with numbers you can 
 - [Roulette](/roulette) — 33 slots, 16 Purple, 16 Silver, 1 Green.
 - [Fairness](/fairness) — recompute a committed result.
 
-The [games and odds topic](/guides/topics/games-and-odds) is the cluster for those prices. Use this page to read a crypto 21 table you meet elsewhere, then walk if the rules or the generator are vague.
+Rules, charts and table variants are in the [blackjack topic](/guides/topics/blackjack). Use this page to read a crypto 21 table you meet elsewhere, then walk if the rules or the generator are vague.
 
 If you only remember one felt check, remember the blackjack payout. A 6:5 table that also hits soft 17 and refuses DAS can sit near a 2% house edge even with a perfect chart. That is in slot territory, without a slot’s excuse of a hidden bonus. Walk. A 3:2 S17 six-deck table with DAS is the version the 0.5% stories were about. Crypto does not tell you which one you opened. The felt does.
 

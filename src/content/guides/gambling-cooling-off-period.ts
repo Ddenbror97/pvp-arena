@@ -153,7 +153,7 @@ If the site still accepts on-chain transfers while "paused," move funds out and 
 
 ### PVPspinArena
 
-Use the [responsible gambling](/responsible-gambling) page and contact support to lock play. Withdraw via [wallet](/wallet) flows before long breaks when possible.
+Use the [responsible gambling](/responsible-gambling) page and contact support to lock play. Withdraw via [wallet](/how-it-works#wallet) flows before long breaks when possible.
 
 ### Multi-account temptation
 

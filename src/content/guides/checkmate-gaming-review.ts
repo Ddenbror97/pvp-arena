@@ -110,7 +110,7 @@ The [skill wagers topic](/guides/topics/skill-wagers) groups these lobby explain
 - Support has not asked for a seed phrase or remote access.
 - This stake can hit zero. You are not covering a bill with it.
 
-[Wallet](/wallet) on this site is a USD balance funded in Bitcoin or USDC/ETH on Base. It does not settle a console series.`,
+[Wallet](/how-it-works#wallet) on this site is a USD balance funded in Bitcoin or USDC/ETH on Base. It does not settle a console series.`,
     },
     {
       id: "settled-block",

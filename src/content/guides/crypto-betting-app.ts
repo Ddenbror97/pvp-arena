@@ -79,7 +79,7 @@ Educational copy, including this crypto betting app note, does not replace the r
       title: "Wallet flows on a phone",
       body: `Mobile wallets and WalletConnect-style flows are common. Read the permission prompt. A casino that only needs a transfer should not need unlimited token approval. Message signatures for login are different from spend approvals.
 
-On PVPspinArena, wallet proof is a signed message and deposits are USDC/ETH on Base — see [how it works](/how-it-works) and [wallet](/wallet). That pattern is one design; judge others by what they ask you to sign.
+On PVPspinArena, wallet proof is a signed message and deposits are USDC/ETH on Base — see [how it works](/how-it-works) and [wallet](/how-it-works#wallet). That pattern is one design; judge others by what they ask you to sign.
 
 Wrong-network sends still ruin sessions. Double-check chain and address on a seed phrase–safe device, not on a borrowed phone.
 ### Extra diligence notes

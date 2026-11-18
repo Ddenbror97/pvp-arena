@@ -186,7 +186,7 @@ The $45 pot is a fee lesson about a player game. It does not buy a card, and it 
     "house-edge",
     "las-vegas-history",
     "slot-machine-for-sale",
-    "bingo-halls-near-me",
+    "bingo-patterns",
   ],
   updated: "2026-10-20",
 };

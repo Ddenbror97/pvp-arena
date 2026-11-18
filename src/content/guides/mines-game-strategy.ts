@@ -156,7 +156,7 @@ If you cannot explain your cashout depth in one sentence written before play, yo
 
 ### Grid size changes
 
-Not every mines product is 5×5. A 4×4 field with 4 mines starts at 75% first-click survival; fair multipliers climb faster because the product has fewer terms. The invert test does not care about branding — count tiles, count mines, multiply conditional fractions, compare to pay. A 8×8 tourist layout with 10 mines is the same math with different numbers in the numerator.
+Not every mines product is 5×5. A 4×4 field with 4 mines starts at 75% first-click survival; fair multipliers climb faster because the product has fewer terms. The invert test does not care about branding — count tiles, count mines, multiply conditional fractions, compare to pay. An 8×8 tourist layout with 10 mines is the same math with different numbers in the numerator.
 
 ### Audio and haptics
 

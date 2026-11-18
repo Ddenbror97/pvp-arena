@@ -93,7 +93,7 @@ Use the official Base parameters (chain ID 8453). The [add Base to MetaMask](/gu
 
 Connect, sign a message, deposit from that address only. A mainnet-only send from the same address still will not credit.
 
-Check the [wallet](/wallet) page for the address and the network label before every first send to a new device.
+Check the [wallet](/how-it-works#wallet) page for the address and the network label before every first send to a new device.
 
 ### Hardware wallets and Base
 

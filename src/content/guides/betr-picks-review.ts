@@ -2,7 +2,7 @@ import type { Guide } from "./types";
 
 export const guide: Guide = {
   slug: "betr-picks-review",
-  cluster: "Sports betting",
+  cluster: "Prediction markets",
   keyword: "betr picks",
   secondary: ["betr flex play", "betr no sweat token", "betr fantasy withdrawal"],
   title: "Betr Picks Review: Flex Table and Cash-Out",
@@ -127,7 +127,7 @@ Two $50 Coinflip stakes make a $100 pot. The fee is 5%, so $5, and the winner re
 
 Roulette colour carries a house edge of about 7.88%, and P2P Slott keeps 10% of a winning pot. The minimum bet is $1, and the cash-out minimum is $20.
 
-[Coinflip](/coinflip), [fairness](/fairness), and [the terms](/terms) are that pot. The hub is [Sports betting](/guides/topics/sports-betting).`,
+[Coinflip](/coinflip), [fairness](/fairness), and [the terms](/terms) are that pot. The hub is [Prediction markets](/guides/topics/prediction-markets).`,
     },
     {
       id: "steps",

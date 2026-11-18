@@ -101,7 +101,7 @@ Withdrawals fail in reverse: the site pays Polygon USDC to an address whose owne
 1. On an exchange that lists both, sell or swap POL for USDC.
 2. Withdraw **USDC on Base** to a wallet you control. Read the network name.
 3. Keep a few dollars of **ETH on Base** for gas.
-4. Verify the wallet on this site and send USDC to the [wallet](/wallet) deposit address.
+4. Verify the wallet on this site and send USDC to the [wallet](/how-it-works#wallet) deposit address.
 
 Do not withdraw POL to the deposit address. Do not withdraw USDC on Polygon to the deposit address. Do not “save a step” by bridging from a page that asked for unlimited approvals you do not understand.
 

@@ -90,7 +90,7 @@ If someone promises guaranteed arena profit, they are selling a fantasy.`,
       title: "A modern duel on PVPspinArena",
       body: `There is no RuneScape integration here. The 1v1 product is [Coinflip](/coinflip): equal dollar stakes, published fee, provably fair style settlement described on [Fairness](/fairness). Jackpot on the [home page](/) is a multi-player pot. [Roulette](/roulette) is house-banked.
 
-Deposits use USDC or ETH on Base after wallet verification. Overview: [how it works](/how-it-works) and [wallet](/wallet).
+Deposits use USDC or ETH on Base after wallet verification. Overview: [how it works](/how-it-works) and [wallet](/how-it-works#wallet).
 
 [Provably fair games](/guides/provably-fair-games) and [commit reveal scheme](/guides/commit-reveal-scheme) are the verification reading list.`,
     },
