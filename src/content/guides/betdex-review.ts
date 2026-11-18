@@ -160,7 +160,9 @@ Aggregate liability is capped at $10,000. The board we loaded was empty behind a
 
 That credit needed a first bet of $50 or more and signups from 16 December 2024. Backing and laying the same selection to farm it was barred. It is not a live offer.
 
-Stay away if you are under 18, if your law bars the product, or if you need a state-licensed book. Also stay away if you will leave a lay unread, if you are chasing a loss, or if you need a public seed or a printed cash-out clock. Call 1-800-GAMBLER if this stops being a read, and open [responsible gambling](/responsible-gambling) before a deposit.`,
+Stay away if you are under 18, if your law bars the product, or if you need a state-licensed book. Also stay away if you will leave a lay unread, if you are chasing a loss, or if you need a public seed or a printed cash-out clock. Call 1-800-GAMBLER if this stops being a read, and open [responsible gambling](/responsible-gambling) before a deposit.
+
+See also: [Novig Review](/guides/novig-review).`,
     },
   ],
   faqs: [

@@ -197,7 +197,9 @@ If you want the peer pot, use the stakes in the examples only as arithmetic, the
 
 PVPspinArena is not an affiliate of the dog title. No code appears in this file to change that.
 
-A dog tap is not an empire tap. [The other Telegram empire tap](/guides/x-empire-telegram) has the same cash-out question and no published payout.`,
+A dog tap is not an empire tap. [The other Telegram empire tap](/guides/x-empire-telegram) has the same cash-out question and no published payout.
+
+See also: [Pump Game Crypto](/guides/pump-game-crypto).`,
     },
   ],
   faqs: [

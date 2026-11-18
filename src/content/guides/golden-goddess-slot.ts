@@ -171,7 +171,9 @@ It is not legal counsel, not a tax opinion, and not bankroll advice. Winning pla
 
 If the money is no longer spare, open [stopping tools](/responsible-gambling). Feature labels are a weak reason to keep a session going.
 
-Real-money availability is only where that casino is allowed to offer the game. This article cannot place the cabinet online for you. A blocked location check ends the question for that visit.`,
+Real-money availability is only where that casino is allowed to offer the game. This article cannot place the cabinet online for you. A blocked location check ends the question for that visit.
+
+See also: [Floating Dragon slot](/guides/floating-dragon-slot), [Top Dollar Slot](/guides/top-dollar-slot).`,
     },
   ],
   faqs: [

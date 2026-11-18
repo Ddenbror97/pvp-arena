@@ -86,7 +86,9 @@ If you learned on a league night, read the list before you stake. A safety you e
 
 Stakes are $1, $2, $5, $10, $25 and $50. Promo credit and partner credit can fund a stake. Deposited money is used first. There is no house opponent. The playing surface is 2.54 m by 1.27 m. New matches store the current physics id on the rack. An older match stays on the physics it was played with.
 
-No weekly crypto tournament is published here yet. A leaderboard of invented brackets would be the same kind of fake. When a bracket exists, it can have a page. Until then the settled list is the public record.`,
+No weekly crypto tournament is published here yet. A leaderboard of invented brackets would be the same kind of fake. When a bracket exists, it can have a page. Until then the settled list is the public record.
+
+See also: [pool hustling](/guides/pool-hustling).`,
     },
   ],
   faqs: [

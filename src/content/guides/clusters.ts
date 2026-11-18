@@ -944,7 +944,6 @@ export const CLUSTER_GROUPS: Record<GuideCluster, ClusterGroup[]> = {
       slugs: [
         "8-ball-pool-hub",
         "pool-betting",
-        "8-ball-pool-real-money",
         "crypto-8-ball-pool",
         "pool-games-for-money",
 

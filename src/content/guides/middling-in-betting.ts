@@ -207,7 +207,9 @@ Nothing here is tax advice or a financial plan. Profit in the suppose is classro
 
 Editorial only. No pick. No code.
 
-A later outbound link to a sportsbook should be read as advertising.`,
+A later outbound link to a sportsbook should be read as advertising.
+
+See also: [NRFI Betting](/guides/nrfi-betting).`,
     },
   ],
   faqs: [

@@ -124,7 +124,9 @@ The [home page](/) and the [poker lobby](/poker) list what is offered here: Jack
 
 Real money poker apps are a category, not a recommendation. The ones where you play people charge you to sit with people. The ones where you play the house charge you a pay-table price. The ones where you pay an agent charge you counterparty risk on top of the cards.
 
-Pick one on purpose. Then read the table and the cashier, or the host's written rate. Anything else is an ad.`,
+Pick one on purpose. Then read the table and the cashier, or the host's written rate. Anything else is an ad.
+
+See also: [Stake poker](/guides/stake-poker).`,
     },
   ],
   faqs: [

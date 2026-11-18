@@ -151,7 +151,9 @@ Sunday you buy 400 USDC for $400 and send it to a casino on Base. That send is a
 
 A [what is a crypto casino](/guides/what-is-a-crypto-casino) balance can sit off-chain between those rows. Your diary still needs the credit time. This remains not personal tax advice. Take the table to a professional if the dollars matter.
 
-Player winnings and operator duty are different questions, and a wallet company is a third one. [Gambling tax in the UK](/guides/gambling-tax-uk) follows HMRC's published line on casual play. [Gambling loss deductions](/guides/gambling-loss-deduction) are a US records question. [Whether MetaMask reports to the IRS](/guides/does-metamask-report-to-irs) is about the wallet, not about a casino form.`,
+Player winnings and operator duty are different questions, and a wallet company is a third one. [Gambling tax in the UK](/guides/gambling-tax-uk) follows HMRC's published line on casual play. [Gambling loss deductions](/guides/gambling-loss-deduction) are a US records question. [Whether MetaMask reports to the IRS](/guides/does-metamask-report-to-irs) is about the wallet, not about a casino form.
+
+See also: [Form W-2G explained](/guides/w2g-form).`,
     },
   ],
   faqs: [

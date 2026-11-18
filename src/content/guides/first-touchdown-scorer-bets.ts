@@ -139,7 +139,9 @@ Chase risk is ordinary and sharp here because touchdowns are vivid. The replay m
 
 [Limits, pauses, and how to stop](/responsible-gambling) belong in the plan before kickoff. A first-score ticket resolves early, which makes it easy to fire a second one out of irritation. Irritation is not an estimate. The 11% figure will not improve because you are annoyed.
 
-First means first. Anytime means any. The board you can see is the only board. The $120 pot is a different product with a fee you can divide on a calculator.`,
+First means first. Anytime means any. The board you can see is the only board. The $120 pot is a different product with a fee you can divide on a calculator.
+
+See also: [what PK means in betting](/guides/pk-in-betting).`,
     },
   ],
   faqs: [

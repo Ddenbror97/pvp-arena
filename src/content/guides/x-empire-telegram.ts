@@ -182,7 +182,9 @@ Coinflip keeps 5% of a pot if the game you wanted was a coin instead of a reel-s
 
 When the claim button stays vague, x empire payout stays not published. PVPspinArena is not an affiliate of the tap title. The missing code is part of that sentence, not an oversight.
 
-An empire score is not a dog score. [The dog-named Telegram tap](/guides/dogs-telegram) is the neighboring bot people ask to cash out.`,
+An empire score is not a dog score. [The dog-named Telegram tap](/guides/dogs-telegram) is the neighboring bot people ask to cash out.
+
+See also: [Pump Game Crypto](/guides/pump-game-crypto).`,
     },
   ],
   faqs: [

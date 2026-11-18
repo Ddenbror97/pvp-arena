@@ -163,7 +163,9 @@ The 590% minimums sit in a pop-up we could not open. There is no public code. Sp
 
 We did not time a cash-out. BetFury is the wrong room if you need the bonus and a same-day send.
 
-[Signs a lobby is only a copy](/guides/fake-casino-sites) is the check if a domain is not the one on the certificate. We did not create an account.`,
+[Signs a lobby is only a copy](/guides/fake-casino-sites) is the check if a domain is not the one on the certificate. We did not create an account.
+
+See also: [Bitcasino.io review](/guides/bitcasino-io-review).`,
     },
   ],
   faqs: [

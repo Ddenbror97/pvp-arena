@@ -45,7 +45,7 @@ export const guide: Guide = {
     {
       id: "limits",
       title: "Do not share keys to resolve a ledger problem",
-      body: "A support conversation about an address or transaction does not require your recovery phrase. Keep private account and transaction evidence out of public channels. Stop if someone asks for keys, an unrelated software installation or an unexplained additional payment to release a balance.\n\nA public website deserves the same scrutiny; switching interfaces is not evidence of a safer operator. PVPspinArena is not a Telegram wagering bot. [Responsible gambling](/responsible-gambling) provides support with paid play.",
+      body: "A support conversation about an address or transaction does not require your recovery phrase. Keep private account and transaction evidence out of public channels. Stop if someone asks for keys, an unrelated software installation or an unexplained additional payment to release a balance.\n\nA public website deserves the same scrutiny; switching interfaces is not evidence of a safer operator. PVPspinArena is not a Telegram wagering bot. [Responsible gambling](/responsible-gambling) provides support with paid play.\n\nSee also: [Discord Gambling Bot](/guides/discord-gambling-bot).",
     },
   ],
   faqs: [

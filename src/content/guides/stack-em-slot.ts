@@ -179,7 +179,9 @@ It is not legal advice, not tax advice, and not a suggestion to chase a ladder. 
 
 Use [stop controls](/responsible-gambling) if the stack is talking you into stake you cannot lose. The animation is built to keep attention. Attention is not a plan.
 
-Cash ladders exist only where that operator may offer the game. A clip with a huge stack may have been recorded where you cannot play. Your cashier's answer overrides the clip.`,
+Cash ladders exist only where that operator may offer the game. A clip with a huge stack may have been recorded where you cannot play. Your cashier's answer overrides the clip.
+
+See also: [Beam Boys slot](/guides/beam-boys-slot), [Piggy Bankin Slot](/guides/piggy-bankin-slot).`,
     },
   ],
   faqs: [

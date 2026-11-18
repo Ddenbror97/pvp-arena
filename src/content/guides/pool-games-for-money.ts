@@ -36,7 +36,7 @@ The pot that is known is simple. Stakes are $1, $2, $5, $10, $25, or $50. The fe
     {
       id: "where",
       title: "Other doors into a money match",
-      body: "Play pool for money can mean an entry-fee app or two equal stakes. This site is the second. The payment grid is on [8 ball pool online](/guides/8-ball-pool-hub).\n\nThe neighbouring money pages are [a house table versus a player pot](/guides/8-ball-pool-casino), [whether pool counts as skill](/guides/skill-games-for-money-pool), and [when the dollar balance is credited](/guides/8-ball-pool-real-money). The group is the [skill wagers guides](/guides/topics/skill-wagers).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
+      body: "Play pool for money can mean an entry-fee app or two equal stakes. This site is the second. The payment grid is on [8 ball pool online](/guides/8-ball-pool-hub).\n\nThe neighbouring money pages are [a house table versus a player pot](/guides/8-ball-pool-casino), [whether pool counts as skill](/guides/skill-games-for-money-pool), and [when the dollar balance is credited](/guides/8-ball-pool-for-money). The group is the [skill wagers guides](/guides/topics/skill-wagers).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
     },
     {
       id: "demand-without-a-bracket",
@@ -75,7 +75,9 @@ Open table lasts until a legal pocket assigns solids or stripes. A foul is ball 
 
 The 8-ball that settles the pot is also not the WPA call-shot book. That split is written out on [8 ball pool rules](/guides/8-ball-pool-rules). Rules effective 21 October 2026 call the ball and the pocket, and a legal 8 on the break is spotted or rebroken. Here a legal 8 on the break wins unless the cue ball scratches, and that scratch loses. Early 8, wrong pocket, and a scratch while pocketing the 8 all lose.
 
-Whether you may play pool for money at all depends on where you live. This page is not legal advice. The APA team manual's ban on gambling at APA functions is a league rule, covering wagers and side bets at those events. It is not a map of statutes, and it is not a ruling on this website. PVPspinArena publishes the page with no named author.`,
+Whether you may play pool for money at all depends on where you live. This page is not legal advice. The APA team manual's ban on gambling at APA functions is a league rule, covering wagers and side bets at those events. It is not a map of statutes, and it is not a ruling on this website. PVPspinArena publishes the page with no named author.
+
+See also: [pool hustling](/guides/pool-hustling).`,
     },
   ],
   faqs: [
