@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "fruit party slot",
   secondary: ["fruit party slot rtp", "fruit party slot max win", "fruit party slot demo"],
-  title: "Fruit Party Slot: Clusters Are Not One Game",
+  title: "Fruit Party Slot: Cluster Wins and Multipliers Explained",
   description:
     "A fruit party slot can share clusters and tumbles with a lookalike and still be a different game. Do not merge paytables. RTP and max win are not published.",
   h1: "Fruit party slot in 2026: similar clusters, separate paytables",

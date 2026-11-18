@@ -139,5 +139,5 @@ A network trick is not a licence. The [VPN casino](/guides/vpn-casino) page is w
     "crypto-casino-license",
     "vpn-casino",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

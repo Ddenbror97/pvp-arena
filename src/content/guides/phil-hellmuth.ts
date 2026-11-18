@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Casino knowledge",
   keyword: "phil hellmuth",
   secondary: ["phil hellmuth net worth", "phil hellmuth story", "phil hellmuth facts"],
-  title: "Phil Hellmuth Facts: 17 Bracelets, Not Worth",
+  title: "Phil Hellmuth: WSOP Bracelets, Career and Playing Style",
   description:
     "WSOP.com lists Phil Hellmuth with 17 bracelets and $20,679,638 in WSOP winnings. That career total is not a net worth. He won the 1989 Main Event.",
   h1: "Phil Hellmuth facts from the WSOP player page, not a net worth",

@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Games of chance",
   keyword: "pool vs snooker",
   secondary: ["snooker vs pool", "difference between pool and snooker", "snooker betting"],
-  title: "Pool vs Snooker: Table, Balls, and No Book Here",
+  title: "Pool vs Snooker: Tables, Balls and Rules Compared",
   description:
     "Pool vs snooker means a different table, smaller balls, and fifteen reds plus colours. Geometry is not 8-ball. This site does not book snooker or print odds.",
   h1: "Pool vs snooker on the table, the balls, and the missing book",

@@ -184,7 +184,13 @@ The definition is the whole product of this page. The rest is a warning not to i
       a: "No. It matches our commit to our result. A final score and a sportsbook's juice are outside it.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Mathematics of bookmaking",
+      url: "https://en.wikipedia.org/wiki/Mathematics_of_bookmaking",
+    },
+    { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
+  ],
   related: [
     "nfl-betting",
     "house-edge",

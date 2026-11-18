@@ -66,7 +66,13 @@ export const guide: Guide = {
       a: "A ranked list is often an advertisement, and it goes stale. No list in this guide names a winning brand. Use the game rules, the cashier, and a small withdrawal test to judge the site in front of you.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wizard of Odds: house edge of casino games",
+      url: "https://wizardofodds.com/gambling/house-edge/",
+    },
+    { label: "Wikipedia: Return to player", url: "https://en.wikipedia.org/wiki/Return_to_player" },
+  ],
   related: ["rtp-explained", "house-edge", "instant-withdrawal-casino"],
   updated: "2026-09-26",
 };

@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Crypto payments",
   keyword: "polygon casino",
   secondary: ["matic casino", "pol casino", "polygon usdc casino", "polygon pos gambling"],
-  title: "Polygon Casino: MATIC, POL Rails and Why Not Here",
+  title: "Polygon Casino: POL Deposits, Fees and Wallet Setup",
   description:
     "Polygon casino deposits use MATIC or POL rails and Polygon USDC. Fees, wrong-network traps, and why this site watches Base.",
   h1: "Polygon casino: MATIC and POL rails, not Base USDC",

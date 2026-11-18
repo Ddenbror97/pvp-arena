@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "bonanza megaways",
   secondary: ["bonanza slot", "bonanza rtp"],
-  title: "Bonanza Megaways: Reactions Are Not a Percent",
+  title: "Bonanza Megaways Slot: Reactions and Ways to Win",
   description:
     "Bonanza megaways reactions are a cascade that can keep paying inside one paid spin. That picture is not a return percent. The fee is still the paytable.",
   h1: "Bonanza megaways in 2026: a reaction is not a return",

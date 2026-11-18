@@ -116,7 +116,7 @@ It does not cover the field, and the field size is not published on the pages we
     {
       id: "card",
       title: "A weekday morning line is not the stakes market",
-      body: `The racing URL was a live card for the week we tested, with a countdown still pointing at 5 June 2027. A morning line on a maiden claimer can look official because it sits on an official domain.
+      body: `When this page was last checked, the racing URL showed a live card with a countdown pointing at 5 June 2027. A morning line on a maiden claimer can look official because it sits on an official domain.
 
 It is official for that race. It is not a price on the stakes.
 

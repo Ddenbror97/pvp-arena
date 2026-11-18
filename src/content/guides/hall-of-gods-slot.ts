@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "hall of gods",
   secondary: ["hall of gods jackpot", "hall of gods rtp", "progressive slot meter"],
-  title: "Hall of Gods Slot: No Jackpot Figure Printed",
+  title: "Hall of Gods Slot: Jackpots and Bonus Rounds Explained",
   description:
     "Hall of Gods is a progressive slot whose meter changes. This page prints no jackpot dollar and no RTP. Our contrast is a $120 player pot with a 5% fee.",
   h1: "Hall of Gods in 2026: the meter moves, so no dollar is printed",

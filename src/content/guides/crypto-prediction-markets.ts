@@ -61,7 +61,14 @@ export const guide: Guide = {
       a: "No. A web3 casino is a game settled by a disclosed game rule, often with a wallet. A prediction market is a share on an outside event. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only, which is neither product.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "U.S. Commodity Futures Trading Commission", url: "https://www.cftc.gov/" },
+    { label: "Polymarket", url: "https://polymarket.com/" },
+    {
+      label: "Wikipedia: Prediction market",
+      url: "https://en.wikipedia.org/wiki/Prediction_market",
+    },
+  ],
   related: [
     "polymarket-alternatives",
     "web3-casino",

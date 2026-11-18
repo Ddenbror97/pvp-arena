@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Casino knowledge",
   keyword: "us open pool",
   secondary: ["us open 9 ball", "us open billiards"],
-  title: "US Open Pool: Open 9-Ball, Purse Not Copied",
+  title: "US Open Pool Championship: The Open 9-Ball Format",
   description:
     "US open pool is an open 9-ball tournament people search by that name. Purse and dates are the organizer's current figures. This page did not copy a number.",
   h1: "US open pool, named without borrowing the purse",

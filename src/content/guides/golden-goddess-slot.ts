@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "golden goddess",
   secondary: ["golden goddess slot machine", "golden goddess rtp"],
-  title: "Golden Goddess: Feature Names Are Not an RTP",
+  title: "Golden Goddess Slot: Super Stacks and Features Explained",
   description:
     "Golden goddess: Super Stacks, when that label is on the cabinet, is a feature name, not an RTP. Real-money play depends on the casino's license.",
   h1: "Golden goddess in 2026: a feature label is not the return",

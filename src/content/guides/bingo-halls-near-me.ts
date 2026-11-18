@@ -180,7 +180,12 @@ The $45 pot is a fee lesson about a player game. It does not buy a card, and it 
       a: "No. The seed check covers our commit and our result. A ball draw in a room is outside it.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Bingo (American version)",
+      url: "https://en.wikipedia.org/wiki/Bingo_(American_version)",
+    },
+  ],
   related: [
     "keno-vs-bingo",
     "house-edge",

@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Skill wagers",
   keyword: "diamonds game",
   secondary: ["diamonds game legit", "diamonds game payout", "diamonds game real money"],
-  title: "Diamonds Game: Crowded Name, Cash-Out Question",
+  title: "Diamonds Casino Game: How to Play and Cash Out",
   description:
     "Diamonds game is a crowded cash-out query, not a card-suit lesson and not a slot review. No payout, RTP, code, or license is invented.",
   h1: "Diamonds game in 2026: one crowded name, one cash-out question",

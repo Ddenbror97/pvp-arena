@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "cash eruption slot",
   secondary: ["cash eruption slot rtp", "cash eruption slot max win", "cash eruption slot demo"],
-  title: "Cash Eruption Slot: Volcano Cabinet, Not Geology",
+  title: "Cash Eruption Slot: Features, Bonus and Jackpots",
   description:
     "Cash eruption slot is a volcano-branded cabinet title, not a geology lesson. RTP and max win stay on the rules screen. This page does not promise a demo.",
   h1: "Cash eruption slot is a volcano marquee on a cabinet, not a science page",

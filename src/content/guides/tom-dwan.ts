@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Casino knowledge",
   keyword: "tom dwan",
   secondary: ["tom dwan net worth", "tom dwan story", "tom dwan facts"],
-  title: "Tom Dwan: Cash Pots, Challenge, No Net Worth",
+  title: "Tom Dwan: High-Stakes Cash Games and the Durrrr Challenge",
   description:
     "Tom Dwan, known as durrrr, played famous televised cash pots and left a heads-up challenge with Daniel Cates unfinished. Net worth is not published.",
   h1: "Tom Dwan facts: cash pots, a screen name, and no fortune",

@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Casino games",
   keyword: "andar bahar",
   secondary: ["andar bahar joker", "andar bahar side bets", "super andar bahar"],
-  title: "Andar Bahar: The Deal, the Joker, and No Printed Edge",
+  title: "Andar Bahar: Rules, Bets and How the Joker Card Works",
   description:
     "Andar bahar deals a joker, then Andar and Bahar in turn. The studio pages print no house edge. A side-bet ceiling is not a promise of a win.",
   h1: "Andar bahar: the joker, the alternating deal, and an edge the pages skip",

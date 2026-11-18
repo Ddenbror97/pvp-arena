@@ -167,7 +167,12 @@ The simulator spends nothing and proves nothing about Valve. The paid open is a 
       a: "No. The seed check covers our five games. A simulator that does not publish a matching commit cannot be cleared by our tool.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Steam Subscriber Agreement",
+      url: "https://store.steampowered.com/subscriber_agreement/",
+    },
+  ],
   related: [
     "csgo-case-opening",
     "cs2-case-battle",

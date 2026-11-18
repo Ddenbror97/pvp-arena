@@ -71,7 +71,16 @@ export const guide: Guide = {
       a: "Cryptocurrency does not move your bet outside the law of the place where you live. A site licensed offshore can still be off limits where real-money online casino play is restricted. Check the current rules for your state before you create an account.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "UK Gambling Commission: age and identity verification rules (May 2019)",
+      url: "https://www.gamblingcommission.gov.uk/news/article/new-age-and-identity-verification-rules-changes-to-the-lccp-from-tuesday-7",
+    },
+    {
+      label: "FATF: virtual assets",
+      url: "https://www.fatf-gafi.org/en/topics/virtual-assets.html",
+    },
+  ],
   related: ["best-crypto-gambling-sites", "crypto-casino-reddit-advice"],
   updated: "2026-09-26",
 };

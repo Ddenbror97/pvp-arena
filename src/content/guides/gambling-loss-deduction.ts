@@ -146,5 +146,5 @@ A worksheet that is not this deduction is the [gambling tax calculator](/guides/
     "online-casino-real-money",
     "house-edge",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

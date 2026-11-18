@@ -133,5 +133,5 @@ Use [best crypto gambling sites](/guides/best-crypto-gambling-sites) checklists 
     "online-casino-real-money",
     "house-edge",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-18",
 };

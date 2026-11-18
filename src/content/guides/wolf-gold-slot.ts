@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "wolf gold",
   secondary: ["wolf gold rtp", "wolf gold max win", "wolf gold demo"],
-  title: "Wolf Gold Slot: Desert Respins, No RTP Here",
+  title: "Wolf Gold Slot: Money Respins and Jackpots Explained",
   description:
     "Wolf gold is a desert money-respin title. The paying figure is the rules screen and can change by casino. A $100 pot here pays the winner $95.",
   h1: "Wolf gold in 2026: a desert respin theme with an unpublished price",

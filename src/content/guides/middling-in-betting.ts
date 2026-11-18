@@ -236,7 +236,13 @@ A later outbound link to a sportsbook should be read as advertising.`,
       a: "No. A middle is described as two bets. Whether those bets are legal where you live is a local question. This page cites no statute.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Mathematics of bookmaking",
+      url: "https://en.wikipedia.org/wiki/Mathematics_of_bookmaking",
+    },
+    { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
+  ],
   related: [
     "nfl-betting",
     "house-edge",

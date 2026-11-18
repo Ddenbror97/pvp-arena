@@ -143,5 +143,5 @@ Help links stay on [responsible gambling](/responsible-gambling). Self-exclusion
     "what-is-a-crypto-casino",
     "new-crypto-casinos",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

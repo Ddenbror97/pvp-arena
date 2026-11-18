@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "jammin jars",
   secondary: ["jammin jars rtp", "jammin jars max win", "jammin jars demo"],
-  title: "Jammin Jars Slot: Cluster Pays, Not a Payline",
+  title: "Jammin Jars Slot: Cluster Pays and Jar Multipliers",
   description:
     "Jammin jars pays on touching clusters, not painted paylines. That shape is not an RTP. Max win stays on the rules screen. No demo is promised.",
   h1: "Jammin jars pays on touching jars, and the percent stays blank",

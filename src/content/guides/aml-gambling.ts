@@ -66,7 +66,13 @@ export const guide: Guide = {
       a: "A license means the operator accepted some jurisdiction's rules, which often include AML expectations, and it does not let you grade the program from a footer. This is not legal advice, and a foreign license does not authorize a player in the United States.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "FATF: virtual assets",
+      url: "https://www.fatf-gafi.org/en/topics/virtual-assets.html",
+    },
+    { label: "Wikipedia: Money laundering", url: "https://en.wikipedia.org/wiki/Money_laundering" },
+  ],
   related: ["no-kyc-casino", "crypto-casino-license"],
   updated: "2026-10-21",
 };

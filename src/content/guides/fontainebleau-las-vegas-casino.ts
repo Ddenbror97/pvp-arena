@@ -180,7 +180,12 @@ The $38 net is a Purple win after our fee. It is not a comp, not a cage slip, an
       a: "No. The page shows whether that committed seed and the pocket agree. A resort's cards and its cage are outside that match.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Fontainebleau Las Vegas",
+      url: "https://en.wikipedia.org/wiki/Fontainebleau_Las_Vegas",
+    },
+  ],
   related: [
     "las-vegas-history",
     "house-edge",

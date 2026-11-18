@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Casino knowledge",
   keyword: "garrett adelstein",
   secondary: ["garrett adelstein net worth", "garrett adelstein story", "garrett adelstein facts"],
-  title: "Garrett Adelstein Facts: Hand, Not a Verdict",
+  title: "Garrett Adelstein: The Hand, the Stream and the Dispute",
   description:
     "Garrett Adelstein, of Hustler Casino Live, was in a 2022 hand with Robbi Jade Lew. Cheating is not declared proved. Net worth is unpublished.",
   h1: "Garrett Adelstein facts: the 2022 hand is an argument, not a verdict",

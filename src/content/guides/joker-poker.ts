@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Poker",
   keyword: "joker poker",
   secondary: ["joker poker rtp", "joker poker max win", "joker poker demo"],
-  title: "Joker Poker: Wild Card Rules, No RTP Printed",
+  title: "Joker Poker: Wild Card Rules, Paytables and Strategy",
   description:
     "Joker poker puts one wild joker on a video-poker hand. The machine paytable is the contract. This guide prints no RTP and no max-win figure.",
   h1: "Joker poker: one wild card on a video paytable",
@@ -197,7 +197,10 @@ A joker wild is not an aces-with-a-kicker paytable. [The four-aces kicker paytab
       a: "No. Our poker is six-max No-Limit Hold'em, with a 5% fee only after a flop, while Jackpot and Coinflip take 5% of the pot and none of those games uses a wild joker.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "Wikipedia: Video poker", url: "https://en.wikipedia.org/wiki/Video_poker" },
+    { label: "Wizard of Odds: video poker", url: "https://wizardofodds.com/games/video-poker/" },
+  ],
   related: [
     "video-poker-paytables",
     "jacks-or-better-strategy",

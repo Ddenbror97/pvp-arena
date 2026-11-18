@@ -168,7 +168,12 @@ First means first. Anytime means any. The board you can see is the only board. T
       a: "No. It recomputes our games' committed seeds. Football grading stays with the league and the book.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Mathematics of bookmaking",
+      url: "https://en.wikipedia.org/wiki/Mathematics_of_bookmaking",
+    },
+  ],
   related: [
     "nfl-betting",
     "prop-bets-explained",

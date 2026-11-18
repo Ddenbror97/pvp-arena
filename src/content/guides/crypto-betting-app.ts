@@ -135,5 +135,5 @@ Try [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coin
     "esports-betting",
     "sports-betting-legal-states",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

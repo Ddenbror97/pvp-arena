@@ -136,5 +136,5 @@ Product demos on [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2
     "gambling-self-exclusion",
     "best-crypto-gambling-sites",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

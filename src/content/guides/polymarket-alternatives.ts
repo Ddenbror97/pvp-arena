@@ -61,7 +61,10 @@ export const guide: Guide = {
       a: "No. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only. It is not an event-contract venue and not a stand-in for one.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "U.S. Commodity Futures Trading Commission", url: "https://www.cftc.gov/" },
+    { label: "Polymarket", url: "https://polymarket.com/" },
+  ],
   related: ["crypto-prediction-markets", "decentralized-casino-explained"],
   updated: "2026-10-21",
 };

@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "gates of olympus",
   secondary: ["gates of olympus rtp", "gates of olympus max win", "gates of olympus demo"],
-  title: "Gates of Olympus: Popular Is Not a Better Price",
+  title: "Gates of Olympus Slot: Tumbles, Multipliers and Spins",
   description:
     "Gates of olympus is a heavily searched tumble title. Popularity is not a better price. The rules screen pays and can change by casino. A $200 pot pays $190.",
   h1: "Gates of olympus in 2026: a searched tumble whose fame is not a price",

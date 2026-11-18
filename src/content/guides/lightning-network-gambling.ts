@@ -10,7 +10,7 @@ export const guide: Guide = {
     "ln casino deposit",
     "btc lightning gambling",
   ],
-  title: "Lightning Network Casino: BTC Rails, Not This Site",
+  title: "Lightning Network Gambling: Fast BTC Deposits Explained",
   description:
     "Lightning Network casino deposits use Bitcoin Lightning rails. How invoices work, what fails, and why this site uses USDC on Base.",
   h1: "Lightning Network casino: Bitcoin Lightning rails, not Base",

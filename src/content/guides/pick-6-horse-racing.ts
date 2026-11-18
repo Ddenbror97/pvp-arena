@@ -214,7 +214,13 @@ Six winners in a row is not a two-horse finish. [An either-order two-horse bet](
       a: "No. A racing pick 6 pays from a tote after track takeout, while a PVPspinArena Jackpot pays the pot minus 5% to the winning player and Coinflip uses the same 5% pot fee. Neither site product is a horse pool.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Parimutuel betting",
+      url: "https://en.wikipedia.org/wiki/Parimutuel_betting",
+    },
+    { label: "Equibase", url: "https://www.equibase.com/" },
+  ],
   related: [
     "exacta-bet",
     "horse-racing-odds-explained",

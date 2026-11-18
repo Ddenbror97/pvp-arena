@@ -126,5 +126,5 @@ Product pages like [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/
     "fake-casino-sites",
     "best-crypto-gambling-sites",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

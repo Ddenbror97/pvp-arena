@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "vikings go berzerk",
   secondary: ["vikings go berzerk rtp", "vikings go berzerk max win", "vikings go berzerk demo"],
-  title: "Vikings Go Berzerk: Sticky Wilds, No Multiple",
+  title: "Vikings Go Berzerk Slot: Sticky Wilds and Rage Explained",
   description:
     "Vikings go berzerk is marketed with sticky wilds. This page quotes no multiple. The rules screen pays and can change by casino. A $64 pot pays $60.80.",
   h1: "Vikings go berzerk in 2026: sticky-wild marketing with no multiple quoted",

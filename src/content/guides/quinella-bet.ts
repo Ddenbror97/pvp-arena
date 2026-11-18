@@ -209,7 +209,13 @@ Either order in one race is not six races. [The six-race carryover](/guides/pick
       a: "No. Jackpot and Coinflip take 5% of a pot between players, and that fee is published. It is not a racing takeout, and there is no horse pool on the site.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wikipedia: Parimutuel betting",
+      url: "https://en.wikipedia.org/wiki/Parimutuel_betting",
+    },
+    { label: "Equibase", url: "https://www.equibase.com/" },
+  ],
   related: [
     "exacta-bet",
     "horse-racing-odds-explained",

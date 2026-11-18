@@ -128,5 +128,5 @@ We will not coach you to hide wins offshore or to break reporting rules.
     "online-casino-real-money",
     "does-metamask-report-to-irs",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-18",
 };

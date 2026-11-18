@@ -128,5 +128,5 @@ Sweepstakes-style US products are a different map ([sweepstakes casino](/guides/
     "best-crypto-gambling-sites",
     "gambling-self-exclusion",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

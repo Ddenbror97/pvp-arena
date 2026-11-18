@@ -182,5 +182,5 @@ This page is about the bend. The drawing rules and the bet prices live on the ru
     { label: "Wikipedia: Baccarat", url: "https://en.wikipedia.org/wiki/Baccarat_(card_game)" },
   ],
   related: ["baccarat-rules", "baccarat-strategy", "illusion-of-control", "crypto-baccarat"],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

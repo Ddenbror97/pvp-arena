@@ -79,7 +79,7 @@ A point spread is an odd fit. Boxing is not scored as a running margin you cover
     },
     {
       label: "ABC Unified Rules of Boxing, amended August 2016 (PDF)",
-      url: "http://www.abcboxing.com/wp-content/uploads/2016/10/unified_rules_boxing_rev_august2016.pdf",
+      url: "https://www.abcboxing.com/wp-content/uploads/2016/10/unified_rules_boxing_rev_august2016.pdf",
     },
   ],
   related: [

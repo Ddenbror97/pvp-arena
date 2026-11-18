@@ -132,5 +132,5 @@ If gambling pressure is the real issue, use [gambling self-exclusion](/guides/ga
     "house-edge",
     "online-casino-real-money",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-18",
 };

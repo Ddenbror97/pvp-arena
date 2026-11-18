@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "dragon link slot",
   secondary: ["dragon link slot rtp", "dragon link slot max win", "dragon link slot demo"],
-  title: "Dragon Link Slot: Linked Jackpot, No Total Here",
+  title: "Dragon Link Slot: Hold and Spin and Linked Jackpots",
   description:
     "Dragon link slot is a linked-jackpot cabinet family, different from Dragon Cash. No jackpot total, RTP, or max win is printed. No demo is promised.",
   h1: "Dragon link slot is a linked cabinet family, not Dragon Cash",

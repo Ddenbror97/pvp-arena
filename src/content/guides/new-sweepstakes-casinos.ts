@@ -66,7 +66,12 @@ export const guide: Guide = {
       a: "The reusable checklist for terms, playthrough, state availability, and redeem friction is on the best sweepstakes casinos page. This page stays on what is specific to a launch.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "FTC: prize, sweepstakes and lottery scams",
+      url: "https://www.ftc.gov/consumer-advice/money-credit/scams/prize-sweepstakes-lotteries",
+    },
+  ],
   related: ["best-sweepstakes-casinos", "new-crypto-casinos"],
   updated: "2026-10-21",
 };

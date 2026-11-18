@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Crypto payments",
   keyword: "ton wallet",
   secondary: ["tonkeeper", "toncoin wallet", "ton vs ethereum"],
-  title: "TON Wallet: Custody for Toncoin, Not for This Site",
+  title: "TON Wallet: Toncoin Custody, Setup and Safety",
   description:
     "A TON wallet holds Toncoin on The Open Network. An Ethereum seed will not restore it. This site's terms accept Bitcoin and Base, not TON.",
   h1: "TON wallet: hold Toncoin before you trust a bot",

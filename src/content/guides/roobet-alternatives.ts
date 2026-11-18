@@ -186,5 +186,5 @@ Cap weekly deposits in writing. Alternatives shopping can become a new form of c
     "fake-casino-sites",
     "crypto-casino-license",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

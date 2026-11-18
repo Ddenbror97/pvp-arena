@@ -135,5 +135,5 @@ Curious about PvP instead? [Roulette](/roulette), [P2P Slott](/slott), [six-max 
     "sports-betting-legal-states",
     "gambling-age-us",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

@@ -145,5 +145,5 @@ Use [best crypto gambling sites](/guides/best-crypto-gambling-sites) as a checkl
     "provably-fair-casino",
     "best-crypto-gambling-sites",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };

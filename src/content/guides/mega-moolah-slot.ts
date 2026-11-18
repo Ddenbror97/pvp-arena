@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "mega moolah",
   secondary: ["mega moolah rtp", "mega moolah max win", "mega moolah demo"],
-  title: "Mega Moolah: RTP and Jackpot Not Published",
+  title: "Mega Moolah Slot: How the Progressive Jackpot Works",
   description:
     "Mega moolah is on the Games Global progressive list. Pages opened 20 October 2026 print no RTP, no max win, and no jackpot dollar. A 2021 prize is history.",
   h1: "Mega moolah: the studio list names the game and leaves the meter blank",

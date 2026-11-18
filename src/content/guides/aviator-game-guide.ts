@@ -61,7 +61,13 @@ export const guide: Guide = {
       a: "No. PVPspinArena does not offer the Aviator game. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "Wizard of Odds: house edge of casino games",
+      url: "https://wizardofodds.com/gambling/house-edge/",
+    },
+    { label: "Wikipedia: Return to player", url: "https://en.wikipedia.org/wiki/Return_to_player" },
+  ],
   related: ["crash-gambling", "crash-game-strategy"],
   updated: "2026-10-21",
 };

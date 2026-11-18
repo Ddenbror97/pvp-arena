@@ -61,7 +61,13 @@ export const guide: Guide = {
       a: "Live esports prices, pauses, and stream delay are on the live esports betting page. This page is for traditional sports. Pre-match pricing from line to payout is on how sports betting works.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
+    {
+      label: "Wikipedia: Mathematics of bookmaking",
+      url: "https://en.wikipedia.org/wiki/Mathematics_of_bookmaking",
+    },
+  ],
   related: ["live-esports-betting", "how-does-sports-betting-work"],
   updated: "2026-10-21",
 };

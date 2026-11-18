@@ -208,7 +208,16 @@ A second-chance entry is not a daily life prize. [The retired life-annuity draw]
       a: "No. A PVPspinArena Jackpot pays the pot minus a 5% fee to the player who wins the round, while a second chance drawing pays whatever prize list the lottery published. The two pots are unrelated.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "North American Association of State and Provincial Lotteries",
+      url: "https://www.naspl.org/",
+    },
+    {
+      label: "IRS Topic 419: gambling income and losses",
+      url: "https://www.irs.gov/taxtopics/tc419",
+    },
+  ],
   related: [
     "odds-of-winning-the-lottery",
     "lottery-taxes",

@@ -61,7 +61,12 @@ export const guide: Guide = {
       a: "No. PVPspinArena offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only. It does not sell gold-coin packages or run a sweeps redemption desk.",
     },
   ],
-  sources: [],
+  sources: [
+    {
+      label: "FTC: prize, sweepstakes and lottery scams",
+      url: "https://www.ftc.gov/consumer-advice/money-credit/scams/prize-sweepstakes-lotteries",
+    },
+  ],
   related: ["how-do-sweepstakes-casinos-work", "sweeps-coins-explained"],
   updated: "2026-10-21",
 };

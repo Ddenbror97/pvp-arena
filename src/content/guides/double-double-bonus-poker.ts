@@ -207,7 +207,10 @@ Extra pay on four aces does not add a wild joker. [The joker-wild machine](/guid
       a: "No. Poker on the site is six-max No-Limit Hold'em, and the fee is 5% of the pot only after a flop, while Jackpot and Coinflip take 5% of the pot and there is no ace-kicker schedule.",
     },
   ],
-  sources: [],
+  sources: [
+    { label: "Wikipedia: Video poker", url: "https://en.wikipedia.org/wiki/Video_poker" },
+    { label: "Wizard of Odds: video poker", url: "https://wizardofodds.com/games/video-poker/" },
+  ],
   related: [
     "video-poker-paytables",
     "jacks-or-better-strategy",

@@ -5,7 +5,7 @@ export const guide: Guide = {
   cluster: "Slots",
   keyword: "huff n puff slot",
   secondary: ["huff n puff rtp", "huff n puff free spins", "huff n puff paytable"],
-  title: "Huff N Puff Slot: A Name, Not a Betting Plan",
+  title: "Huff N Puff Slot: Features, Bonus and Cost per Spin",
   description:
     "Huff n puff slot is a named game, not a nursery rhyme and not a strategy. Blowing harder is not a system. RTP and max win are not published on this page.",
   h1: "Huff n puff slot in 2026: a title, not a nursery-rhyme plan",

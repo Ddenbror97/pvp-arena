@@ -147,5 +147,5 @@ The country pages that sit under this question are [crypto casino New Zealand](/
     "prediction-market-legal-us",
     "online-gambling-legal-colorado",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-18",
 };
