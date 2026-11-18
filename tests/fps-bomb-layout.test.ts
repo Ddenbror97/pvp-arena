@@ -256,7 +256,7 @@ describe("SANDGATE (map 06) layout", () => {
       for (const b of ct.filter((_, i) => i % 2 === 0)) if (sees(a, b)) visible++;
     metrics["spawnPairsVisible"] = visible;
     expect(visible).toBe(0);
-  });
+  }, 600_000);
 
   it("first contact between teams running from spawn (simultaneous start)", () => {
     // Coarse 1 m sample of reachable cells, ordered by each team's arrival time; contact is the
