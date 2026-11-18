@@ -2064,6 +2064,13 @@ const FOOT: Record<string, [number, number]> = {
   "palm-young-b": [3.0, 3.3],
   "palm-clump": [6.1, 6.5],
   "tall-tree": [2.0, 2.0],
+  "torch-stake": [0.4, 0.4],
+  "torch-medieval": [0.2, 0.36],
+  "torch-holder": [0.31, 0.35],
+  "torch-rusty": [0.34, 0.31],
+  "chac-mool": [1.7, 0.8],
+  skeleton: [0.7, 1.8],
+  "old-ladder": [1.8, 2.1],
   "jungle-rock-a": [2.7, 3],
   "jungle-rock-b": [2.5, 2.8],
   "fern-grass": [3.6, 3.6],
@@ -5921,6 +5928,7 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
     ["wooden-crate", 10, 17.2, 1],
     ["banana-plant", -8, -2, 0],
     ["oil-lantern", 3, 4, 0],
+    ["campfire", 6, 3, 0],
     ["old-chest", -3, 5, 1],
     ["willys-jeep", -10, 14, 2],
   ] as const)
@@ -6019,6 +6027,162 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
         inPlace("red-banner", great, lx, 4.2, lz, s === 0 ? 0 : s === 1 ? 1 : s === 2 ? 2 : 3);
       }
   }
+  // Burning torches (owner, 2026-11-17: "faklor … på dom olika templen", "som sitter på walls
+  // inne i templet"): the owner's wall torches (their wall at −z, `back` behind their middle)
+  // on the walls of every tunnel, chamber, gallery and room, the head ~2 m up (lower in the
+  // tunnels, under their vaults); torch columns at the gates, braziers on the tops. The fire is
+  // drawn by torch-flames.ts.
+  const BACK: Record<string, number> = {
+    "torch-medieval": 0.182,
+    "torch-holder": 0.175,
+    "torch-rusty": 0.149,
+  };
+  let torchModel = "torch-medieval";
+  /** A torch on the wall at (lx, ly, lz) facing `turn` (its room side): its head ~0.4 m over ly. */
+  const torch = (base: Placement, lx: number, ly: number, lz: number, turn: number) => {
+    const [fx, fz] = turnXZ(0, BACK[torchModel]!, turn);
+    inPlace(torchModel, base, lx + fx, ly - 0.25, lz + fz, turn);
+  };
+  if (pyramid) {
+    // The tunnel through the base, the burial chamber, the upper room, the temple on top.
+    for (const [lx, lz, t] of [
+      [-12, -0.9, 0],
+      [12, -0.9, 0],
+      [-8, 0.9, 2],
+      [8, 0.9, 2],
+    ] as const)
+      torch(pyramid, lx, 1.4, lz, t);
+    for (const lx of [-2.5, 2.5]) {
+      torch(pyramid, lx, 1.5, -4, 0);
+      torch(pyramid, lx, 1.5, 4, 2);
+      torch(pyramid, lx * 0.96, 19.2 + 1.5, -3.8, 0);
+      inPlace("brazier", pyramid, lx * 2.08, 19.2, 4.8);
+    }
+    torch(pyramid, -3, 6.44 + 1.4, -12.5, 1);
+    torch(pyramid, 3, 6.44 + 1.4, -12.5, 3);
+  }
+  if (great) {
+    // Side frames as build_ruins.mjs's `side()`: u along the side, w outward.
+    const sideAt = (u: number, w: number, s: number) => turnXZ(u, w, s);
+    for (let s = 0; s < 4; s++) {
+      const inward = (s + 2) & 3,
+        alongU = (s + 1) & 3,
+        backU = (s + 3) & 3;
+      // The outer gallery (between its windows; not where its roof has fallen, side 1, u 8–24).
+      for (const u of [-27, -15, 15, 27]) {
+        if (s === 1 && u >= 8 && u <= 24) continue;
+        const [lx, lz] = sideAt(u, 35.4, s);
+        torch(great, lx, 1.45, lz, inward);
+      }
+      // The inner gallery on its terrace.
+      for (const u of [-12.5, 12.5]) {
+        const [lx, lz] = sideAt(u, 20.4, s);
+        torch(great, lx, 2.4 + 1.45, lz, inward);
+      }
+      // The outer gate tower's side rooms, on their end walls.
+      const [ax, az] = sideAt(-6.2, 36.8, s);
+      torch(great, ax, 1.45, az, alongU);
+      const [bx, bz] = sideAt(6.2, 36.8, s);
+      torch(great, bx, 1.45, bz, backU);
+      // Torch columns either side of the outer gate.
+      for (const u of [-3.6, 3.6]) {
+        const [lx, lz] = sideAt(u, 40.6, s);
+        inPlace("column-torch", great, lx, 0, lz, s);
+      }
+    }
+    // The crypt and the tunnels in to it.
+    for (const lx of [-2.5, 2.5]) {
+      torch(great, lx, 2.4 + 1.45, -4, 0);
+      torch(great, lx, 2.4 + 1.45, 4, 2);
+    }
+    torch(great, 8, 2.4 + 1.2, -0.8, 0);
+    torch(great, -8, 2.4 + 1.2, 0.8, 2);
+    // The tower's chamber and its lookout room.
+    const CY = 7.2;
+    for (const [lx, lz, t] of [
+      [3.5, 2.2, 3],
+      [3.5, -2.2, 3],
+      [2.3, -3.5, 0],
+      [-1.5, -3.5, 0],
+    ] as const)
+      torch(great, lx, CY + 1.5, lz, t);
+    torch(great, 2.9, CY + 6 + 1.1, -1.6, 3);
+    torch(great, -2.9, CY + 6 + 1.1, -1.6, 1);
+    // Braziers on the platform's top, either side of its stairs north and south.
+    for (const s of [0, 2])
+      for (const u of [-3.2, 3.2]) {
+        const [lx, lz] = sideAt(u, 6.2, s);
+        inPlace("brazier", great, lx, CY, lz);
+      }
+  }
+  const palace = out.find((p) => p.model === "ruin-palace" && p.poi === poi.id);
+  if (palace) {
+    torchModel = "torch-holder";
+    // Its five rooms (on their back walls), the gallery's back wall between the doors, the
+    // upper gallery; torch columns at the foot of its stair.
+    const rw = (2 * (24 - 0.8) - 4 * 0.9) / 5;
+    for (let i = 0; i < 5; i++) {
+      const x0 = -24 + 0.8 + i * (rw + 0.9);
+      torch(palace, x0 + rw / 2, 2.4 + 1.45, -8.2, 0);
+      if (i > 0) torch(palace, x0 - 0.45, 2.4 + 1.45, 1.4, 0);
+    }
+    for (const lx of [-6, 2, 10]) torch(palace, lx, 7.7 + 1.4, -8.2, 0);
+    for (const lx of [-9.2, 9.2]) inPlace("column-torch", palace, lx, 0, 13.6);
+  }
+  const tower = out.find((p) => p.model === "ruin-tower" && p.poi === poi.id);
+  if (tower)
+    // A torch a storey, on the wall opposite its stair.
+    for (let s = 0; s < 4; s++)
+      torch(tower, s % 2 ? -3.5 : 3.5, s * 3.3 + 1.45, s % 2 ? 2.4 : -2.4, s % 2 ? 1 : 3);
+  const acropolis = out.find((p) => p.model === "ruin-acropolis" && p.poi === poi.id);
+  torchModel = "torch-rusty";
+  if (acropolis)
+    // Its tunnels, the chambers where they meet, the tomb gallery.
+    for (const [lx, ly, lz, t] of [
+      [-18, 1.4, -0.9, 0],
+      [5, 1.4, -0.9, 0],
+      [-5, 1.4, 0.9, 2],
+      [18, 1.4, 0.9, 2],
+      [-15, 1.5, 2, 1],
+      [-15, 1.5, -2, 1],
+      [15, 1.5, 2, 3],
+      [-12.9, 1.4, 10, 1],
+      [-11.1, 1.4, -10, 3],
+      [11.1, 1.4, -7, 1],
+      [18, 1.3, -13.5, 3],
+    ] as const)
+      torch(acropolis, lx, ly, lz, t);
+  // The last of the owner's downloads (2026-11-17): Chac Mool on the pyramid's top before the
+  // temple's door and on the great temple's platform before the tower; skeletons in the burial
+  // chamber, the crypt, the tunnels and the tomb gallery; standing torches down the north avenue
+  // to the great temple; the ladders at the dig by the camp; a canoe drawn up by the cenote.
+  if (pyramid) {
+    inPlace("chac-mool", pyramid, 0, 19.2, 4.7);
+    inPlace("skeleton", pyramid, -2.6, 0.04, 0);
+    inPlace("skeleton", pyramid, 14, 0.04, 0.2, 1);
+  }
+  if (great) {
+    inPlace("chac-mool", great, 0, 7.2, -6.3, 2);
+    inPlace("skeleton", great, 0.4, 2.44, -2.3, 1);
+  }
+  if (acropolis) inPlace("skeleton", acropolis, 15.4, 0.04, -13.5, 1);
+  for (let lz = -98; lz >= -174; lz -= 19)
+    for (const lx of [-5.5, 5.5]) near("torch-stake", lx, lz, 0, 2, { margin: 0.2, flat: 1 });
+  for (const [m, lx, lz] of [
+    ["torch-stake", -3, -3],
+    ["torch-stake", 9, 7],
+    ["old-ladder", -4, -14],
+  ] as const)
+    firstSpot(
+      put,
+      m,
+      0,
+      spotsIn(camp[0] + lx - 4, camp[1] + lz - 4, camp[0] + lx + 4, camp[1] + lz + 4, 1, [
+        camp[0] + lx,
+        camp[1] + lz,
+      ]),
+      { margin: 0.3, flat: 1.2 },
+    );
   // The cenote's lilies (on the water, at its level).
   const cenote = ctx.meta.waterBodies.find((w) => w.id === "ruins-cenote");
   if (cenote) {
@@ -6045,6 +6209,11 @@ function forgottenRuins(poi: Poi, out: Placement[], ctx: Context) {
         turn: t as Placement["turn"],
         poi: "shore",
       });
+    // A canoe drawn up on its bank (the first dry, level spot out from the water).
+    firstSpot(put, "canoe", 1, spotsIn(cx - 18, cz - 18, cx + 18, cz + 18, 1.5, [cx, cz]), {
+      margin: 0.5,
+      flat: 0.8,
+    });
   }
   // The temple town (owner, 2026-11-17: "should be like a ruins temple town not just 1-3 small
   // single temples"): a square street round the plaza's monuments, houses either side facing

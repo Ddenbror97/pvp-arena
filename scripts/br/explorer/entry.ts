@@ -10,6 +10,7 @@ import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
 import type { StaticWorld } from "../../../src/lib/fps/br/static-world";
 import { loadIslandScene, type IslandScene } from "../../../src/lib/fps/br/island-scene";
 import { createDoorRenderer } from "../../../src/lib/fps/br/door-renderer";
+import { createTorchFlames } from "../../../src/lib/fps/br/torch-flames";
 import { initialDoors } from "../../../src/lib/fps/br/doors";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 import type { WorldMeta } from "../../../src/lib/fps/br/world";
@@ -113,6 +114,7 @@ let placed: Array<{ model: string; x: number; y: number; z: number; poi: string 
 let meta: WorldMeta;
 let groundAt = (_x: number, _z: number) => 0;
 let doorsFx: ReturnType<typeof createDoorRenderer> | null = null;
+let torchFx: ReturnType<typeof createTorchFlames> | null = null;
 const ready = (async () => {
   const t0 = performance.now();
   // The same island the match draws and the server collides against (island-scene.ts).
@@ -144,6 +146,8 @@ const ready = (async () => {
     { open: [...start.keys()].filter((i) => start[i]) },
     new Uint8Array(doorSet.doors.length),
   );
+  // The torches' fire, as in the game (its light where the tier has room for it).
+  torchFx = createTorchFlames(scene, islandScene.island.layout, { light: tier !== "low" });
   // As in 1v1/5v5: every shader compiled before Ready, so nothing compiles mid-match.
   islandScene.update(camera, true);
   await renderer.compileAsync(scene, camera);
@@ -166,6 +170,7 @@ resize();
 
 function draw() {
   const { selectMs } = islandScene.update(camera);
+  torchFx?.update(performance.now(), camera);
   gpu.begin();
   renderer.render(scene, camera);
   const calls = renderer.info.render.calls,

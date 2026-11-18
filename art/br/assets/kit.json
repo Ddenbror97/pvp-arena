@@ -8622,6 +8622,89 @@
       },
       "collision": "solid",
       "use": "Forgotten Ruins (2026-11-17): wooden crate at the camp"
+    },
+    {
+      "id": "torch-medieval",
+      "key": "sf:77db436da2844cbfb4dde0bb9b396835",
+      "class": "small",
+      "fit": {
+        "y": 0.7
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): wall torch in an iron holder, burning (the game draws its flame), in the temples' galleries and rooms (turned so its wall is at -z)",
+      "yaw": -90
+    },
+    {
+      "id": "torch-rusty",
+      "key": "sf:cf0ae61e317b483b942fd10af357321b",
+      "class": "small",
+      "fit": {
+        "y": 0.8
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): rusty wall-mounted torch, burning, in the great temple's tower"
+    },
+    {
+      "id": "torch-holder",
+      "key": "sf:68f61f1132ba46999709c26e79400961",
+      "class": "small",
+      "fit": {
+        "y": 0.7
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): wall torch holder, burning, in the palace's rooms"
+    },
+    {
+      "id": "torch-stake",
+      "key": "sf:8f9ceeff9f264a2688e7280e0d379c3f",
+      "class": "small",
+      "fit": {
+        "y": 1.9
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): standing torch on a stake, burning, along the avenues and at the camp"
+    },
+    {
+      "id": "chac-mool",
+      "key": "sf:01ef40debbd54b9094353416a97232ba",
+      "class": "prop",
+      "lodTris": [
+        3000,
+        1200,
+        400
+      ],
+      "fit": {
+        "max": 1.7
+      },
+      "collision": "solid",
+      "use": "Forgotten Ruins (2026-11-17): Chac Mool, the reclining offering statue, on the pyramid's top and in the great temple's tower"
+    },
+    {
+      "id": "skeleton",
+      "key": "sf:950d0a46531f492ab8715777e312a5bf",
+      "piece": "SM_HumanSkeleton",
+      "zUp": 1,
+      "class": "small",
+      "lodTris": [
+        2500,
+        900,
+        300
+      ],
+      "fit": {
+        "max": 1.8
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): a skeleton lying in the crypts, the burial chamber and the tunnels"
+    },
+    {
+      "id": "old-ladder",
+      "key": "sf:5e818740606642c0885b32bda78cd479",
+      "class": "small",
+      "fit": {
+        "y": 3.2
+      },
+      "collision": "none",
+      "use": "Forgotten Ruins (2026-11-17): an old wooden ladder against the ruins at the expedition's dig"
     }
   ],
   "skipped": [

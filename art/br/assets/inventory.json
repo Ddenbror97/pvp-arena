@@ -1,13 +1,14 @@
 {
  "tool_version": 3,
- "generated": "2026-11-17T18:55:57-03:00",
+ "generated": "2026-11-17T20:34:31-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/home/claude/fr-zips/*.zip",
   "/home/claude/fr-zips2/*.zip",
   "/home/claude/fr-zips3/*.zip",
   "/home/claude/fr-zips4/*.zip",
-  "/home/claude/fr-zips5/*.zip"
+  "/home/claude/fr-zips5/*.zip",
+  "/home/claude/fr-zips7/*.zip"
  ],
  "asset_list": "/home/claude/br-assets/index.html",
  "budgets": {
@@ -3299,14 +3300,6 @@
    },
    "list_match": null,
    "zips": [
-    {
-     "path": "/mnt/user-data/uploads/25e088ff-a_speed_luxury_yacht_full_interior.zip",
-     "sha256": "acafa0662b9affae8248f12d68c29e6477456a296e773ae3cd0d2a38bd16e56a",
-     "size": 18513070,
-     "mtime": "2026-11-17T16:51:00-03:00",
-     "batch": "2026-11-17",
-     "present": true
-    },
     {
      "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/ad481c72-a_speed_luxury_yacht_full_interior.zip",
      "sha256": "acafa0662b9affae8248f12d68c29e6477456a296e773ae3cd0d2a38bd16e56a",
@@ -13838,10 +13831,18 @@
      "mtime": "2026-11-17T17:22:49-03:00",
      "batch": "2026-11-17",
      "present": true
+    },
+    {
+     "path": "/home/claude/fr-zips7/banyan_tree_2.zip",
+     "sha256": "2ed1eb6aa05f30e3ca67e9b1a8c8017e6f6672d130749fd3c780ace1d3ffc330",
+     "size": 43316384,
+     "mtime": "2026-11-17T20:34:09-03:00",
+     "batch": "2026-11-17",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-17",
    "formats": [
     "gltf+bin"
@@ -21579,6 +21580,151 @@
    ],
    "over_budget": true,
    "budget_ratio": 1.33
+  },
+  {
+   "key": "sf:6486623945f44789ae1949e9add15268",
+   "title": "Canoe",
+   "author": "SkyeSladeUT",
+   "author_url": "https://sketchfab.com/SkyeSladeUT",
+   "source": "https://sketchfab.com/3d-models/canoe-6486623945f44789ae1949e9add15268",
+   "uid": "6486623945f44789ae1949e9add15268",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/af0ba892-canoe.zip",
+     "sha256": "b82bab2c821de71b9ea876aef36b655a4d54eb807b98321dd9c1305e4cf78548",
+     "size": 1596291,
+     "mtime": "2026-11-17T20:33:25-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 906,
+    "verts": 864,
+    "draws": 4,
+    "unique_tris": 906,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 10,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.429,
+     0.282,
+     2.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 834,
+    "top_pieces": [
+     {
+      "name": "Boat_Shell",
+      "tris": 834,
+      "draws": 1,
+      "size_m": [
+       0.429,
+       0.282,
+       2.0
+      ]
+     },
+     {
+      "name": "Seat5",
+      "tris": 26,
+      "draws": 1,
+      "size_m": [
+       0.311,
+       0.013,
+       0.132
+      ]
+     },
+     {
+      "name": "Seat3",
+      "tris": 26,
+      "draws": 1,
+      "size_m": [
+       0.311,
+       0.013,
+       0.132
+      ]
+     },
+     {
+      "name": "seat2",
+      "tris": 20,
+      "draws": 1,
+      "size_m": [
+       0.377,
+       0.008,
+       0.13
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/lambert2_baseColor.jpeg",
+      "name": "textures/lambert2_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lambert2_metallicRoughness.png",
+      "name": "textures/lambert2_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert2_normal.jpeg",
+      "name": "textures/lambert2_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
   },
   {
    "key": "sf:9e8f92a215784f3d8aaaaeab1bef54c4",
@@ -38493,6 +38639,140 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:1439096bf4414ff9bbd615a4c727fbff",
+   "title": "Dungeon wall torch",
+   "author": "UriZX",
+   "author_url": "https://sketchfab.com/UriZX",
+   "source": "https://sketchfab.com/3d-models/dungeon-wall-torch-1439096bf4414ff9bbd615a4c727fbff",
+   "uid": "1439096bf4414ff9bbd615a4c727fbff",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/37303885-dungeon_wall_torch.zip",
+     "sha256": "f128353007a5f41c1bad8ba492aabb3227a0c0c9d87d5d46646457cea9f5240c",
+     "size": 2683419,
+     "mtime": "2026-11-17T20:32:17-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4470,
+    "verts": 3283,
+    "draws": 1,
+    "unique_tris": 4470,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.65,
+     1.442,
+     0.796
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Wall_Torch.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 4470,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 4470,
+      "draws": 1,
+      "size_m": [
+       0.65,
+       1.442,
+       0.796
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/WallTorch_baseColor.png",
+      "name": "textures/WallTorch_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WallTorch_metallicRoughness.png",
+      "name": "textures/WallTorch_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WallTorch_emissive.png",
+      "name": "textures/WallTorch_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WallTorch_normal.png",
+      "name": "textures/WallTorch_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WallTorch_specularf0.png",
+      "name": "textures/WallTorch_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 26.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 27"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:70ab4f4164b54afbad87f174f8b285c1",
    "title": "Duplex",
    "author": "SrMonteiro",
@@ -47267,6 +47547,114 @@
    ],
    "over_budget": false,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:950d0a46531f492ab8715777e312a5bf",
+   "title": "Free Pack - Human Skeleton",
+   "author": "PolyOne Studio",
+   "author_url": "https://sketchfab.com/polyone",
+   "source": "https://sketchfab.com/3d-models/free-pack-human-skeleton-950d0a46531f492ab8715777e312a5bf",
+   "uid": "950d0a46531f492ab8715777e312a5bf",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/779633fd-free_pack_-_human_skeleton.zip",
+     "sha256": "09e4b1506afd581b38447ad851e23fdf24d7968200b7fd239bf54d5930142d9d",
+     "size": 1381225,
+     "mtime": "2026-11-17T20:32:53-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 51650,
+    "verts": 100936,
+    "draws": 21,
+    "unique_tris": 51650,
+    "meshes": 21,
+    "primitives": 21,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 46,
+    "mesh_nodes": 21,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.676,
+     1.831,
+     0.269
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "c09cde5134f24485863b80bd03f2fd01.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 2,
+    "max_piece_tris": 25825,
+    "top_pieces": [
+     {
+      "name": "SM_HumanSkeleton",
+      "tris": 25825,
+      "draws": 20,
+      "size_m": [
+       0.669,
+       1.825,
+       0.262
+      ]
+     },
+     {
+      "name": "OutLine",
+      "tris": 25825,
+      "draws": 1,
+      "size_m": [
+       0.676,
+       1.831,
+       0.269
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (3.4x)",
+    "DRAWS 21"
+   ],
+   "actions": [
+    "decimate to 15k",
+    "atlas materials (21 draws to ≤12)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 3.44
   },
   {
    "key": "sf:d492ba2aaa304510a5eab5c62d16709b",
@@ -67757,10 +68145,18 @@
      "mtime": "2026-11-17T17:22:48-03:00",
      "batch": "2026-11-17",
      "present": true
+    },
+    {
+     "path": "/home/claude/fr-zips7/1409320b-jungle_tree.zip",
+     "sha256": "913624816ef8f6f183d524ff7b0a77524e5fc6d617fa8a163f0935d4def864b3",
+     "size": 12581898,
+     "mtime": "2026-11-17T20:31:54-03:00",
+     "batch": "2026-11-17",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-17",
    "formats": [
     "gltf+bin"
@@ -78050,10 +78446,18 @@
      "mtime": "2026-11-17T17:24:36-03:00",
      "batch": "2026-11-17",
      "present": true
+    },
+    {
+     "path": "/home/claude/fr-zips7/409fb83f-low_poly_jungle_plant_package.zip",
+     "sha256": "059b5b7185eac24a85743114d8c2239fe8ff6b4898fe10b83bddee37b62f02cf",
+     "size": 656719,
+     "mtime": "2026-11-17T20:32:23-03:00",
+     "batch": "2026-11-17",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-17",
    "formats": [
     "gltf+bin"
@@ -87039,6 +87443,127 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:77db436da2844cbfb4dde0bb9b396835",
+   "title": "Medieval Wall Torch",
+   "author": "Kigha",
+   "author_url": "https://sketchfab.com/Kigha",
+   "source": "https://sketchfab.com/3d-models/medieval-wall-torch-77db436da2844cbfb4dde0bb9b396835",
+   "uid": "77db436da2844cbfb4dde0bb9b396835",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/fc1b37b1-medieval_wall_torch.zip",
+     "sha256": "d76bd06af47bf0bdb20a611126d4215425d001951cf8a8423cd5ab6fda113ad9",
+     "size": 6288054,
+     "mtime": "2026-11-17T20:34:08-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1748,
+    "verts": 1743,
+    "draws": 1,
+    "unique_tris": 1748,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     37.582,
+     62.036,
+     16.1
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Wall_Torch.fbx",
+     "RootNode",
+     "Torch"
+    ],
+    "root_scale": 100.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1748,
+    "top_pieces": [
+     {
+      "name": "Torch_Wall_Torch_0",
+      "tris": 1748,
+      "draws": 1,
+      "size_m": [
+       37.582,
+       62.036,
+       16.1
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Wall_Torch_baseColor.png",
+      "name": "textures/Wall_Torch_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wall_Torch_metallicRoughness.png",
+      "name": "textures/Wall_Torch_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wall_Torch_normal.png",
+      "name": "textures/Wall_Torch_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 31.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 62 m",
+    "TEXMB 32"
+   ],
+   "actions": [
+    "check scale (largest side 62 m; x0.01 would give 0.62 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:a8664f1eba49491b8a67e892b0c0da1f",
    "title": "Mediterranean Home",
    "author": "shirlanne",
@@ -88725,6 +89250,162 @@
    ],
    "over_budget": true,
    "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:01ef40debbd54b9094353416a97232ba",
+   "title": "Mexican Chac Mool Statue",
+   "author": "Pierre Wilmot",
+   "author_url": "https://sketchfab.com/pierre.wilmot",
+   "source": "https://sketchfab.com/3d-models/mexican-chac-mool-statue-01ef40debbd54b9094353416a97232ba",
+   "uid": "01ef40debbd54b9094353416a97232ba",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/mexican_chac_mool_statue.zip",
+     "sha256": "de0f1f21785f2d20095a553aed4c6470c7e8eafe02cedcbd418d413e1b202e52",
+     "size": 63544751,
+     "mtime": "2026-11-17T20:34:09-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 183982,
+    "verts": 551886,
+    "draws": 9,
+    "unique_tris": 183982,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 11,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     20.8,
+     19.332,
+     9.608
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "decimated.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 9,
+    "max_piece_tris": 21848,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 21848,
+      "draws": 1,
+      "size_m": [
+       3.109,
+       11.456,
+       7.428
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 21848,
+      "draws": 1,
+      "size_m": [
+       20.513,
+       17.49,
+       8.885
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 21847,
+      "draws": 1,
+      "size_m": [
+       17.904,
+       19.3,
+       8.888
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 21847,
+      "draws": 1,
+      "size_m": [
+       16.83,
+       16.91,
+       7.581
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 21846,
+      "draws": 1,
+      "size_m": [
+       16.625,
+       17.024,
+       7.972
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 21846,
+      "draws": 1,
+      "size_m": [
+       16.833,
+       16.594,
+       8.358
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/mesh_Model_1_u1_v1_baseColor.png",
+      "name": "textures/mesh_Model_1_u1_v1_baseColor.png",
+      "w": 8192,
+      "h": 8192,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TRIS>15k (12.3x)",
+    "TEX 8192px",
+    "TEXMB 340"
+   ],
+   "actions": [
+    "decimate to 15k (heavy: 12x) or reject",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
+   "budget_ratio": 12.27
   },
   {
    "key": "sf:78082af447d1477f9d0a6aab6ec7a6ba",
@@ -98070,10 +98751,18 @@
      "mtime": "2026-11-17T17:30:49-03:00",
      "batch": "2026-11-17",
      "present": true
+    },
+    {
+     "path": "/home/claude/fr-zips7/10b3f6c7-mossy_rock.zip",
+     "sha256": "518360059359597658e02b16b0efa333a4f99d404164c8f9be4dea91eb50764c",
+     "size": 6275176,
+     "mtime": "2026-11-17T20:31:50-03:00",
+     "batch": "2026-11-17",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-17",
    "formats": [
     "gltf+bin"
@@ -105036,6 +105725,154 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:5e818740606642c0885b32bda78cd479",
+   "title": "Old Wooden Ladder",
+   "author": "CurlyFryWhy",
+   "author_url": "https://sketchfab.com/CurlyFryWhy",
+   "source": "https://sketchfab.com/3d-models/old-wooden-ladder-5e818740606642c0885b32bda78cd479",
+   "uid": "5e818740606642c0885b32bda78cd479",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/50c5db79-old_wooden_ladder.zip",
+     "sha256": "f4f07196fe1a4e8508ba9ad64ada59faff95d70ca374c5ec8fcd494f4066791a",
+     "size": 11262412,
+     "mtime": "2026-11-17T20:32:32-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3140,
+    "verts": 3290,
+    "draws": 2,
+    "unique_tris": 3140,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 4,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     11.863,
+     22.17,
+     14.267
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "847f64bdcf4149e6becb0da18bd1d1f3.obj.cleaner.materialmerger."
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 1864,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 1864,
+      "draws": 1,
+      "size_m": [
+       11.863,
+       22.17,
+       14.267
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 1276,
+      "draws": 1,
+      "size_m": [
+       5.152,
+       3.024,
+       13.622
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/lambert8SG_baseColor.png",
+      "name": "textures/lambert8SG_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert8SG_metallicRoughness.png",
+      "name": "textures/lambert8SG_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert8SG_normal.png",
+      "name": "textures/lambert8SG_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert9SG_baseColor.png",
+      "name": "textures/lambert9SG_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert9SG_metallicRoughness.png",
+      "name": "textures/lambert9SG_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert9SG_normal.png",
+      "name": "textures/lambert9SG_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 79.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 80"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:49b77f82b0944d5188c04c3fc205a499",
    "title": "Old Wooden Watchtower (House 3)",
    "author": "Blenderust",
@@ -106499,6 +107336,122 @@
    "errors": [],
    "polyhaven_like": false,
    "category": "kit",
+   "flags": [],
+   "actions": [
+    "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:8f9ceeff9f264a2688e7280e0d379c3f",
+   "title": "Outdoor Torch",
+   "author": "Duznot",
+   "author_url": "https://sketchfab.com/duz_vr",
+   "source": "https://sketchfab.com/3d-models/outdoor-torch-8f9ceeff9f264a2688e7280e0d379c3f",
+   "uid": "8f9ceeff9f264a2688e7280e0d379c3f",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/b16f565e-outdoor_torch.zip",
+     "sha256": "a45c0bb1983ed0b5534f61f2be3738769ebfddf837ca81344f79a60e4403d344",
+     "size": 764813,
+     "mtime": "2026-11-17T20:33:25-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 498,
+    "verts": 455,
+    "draws": 1,
+    "unique_tris": 498,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.127,
+     2.0,
+     0.127
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "Tiki"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 498,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 498,
+      "draws": 1,
+      "size_m": [
+       0.127,
+       2.0,
+       0.127
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Torch_baseColor.jpeg",
+      "name": "textures/Torch_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Torch_metallicRoughness.png",
+      "name": "textures/Torch_metallicRoughness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Torch_normal.png",
+      "name": "textures/Torch_normal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 4.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
    "flags": [],
    "actions": [
     "use as-is"
@@ -112814,10 +113767,18 @@
      "mtime": "2026-11-17T17:24:36-03:00",
      "batch": "2026-11-17",
      "present": true
+    },
+    {
+     "path": "/home/claude/fr-zips7/974c70e3-poison_ivy.zip",
+     "sha256": "5dd0011aa740ec68dafee8434da514c7d88b8d443288c0045e997e5b9e54dc5c",
+     "size": 1974664,
+     "mtime": "2026-11-17T20:33:13-03:00",
+     "batch": "2026-11-17",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-17",
    "formats": [
     "gltf+bin"
@@ -127791,6 +128752,216 @@
    "budget_ratio": 2.9
   },
   {
+   "key": "sf:cf0ae61e317b483b942fd10af357321b",
+   "title": "Rusty Wall Mounted Torch",
+   "author": "persnetto",
+   "author_url": "https://sketchfab.com/persnetto",
+   "source": "https://sketchfab.com/3d-models/rusty-wall-mounted-torch-cf0ae61e317b483b942fd10af357321b",
+   "uid": "cf0ae61e317b483b942fd10af357321b",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/e162c595-rusty_wall_mounted_torch.zip",
+     "sha256": "cb47260d257582538fb33f2672d51f27ab9a36c70c6e670a322cd3f620efceec",
+     "size": 16819241,
+     "mtime": "2026-11-17T20:33:56-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 4898,
+    "verts": 3735,
+    "draws": 4,
+    "unique_tris": 4898,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 10,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.854,
+     2.0,
+     0.763
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 3668,
+    "top_pieces": [
+     {
+      "name": "torch_lp",
+      "tris": 3668,
+      "draws": 1,
+      "size_m": [
+       0.684,
+       1.689,
+       0.711
+      ]
+     },
+     {
+      "name": "torch_lp",
+      "tris": 632,
+      "draws": 1,
+      "size_m": [
+       0.854,
+       2.0,
+       0.309
+      ]
+     },
+     {
+      "name": "torch_lp",
+      "tris": 340,
+      "draws": 1,
+      "size_m": [
+       0.191,
+       1.12,
+       0.393
+      ]
+     },
+     {
+      "name": "torch_lp",
+      "tris": 258,
+      "draws": 1,
+      "size_m": [
+       0.324,
+       0.428,
+       0.327
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/Material__37_baseColor.jpeg",
+      "name": "textures/Material__37_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material__37_metallicRoughness.png",
+      "name": "textures/Material__37_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__37_normal.png",
+      "name": "textures/Material__37_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__39_baseColor.jpeg",
+      "name": "textures/Material__39_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material__39_metallicRoughness.png",
+      "name": "textures/Material__39_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__39_normal.png",
+      "name": "textures/Material__39_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__40_baseColor.jpeg",
+      "name": "textures/Material__40_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material__40_metallicRoughness.png",
+      "name": "textures/Material__40_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__40_normal.png",
+      "name": "textures/Material__40_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__41_baseColor.jpeg",
+      "name": "textures/Material__41_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material__41_metallicRoughness.png",
+      "name": "textures/Material__41_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__41_normal.png",
+      "name": "textures/Material__41_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 255"
+   ],
+   "actions": [
+    "downscale textures to 1K"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:048ca9ab42b0453ab344a0691fbd5058",
    "title": "Sailboat 1",
    "author": "masterjack20",
@@ -136100,6 +137271,103 @@
    ],
    "actions": [
     "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:98931018b2b845b1bf8b6918aed7c235",
+   "title": "Spiderweb Model",
+   "author": "Shaely Caldwell",
+   "author_url": "https://sketchfab.com/ShaelyCaldwell",
+   "source": "https://sketchfab.com/3d-models/spiderweb-model-98931018b2b845b1bf8b6918aed7c235",
+   "uid": "98931018b2b845b1bf8b6918aed7c235",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/893e6f91-spiderweb_model.zip",
+     "sha256": "eec63fc37db8e98796ce63003c322e1ab7043ba13f314ee8a3060da5688b70eb",
+     "size": 52501,
+     "mtime": "2026-11-17T20:33:05-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3368,
+    "verts": 4169,
+    "draws": 1,
+    "unique_tris": 3368,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.019,
+     0.02,
+     0.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "8bb043c2121c47d5885735a8a0d912f0.fbx",
+     "RootNode",
+     "pCylinder11"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 3368,
+    "top_pieces": [
+     {
+      "name": "pCylinder11_lambert1_0",
+      "tris": 3368,
+      "draws": 1,
+      "size_m": [
+       0.019,
+       0.02,
+       0.0
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 0.02 m"
+   ],
+   "actions": [
+    "check scale (largest side 0.02 m; x100 would give 2 m)"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -149182,10 +150450,18 @@
      "mtime": "2026-11-17T17:22:53-03:00",
      "batch": "2026-11-17",
      "present": true
+    },
+    {
+     "path": "/home/claude/fr-zips7/tree_gn_2.zip",
+     "sha256": "1ce9a49c804a0624b3ee7ecee1dc71b1284849dd1c7a9aae6674f521deaec81f",
+     "size": 109210757,
+     "mtime": "2026-11-17T20:34:09-03:00",
+     "batch": "2026-11-17",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-17",
    "formats": [
     "gltf+bin"
@@ -153901,6 +155177,169 @@
     "check scale (largest side 156 m; x0.01 would give 1.56 m)"
    ],
    "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:68f61f1132ba46999709c26e79400961",
+   "title": "Wall Torch",
+   "author": "Sean Thomas",
+   "author_url": "https://sketchfab.com/foon.",
+   "source": "https://sketchfab.com/3d-models/wall-torch-68f61f1132ba46999709c26e79400961",
+   "uid": "68f61f1132ba46999709c26e79400961",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/fr-zips7/a8c15b15-wall_torch.zip",
+     "sha256": "0681131163e0ab114def3a55d2f9fdc67b3950ba644dbb612fc4ad522b500f5a",
+     "size": 9714479,
+     "mtime": "2026-11-17T20:33:22-03:00",
+     "batch": "2026-11-17",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-17",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 2981,
+    "verts": 3194,
+    "draws": 24,
+    "unique_tris": 2981,
+    "meshes": 24,
+    "primitives": 24,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 53,
+    "mesh_nodes": 24,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     29.831,
+     67.249,
+     34.01
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "198bcf32d6ed476a97020de124bc1cc3.fbx",
+     "RootNode",
+     "group2"
+    ],
+    "root_scale": 1.452862,
+    "pieces_count": 5,
+    "max_piece_tris": 2020,
+    "top_pieces": [
+     {
+      "name": "group3",
+      "tris": 2020,
+      "draws": 20,
+      "size_m": [
+       18.981,
+       66.208,
+       29.771
+      ]
+     },
+     {
+      "name": "polySurface1",
+      "tris": 655,
+      "draws": 1,
+      "size_m": [
+       29.831,
+       47.969,
+       2.833
+      ]
+     },
+     {
+      "name": "pCylinder6",
+      "tris": 160,
+      "draws": 1,
+      "size_m": [
+       8.029,
+       4.2,
+       8.375
+      ]
+     },
+     {
+      "name": "pCylinder7",
+      "tris": 92,
+      "draws": 1,
+      "size_m": [
+       6.318,
+       6.318,
+       9.552
+      ]
+     },
+     {
+      "name": "polySurface5",
+      "tris": 54,
+      "draws": 1,
+      "size_m": [
+       12.216,
+       8.423,
+       1.36
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/lambert1_baseColor.png",
+      "name": "textures/lambert1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert1_metallicRoughness.png",
+      "name": "textures/lambert1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert1_normal.png",
+      "name": "textures/lambert1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "DRAWS 24",
+    "SCALE? 67.2 m",
+    "TEXMB 64"
+   ],
+   "actions": [
+    "atlas materials (24 draws to ≤12)",
+    "check scale (largest side 67.2 m; x0.01 would give 0.672 m)",
+    "downscale textures to 1K"
+   ],
+   "over_budget": true,
    "budget_ratio": 0.0
   },
   {
@@ -166474,6 +167913,134 @@
    "size": 10322998,
    "mtime_ns": 1794952469736780562,
    "mtime": "2026-11-17T18:54:29-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/10b3f6c7-mossy_rock.zip": {
+   "sha256": "518360059359597658e02b16b0efa333a4f99d404164c8f9be4dea91eb50764c",
+   "size": 6275176,
+   "mtime_ns": 1794958310133146309,
+   "mtime": "2026-11-17T20:31:50-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/1409320b-jungle_tree.zip": {
+   "sha256": "913624816ef8f6f183d524ff7b0a77524e5fc6d617fa8a163f0935d4def864b3",
+   "size": 12581898,
+   "mtime_ns": 1794958314000499276,
+   "mtime": "2026-11-17T20:31:54-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/37303885-dungeon_wall_torch.zip": {
+   "sha256": "f128353007a5f41c1bad8ba492aabb3227a0c0c9d87d5d46646457cea9f5240c",
+   "size": 2683419,
+   "mtime_ns": 1794958337547074524,
+   "mtime": "2026-11-17T20:32:17-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/409fb83f-low_poly_jungle_plant_package.zip": {
+   "sha256": "059b5b7185eac24a85743114d8c2239fe8ff6b4898fe10b83bddee37b62f02cf",
+   "size": 656719,
+   "mtime_ns": 1794958343374247151,
+   "mtime": "2026-11-17T20:32:23-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/50c5db79-old_wooden_ladder.zip": {
+   "sha256": "f4f07196fe1a4e8508ba9ad64ada59faff95d70ca374c5ec8fcd494f4066791a",
+   "size": 11262412,
+   "mtime_ns": 1794958352392501558,
+   "mtime": "2026-11-17T20:32:32-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/779633fd-free_pack_-_human_skeleton.zip": {
+   "sha256": "09e4b1506afd581b38447ad851e23fdf24d7968200b7fd239bf54d5930142d9d",
+   "size": 1381225,
+   "mtime_ns": 1794958373583519741,
+   "mtime": "2026-11-17T20:32:53-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/893e6f91-spiderweb_model.zip": {
+   "sha256": "eec63fc37db8e98796ce63003c322e1ab7043ba13f314ee8a3060da5688b70eb",
+   "size": 52501,
+   "mtime_ns": 1794958385411163822,
+   "mtime": "2026-11-17T20:33:05-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/974c70e3-poison_ivy.zip": {
+   "sha256": "5dd0011aa740ec68dafee8434da514c7d88b8d443288c0045e997e5b9e54dc5c",
+   "size": 1974664,
+   "mtime_ns": 1794958393855198752,
+   "mtime": "2026-11-17T20:33:13-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/a8c15b15-wall_torch.zip": {
+   "sha256": "0681131163e0ab114def3a55d2f9fdc67b3950ba644dbb612fc4ad522b500f5a",
+   "size": 9714479,
+   "mtime_ns": 1794958402621784561,
+   "mtime": "2026-11-17T20:33:22-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/af0ba892-canoe.zip": {
+   "sha256": "b82bab2c821de71b9ea876aef36b655a4d54eb807b98321dd9c1305e4cf78548",
+   "size": 1596291,
+   "mtime_ns": 1794958405597239307,
+   "mtime": "2026-11-17T20:33:25-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/b16f565e-outdoor_torch.zip": {
+   "sha256": "a45c0bb1983ed0b5534f61f2be3738769ebfddf837ca81344f79a60e4403d344",
+   "size": 764813,
+   "mtime_ns": 1794958405809209841,
+   "mtime": "2026-11-17T20:33:25-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/banyan_tree_2.zip": {
+   "sha256": "2ed1eb6aa05f30e3ca67e9b1a8c8017e6f6672d130749fd3c780ace1d3ffc330",
+   "size": 43316384,
+   "mtime_ns": 1794958449572507335,
+   "mtime": "2026-11-17T20:34:09-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/e162c595-rusty_wall_mounted_torch.zip": {
+   "sha256": "cb47260d257582538fb33f2672d51f27ab9a36c70c6e670a322cd3f620efceec",
+   "size": 16819241,
+   "mtime_ns": 1794958436176506539,
+   "mtime": "2026-11-17T20:33:56-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/fc1b37b1-medieval_wall_torch.zip": {
+   "sha256": "d76bd06af47bf0bdb20a611126d4215425d001951cf8a8423cd5ab6fda113ad9",
+   "size": 6288054,
+   "mtime_ns": 1794958448671034503,
+   "mtime": "2026-11-17T20:34:08-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/mexican_chac_mool_statue.zip": {
+   "sha256": "de0f1f21785f2d20095a553aed4c6470c7e8eafe02cedcbd418d413e1b202e52",
+   "size": 63544751,
+   "mtime_ns": 1794958449604507337,
+   "mtime": "2026-11-17T20:34:09-03:00",
+   "batch": "2026-11-17",
+   "present": true
+  },
+  "/home/claude/fr-zips7/tree_gn_2.zip": {
+   "sha256": "1ce9a49c804a0624b3ee7ecee1dc71b1284849dd1c7a9aae6674f521deaec81f",
+   "size": 109210757,
+   "mtime_ns": 1794958449656507340,
+   "mtime": "2026-11-17T20:34:09-03:00",
    "batch": "2026-11-17",
    "present": true
   }
@@ -301479,6 +303046,1157 @@
    "sha256": "6db016f819b354b0b078a15f41a921d688be8539eb723b01fb1ff03158b1931b",
    "size": 10322998,
    "parsed_at": "2026-11-17T18:55:57-03:00"
+  },
+  "f128353007a5f41c1bad8ba492aabb3227a0c0c9d87d5d46646457cea9f5240c": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 9,
+   "uncompressed_bytes": 2767041,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.74.0",
+   "licence": {
+    "title": "Dungeon wall torch",
+    "source": "https://sketchfab.com/3d-models/dungeon-wall-torch-1439096bf4414ff9bbd615a4c727fbff",
+    "author": "UriZX (https://sketchfab.com/UriZX)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4470,
+    "verts": 3283,
+    "draws": 1,
+    "unique_tris": 4470,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 3,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.65,
+     1.442,
+     0.796
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Wall_Torch.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 4470,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 4470,
+      "draws": 1,
+      "size_m": [
+       0.65,
+       1.442,
+       0.796
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_emissive_strength",
+     "KHR_materials_specular"
+    ]
+   },
+   "textures": {
+    "count": 5,
+    "images": [
+     {
+      "member": "textures/WallTorch_baseColor.png",
+      "name": "textures/WallTorch_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WallTorch_metallicRoughness.png",
+      "name": "textures/WallTorch_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WallTorch_emissive.png",
+      "name": "textures/WallTorch_emissive.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WallTorch_normal.png",
+      "name": "textures/WallTorch_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/WallTorch_specularf0.png",
+      "name": "textures/WallTorch_specularf0.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 26.6,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f128353007a5f41c1bad8ba492aabb3227a0c0c9d87d5d46646457cea9f5240c",
+   "size": 2683419,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
+  },
+  "f4f07196fe1a4e8508ba9ad64ada59faff95d70ca374c5ec8fcd494f4066791a": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 10,
+   "uncompressed_bytes": 11401326,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.37.0",
+   "licence": {
+    "title": "Old Wooden Ladder",
+    "source": "https://sketchfab.com/3d-models/old-wooden-ladder-5e818740606642c0885b32bda78cd479",
+    "author": "CurlyFryWhy (https://sketchfab.com/CurlyFryWhy)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3140,
+    "verts": 3290,
+    "draws": 2,
+    "unique_tris": 3140,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 4,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     11.863,
+     22.17,
+     14.267
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "847f64bdcf4149e6becb0da18bd1d1f3.obj.cleaner.materialmerger."
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 1864,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 1864,
+      "draws": 1,
+      "size_m": [
+       11.863,
+       22.17,
+       14.267
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 1276,
+      "draws": 1,
+      "size_m": [
+       5.152,
+       3.024,
+       13.622
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 6,
+    "images": [
+     {
+      "member": "textures/lambert8SG_baseColor.png",
+      "name": "textures/lambert8SG_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert8SG_metallicRoughness.png",
+      "name": "textures/lambert8SG_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert8SG_normal.png",
+      "name": "textures/lambert8SG_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert9SG_baseColor.png",
+      "name": "textures/lambert9SG_baseColor.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert9SG_metallicRoughness.png",
+      "name": "textures/lambert9SG_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert9SG_normal.png",
+      "name": "textures/lambert9SG_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 79.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "f4f07196fe1a4e8508ba9ad64ada59faff95d70ca374c5ec8fcd494f4066791a",
+   "size": 11262412,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
+  },
+  "09e4b1506afd581b38447ad851e23fdf24d7968200b7fd239bf54d5930142d9d": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 3887077,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-16.75.0",
+   "licence": {
+    "title": "Free Pack - Human Skeleton",
+    "source": "https://sketchfab.com/3d-models/free-pack-human-skeleton-950d0a46531f492ab8715777e312a5bf",
+    "author": "PolyOne Studio (https://sketchfab.com/polyone)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 51650,
+    "verts": 100936,
+    "draws": 21,
+    "unique_tris": 51650,
+    "meshes": 21,
+    "primitives": 21,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 46,
+    "mesh_nodes": 21,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.676,
+     1.831,
+     0.269
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "c09cde5134f24485863b80bd03f2fd01.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 2,
+    "max_piece_tris": 25825,
+    "top_pieces": [
+     {
+      "name": "SM_HumanSkeleton",
+      "tris": 25825,
+      "draws": 20,
+      "size_m": [
+       0.669,
+       1.825,
+       0.262
+      ]
+     },
+     {
+      "name": "OutLine",
+      "tris": 25825,
+      "draws": 1,
+      "size_m": [
+       0.676,
+       1.831,
+       0.269
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "09e4b1506afd581b38447ad851e23fdf24d7968200b7fd239bf54d5930142d9d",
+   "size": 1381225,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
+  },
+  "eec63fc37db8e98796ce63003c322e1ab7043ba13f314ee8a3060da5688b70eb": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 178186,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-14.39.1",
+   "licence": {
+    "title": "Spiderweb Model",
+    "source": "https://sketchfab.com/3d-models/spiderweb-model-98931018b2b845b1bf8b6918aed7c235",
+    "author": "Shaely Caldwell (https://sketchfab.com/ShaelyCaldwell)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3368,
+    "verts": 4169,
+    "draws": 1,
+    "unique_tris": 3368,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.019,
+     0.02,
+     0.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "8bb043c2121c47d5885735a8a0d912f0.fbx",
+     "RootNode",
+     "pCylinder11"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 1,
+    "max_piece_tris": 3368,
+    "top_pieces": [
+     {
+      "name": "pCylinder11_lambert1_0",
+      "tris": 3368,
+      "draws": 1,
+      "size_m": [
+       0.019,
+       0.02,
+       0.0
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "eec63fc37db8e98796ce63003c322e1ab7043ba13f314ee8a3060da5688b70eb",
+   "size": 52501,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
+  },
+  "0681131163e0ab114def3a55d2f9fdc67b3950ba644dbb612fc4ad522b500f5a": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 9898534,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Wall Torch",
+    "source": "https://sketchfab.com/3d-models/wall-torch-68f61f1132ba46999709c26e79400961",
+    "author": "Sean Thomas (https://sketchfab.com/foon.)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 2981,
+    "verts": 3194,
+    "draws": 24,
+    "unique_tris": 2981,
+    "meshes": 24,
+    "primitives": 24,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 53,
+    "mesh_nodes": 24,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     29.831,
+     67.249,
+     34.01
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "198bcf32d6ed476a97020de124bc1cc3.fbx",
+     "RootNode",
+     "group2"
+    ],
+    "root_scale": 1.452862,
+    "pieces_count": 5,
+    "max_piece_tris": 2020,
+    "top_pieces": [
+     {
+      "name": "group3",
+      "tris": 2020,
+      "draws": 20,
+      "size_m": [
+       18.981,
+       66.208,
+       29.771
+      ]
+     },
+     {
+      "name": "polySurface1",
+      "tris": 655,
+      "draws": 1,
+      "size_m": [
+       29.831,
+       47.969,
+       2.833
+      ]
+     },
+     {
+      "name": "pCylinder6",
+      "tris": 160,
+      "draws": 1,
+      "size_m": [
+       8.029,
+       4.2,
+       8.375
+      ]
+     },
+     {
+      "name": "pCylinder7",
+      "tris": 92,
+      "draws": 1,
+      "size_m": [
+       6.318,
+       6.318,
+       9.552
+      ]
+     },
+     {
+      "name": "polySurface5",
+      "tris": 54,
+      "draws": 1,
+      "size_m": [
+       12.216,
+       8.423,
+       1.36
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/lambert1_baseColor.png",
+      "name": "textures/lambert1_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert1_metallicRoughness.png",
+      "name": "textures/lambert1_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert1_normal.png",
+      "name": "textures/lambert1_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "0681131163e0ab114def3a55d2f9fdc67b3950ba644dbb612fc4ad522b500f5a",
+   "size": 9714479,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
+  },
+  "b82bab2c821de71b9ea876aef36b655a4d54eb807b98321dd9c1305e4cf78548": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 1639410,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.65.0",
+   "licence": {
+    "title": "Canoe",
+    "source": "https://sketchfab.com/3d-models/canoe-6486623945f44789ae1949e9add15268",
+    "author": "SkyeSladeUT (https://sketchfab.com/SkyeSladeUT)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 906,
+    "verts": 864,
+    "draws": 4,
+    "unique_tris": 906,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 10,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.429,
+     0.282,
+     2.0
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 834,
+    "top_pieces": [
+     {
+      "name": "Boat_Shell",
+      "tris": 834,
+      "draws": 1,
+      "size_m": [
+       0.429,
+       0.282,
+       2.0
+      ]
+     },
+     {
+      "name": "Seat5",
+      "tris": 26,
+      "draws": 1,
+      "size_m": [
+       0.311,
+       0.013,
+       0.132
+      ]
+     },
+     {
+      "name": "Seat3",
+      "tris": 26,
+      "draws": 1,
+      "size_m": [
+       0.311,
+       0.013,
+       0.132
+      ]
+     },
+     {
+      "name": "seat2",
+      "tris": 20,
+      "draws": 1,
+      "size_m": [
+       0.377,
+       0.008,
+       0.13
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/lambert2_baseColor.jpeg",
+      "name": "textures/lambert2_baseColor.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/lambert2_metallicRoughness.png",
+      "name": "textures/lambert2_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/lambert2_normal.jpeg",
+      "name": "textures/lambert2_normal.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 16.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "b82bab2c821de71b9ea876aef36b655a4d54eb807b98321dd9c1305e4cf78548",
+   "size": 1596291,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
+  },
+  "a45c0bb1983ed0b5534f61f2be3738769ebfddf837ca81344f79a60e4403d344": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 778941,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Outdoor Torch",
+    "source": "https://sketchfab.com/3d-models/outdoor-torch-8f9ceeff9f264a2688e7280e0d379c3f",
+    "author": "Duznot (https://sketchfab.com/duz_vr)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 498,
+    "verts": 455,
+    "draws": 1,
+    "unique_tris": 498,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 4,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.127,
+     2.0,
+     0.127
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group",
+     "Tiki"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 498,
+    "top_pieces": [
+     {
+      "name": "defaultMaterial",
+      "tris": 498,
+      "draws": 1,
+      "size_m": [
+       0.127,
+       2.0,
+       0.127
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Torch_baseColor.jpeg",
+      "name": "textures/Torch_baseColor.jpeg",
+      "w": 512,
+      "h": 512,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Torch_metallicRoughness.png",
+      "name": "textures/Torch_metallicRoughness.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Torch_normal.png",
+      "name": "textures/Torch_normal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 512,
+    "rgba_mb": 4.0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "a45c0bb1983ed0b5534f61f2be3738769ebfddf837ca81344f79a60e4403d344",
+   "size": 764813,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
+  },
+  "cb47260d257582538fb33f2672d51f27ab9a36c70c6e670a322cd3f620efceec": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 16,
+   "uncompressed_bytes": 17504586,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Rusty Wall Mounted Torch",
+    "source": "https://sketchfab.com/3d-models/rusty-wall-mounted-torch-cf0ae61e317b483b942fd10af357321b",
+    "author": "persnetto (https://sketchfab.com/persnetto)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 4898,
+    "verts": 3735,
+    "draws": 4,
+    "unique_tris": 4898,
+    "meshes": 4,
+    "primitives": 4,
+    "materials": 4,
+    "materials_used": 4,
+    "nodes": 10,
+    "mesh_nodes": 4,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     0.854,
+     2.0,
+     0.763
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Collada visual scene group"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 4,
+    "max_piece_tris": 3668,
+    "top_pieces": [
+     {
+      "name": "torch_lp",
+      "tris": 3668,
+      "draws": 1,
+      "size_m": [
+       0.684,
+       1.689,
+       0.711
+      ]
+     },
+     {
+      "name": "torch_lp",
+      "tris": 632,
+      "draws": 1,
+      "size_m": [
+       0.854,
+       2.0,
+       0.309
+      ]
+     },
+     {
+      "name": "torch_lp",
+      "tris": 340,
+      "draws": 1,
+      "size_m": [
+       0.191,
+       1.12,
+       0.393
+      ]
+     },
+     {
+      "name": "torch_lp",
+      "tris": 258,
+      "draws": 1,
+      "size_m": [
+       0.324,
+       0.428,
+       0.327
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 12,
+    "images": [
+     {
+      "member": "textures/Material__37_baseColor.jpeg",
+      "name": "textures/Material__37_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material__37_metallicRoughness.png",
+      "name": "textures/Material__37_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__37_normal.png",
+      "name": "textures/Material__37_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__39_baseColor.jpeg",
+      "name": "textures/Material__39_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material__39_metallicRoughness.png",
+      "name": "textures/Material__39_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__39_normal.png",
+      "name": "textures/Material__39_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__40_baseColor.jpeg",
+      "name": "textures/Material__40_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material__40_metallicRoughness.png",
+      "name": "textures/Material__40_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__40_normal.png",
+      "name": "textures/Material__40_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__41_baseColor.jpeg",
+      "name": "textures/Material__41_baseColor.jpeg",
+      "w": 2048,
+      "h": 2048,
+      "format": "JPEG"
+     },
+     {
+      "member": "textures/Material__41_metallicRoughness.png",
+      "name": "textures/Material__41_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Material__41_normal.png",
+      "name": "textures/Material__41_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 255.4,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "cb47260d257582538fb33f2672d51f27ab9a36c70c6e670a322cd3f620efceec",
+   "size": 16819241,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
+  },
+  "d76bd06af47bf0bdb20a611126d4215425d001951cf8a8423cd5ab6fda113ad9": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 6403218,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.67.0",
+   "licence": {
+    "title": "Medieval Wall Torch",
+    "source": "https://sketchfab.com/3d-models/medieval-wall-torch-77db436da2844cbfb4dde0bb9b396835",
+    "author": "Kigha (https://sketchfab.com/Kigha)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1748,
+    "verts": 1743,
+    "draws": 1,
+    "unique_tris": 1748,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     37.582,
+     62.036,
+     16.1
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "Wall_Torch.fbx",
+     "RootNode",
+     "Torch"
+    ],
+    "root_scale": 100.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1748,
+    "top_pieces": [
+     {
+      "name": "Torch_Wall_Torch_0",
+      "tris": 1748,
+      "draws": 1,
+      "size_m": [
+       37.582,
+       62.036,
+       16.1
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Wall_Torch_baseColor.png",
+      "name": "textures/Wall_Torch_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wall_Torch_metallicRoughness.png",
+      "name": "textures/Wall_Torch_metallicRoughness.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Wall_Torch_normal.png",
+      "name": "textures/Wall_Torch_normal.png",
+      "w": 1024,
+      "h": 1024,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 31.9,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "d76bd06af47bf0bdb20a611126d4215425d001951cf8a8423cd5ab6fda113ad9",
+   "size": 6288054,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
+  },
+  "de0f1f21785f2d20095a553aed4c6470c7e8eafe02cedcbd418d413e1b202e52": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 76341735,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.30.0",
+   "licence": {
+    "title": "Mexican Chac Mool Statue",
+    "source": "https://sketchfab.com/3d-models/mexican-chac-mool-statue-01ef40debbd54b9094353416a97232ba",
+    "author": "Pierre Wilmot (https://sketchfab.com/pierre.wilmot)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 183982,
+    "verts": 551886,
+    "draws": 9,
+    "unique_tris": 183982,
+    "meshes": 9,
+    "primitives": 9,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 11,
+    "mesh_nodes": 9,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     20.8,
+     19.332,
+     9.608
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "decimated.obj.cleaner.materialmerger.gles"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 9,
+    "max_piece_tris": 21848,
+    "top_pieces": [
+     {
+      "name": "Object_2",
+      "tris": 21848,
+      "draws": 1,
+      "size_m": [
+       3.109,
+       11.456,
+       7.428
+      ]
+     },
+     {
+      "name": "Object_3",
+      "tris": 21848,
+      "draws": 1,
+      "size_m": [
+       20.513,
+       17.49,
+       8.885
+      ]
+     },
+     {
+      "name": "Object_4",
+      "tris": 21847,
+      "draws": 1,
+      "size_m": [
+       17.904,
+       19.3,
+       8.888
+      ]
+     },
+     {
+      "name": "Object_7",
+      "tris": 21847,
+      "draws": 1,
+      "size_m": [
+       16.83,
+       16.91,
+       7.581
+      ]
+     },
+     {
+      "name": "Object_5",
+      "tris": 21846,
+      "draws": 1,
+      "size_m": [
+       16.625,
+       17.024,
+       7.972
+      ]
+     },
+     {
+      "name": "Object_6",
+      "tris": 21846,
+      "draws": 1,
+      "size_m": [
+       16.833,
+       16.594,
+       8.358
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/mesh_Model_1_u1_v1_baseColor.png",
+      "name": "textures/mesh_Model_1_u1_v1_baseColor.png",
+      "w": 8192,
+      "h": 8192,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 8192,
+    "rgba_mb": 340.5,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "de0f1f21785f2d20095a553aed4c6470c7e8eafe02cedcbd418d413e1b202e52",
+   "size": 63544751,
+   "parsed_at": "2026-11-17T20:34:30-03:00"
   }
  }
 }

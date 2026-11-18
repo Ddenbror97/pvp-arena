@@ -83,6 +83,7 @@ import { reloadLengthMs, reloadProgress, shellStage } from "./reload-progress";
 import { SPAS12_RELOAD, spas12ClipTime } from "../spas12-animation";
 import { createLootRenderer, type LootClient } from "./loot-renderer";
 import { createNadeRenderer } from "./nade-renderer";
+import { createTorchFlames } from "./torch-flames";
 import { createAirdropSmoke } from "./airdrop-smoke";
 import { createVehicleRenderer, kindOfRow } from "./vehicle-renderer";
 import {
@@ -772,6 +773,7 @@ export function createBrArena(
   const shown = new THREE.Vector3();
   /** The Iron Peaks climbing rope (rope-renderer.ts). */
   let ropeFx: ReturnType<typeof createRopeRenderer> | null = null;
+  let torchFx: ReturnType<typeof createTorchFlames> | null = null;
   const ropeClimbers: RopeClimberView[] = [];
   /**
    * The rope's third-person camera (owner's spec §4): 0 first person … 1 the orbit view (eased in
@@ -1329,6 +1331,9 @@ export function createBrArena(
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
     liftFx = createLiftRenderer(scene, island.loader, base, lifts(island.hf));
     ropeFx = createRopeRenderer(scene, island.hf);
+    // The torches', braziers' and campfires' fire (Forgotten Ruins' temples); its light only
+    // where the device has room for another light in every lit material.
+    torchFx = createTorchFlames(scene, island.island.layout, { light: tier.tier !== "low" });
     zipLandY = zipLanding((x, z) => island!.hf.heightAt(x, z)).y;
     zipLandYs = ZIPLINES.map((l) => l.landing((x, z) => island!.hf.heightAt(x, z)).y);
     mapUrl = drawMap(island);
@@ -3715,6 +3720,7 @@ export function createBrArena(
       body.phase === "lift" ? py : null,
     );
     nadeFx.update(solid(), server, now, camera);
+    torchFx?.update(now, camera);
     doorsFx?.update(dtMs, now, camera.position);
     const smoking: Array<[number, number, number, number]> = [];
     // The loot inside each landed crate (sent after the drop's fields).
@@ -4658,6 +4664,7 @@ export function createBrArena(
       paneFx?.dispose();
       trackFx?.dispose();
       ropeFx?.dispose();
+      torchFx?.dispose();
       rappelRopes?.dispose();
       nadeFx.dispose();
       dropSmoke.dispose();

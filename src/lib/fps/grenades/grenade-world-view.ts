@@ -814,7 +814,8 @@ void main() {
   });
 }
 
-function glowMaterial(uniforms: Record<string, THREE.IUniform>) {
+/** Flames (mode 1, upright, base on the point) and glows (mode 0) in one additive draw. */
+export function glowMaterial(uniforms: Record<string, THREE.IUniform>) {
   return new THREE.ShaderMaterial({
     name: "grenade-glow-sprite",
     uniforms: { ...THREE.UniformsUtils.clone(THREE.UniformsLib.fog), ...uniforms },
