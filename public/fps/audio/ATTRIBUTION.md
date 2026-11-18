@@ -353,10 +353,13 @@ src/lib/fps/br/aircraft-audio.ts), mono 44.1 kHz, MP3 at 128 kb/s, peaks at -1 d
   engine catching into its idle, from 0:00.2 so the catch falls 4.5 s in (the starter's time in
   aircraft.ts), the last 0.8 s faded out. Played from the starter's own moment on the server's
   clock, so everyone hears the catch when the propeller takes it.
-- `br-plane-roll-loop-v1.mp3` ("Plane_take_off_sound.mp3", 10 s): the loudest stretch of the
-  take-off run, 0:03.0 to 0:06.4, the following 0.6 s cross-faded (equal power) into its start,
-  stored between copies of its own last and first 0.25 s. The engine on the ground (taxi and the
-  take-off roll), its pitch and level with the RPM and the speed.
+- `br-plane-roll-loop-v2.mp3` ("new take off sound airplane.mp3", supplied 2026-11-17,
+  114.912 s): a 12 s loop from its first 13 s, the final second cross-faded (equal power)
+  into the first second. Stored between copies of its own last and first 0.25 s; loop
+  region 0.25–12.25 s. Mono 48 kHz, MP3 128 kb/s, RMS no louder than -12 dBFS and peak
+  no higher than -2 dBFS before encoding. Built by `scripts/fps/build-aircraft-takeoff-audio.mjs`.
+  Replaces v1 for the ground engine and takeoff roll. RPM/speed control its pitch and gain;
+  it fades into the existing flight loop after lift-off. Startup and flight recordings unchanged.
 - `br-plane-drive-loop-v1.mp3` ("Driving_airplane_sound.mp3", 45.7 s): 22 s from 0:21, the
   following 1.2 s cross-faded into its start, stored the same way. The engine and propeller in
   flight (and the idle under it, slowed).
