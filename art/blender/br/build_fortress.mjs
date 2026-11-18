@@ -31,7 +31,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { createTexturedKit, publishTextured } from "./textured-kit.mjs";
 
-const TAG = "fort-v1";
+const TAG = process.env.TAG ?? "fort-v2";
 const only = process.argv.slice(2);
 const PLAN = "src/lib/fps/br/location-buildings.json";
 const plan = JSON.parse(fs.readFileSync(PLAN, "utf8"));
@@ -50,6 +50,8 @@ const FAR_STONE = [0.6, 0.57, 0.5],
   FAR_SLATE = [0.27, 0.3, 0.34],
   FAR_WOOD = [0.38, 0.28, 0.18];
 /** Stairs: risers and treads (m). */
+/** A ramp's step under a flight (m): as the old buildings' stairs (stairBoxes(s, 0.05)). */
+const RAMP_RISE = 0.05;
 const RISE = 0.25,
   TREAD = 0.28;
 
@@ -178,6 +180,38 @@ function kit() {
     }
   };
   /**
+   * A flight's collision (owner, 2026-11-18: "fix the stairs to not be hacky/laggy going up/down
+   * as the rest of the stairs we fixed for old buildings"): the old buildings' stairs walk on a
+   * ramp of 5 cm steps (repair_building_access.mjs stairBoxes), and these did on their 25 cm
+   * treads, a riser a tick, up in a jolt and down in a drop. The same here: slices rising
+   * RAMP_RISE each a quarter riser over the line through the treads' backs (the feet sink at
+   * most three quarters of a riser at a tread's front), flat at the top, solid from `base` up.
+   * The treads are drawn only.
+   */
+  const rampUnder = (axis, a, dir, c0, c1, y, rise, runLen, steps, base) => {
+    const rr = rise / steps,
+      tread = runLen / steps;
+    const count = Math.max(1, Math.ceil(rise / RAMP_RISE));
+    // (A quarter riser over the line through the treads' backs: stepped onto from the side, at a
+    // turn, a ramp half a riser higher was a 35 cm step at its foot.)
+    const at = (d) => Math.min(y + rise, Math.max(y, y + rr / 4 + (rr * d) / tread));
+    for (let i = 0; i < count; i++) {
+      const d0 = (runLen * i) / count,
+        d1 = (runLen * (i + 1)) / count;
+      const top = at((d0 + d1) / 2);
+      const pa = a + dir * d0,
+        pb = a + dir * d1;
+      const lo = Math.min(pa, pb),
+        hi = Math.max(pa, pb);
+      k.box(
+        axis === "x" ? [lo, base, c0, hi, top, c1] : [c0, base, lo, c1, top, hi],
+        STONE,
+        WHITE,
+        { visible: false },
+      );
+    }
+  };
+  /**
    * A straight flight along x or z: from `a` (its foot) in direction `dir` (±1), across c0..c1,
    * rising `rise` from y in RISE steps of TREAD; solid from `base` (default: y) up to each tread.
    * Returns the run's end.
@@ -202,9 +236,11 @@ function kit() {
       const top = y + (s + 1) * rr;
       k.box(axis === "x" ? [lo, base, c0, hi, top, c1] : [c0, base, lo, c1, top, hi], m, WHITE, {
         lod,
+        collide: false,
         ...(base <= 0.001 ? { skip: ["bottom"] } : {}),
       });
     }
+    rampUnder(axis, a, dir, c0, c1, y, rise, n * tread, n, base);
     return a + dir * n * tread;
   };
   /** The run of a flight rising `rise`. */
@@ -300,17 +336,40 @@ function kit() {
     } = {},
   ) => {
     const d = (2 * Math.PI) / n;
-    for (let i = 0; i < n; i++) {
-      if (only && !only(i)) continue;
-      const a = phase + i * d,
-        b = a + d,
-        mid = a + d / 2;
-      const cut = open.find(([o0, o1]) => {
+    const cutOf = (j) => {
+      const mid = phase + (((j % n) + n) % n) * d + d / 2;
+      return open.find(([o0, o1]) => {
         const t = (((mid - o0) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
         return (
           t <= (o1 - o0 + 2 * Math.PI) % (2 * Math.PI) || Math.abs(o1 - o0) >= 2 * Math.PI - 1e-6
         );
       });
+    };
+    for (let i = 0; i < n; i++) {
+      if (only && !only(i)) continue;
+      const a = phase + i * d,
+        b = a + d,
+        mid = a + d / 2;
+      const cut = cutOf(i);
+      const P0 = (r, ang, y) => [cx + Math.cos(ang) * r, y, cz + Math.sin(ang) * r];
+      // An opening's reveals (owner, 2026-11-18, a round tower's door: "entrence_fix"): the
+      // segments either side of it showed their hollow inside through the doorway. Drawn on the
+      // cut segment's ends that meet a whole one, over the opening's height, facing into it.
+      if (cut)
+        for (const [ang, j, sign] of [
+          [a, i - 1, 1],
+          [b, i + 1, -1],
+        ]) {
+          if (cutOf(j) || (only && !only(((j % n) + n) % n))) continue;
+          const ya = Math.max(y0, cut[2]),
+            yb = Math.min(y1, cut[3]);
+          if (yb - ya < 1e-3) continue;
+          const tn = [-Math.sin(ang) * sign, 0, Math.cos(ang) * sign];
+          k.quad(P0(r0, ang, ya), P0(r1, ang, ya), P0(r1, ang, yb), P0(r0, ang, yb), m, WHITE, {
+            n: tn,
+            lod,
+          });
+        }
       const spans = cut
         ? [
             [y0, cut[2]],
@@ -405,7 +464,9 @@ function kit() {
         b,
         holes.map((o) => [o[0], y - 9, o[1], o[2], y + 9, o[3]]),
       ))
-        k.box(p, m, WHITE, { lod, skip: ["bottom"] });
+        // Seen from below a storey's floor was see-through between its boards' sides (no
+        // bottom faces): only a solid foot standing on the ground leaves its bottom out.
+        k.box(p, m, WHITE, { lod, ...(thick >= 1 ? { skip: ["bottom"] } : {}) });
     }
   };
   /** A cone roof (drawn only): base radius r at y, apex h above, n sides. */
@@ -750,8 +811,12 @@ await curtain("fort-wall-breach", 26, { breach: [-4.5, 4.5] });
   const F = [BASE, BASE + 6, BASE + 12, BASE + 18]; // 10, 16, 22, 28
   const WALK = BASE + WH; // 22
   ring(0, 0, R1 - 0.1, R1 + 0.6, 0, 1.6, N, { m: WALL }); // the talus
+  // No top of its own (owner, 2026-11-18: "flicker_top_of_tower"): the roof's floor reaches
+  // under the merlons' sill instead; the ring's top round its rim lay in the floor's plane,
+  // overlapping its boards' corners, and the two fought along the parapet.
   ring(0, 0, R0, R1, 0, F[3], N, {
     m: STONE,
+    top: false,
     open: [
       [0.6, 0.97, F[0], F[0] + 3.3],
       [0.0, 0.39, WALK, WALK + 3],
@@ -766,7 +831,7 @@ await curtain("fort-wall-breach", 26, { breach: [-4.5, 4.5] });
     holeC = [-2.5, -4.7, 4.9, -3.3];
   disc(0, 0, R0 + 0.05, F[1], { m: WOOD, holes: [holeA] });
   disc(0, 0, R0 + 0.05, F[2], { m: WOOD, holes: [holeB] });
-  disc(0, 0, R0 + 0.05, F[3], { m: FLOOR, holes: [holeC], lod: 1 });
+  disc(0, 0, R1 - 0.55, F[3], { m: FLOOR, holes: [holeC], lod: 1 });
   // Flights: A (10→16) along −x on the south side; B (16→22) along +z on the west side;
   // C (22→28) along +x over A's line, to the roof (its foot east of B's well, with room to turn
   // onto it from B's top round the well).
@@ -1023,10 +1088,17 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
   }
   mass([-HX, 0, -HZ, HX, F[4], HZ], cuts, { m: STONE, top: FLOOR });
   // A plinth course and a string course at each floor (drawn).
-  k.box([-HX - 0.3, 0, -HZ - 0.3, HX + 0.3, 1.0, HZ + 0.3], STONE, [0.9, 0.88, 0.84], {
-    skip: ["bottom"],
-    collide: false,
-  });
+  // Round the outside only, open at the doors (owner, 2026-11-18: "floor_issue_fort"): one box
+  // under the whole keep, it stood a metre high across both doorways and over the ground floor.
+  for (const p of carve(
+    [-HX - 0.3, 0, -HZ - 0.3, HX + 0.3, 1.0, HZ + 0.3],
+    [
+      [-HX + 0.05, -1, -HZ + 0.05, HX - 0.05, 2, HZ - 0.05],
+      // (Out through the plinth's 0.3 m too.)
+      ...cuts.filter((c) => c[1] < 1).map((c) => [c[0], c[1], c[2] - 0.4, c[3], c[4], c[5] + 0.4]),
+    ],
+  ))
+    k.box(p, STONE, [0.9, 0.88, 0.84], { skip: ["bottom"], collide: false });
   for (const f of [F[1], F[2], F[3]])
     for (const p of carve([-HX - 0.12, f - 0.3, -HZ - 0.12, HX + 0.12, f, HZ + 0.12], cuts))
       k.box(p, STONE, [0.95, 0.93, 0.9], { collide: false, skip: ["bottom"] });
@@ -1519,7 +1591,20 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
       xb = L - s * tr;
     const h = (s + 1) * RISE;
     const w = 5.5 - 1.2 * (s / n);
-    k.box([xa, 0, -w, xb, h, w], WALL, [0.88, 0.86, 0.82], { skip: ["bottom"], lod: 1 });
+    k.box([xa, 0, -w, xb, h, w], WALL, [0.88, 0.86, 0.82], {
+      skip: ["bottom"],
+      lod: 1,
+      collide: false,
+    });
+  }
+  // Climbed on a ramp of RAMP_RISE steps, as the stairs (its 25 cm steps were a jolt a tick).
+  const slices = Math.ceil(top / RAMP_RISE);
+  for (let i = 0; i < slices; i++) {
+    const xb = L - (L * i) / slices,
+      xa = L - (L * (i + 1)) / slices;
+    const h = Math.min(top, RISE / 4 + (top * (L - (xa + xb) / 2)) / L);
+    const w = 5.5 - 1.2 * ((L - xb) / L);
+    k.box([xa, 0, -w, xb, Math.max(RAMP_RISE, h), w], WALL, WHITE, { visible: false });
   }
   // Jumbled blocks over the heap (drawn only: the steps are what you climb).
   const rnd = rng(91);

@@ -476,7 +476,9 @@ const only = process.env.VIEWS?.split(",");
 for (const [name, [pos, look]] of Object.entries(customViews ?? views)) {
   if (only && !only.some((v) => name.startsWith(`${v}-`))) continue;
   const s = await page.evaluate(([p, l]) => window.explorer.view(p, l), [pos, look]);
-  await page.screenshot({ path: path.join(outDir, `${name}.jpg`), type: "jpeg", quality: 82 });
+  // SHOT=png: lossless frames (for frame-to-frame flicker measures; JPEG noise swamps them).
+  if (process.env.SHOT === "png") await page.screenshot({ path: path.join(outDir, `${name}.png`) });
+  else await page.screenshot({ path: path.join(outDir, `${name}.jpg`), type: "jpeg", quality: 82 });
   report.views[name] = s;
   console.log(name, JSON.stringify(s));
 }

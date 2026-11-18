@@ -64,6 +64,22 @@ export class BrStrides {
 }
 
 /**
+ * A model's footstep surface, by its name. "tower" alone meant steel (radio masts, cranes,
+ * water towers), and so the Old Fortress's stone towers, the ruins' tower, the prison's and the
+ * airfield's control towers sounded like sheet metal (owner, 2026-11-18: "the footsteps at the
+ * fort is wrong, getting metallic sound but i dont think the fort is in metalic material").
+ * Timber first (scaffolds, siege engines, lifeguard and guard huts), then stone and concrete
+ * (the fortress, the ruins, the prison, control towers, cooling towers), then steel.
+ */
+export function modelSurface(model: string): FootstepSurface {
+  if (/wood|barn|cabin|scaffold|siege|trebuchet|lifeguard|guard-tower/.test(model)) return "wood";
+  if (/^(fort|ruin)-|prison|^bw-|atc-tower|control-tower|cooling-tower/.test(model))
+    return "concrete";
+  if (/metal|container|warehouse|tower/.test(model)) return "metal";
+  return "concrete";
+}
+
+/**
  * The surface under a body's feet, for its footsteps (indexed once at load; asked at stride
  * frequency). Owner, 2026-11-12: "stepping in snow sometimes dont sound snow, walking on snow =
  * always snow … at the iron peak". Before, any model whose bounding box held the feet decided
@@ -106,11 +122,7 @@ export function createBrFootstepSurface(
     const b = bounds.get(p.model);
     if (!b || !Number.isFinite(b[0])) continue;
     const [x0, y0, z0, x1, y1, z1] = turnBox(b, p.turn);
-    const surface: FootstepSurface = /metal|container|warehouse|tower/.test(p.model)
-      ? "metal"
-      : /wood|barn|cabin/.test(p.model)
-        ? "wood"
-        : "concrete";
+    const surface = modelSurface(p.model);
     const top = {
       x0: x0 + p.x,
       x1: x1 + p.x,

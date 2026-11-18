@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { BrStrides, createBrFootstepSurface } from "../src/lib/fps/br/footsteps";
+import { BrStrides, createBrFootstepSurface, modelSurface } from "../src/lib/fps/br/footsteps";
 import { Heightfield } from "../src/lib/fps/br/heightfield";
 import { LandCoverMap } from "../src/lib/fps/br/landcover";
 import type { WorldMeta } from "../src/lib/fps/br/world";
@@ -124,3 +124,20 @@ test("snow on the Iron Peaks sounds snow wherever the ground shows it, rocks or 
   expect(snowy).toBeGreaterThan(500);
   expect(bare).toBeGreaterThan(500);
 }, 300_000);
+
+test("stone towers sound like stone, steel ones like metal, timber like wood (2026-11-18)", () => {
+  for (const id of [
+    "fort-tower-round",
+    "fort-tower-square",
+    "fort-keep",
+    "fort-base",
+    "ruin-tower",
+  ])
+    expect(modelSurface(id), id).toBe("concrete");
+  for (const id of ["prison-tower", "bw-tower", "atc-tower", "control-tower", "ew-cooling-tower"])
+    expect(modelSurface(id), id).toBe("concrete");
+  for (const id of ["fort-scaffold", "siege-tower", "lifeguard-tower", "guard-tower", "barn"])
+    expect(modelSurface(id), id).toBe("wood");
+  for (const id of ["radio-tower", "tower-crane", "water-tower", "container-20", "warehouse"])
+    expect(modelSurface(id), id).toBe("metal");
+});

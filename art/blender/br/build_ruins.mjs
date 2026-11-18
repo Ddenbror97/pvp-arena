@@ -183,6 +183,24 @@ function kit(mid = "solid") {
     k.box([x0, y - 0.3, z0, x1, y, z1], STONE, WHITE, { visible: false });
   };
   /**
+   * A stair's collision (owner, 2026-11-18: "fix the stairs to not be hacky/laggy going up/down
+   * as the rest of the stairs we fixed for old buildings, this need to be applied to ruins
+   * also"): a ramp of 5 cm steps, as the old buildings' (repair_building_access.mjs
+   * stairBoxes), a quarter riser over the line through the treads' backs, flat at the top.
+   * `box(p0, p1, top)`: the slice from p0 to p1 along the stair, solid up to `top`.
+   */
+  const ramp = (box, a, dir, y, rise, n, t) => {
+    const rr = rise / n,
+      len = n * t,
+      count = Math.max(1, Math.ceil(rise / 0.05));
+    for (let i = 0; i < count; i++) {
+      const d0 = (len * i) / count,
+        d1 = (len * (i + 1)) / count;
+      const top = Math.min(y + rise, Math.max(y, y + rr / 4 + (rr * (d0 + d1)) / 2 / t));
+      k.box(box(a + dir * d0, a + dir * d1, top), STONE, WHITE, { visible: false });
+    }
+  };
+  /**
    * A straight stair of solid steps (each from `base` up to its tread), along +z or −z (dir),
    * x0..x1 wide, from z `a` rising `rise` with risers `r` and treads `t`. Returns its end.
    */
@@ -203,9 +221,19 @@ function kit(mid = "solid") {
       const top = y + (s + 1) * rr;
       k.box([x0, base, Math.min(za, zb), x1, top, Math.max(za, zb)], m, WHITE, {
         lod,
+        collide: false,
         ...(base <= 0.001 ? { skip: ["bottom"] } : {}),
       });
     }
+    ramp(
+      (p0, p1, top) => [x0, base, Math.min(p0, p1), x1, top, Math.max(p0, p1)],
+      a,
+      dir,
+      y,
+      rise,
+      n,
+      t,
+    );
     return a + dir * n * t;
   };
   /** The same along x. */
@@ -220,9 +248,18 @@ function kit(mid = "solid") {
         [Math.min(xa, xb), base, z0, Math.max(xa, xb), top, z1],
         m,
         WHITE,
-        base <= 0.001 ? { skip: ["bottom"] } : {},
+        base <= 0.001 ? { skip: ["bottom"], collide: false } : { collide: false },
       );
     }
+    ramp(
+      (p0, p1, top) => [Math.min(p0, p1), base, z0, Math.max(p0, p1), top, z1],
+      a,
+      dir,
+      y,
+      rise,
+      n,
+      t,
+    );
     return a + dir * n * t;
   };
   /**
@@ -286,7 +323,7 @@ function kit(mid = "solid") {
       );
     }
   };
-  return { k, far, mass, floor, stair, stairX, alfarda, frieze, rubble };
+  return { k, far, mass, floor, stair, stairX, ramp, alfarda, frieze, rubble };
 }
 
 /**
@@ -430,8 +467,20 @@ const publish = async (id, K, entry, foot) => {
   for (let s = 0; s < steps; s++) {
     const z1 = zFoot - s * 0.3,
       z0 = z1 - 0.3;
-    k.box([-4.5, 0, z0, 4.5, (s + 1) * (topY / steps), z1], STONE, WHITE, { skip: ["bottom"] });
+    k.box([-4.5, 0, z0, 4.5, (s + 1) * (topY / steps), z1], STONE, WHITE, {
+      skip: ["bottom"],
+      collide: false,
+    });
   }
+  K.ramp(
+    (p0, p1, top) => [-4.5, 0, Math.min(p0, p1), 4.5, top, Math.max(p0, p1)],
+    zFoot,
+    -1,
+    0,
+    topY,
+    steps,
+    0.3,
+  );
   for (const [x0, x1] of [
     [-5.6, -4.5],
     [4.5, 5.6],
@@ -501,8 +550,18 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
     const z1 = zFoot - s * 0.3;
     k.box([-sw / 2, 0, z1 - 0.3, sw / 2, ((s + 1) * topY) / steps, z1], STONE, WHITE, {
       skip: ["bottom"],
+      collide: false,
     });
   }
+  K.ramp(
+    (p0, p1, top) => [-sw / 2, 0, Math.min(p0, p1), sw / 2, top, Math.max(p0, p1)],
+    zFoot,
+    -1,
+    0,
+    topY,
+    steps,
+    0.3,
+  );
   for (const [x0, x1] of [
     [-sw / 2 - 0.9, -sw / 2],
     [sw / 2, sw / 2 + 0.9],
@@ -615,8 +674,20 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
   const fs_ = Math.round(PH / 0.3);
   for (let s = 0; s < fs_; s++) {
     const z1 = PZ1 + (fs_ - s) * 0.4;
-    k.box([-8, 0, z1 - 0.4, 8, ((s + 1) * PH) / fs_, z1], STONE, WHITE, { skip: ["bottom"] });
+    k.box([-8, 0, z1 - 0.4, 8, ((s + 1) * PH) / fs_, z1], STONE, WHITE, {
+      skip: ["bottom"],
+      collide: false,
+    });
   }
+  K.ramp(
+    (p0, p1, top) => [-8, 0, Math.min(p0, p1), 8, top, Math.max(p0, p1)],
+    PZ1 + fs_ * 0.4,
+    -1,
+    0,
+    PH,
+    fs_,
+    0.4,
+  );
   // Ground storey: x ±24, z −9..5, from the platform up 4.8, its roof 0.5 more.
   const GX = 24,
     GZ0 = -9,
@@ -993,8 +1064,20 @@ function smallTemple({ tiers, th, bx, bz, inset, sw, ruined, seed, comb }) {
   const zFoot = Z + steps * 0.33;
   for (let s = 0; s < steps; s++) {
     const z1 = zFoot - s * 0.33;
-    k.box([-6, 0, z1 - 0.33, 6, ((s + 1) * H) / steps, z1], STONE, WHITE, { skip: ["bottom"] });
+    k.box([-6, 0, z1 - 0.33, 6, ((s + 1) * H) / steps, z1], STONE, WHITE, {
+      skip: ["bottom"],
+      collide: false,
+    });
   }
+  K.ramp(
+    (p0, p1, top) => [-6, 0, Math.min(p0, p1), 6, top, Math.max(p0, p1)],
+    zFoot,
+    -1,
+    0,
+    H,
+    steps,
+    0.33,
+  );
   for (const [x0, x1] of [
     [-7, -6],
     [6, 7],
@@ -1349,8 +1432,20 @@ for (const [id, len, h, seed, corner] of [
   for (const s of [0, 2])
     for (let k2 = 0; k2 < 16; k2++) {
       const w1 = CT[2] + 4.8 - k2 * 0.3;
-      k.box(side([-2, TH, w1 - 0.3, 2, TH + (k2 + 1) * 0.3, w1], s), STONE, WHITE);
+      k.box(side([-2, TH, w1 - 0.3, 2, TH + (k2 + 1) * 0.3, w1], s), STONE, WHITE, {
+        collide: false,
+      });
     }
+  for (const s of [0, 2])
+    K.ramp(
+      (p0, p1, top) => side([-2, TH, Math.min(p0, p1), 2, top, Math.max(p0, p1)], s),
+      CT[2] + 4.8,
+      -1,
+      TH,
+      4.8,
+      16,
+      0.3,
+    );
   for (const s of [1, 3]) {
     k.box(side([-1.6, CY - 0.35, CT[2] - 0.2, 1.6, CY - 0.05, IA - IW + 0.1], s), STONE, WHITE);
     for (const w of [12.5, 15.2])

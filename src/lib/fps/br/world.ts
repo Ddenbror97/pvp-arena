@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "fort-v1",
+  revision: "fort-v2",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -136,8 +136,12 @@ export const WORLD_ASSETS = {
   // for it (siege engines, the city gate, thrones, tables, racks, shields, banners, chandeliers,
   // the cage, the bell, the smithy, carts, flags); the new models' coplanar faces lifted
   // (zfix-v9).
-  models: "/fps/br/models/models.fort-v1.json",
-  collision: "/fps/br/models/collision.fort-v1.json",
+  // Then (fort-v2, 2026-11-18): the fortress's and the ruins' stairs walk on 5 cm ramps as the
+  // old buildings' do; the fortress's tower roofs, door reveals, floor undersides and the keep's
+  // plinth; the towers' lift shaft open through their roofs (skyline-v4); coplanar faces that
+  // only overlap at their edges lifted too (zfix-v11); the car parks' bay lines drawn near only.
+  models: "/fps/br/models/models.fort-v2.json",
+  collision: "/fps/br/models/collision.fort-v2.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

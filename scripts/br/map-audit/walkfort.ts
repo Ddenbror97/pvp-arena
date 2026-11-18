@@ -62,6 +62,9 @@ const routes = Object.fromEntries(
 );
 const BACK = !!process.env.BACK;
 let bad = 0;
+// The climb's feel: the largest rise and drop of the feet in one tick, and the ticks off the ground
+// while walking a route (a stair of 25 cm treads: a riser a tick up, a drop off each tread down).
+const feel = { rise: 0, drop: 0, air: 0, ticks: 0, jolts: 0 };
 for (const [name, fwd] of Object.entries(routes)) {
   // BACK=1: there and back again (the way back from where the way there ended).
   const route = BACK ? [...fwd, ...[...fwd].reverse().slice(1)] : fwd;
@@ -83,6 +86,7 @@ for (const [name, fwd] of Object.entries(routes)) {
       ticks = 0,
       last = Infinity;
     for (; ticks < 600 && Math.hypot(body.x - x!, body.z - z!) > 0.2; ticks++) {
+      const y0 = body.y;
       stepBody(
         world,
         body,
@@ -94,6 +98,17 @@ for (const [name, fwd] of Object.entries(routes)) {
         } as never,
         34,
       );
+      feel.rise = Math.max(feel.rise, body.y - y0);
+      feel.drop = Math.max(feel.drop, y0 - body.y);
+      if (!body.grounded) feel.air++;
+      if (Math.abs(body.y - y0) > 0.2) {
+        feel.jolts++;
+        if (process.env.JOLTS)
+          console.log(
+            `jolt ${(body.y - y0).toFixed(2)} at ${(body.x - OX).toFixed(1)},${(body.y - OY).toFixed(1)},${(body.z - OZ).toFixed(1)} (${name})`,
+          );
+      }
+      feel.ticks++;
       const d = Math.hypot(body.x - x!, body.z - z!);
       if (last - d < 0.005) stall++;
       else stall = 0;
@@ -113,3 +128,6 @@ for (const [name, fwd] of Object.entries(routes)) {
   console.log(`${ok ? "OK  " : "FAIL"} ${name}: ${out.join(" ")}`);
 }
 console.log(bad ? `${bad} routes failed` : "all routes walked");
+console.log(
+  `feet per tick: largest rise ${feel.rise.toFixed(3)} m, largest drop ${feel.drop.toFixed(3)} m; off the ground ${feel.air}, a step of over 20 cm up or down in one tick ${feel.jolts}, of ${feel.ticks} ticks`,
+);

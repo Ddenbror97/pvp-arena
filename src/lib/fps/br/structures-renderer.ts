@@ -37,8 +37,14 @@ export function createStructures(
 ): StructuresControls {
   const root = new THREE.Group();
   root.name = "br-structures";
-  const bridges = bridgeMesh(meta, hf);
   const runways = runwayMesh(meta, hf, lots);
+  // The bridges' road takes the same asphalt (owner, 2026-11-18: "add some texture to the road
+  // on the bridges instead of just begin blank grey"): one set of uniforms for both.
+  const bridges = bridgeMesh(
+    meta,
+    hf,
+    (runways.material as THREE.Material).userData["ground"] as RoadUniforms,
+  );
   root.add(bridges, runways);
   return {
     root,
@@ -120,7 +126,7 @@ function prism(
   }
 }
 
-function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
+function bridgeMesh(meta: WorldMeta, hf: Heightfield, ground?: RoadUniforms) {
   const pos: number[] = [],
     col: number[] = [];
   const concrete: [number, number, number] = [0.42, 0.41, 0.39],
@@ -327,10 +333,39 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield) {
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
   g.computeVertexNormals();
-  const mesh = new THREE.Mesh(
-    g,
-    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, side: THREE.DoubleSide }),
-  );
+  const material = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    roughness: 0.9,
+    side: THREE.DoubleSide,
+  });
+  if (ground) {
+    // The asphalt grain on the decks' road: the faces that look up and are asphalt-dark take it
+    // fully; the light concrete and steel a trace of it (as on the roads), walls and undersides
+    // none (projected from above, the grain would run in streaks down them).
+    material.onBeforeCompile = (shader) => {
+      Object.assign(shader.uniforms, ground);
+      shader.vertexShader = shader.vertexShader
+        .replace(
+          "#include <common>",
+          "#include <common>\nvarying vec3 vRoadWorld;\nvarying float vUp;",
+        )
+        .replace(
+          "#include <worldpos_vertex>",
+          "#include <worldpos_vertex>\nvRoadWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvUp = normalize(mat3(modelMatrix) * objectNormal).y;",
+        );
+      shader.fragmentShader = shader.fragmentShader
+        .replace(
+          "#include <common>",
+          `#include <common>\n${ROAD_GRAIN_UNIFORMS}\nvarying float vUp;`,
+        )
+        .replace(
+          "#include <color_fragment>",
+          `#include <color_fragment>\n${roadGrainGlsl("smoothstep(0.7, 0.9, abs(vUp))")}`,
+        );
+    };
+    material.customProgramCacheKey = () => "br-bridges-v2";
+  }
+  const mesh = new THREE.Mesh(g, material);
   mesh.name = "br-bridges";
   return mesh;
 }
@@ -408,9 +443,9 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
     col: number[] = [],
     nor: number[] = [],
     skirt: number[] = [],
+    paintAt: number[] = [],
     index: number[] = [];
   const asphalt: [number, number, number] = [0.13, 0.13, 0.14],
-    paint: [number, number, number] = [0.8, 0.8, 0.78],
     road: [number, number, number] = [0.2, 0.2, 0.21];
   const heightAt = hf.heightAt.bind(hf);
   const n3 = { x: 0, y: 1, z: 0 };
@@ -447,9 +482,15 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   const surface = (x: number, z: number, lift: number) => pavedHeight(drawn, x, z, lift);
   const roadSurface = (x: number, z: number, lift: number) =>
     (grade.at(x, z) ?? pavedHeight(drawn, x, z, 0)) + lift;
+  /**
+   * A runway vertex's place for its paint (RUNWAY_PAINT_GLSL): across (m from the centre line),
+   * along (m from its start), the runway's half width and length. Zero width: not a runway.
+   */
+  let painting: [number, number, number, number] = [0, 0, 0, 0];
   /** A vertex (its normal the ground's there); `foot`: a skirt's foot, never lifted. */
   const add = (v: V, colour: [number, number, number], foot = false) => {
     pos.push(v[0], v[1], v[2]);
+    paintAt.push(...painting);
     col.push(colour[0], colour[1], colour[2]);
     // (No steeper than PAVED_SLOPE: beside a cliff the ground's normal is the cliff's, and the
     // road there would be lit as a wall.)
@@ -546,6 +587,17 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
           z = az + dz * t + sz * off;
         return [x, surface(x, z, PAVED_LIFT.runway), z];
       };
+      /** A runway cell, its paint drawn per pixel from where it is on the runway. */
+      const cell = (a: V, b: V, c: V, d: V) => {
+        const at = (v: V) => {
+          const rx = v[0] - ax,
+            rz = v[2] - az;
+          painting = [rx * sx + rz * sz, rx * dx + rz * dz, half, length];
+          return add(v, asphalt);
+        };
+        face(at(a), at(b), at(c), at(d));
+        painting = [0, 0, 0, 0];
+      };
       // Across: the edge lines (1 to 1.6 m in from each edge) and the centre line's 0.9 m.
       const marks = [-half, -half + 1, -half + 1.6, -0.45, 0.45, half - 1.6, half - 1, half];
       const across: number[] = [];
@@ -554,18 +606,13 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
         for (let k = 0; k < n; k++) across.push(marks[i]! + ((marks[i + 1]! - marks[i]!) * k) / n);
       }
       across.push(half);
-      const edgeLine = (o: number) => Math.abs(o) > half - 1.6 && Math.abs(o) < half - 1;
       // Along: 2.5 m steps (the dashes, 25 m of every 50 from 40 m in, start and end on them).
       let row = across.map((o) => p(0, o));
       for (let t0 = 0; t0 < length - 1e-6; t0 += 2.5) {
         const t1 = Math.min(length, t0 + 2.5);
         const next = across.map((o) => p(t1, o));
-        const dash = t0 >= 40 && t1 <= length - 40 && (t0 - 40) % 50 < 25;
-        for (let i = 0; i + 1 < across.length; i++) {
-          const mid = (across[i]! + across[i + 1]!) / 2;
-          const painted = edgeLine(mid) || (dash && Math.abs(mid) < 0.45);
-          quad(row[i + 1]!, next[i + 1]!, next[i]!, row[i]!, painted ? paint : asphalt);
-        }
+        for (let i = 0; i + 1 < across.length; i++)
+          cell(row[i + 1]!, next[i + 1]!, next[i]!, row[i]!);
         const last = across.length - 1;
         const mx = ax + dx * t0,
           mz = az + dz * t0;
@@ -747,10 +794,11 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
   g.setAttribute("skirt", new THREE.Float32BufferAttribute(skirt, 1));
   g.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute("paintAt", new THREE.Float32BufferAttribute(paintAt, 4));
   g.setIndex(index);
   // The attributes hold copies. Emptied, because the material's onBeforeCompile below closes
   // over this function's scope and would keep both lists (34 MB of numbers) for the whole match.
-  pos.length = col.length = skirt.length = nor.length = 0;
+  pos.length = col.length = skirt.length = nor.length = paintAt.length = 0;
   index.length = 0;
   const material = new THREE.MeshStandardMaterial({
     vertexColors: true,
@@ -778,7 +826,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nvarying vec3 vRoadWorld;\nattribute float skirt;",
+        "#include <common>\nvarying vec3 vRoadWorld;\nattribute float skirt;\nattribute vec4 paintAt;\nvarying vec4 vPaintAt;",
       )
       // Far ground is drawn from every 2nd, 4th or 8th height sample (terrain.ts CDLOD) and
       // rises over a road laid 8 cm above the full heightfield: 1.7 % of the road surface at
@@ -792,23 +840,88 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
       )
       .replace(
         "#include <worldpos_vertex>",
-        "#include <worldpos_vertex>\nvRoadWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;",
+        "#include <worldpos_vertex>\nvRoadWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvPaintAt = paintAt;",
       );
     shader.fragmentShader = shader.fragmentShader
       .replace(
         "#include <common>",
         `#include <common>
-        precision highp sampler2DArray;
-        uniform sampler2DArray uGroundA;
-        uniform float uOn, uRange, uLayer, uScale;
-        uniform vec3 uTint, uFar;
-        varying vec3 vRoadWorld;`,
+        ${ROAD_GRAIN_UNIFORMS}
+        varying vec4 vPaintAt;
+        ${RUNWAY_PAINT_GLSL}`,
       )
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
+        if (vPaintAt.z > 0.0) diffuseColor.rgb = mix(diffuseColor.rgb, vec3(${RUNWAY_PAINT.colour.map((c) => c.toFixed(2)).join(", ")}), runwayPaint(vPaintAt));
+        ${roadGrainGlsl("1.0")}`,
+      );
+  };
+  material.customProgramCacheKey = () => "br-roads-v8";
+  // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
+  biasLogDepth(material, LOG_BIAS.road);
+  const mesh = new THREE.Mesh(g, material);
+  mesh.name = "br-runways";
+  return mesh;
+}
+
+/**
+ * The runways' paint (owner, 2026-11-18: "the white lines of the airfields asfalt at
+ * island/military still render/flicker"). It was cells of their own colour: hard-edged
+ * geometry. Seen along the runway the 0.6 m edge lines and the 0.9 m centre dashes are a
+ * fraction of a pixel tall from a few hundred metres, and each pixel's samples caught the line
+ * or missed it as the camera moved (MSAA's four samples cannot cover a line that thin), so the
+ * far paint broke up and crawled. Now each pixel takes the share of its own footprint that is
+ * painted (a box filter from the screen-space derivatives of its place on the runway): far off
+ * a line fades into the asphalt as a steady grey instead of popping between white and black.
+ * Edge lines 1–1.6 m in from each edge; the centre line's 0.9 m dashes, 25 m of every 50 from
+ * 40 m in to 40 m before the end.
+ */
+export const RUNWAY_PAINT = {
+  colour: [0.8, 0.8, 0.78],
+  edgeIn: [1, 1.6],
+  centreHalf: 0.45,
+  dash: { from: 40, period: 50, length: 25 },
+} as const;
+const RUNWAY_PAINT_GLSL = `
+  // The share of [u - w/2, u + w/2] inside [a, b].
+  float paintCover(float u, float w, float a, float b) {
+    return clamp((min(u + 0.5 * w, b) - max(u - 0.5 * w, a)) / w, 0.0, 1.0);
+  }
+  // The painted length of the dashes from the first dash's start up to x (from ≤ x ≤ end).
+  float dashLength(float x, float from, float end) {
+    float r = clamp(x, from, end) - from;
+    return floor(r / ${RUNWAY_PAINT.dash.period.toFixed(1)}) * ${RUNWAY_PAINT.dash.length.toFixed(1)} + min(mod(r, ${RUNWAY_PAINT.dash.period.toFixed(1)}), ${RUNWAY_PAINT.dash.length.toFixed(1)});
+  }
+  // p: across, along, half width, length.
+  float runwayPaint(vec4 p) {
+    float wo = max(length(vec2(dFdx(p.x), dFdy(p.x))), 1e-3);
+    float wt = max(length(vec2(dFdx(p.y), dFdy(p.y))), 1e-3);
+    float inner = p.z - ${RUNWAY_PAINT.edgeIn[1].toFixed(2)}, outer = p.z - ${RUNWAY_PAINT.edgeIn[0].toFixed(2)};
+    float edge = paintCover(p.x, wo, inner, outer) + paintCover(p.x, wo, -outer, -inner);
+    float end = p.w - ${RUNWAY_PAINT.dash.from.toFixed(1)};
+    float along = (dashLength(p.y + 0.5 * wt, ${RUNWAY_PAINT.dash.from.toFixed(1)}, end) - dashLength(p.y - 0.5 * wt, ${RUNWAY_PAINT.dash.from.toFixed(1)}, end)) / wt;
+    float centre = paintCover(p.x, wo, -${RUNWAY_PAINT.centreHalf.toFixed(2)}, ${RUNWAY_PAINT.centreHalf.toFixed(2)}) * along;
+    return clamp(edge + centre, 0.0, 1.0);
+  }
+`;
+
+/** The asphalt grain's uniforms and the world position it is drawn from (roadGrainGlsl). */
+const ROAD_GRAIN_UNIFORMS = `precision highp sampler2DArray;
+        uniform sampler2DArray uGroundA;
+        uniform float uOn, uRange, uLayer, uScale;
+        uniform vec3 uTint, uFar;
+        varying vec3 vRoadWorld;`;
+/**
+ * The asphalt grain over a paved surface's colour (after <color_fragment>): the terrain's
+ * asphalt near the camera, enlarged copies of it beyond. `weight`: a GLSL expression (0–1) for
+ * how much of it a fragment takes (the bridges: their up-facing road only).
+ */
+function roadGrainGlsl(weight: string) {
+  return `
         {
-          float near = uOn * (1.0 - smoothstep(uRange * 0.6, uRange, distance(vRoadWorld, cameraPosition)));
+          float GRAIN_W = ${weight};
+          float near = uOn * (GRAIN_W) * (1.0 - smoothstep(uRange * 0.6, uRange, distance(vRoadWorld, cameraPosition)));
           // Gradients taken outside the branch: inside it the mip level is undefined on the
           // ring where the texture starts, which drew a dashed line across the road there.
           vec2 rdx = dFdx(vRoadWorld.xz) * uScale, rdy = dFdy(vRoadWorld.xz) * uScale;
@@ -823,7 +936,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
           // ground. From up there a road was a flat grey ribbon; this gives it the patches
           // and wear a pixel can still resolve. Two fixed scales, the second turned.
           float camD = distance(vRoadWorld, cameraPosition);
-          float far = uOn * (1.0 - near) * (1.0 - smoothstep(${ROAD_FAR.range * 0.55}.0, ${ROAD_FAR.range}.0, camD));
+          float far = uOn * (GRAIN_W) * (1.0 - near / max(GRAIN_W, 1e-3)) * (1.0 - smoothstep(${ROAD_FAR.range * 0.55}.0, ${ROAD_FAR.range}.0, camD));
           if (far > 0.0) {
             vec2 p = vRoadWorld.xz * uScale;
             // Two regimes cross-faded by distance (never a scale that slides): the tile a few
@@ -846,15 +959,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
             t = clamp(mix(vec3(1.0), t, ${ROAD_FAR.strength.toFixed(2)}), 0.6, 1.5);
             diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * t, far * mix(0.3, 1.0, dark));
           }
-        }`,
-      );
-  };
-  material.customProgramCacheKey = () => "br-roads-v7";
-  // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
-  biasLogDepth(material, LOG_BIAS.road);
-  const mesh = new THREE.Mesh(g, material);
-  mesh.name = "br-runways";
-  return mesh;
+        }`;
 }
 
 /** Roads beyond the near asphalt: the tile at two enlarged scales, out to `range` metres. */
