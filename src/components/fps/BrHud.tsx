@@ -323,6 +323,8 @@ function promptAction(p: BrPrompt) {
   switch (p.kind) {
     case "enter":
       return /bike/i.test(p.name) ? "Ride" : "Enter";
+    case "board":
+      return p.detail.startsWith("Fly") ? "Fly" : p.detail.startsWith("Ride") ? "Board" : "Full";
     case "lift":
       return p.id >= 0 ? "Ride" : "Call lift";
     case "zip":
@@ -1705,6 +1707,184 @@ function BrSpeedometer({ car }: { car: NonNullable<BrHud["vehicle"]> }) {
         </span>
         <span>
           <kbd>E</kbd> exit
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * In the aircraft (aircraft-client.ts flightHud): the instruments a light aircraft's panel shows
+ * (airspeed in knots, altitude in feet, the climb in feet per minute, an attitude indicator and
+ * the heading), the engine's throttle, RPM and fuel, the airframe's health, flaps and brakes,
+ * the warnings, and what the keys do from this seat.
+ */
+export function BrFlight({ hud }: { hud: BrHud }) {
+  const f = hud.flight;
+  if (!f) return null;
+  const pitchDeg = (f.pitch * 180) / Math.PI;
+  const bankDeg = (f.bank * 180) / Math.PI;
+  const mmss = (s: number) =>
+    `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  const warnings = [
+    f.stall && "STALL",
+    f.engine === "dead" && (f.fuel <= 0 ? "OUT OF FUEL" : "ENGINE FAILURE"),
+    f.engine !== "dead" && f.fuel > 0 && f.fuel < 0.15 && "LOW FUEL",
+    f.health < 0.3 ? "AIRFRAME CRITICAL" : f.health < 0.6 ? "AIRFRAME DAMAGED" : null,
+  ].filter((w): w is string => !!w);
+  const exit =
+    f.exit === "ground"
+      ? "Exit"
+      : f.exit === "parachute"
+        ? "Bail out"
+        : f.exit === "slow"
+          ? "Exit · slow down"
+          : "Exit unsafe";
+  const hp = hud.kit ? Math.ceil(hud.kit.hp) : null;
+  return (
+    <div className="br-flight" role="status" aria-label="Aircraft instruments">
+      <div className="br-flight-tape left">
+        <b>{Math.round(f.kt)}</b>
+        <small>KT</small>
+        <span>Airspeed</span>
+      </div>
+      <div className="br-flight-tape right">
+        <b>{Math.round(f.ft).toLocaleString("en-US")}</b>
+        <small>FT</small>
+        <span>
+          {f.vsFpm >= 0 ? "▲" : "▼"} {Math.abs(Math.round(f.vsFpm / 10) * 10)} ft/min
+        </span>
+      </div>
+      {warnings.length > 0 && (
+        <div className="br-flight-warn" role="alert">
+          {warnings.map((w) => (
+            <span key={w} className={w === "STALL" ? "stall" : ""}>
+              {w}
+            </span>
+          ))}
+        </div>
+      )}
+      <div className="br-flight-panel">
+        <svg className="br-attitude" viewBox="-60 -60 120 120" aria-hidden>
+          <defs>
+            <clipPath id="br-att-clip">
+              <circle r="56" />
+            </clipPath>
+          </defs>
+          <g clipPath="url(#br-att-clip)">
+            <g transform={`rotate(${-bankDeg}) translate(0 ${pitchDeg * 1.6})`}>
+              <rect x="-200" y="-400" width="400" height="400" fill="#3b7fc4" />
+              <rect x="-200" y="0" width="400" height="400" fill="#7a5532" />
+              <line x1="-200" x2="200" y1="0" y2="0" stroke="#fff" strokeWidth="1.5" />
+              {[-20, -10, 10, 20].map((d) => (
+                <line
+                  key={d}
+                  x1={Math.abs(d) === 10 ? -12 : -20}
+                  x2={Math.abs(d) === 10 ? 12 : 20}
+                  y1={-d * 1.6}
+                  y2={-d * 1.6}
+                  stroke="#fff"
+                  strokeWidth="1"
+                />
+              ))}
+            </g>
+          </g>
+          <circle r="56" fill="none" stroke="#ffffffb0" strokeWidth="2" />
+          <path d="M -30 0 H -10 L 0 6 L 10 0 H 30" fill="none" stroke="#f6c343" strokeWidth="3" />
+          <circle r="2" fill="#f6c343" />
+        </svg>
+        <div className="br-flight-heading">
+          {String(Math.round(f.heading) % 360).padStart(3, "0")}°
+        </div>
+        <dl className="br-flight-gauges">
+          <dt>Throttle</dt>
+          <dd>
+            <Bar value={f.throttle} max={1} tone="#e9eef0" />
+            <small>{Math.round(f.throttle * 100)} %</small>
+          </dd>
+          <dt>RPM</dt>
+          <dd>
+            <small>
+              {f.engine === "starting" ? "Starting…" : f.engine === "off" ? "Off" : f.rpm}
+            </small>
+          </dd>
+          <dt>Fuel</dt>
+          <dd>
+            <Bar value={f.fuel} max={1} tone={f.fuel < 0.15 ? "#ff5a4e" : "#9fd27e"} />
+            <small>
+              {f.engine === "running" ? mmss(f.fuelS) : `${Math.round(f.fuel * 100)} %`}
+            </small>
+          </dd>
+          <dt>Airframe</dt>
+          <dd>
+            <Bar
+              value={f.health}
+              max={1}
+              tone={f.health < 0.3 ? "#ff5a4e" : f.health < 0.6 ? "#f0c24b" : "#e9eef0"}
+            />
+            <small>{Math.round(f.health * 100)} %</small>
+          </dd>
+          <dt>Flaps</dt>
+          <dd>
+            <small>
+              {["Up", "10°", "30°"][f.flaps]}
+              {f.brake && f.grounded ? " · Brakes" : ""}
+            </small>
+          </dd>
+          {hp !== null && (
+            <>
+              <dt>Health</dt>
+              <dd>
+                <small>{hp}</small>
+              </dd>
+            </>
+          )}
+        </dl>
+      </div>
+      <div className="br-flight-keys">
+        <span className="br-flight-seat">{f.seat === 0 ? "Pilot" : "Passenger"}</span>
+        {f.seat === 0 ? (
+          <>
+            <span>
+              <kbd>W</kbd>
+              <kbd>S</kbd> throttle
+            </span>
+            <span>
+              <kbd>A</kbd>
+              <kbd>D</kbd> roll
+            </span>
+            <span>
+              <kbd>Mouse</kbd> pitch
+            </span>
+            <span>
+              <kbd>Q</kbd>
+              <kbd>R</kbd> rudder
+            </span>
+            <span>
+              <kbd>G</kbd> flaps
+            </span>
+            <span>
+              <kbd>Space</kbd> brakes
+            </span>
+            <span>
+              <kbd>F</kbd> engine
+            </span>
+          </>
+        ) : (
+          f.canTakeControls && (
+            <span>
+              <kbd>F</kbd> take the controls
+            </span>
+          )
+        )}
+        <span>
+          <kbd>C</kbd> {f.camera.toLowerCase()} camera
+        </span>
+        <span>
+          <kbd>Alt</kbd> look
+        </span>
+        <span className={f.exit === "unsafe" || f.exit === "slow" ? "unsafe" : ""}>
+          <kbd>E</kbd> {exit.toLowerCase()}
         </span>
       </div>
     </div>

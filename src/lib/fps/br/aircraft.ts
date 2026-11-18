@@ -666,3 +666,87 @@ export function seatAt(a: Aircraft, seat: 0 | 1) {
   const r = toWorld(a, SEATS[seat]);
   return { x: a.x + r[0], y: a.y + r[1], z: a.z + r[2] };
 }
+
+// ------------------------------------------------------------------ the wire
+
+const ENGINE_CODES = ["off", "starting", "running", "dead"] as const;
+/**
+ * The aircraft's row (aircraft.ts Aircraft, read by aircraftFromRow): [x, y, z, qx, qy, qz, qw,
+ * vx, vy, vz, wx, wy, wz, engine (ENGINE_CODES), the starter's server ms, rpm, throttle, fuel
+ * (s), flap lever, flap travel, elevator, ailerons, rudder, health, gear harm, flags (1 on the
+ * ground, 2 destroyed, 4 in the water, 8 brakes), pilot seat, passenger seat (−1 empty)]. Full
+ * precision where the pilot's prediction resumes from it.
+ */
+export function aircraftRow(a: Aircraft) {
+  const r = (n: number, k: number) => Math.round(n * k) / k;
+  return [
+    r(a.x, 1000),
+    r(a.y, 1000),
+    r(a.z, 1000),
+    r(a.qx, 1e6),
+    r(a.qy, 1e6),
+    r(a.qz, 1e6),
+    r(a.qw, 1e6),
+    r(a.vx, 1000),
+    r(a.vy, 1000),
+    r(a.vz, 1000),
+    r(a.wx, 1e4),
+    r(a.wy, 1e4),
+    r(a.wz, 1e4),
+    ENGINE_CODES.indexOf(a.engine),
+    a.startAt,
+    r(a.rpm, 1e4),
+    r(a.throttle, 1e4),
+    r(a.fuel, 100),
+    a.flaps,
+    r(a.flap, 1e4),
+    r(a.elev, 1e4),
+    r(a.ail, 1e4),
+    r(a.rud, 1e4),
+    r(a.health, 10),
+    r(a.gear, 1e4),
+    (a.grounded ? 1 : 0) + (a.destroyed ? 2 : 0) + (a.wet ? 4 : 0) + (a.brake ? 8 : 0),
+    a.pilot,
+    a.passenger,
+  ];
+}
+/** The client's copy of the aircraft from its row (the inverse of aircraftRow). */
+export function aircraftFromRow(row: readonly number[], into?: Aircraft): Aircraft {
+  const a = into ?? ({ id: 0, maxHealth: AIRCRAFT.health } as Aircraft);
+  const f = row[25] ?? 0;
+  Object.assign(a, {
+    x: row[0],
+    y: row[1],
+    z: row[2],
+    qx: row[3],
+    qy: row[4],
+    qz: row[5],
+    qw: row[6],
+    vx: row[7],
+    vy: row[8],
+    vz: row[9],
+    wx: row[10],
+    wy: row[11],
+    wz: row[12],
+    engine: ENGINE_CODES[row[13] ?? 0] ?? "off",
+    startAt: row[14],
+    rpm: row[15],
+    throttle: row[16],
+    fuel: row[17],
+    flaps: (row[18] ?? 0) as 0 | 1 | 2,
+    flap: row[19],
+    elev: row[20],
+    ail: row[21],
+    rud: row[22],
+    health: row[23],
+    gear: row[24],
+    grounded: (f & 1) !== 0,
+    destroyed: (f & 2) !== 0,
+    wet: (f & 4) !== 0,
+    brake: (f & 8) !== 0,
+    pilot: row[26],
+    passenger: row[27],
+  });
+  a.maxHealth = AIRCRAFT.health;
+  return a;
+}

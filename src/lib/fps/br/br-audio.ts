@@ -1,3 +1,4 @@
+import { AIRCRAFT_SAMPLES, createAircraftAudio, type AircraftSound } from "./aircraft-audio";
 import { grenadeSamples, GRENADE_CUES, type GrenadeCue } from "../grenades/grenade-audio";
 /**
  * Battle royale sounds: the 1v1/5v5 gun recordings and the owner's battle royale shots
@@ -63,11 +64,14 @@ const FILES: Record<
   | "waves"
   | "snow"
   | "seagulls"
-  | keyof typeof VEHICLE_SAMPLES,
+  | keyof typeof VEHICLE_SAMPLES
+  | keyof typeof AIRCRAFT_SAMPLES,
   string
 > = {
   // Vehicle buffers share the loading/decode cache with weapons and footsteps.
   ...VEHICLE_SAMPLES,
+  // The owner's three aircraft recordings (2026-11-17, ATTRIBUTION.md, aircraft-audio.ts).
+  ...AIRCRAFT_SAMPLES,
   ak47: "ak47-reference-v1.wav",
   "ak47-s": "br-ak47-silenced-v3.wav",
   m4: "br-m4-v2.wav",
@@ -234,6 +238,7 @@ export function createBrAudio(base: string) {
   }
   const listener = { x: 0, y: 0, z: 0, yaw: 0 };
   let vehicleAudio: ReturnType<typeof createVehicleAudio> | undefined;
+  let aircraftAudio: ReturnType<typeof createAircraftAudio> | undefined;
   let reloadVoice: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let parachuteOpen = false;
   let parachuteSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
@@ -598,6 +603,16 @@ export function createBrAudio(base: string) {
       vehicleAudio ??= createVehicleAudio(c, master, (key) => buffers.get(key));
       vehicleAudio.update(vehicle, throttle);
     },
+    /**
+     * The aircraft's engine (aircraft-audio.ts): every frame, the aircraft as drawn (null: none),
+     * whether this player is aboard, and the server's clock (the starter's).
+     */
+    aircraft(a: AircraftSound | null, inside: boolean, serverNow: number) {
+      const c = context();
+      if (!c || !master) return;
+      aircraftAudio ??= createAircraftAudio(c, master, (key) => buffers.get(key));
+      aircraftAudio.update(a, inside, listener, serverNow);
+    },
     grenade(kind: GrenadeCue, at: [number, number, number] | null = null) {
       context();
       const cue = GRENADE_CUES[kind];
@@ -659,6 +674,7 @@ export function createBrAudio(base: string) {
       if (disposed) return;
       disposed = true;
       vehicleAudio?.dispose();
+      aircraftAudio?.dispose();
       parachuteSound?.src.stop();
       windSound?.src.stop();
       parachuteSound = windSound = undefined;

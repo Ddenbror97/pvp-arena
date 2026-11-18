@@ -136,6 +136,9 @@ import { withPanes } from "./panes";
 import { createPaneRenderer } from "./pane-renderer";
 import { spec, stepVehicle, vehicleGap, VEHICLES, type Vehicle } from "./vehicles";
 import type { NadeEvent } from "./match";
+import { AircraftClient, boardable, flightHud, type FlightHud } from "./aircraft-client";
+import { createAircraftRenderer } from "./aircraft-renderer";
+import { withAircraft } from "./aircraft-world";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
 import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./attachment-fit";
@@ -266,6 +269,9 @@ export type BrView = {
   vehicles?: { rows: number[][]; gone: number[] };
   /** The vehicle you drive. */
   driving?: number;
+  /** The aircraft's row when it changed (aircraft.ts aircraftRow), and your seat in it. */
+  aircraft?: number[];
+  flying?: 0 | 1;
   /** Announced supply drops: [id, x, z, ground, at, landAt, looted, ...loot ids inside]. */
   drops?: number[][];
   /** Doors: every open id on the first view, then changes (id · 2 + open). */
@@ -279,7 +285,8 @@ export type BrPrompt = {
    * What E does: pick an item up, get into a vehicle, get out, open or close a door, take the
    * zip-line at Iron Peaks, get on a ladder, throw a rope down a wall from its roof's edge.
    */
-  kind?: "item" | "enter" | "exit" | "door" | "zip" | "ladder" | "lift" | "crate" | "rappel";
+  kind?:
+    "item" | "enter" | "exit" | "door" | "zip" | "ladder" | "lift" | "crate" | "rappel" | "board";
   id: number;
   name: string;
   rarity: string;
@@ -341,6 +348,8 @@ export type BrHud = {
     /** Tyres shot out. */
     flats: number;
   } | null;
+  /** In the aircraft: its instruments, your seat and what E / F would do (aircraft-client.ts). */
+  flight: FlightHud | null;
   /** Supply drops for the map: position and whether still falling. */
   drops: Array<{ x: number; z: number; falling: boolean }>;
   /**
@@ -845,6 +854,11 @@ export function createBrArena(
   const solid = () => solidView ?? island!.island.solid;
   /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
   let car: Vehicle | null = null;
+  /** The Island Airfield's aircraft: rows, your seat, the pilot's prediction and cameras. */
+  const flight = new AircraftClient();
+  let aircraftFx: ReturnType<typeof createAircraftRenderer> | null = null;
+  /** In a seat (a vehicle's or the aircraft's): no walking, no weapons. */
+  const seatedMe = () => !!car || flight.seat !== null;
   const nadeFx = createNadeRenderer(scene, (cue, at) => audio.grenade(cue, at));
   // A landed supply crate's green marker smoke, until someone takes from it (airdrop-smoke.ts).
   const dropSmoke = createAirdropSmoke(scene);
@@ -1088,7 +1102,7 @@ export function createBrArena(
     };
     out[0] = worn(o.carried % 256);
     out[1] = worn(Math.floor(o.carried / 256));
-    const busy = o.phase !== "ground" || o.vehicle >= 0;
+    const busy = o.phase !== "ground" || o.vehicle !== -1;
     const held = busy ? worn(o.gun + 1) : null;
     if (held) {
       if (!out[0]) out[0] = held;
@@ -1314,15 +1328,21 @@ export function createBrArena(
     applyGroundRange();
     loot = createLootRenderer(scene, island.loader, base);
     vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest, base);
+    aircraftFx = createAircraftRenderer(scene, island.loader, base);
     doorOpen = new Uint8Array(island.island.doors.doors.length);
     paneFx = createPaneRenderer(scene, island.island.panes);
     // The Tracker perk's footprints: one instanced draw, compiled now (never mid-fight).
     trackFx = createTrackerRenderer(scene);
     void renderer.compileAsync(trackFx.mesh, camera, scene).catch(() => {});
-    solidView = withDoors(
-      withPanes(island.island.solid, island.island.panes, paneFx.broken),
-      island.island.doors,
-      doorOpen,
+    // The aircraft is solid to you on foot (as on the server); seated, your own prediction and
+    // chase camera fly without it.
+    solidView = withAircraft(
+      withDoors(
+        withPanes(island.island.solid, island.island.panes, paneFx.broken),
+        island.island.doors,
+        doorOpen,
+      ),
+      () => (flight.seat === null ? flight.server : null),
     );
     doorsFx = createDoorRenderer(scene, island.island.doors, island.doorLook);
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
@@ -1369,6 +1389,7 @@ export function createBrArena(
       viewmodel.ready,
       audio.prepare(),
       vehiclesFx.ready,
+      aircraftFx.ready,
       attachmentsLoaded,
       gearLoaded,
       me.ready,
@@ -1490,7 +1511,7 @@ export function createBrArena(
         // grenades have no inspection).
         if (e.code === binds.inspect && !e.repeat) {
           if (knifeDrawn()) viewmodel?.knifeInspect();
-          else if (onFoot() && !car) viewmodel?.gunInspect(performance.now());
+          else if (onFoot() && !seatedMe()) viewmodel?.gunInspect(performance.now());
         }
       }
     }
@@ -1522,6 +1543,12 @@ export function createBrArena(
     const { dx, dy } = looker.take(now);
     if (!dx && !dy) return;
     if (!locked() || inventoryOpen || canopyLook.active) return looker.reset();
+    if (flight.seat !== null) {
+      // In the aircraft: the stick (the pilot) or the free look (Alt, or the passenger's).
+      if (flight.seat === 1) flight.look.held = true;
+      flight.mouse(dx, dy, sensitivity);
+      return;
+    }
     const scale = 1 / Math.max(1, currentZoom());
     // (No yaw wrap here: the island's prediction and the canopy camera follow yaw as it turns.)
     ({ yaw, pitch } = mouseLook(yaw, pitch, dx, dy, sensitivity * scale));
@@ -1559,8 +1586,8 @@ export function createBrArena(
       if (button === 2) nadeButtons.right = nadeButtons.tapRight = true;
       return;
     }
-    // Driving: the mouse steers the view only.
-    if (car) return;
+    // Driving or flying: the mouse steers the view (or the aircraft) only.
+    if (seatedMe()) return;
     if (button === 0) fireHeld = fireTapped = predictTap = true;
     if (button === 2) {
       if (macButtons && aimToggled && aimHeld) {
@@ -1597,7 +1624,8 @@ export function createBrArena(
     if (!locked() || inventoryOpen || !Number.isFinite(e.deltaY) || e.deltaY === 0) return;
     e.preventDefault();
     const now = performance.now();
-    if (now - lastWheel < 150 || !kit || kit.dead || car || !onFoot() || nadeHands.busy) return;
+    if (now - lastWheel < 150 || !kit || kit.dead || seatedMe() || !onFoot() || nadeHands.busy)
+      return;
     lastWheel = now;
     const order: Array<0 | 1 | 2 | 3 | "he" | "smoke" | "fire"> = [
       ...(kit.guns[0] ? ([0] as const) : []),
@@ -1707,7 +1735,7 @@ export function createBrArena(
     }
     return povGunCache.gun;
   }
-  const onFoot = () => body.phase === "ground" || body.phase === "swim";
+  const onFoot = () => flight.seat === null && (body.phase === "ground" || body.phase === "swim");
   /** On the climbing rope (a "ladder" whose climb is the rope's: ladders.ts). */
   const onRope = () =>
     body.phase === "ladder" && !!island && !!ladders(island.hf)[body.ladder?.id ?? -1]?.rope;
@@ -1841,6 +1869,64 @@ export function createBrArena(
       }
     }
     nadeButtons.tapLeft = nadeButtons.tapRight = false;
+    // In the aircraft (aircraft-client.ts): the keys are its controls. E gets out (the server
+    // refuses an unsafe exit), F the engine (or, as the passenger with the pilot's seat empty,
+    // moving over to it), G the flaps, C the camera, Alt held looks around.
+    if (flight.seat !== null) {
+      for (const c of [binds.primary, binds.secondary, binds.pistol, binds.knife, binds.grenade])
+        edges.delete(c);
+      if (edge(binds.interact)) sendAct({ act: "exit" });
+      if (edge(binds.inspect)) {
+        if (flight.seat === 0) sendAct({ act: "engine" });
+        else if (flight.server && flight.server.pilot < 0) sendAct({ act: "seat" });
+      }
+      if (edge(binds.flaps) && flight.seat === 0) flight.nextFlaps();
+      if (edge(binds.crouch)) flight.camera = (flight.camera + 1) % 3;
+      edges.delete(binds.reload);
+      edges.delete(binds.jump);
+      flight.look.held = flight.seat === 1 || (keys.has(binds.walk) && !inventoryOpen);
+      const wire =
+        flight.seat === 0
+          ? flight.steer(
+              inventoryOpen
+                ? {
+                    throttleUp: false,
+                    throttleDown: false,
+                    rollLeft: false,
+                    rollRight: false,
+                    rudderLeft: false,
+                    rudderRight: false,
+                    brake: false,
+                  }
+                : {
+                    throttleUp: keys.has(binds.forward),
+                    throttleDown: keys.has(binds.back),
+                    rollLeft: keys.has(binds.left),
+                    rollRight: keys.has(binds.right),
+                    rudderLeft: keys.has(binds.dive),
+                    rudderRight: keys.has(binds.reload),
+                    brake: keys.has(binds.jump),
+                  },
+              TICK_MS / 1000,
+            )
+          : null;
+      return {
+        forward: 0,
+        strafe: 0,
+        yaw,
+        pitch,
+        jump: flight.seat === 0 && keys.has(binds.jump) && !inventoryOpen,
+        crouch: false,
+        sprint: false,
+        walk: false,
+        jumpOut: false,
+        dive: false,
+        fire: false,
+        aim: false,
+        reload: false,
+        ...(wire ?? {}),
+      };
+    }
     const reload = edge(binds.reload);
     // Discrete actions: E picks up what the prompt shows; 5 medkit, 6 bandage (hotbar).
     const interactPressed = edge(binds.interact);
@@ -1852,6 +1938,7 @@ export function createBrArena(
     else if (interactPressed && body.phase === "rappel") sendAct({ act: "rappel" });
     else if (interactPressed && prompt) {
       if (prompt.kind === "exit") sendAct({ act: "exit" });
+      else if (prompt.kind === "board") sendAct({ act: "board" });
       else if (prompt.kind === "enter") sendAct({ act: "enter", id: prompt.id });
       else if (prompt.kind === "zip") {
         // Once per press: the server validates and starts the ride (a held key does not repeat).
@@ -1902,8 +1989,8 @@ export function createBrArena(
       ...(canopyLook.active ? { canopyYaw: canopyLook.course } : {}),
       // Never from the driver's seat (the server refuses it too; owner, 2026-11-11: shots and
       // tracers came out of a car while driving).
-      fire: armed && (fireHeld || tapped) && onFoot() && !car,
-      aim: armed && (aimHeld || stab) && body.phase === "ground" && !car,
+      fire: armed && (fireHeld || tapped) && onFoot() && !seatedMe(),
+      aim: armed && (aimHeld || stab) && body.phase === "ground" && !seatedMe(),
       reload,
       ...(slot !== undefined ? { slot } : {}),
     };
@@ -1911,7 +1998,7 @@ export function createBrArena(
 
   /** The Karambit is in the hand: on foot, alive, no gun drawn, no grenade up, not driving. */
   function knifeDrawn() {
-    return !!kit && !kit.dead && kit.active === -1 && onFoot() && !nadeHand && !car;
+    return !!kit && !kit.dead && kit.active === -1 && onFoot() && !nadeHand && !seatedMe();
   }
   /** Our own swing at once (animation and sound); the server decides the hit, same gates. */
   function predictKnife(server: number, attack: "slash" | "stab") {
@@ -2175,6 +2262,22 @@ export function createBrArena(
     }
     loot?.apply(view.loot);
     vehiclesFx?.apply(view.vehicles, now);
+    {
+      const was = flight.seat;
+      flight.apply(view.aircraft, view.flying, view.tick * TICK_MS);
+      if (was === null && flight.seat !== null) {
+        // In: nothing held over from on foot; the pilot's engine starts on boarding (owner,
+        // 2026-11-17: the start-up "when player have just entered the airplane"). F turns it
+        // off and on again after.
+        fireHeld = fireTapped = predictTap = aimHeld = false;
+        putAwayNade();
+        const a = flight.server;
+        if (flight.seat === 0 && a && a.engine === "off" && a.fuel > 0 && !flight.autoStarted) {
+          flight.autoStarted = true;
+          sendAct({ act: "engine" });
+        }
+      }
+    }
     doorsFx?.apply(view.doors, doorOpen);
     // Panes shot out (all broken ones on the first view; new breaks with shards and the sound).
     if (view.tracks) trackFx?.apply(view.tracks, now);
@@ -2269,7 +2372,10 @@ export function createBrArena(
     if (y.lift) body.lift = { ...y.lift };
     else delete body.lift;
     while (pending.length && pending[0]!.seq <= y.seq) pending.shift();
-    if (car && island) {
+    if (flight.seat !== null && island) {
+      // Flying: the pilot replays the unacknowledged inputs on the server's aircraft.
+      flight.reconcile(solid(), island.meta, pending as never);
+    } else if (car && island) {
       // Driving: replay the unacknowledged inputs on the server's vehicle state.
       const others = vehiclesFx!.asVehicles();
       for (const p of pending) stepVehicle(solid(), island.meta, car, p.input, TICK_MS, others);
@@ -2446,7 +2552,8 @@ export function createBrArena(
       );
       pending.push({ seq, input, clock });
       while (pending.length > 90) pending.shift();
-      if (car)
+      if (flight.seat !== null) flight.predict(solid(), island.meta, input as never, clock);
+      else if (car)
         stepVehicle(solid(), island.meta, car, input, TICK_MS, vehiclesFx?.asVehicles() ?? []);
       else if (
         (latest.phase !== "waiting" && latest.phase !== "starting") ||
@@ -2538,7 +2645,13 @@ export function createBrArena(
           }
       audio.setShore((1 - smooth(SHORE_NEAR_M, SHORE_FAR_M, shoreAt)) * (inland ? 0.7 : 1));
     }
-    if ((fireHeld || predictTap) && !inventoryOpen && locked() && body.phase === "ground" && !car)
+    if (
+      (fireHeld || predictTap) &&
+      !inventoryOpen &&
+      locked() &&
+      body.phase === "ground" &&
+      !seatedMe()
+    )
       predictShot(now, server, predictTap);
     // Karambit: left slashes, right stabs; held buttons repeat at the cooldown, as on the server.
     if ((fireHeld || predictTap || aimHeld || predictStab) && !inventoryOpen && locked())
@@ -2585,6 +2698,17 @@ export function createBrArena(
     trackFx?.update(now);
     // Others, interpolated on the server's clock, behind it by this connection's delay.
     const t = remoteTimeline.sample(now, dtMs);
+    // The aircraft: the pilot's prediction, or everyone else's interpolation on the same clock.
+    const plane3d = flight.sample(t, accumulator, dtMs);
+    aircraftFx?.update(plane3d, dtMs, camera.position, now);
+    audio.aircraft(
+      plane3d && {
+        ...plane3d,
+        stallWarn: flight.seat !== null && !!island && flightHud(solid(), plane3d, 0, 0).stall,
+      },
+      flight.seat !== null && !kit?.dead,
+      serverClock(),
+    );
     let a = buffer[0],
       b = buffer[buffer.length - 1];
     for (let i = 0; i + 1 < buffer.length; i++)
@@ -2686,7 +2810,7 @@ export function createBrArena(
     {
       const seat = kit?.dead ? latest?.watch?.seat : undefined;
       const w = seat !== undefined ? others.find((o) => o.seat === seat) : undefined;
-      if (w && w.vehicle < 0 && POV_PHASES.has(w.phase)) {
+      if (w && w.vehicle === -1 && POV_PHASES.has(w.phase)) {
         povSeat = w.seat;
         w.occluded = true;
       }
@@ -2808,7 +2932,11 @@ export function createBrArena(
         slot.rappelMotion.vest = vest;
         // Driving: sat in the seat, hands on the wheel or the bars (no gun).
         const seated =
-          o.vehicle >= 0 && o.phase === "ground" ? vehiclesFx?.seatRider(o.vehicle, root) : null;
+          o.vehicle >= 0 && o.phase === "ground"
+            ? vehiclesFx?.seatRider(o.vehicle, root)
+            : o.vehicle <= -2 && o.phase === "ground"
+              ? aircraftFx?.seatRider((-2 - o.vehicle) as 0 | 1, root)
+              : null;
         if (seated) {
           slot.actor.update(dtMs, now, 0, true, false, {
             seated,
@@ -2983,7 +3111,7 @@ export function createBrArena(
         continue;
       }
       // Far away in a vehicle: inside it, nothing to draw.
-      if (ground < MAX_PLAYERS && o.vehicle < 0) {
+      if (ground < MAX_PLAYERS && o.vehicle === -1) {
         const lying = o.phase === "freefall" || o.phase === "dead";
         q.setFromAxisAngle(horizontalAxis, lying ? -Math.PI / 2 : 0);
         m4.compose(o.pos, q, one);
@@ -2997,7 +3125,7 @@ export function createBrArena(
     // You, as drawn this frame: the predicted body plus the elapsed part of the next step.
     // (The same condition as the fixed step: before take-off only the warm-up walks.)
     const stepping =
-      !car &&
+      !seatedMe() &&
       ((latest.phase !== "waiting" && latest.phase !== "starting") ||
         body.phase === "ground" ||
         body.phase === "swim");
@@ -3054,7 +3182,7 @@ export function createBrArena(
       fog.far =
         view.fog[1] + (Math.min(view.far * 0.97, view.fog[1] * 1.3) - view.fog[1]) * airClear;
     }
-    const canopyFp = underCanopy && chuteFirstPerson && !car;
+    const canopyFp = underCanopy && chuteFirstPerson && !seatedMe();
     const groundBelow = solid().hf.heightAt(px, pz);
     const agl = py - groundBelow;
     // Toggles: the turning side pulled, both half down braking (S), both for the landing flare.
@@ -3234,7 +3362,11 @@ export function createBrArena(
     )
       pitch += (0 - pitch) * (1 - Math.exp(-dtMs / 110));
     // Driving: your operator sat in the seat (the camera is always third person there).
-    const mySeated = car ? (vehiclesFx?.seatRider(car.id, me.root) ?? null) : null;
+    const mySeated = car
+      ? (vehiclesFx?.seatRider(car.id, me.root) ?? null)
+      : flight.seat !== null && !kit?.dead
+        ? (aircraftFx?.seatRider(flight.seat, me.root) ?? null)
+        : null;
     me.root.visible = (airborne && !canopyFp) || !!mySeated || zipShow || ropeShow || rappelShow;
     if (mySeated) {
       me.update(dtMs, now, 0, true, false, { seated: mySeated, primary: "none", weapon: "rifle" });
@@ -3398,7 +3530,16 @@ export function createBrArena(
       }
       risers.geometry.attributes["position"]!.needsUpdate = true;
     }
-    if (car && carPose) {
+    if (flight.seat !== null && plane3d && !kit?.dead) {
+      // Flying (owner's spec, 2026-11-17): third person only, a chase camera behind and above
+      // the aircraft (C: chase, wide, close), Alt to look around it, out of walls and the ground.
+      const c = flight.chase(solid(), plane3d, dtMs);
+      camera.position.set(c.x, c.y, c.z);
+      camera.lookAt(c.lookX, c.lookY, c.lookZ);
+      // The head turns where the view looks (others see it), the shots stay off.
+      yaw = c.yaw;
+      chaseCamSet = false;
+    } else if (car && carPose) {
       // Driving (owner, 2026-11-08: "not FPS while driving", "camera angle above the car and
       // bike"): always third person, a chase camera above and behind looking down on the
       // vehicle, as in PUBG/Warzone. The mouse swings it around (and tilts it, within limits);
@@ -3495,7 +3636,7 @@ export function createBrArena(
       const recoil = aimRecoil.sample(server, dtMs);
       camera.rotation.set(clampPitch(pitch + recoil.pitch), yaw + recoil.yaw, 0, "YXZ");
     }
-    if (zipBlend > 0 && !car) {
+    if (zipBlend > 0 && !seatedMe()) {
       // The zip-line's elevated follow view (owner's spec §5): above and behind the rider, looking
       // down at them and the line ahead; the mouse orbits it (the ride never changes). Further
       // back with the speed, closer for the landing; pulled in where the ground or a structure
@@ -3544,7 +3685,7 @@ export function createBrArena(
       camera.position.lerpVectors(zipFpPos, camera.position, k);
       camera.quaternion.copy(zipFpQ.slerp(camera.quaternion, k));
     }
-    if (ropeBlend > 0 && !car && zipBlend === 0 && island) {
+    if (ropeBlend > 0 && !seatedMe() && zipBlend === 0 && island) {
       // The climbing rope's orbit camera (owner's spec §4): one smooth third-person controller
       // round the climber. By default above and behind, out from the rock (3.2 m back, 2.3 m
       // up, looking down 35° at you, the rope and the face above); the mouse orbits it all the
@@ -3592,7 +3733,7 @@ export function createBrArena(
       camera.quaternion.copy(ropeFpQ.slerp(camera.quaternion, k));
     }
     rappelRopes?.end();
-    if (rappelBlend > 0 && !car && island && myRappel.on) {
+    if (rappelBlend > 0 && !seatedMe() && island && myRappel.on) {
       // The rappel's camera: above you and out from the wall, looking down past you at the
       // wall below and the floor you are going to (2.4 m out, 3.1 m up by default). The mouse
       // orbits it (round to either side, lower behind you, or right overhead); it never
@@ -3792,7 +3933,7 @@ export function createBrArena(
         ? povGunFor(pov.gun, pov.optic, pov.muzzle)
         : null;
     povKnife = !!pov && pov.gun < 0 && pov.phase === "ground";
-    const gun = pov ? povGunNow : onFoot() && !nadeHand && !car ? activeGun() : null;
+    const gun = pov ? povGunNow : onFoot() && !nadeHand && !seatedMe() ? activeGun() : null;
     const reloadUntil = pov ? (latest.watch?.reload ?? 0) : (kit?.reloadUntil ?? 0);
     const aiming = pov
       ? !!gun && latest.watch?.aim === 1 && pov.phase === "ground"
@@ -3878,7 +4019,7 @@ export function createBrArena(
     if (viewmodel) {
       viewmodel.grenade(
         dtMs,
-        !pov && nadeHand && onFoot() && !car
+        !pov && nadeHand && onFoot() && !seatedMe()
           ? nadeHands.view(
               performance.now(),
               keys.has(binds.sprint)
@@ -3975,7 +4116,27 @@ export function createBrArena(
           color: "#9fbf7a",
           detail: "Exit",
         };
-      } else if (onFoot() && !kit?.dead && vehiclesFx) {
+      }
+      // The aircraft's door (aircraft-world.ts nearDoor): board it, pilot's seat first.
+      const seatFree =
+        !prompt && onFoot() && body.phase === "ground" && !kit?.dead && flight.hasShown
+          ? boardable(flight.shown, body.x, body.y, body.z)
+          : null;
+      if (seatFree)
+        prompt = {
+          kind: "board",
+          id: -2,
+          name: "Cessna 172SP",
+          rarity: "",
+          color: "#9fbf7a",
+          detail:
+            seatFree === "full"
+              ? "Both seats taken"
+              : seatFree === "pilot"
+                ? "Fly · pilot's seat"
+                : "Ride · passenger's seat",
+        };
+      else if (!prompt && onFoot() && !kit?.dead && vehiclesFx) {
         for (const r of vehiclesFx.rows()) {
           const k = kindOfRow(r);
           if (r[12] === 1 || r[11]! >= 0) continue;
@@ -4150,7 +4311,7 @@ export function createBrArena(
     // rope down it. Asked five times a second, standing still on a roof.
     if (now - rappelAsked > 200) {
       rappelAsked = now;
-      const can = !!island && body.phase === "ground" && body.grounded && !car && !kit?.dead;
+      const can = !!island && body.phase === "ground" && body.grounded && !seatedMe() && !kit?.dead;
       // (Not asked again where nothing has changed: standing at an edge costs nothing.)
       if (!can) {
         rappelHere = null;
@@ -4168,7 +4329,7 @@ export function createBrArena(
         rappelHere = rappelSite(solid(), body.x, body.y, body.z, yaw, undefined, true);
       }
     }
-    if (loot && !prompt && rappelHere && body.phase === "ground" && !car && !kit?.dead)
+    if (loot && !prompt && rappelHere && body.phase === "ground" && !seatedMe() && !kit?.dead)
       prompt = {
         kind: "rappel",
         id: 0,
@@ -4184,7 +4345,7 @@ export function createBrArena(
         body.x,
         body.y,
         body.z,
-        body.phase === "ground" && body.grounded && !car && !kit?.dead,
+        body.phase === "ground" && body.grounded && !seatedMe() && !kit?.dead,
         keys.has(binds.walk) || body.crouched || !!kit?.heal,
         now,
       )
@@ -4277,7 +4438,7 @@ export function createBrArena(
       // Spectating in first person: the watched player's gun, on foot and not scoped.
       povGunNow || (povSeat >= 0 && povKnife)
         ? scopeUp || inventoryOpen
-        : !onFoot() || !!car || scopeUp || inventoryOpen || !!kit?.dead || rappelBlend > 0.05,
+        : !onFoot() || seatedMe() || scopeUp || inventoryOpen || !!kit?.dead || rappelBlend > 0.05,
     );
     sceneTarget?.present(sharpenPresent());
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
@@ -4448,6 +4609,10 @@ export function createBrArena(
           }
           return null;
         })(),
+        flight:
+          flight.seat !== null && flight.hasShown && !kit?.dead
+            ? flightHud(solid(), flight.shown, flight.seat, flight.camera)
+            : null,
         vehicle: car
           ? {
               name: spec(car.kind).name,

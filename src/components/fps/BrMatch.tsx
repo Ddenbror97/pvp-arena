@@ -31,6 +31,7 @@ import { BR_LOADING_IMAGE, warmBrLoadingImage } from "@/lib/fps/br/loading";
 import { TacticalMap } from "./TacticalMap";
 import {
   BrCanopyGauges,
+  BrFlight,
   BrAirdropAlert,
   BrCentre,
   BrEnd,
@@ -480,6 +481,7 @@ export function BrMatch() {
           )}
           <BrGasFx hud={hud} />
           <BrCanopyGauges hud={hud} />
+          <BrFlight hud={hud} />
           <BrEnd
             hud={hud}
             out={feed.out}
