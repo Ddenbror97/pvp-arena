@@ -16,9 +16,8 @@ export function openGames(data: DuelLobbyData | undefined, now: number): OpenGam
       room.opponent_id ||
       room.private ||
       !Number.isSafeInteger(room.stake) ||
-      room.stake <= 0 ||
+      room.stake < 100 ||
       room.stake > 5000 ||
-      !data.stakes.includes(room.stake) ||
       ![5, 9, 13].includes(room.best_of) ||
       !(Date.parse(room.expires_at) > now)
     )
