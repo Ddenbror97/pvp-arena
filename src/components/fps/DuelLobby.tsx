@@ -109,6 +109,7 @@ export function DuelLobby() {
   const wallet = useQuery({ ...walletQuery(userId), enabled: !!userId, retry: 1 });
   const [panel, setPanel] = useState<"games" | "create">("games");
   const [mode, setMode] = useState<StrikeMode>("duel");
+  const [createMode, setCreateMode] = useState<"duel" | "bomb" | "battle">("duel");
   const [stake, setStake] = useState(100);
   const format = 13;
   const [accepted, setAccepted] = useState(false);
@@ -599,12 +600,64 @@ export function DuelLobby() {
                     void run();
                   }}
                 >
+                  <section
+                    className="strike-create-section"
+                    aria-labelledby="strike-create-mode-title"
+                  >
+                    <h3 className="strike-create-section-title" id="strike-create-mode-title">
+                      <span>1</span> Choose a game mode
+                    </h3>
+                    <div className="strike-create-modes" role="group" aria-label="Cash game mode">
+                      <button
+                        type="button"
+                        className={`strike-create-mode${createMode === "duel" ? " is-selected" : ""}`}
+                        aria-pressed={createMode === "duel"}
+                        onClick={() => {
+                          setCreateMode("duel");
+                          change();
+                        }}
+                      >
+                        <Crosshair aria-hidden />
+                        <span className="strike-create-mode-copy">
+                          <strong>1v1 Duel</strong>
+                          <small>Human opponent · best of 13</small>
+                        </span>
+                        <span
+                          className={`strike-create-mode-status${data?.enabled && data.cash_enabled ? " is-available" : ""}`}
+                        >
+                          {lobby.isPending
+                            ? "Checking"
+                            : data?.enabled && data.cash_enabled
+                              ? "Available"
+                              : "Paused"}
+                        </span>
+                      </button>
+                      <button type="button" className="strike-create-mode" disabled>
+                        <Users aria-hidden />
+                        <span className="strike-create-mode-copy">
+                          <strong>5v5 Bomb Defusal</strong>
+                          <small>Team matches</small>
+                        </span>
+                        <span className="strike-create-mode-status">Coming soon</span>
+                      </button>
+                      <button type="button" className="strike-create-mode" disabled>
+                        <Crown aria-hidden />
+                        <span className="strike-create-mode-copy">
+                          <strong>Battle Royale</strong>
+                          <small>Project Island</small>
+                        </span>
+                        <span className="strike-create-mode-status">Coming soon</span>
+                      </button>
+                    </div>
+                  </section>
                   <fieldset className="strike-fieldset">
                     <legend>
-                      Entry per player <span>USD</span>
+                      2 · Select entry per player <span>USD</span>
                     </legend>
                     <div className="strike-stakes">
-                      {[...(data?.cash_enabled ? data.stakes : [])].map((amount) => (
+                      {[
+                        ...(data?.cash_enabled ? data.stakes.filter((value) => value > 0) : []),
+                      ].map((amount) => (
                         <button
                           key={amount}
                           type="button"
@@ -614,7 +667,7 @@ export function DuelLobby() {
                             change();
                           }}
                         >
-                          {amount === 0 ? "Practice" : duelMoney(amount)}
+                          {duelMoney(amount)}
                         </button>
                       ))}
                     </div>
@@ -627,9 +680,7 @@ export function DuelLobby() {
                     </p>
                   )}
                   <QuoteLine stake={stake} />
-                  <p className="strike-create-terms">
-                    Platform fee 5% · Best of 13, first to seven · sides switch after round six
-                  </p>
+                  <p className="strike-create-terms">Best of 13 · First to 7 · 5% platform fee</p>
                   <label className="strike-check strike-consent">
                     <input
                       type="checkbox"
@@ -672,7 +723,7 @@ export function DuelLobby() {
                         !!data?.mine
                       }
                     >
-                      {busy ? "Creating…" : `Create game · ${duelMoney(stake)}`}
+                      {busy ? "Creating…" : `Create 1v1 · ${duelMoney(stake)} per player`}
                       <ArrowRight size={16} />
                     </button>
                   ) : (

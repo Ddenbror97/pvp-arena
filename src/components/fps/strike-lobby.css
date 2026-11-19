@@ -854,6 +854,9 @@
 .strike-room-empty > svg {
   color: #bd8ce9;
 }
+.strike-room-loading > svg {
+  color: #c99bea;
+}
 .strike-room-empty h3 {
   margin: 0;
   font-size: 17px;
@@ -983,6 +986,102 @@
 /* The create form: stakes in a 3 × 2 grid, terms on two lines, rules folded away. */
 .strike-panel form .strike-fieldset {
   margin-bottom: 12px;
+}
+.strike-create-section {
+  margin: 0 0 16px;
+}
+.strike-create-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 9px;
+  color: #e9dff2;
+  font-size: 12px;
+  font-weight: 650;
+}
+.strike-create-section-title > span {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 1px solid #b76ce966;
+  border-radius: 50%;
+  color: #e2c3ff;
+  background: #994ce51c;
+  font-size: 10px;
+}
+.strike-create-modes {
+  display: grid;
+  gap: 6px;
+}
+.strike-create-mode {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 54px;
+  padding: 7px 10px;
+  border: 1px solid #ffffff18;
+  border-radius: 9px;
+  background: #ffffff04;
+  color: #ddd4e8;
+  text-align: left;
+  cursor: pointer;
+}
+.strike-create-mode > svg {
+  width: 17px;
+  height: 17px;
+  justify-self: center;
+  color: #ad91c8;
+}
+.strike-create-mode.is-selected {
+  border-color: #bd78fa;
+  background: linear-gradient(100deg, #983fe51b, #bd78fa0d);
+  box-shadow: inset 0 0 0 1px #bd78fa24;
+}
+.strike-create-mode.is-selected > svg {
+  color: #d7a9ff;
+}
+.strike-create-mode:disabled {
+  color: #968ba2;
+  background: #ffffff02;
+  cursor: not-allowed;
+}
+.strike-create-mode:disabled > svg {
+  color: #777080;
+}
+.strike-create-mode-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.strike-create-mode-copy strong {
+  overflow: hidden;
+  color: #f0eaf6;
+  font-size: 11px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.strike-create-mode-copy small {
+  color: #a99cb5;
+  font-size: 9px;
+  line-height: 1.3;
+}
+.strike-create-mode-status {
+  padding: 4px 6px;
+  border: 1px solid #ffffff14;
+  border-radius: 6px;
+  color: #a69aaf;
+  font-size: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.strike-create-mode-status.is-available {
+  border-color: #55bd9252;
+  background: #2b986415;
+  color: #8de0b6;
 }
 .strike-stakes {
   display: grid;
