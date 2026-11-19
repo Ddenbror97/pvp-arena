@@ -70,6 +70,8 @@ const renderer = new THREE.WebGLRenderer({
   powerPreference: "high-performance",
   reversedDepthBuffer: reversedDepth,
   logarithmicDepthBuffer: !reversedDepth,
+  // The foliage's mark for the sharpening (sharpen.ts markFoliage).
+  stencil: true,
 });
 setTextureQuality(renderer, tier);
 const sceneTarget = renderer.capabilities.reversedDepthBuffer

@@ -45,6 +45,29 @@ export const SHARPEN_WEIGHT_GLSL = /* glsl */ `
     return 1.0 - smoothstep(${SHARPEN.edge[0].toFixed(2)}, ${SHARPEN.edge[1].toFixed(2)}, range);
   }`;
 
+/**
+ * Foliage is left as it was drawn (owner, 2026-11-18: the trees' leaves "blinking" while
+ * running or driving, at 60–150 m). A leaf a pixel or less across is cut from its card with soft
+ * edges; a step moves it by a fraction of a pixel. The sharpening pushed each such pixel away
+ * from its neighbours, which inside a crown (leaf against leaf, the low contrast it sharpens
+ * fully) turned every fraction of a pixel into a flash: a third of the crowns' blinking
+ * (headless, 10 cm a frame past broadleafs 80 m off). The trees and the grass mark their pixels
+ * in the stencil (`markFoliage`), and the sharpening skips them. The canvas needs `stencil: true`.
+ * (A pixel of a nearer building drawn over a tree after it keeps the mark and goes unsharpened:
+ * a few pixels along the outline, the picture as it was before the pass.)
+ */
+export const FOLIAGE_STENCIL = 1;
+export function markFoliage(material: THREE.Material) {
+  material.stencilWrite = true;
+  material.stencilRef = FOLIAGE_STENCIL;
+  material.stencilFunc = THREE.AlwaysStencilFunc;
+  material.stencilZPass = THREE.ReplaceStencilOp;
+  material.stencilFail = THREE.KeepStencilOp;
+  material.stencilZFail = THREE.KeepStencilOp;
+  material.stencilWriteMask = FOLIAGE_STENCIL;
+  material.stencilFuncMask = FOLIAGE_STENCIL;
+}
+
 /** The player's or tester's switch: localStorage "br-sharpen" = "off" (never throws). */
 export function sharpenWanted(): boolean {
   try {
@@ -99,6 +122,15 @@ export function createSharpen(renderer: THREE.WebGLRenderer): Sharpen {
     depthTest: false,
     depthWrite: false,
     toneMapped: false,
+    // Not over foliage (markFoliage): those pixels keep the scene as it was drawn.
+    stencilWrite: true,
+    stencilRef: FOLIAGE_STENCIL,
+    stencilFuncMask: FOLIAGE_STENCIL,
+    stencilWriteMask: 0,
+    stencilFunc: THREE.NotEqualStencilFunc,
+    stencilFail: THREE.KeepStencilOp,
+    stencilZFail: THREE.KeepStencilOp,
+    stencilZPass: THREE.KeepStencilOp,
   });
   const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
   quad.frustumCulled = false;
