@@ -466,13 +466,12 @@ export function DuelLobby() {
                   key={value}
                   type="button"
                   role="tab"
-                  disabled={desktop === null || busy}
+                  disabled={busy}
                   id={`strike-tab-${value}`}
                   aria-controls={`strike-panel-${value}`}
                   aria-selected={panel === value}
                   onClick={() => {
                     setPanel(value);
-                    if (value === "create" && userId && desktop) warmArenaAssets();
                     setError(null);
                   }}
                 >
@@ -692,15 +691,19 @@ export function DuelLobby() {
                 </form>
               )}
             </div>
-            <div className="strike-practice-strip" aria-label="Free practice">
-              <h2>Free practice</h2>
+            <div className="strike-practice-strip" aria-label="Free game modes">
+              <h2>Free modes · no entry fee</h2>
               <div className="strike-practice-row">
                 <div className="strike-practice">
                   <Crosshair className="strike-practice-icon" aria-hidden />
-                  <h3>Solo</h3>
+                  <div className="strike-practice-copy">
+                    <h3>1v1</h3>
+                    <p>Practice vs bot</p>
+                  </div>
                   <button
                     type="button"
                     className="strike-secondary"
+                    aria-label="Play Now: 1v1 practice against a bot"
                     disabled={
                       busy ||
                       desktop !== true ||
@@ -708,12 +711,13 @@ export function DuelLobby() {
                       !data.practice_allowed ||
                       (!!data.mine && !data.mine.practice && data.mine.status !== "WAITING")
                     }
-                    onPointerEnter={() => {
-                      if (userId && desktop) warmArenaAssets();
-                    }}
                     onClick={() => void practice()}
                   >
-                    {data?.practice ? "Resume Practice" : "Practice vs Bot"}{" "}
+                    {data?.practice
+                      ? "Resume Practice"
+                      : desktop === false
+                        ? "Desktop only"
+                        : "Play Now"}{" "}
                     <ArrowRight size={16} />
                   </button>
                   {error && operation === "practice" && (
@@ -724,22 +728,31 @@ export function DuelLobby() {
                 </div>
                 <div className="strike-practice">
                   <CalendarDays className="strike-practice-icon" aria-hidden />
-                  <h3>Training</h3>
+                  <div className="strike-practice-copy">
+                    <h3>Plant the Bomb</h3>
+                    <p>Bomb Defusal</p>
+                  </div>
                   {desktop === true ? (
                     <button
                       type="button"
                       className="strike-secondary"
+                      aria-label="Play Now: Plant the Bomb practice"
                       disabled={busy}
                       onPointerEnter={warmBombLoadingImage}
                       onFocus={warmBombLoadingImage}
                       onClick={() => void bombPractice()}
                     >
-                      {operation === "bomb" && busy ? "Preparing map…" : "Practice Defuse the Bomb"}{" "}
+                      {operation === "bomb" && busy ? "Preparing map…" : "Play Now"}{" "}
                       <ArrowRight size={16} />
                     </button>
                   ) : (
-                    <button type="button" className="strike-secondary" disabled>
-                      Practice Defuse the Bomb <ArrowRight size={16} />
+                    <button
+                      type="button"
+                      className="strike-secondary"
+                      aria-label="Play Now: Plant the Bomb practice"
+                      disabled
+                    >
+                      {desktop === false ? "Desktop only" : "Play Now"} <ArrowRight size={16} />
                     </button>
                   )}
                 </div>
@@ -750,7 +763,10 @@ export function DuelLobby() {
                 )}
                 <div className="strike-practice">
                   <Crown className="strike-practice-icon" aria-hidden />
-                  <h3>Battle Royale</h3>
+                  <div className="strike-practice-copy">
+                    <h3>Battle Royale</h3>
+                    <p>Drop in and survive</p>
+                  </div>
                   {desktop === true && brAccess.data === true ? (
                     <Link
                       className="strike-secondary"
