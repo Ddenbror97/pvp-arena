@@ -70,6 +70,10 @@ cfg.vars = {
   VITE_SUPABASE_PROJECT_ID: envValue("VITE_SUPABASE_PROJECT_ID", dotenv) || supabaseProjectId,
   VITE_SUPABASE_PUBLISHABLE_KEY:
     envValue("VITE_SUPABASE_PUBLISHABLE_KEY", dotenv) || supabasePublishableKey,
+  // The site calls this match Worker for 1v1/5v5 admission. Keep it explicit in
+  // every production deployment so config replacement cannot silently remove it.
+  FPS_RUNTIME_ORIGIN:
+    envValue("FPS_RUNTIME_ORIGIN", dotenv) || "https://pvpspinarena-fps.pvpspinarena.workers.dev",
   BTCPAY_MIN_DEPOSIT_CENTS: envValue("BTCPAY_MIN_DEPOSIT_CENTS", dotenv) || "200",
   // Exact string "true" turns on the five-game PVP1 signup invite.
   GAME_SIGNUP_PROMO_ENABLED: "true",
