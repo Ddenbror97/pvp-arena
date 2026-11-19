@@ -15,6 +15,13 @@ import { AIRCRAFT, type Aircraft } from "./aircraft";
  * as the simulation's does, so the sound never runs ahead of the picture. Inside (pilot and
  * passenger) it plays centred and a little muffled, with the stall horn; outside it is placed
  * at the aircraft and heard far (a light aircraft carries over a kilometre).
+ *
+ * Outside, the level falls with the distance as a real engine's does (owner, 2026-11-18: "the
+ * airplane sound hears louder for other players higher if close, lower if longer distance"):
+ * the inverse-distance law from OUTSIDE.refM (full, and louder than before overhead), about a
+ * fifth at 100 m and a twentieth at 400 m, still there at a kilometre; the far sound also loses
+ * its top (the air takes the high frequencies first). Before, the fall-off was linear over the
+ * whole 1.4 km: at 300 m the engine was still four fifths as loud as overhead.
  */
 export const AIRCRAFT_SAMPLES = {
   planeStart: "br-plane-start-v1.mp3",
@@ -27,8 +34,24 @@ const LOOPS = {
 } as const;
 /** The start-up's catch (s into the file) and its length. */
 const START = { catch: AIRCRAFT.startS, length: 11.9 } as const;
-/** Heard this far outside (m): the panner's linear fall-off. */
+/** Heard this far outside (m). */
 export const AIRCRAFT_HEAR_M = 1400;
+/**
+ * Outside: the panner's inverse-distance law (full within `refM`, then refM / (refM +
+ * rolloff · (d − refM))), the level overhead, and the air's low-pass (Hz at the aircraft, the
+ * floor far off, and the distance over which it falls).
+ */
+export const OUTSIDE = {
+  refM: 25,
+  rolloff: 1.2,
+  gain: 1.5,
+  lowpass: { near: 20000, far: 1400, overM: 380 },
+} as const;
+/** The outside level at `d` m (the panner's own sum), for tests and tuning. */
+export function outsideLevel(d: number) {
+  const r = Math.max(d, OUTSIDE.refM);
+  return (OUTSIDE.gain * OUTSIDE.refM) / (OUTSIDE.refM + OUTSIDE.rolloff * (r - OUTSIDE.refM));
+}
 
 export type AircraftSound = Pick<
   Aircraft,
@@ -51,10 +74,10 @@ export function createAircraftAudio(
   cabin.frequency.value = 20000;
   const panner = context.createPanner();
   panner.panningModel = "equalpower";
-  panner.distanceModel = "linear";
-  panner.refDistance = 12;
+  panner.distanceModel = "inverse";
+  panner.refDistance = OUTSIDE.refM;
   panner.maxDistance = AIRCRAFT_HEAR_M;
-  panner.rolloffFactor = 1;
+  panner.rolloffFactor = OUTSIDE.rolloff;
   bus.connect(cabin);
   let placed: "in" | "out" | null = null;
   const route = (inside: boolean) => {
@@ -131,6 +154,7 @@ export function createAircraftAudio(
       }
       route(inside);
       const t = context.currentTime;
+      let lowpass = 3800;
       if (!inside) {
         const dx = a.x - listener.x,
           dy = a.y - listener.y,
@@ -140,8 +164,11 @@ export function createAircraftAudio(
         panner.positionX.setTargetAtTime(dx * cos - dz * sin, t, 0.03);
         panner.positionY.setTargetAtTime(dy, t, 0.03);
         panner.positionZ.setTargetAtTime(dx * sin + dz * cos, t, 0.03);
+        const { near, far, overM } = OUTSIDE.lowpass;
+        lowpass = far + (near - far) * Math.exp(-Math.hypot(dx, dy, dz) / overM);
       }
-      cabin.frequency.setTargetAtTime(inside ? 3800 : 20000, t, 0.1);
+      bus.gain.setTargetAtTime(inside ? 1 : OUTSIDE.gain, t, 0.1);
+      cabin.frequency.setTargetAtTime(lowpass, t, 0.1);
       // The start-up from the starter's moment: late joiners hear the rest of it.
       const sinceStart = (serverNow - a.startAt) / 1000;
       if (
