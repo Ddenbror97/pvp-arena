@@ -94,8 +94,19 @@ export const AIRCRAFT = {
     [-1.55, 0.2, 5.1],
     [1.55, 0.2, 5.1],
   ] as const,
-  /** Touchdown sink rate (m/s): above `hard` the gear is hurt, above `crash` it gives way. */
-  touchdown: { hard: 4, crash: 8 },
+  /**
+   * Touchdown sink rate (m/s): above `hard` the gear is hurt, above `crash` it gives way. A game
+   * landing is flown with keys and a mouse, not a yoke and a feel for the flare: 4 and 8 (the
+   * book's gear) made a firm arrival a write-off (owner, 2026-11-18: "way to sensitive to hard
+   * landings (impossible to land)"). A sturdy fixed gear: a 6 m/s arrival only shakes it.
+   */
+  touchdown: { hard: 6, crash: 12 },
+  /**
+   * Scraping the ground with the tail, a wing tip or the belly: harm from the speed into the
+   * ground, and from the speed along it only beyond `free` m/s (a tail strike in the flare or a
+   * belly slide at landing speed is not a crash; a nose-first dive into a field is).
+   */
+  scrape: { free: 32, share: 0.35 },
   /** Control surfaces' travel rates (per s) and the nose wheel's lock (rad). */
   surfaceRate: 3.5,
   throttleRate: 0.6,
@@ -289,9 +300,21 @@ export function newAircraft(
 }
 
 /**
+ * Nobody at the controls (owner, 2026-11-18: "when player drives it in the air and jumps out E
+ * the airplane continue drive, it should crash"). A light aircraft trimmed for cruise flies on
+ * by itself, and with the stick left neutral and the throttle where it was, ours did, until its
+ * fuel ran out minutes later. Abandoned, the throttle comes back to idle and the controls go
+ * slack: the nose drops and a wing goes down into a tightening spiral, as a real one does once
+ * its trim is off, and it comes down within seconds (to the ground at 40–60 m/s from 300 m up).
+ * On the ground (its pilot killed while taxiing) it brakes to a stop.
+ */
+export const ABANDONED = { thr: 0, elev: -0.3, ail: 0.45, rud: 0.25 } as const;
+
+/**
  * One fixed step (`dtMs`, the match's tick) of the aircraft. `input` is its pilot's (null: no
- * pilot, the controls left neutral, the throttle where it was). Returns the impact speed of a
- * crash or a hard touchdown this step (0: none), for damage to the occupants and effects.
+ * input this step, the controls left neutral, the throttle where it was). `abandoned`: no pilot
+ * aboard (ABANDONED). Returns the impact speed of a crash or a hard touchdown this step (0:
+ * none), for damage to the occupants and effects.
  */
 export function stepAircraft(
   world: StaticWorld,
@@ -300,10 +323,19 @@ export function stepAircraft(
   input: FlightInput | null,
   now: number,
   dtMs: number,
+  abandoned = false,
 ): number {
   a.impact = 0;
   const dt = dtMs / 1000;
   const c = input ?? { ...NEUTRAL, thr: a.throttle, flaps: a.flaps };
+  if (abandoned) {
+    c.thr = ABANDONED.thr;
+    if (!a.grounded) {
+      c.elev = ABANDONED.elev;
+      c.ail = ABANDONED.ail;
+      c.rud = ABANDONED.rud;
+    } else c.brake = true; // (an idling engine alone would creep it along for ever)
+  }
   if (a.destroyed) {
     // A wreck: its controls are dead, it falls and slides to a stop.
     c.elev = c.ail = c.rud = c.thr = 0;
@@ -611,7 +643,8 @@ function collide(world: StaticWorld, a: Aircraft, ox: number, oy: number, oz: nu
     const ground = world.hf.heightAt(nx, nz);
     if (ny < ground) {
       const sp = Math.hypot(a.vx, a.vy, a.vz);
-      worst = Math.max(worst, Math.max(0, -a.vy) + sp * 0.35);
+      const { free, share } = AIRCRAFT.scrape;
+      worst = Math.max(worst, Math.max(0, -a.vy) + Math.max(0, sp - free) * share);
       a.y += ground - ny;
       if (a.vy < 0) a.vy = 0;
       // Scraping: friction on the ground.
@@ -649,10 +682,13 @@ function collide(world: StaticWorld, a: Aircraft, ox: number, oy: number, oz: nu
   return worst;
 }
 
-/** Harm from an impact (m/s) to the aircraft: none below 4 m/s, everything at 35 m/s. */
+/**
+ * Harm from an impact (m/s) to the aircraft: none below 6 m/s (a firm landing), a twentieth at
+ * 8, a third at 15, everything at about 24 (a slam, a dive into the ground, a wall).
+ */
 export function impactDamage(speed: number) {
-  if (speed < 4) return 0;
-  return Math.min(AIRCRAFT.health * 1.5, ((speed - 4) / 31) ** 1.6 * AIRCRAFT.health * 1.2);
+  if (speed < 6) return 0;
+  return Math.min(AIRCRAFT.health * 1.5, ((speed - 6) / 19) ** 1.6 * AIRCRAFT.health * 1.2);
 }
 
 /** Height above the ground under the aircraft (m), for exits and the HUD. */

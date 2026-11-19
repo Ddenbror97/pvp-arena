@@ -280,7 +280,8 @@ describe("BR aircraft in the match", () => {
   it("a crash wrecks it and kills those aboard; a hard landing only shakes them", () => {
     expect(occupantHarm(3)).toBe(0);
     expect(occupantHarm(6)).toBe(0);
-    expect(occupantHarm(12)).toBeGreaterThan(20);
+    expect(occupantHarm(8)).toBe(0);
+    expect(occupantHarm(14)).toBeGreaterThan(20);
     expect(occupantHarm(21)).toBeGreaterThanOrEqual(100);
     const { state, a } = scene();
     toDoor(state, 0, a, -1);

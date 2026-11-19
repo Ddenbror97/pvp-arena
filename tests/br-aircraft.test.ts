@@ -4,11 +4,13 @@ import {
   aero,
   attitude,
   impactDamage,
+  NEUTRAL,
   newAircraft,
   stepAircraft,
   type Aircraft,
 } from "@/lib/fps/br/aircraft";
-import { fly, takeoffPilot, testWorld, wrap } from "@/lib/fps/br/flight-harness";
+import { fly, takeoffPilot, testWorld, TICK, wrap } from "@/lib/fps/br/flight-harness";
+import { occupantHarm } from "@/lib/fps/br/match";
 
 const env = testWorld();
 const clamp = (v: number) => Math.max(-1, Math.min(1, v));
@@ -216,7 +218,7 @@ describe("aircraft flight model (Cessna 172SP)", () => {
     expect(good.r.maxImpact).toBeLessThan(AIRCRAFT.touchdown.hard);
     expect(good.a.gear).toBe(0);
     expect(good.r.log.at(-1)!.speed).toBeLessThan(0.5);
-    const hard = land(false, -7);
+    const hard = land(false, -11);
     expect(hard.r.maxImpact).toBeGreaterThan(AIRCRAFT.touchdown.hard);
     expect(hard.a.gear).toBeGreaterThan(0.3);
   });
@@ -250,9 +252,112 @@ describe("aircraft flight model (Cessna 172SP)", () => {
     const rough = land(5);
     expect(rough.damage).toBeLessThan(AIRCRAFT.health * 0.05);
     expect(rough.a.gear).toBeLessThan(0.7);
-    const crash = land(15);
+    const crash = land(24);
     expect(crash.damage).toBeGreaterThanOrEqual(AIRCRAFT.health);
     expect(crash.a.gear).toBe(1);
+  });
+
+  it("abandoned in the air, it goes into a spiral and is wrecked on the ground", () => {
+    // Cruising level at 50 m/s, 300 m up, when its pilot bails out.
+    const a = air(50, env.ground + 300, true, 0.75);
+    let damage = 0,
+      t = 0,
+      worst = 0;
+    for (
+      ;
+      t < 90 && !a.destroyed && !(a.grounded && Math.hypot(a.vx, a.vz) < 1);
+      t += TICK / 1000
+    ) {
+      const impact = stepAircraft(env.world, env.meta, a, null, t * 1000, TICK, true);
+      worst = Math.max(worst, impact);
+      damage += impactDamage(impact);
+      if (damage >= AIRCRAFT.health) a.destroyed = true;
+    }
+    // Down within half a minute, hard enough to wreck it.
+    expect(t).toBeLessThan(30);
+    expect(worst).toBeGreaterThan(30);
+    expect(a.destroyed).toBe(true);
+    // The same aircraft with its pilot's hands off but aboard (no input this tick) flies on.
+    const b = air(50, env.ground + 300, true, 0.75);
+    for (let s = 0; s < 10; s += TICK / 1000)
+      stepAircraft(env.world, env.meta, b, null, s * 1000, TICK);
+    expect(b.y).toBeGreaterThan(env.ground + 200);
+  });
+
+  it("abandoned on the ground, it rolls to a stop", () => {
+    const a = newAircraft(0, 0, env.ground, 0, 0);
+    Object.assign(a, { engine: "running", rpm: 0.6, throttle: 0.6, vz: -6, brake: false });
+    for (let s = 0; s < 40; s += TICK / 1000)
+      stepAircraft(env.world, env.meta, a, null, s * 1000, TICK, true);
+    expect(Math.hypot(a.vx, a.vz)).toBeLessThan(0.3);
+    expect(a.destroyed).toBe(false);
+  });
+
+  it("forgives a firm landing: 8 m/s down only shakes it, 12 m/s hurts but is no write-off", () => {
+    const touch = (sink: number) => {
+      const a = newAircraft(0, 0, env.ground, 0, 0);
+      Object.assign(a, { y: env.ground + 1.4, vy: -sink, vz: -32, brake: false, grounded: false });
+      let damage = 0,
+        harm = 0;
+      for (let i = 0; i < 200; i++) {
+        const impact = stepAircraft(
+          env.world,
+          env.meta,
+          a,
+          { ...NEUTRAL, flaps: 2 },
+          i * TICK,
+          TICK,
+        );
+        damage += impactDamage(impact);
+        harm += occupantHarm(impact);
+      }
+      return { a, damage, harm };
+    };
+    for (const sink of [3, 6]) {
+      const r = touch(sink);
+      expect(r.damage, `sink ${sink}`).toBe(0);
+      expect(r.a.gear, `sink ${sink}`).toBeLessThan(0.05);
+    }
+    const firm = touch(8);
+    expect(firm.damage).toBeLessThan(AIRCRAFT.health * 0.05);
+    expect(firm.harm).toBe(0);
+    expect(firm.a.gear).toBeLessThan(0.5);
+    const hard = touch(12);
+    expect(hard.a.gear).toBeGreaterThan(0.5);
+    expect(hard.damage).toBeLessThan(AIRCRAFT.health * 0.4);
+  });
+
+  it("takes a tail strike in the flare and a belly slide at landing speed without a crash", () => {
+    const a = newAircraft(0, 0, env.ground, 0, 0);
+    const p = (16 * Math.PI) / 180;
+    Object.assign(a, {
+      y: env.ground + 1.6 + 2.5 * Math.sin(p),
+      vy: -2,
+      vz: -30,
+      qx: Math.sin(p / 2),
+      qw: Math.cos(p / 2),
+      brake: false,
+      grounded: false,
+    });
+    let damage = 0;
+    for (let i = 0; i < 200; i++)
+      damage += impactDamage(stepAircraft(env.world, env.meta, a, NEUTRAL, i * TICK, TICK));
+    expect(damage).toBe(0);
+    const belly = newAircraft(0, 0, env.ground, 0, 0);
+    Object.assign(belly, {
+      gear: 1,
+      y: env.ground + 0.9,
+      vy: -1.5,
+      vz: -30,
+      brake: false,
+      grounded: false,
+    });
+    let bellyDamage = 0;
+    for (let i = 0; i < 300; i++)
+      bellyDamage += impactDamage(
+        stepAircraft(env.world, env.meta, belly, NEUTRAL, i * TICK, TICK),
+      );
+    expect(bellyDamage).toBeLessThan(AIRCRAFT.health * 0.1);
   });
 
   it("crashes into what it hits instead of passing through (swept collision)", () => {

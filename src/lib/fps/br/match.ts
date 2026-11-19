@@ -1897,7 +1897,7 @@ export const AIRCRAFT_BOOM = -1000;
 const AIRCRAFT_BLAST = { radius: 10, damage: 90 } as const;
 /** Harm to the occupants from an impact (m/s): none in a hard landing, death at ~21 m/s. */
 export function occupantHarm(impact: number) {
-  return impact < 7 ? 0 : (impact - 7) * 7.5;
+  return impact < 10 ? 0 : (impact - 10) * 9.5;
 }
 
 const heldFlight = new WeakMap<BrMatchState, { input: BrInput; at: number }>();
@@ -1952,7 +1952,8 @@ function stepFlight(
           brake: !!raw?.jump,
         }
       : null;
-  const impact = stepAircraft(island, meta, a, input, now, dtMs);
+  // Nobody flying it (bailed out, or killed at the controls): it comes down (ABANDONED).
+  const impact = stepAircraft(island, meta, a, input, now, dtMs, !pilot);
   if (impact) {
     hurtAircraft(state, world, impactDamage(impact), pilot);
     const harm = occupantHarm(impact);

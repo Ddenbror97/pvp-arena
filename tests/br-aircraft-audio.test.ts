@@ -1,5 +1,5 @@
 import { expect, it, vi } from "vitest";
-import { createAircraftAudio, type AircraftSound } from "@/lib/fps/br/aircraft-audio";
+import { createAircraftAudio, outsideLevel, type AircraftSound } from "@/lib/fps/br/aircraft-audio";
 
 it("keeps the takeoff recording running in flight, without adding a driving loop", () => {
   const parameter = () => ({ value: 0, cancelScheduledValues: vi.fn(), setTargetAtTime: vi.fn() });
@@ -63,4 +63,13 @@ it("keeps the takeoff recording running in flight, without adding a driving loop
   expect(sources[0]!.stop).not.toHaveBeenCalled();
   audio.dispose();
   expect(sources[0]!.stop).toHaveBeenCalledOnce();
+});
+
+it("is loud near the aircraft and falls away with the distance outside", () => {
+  // Overhead louder than the old linear law's full level; a fifth at 100 m, a twentieth at 400 m.
+  expect(outsideLevel(10)).toBeGreaterThan(1);
+  expect(outsideLevel(100) / outsideLevel(10)).toBeLessThan(0.3);
+  expect(outsideLevel(400) / outsideLevel(10)).toBeLessThan(0.07);
+  expect(outsideLevel(1000)).toBeGreaterThan(0.01);
+  for (let d = 30; d < 1400; d += 50) expect(outsideLevel(d + 50)).toBeLessThan(outsideLevel(d));
 });
