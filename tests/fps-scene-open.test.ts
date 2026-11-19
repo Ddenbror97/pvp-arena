@@ -1,11 +1,45 @@
 import * as THREE from "three";
 import { readFileSync } from "node:fs";
-import { NodeIO } from "@gltf-transform/core";
-import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
-import { MeshoptDecoder } from "meshoptimizer";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { describe, expect, it } from "vitest";
 import { IRON_DISTRICT_DEFINITION } from "@/lib/fps/bomb/iron-district";
 import { applyScenePatches, withoutFaces } from "@/lib/fps/maps/scene-patches";
+
+/**
+ * A GLB without its images and textures (they need a browser to decode, and no test here
+ * reads them): the JSON chunk rewritten, the binary chunk as it was.
+ */
+function geometryOnly(glb: Buffer): ArrayBuffer {
+  const jsonLength = glb.readUInt32LE(12);
+  const json = JSON.parse(glb.subarray(20, 20 + jsonLength).toString("utf8")) as {
+    images?: unknown;
+    textures?: unknown;
+    samplers?: unknown;
+    materials?: Array<Record<string, unknown>>;
+  };
+  delete json.images;
+  delete json.textures;
+  delete json.samplers;
+  const strip = (o: Record<string, unknown>) => {
+    for (const k of Object.keys(o)) {
+      if (/Texture$/.test(k)) delete o[k];
+      else if (o[k] && typeof o[k] === "object") strip(o[k] as Record<string, unknown>);
+    }
+  };
+  for (const m of json.materials ?? []) strip(m);
+  let text = JSON.stringify(json);
+  while (text.length % 4) text += " ";
+  const head = Buffer.alloc(20);
+  const rest = glb.subarray(20 + jsonLength);
+  head.writeUInt32LE(0x46546c67, 0);
+  head.writeUInt32LE(2, 4);
+  head.writeUInt32LE(20 + text.length + rest.length, 8);
+  head.writeUInt32LE(text.length, 12);
+  head.writeUInt32LE(0x4e4f534a, 16);
+  const out = Buffer.concat([head, Buffer.from(text, "utf8"), rest]);
+  return out.buffer.slice(out.byteOffset, out.byteOffset + out.byteLength);
+}
 
 /** Two quads across a corridor (z = 10 and z = 14), x 12..15, y 0..3. */
 function walls(indexed: boolean) {
@@ -100,36 +134,39 @@ describe("faces a map's build drew across a way through", () => {
       .patches!.open!.filter((o) => o.node === "Upper_Town")
       .map((o) => o.box);
     expect(boxes).toHaveLength(4);
+    // Read with three's own loader and meshopt decoder: the glTF tools the art scripts use are
+    // not in package.json, so CI has none of them.
     await MeshoptDecoder.ready;
-    const io = new NodeIO()
-      .registerExtensions(ALL_EXTENSIONS)
-      .registerDependencies({ "meshopt.decoder": MeshoptDecoder });
     const url = IRON_DISTRICT_DEFINITION.presentation.modelUrl.split("?")[0]!;
-    const doc = await io.readBinary(new Uint8Array(readFileSync(`public${url}`)));
+    const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+    const gltf = await loader.parseAsync(geometryOnly(readFileSync(`public${url}`)), "");
+    gltf.scene.updateMatrixWorld(true);
     const inBox = new Array<number>(boxes.length).fill(0);
-    const v = [0, 0, 0];
-    for (const node of doc.getRoot().listNodes()) {
-      if (node.getName() !== "Upper_Town" || !node.getMesh()) continue;
-      const w = node.getWorldMatrix();
-      const at = (p: number[]) =>
-        [0, 1, 2].map((k) => w[k]! * p[0]! + w[4 + k]! * p[1]! + w[8 + k]! * p[2]! + w[12 + k]!);
-      for (const prim of node.getMesh()!.listPrimitives()) {
-        if (prim.getMaterial()?.getName() !== "metal") continue;
-        const pos = prim.getAttribute("POSITION")!,
-          index = prim.getIndices()!;
-        for (let i = 0; i < index.getCount(); i += 3) {
-          const tri = [0, 1, 2].map((k) => at(pos.getElement(index.getScalar(i + k), v)));
-          boxes.forEach(([x0, x1, y0, y1, z0, z1], b) => {
-            const inside = tri.filter(
-              ([x, y, z]) => x! >= x0 && x! <= x1 && y! >= y0 && y! <= y1 && z! >= z0 && z! <= z1,
-            ).length;
-            // A triangle half in a box would be left standing, cut off in the air.
-            expect(inside === 0 || inside === 3).toBe(true);
-            if (inside === 3) inBox[b]!++;
-          });
-        }
+    const p = new THREE.Vector3();
+    const town = gltf.scene.getObjectByName("Upper_Town")!;
+    expect(town).toBeTruthy();
+    town.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh || (mesh.material as THREE.Material).name !== "metal") return;
+      const pos = mesh.geometry.getAttribute("position")!,
+        index = mesh.geometry.getIndex()!;
+      for (let i = 0; i < index.count; i += 3) {
+        const tri = [0, 1, 2].map((k) =>
+          p
+            .fromBufferAttribute(pos, index.getX(i + k))
+            .applyMatrix4(mesh.matrixWorld)
+            .toArray(),
+        );
+        boxes.forEach(([x0, x1, y0, y1, z0, z1], b) => {
+          const inside = tri.filter(
+            ([x, y, z]) => x! >= x0 && x! <= x1 && y! >= y0 && y! <= y1 && z! >= z0 && z! <= z1,
+          ).length;
+          // A triangle half in a box would be left standing, cut off in the air.
+          expect(inside === 0 || inside === 3).toBe(true);
+          if (inside === 3) inBox[b]!++;
+        });
       }
-    }
+    });
     expect(inBox).toEqual([64, 64, 64, 64]);
   });
 });
