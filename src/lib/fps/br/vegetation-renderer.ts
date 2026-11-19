@@ -179,7 +179,7 @@ function instanceShader(
   material.userData["treeFade"] = { centre: camera, fade };
   const band = (b: [number, number] | null, none: string) =>
     b ? `clamp((treeDistance - ${b[0].toFixed(2)}) / ${(b[1] - b[0]).toFixed(2)}, 0.0, 1.0)` : none;
-  material.onBeforeCompile = (shader) => {
+  material.onBeforeCompile = (shader, renderer) => {
     shader.uniforms["uTreeCamera"] = camera;
     if (farOut) shader.uniforms["uTreeFarOut"] = farOut;
     shader.vertexShader = shader.vertexShader
@@ -306,7 +306,20 @@ function instanceShader(
         `#include <normal_fragment_maps>
         normal = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);`,
       );
-    if (alphaMipScale > 0)
+    if (alphaMipScale > 0) {
+      // Multisampled (the canvas, or the scene target on the reversed-depth path): from the
+      // second mip on, a leaf's edge is a ramp a quarter of the alpha range wide each side of
+      // the cut, not a pixel wide, and alpha to coverage turns the ramp into a share of each
+      // pixel's samples (owner, 2026-11-19: the airfield's trees, 60–150 m off, "leafs still
+      // flicker/blink/change size while running, not when standing still"). A leaf there is a
+      // pixel or less; with the edge a pixel wide, a step of a few centimetres took each pixel
+      // across the cut or back, the whole crown re-drawn every frame. The ramp follows the
+      // texture's own mip-averaged alpha, which a step barely moves. Without MSAA alpha to
+      // coverage does nothing, and the plain cut stays.
+      const ctx = renderer.getContext();
+      const target = renderer.getRenderTarget();
+      // (One renderer, one answer, so the program's cache key needs no part for it.)
+      const msaa = target ? target.samples > 0 : !!ctx.getContextAttributes()?.antialias;
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <alphatest_fragment>",
         `{
@@ -314,9 +327,18 @@ function instanceShader(
           vec2 dx = dFdx(texel), dy = dFdy(texel);
           float mip = max(0.0, 0.5 * log2(max(dot(dx, dx), dot(dy, dy))));
           diffuseColor.a *= 1.0 + mip * ${alphaMipScale.toFixed(2)};
-        }
-        #include <alphatest_fragment>`,
+          ${
+            msaa
+              ? `float leafFar = smoothstep(1.0, 2.5, mip);
+          float leafLo = mix(alphaTest, alphaTest - 0.25, leafFar);
+          float leafHi = mix(alphaTest + max(fwidth(diffuseColor.a), 1e-3), alphaTest + 0.25, leafFar);
+          diffuseColor.a = smoothstep(leafLo, leafHi, diffuseColor.a);
+          if (diffuseColor.a < 0.02) discard;`
+              : `#include <alphatest_fragment>`
+          }
+        }`,
       );
+    }
   };
   material.customProgramCacheKey = () => `br-trees-${key}${farOut ? "-out" : ""}`;
 }
