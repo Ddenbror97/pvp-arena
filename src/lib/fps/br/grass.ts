@@ -9,6 +9,7 @@ import {
   type GrassWorld,
 } from "./grass-scatter";
 import type { BrTier } from "./quality-tier";
+import { markFoliage } from "./sharpen";
 import { sunLook } from "./sun";
 import { WORLD_HALF, WORLD_SIZE } from "./world";
 
@@ -206,6 +207,8 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     // Soft blade edges under MSAA (the alpha test alone with none).
     alphaToCoverage: true,
   });
+  // Not sharpened: that hardens the blades' soft edges again (sharpen.ts markFoliage).
+  markFoliage(material);
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader

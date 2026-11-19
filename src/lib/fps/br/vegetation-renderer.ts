@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { dropDuplicateFaces } from "./duplicate-faces";
 import { prepareFoliageMaterial } from "./foliage-material";
+import { markFoliage } from "./sharpen";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import {
@@ -172,6 +173,8 @@ function instanceShader(
 ) {
   const { alphaMipScale = 0, alphaTexSize = 256, upNormal = false, leaf = null, crown = null } = o;
   const farOut = o.farOut ?? null;
+  // Not sharpened (sharpen.ts markFoliage).
+  markFoliage(material);
   // The form's fade, readable by tests (the shader does the same sums: fadeShare).
   material.userData["treeFade"] = { centre: camera, fade };
   const band = (b: [number, number] | null, none: string) =>

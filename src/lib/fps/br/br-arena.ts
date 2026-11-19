@@ -646,6 +646,8 @@ export function createBrArena(
     powerPreference: "high-performance",
     reversedDepthBuffer: reversedDepth,
     logarithmicDepthBuffer: !reversedDepth,
+    // The foliage's mark for the sharpening (sharpen.ts markFoliage).
+    stencil: true,
   });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
