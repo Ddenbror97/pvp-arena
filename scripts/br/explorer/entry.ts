@@ -13,7 +13,8 @@ import { createDoorRenderer } from "../../../src/lib/fps/br/door-renderer";
 import { createTorchFlames } from "../../../src/lib/fps/br/torch-flames";
 import { initialDoors } from "../../../src/lib/fps/br/doors";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
-import type { WorldMeta } from "../../../src/lib/fps/br/world";
+import { WORLD_HALF, type WorldMeta } from "../../../src/lib/fps/br/world";
+import { CELL_SIZE, CELLS, cellTrees, TREE_STRIDE } from "../../../src/lib/fps/br/vegetation";
 import { createSharpen } from "../../../src/lib/fps/br/sharpen";
 import { RenderBudget, RENDER_CAP } from "../../../src/lib/fps/presentation";
 import { DevOverlay, GpuTimer } from "../../../src/lib/fps/br/dev-overlay";
@@ -35,6 +36,7 @@ declare global {
       meta: () => WorldMeta;
       /** Placements (model, position, POI) for aiming capture views at real buildings. */
       layout: () => Array<{ model: string; x: number; y: number; z: number; poi: string }>;
+      trees: (x: number, z: number, r: number) => number[][];
       groundAt: (x: number, z: number) => number;
       setGroundRange: (m: number) => Promise<void>;
       /** The budget's lite ground shading (br-arena applyGroundRange), for comparing views. */
@@ -296,6 +298,21 @@ window.explorer = {
   ready,
   meta: () => meta,
   layout: () => placed,
+  /** Trees within r m of (x, z): [x, y, z, species index] (vegetation.ts SPECIES), nearest first. */
+  trees(x: number, z: number, r: number) {
+    const v = islandScene.island.vegetation;
+    const out: number[][] = [];
+    const cell = (c: number) => Math.floor((c + WORLD_HALF) / CELL_SIZE);
+    for (let cj = cell(z - r); cj <= cell(z + r); cj++)
+      for (let ci = cell(x - r); ci <= cell(x + r); ci++) {
+        if (ci < 0 || cj < 0 || ci >= CELLS || cj >= CELLS) continue;
+        const t = cellTrees(v, ci, cj);
+        for (let k = 0; k < t.length; k += TREE_STRIDE)
+          if (Math.hypot(t[k]! - x, t[k + 2]! - z) < r)
+            out.push([t[k]!, t[k + 1]!, t[k + 2]!, t[k + 5]!]);
+      }
+    return out.sort((a, b) => Math.hypot(a[0]! - x, a[2]! - z) - Math.hypot(b[0]! - x, b[2]! - z));
+  },
   setPixelRatio(ratio) {
     pixelRatioOverride = ratio;
     resize();
