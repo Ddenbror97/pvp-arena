@@ -127,10 +127,13 @@ export function OpenGames(props: OpenGamesProps) {
       )}
       <div className="strike-rooms-body" aria-busy={loading}>
         {loading ? (
-          <div className="strike-room-skeletons" role="status" aria-label="Loading open games">
-            {[0, 1, 2].map((n) => (
-              <div key={n} className="strike-room-skeleton" aria-hidden />
-            ))}
+          <div className="strike-room-empty strike-room-loading" role="status">
+            <RefreshCw size={22} aria-hidden className="animate-spin" />
+            <h3>Checking for open games…</h3>
+            <p>Live 1v1 rooms will appear here. You can create one while you wait.</p>
+            <button type="button" className="strike-primary" onClick={onCreate} disabled={busy}>
+              Create a game <ArrowRight size={16} />
+            </button>
           </div>
         ) : failed && !rooms.length ? null : !enabled ? (
           <div className="strike-room-empty">
