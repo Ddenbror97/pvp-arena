@@ -44,7 +44,7 @@ export const GAME_SIGNUP_COPY = {
 
 /** 26.25rem is 420px, inside the 400–440px desktop width. */
 export const GAME_SIGNUP_DIALOG_CLASS =
-  "w-[calc(100%-2rem)] max-w-[26.25rem] gap-5 border-border/80 bg-background p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl duration-200 motion-reduce:animate-none motion-reduce:duration-0 sm:rounded-xl";
+  "w-[calc(100%-2rem)] max-w-[26.25rem] gap-0 overflow-hidden border-white/10 bg-[#090b18] p-0 shadow-[0_28px_100px_-24px_rgba(0,0,0,0.9)] duration-200 motion-reduce:animate-none motion-reduce:duration-0 sm:rounded-2xl";
 
 export const INVITE_DECISION_KEY = "pvp-play-invite";
 export const INVITE_FROM_KEY = "pvp-play-invite-from";

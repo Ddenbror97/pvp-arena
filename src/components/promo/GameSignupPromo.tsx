@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { ArrowRight, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -188,46 +189,83 @@ export function GameSignupPromo() {
   return (
     <Dialog open={state.phase === "open"} onOpenChange={onOpenChange}>
       <DialogContent className={GAME_SIGNUP_DIALOG_CLASS}>
-        <DialogHeader className="space-y-3 pr-8 text-left">
-          <DialogTitle className="font-display text-2xl leading-tight">
-            {GAME_SIGNUP_COPY.headline}
-          </DialogTitle>
-          <p className="font-display text-4xl leading-none text-primary">
-            {GAME_SIGNUP_COPY.amount}
-          </p>
-          <DialogDescription className="text-sm leading-relaxed">
-            {GAME_SIGNUP_COPY.support}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="rounded-md border border-border bg-muted/40 px-3 py-2 text-center">
-          <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-            Promo code
-          </p>
-          <p
-            className="mt-1 font-mono text-lg tracking-[0.2em] text-foreground"
-            aria-label="Promo code PVP1"
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-28 h-64 w-64 rounded-full bg-violet-600/20 blur-3xl"
+        />
+        <div className="relative px-6 pb-5 pt-7 sm:px-7 sm:pb-6">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-300/20 bg-violet-300/[0.08] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-violet-200">
+            <Gift className="h-3.5 w-3.5" aria-hidden="true" />
+            Welcome offer
+          </span>
+          <DialogHeader className="mt-4 space-y-2 pr-7 text-left">
+            <DialogTitle className="font-display text-[25px] font-bold leading-tight tracking-tight text-white">
+              {GAME_SIGNUP_COPY.headline}
+            </DialogTitle>
+            <DialogDescription className="max-w-[30rem] text-[13px] leading-relaxed text-slate-300">
+              {GAME_SIGNUP_COPY.support}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-5 flex items-center justify-between rounded-xl border border-violet-300/15 bg-gradient-to-br from-violet-500/[0.13] via-[#111329] to-[#10111d] px-4 py-3.5">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                Promotional play credit
+              </p>
+              <p className="mt-1 font-display text-4xl font-extrabold leading-none tracking-tight text-white">
+                {GAME_SIGNUP_COPY.amount}
+              </p>
+            </div>
+            <div className="grid h-11 w-11 place-items-center rounded-xl border border-violet-200/15 bg-violet-300/[0.08] text-violet-200">
+              <Gift className="h-5 w-5" aria-hidden="true" />
+            </div>
+          </div>
+
+          <div className="mt-3 flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3">
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-slate-400">
+                Your promo code
+              </p>
+              <p className="mt-0.5 text-xs text-slate-300">Enter it during sign up</p>
+            </div>
+            <p
+              className="rounded-lg border border-white/10 bg-black/20 px-3 py-1.5 font-mono text-base font-bold tracking-[0.2em] text-white"
+              aria-label="Promo code PVP1"
+            >
+              {GAME_SIGNUP_COPY.code}
+            </p>
+          </div>
+        </div>
+
+        <div className="relative border-t border-white/[0.07] bg-black/10 px-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4 sm:px-7">
+          <Button
+            type="button"
+            className="min-h-12 w-full gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 font-display text-sm font-bold text-white shadow-lg shadow-violet-950/30 transition hover:brightness-110"
+            onClick={onCta}
           >
-            {GAME_SIGNUP_COPY.code}
+            {GAME_SIGNUP_COPY.primary}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Button>
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              className="mt-1 min-h-10 w-full rounded-lg text-sm text-slate-400 hover:bg-white/[0.04] hover:text-white"
+            >
+              {GAME_SIGNUP_COPY.secondary}
+            </Button>
+          </DialogClose>
+          <p className="mt-3 text-[10px] leading-relaxed text-slate-500">
+            {GAME_SIGNUP_COPY.small}{" "}
+            <a
+              href={GAME_SIGNUP_COPY.termsHref}
+              className="text-slate-300 underline decoration-slate-500 underline-offset-2 transition hover:text-white"
+            >
+              {GAME_SIGNUP_COPY.termsLabel}
+            </a>
+            .
           </p>
         </div>
-        <Button type="button" className="min-h-11 w-full font-display" onClick={onCta}>
-          {GAME_SIGNUP_COPY.primary}
-        </Button>
-        <DialogClose asChild>
-          <Button type="button" variant="ghost" className="min-h-11 w-full text-muted-foreground">
-            {GAME_SIGNUP_COPY.secondary}
-          </Button>
-        </DialogClose>
-        <p className="text-xs leading-relaxed text-muted-foreground">
-          {GAME_SIGNUP_COPY.small}{" "}
-          <a
-            href={GAME_SIGNUP_COPY.termsHref}
-            className="underline underline-offset-2 hover:text-foreground"
-          >
-            {GAME_SIGNUP_COPY.termsLabel}
-          </a>
-          .
-        </p>
       </DialogContent>
     </Dialog>
   );
