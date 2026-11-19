@@ -18,7 +18,11 @@ declare global {
   interface Window {
     review: {
       ready: Promise<Manifest>;
-      show: (id: string, angle?: number, view?: { top?: boolean; cut?: number }) => Promise<void>;
+      show: (
+        id: string,
+        angle?: number,
+        view?: { top?: boolean; cut?: number; low?: boolean },
+      ) => Promise<void>;
     };
   }
 }
@@ -50,7 +54,7 @@ const ready = fetch(new URLSearchParams(location.search).get("models") ?? WORLD_
 );
 window.review = {
   ready,
-  async show(id, angle = 0, view?: { top?: boolean; cut?: number }) {
+  async show(id, angle = 0, view?: { top?: boolean; cut?: number; low?: boolean }) {
     const manifest = await ready;
     const m = manifest.models[id]!;
     const [sx, sy, sz] = m.size as [number, number, number];
@@ -108,8 +112,14 @@ window.review = {
       const persp = new THREE.PerspectiveCamera(40, W / 3 / H, 0.05, 5000);
       const d = span * 1.6;
       const a = 0.7 + angle;
-      persp.position.set(Math.sin(a) * d * 1.17, sy * 0.55 + d * 0.3, Math.cos(a) * d * 1.17);
-      persp.lookAt(0, sy * 0.4, 0);
+      if (view?.low) {
+        // From a player's eye height, looking up: what is under balconies, eaves and canopies.
+        persp.position.set(Math.sin(a) * d * 0.8, 1.7, Math.cos(a) * d * 0.8);
+        persp.lookAt(0, sy * 0.45, 0);
+      } else {
+        persp.position.set(Math.sin(a) * d * 1.17, sy * 0.55 + d * 0.3, Math.cos(a) * d * 1.17);
+        persp.lookAt(0, sy * 0.4, 0);
+      }
       camera = persp;
     }
     scenes.forEach((scene, i) => {

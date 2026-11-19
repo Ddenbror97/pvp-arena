@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "harbor-v1",
+  revision: "soffit-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -153,8 +153,16 @@ export const WORLD_ASSETS = {
   // collision with ramped stairs: art/blender/br/rusty_house.mjs).
   // harbor-v1 (2026-11-18): Fisher's Cove's street lights rebuilt with their posts (pole-v1:
   // the near LOD had lost them, the lamps hung in the air); the harbour yard's containers.
-  models: "/fps/br/models/models.harbor-v1.json",
-  collision: "/fps/br/models/collision.harbor-v1.json",
+  // soffit-v1 (2026-11-18): the outside undersides of the apartment, bungalow, townhouse, police
+  // station and strip mall face down again on their near LODs (eaves-v1,
+  // art/blender/br/exterior_undersides.mjs: interior_style had lit every downward face as a
+  // ceiling, so balconies, eaves and window heads turned white within 100 m and dark beyond);
+  // the arena, its stands, masts and car park, the Bauhaus block and the apartment through the
+  // coplanar lift again (zfix-v13); the airfield hangar repainted (paint-v2: silver arch, blue
+  // sides, cream ends); the Victorian glasshouses (Riverside Park, Blackwater) glazed: frames cut
+  // from the texture, see-through glass between (glass-v4, art/blender/br/glasshouse.mjs).
+  models: "/fps/br/models/models.soffit-v1.json",
+  collision: "/fps/br/models/collision.soffit-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

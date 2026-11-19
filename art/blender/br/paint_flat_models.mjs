@@ -12,6 +12,10 @@
  * Writes `<id>.paint-v1.lod<N>.glb` and points the manifest's LODs at them.
  *
  *   node art/blender/br/paint_flat_models.mjs <manifest.json>
+ *   TAG=paint-v2 ONLY=hangar node art/blender/br/paint_flat_models.mjs <manifest.json>
+ *
+ * TAG names the output files (default paint-v1); ONLY paints just those models (from the LODs the
+ * manifest names now, whatever pass they last went through: the geometry is kept as it is).
  *
  * The source LODs it read (eastport-v1's) were removed from public/ once superseded; to run it
  * again, restore them from git (`git checkout ce06bb85 -- public/fps/br/models/<file>`).
@@ -39,6 +43,10 @@ const C = {
   concrete: srgb(0.6, 0.58, 0.54),
   hangarWall: srgb(0.52, 0.57, 0.52),
   hangarRoof: srgb(0.45, 0.47, 0.48),
+  // The airfield hangar repainted (paint-v2): a silver arched roof, blue long sides, cream ends.
+  hangarSilver: srgb(0.74, 0.76, 0.78),
+  hangarBlue: srgb(0.2, 0.36, 0.56),
+  hangarCream: srgb(0.86, 0.84, 0.77),
   steelDark: srgb(0.33, 0.31, 0.29),
   rust: srgb(0.42, 0.27, 0.18),
   roofGreen: srgb(0.36, 0.42, 0.35),
@@ -54,14 +62,18 @@ const C = {
 
 /** Per model: a face → colour rule (positions in model units; bounds given). */
 const RULES = {
-  // The arched airfield hangar: concrete plinth, sage-green sheet walls, grey roof, dark steel
-  // trusses and door frames inside.
+  // The arched airfield hangar: concrete apron and plinth; the arch silver, the long sides blue,
+  // the ends (the doors, facing ±z) cream, undersides and trusses seen from below dark steel.
+  // (paint-v1 had sage-green walls and a grey roof that met at 0.45 up, so most of the arch was
+  // the walls' green: owner, 2026-11-18, "those buildings have no colors".)
   hangar: (f, b) => {
     // (The model stands on its own 62 m apron, so "inside the bounds" says nothing here.)
     if (f.y < b.min[1] + 0.35 && f.ny > 0.6) return C.concrete; // apron and floor
     if (f.y < b.min[1] + 1.25) return C.concrete; // plinth
-    if (f.ny > 0.45) return panel(C.hangarRoof, f, 1.1);
-    return panel(C.hangarWall, f, 1.1);
+    if (f.down) return C.steelDark;
+    if (f.ny > 0.2) return panel(C.hangarSilver, f, 1.1, 0.06);
+    if (Math.abs(f.nz) > Math.abs(f.nx)) return panel(C.hangarCream, f, 1.1, 0.05);
+    return panel(C.hangarBlue, f, 1.1);
   },
 
   // Open field hangars / plane shelters: steel frame, green sheet roof.
@@ -105,8 +117,11 @@ function board(c, f) {
   return c.map((v) => v * k);
 }
 
+const TAG = process.env.TAG ?? "paint-v1";
+const ONLY = process.env.ONLY?.split(",");
 const report = [];
 for (const [id, rule] of Object.entries(RULES)) {
+  if (ONLY && !ONLY.includes(id)) continue;
   const model = manifest.models[id];
   if (!model) throw Error("no model " + id);
   for (const [level, lod] of model.lods.entries()) {
@@ -176,7 +191,7 @@ for (const [id, rule] of Object.entries(RULES)) {
           y > max[1] - inset * 2 ||
           ny > 0.45;
         const side = x < min[0] + (max[0] - min[0]) * 0.22 || x > max[0] - (max[0] - min[0]) * 0.22;
-        const rgb = rule({ x, y, z, nx, ny: Math.abs(ny), nz, shell, side }, b);
+        const rgb = rule({ x, y, z, nx, ny: Math.abs(ny), nz, shell, side, down: ny < -0.2 }, b);
         for (let k = 0; k < 3; k++) {
           colors.set([rgb[0], rgb[1], rgb[2], 1], (i + k) * 4);
         }
@@ -192,7 +207,7 @@ for (const [id, rule] of Object.entries(RULES)) {
       weld(),
       meshopt({ encoder: MeshoptEncoder, level: "medium", quantizePosition: 16 }),
     );
-    const file = `/fps/br/models/${id}.paint-v1.lod${level}.glb`;
+    const file = `/fps/br/models/${id}.${TAG}.lod${level}.glb`;
     await io.write("public" + file, doc);
     const kB = Math.round(fs.statSync("public" + file).size / 1024);
     report.push(`${id} lod${level}: ${lod.file} → ${file} (${lod.kB} → ${kB} kB)`);
