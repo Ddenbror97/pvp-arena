@@ -104,11 +104,17 @@ async function paced<T>(steps: Generator<void, T, void>): Promise<T> {
   }
 }
 type Loaded = { island: Island; meta: WorldMeta; collision: CollisionData };
-let loading: Promise<Loaded> | null = null;
+let loadedIsland: Loaded | null = null;
 
 /** The island, loaded once per isolate from the site's static files (`BR_ASSETS_URL`). */
-export function loadIsland(env: Env): Promise<Loaded> {
-  loading ??= (async () => {
+export async function loadIsland(env: Env): Promise<Loaded> {
+  // Never cache an in-flight promise at module scope. Durable Object requests can overlap,
+  // and Workers bind promise continuations to the request that created them. A later request
+  // awaiting that promise can fail if its creator has already ended. Cache only the completed
+  // world; simultaneous cold starts may build independently, then share the result.
+  if (loadedIsland) return loadedIsland;
+
+  const loaded = await (async () => {
     const base = (env.BR_ASSETS_URL ?? env.ALLOWED_ORIGIN).replace(/\/$/, "");
     const get = async (path: string) => {
       const r = await fetch(`${base}${path}`);
@@ -128,11 +134,9 @@ export function loadIsland(env: Env): Promise<Loaded> {
     const island = await paced(buildIslandSteps(hf, cover, meta, collision));
     await paced(warmLootSteps(island.layout, collision, island.solid, meta));
     return { island, meta, collision };
-  })().catch((e) => {
-    loading = null; // retry on the next join
-    throw e;
-  });
-  return loading;
+  })();
+  loadedIsland ??= loaded;
+  return loadedIsland;
 }
 
 // ------------------------------------------------------------------------------ lobby
