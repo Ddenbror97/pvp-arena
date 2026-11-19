@@ -77,7 +77,8 @@ cfg.vars = {
   // BR has its own Worker and ruleset; routing it through FPS_RUNTIME_ORIGIN can
   // make every current BR client fail the world's/rules' version handshake.
   FPS_BR_RUNTIME_ORIGIN:
-    envValue("FPS_BR_RUNTIME_ORIGIN", dotenv) || "https://pvpspinarena-fps-br.pvpspinarena.workers.dev",
+    envValue("FPS_BR_RUNTIME_ORIGIN", dotenv) ||
+    "https://pvpspinarena-fps-br.pvpspinarena.workers.dev",
   BTCPAY_MIN_DEPOSIT_CENTS: envValue("BTCPAY_MIN_DEPOSIT_CENTS", dotenv) || "200",
   // Exact string "true" turns on the five-game PVP1 signup invite.
   GAME_SIGNUP_PROMO_ENABLED: "true",
