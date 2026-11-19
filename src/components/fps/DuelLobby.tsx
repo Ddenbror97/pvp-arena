@@ -84,6 +84,13 @@ function QuoteLine({ stake }: { stake: number }) {
   );
 }
 
+function parseStakeCents(value: string): number | null {
+  const match = /^(\d+)(?:\.(\d{0,2}))?$/.exec(value.trim());
+  if (!match) return null;
+  const cents = Number(match[1]) * 100 + Number((match[2] ?? "").padEnd(2, "0"));
+  return Number.isSafeInteger(cents) && cents >= 100 && cents <= 5000 ? cents : null;
+}
+
 export function DuelLobby() {
   // `ready`: the session is known. Until then the signed-in controls show (disabled), not a
   // "Sign in" link that swaps for them a moment later.
@@ -110,7 +117,9 @@ export function DuelLobby() {
   const [panel, setPanel] = useState<"games" | "create">("games");
   const [mode, setMode] = useState<StrikeMode>("duel");
   const [createMode, setCreateMode] = useState<"duel" | "bomb" | "battle">("duel");
-  const [stake, setStake] = useState(100);
+  const [stakeInput, setStakeInput] = useState("1.00");
+  const stake = parseStakeCents(stakeInput) ?? 0;
+  const validStake = stake > 0;
   const format = 13;
   const [accepted, setAccepted] = useState(false);
   const [selected, setSelected] = useState<OpenRoom | null>(null);
@@ -146,7 +155,9 @@ export function DuelLobby() {
   }, []);
   const allowed = (amount: number) =>
     !!data?.enabled &&
-    (amount === 0 ? data.practice_allowed : data.cash_enabled && data.stakes.includes(amount));
+    (amount === 0
+      ? data.practice_allowed
+      : data.cash_enabled && Number.isSafeInteger(amount) && amount >= 100 && amount <= 5000);
   const rooms = openGames(data, now);
   const fresh = !!data && !lobby.isError && now - lobby.dataUpdatedAt < LOBBY_FRESH_MS;
   const currentSelection = selected ? rooms.find((room) => room.id === selected.id) : undefined;
@@ -209,6 +220,7 @@ export function DuelLobby() {
     if (
       actionInFlight.current ||
       !desktop ||
+      (!room && !validStake) ||
       (!retry && (!allowed(room?.stake ?? stake) || (room ? !!blockedReason : !!data?.mine))) ||
       (!room && !accepted)
     )
@@ -652,25 +664,30 @@ export function DuelLobby() {
                   </section>
                   <fieldset className="strike-fieldset">
                     <legend>
-                      2 · Select entry per player <span>USD</span>
+                      2 · Entry per player <span>USD</span>
                     </legend>
-                    <div className="strike-stakes">
-                      {[
-                        ...(data?.cash_enabled ? data.stakes.filter((value) => value > 0) : []),
-                      ].map((amount) => (
-                        <button
-                          key={amount}
-                          type="button"
-                          aria-pressed={stake === amount}
-                          onClick={() => {
-                            setStake(amount);
-                            change();
-                          }}
-                        >
-                          {duelMoney(amount)}
-                        </button>
-                      ))}
+                    <div className="strike-stake-input-wrap">
+                      <span aria-hidden="true">$</span>
+                      <input
+                        id="fps-entry-amount"
+                        className="strike-stake-input"
+                        type="text"
+                        inputMode="decimal"
+                        autoComplete="off"
+                        value={stakeInput}
+                        onChange={(event) => {
+                          setStakeInput(event.target.value);
+                          change();
+                        }}
+                        aria-label="Entry amount per player in US dollars"
+                        aria-invalid={!validStake}
+                        aria-describedby="fps-entry-hint"
+                        placeholder="1.00"
+                      />
                     </div>
+                    <p id="fps-entry-hint" className="strike-entry-hint">
+                      Enter $1–$50. Both players pay the same amount.
+                    </p>
                   </fieldset>
                   {(lobby.isPending || !data?.cash_enabled) && (
                     <p className="strike-fineprint strike-entry-status">
@@ -679,7 +696,13 @@ export function DuelLobby() {
                         : "Cash entries are currently closed. Practice is free and does not affect your balance or rating."}
                     </p>
                   )}
-                  <QuoteLine stake={stake} />
+                  {validStake ? (
+                    <QuoteLine stake={stake} />
+                  ) : (
+                    <p className="strike-entry-error" role="status">
+                      Enter an amount from $1.00 to $50.00.
+                    </p>
+                  )}
                   <p className="strike-create-terms">Best of 13 · First to 7 · 5% platform fee</p>
                   <label className="strike-check strike-consent">
                     <input
@@ -719,11 +742,16 @@ export function DuelLobby() {
                         busy ||
                         !accepted ||
                         desktop !== true ||
+                        !validStake ||
                         !allowed(stake) ||
                         !!data?.mine
                       }
                     >
-                      {busy ? "Creating…" : `Create 1v1 · ${duelMoney(stake)} per player`}
+                      {busy
+                        ? "Creating…"
+                        : validStake
+                          ? `Create 1v1 · ${duelMoney(stake)} per player`
+                          : "Enter a valid entry amount"}
                       <ArrowRight size={16} />
                     </button>
                   ) : (
