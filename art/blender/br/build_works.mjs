@@ -23,7 +23,7 @@
  *
  *   node art/blender/br/build_works.mjs [id ...]
  *
- * Writes public/fps/br/models/<id>.works-v1.lod{0,1,2}.glb, the models.json entry,
+ * Writes public/fps/br/models/<id>.<TAG>.lod{0,1,2}.glb (TAG=works-v1 unless set), the models.json entry,
  * art/br/procedural/<id>.boxes.json and <id>.entrances.json, and the footprints and door
  * aprons in src/lib/fps/br/location-buildings.json.
  */
@@ -32,7 +32,8 @@ import fs from "node:fs";
 import { makeBuilding } from "./building-kit.mjs";
 import { createTexturedKit, publishTextured } from "./textured-kit.mjs";
 
-const TAG = "works-v1";
+// TAG: a rebuilt model gets new files (cached clients keep the old ones).
+const TAG = process.env.TAG ?? "works-v1";
 /** Flight length for a storey of `h` (risers ≤ 0.19, treads 0.27). */
 const L = (h) => Math.ceil(h / 0.19) * 0.27;
 const r2 = (v) => +v.toFixed(2);
@@ -278,6 +279,13 @@ const B = {
         d = 22;
       const X = w / 2,
         Z = d / 2;
+      const doors = [
+        { side: "front", at: -11, w: 5, h: 5.5, entrance: false },
+        { side: "front", at: 6 },
+        { side: "back", at: 12 },
+        { side: "left", at: 4 },
+        { side: "right", at: -4 },
+      ];
       return {
         w,
         d,
@@ -288,13 +296,7 @@ const B = {
         trim: [0.85, 0.85, 0.82],
         floorM: "yard",
         floorTint: [0.6, 0.6, 0.58],
-        doors: [
-          { side: "front", at: -11, w: 5, h: 5.5, entrance: false },
-          { side: "front", at: 6 },
-          { side: "back", at: 12 },
-          { side: "left", at: 4 },
-          { side: "right", at: -4 },
-        ],
+        doors,
         // A high band of windows (above the gallery) and a row at eye height.
         windows: { step: 4.4, w: 2.6, sill: 7.0, head: 9.6 },
         extraHoles: [-16, -4, 10, 16].map((a) => ({
@@ -323,12 +325,30 @@ const B = {
           farTint: [0.38, 0.4, 0.43],
         },
         extra: ({ k, X: x, Z: z }) => {
-          // The brick plinth round the hall (to 1.1 m), a steel portal frame inside every 8 m.
-          for (const [b, sk] of [
-            [[-x - 0.06, 0, z - 0.02, x + 0.06, 1.1, z + 0.06], "z0"],
-            [[-x - 0.06, 0, -z - 0.06, x + 0.06, 1.1, -z + 0.02], "z1"],
-          ])
-            k.box(b, BRICK.m, BRICK.tint, { collide: false, skip: [sk] });
+          // The brick plinth along the long sides (to 1.1 m), cut where the gateway and the
+          // doors are (owner, 2026-11-19, the gateway: "issue with this wall"). It ran straight
+          // across them: a brick wall 1.1 m high across the gateway from outside, walked through
+          // (it has no collision), and from inside, where its inner face is not drawn, nothing
+          // but its top edge.
+          // Then a steel portal frame inside every 8 m.
+          for (const [side, z0, z1, sk] of [
+            ["front", z - 0.02, z + 0.06, "z0"],
+            ["back", -z - 0.06, -z + 0.02, "z1"],
+          ]) {
+            const gaps = doors
+              .filter((o) => o.side === side)
+              .map((o) => [o.at - (o.w ?? 1.3) / 2, o.at + (o.w ?? 1.3) / 2])
+              .sort((a, b) => a[0] - b[0]);
+            let from = -x - 0.06;
+            for (const [g0, g1] of [...gaps, [x + 0.06, x + 0.06]]) {
+              if (g0 - from > 0.05)
+                k.box([from, 0, z0, g0, 1.1, z1], BRICK.m, BRICK.tint, {
+                  collide: false,
+                  skip: [sk],
+                });
+              from = g1;
+            }
+          }
           for (let px = -x + 6; px < x - 3; px += 8)
             for (const pz of [-z + 0.45, z - 0.45])
               k.box([px - 0.25, 0, pz - 0.2, px + 0.25, 10.8, pz + 0.2], "rust", STEEL, { lod: 0 });
