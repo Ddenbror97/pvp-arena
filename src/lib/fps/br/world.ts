@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "sweep-v1",
+  revision: "tone-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -166,8 +166,14 @@ export const WORLD_ASSETS = {
   // airfield terminal's wall bases among them, owner: "this building at the airfield flicker");
   // the glow taken off the East Works pipe pieces, Eastport's trawler and the lifeguard booth
   // (glow-v1, art/blender/br/strip_emissive.mjs: "white items at east works").
-  models: "/fps/br/models/models.sweep-v1.json",
-  collision: "/fps/br/models/collision.sweep-v1.json",
+  // tone-v1 (2026-11-22, set_lods.mjs): far LODs only. The towers' storeys and lobbies (flat-v1),
+  // the apartment block (far-v3) and the Bauhaus block (far-v2) flat, in faint bands of their
+  // walls' average colour, and marked `air: "far"` (props-renderer.ts AIR_FLAT): they flickered
+  // from the parachute. The 99 textured-kit buildings (the fortress, the ruins, the coast towns,
+  // East Works, the 2026-11-15 locations, Blackwater) in their textures' own colours (tone-v1;
+  // eleven of them through offset_coplanar again, zfix-v16): they were about twice too light.
+  models: "/fps/br/models/models.tone-v1.json",
+  collision: "/fps/br/models/collision.tone-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

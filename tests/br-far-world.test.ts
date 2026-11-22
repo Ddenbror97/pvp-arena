@@ -73,6 +73,44 @@ describe("BR far buildings (render audit 2026-11-15)", () => {
     expect(proxyShape(scene)).toBeNull();
   });
 
+  it("takes a storey with walls all round and no lid as a box, and a frame as nothing", () => {
+    // A tower's storey: four walls, 26 × 22 m and 3.6 m high, no roof and no floor (its lid is
+    // the storey placed on it).
+    const walls = (cover: number) => {
+      const v: number[] = [];
+      const quad = (a: number[], b: number[], c: number[], d: number[]) =>
+        v.push(...a, ...b, ...c, ...a, ...c, ...d);
+      const h = 3.6 * cover;
+      quad([-13, 0, 11], [13, 0, 11], [13, h, 11], [-13, h, 11]);
+      quad([13, 0, -11], [-13, 0, -11], [-13, h, -11], [13, h, -11]);
+      quad([13, 0, 11], [13, 0, -11], [13, h, -11], [13, h, 11]);
+      quad([-13, 0, -11], [-13, 0, 11], [-13, h, 11], [-13, h, -11]);
+      // (A post to the full height at one corner, so both are 3.6 m high.)
+      quad([-13, 0, 11], [-12.9, 0, 11], [-12.9, 3.6, 11], [-13, 3.6, 11]);
+      const g = new THREE.BufferGeometry();
+      g.setAttribute("position", new THREE.Float32BufferAttribute(v, 3));
+      g.setAttribute(
+        "color",
+        new THREE.Float32BufferAttribute(
+          v.map((_, i) => [0.4, 0.5, 0.6][i % 3]!),
+          3,
+        ),
+      );
+      const scene = new THREE.Group();
+      scene.add(new THREE.Mesh(g, new THREE.MeshStandardMaterial()));
+      scene.updateMatrixWorld(true);
+      return scene;
+    };
+    const s = proxyShape(walls(1))!;
+    expect(s).not.toBeNull();
+    expect([...s.heights].every((y) => Math.abs(y - 3.6) < 1e-6)).toBe(true);
+    // Its top takes the walls' colour (there is no roof to take one from).
+    expect(s.roof.map((c) => +c.toFixed(2))).toEqual([0.4, 0.5, 0.6]);
+    expect(s.wall.map((c) => +c.toFixed(2))).toEqual([0.4, 0.5, 0.6]);
+    // Walls over half the height only: mostly air, like a fence round a yard.
+    expect(proxyShape(walls(0.5))).toBeNull();
+  });
+
   it("stands each proxy on its placement, turned as the model is, with its own far ring", () => {
     const shape = proxyShape(house())!;
     const placements = [

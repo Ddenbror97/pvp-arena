@@ -29,7 +29,7 @@
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
-import { createTexturedKit, publishTextured } from "./textured-kit.mjs";
+import { createTexturedKit, farTint, publishTextured } from "./textured-kit.mjs";
 
 const TAG = process.env.TAG ?? "fort-v2";
 const only = process.argv.slice(2);
@@ -46,9 +46,13 @@ const STONE = "castlestone",
   PAINT = "paint";
 const WHITE = [1, 1, 1];
 const DARK = [0.05, 0.045, 0.04];
-const FAR_STONE = [0.6, 0.57, 0.5],
-  FAR_SLATE = [0.27, 0.3, 0.34],
-  FAR_WOOD = [0.38, 0.28, 0.18];
+// The far LODs' paint where one box stands for several parts: the textures' average colours
+// (linear, textured-kit.mjs farTint). They were the averages read off the images, sRGB values
+// about twice as light as the stone itself: the fortress stood pale on its hill from wherever
+// its far LOD drew (owner, 2026-11-22: "the castle is white in a distance no color").
+const FAR_STONE = farTint(WALL),
+  FAR_SLATE = farTint(SLATE),
+  FAR_WOOD = farTint(WOOD);
 /** Stairs: risers and treads (m). */
 /** A ramp's step under a flight (m): as the old buildings' stairs (stairBoxes(s, 0.05)). */
 const RAMP_RISE = 0.05;
@@ -147,11 +151,7 @@ function kit() {
       k.box(p, m, tint, { skip, lod, collide: lod === 0 });
     }
   };
-  const mass = (
-    b,
-    cuts = [],
-    { m = STONE, top = null, tint = WHITE, farTint = FAR_STONE, farBox = true } = {},
-  ) => {
+  const mass = (b, cuts = [], { m = STONE, top = null, tint = WHITE, farBox = true } = {}) => {
     draw(b, carve(b, cuts), m, top, 0, tint);
     const e = 1e-6;
     const outer = cuts.filter(
@@ -164,7 +164,7 @@ function kit() {
           c[4] >= b[4] - e),
     );
     draw(b, carve(b, outer), m, top, "mid", tint);
-    if (farBox) far.box(b, PAINT, farTint, { collide: false });
+    if (farBox) far.box(b, m, tint, { collide: false });
   };
   /** A floor surface drawn at y (near LOD), a thin collision slab under it. */
   const floor = (x0, z0, x1, z1, y, m = FLOOR, { collide = true, holes = [] } = {}) => {
@@ -1490,7 +1490,10 @@ export const KEEP = { at: [0, 8], half: [17, 14] };
     [0.25, 0.08, 0.02],
     { n: [0, 1, 0], lod: 0 },
   );
-  K.far.box([-HX, 0, -HZ, HX, 5, HZ], PAINT, FAR_WOOD, { collide: false });
+  K.far.box([-HX, 0, -HZ, HX, 5, HZ], PAINT, FAR_WOOD, { collide: false, skip: ["top"] });
+  K.far.quad([-HX, 5, -HZ], [-HX, 5, HZ], [HX, 5, HZ], [HX, 5, -HZ], PAINT, FAR_SLATE, {
+    n: [0, 1, 0],
+  });
   await publish(
     "fort-stables",
     K,

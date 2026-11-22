@@ -29,6 +29,8 @@ export const FAR_BUILDINGS = {
   minSide: 4,
   minHeight: 2.5,
   minCover: 0.45,
+  /** A roofless model whose walls cover this share of its box's four sides is a box (a storey). */
+  tubeWalls: 0.8,
   /** Walls reach this far below the model's base (m), into sloping ground. */
   skirt: 1.5,
 } as const;
@@ -148,7 +150,17 @@ export function proxyShape(scene: THREE.Object3D): ProxyShape | null {
   }
   let covered = 0;
   for (let i = 0; i < top.length; i++) if (top[i]! > -Infinity) covered++;
-  if (covered / top.length < FAR_BUILDINGS.minCover || roof[3]! <= 0) return null;
+  // Walls all round and no roof: a storey of a tower, whose lid is the storey placed on it (a
+  // lid of its own shows through its walls from far off, build_condo.mjs farSlice). A box to its
+  // top, in its walls' colour. (A mast or a pylon has no such walls: 80 % of the box's sides.)
+  const tube =
+    covered / top.length < FAR_BUILDINGS.minCover &&
+    // (`wall[3]` is twice the walls' area: the normals' lengths.)
+    wall[3]! / 2 >= FAR_BUILDINGS.tubeWalls * 2 * (sx + sz) * sy;
+  if (tube) {
+    top.fill(bounds.max.y);
+    for (let k = 0; k < 4; k++) roof[k] = wall[k]!;
+  } else if (covered / top.length < FAR_BUILDINGS.minCover || roof[3]! <= 0) return null;
   // Each grid corner: the highest roof in the fine cells that touch it.
   const heights = new Float32Array((nx + 1) * (nz + 1));
   for (let j = 0; j <= nz; j++)

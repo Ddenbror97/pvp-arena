@@ -10,6 +10,7 @@ import { stepBody, type BrBody } from "../../../src/lib/fps/br/movement";
 import type { StaticWorld } from "../../../src/lib/fps/br/static-world";
 import { loadIslandScene, type IslandScene } from "../../../src/lib/fps/br/island-scene";
 import { createDoorRenderer } from "../../../src/lib/fps/br/door-renderer";
+import { createPaneRenderer } from "../../../src/lib/fps/br/pane-renderer";
 import { createTorchFlames } from "../../../src/lib/fps/br/torch-flames";
 import { initialDoors } from "../../../src/lib/fps/br/doors";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
@@ -27,6 +28,8 @@ import { detectBrTier, tierPixelRatio, type BrTier } from "../../../src/lib/fps/
 declare global {
   interface Window {
     explorer: {
+      scene: THREE.Scene;
+      camera: THREE.PerspectiveCamera;
       ready: Promise<void>;
       view: (
         pos: number[],
@@ -142,6 +145,9 @@ const ready = (async () => {
   groundAt = (x, z) => hf.heightAt(x, z);
   placed = islandScene.island.layout;
   solid = islandScene.island.solid;
+  // The breakable panorama glass, whole, as a match starts it (?panes=0: without, to compare).
+  if (new URLSearchParams(location.search).get("panes") !== "0")
+    createPaneRenderer(scene, islandScene.island.panes);
   // Doors as a match starts them (seed 1).
   const doorSet = islandScene.island.doors;
   doorsFx = createDoorRenderer(scene, doorSet, islandScene.doorLook);
@@ -297,6 +303,9 @@ void ready.then(() => {
 });
 
 window.explorer = {
+  // For probes: the live scene and camera (find a mesh, change a material, project a point).
+  scene,
+  camera,
   ready,
   meta: () => meta,
   layout: () => placed,

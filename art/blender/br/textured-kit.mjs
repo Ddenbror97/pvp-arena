@@ -342,6 +342,33 @@ const io = new NodeIO()
   .registerDependencies({ "meshopt.decoder": MeshoptDecoder, "meshopt.encoder": MeshoptEncoder });
 
 /** One GLB: a primitive per material, textures embedded once per file. */
+/**
+ * A texture's average colour, linear like the tints (COLOR_0 is linear; a JPEG is sRGB). The far
+ * LODs have no textures, and their builders painted them the textures' average as read off the
+ * image, an sRGB value, as a tint: about twice the light the textured wall reflects (castle
+ * stone 0.60 0.57 0.50 for a wall that averages 0.32 0.29 0.22). Whatever was built of stone,
+ * plaster, tile or timber went pale where it changed to its far LOD (owner, 2026-11-22: "the
+ * castle is white in a distance no color").
+ */
+const MEANS = {};
+for (const tex of new Set(Object.values(MATERIALS).map((m) => m.tex))) {
+  if (!tex) continue;
+  const data = await sharp(`${TEX}/${tex}.jpg`).resize(64, 64).removeAlpha().raw().toBuffer();
+  const sum = [0, 0, 0];
+  for (let i = 0; i < data.length; i += 3)
+    for (let c = 0; c < 3; c++) sum[c] += (data[i + c] / 255) ** 2.2;
+  MEANS[tex] = sum.map((v) => +(v / (data.length / 3)).toFixed(3));
+}
+/**
+ * A far LOD's colour for a surface of `material` tinted `tint`: the texture's average times the
+ * tint. (A far part that names the material itself gets this when its GLB is written; this is
+ * for a far part that stands for several, painted "paint".)
+ */
+export function farTint(material, tint = [1, 1, 1]) {
+  const mean = MEANS[(MATERIALS[material] ?? MATERIALS.paint).tex] ?? [1, 1, 1];
+  return tint.map((v, i) => +(v * mean[i]).toFixed(3));
+}
+
 /** A texture's JPEG at most `size` px (the source files are 512 or 1024). */
 const resized = new Map();
 async function textureBytes(tex, size) {
@@ -366,9 +393,17 @@ export async function writeTexturedGlb(
   { textures = true, size = null } = {},
 ) {
   if (!textures) {
-    // The far LOD: one draw (its tints carry the colours).
+    // The far LOD: one draw, its tints carrying the colours. A part that names a textured
+    // material is painted that texture's average colour times its tint: what the near LODs
+    // show there from far off (see farTint).
     const one = { pos: [], nrm: [], uv: [], col: [] };
-    for (const g of byMaterial.values()) for (const k of Object.keys(one)) one[k].push(...g[k]);
+    for (const [m, g] of byMaterial) {
+      const mean = MEANS[(MATERIALS[m] ?? MATERIALS.paint).tex];
+      for (const k of Object.keys(one)) {
+        if (k !== "col" || !mean) one[k].push(...g[k]);
+        else for (let i = 0; i < g.col.length; i++) one.col.push(g.col[i] * (mean[i % 4] ?? 1));
+      }
+    }
     byMaterial = new Map([["paint", one]]);
   }
   const doc = new Document();
@@ -437,6 +472,14 @@ export async function writeTexturedGlb(
 export async function publishTextured(id, kit, far, entry) {
   const OUT = "public/fps/br/models";
   const { tag, ...meta } = entry;
+  // FAR_ONLY=<tag>: only the far LOD, as <id>.<tag>.lod2.glb, and nothing else written (the
+  // near LODs in the game went through later passes; set_lods.mjs points a manifest at it).
+  if (process.env.FAR_ONLY) {
+    const out = `${OUT}/${id}.${process.env.FAR_ONLY}.lod2.glb`;
+    const r = await writeTexturedGlb(out, far.geometry(0), id, { textures: false });
+    console.log(`far ${id}:2:${id}.${process.env.FAR_ONLY}.lod2.glb ${r.tris} tris`);
+    return;
+  }
   const file = (i) => `${id}${tag ? `.${tag}` : ""}.lod${i}.glb`;
   // `texture`: the near LOD's largest texture (px); the middle LOD gets a quarter of its area.
   const { texture = 1024, ...info } = meta;

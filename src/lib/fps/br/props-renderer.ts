@@ -35,7 +35,14 @@ export type ModelManifest = {
   facades?: { atlas: string; width: number; height: number };
   models: Record<
     string,
-    { class: string; ring?: string; size: number[]; lods: Array<{ file: string; tris: number }> }
+    {
+      class: string;
+      ring?: string;
+      /** "far": from the air this model goes to its far LOD early (AIR_FLAT). */
+      air?: string;
+      size: number[];
+      lods: Array<{ file: string; tris: number }>;
+    }
   >;
 };
 
@@ -171,6 +178,23 @@ const FIXED_RINGS = new Set([
  */
 export const AIR_VIEW = { from: 100, full: 350, reach: 2 } as const;
 const AIR_CLASSES = new Set(["dwelling", "outbuilding", "shop"]);
+/**
+ * Blocks of storeys do the opposite (owner, 2026-11-22: the apartments with balconies and the
+ * towers "flicker in downtown alot in the parchute in higher attitude"). Seen from above, a
+ * storey is 3–6 pixels high, and what its middle LOD has proud of the wall (balcony slabs and
+ * railings, the slabs' edge lines, the open frame round the panes) is lines thinner than a
+ * pixel, sunlit on top and shaded on the face: they come and go as the camera moves. Measured
+ * from 300–800 m in a glide, 25–60 of every 1,000 pixels of an apartment's balcony side flashed
+ * each frame and 10–30 of a tower's face, against 1–5 for a far LOD with flat walls. Colours do
+ * not cure it (the same LOD in one flat colour flashed as much); only the geometry does.
+ *
+ * So a model whose manifest entry says `air: "far"` (the towers' storeys and lobbies, the
+ * apartment and Bauhaus blocks: their far LODs are flat, in the colours the middle LOD averages
+ * to) ends its middle LOD at `mid` metres once the camera is `full` metres above the ground,
+ * easing in from `from`. Nothing changes on foot or on a roof (the tallest is under `from`):
+ * a player on a balcony is drawn, and hidden, from exactly as far as before.
+ */
+export const AIR_FLAT = { from: 100, full: 160, mid: 300 } as const;
 /** Scaled rings never end closer than this (m): beyond the 1 km range players are sent. */
 const MIN_FAR = 1500;
 const scaleRing = (ring: [number, number, number], k: number): [number, number, number] => [
@@ -201,6 +225,8 @@ type ModelState = {
   ring: [number, number, number];
   base: [number, number, number];
   fixed: boolean;
+  /** Goes to its far LOD early from the air (AIR_FLAT). */
+  airFar: boolean;
   lods: Array<LodMeshes | null | "loading">;
   /** The LOD each placement's distance last chose (-1: none), for LOD_HYSTERESIS. */
   level: Int8Array;
@@ -341,6 +367,7 @@ export function createProps(
       ring,
       base: ring,
       fixed: FIXED_RINGS.has(cls),
+      airFar: m.air === "far",
       lods: m.lods.map(() => null),
       level: new Int8Array(byModel.get(id)!.length).fill(-1),
     });
@@ -557,8 +584,9 @@ export function createProps(
   /** Where the last pass started (the camera then). */
   const last = new THREE.Vector3(Infinity, Infinity, Infinity);
   let dirty = true;
-  /** How far the pass in progress is "in the air": 0 on foot to 1 (AIR_VIEW). */
-  let air = 0;
+  /** How far the pass in progress is "in the air": 0 on foot to 1 (AIR_VIEW; AIR_FLAT). */
+  let air = 0,
+    airFlat = 0;
   const cam = new THREE.Vector3();
   let instances = 0;
   /** Each placement's matrix, composed once (placements never move): 16 floats each. */
@@ -584,15 +612,11 @@ export function createProps(
   const startPass = () => {
     pass.copy(cam);
     last.copy(cam);
-    air = ground
-      ? Math.min(
-          1,
-          Math.max(
-            0,
-            (cam.y - ground(cam.x, cam.z) - AIR_VIEW.from) / (AIR_VIEW.full - AIR_VIEW.from),
-          ),
-        )
-      : 0;
+    const up = ground ? cam.y - ground(cam.x, cam.z) : 0;
+    const eased = (from: number, full: number) =>
+      Math.min(1, Math.max(0, (up - from) / (full - from)));
+    air = eased(AIR_VIEW.from, AIR_VIEW.full);
+    airFlat = eased(AIR_FLAT.from, AIR_FLAT.full);
     dirty = false;
     cursor = 0;
     passInstances = 0;
@@ -616,8 +640,9 @@ export function createProps(
     };
     const list = byModel.get(id)!;
     const mats = placedMatrices.get(id)!;
-    const mid =
-      air && AIR_CLASSES.has(state.cls)
+    const mid = state.airFar
+      ? state.ring[1] - airFlat * Math.max(0, state.ring[1] - AIR_FLAT.mid)
+      : air && AIR_CLASSES.has(state.cls)
         ? Math.min(state.ring[2], state.ring[1] * (1 + air * (AIR_VIEW.reach - 1)))
         : state.ring[1];
     const r0 = state.ring[0] ** 2,

@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { batchable, buildBatches } from "../src/lib/fps/br/props-batch";
 import { brResolutionScale } from "../src/lib/fps/br/br-settings";
 import {
+  AIR_FLAT,
   AIR_VIEW,
   createProps,
   LOD_HYSTERESIS,
@@ -352,5 +353,38 @@ describe("BR props follow the camera up and down (owner, 2026-11-14: houses from
     ).toBe(0);
     props.dispose();
     cover.dispose();
+  });
+
+  it("hands a block of storeys to its far LOD early from the air, and only from the air", async () => {
+    // `building`: near to 220 m, middle to 800 m. A storey marked `air: "far"`, 500 m off.
+    const storeys: ModelManifest = {
+      models: { house: { ...manifest("building").models["house"]!, air: "far" } },
+    };
+    const props = createProps(town(), storeys, loader, { preload: true, ground: () => 0 });
+    await props.ready;
+    at(500, 1.7, 0); // on foot: the middle LOD, as ever
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, N, 0]);
+    at(400, 300, 0); // the same distance from 300 m up: its flat far LOD
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, 0, N]);
+    at(200, 180, 0); // inside AIR_FLAT.mid the middle LOD is back
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, N, 0]);
+    // On the roof of the tallest tower (under AIR_FLAT.from) nothing changes.
+    at(500, AIR_FLAT.from - 10, 0);
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, N, 0]);
+    // A building without the mark keeps its middle LOD from the air.
+    const plain = createProps(town(), manifest("building"), loader, {
+      preload: true,
+      ground: () => 0,
+    });
+    await plain.ready;
+    at(400, 300, 0);
+    plain.update(camera, true);
+    expect(drawn(plain)).toEqual([0, N, 0]);
+    props.dispose();
+    plain.dispose();
   });
 });

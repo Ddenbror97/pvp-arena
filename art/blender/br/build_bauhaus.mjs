@@ -20,7 +20,8 @@
  *
  * Model space: metres, pivot at the bottom centre, front +z at turn 0 (the old door's side).
  */
-import { createTexturedKit, publishTextured } from "./textured-kit.mjs";
+import { bands, strips } from "./far-tone.mjs";
+import { createTexturedKit, publishTextured, writeTexturedGlb } from "./textured-kit.mjs";
 
 const TAG = "bauhaus-v4";
 const X = 8.4, // the body's half width
@@ -385,28 +386,69 @@ function balcony(s, y) {
 for (let L = 1; L < LEVELS; L++) for (const s of [-1, 1]) balcony(s, Y(L));
 
 // ------------------------------------------------------------------ the far LOD
-far.box([-X, 0, ZB, X, Y(LEVELS) + 0.95, ZF], "paint", T.white, { collide: false });
-for (let L = 0; L < LEVELS; L++) {
-  const y0 = Y(L);
-  far.box([-7.9, y0 + WIN[0], ZF, 7.9, y0 + WIN[1], ZF + 0.04], "glass", T.glass, {
+// far-v2 (2026-11-22). The far LOD has no textures and was white all over with the windows' own
+// dark blue: the roof (grey under a sand-coloured concrete texture near by) turned white where
+// a block changed LOD, most of all from the air, where every roof is in view (owner: the new
+// buildings are "white in a distance no color"), and the window bands were full-contrast
+// stripes a pixel or two high that crawled as the camera moved (far-tone.mjs). Now the roof is
+// its texture's colour (textured-kit.mjs paints a far part its material's average), and the
+// front and back are painted flush in two bands a storey close in brightness: the see-through
+// panes over the pale rooms behind them (lit like the open floor, so about two thirds of the
+// wall's white) and the wall between.
+{
+  const WINDOW = bands([[0.58, 0.62, 0.66], WIN[1] - WIN[0]], [T.white, FH - (WIN[1] - WIN[0])]);
+  const rows = [];
+  for (let L = 0; L < LEVELS; L++) {
+    rows.push([Y(L) + WIN[0], Y(L) + WIN[1], WINDOW.dark]);
+    if (L + 1 < LEVELS) rows.push([Y(L) + WIN[1], Y(L + 1) + WIN[0], WINDOW.light]);
+  }
+  const painted = strips(0, RP, rows, T.white),
+    plain = strips(0, RP, [], T.white);
+  // The ends as a box; the front, the back and the roof as quads of their own.
+  far.box([-X, 0, ZB, X, RP, ZF], "paint", T.white, {
     collide: false,
+    skip: ["top", "bottom", "z0", "z1"],
   });
-  far.box([-7.9, y0 + WIN[0], ZB - 0.04, 7.9, y0 + WIN[1], ZB], "glass", T.glass, {
-    collide: false,
+  for (const [z, n] of [
+    [ZF, [0, 0, 1]],
+    [ZB, [0, 0, -1]],
+  ])
+    for (const [u0, u1, list] of [
+      [-X, -7.9, plain],
+      [-7.9, 7.9, painted],
+      [7.9, X, plain],
+    ])
+      for (const [a, b, tone] of list)
+        far.quad([u0, a, z], [u1, a, z], [u1, b, z], [u0, b, z], "paint", tone, { n });
+  far.quad([-X, RP, ZB], [-X, RP, ZF], [X, RP, ZF], [X, RP, ZB], "concrete", T.roof, {
+    n: [0, 1, 0],
   });
-  if (L > 0)
+  for (let L = 1; L < LEVELS; L++)
     for (const s of [-1, 1])
       far.box(
-        [s > 0 ? 4.9 : -X - 0.6, y0 - 0.22, ZF, s > 0 ? X + 0.6 : -4.9, y0 + 1.0, ZF + 2.0],
+        [s > 0 ? 4.9 : -X - 0.6, Y(L) - 0.22, ZF, s > 0 ? X + 0.6 : -4.9, Y(L) + 1.0, ZF + 2.0],
         "paint",
         T.white,
-        {
-          collide: false,
-        },
+        { collide: false, skip: ["z0"] },
       );
+  // The stair house (from the parapet's top up) and its roof.
+  far.box([-HX, RP, HZ0, HX, HY, HZ1], "paint", T.white, {
+    collide: false,
+    skip: ["top", "bottom"],
+  });
+  far.quad([-HX, HY, HZ0], [-HX, HY, HZ1], [HX, HY, HZ1], [HX, HY, HZ0], "concrete", T.roof, {
+    n: [0, 1, 0],
+  });
 }
-far.box([-HX, Y(LEVELS), HZ0, HX, HY, HZ1], "paint", T.white, { collide: false });
 
+// `--far`: only the far LOD, as bauhaus-block.far-v2.lod2.glb (the near LODs in the game went
+// through later passes: zfix-v13); set_lods.mjs points a manifest at it.
+if (process.argv.includes("--far")) {
+  const out = "public/fps/br/models/bauhaus-block.far-v2.lod2.glb";
+  const r = await writeTexturedGlb(out, far.geometry(0), "bauhaus-block", { textures: false });
+  console.log(`bauhaus-block far LOD → ${out}`, r);
+  process.exit(0);
+}
 await publishTextured("bauhaus-block", k, far, {
   tag: TAG,
   title: "Bauhaus block",

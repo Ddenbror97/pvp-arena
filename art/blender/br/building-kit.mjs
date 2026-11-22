@@ -30,7 +30,7 @@
  *   trim          tint of the door frames, sills and cornice
  *   bands         true: a cornice at every floor line
  */
-import { createTexturedKit } from "./textured-kit.mjs";
+import { createTexturedKit, farTint } from "./textured-kit.mjs";
 
 const SLAB = 0.22;
 const RISE_MAX = 0.19;
@@ -80,19 +80,10 @@ export function makeBuilding(S) {
           // (One floor material per building, each storey its own shade: a material is a draw.)
           floor: PALETTES[S.palette % PALETTES.length].floor,
         };
-  // The far LOD is tint only: the wall's texture's average colour times its tint.
-  const AVG = {
-    plaster: [0.72, 0.52, 0.45],
-    rubble: [0.66, 0.58, 0.45],
-    stone: [0.78, 0.75, 0.68],
-    concrete: [0.74, 0.71, 0.65],
-    metal: [0.7, 0.7, 0.7],
-    wood: [0.5, 0.34, 0.22],
-    paint: [1, 1, 1],
-  };
-  const farWall = (AVG[(S.wall ?? {}).m ?? "paint"] ?? [1, 1, 1]).map(
-    (v, i) => v * ((S.wall ?? {}).tint ?? [0.9, 0.88, 0.84])[i],
-  );
+  // The far LOD is tint only: the wall's texture's average colour times its tint (farTint: the
+  // linear average. The table that stood here held the textures' sRGB averages, about twice as
+  // light, so every building of this kit went pale at its far LOD).
+  const farWall = farTint((S.wall ?? {}).m ?? "paint", (S.wall ?? {}).tint ?? [0.9, 0.88, 0.84]);
   const top = Y(n);
 
   // ---------------------------------------------------------------- walls
@@ -514,7 +505,19 @@ export function makeBuilding(S) {
         { skip: ["bottom"] },
       );
       ceiling(rx0 + 0.2, rz0 + 0.2, rx1 - 0.2, rz1 - 0.2, HY - 0.02);
-      far.box([rx0, top, rz0, rx1, HY + 0.2, rz1], "paint", farWall, { collide: false });
+      far.box([rx0, top, rz0, rx1, HY + 0.2, rz1], "paint", farWall, {
+        collide: false,
+        skip: ["top"],
+      });
+      far.quad(
+        [rx0, HY + 0.2, rz0],
+        [rx0, HY + 0.2, rz1],
+        [rx1, HY + 0.2, rz1],
+        [rx1, HY + 0.2, rz0],
+        "concrete",
+        [0.55, 0.55, 0.53],
+        { n: [0, 1, 0] },
+      );
     }
   }
 
@@ -561,7 +564,18 @@ export function makeBuilding(S) {
         skip: ["bottom"],
       });
     height = top + ph + 0.08;
-    far.box([-X, 0, -Z, X, top + ph, Z], "paint", farWall, { collide: false });
+    // The far LOD: the block to the parapet's top, its top the roof's deck (it was the walls'
+    // colour: a flat roof turned as pale as its walls where the building changed LOD).
+    far.box([-X, 0, -Z, X, top + ph, Z], "paint", farWall, { collide: false, skip: ["top"] });
+    far.quad(
+      [-X, top + ph, -Z],
+      [-X, top + ph, Z],
+      [X, top + ph, Z],
+      [X, top + ph, -Z],
+      "concrete",
+      roof.slabTint ?? [0.6, 0.6, 0.58],
+      { n: [0, 1, 0] },
+    );
   } else {
     // Gable: the ridge along `along`, eaves `over` beyond the walls.
     const along = roof.along ?? "x";
@@ -614,8 +628,8 @@ export function makeBuilding(S) {
         P(L2, s * half, eaveY),
         P(L2, 0, ridgeY),
         P(-L2, 0, ridgeY),
-        "paint",
-        roof.farTint ?? [0.55, 0.3, 0.22],
+        rm,
+        rt,
         { n: nrm, facing: nrm },
       );
       // The gable end over the end wall (both faces): a band up to the eaves' underside, then

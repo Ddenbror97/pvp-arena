@@ -74,7 +74,7 @@ const stack =
       [0.12, 0.11, 0.1],
       { collide: false },
     );
-    far.box([x - half, y0, z - half, x + half, y1, z + half], "paint", [0.5, 0.3, 0.26], {
+    far.box([x - half, y0, z - half, x + half, y1, z + half], DARK_BRICK.m, DARK_BRICK.tint, {
       collide: false,
     });
   };
@@ -211,7 +211,7 @@ const B = {
           });
           k.box([-X - 0.5, 0, -Z, -X, 1.2, Z], DARK_BRICK.m, DARK_BRICK.tint, { skip: ["bottom"] });
           k.box([X, 0, -Z, X + 0.5, 1.2, Z], DARK_BRICK.m, DARK_BRICK.tint, { skip: ["bottom"] });
-          far.box([-X - 0.5, 0, -Z - 0.5, X + 0.5, 1.2, Z + 0.5], "paint", [0.42, 0.26, 0.22], {
+          far.box([-X - 0.5, 0, -Z - 0.5, X + 0.5, 1.2, Z + 0.5], DARK_BRICK.m, DARK_BRICK.tint, {
             collide: false,
           });
         }),
@@ -322,7 +322,6 @@ const B = {
           over: 0.5,
           m: "metal",
           tint: [0.5, 0.52, 0.55],
-          farTint: [0.38, 0.4, 0.43],
         },
         extra: ({ k, X: x, Z: z }) => {
           // The brick plinth along the long sides (to 1.1 m), cut where the gateway and the
@@ -423,18 +422,7 @@ function tank(id, { R = 8, H = 11, tint, band, title, use }) {
     k.slab(x0, z0, x1, z1, 0.3, 0, H, "metal", tint);
     // The band.
     k.slab(x0, z0, x1, z1, 0.34, H * 0.62, H * 0.62 + 1.2, "paint", band, { collide: false });
-    far.slab(
-      x0,
-      z0,
-      x1,
-      z1,
-      0.3,
-      0,
-      H,
-      "paint",
-      tint.map((v) => v * 0.8),
-      { collide: false },
-    );
+    far.slab(x0, z0, x1, z1, 0.3, 0, H, "metal", tint, { collide: false });
   }
   // The roof (walked on: collision in strips) and a shallow cone over its middle.
   const ring = [...Array(N).keys()].map((i) => pt(i, R - 0.1));
@@ -448,8 +436,8 @@ function tank(id, { R = 8, H = 11, tint, band, title, use }) {
   far.poly(
     ring,
     H,
-    "paint",
-    tint.map((v) => v * 0.7),
+    "metal",
+    tint.map((v) => v * 0.92),
     { collide: false },
   );
   const rc = R * 0.55,
@@ -568,7 +556,7 @@ function pipeRack() {
       },
     );
   }
-  far.box([-LEN / 2, 0, -0.2, LEN / 2, H, 0.2], "paint", [0.45, 0.2, 0.15], { collide: false });
+  far.box([-LEN / 2, 0, -0.2, LEN / 2, H, 0.2], "rust", STEEL, { collide: false });
   return {
     id: "ew-pipe-rack",
     k,
@@ -636,17 +624,7 @@ function yard(id, kind) {
     for (let x = -S + 0.5; x < S; x += 5) line(x, -0.07, x + 2.5, 0.07, [0.92, 0.92, 0.9]);
   }
   // (The far LOD a single quad: no cheaper than the near one otherwise.)
-  far.quad(
-    [-S, h, -S],
-    [-S, h, S],
-    [S, h, S],
-    [S, h, -S],
-    "paint",
-    kind === "road" ? [0.22, 0.22, 0.23] : [0.6, 0.59, 0.56],
-    {
-      n: [0, 1, 0],
-    },
-  );
+  far.quad([-S, h, -S], [-S, h, S], [S, h, S], [S, h, -S], m, [1, 1, 1], { n: [0, 1, 0] });
   return {
     id,
     k,
