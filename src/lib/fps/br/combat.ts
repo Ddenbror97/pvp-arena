@@ -105,7 +105,8 @@ export class PoseHistory {
       pose[o] = f.body.x;
       pose[o + 1] = f.body.y;
       pose[o + 2] = f.body.z;
-      pose[o + 3] = f.body.crouched ? 1 : 0;
+      // 2: swimming (player-volumes.ts: the body lies in the water, not standing on it).
+      pose[o + 3] = f.body.phase === "swim" ? 2 : f.body.crouched ? 1 : 0;
     }
     this.frames.push({ at, pose });
     if (this.frames.length > COMBAT.historyTicks) this.frames.shift();
@@ -142,6 +143,7 @@ export class PoseHistory {
           y: f.pose[o + 1]! + (k ? (next!.pose[o + 1]! - f.pose[o + 1]!) * k : 0),
           z: f.pose[o + 2]! + (k ? (next!.pose[o + 2]! - f.pose[o + 2]!) * k : 0),
           crouched: f.pose[o + 3] === 1,
+          swim: f.pose[o + 3] === 2,
         };
       }
     }
@@ -155,8 +157,15 @@ export class PoseHistory {
         y: oldest.pose[o + 1]!,
         z: oldest.pose[o + 2]!,
         crouched: oldest.pose[o + 3] === 1,
+        swim: oldest.pose[o + 3] === 2,
       };
-    return { x: fallback.x, y: fallback.y, z: fallback.z, crouched: fallback.crouched };
+    return {
+      x: fallback.x,
+      y: fallback.y,
+      z: fallback.z,
+      crouched: fallback.crouched,
+      swim: fallback.phase === "swim",
+    };
   }
 }
 

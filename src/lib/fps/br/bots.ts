@@ -386,7 +386,8 @@ export function botThink(
     aimAt = { x: 0, y: 0, z: 0 };
   for (const c of near.slice(0, 3)) {
     const tx = c.o.body.x,
-      ty = c.o.body.y + (c.o.body.crouched ? 0.85 : 1.15),
+      // (A swimmer lies in the water, player-volumes.ts: the head and shoulders at its surface.)
+      ty = c.o.body.y + (c.o.body.phase === "swim" ? 0.1 : c.o.body.crouched ? 0.85 : 1.15),
       tz = c.o.body.z;
     const dx = tx - eye.x,
       dy = ty - eye.y,
