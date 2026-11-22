@@ -38,7 +38,7 @@ const browser = await chromium.launch({
   executablePath: process.env.CHROMIUM ?? "/opt/pw-browsers/chromium-1243/chrome-linux64/chrome",
   args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
 });
-const page = await browser.newPage({ viewport: { width: 640, height: 480 } });
+const page = await browser.newPage({ viewport: { width: 960, height: 540 } });
 page.on("pageerror", (e) => console.log("pageerror", e.message));
 page.on("console", (m) => m.type() === "error" && console.log("console", m.text()));
 await page.goto(`http://localhost:${server.address().port}/`);
@@ -105,14 +105,46 @@ if (process.env.DEATH) {
   process.exit(0);
 }
 if (process.env.SWIM) {
-  for (const seat of ["A", "B"])
-    for (const view of ["side", "front"])
-      for (const t of [0.5, 1.0, 1.5, 2.0, 2.5, 3.0]) {
-        await page.evaluate((x) => window.show(x), { seat, gait: "swim", t, view });
-        await page.screenshot({
-          path: path.join(outDir, `swim-${seat}-${view}-${t.toFixed(1)}.png`),
-        });
-      }
+  // SWIM=1: the crawl from every side and through the swimmer's own eyes, the tread, a turn.
+  // SWIM='[["name",{...show options}],…]' for chosen frames.
+  const cases =
+    process.env.SWIM !== "1"
+      ? JSON.parse(process.env.SWIM)
+      : ["A", "B"].flatMap((seat) => [
+          ...["side", "front", "rear", "top", "diagonal", "rear-diagonal"].flatMap((view) =>
+            [2.0, 2.3, 2.6, 2.9].map((t) => [`swim-${seat}-${view}-${t}`, { seat, view, t }]),
+          ),
+          ...[2.0, 2.15, 2.3, 2.45, 2.6, 2.75, 2.9, 3.05].map((t) => [
+            `swim-${seat}-pov-${t}`,
+            { seat, view: "pov", t },
+          ]),
+          ...[2.0, 2.3, 2.6, 2.9].map((t) => [
+            `swim-${seat}-pov-down-${t}`,
+            { seat, view: "pov", t, pitch: -0.5 },
+          ]),
+          ...[2.0, 2.6].map((t) => [
+            `swim-${seat}-pov-up-${t}`,
+            { seat, view: "pov", t, pitch: 0.35 },
+          ]),
+          ...[2.0, 2.6].flatMap((t) => [
+            [`swim-${seat}-pov-left-${t}`, { seat, view: "pov", t, turn: 1.6 }],
+            [`swim-${seat}-pov-right-${t}`, { seat, view: "pov", t, turn: -1.6 }],
+          ]),
+          ...["side", "front", "pov"].flatMap((view) =>
+            [2.0, 2.6].map((t) => [`tread-${seat}-${view}-${t}`, { seat, view, t, speed: 0 }]),
+          ),
+          [`tread-${seat}-pov-down-2`, { seat, view: "pov", t: 2, speed: 0, pitch: -0.6 }],
+          ...[0.1, 0.3, 0.6, 1.0].map((t) => [
+            `enter-${seat}-side-${t}`,
+            { seat, view: "side", t },
+          ]),
+        ]);
+  for (const [name, o] of cases) {
+    await page.evaluate((x) => window.show({ gait: "swim", ...x }), o);
+    if (o.view === "pov" && process.env.DEBUG)
+      console.log(name, await page.evaluate(() => window.armTris));
+    await page.screenshot({ path: path.join(outDir, `${name}.png`) });
+  }
   await browser.close();
   server.close();
   process.exit(0);

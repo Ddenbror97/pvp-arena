@@ -54,6 +54,29 @@ declare global {
        * still an arm's length ahead (`behind`: facing away), no longer mirroring the input.
        */
       knifeSetup?: (behind?: boolean) => void;
+      /**
+       * Swim check only: you in a lake, `depth` m of water under you (shallower than 1.2: stood
+       * on the bottom there, to walk in), facing out to the deep. Returns that heading.
+       */
+      toWater?: (depth?: number, lake?: string) => number;
+      /**
+       * Swim check only: the other player swimming near you: `ahead`/`right` m from you (by your
+       * heading), swimming `turn` rad off your heading (`still`: treading water there; `circle`: round a
+       * circle of that radius, m, so every side of them comes past).
+       */
+      otherSwim?: (
+        ahead: number,
+        right: number,
+        turn: number,
+        still?: boolean,
+        circle?: number,
+      ) => void;
+      /** Swim check only: the countdown ends now (the plane takes off on the next step). */
+      takeOff?: () => void;
+      /** Swim check only: your view (yaw, pitch). */
+      face?: (yaw: number, pitch: number) => void;
+      /** Swim check only: you are eliminated and watch the other player (first person). */
+      die?: () => void;
       /** Profiling: `count` more players on the ground in view (see the definition). */
       crowd?: (count?: number) => number;
       /**
@@ -189,6 +212,8 @@ const ready = (async () => {
   const actQueue: BrAct[] = [];
   let mirror: BrInput | null = null;
   let mirroring = true;
+  /** The other player's turn rate (rad/s) while it swims a circle (otherSwim), else 0. */
+  let orbit = 0;
   let lastInput: BrInput | null = null;
   arena.setSender((message) => {
     const raw = JSON.parse(message);
@@ -214,6 +239,8 @@ const ready = (async () => {
   setInterval(() => {
     const input = queue.shift();
     if (input && mirroring) mirror = { ...input, yaw: input.yaw + 0.3 };
+    // (Swim check: the other player swims a circle, so every side of the stroke comes past.)
+    if (orbit && mirror) mirror = { ...mirror, yaw: mirror.yaw + (orbit * TICK_MS) / 1000 };
     const inputs = new Map<number, BrInput>();
     if (input) inputs.set(me, input);
     if (mirror) inputs.set(other, mirror);
@@ -273,6 +300,104 @@ const ready = (async () => {
     b.z = best.z;
     b.y = best.y;
     b.vx = b.vy = b.vz = 0;
+  };
+  let seaYaw = 0;
+  window.sim.toWater = (depth = 5, lake = "lake-3") => {
+    const b = state.seats[me]!.body;
+    mirroring = false;
+    mirror = null;
+    const w = meta.waterBodies.find((l) => l.id === lake)!;
+    const [x0, z0, x1, z1] = w.bounds;
+    const deep = (x: number, z: number) => {
+      const g = hf.heightAt(x, z);
+      return x > x0 && x < x1 && z > z0 && z < z1 && g < w.level ? w.level - g : 0;
+    };
+    // Deep water in the lake, and from it toward a shore: where the water is that deep.
+    let mx = 0,
+      mz = 0,
+      most = 0;
+    const ox = (x0 + x1) / 2,
+      oz = (z0 + z1) / 2;
+    // (Deep water nearest the lake's middle: open water all round it.)
+    let far = Infinity;
+    for (let x = x0; x <= x1; x += 6)
+      for (let z = z0; z <= z1; z += 6) {
+        const d = deep(x, z),
+          from = Math.hypot(x - ox, z - oz);
+        if (d > 3 && from < far) [far, most, mx, mz] = [from, d, x, z];
+      }
+    b.x = mx;
+    b.z = mz;
+    seaYaw = 0;
+    search: for (let k = 0; k < 32 && depth < most; k++) {
+      const a = k * 2.4,
+        cx = Math.cos(a),
+        cz = Math.sin(a);
+      for (let r = 0; r < 800; r += 0.2) {
+        const d = deep(mx + cx * r, mz + cz * r);
+        if (d === 0) break;
+        if (d > depth) continue;
+        // (A shore that shelves: wading depth within 30 m, and not a ledge.)
+        if (r < 25 || deep(mx + cx * (r + 30), mz + cz * (r + 30)) > 0.4) break;
+        // (And nothing in the way of walking in: no wall, pier or rock on the bed there.)
+        let clear = true;
+        for (let d = -12; d <= 8 && clear; d += 0.5) {
+          const x = mx + cx * (r + d),
+            z = mz + cz * (r + d);
+          clear = !world.blocked(x, hf.heightAt(x, z) + 0.1, z, 1.8, 0.6);
+        }
+        if (!clear) break;
+        b.x = mx + cx * r;
+        b.z = mz + cz * r;
+        // (Heading out to the deep: forward is (−sin yaw, −cos yaw).)
+        seaYaw = Math.atan2(cx, cz);
+        break search;
+      }
+    }
+    const g = hf.heightAt(b.x, b.z);
+    Object.assign(
+      b,
+      w.level - g > 1.3
+        ? { phase: "swim", grounded: false, y: w.level }
+        : { phase: "ground", grounded: true, y: g },
+    );
+    stop(b);
+    const o = state.seats[other]!.body;
+    Object.assign(o, { phase: "ground", grounded: true, x: b.x + 300, z: b.z + 300 });
+    o.y = hf.heightAt(o.x, o.z);
+    stop(o);
+    arena.look(seaYaw, 0);
+    return seaYaw;
+  };
+  window.sim.otherSwim = (ahead, right, turn, still = false, circle = 0) => {
+    // (A circle of that radius at the swimming speed, to the left.)
+    orbit = circle > 0 && !still ? 2.5 / circle : 0;
+    const b = state.seats[me]!.body,
+      o = state.seats[other]!;
+    const fx = -Math.sin(seaYaw),
+      fz = -Math.cos(seaYaw);
+    Object.assign(o.body, {
+      phase: "swim",
+      grounded: false,
+      x: b.x + fx * ahead - fz * right,
+      z: b.z + fz * ahead + fx * right,
+      y: b.y,
+    });
+    stop(o.body);
+    o.yaw = seaYaw + turn;
+    o.kit.hp = 100;
+    o.dead = false;
+    mirroring = false;
+    mirror = { seq: 1, forward: still ? 0 : 1, strafe: 0, yaw: seaYaw + turn };
+  };
+  window.sim.face = (yaw, pitch) => arena.look(yaw, pitch);
+  window.sim.takeOff = () => {
+    if (state.phase === "starting") state.phaseAt = clock;
+  };
+  window.sim.die = () => {
+    const s = state.seats[me]!;
+    s.kit.hp = 0;
+    s.dead = true;
   };
   window.sim.knifeSetup = (behind = false) => {
     const b = state.seats[me]!.body,
@@ -682,6 +807,7 @@ const ready = (async () => {
         return hf.heightAt(c[0]!, c[2]!);
       })(),
       cam: arena.debug().camera.map((v) => Math.round(v * 10) / 10),
+      camY: arena.debug().camera[1]!,
       camDist: (() => {
         const d = arena.debug();
         return (

@@ -4,15 +4,16 @@ import { createWeaponKit } from "@/lib/fps/weapon";
 import { loadLocomotion } from "@/lib/fps/locomotion";
 import { deathPose } from "@/lib/fps/death-presentation";
 import { loadDeathClip } from "@/lib/fps/death-clip";
-import { loadSwimClip } from "@/lib/fps/swim-clip";
+import { createSwimSplash } from "@/lib/fps/br/swim-splash";
+import { SWIM_EYE } from "@/lib/fps/swim-stroke";
 
 /**
  * Gait check (2026-11-10): both characters driven by the game's own update at a gait's speed
  * and direction, drawn from the side (or the given view) at a few moments of the cycle.
  * Driven by capture.mjs: window.show({ seat, gait, t, view }).
  */
-const W = 640,
-  H = 480;
+const W = 960,
+  H = 540;
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(W, H);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -25,6 +26,22 @@ sun.position.set(3, 5, 2);
 scene.add(sun);
 const grid = new THREE.GridHelper(400, 400, 0x556644, 0x6a7a55);
 scene.add(grid);
+// The water for the swim views: a sheet at y = 0 the body is seen through.
+const water = new THREE.Mesh(
+  new THREE.PlaneGeometry(60, 60),
+  new THREE.MeshBasicMaterial({
+    color: 0x2f6f8f,
+    transparent: true,
+    opacity: 0.62,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  }),
+);
+water.rotation.x = -Math.PI / 2;
+water.visible = false;
+scene.add(water);
+let splash: ReturnType<typeof createSwimSplash> | null = null,
+  splashes = 0;
 const kit = createWeaponKit();
 const chars = {
   A: createCharacter("A", null, kit, { worldRifle: true }),
@@ -48,7 +65,13 @@ declare global {
       seat: "A" | "B";
       gait: string;
       t: number;
-      view?: "side" | "front" | "rear";
+      view?: string;
+      /** Swim only: speed (m/s), first-person pitch (rad), turn rate (rad/s), water depth (m). */
+      speed?: number;
+      pitch?: number;
+      turn?: number;
+      depth?: number;
+      yaw0?: number;
     }) => void;
     /** Highest arm extension (shoulder–hand over upper+fore arm) over `t` s of a gait at `speed`. */
     reach: (o: { seat: "A" | "B"; speed: number; x: number; z: number; t: number }) => number;
@@ -56,14 +79,8 @@ declare global {
     slide: (o: { seat: "A" | "B"; speed: number; x: number; z: number; t: number }) => number[];
   }
 }
-window.ready = Promise.all([
-  chars.A.ready,
-  chars.B.ready,
-  loadLocomotion(),
-  loadDeathClip(),
-  loadSwimClip(),
-]);
-window.show = ({ seat, gait, t, view = "side" }) => {
+window.ready = Promise.all([chars.A.ready, chars.B.ready, loadLocomotion(), loadDeathClip()]);
+window.show = ({ seat, gait, t, view = "side", speed, pitch, turn, depth, yaw0 }) => {
   for (const c of Object.values(chars)) {
     c.root.removeFromParent();
   }
@@ -88,24 +105,63 @@ window.show = ({ seat, gait, t, view = "side" }) => {
     return;
   }
   if (gait === "swim") {
-    // Swimming forward at the game's swim speed: the root is at the water's surface (the grid).
+    // Swimming at `speed` (the game's 2.5 m/s by default; 0 treads): the root is on the water's
+    // surface (the blue sheet). `view`: side, front, rear, top, diagonal and rear-diagonal from
+    // outside; "pov" through the swimmer's own eyes (`pitch` radians, the head not drawn).
+    const v = speed ?? 2.5;
+    const own = view === "pov";
+    water.visible = true;
     actor.root.position.set(0, 0, 0);
-    actor.root.rotation.set(0, 0, 0);
-    actor.resetMotion(2.5, 0, -1);
+    actor.root.rotation.set(0, yaw0 ?? 0, 0);
+    actor.resetMotion(v, 0, -1);
     const steps = Math.round(t * 60);
+    // (The splashes of this run only: where the hands went through the water on the way.)
+    splash?.dispose();
+    const made = (splash = createSwimSplash(scene));
     for (let i = 0; i <= steps; i++) {
-      actor.root.position.z -= 2.5 / 60;
-      actor.update(1000 / 60, i * (1000 / 60), 0, true, false, { swim: true, primary: "none" });
+      actor.root.position.z -= v / 60;
+      if (turn) actor.root.rotation.y += turn / 60;
+      actor.update(1000 / 60, i * (1000 / 60), own ? (pitch ?? 0) : 0, true, false, {
+        swim: { view: own, ...(depth === undefined ? {} : { depth }) },
+        primary: "none",
+      });
+      actor.swimSplashes((x, y, z, strength) => {
+        made.add(x, y, z, strength);
+        splashes++;
+      });
+      made.update(1000 / 60);
     }
+    (window as unknown as { splashes: number }).splashes = splashes;
     const p = actor.root.position;
-    cam.position.set(
-      view === "side" ? p.x + 5 : p.x + 0.01,
-      view === "side" ? 0.9 : 5,
-      view === "side" ? p.z : p.z,
-    );
-    cam.lookAt(p.x, 0, p.z);
-    grid.position.set(0, 0, Math.round(p.z));
+    water.position.set(p.x, 0, p.z);
+    grid.position.set(0, -1.6, Math.round(p.z));
+    if (own) {
+      let n = 0;
+      actor.root.traverse((o) => {
+        if (o.name === "swim-view-arms") n += (o as THREE.Mesh).geometry.index!.count / 3;
+      });
+      (window as unknown as { armTris: number }).armTris = n;
+      const fp = new THREE.PerspectiveCamera(75, W / H, 0.1, 500);
+      fp.position.set(p.x, SWIM_EYE, p.z);
+      fp.rotation.set(pitch ?? 0, actor.root.rotation.y, 0, "YXZ");
+      renderer.render(scene, fp);
+      water.visible = false;
+      return;
+    }
+    const at: Record<string, [number, number, number]> = {
+      side: [4.2, 0.7, 0],
+      front: [0, 0.7, -4.2],
+      rear: [0, 1.1, 4.2],
+      top: [0.01, 5, 0.6],
+      diagonal: [3, 1.0, -3],
+      "rear-diagonal": [-3, 1.2, 3],
+      under: [3.6, -0.9, 0.8],
+    };
+    const e = at[view] ?? at.side!;
+    cam.position.set(p.x + e[0], e[1], p.z + e[2]);
+    cam.lookAt(p.x, view === "top" ? 0 : -0.1, p.z + (view === "top" ? 0.6 : 0.5));
     renderer.render(scene, cam);
+    water.visible = false;
     return;
   }
   const g = GAITS[gait]!;
