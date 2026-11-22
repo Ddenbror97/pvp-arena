@@ -97,7 +97,7 @@ export async function loadIslandScene(
   const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
   const root = new THREE.Group();
   root.name = "project-island";
-  const terrain = createTerrain(hf, cover);
+  const terrain = createTerrain(hf, cover, meta);
   root.add(terrain.root);
   const water = createWater(meta, terrain.textures.coverB, {
     texture: terrain.textures.height,
