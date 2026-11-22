@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { bindDeathClip, deathClipMs, loadDeathClip } from "./death-clip";
-import { bindSwimClip, loadSwimClip, swimClipReady } from "./swim-clip";
+import { bindSwimStroke, swimBob } from "./swim-stroke";
 import { bindLadderClip, ladderClipReady, loadLadderClip } from "./ladder-clip";
 import {
   bindRappelClip,
@@ -100,11 +100,13 @@ type Motion = {
    * handlebar grips. The caller places the character at the seat.
    */
   /**
-   * Swimming (BR): the stroke cycle (swim-clip.ts) drives the whole body, lying along the
-   * water's surface at the root, faster the faster the character moves (still: a slow tread).
+   * Swimming (BR): the stroke (swim-stroke.ts) drives the whole body, the root on the water's
+   * surface: a head-up front crawl when moving, an upright tread when still, eased between
+   * the two (and from one to the other as the water gets shallow: `depth`, m, where known).
+   * `view`: posed for the swimmer's own eyes (first person) and the head not drawn.
    * Pass `primary: "none"` with it: the hands are empty.
    */
-  swim?: boolean | undefined;
+  swim?: boolean | { view?: boolean; depth?: number } | undefined;
   /**
    * On a ladder (BR ladders.ts): the climbing cycle (ladder-clip.ts) drives the whole body,
    * `cycles` into the climb (the height climbed over the climb per cycle). The caller puts the
@@ -590,8 +592,70 @@ export function createCharacter(
   void loadDeathClip();
   /** The death animation bound to this rig (death-clip.ts), made at the first death. */
   let deathRig: ReturnType<typeof bindDeathClip> = null;
-  /** The swim stroke bound to this rig (swim-clip.ts) at the first swim, and its clock (ms). */
-  let swimRig: ReturnType<typeof bindSwimClip> = null;
+  /** The swim stroke bound to this rig (swim-stroke.ts) at the first swim. */
+  let swimRig: ReturnType<typeof bindSwimStroke> = null;
+  /** Its cycles so far, how far into the crawl (0 treading), the lean into a turn. */
+  const splashAt = new THREE.Vector3();
+  let swimCycle = 0,
+    swimCrawl = 0,
+    swimTurn = 0,
+    swimYaw = 0,
+    swimWas = false,
+    armsOnly = false;
+  /**
+   * First person in the water: the arms alone, cut from the body's own skin (the triangles
+   * whose corners all hang mostly on an arm's bones, shoulder joint to fingertips), on the same
+   * skeleton. Made at the first such swim; everything else of the character is hidden meanwhile
+   * (`viewHidden`: what was, to show again).
+   */
+  let viewArms: THREE.SkinnedMesh[] | null = null;
+  const viewHidden = new Set<THREE.Object3D>();
+  function cutViewArms() {
+    const arm = new Set<THREE.Object3D>();
+    for (const side of ["Left", "Right"]) bones.get(side + "Arm")?.traverse((o) => arm.add(o));
+    const skins: THREE.SkinnedMesh[] = [];
+    instance?.root.traverse((o) => {
+      if ((o as THREE.SkinnedMesh).isSkinnedMesh) skins.push(o as THREE.SkinnedMesh);
+    });
+    const arms: THREE.SkinnedMesh[] = [];
+    for (const skin of skins) {
+      const g = skin.geometry;
+      const index = g.index,
+        joints = g.getAttribute("skinIndex"),
+        weights = g.getAttribute("skinWeight");
+      if (!index || !joints || !weights || Array.isArray(skin.material)) continue;
+      const onArm = new Uint8Array(joints.count);
+      for (let v = 0; v < joints.count; v++) {
+        let best = 0;
+        for (let k = 1; k < 4; k++)
+          if (weights.getComponent(v, k) > weights.getComponent(v, best)) best = k;
+        onArm[v] = arm.has(skin.skeleton.bones[joints.getComponent(v, best)]!) ? 1 : 0;
+      }
+      const kept: number[] = [];
+      for (let i = 0; i + 2 < index.count; i += 3) {
+        const a = index.getX(i),
+          b = index.getX(i + 1),
+          c = index.getX(i + 2);
+        if (onArm[a] && onArm[b] && onArm[c]) kept.push(a, b, c);
+      }
+      if (!kept.length) continue;
+      const cut = new THREE.BufferGeometry();
+      for (const name in g.attributes) cut.setAttribute(name, g.getAttribute(name));
+      cut.setIndex(kept);
+      const mesh = new THREE.SkinnedMesh(cut, skin.material);
+      mesh.name = "swim-view-arms";
+      mesh.bind(skin.skeleton, skin.bindMatrix);
+      mesh.position.copy(skin.position);
+      mesh.quaternion.copy(skin.quaternion);
+      mesh.scale.copy(skin.scale);
+      // Beside the camera, posed every frame: never culled by a rest-pose bound.
+      mesh.frustumCulled = false;
+      mesh.visible = false;
+      skin.parent!.add(mesh);
+      arms.push(mesh);
+    }
+    return arms;
+  }
   /** The climb bound to this rig (ladder-clip.ts) on the first ladder. */
   let ladderRig: ReturnType<typeof bindLadderClip> = null;
   /** The rappel bound to this rig (rappel-clip.ts) on the first rope down a wall, what its
@@ -617,7 +681,6 @@ export function createCharacter(
   let ropeLast = NaN,
     ropeStill = 0,
     ropeSettle = 0;
-  let swimMs = 0;
   // Follows the rendered head centre each frame; tests compare it with the head hitbox.
   const headCenterMarker = new THREE.Group();
   headCenterMarker.name = "head-center";
@@ -1466,6 +1529,27 @@ export function createCharacter(
      * Length of the death animation (ms) when this rig plays it, else 0: the caller then tips
      * the body over itself (deathPose's fourth argument).
      */
+    /** Swimming: how far the head is above or below its mean height in the water right now (m),
+     * else 0. The first-person camera adds it (the eyes ride with the stroke). */
+    get swimBob() {
+      return swimWas ? swimBob(swimCycle, swimCrawl) : 0;
+    },
+    /**
+     * Swimming: where this swimmer's hands went through the water since the last call (world x,
+     * the water's height, world z, strength 0–1), each given to `emit` once.
+     */
+    swimSplashes(emit: (x: number, y: number, z: number, strength: number) => void) {
+      const list = swimRig?.splashes;
+      if (!list?.length) return;
+      for (let i = 0; i < list.length; i += 3) {
+        splashAt
+          .set(list[i]!, 0, list[i + 1]!)
+          .applyQuaternion(root.quaternion)
+          .add(root.position);
+        emit(splashAt.x, root.position.y, splashAt.z, list[i + 2]!);
+      }
+      list.length = 0;
+    },
     get deathClipMs() {
       return loaded && gait ? deathClipMs() : 0;
     },
@@ -1569,14 +1653,62 @@ export function createCharacter(
       // Bound with the bones at rest, before anything below poses them.
       if (motion.death !== undefined && !deathRig && gait && deathClipMs() > 0)
         deathRig = bindDeathClip(root, bones, gait.legLength);
-      const swimming = alive && motion.swim === true && motion.death === undefined;
+      const swimming = alive && !!motion.swim && motion.death === undefined;
+      const swimView = swimming && typeof motion.swim === "object" && !!motion.swim.view;
       if (swimming) {
-        void loadSwimClip();
-        if (!swimRig && gait && swimClipReady())
-          swimRig = bindSwimClip(root, bones, gait.legLength);
-        // A slow tread when still, up to 1.7× the clip's own pace at a full stroke.
-        swimMs += seconds * 1000 * (0.55 + 1.15 * Math.min(1, speed / 2.5));
+        if (!swimRig && gait) swimRig = bindSwimStroke(root, bones);
+        const depth = typeof motion.swim === "object" ? motion.swim.depth : undefined;
+        // Into the crawl with speed; upright again where the bottom comes up to the feet (the
+        // swimmer stands up there: no snap from lying in the water to walking).
+        const want =
+          Math.min(1, Math.max(0, (speed - 0.25) / 1.3)) *
+          (depth === undefined ? 1 : Math.min(1, Math.max(0, (depth - 1.3) / 0.6)));
+        const yawNow = root.rotation.y;
+        if (!swimWas) {
+          // Just in the water: upright, as the wader was.
+          swimCrawl = swimTurn = 0;
+          swimYaw = yawNow;
+        }
+        swimCrawl = THREE.MathUtils.damp(swimCrawl, want, want > swimCrawl ? 2.6 : 3.4, seconds);
+        const turned = Math.atan2(Math.sin(yawNow - swimYaw), Math.cos(yawNow - swimYaw));
+        swimYaw = yawNow;
+        swimTurn = THREE.MathUtils.damp(
+          swimTurn,
+          seconds > 0 ? Math.max(-1, Math.min(1, -turned / seconds / 2.2)) : 0,
+          5,
+          seconds,
+        );
+        // A slow scull treading, up to a stroke every 1.15 s at full speed.
+        swimCycle += seconds * (0.42 + 0.45 * swimCrawl * Math.min(1, speed / 2.5));
       }
+      if (swimWas && !swimming) swimRig?.reset();
+      swimWas = swimming;
+      // First person in the water: only the arms are drawn (the camera is the head, and the
+      // body under it would fill the view).
+      if (swimView !== armsOnly) {
+        armsOnly = swimView;
+        if (swimView && !viewArms) viewArms = cutViewArms();
+        for (const m of viewArms ?? []) m.visible = swimView;
+        if (!swimView) {
+          for (const o of viewHidden) o.visible = true;
+          viewHidden.clear();
+        }
+      }
+      if (swimView)
+        root.traverse((o) => {
+          const drawn = o as THREE.Mesh | THREE.Line | THREE.Points | THREE.Sprite;
+          if (
+            o.visible &&
+            ((drawn as THREE.Mesh).isMesh ||
+              (drawn as THREE.Line).isLine ||
+              (drawn as THREE.Points).isPoints ||
+              (drawn as THREE.Sprite).isSprite) &&
+            !viewArms?.includes(o as THREE.SkinnedMesh)
+          ) {
+            o.visible = false;
+            viewHidden.add(o);
+          }
+        });
       const climbing = alive && !!motion.ladder && motion.death === undefined;
       if (climbing) {
         void loadLadderClip();
@@ -2088,9 +2220,16 @@ export function createCharacter(
         // Down a wall on a rope: braced on it, hopping down it (rappel-clip.ts).
         poseRappel(motion.rappel!);
       } else if (swimming && swimRig) {
-        // The stroke drives the whole body (arms, legs and the hips' place in the water).
-        swimRig.apply(swimMs);
-        root.updateWorldMatrix(true, true);
+        // The stroke drives the whole body (arms, legs and the hips' place in the water); the
+        // hands are open paddles.
+        for (const pose of gripPoses) pose.bone.quaternion.copy(pose.open);
+        swimRig.apply({
+          cycle: swimCycle,
+          crawl: swimCrawl,
+          turn: swimTurn,
+          view: swimView,
+          pitch,
+        });
       } else if (motion.death !== undefined && deathRig) {
         // The death animation (death-clip.ts) drives the whole body; the gun has dropped.
         deathRig.apply(motion.death * deathClipMs());

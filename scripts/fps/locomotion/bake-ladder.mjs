@@ -4,7 +4,7 @@
  * (src/lib/fps/ladder-clip.ts). Owner, 2026-11-11: a climbing animation for the battle royale's
  * ladders.
  *
- * As bake-swim.mjs (root space, rotations relative to the clip's rest pose, rest directions), one
+ * As the other baked clips (root space, rotations relative to the clip's rest pose, rest directions), one
  * climbing cycle that loops (both hands and both feet one step up). The hips are an offset round
  * their mean with the climb taken out (the server moves the climber). Also written, in hip
  * heights: the climb per cycle, and where the hands grip and the feet stand relative to the mean

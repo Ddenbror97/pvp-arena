@@ -109,7 +109,7 @@ export function poseClipDrive(
 }
 
 /**
- * Bind any baked clip to a rig (the death above, the swim in swim-clip.ts). `loop`: the clip
+ * Bind any baked clip to a rig (the death above, the ladder climb in ladder-clip.ts). `loop`: the clip
  * repeats (its last frame runs into its first) and its hips are an offset round `hipsAt`
  * (root space, m) instead of a path from where the body stood.
  */

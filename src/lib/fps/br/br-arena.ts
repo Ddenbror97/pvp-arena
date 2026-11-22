@@ -164,6 +164,8 @@ import { WORLD_HALF } from "./world";
 import { warmPrograms } from "../program-warmup";
 import { gridRefAt, MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
 import { createCharacter, type CarryGun } from "../character";
+import { SWIM_EYE } from "../swim-stroke";
+import { createSwimSplash } from "./swim-splash";
 
 /** The guns worn on the back (the Desert Eagle has the thigh holster). */
 const CARRY_GUNS = new Set<string>(["ak47", "m4", "awp", "hunting", "mp5", "spas12"]);
@@ -896,7 +898,14 @@ export function createBrArena(
   /** The movement keys held now, for the frame view: no key edges are consumed. */
   const heldInput: DropInput = { forward: 0, strafe: 0, yaw: 0 };
   /** Eye height, eased (a crouch does not snap the camera 65 cm in one frame). */
+  const swimSplash = createSwimSplash(scene);
+  const splash = (x: number, y: number, z: number, strength: number) =>
+    swimSplash.add(x, y, z, strength);
   let eyeHeight = 1.6;
+  // The swim/ground flip the eyes last saw, and the body height then (see the camera).
+  let eyeSwam = false,
+    eyePy = 0,
+    eyeAt = -1e9;
   /** Other players' rows per snapshot, stamped with the snapshot's server time (lag.ts). */
   const buffer: Array<{ at: number; rows: Map<number, number[]> }> = [];
   const remoteTimeline = new BrRemoteTimeline();
@@ -2856,7 +2865,8 @@ export function createBrArena(
       const w = seat !== undefined ? others.find((o) => o.seat === seat) : undefined;
       if (w && w.vehicle === -1 && POV_PHASES.has(w.phase)) {
         povSeat = w.seat;
-        w.occluded = true;
+        // Swimming: their arms stay drawn, stroking in front of the camera.
+        w.occluded = w.phase !== "swim";
       }
     }
     // (−1, 0 or 1, not the difference: a comparator's fractional result goes onto the heap for
@@ -3085,6 +3095,16 @@ export function createBrArena(
           root.position.copy(o.pos);
           root.rotation.set(o.phase === "freefall" ? -Math.PI / 2.2 : 0, o.yaw, 0);
         }
+        // Swimming: in the water's surface there, and how deep it is under them. (Between the
+        // snapshot that walked on the bottom and the one that swims, the height sent is on its
+        // way up; the swimmer is not drawn rising out of the bottom.)
+        let swimDepth = 0;
+        if (o.phase === "swim") {
+          const bottom = solid().hf.heightAt(o.pos.x, o.pos.z);
+          const surface = waterSurface(island.meta, bottom, o.pos.x, o.pos.z);
+          if (surface !== null) root.position.y = surface;
+          swimDepth = root.position.y - bottom;
+        }
         const gun = itemFromCode(o.gun);
         const dead = o.phase === "dead";
         if (dead && !deathAt.has(o.seat)) deathAt.set(o.seat, now - 5000);
@@ -3108,11 +3128,20 @@ export function createBrArena(
           root.position.z += Math.cos(o.yaw) * collapse.backward;
         }
         const agl = hanging ? o.pos.y - solid().hf.heightAt(o.pos.x, o.pos.z) : 99;
-        slot.actor.update(dtMs, now, 0, !dead, o.crouched, {
+        slot.actor.update(dtMs, now, o.seat === povSeat ? povPitch : 0, !dead, o.crouched, {
           stance: o.stance,
           airborne: o.phase === "freefall" || o.phase === "parachute",
           // In the water: the swimming stroke instead of the run.
-          ...(o.phase === "swim" && !dead ? { swim: true } : {}),
+          // How deep it is there: upright where the feet reach the bottom, the crawl beyond.
+          // Watched in first person: only their arms, as they see them (swim-stroke.ts).
+          ...(o.phase === "swim" && !dead
+            ? {
+                swim: {
+                  depth: swimDepth,
+                  view: o.seat === povSeat,
+                },
+              }
+            : {}),
           ...(hanging
             ? {
                 canopy: {
@@ -3145,13 +3174,16 @@ export function createBrArena(
           // Collapse progress 0–1 (the limbs relax with it), not the time of death.
           ...(collapse ? { death: collapse.progress } : {}),
         });
-        fitCharacterGun(
-          slot.actor,
-          attachmentParts,
-          itemFromCode(o.optic) ?? null,
-          itemFromCode(o.muzzle) ?? null,
-        );
-        fitCharacterGear(slot.actor, o.gear);
+        // (Through a swimmer's eyes only the arms are drawn: nothing to fit.)
+        if (o.seat !== povSeat) {
+          fitCharacterGun(
+            slot.actor,
+            attachmentParts,
+            itemFromCode(o.optic) ?? null,
+            itemFromCode(o.muzzle) ?? null,
+          );
+          fitCharacterGear(slot.actor, o.gear);
+        }
         continue;
       }
       // Far away in a vehicle: inside it, nothing to draw.
@@ -3162,9 +3194,13 @@ export function createBrArena(
         stand.setMatrixAt(ground++, m4);
       }
     }
-    for (const slot of actors) if (slot.seat === -1) slot.actor.root.visible = false;
+    for (const slot of actors)
+      if (slot.seat === -1) slot.actor.root.visible = false;
+      // Swimmers' hands through the water: the splashes (swim-splash.ts).
+      else slot.actor.swimSplashes(splash);
     stand.count = ground;
     stand.instanceMatrix.needsUpdate = true;
+    swimSplash.update(dtMs);
     // Camera: chase the plane, third person in the air, first person on the ground.
     // You, as drawn this frame: the predicted body plus the elapsed part of the next step.
     // (The same condition as the fixed step: before take-off only the warm-up walks.)
@@ -3411,8 +3447,21 @@ export function createBrArena(
       : flight.seat !== null && !kit?.dead
         ? (aircraftFx?.seatRider(flight.seat, me.root) ?? null)
         : null;
-    me.root.visible = (airborne && !canopyFp) || !!mySeated || zipShow || ropeShow || rappelShow;
-    if (mySeated) {
+    // Swimming in first person: your own arms doing the crawl (swim-stroke.ts), the body under
+    // the camera where the server has it, in the water's surface.
+    const swimShow = body.phase === "swim" && !mySeated && !kit?.dead;
+    me.root.visible =
+      (airborne && !canopyFp) || !!mySeated || zipShow || ropeShow || rappelShow || swimShow;
+    if (swimShow) {
+      me.root.position.set(px, py, pz);
+      me.root.rotation.set(0, yaw, 0);
+      me.update(dtMs, now, pitch, true, false, {
+        swim: { view: true, depth: py - solid().hf.heightAt(px, pz) },
+        primary: "none",
+        weapon: "rifle",
+      });
+      me.swimSplashes(splash);
+    } else if (mySeated) {
       me.update(dtMs, now, 0, true, false, { seated: mySeated, primary: "none", weapon: "rifle" });
       if (kit) fitCharacterGear(me, figureState(kit).gear);
     } else if (zipShow && !airborne) {
@@ -3658,7 +3707,16 @@ export function createBrArena(
     } else {
       chaseCamSet = false;
       const seen = viewPose.body;
-      const eyeTarget = seen.phase === "swim" ? 0.3 : seen.crouched ? 0.95 : 1.6;
+      const eyeTarget = seen.phase === "swim" ? SWIM_EYE : seen.crouched ? 0.95 : 1.6;
+      // Into and out of the water the server moves the body between the bottom and the surface
+      // in one step (drop.ts). The eyes do not jump with it: they keep their height in the world
+      // at that moment and ease to the new stance from there.
+      const swam = seen.phase === "swim";
+      if (swam !== eyeSwam && now - eyeAt < 1000 && Math.abs(eyePy - py) < 2.5)
+        eyeHeight = Math.max(-0.2, Math.min(2, eyeHeight + eyePy - py));
+      eyeSwam = swam;
+      eyePy = py;
+      eyeAt = now;
       // As in 1v1 (CameraStance): the stance changes at 10 m/s, not in one frame.
       const eyeStep = Math.min(100, dtMs) * 0.01;
       eyeHeight += Math.max(-eyeStep, Math.min(eyeStep, eyeTarget - eyeHeight));
@@ -3674,7 +3732,8 @@ export function createBrArena(
       if (rungs) ladderLeanYaw = rungs.yaw;
       camera.position.set(
         px + Math.sin(out) * ladderLean,
-        py + eyeH - dip,
+        // (Swimming, the eyes ride the water with the stroke, as the head others see does.)
+        py + eyeH - dip + (swimShow ? me.swimBob : 0),
         pz + Math.cos(out) * ladderLean,
       );
       const recoil = aimRecoil.sample(server, dtMs);
@@ -3949,8 +4008,10 @@ export function createBrArena(
     const watched = watchSeat !== undefined ? others.find((o) => o.seat === watchSeat) : undefined;
     const pov = watched && watched.seat === povSeat ? watched : null;
     if (pov) {
-      const eyeH = pov.phase === "swim" ? 0.3 : 1.6 - (1.6 - 0.95) * pov.stance;
-      camera.position.set(pov.pos.x, pov.pos.y + eyeH, pov.pos.z);
+      const eyeH = pov.phase === "swim" ? SWIM_EYE : 1.6 - (1.6 - 0.95) * pov.stance;
+      const bob =
+        pov.phase === "swim" ? (actors.find((s) => s.seat === pov.seat)?.actor.swimBob ?? 0) : 0;
+      camera.position.set(pov.pos.x, pov.pos.y + eyeH + bob, pov.pos.z);
       const target = latest.watch?.pitch ?? 0;
       povPitch += (target - povPitch) * (1 - Math.exp(-Math.min(100, dtMs) / 60));
       camera.rotation.set(povPitch, pov.yaw, 0, "YXZ");
@@ -3974,11 +4035,16 @@ export function createBrArena(
     // First-person gun, aim and zoom (lowered while a grenade is in hand). Spectating in first
     // person: the watched player's gun, their aim and their reload.
     povGunNow =
-      pov && (pov.phase === "ground" || pov.phase === "swim") && pov.gun >= 0
+      // (Swimming, the hands are busy: no gun in view, theirs or yours.)
+      pov && pov.phase === "ground" && pov.gun >= 0
         ? povGunFor(pov.gun, pov.optic, pov.muzzle)
         : null;
     povKnife = !!pov && pov.gun < 0 && pov.phase === "ground";
-    const gun = pov ? povGunNow : onFoot() && !nadeHand && !seatedMe() ? activeGun() : null;
+    const gun = pov
+      ? povGunNow
+      : body.phase === "ground" && flight.seat === null && !nadeHand && !seatedMe()
+        ? activeGun()
+        : null;
     const reloadUntil = pov ? (latest.watch?.reload ?? 0) : (kit?.reloadUntil ?? 0);
     const aiming = pov
       ? !!gun && latest.watch?.aim === 1 && pov.phase === "ground"
@@ -4064,7 +4130,7 @@ export function createBrArena(
     if (viewmodel) {
       viewmodel.grenade(
         dtMs,
-        !pov && nadeHand && onFoot() && !seatedMe()
+        !pov && nadeHand && body.phase === "ground" && flight.seat === null && !seatedMe()
           ? nadeHands.view(
               performance.now(),
               keys.has(binds.sprint)
