@@ -13,6 +13,7 @@
  * walls, the balconies on +z (front), the entrance on −x. Original work (no third-party asset).
  */
 import fs from "node:fs";
+import { bands, blend, strips } from "./far-tone.mjs";
 import { writeGlb } from "./procedural-kit.mjs";
 
 const W = 20,
@@ -266,7 +267,7 @@ function quarterDiscs(segs = 8) {
   return out;
 }
 
-function geometry(maxLod, discSegs = 8) {
+function geometry(maxLod) {
   const pos = [],
     nrm = [],
     col = [];
@@ -279,6 +280,11 @@ function geometry(maxLod, discSegs = 8) {
   };
   for (const p of parts) {
     if (p.lod < maxLod) continue;
+    if (p.q) {
+      // A flat quad of the far LOD (farParts).
+      quad(...p.q, p.n, p.colour);
+      continue;
+    }
     const [x0, y0, z0, x1, y1, z1] = p.b;
     const c = p.colour;
     quad([x0, y1, z0], [x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [0, 1, 0], c);
@@ -288,8 +294,8 @@ function geometry(maxLod, discSegs = 8) {
     quad([x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [1, 0, 0], c);
     quad([x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [-1, 0, 0], c);
   }
-  if (maxLod <= 1 || discSegs < 8)
-    for (const { tri, colour } of quarterDiscs(discSegs)) {
+  if (maxLod <= 1)
+    for (const { tri, colour } of quarterDiscs()) {
       const [a, b, c] = tri;
       const u = b.map((v, i) => v - a[i]),
         w = c.map((v, i) => v - a[i]);
@@ -312,45 +318,176 @@ function geometry(maxLod, discSegs = 8) {
  * crossed 600 m (owner, 2026-11-16: flicker "on the side of the building mainly", from the
  * parachute and from different camera angles). Details sit 2 cm proud of the mass and no two
  * faces share a plane, so nothing needs the coplanar repair the near LODs went through.
+ *
+ * far-v3 (2026-11-22): flat walls painted in faint bands (far-tone.mjs). far-v2 kept each
+ * balcony as a ledge with its railing: from the air a storey is 3–6 pixels high and showed five
+ * stripes (the slab's sunlit top, its edge, the dark railing, the wall and the window behind),
+ * each thinner than a pixel, so the whole side crawled as the camera moved, in the far LOD as
+ * much as in the middle one (owner: the balcony apartments "flicker in downtown alot in the
+ * parchute in higher attitude"; 27–70 of 1,000 pixels flashing a frame 320 m off, the other
+ * sides 0–3). Now the four walls are strips of colour in their own plane: the balconies painted
+ * on, and every side's storeys two bands close in brightness that keep the side's average
+ * colour (the balcony side the mid grey its railings, windows, slabs and wall add up to from
+ * above, measured against the middle LOD; the others the grey of their ribbon windows on white).
  */
 function farParts() {
   parts.length = 0;
-  const H = FLOORS * STOREY,
+  // The walls to the parapet's top, the roof at that height: a parapet of its own is a rim a
+  // third of a pixel wide, sunlit on top, that sparkles round the roof.
+  const H = FLOORS * STOREY + 0.8,
     P = 0.25; // parapet
-  const far = (b, c) => box(b, c, { lod: 2 });
-  far([X0, 0, Z0, X1, H, Z1], C.plaster);
-  // The roof inside the parapet (2 cm up), the parapet, the stair house and its roof.
-  far([X0 + P, H, Z0 + P, X1 - P, H + 0.02, Z1 - P], C.roof);
-  far([X0, H, Z0, X1, H + 0.8, Z0 + P], C.plaster);
-  far([X0, H, Z1 - P, X1, H + 0.8, Z1], C.plaster);
-  far([X1 - P, H, Z0 + P, X1, H + 0.8, Z1 - P], C.plaster);
-  far([X0 - 0.01, H, Z0 + P, CORE_X1 + 0.15, H + 3.0, Z1 - P], C.plaster);
-  far([X0 - 0.01, H + 3.0, Z0 + P - 0.02, CORE_X1 + 0.17, H + 3.2, Z1 - P + 0.02], C.roof);
-  for (let n = 0; n < FLOORS; n++) {
-    const y = n * STOREY;
-    // Ribbon windows front and back; the window band east; the stair window west.
-    far([-6.2, y + 0.9, Z1, 9.2, y + 2.3, Z1 + 0.02], C.glass);
-    far([-6.2, y + 0.9, Z0 - 0.02, 9.2, y + 2.3, Z0], C.glass);
-    far([X1, y + 0.9, -4, X1 + 0.02, y + 2.3, 4], C.glass);
-    far([X0 - 0.02, y + 1.0, -1.6, X0, y + 2.6, 1.6], C.glass);
-    if (n > 0) {
-      // The balcony: its slab and its dark railing (the corner's quarter disc is added after).
-      far([-6.4, y - 0.2, Z1, X1, y, Z1 + 1.4], C.plaster);
-      far([-6.4, y, Z1 + 1.3, X1, y + 1.0, Z1 + 1.4], C.rail);
+  const quad = (q, n, colour) => parts.push({ q, n, colour, collide: false, lod: 2 });
+  /** A stretch (u0..u1 along the wall) of one side, bottom to top in `rows` (far-tone strips). */
+  const wall = (side, u0, u1, rows) => {
+    for (const [a, b, c] of rows) {
+      if (side === "front")
+        quad(
+          [
+            [u0, a, Z1],
+            [u1, a, Z1],
+            [u1, b, Z1],
+            [u0, b, Z1],
+          ],
+          [0, 0, 1],
+          c,
+        );
+      if (side === "back")
+        quad(
+          [
+            [u1, a, Z0],
+            [u0, a, Z0],
+            [u0, b, Z0],
+            [u1, b, Z0],
+          ],
+          [0, 0, -1],
+          c,
+        );
+      if (side === "east")
+        quad(
+          [
+            [X1, a, u1],
+            [X1, a, u0],
+            [X1, b, u0],
+            [X1, b, u1],
+          ],
+          [1, 0, 0],
+          c,
+        );
+      if (side === "west")
+        quad(
+          [
+            [X0, a, u0],
+            [X0, a, u1],
+            [X0, b, u1],
+            [X0, b, u0],
+          ],
+          [-1, 0, 0],
+          c,
+        );
     }
+  };
+  const plain = strips(0, H, [], C.plaster);
+  /** Ribbon windows `sill`..`head` above each floor, and the wall between two of them. */
+  const ribbons = (sill, head) => {
+    const tone = bands([C.glass, head - sill], [C.plaster, STOREY - (head - sill)]);
+    const rows = [];
+    for (let n = 0; n < FLOORS; n++) {
+      const y = n * STOREY;
+      rows.push([y + sill, y + head, tone.dark]);
+      if (n + 1 < FLOORS) rows.push([y + head, y + STOREY + sill, tone.light]);
+    }
+    return strips(0, H, rows, C.plaster);
+  };
+  // The back's ribbon windows, the window band east, the stair window west.
+  wall("back", X0, -6.2, plain);
+  wall("back", -6.2, 9.2, ribbons(0.9, 2.3));
+  wall("back", 9.2, X1, plain);
+  wall("east", Z0, -4, plain);
+  wall("east", -4, 4, ribbons(0.9, 2.3));
+  wall("east", 4, Z1, plain);
+  wall("west", Z0, -1.6, plain);
+  wall("west", -1.6, 1.6, ribbons(1.0, 2.6));
+  wall("west", 1.6, Z1, plain);
+  // The front: the ground floor's ribbon window, then the balconies. Seen from above, a balcony
+  // storey is about half dark (the railing, the window behind it) and half pale (the slab's top
+  // and edge, the wall); the slabs' tops catch the sun even on the shaded side, so the middle
+  // LOD is a little lighter there than any flat wall of this colour.
+  const ground = bands([C.glass, 1.4], [C.plaster, STOREY - 1.4]);
+  const balcony = bands([blend([C.rail, 1], [C.glass, 1]), 0.5], [C.plaster, 0.5]);
+  const front = [[0.9, 2.3, ground.dark]];
+  for (let n = 1; n < FLOORS; n++) {
+    const y = n * STOREY - 0.2;
+    front.push([y, y + 0.5 * STOREY, balcony.dark], [y + 0.5 * STOREY, y + STOREY, balcony.light]);
   }
+  wall("front", X0, -6.4, plain);
+  wall("front", -6.4, X1, strips(0, H, front, C.plaster));
+  // The roof, and the stair house on it (its walls and its own roof).
+  const top = (x0, z0, x1, z1, y) =>
+    quad(
+      [
+        [x0, y, z0],
+        [x0, y, z1],
+        [x1, y, z1],
+        [x1, y, z0],
+      ],
+      [0, 1, 0],
+      C.roof,
+    );
+  top(X0, Z0, X1, Z1, H);
+  const [a0, c0, a1, c1, y0, y1] = [X0, Z0 + P, CORE_X1 + 0.15, Z1 - P, H, H + 2.4];
+  quad(
+    [
+      [a0, y0, c1],
+      [a1, y0, c1],
+      [a1, y1, c1],
+      [a0, y1, c1],
+    ],
+    [0, 0, 1],
+    C.plaster,
+  );
+  quad(
+    [
+      [a1, y0, c0],
+      [a0, y0, c0],
+      [a0, y1, c0],
+      [a1, y1, c0],
+    ],
+    [0, 0, -1],
+    C.plaster,
+  );
+  quad(
+    [
+      [a1, y0, c1],
+      [a1, y0, c0],
+      [a1, y1, c0],
+      [a1, y1, c1],
+    ],
+    [1, 0, 0],
+    C.plaster,
+  );
+  quad(
+    [
+      [a0, y0, c0],
+      [a0, y0, c1],
+      [a0, y1, c1],
+      [a0, y1, c0],
+    ],
+    [-1, 0, 0],
+    C.plaster,
+  );
+  top(a0, c0, a1, c1, y1);
 }
 
 /** The shared GLB writer (welded, meshopt-compressed; procedural-kit.mjs). */
 const write = (file, g) => writeGlb(file, g, "apartment");
 
 const OUT = "public/fps/br/models";
-// `--far`: only the far LOD, as apartment.far-v2.lod2.glb (the near LODs in the game went
-// through later passes: int-v1, walls-v1); the manifests are pointed at it by hand.
+// `--far`: only the far LOD, as apartment.far-v3.lod2.glb (the near LODs in the game went
+// through later passes: int-v1, walls-v1, zfix-v13); set_lods.mjs points a manifest at it.
 if (process.argv.includes("--far")) {
   farParts();
-  const out = `${OUT}/apartment.far-v2.lod2.glb`;
-  const r = await write(out, geometry(2, 3));
+  const out = `${OUT}/apartment.far-v3.lod2.glb`;
+  const r = await write(out, geometry(2));
   console.log(`apartment far LOD → ${out}`, r);
   process.exit(0);
 }

@@ -24,7 +24,8 @@
  * balconies) towards +z. Original work.
  */
 import fs from "node:fs";
-import { COLOURS as C, createKit, publish } from "./procedural-kit.mjs";
+import { bands, blend } from "./far-tone.mjs";
+import { COLOURS as C, createKit, publish, writeGlb } from "./procedural-kit.mjs";
 
 // skyline-v2 (2026-11-13): the lift shaft open from the lobby to the roof (the cab is drawn and
 // moved by the game, lift-renderer.ts), a 1.6 m landing door with pockets for its leaves, stair
@@ -569,7 +570,7 @@ function floorModel() {
   // (No stop here: the express runs from the lobby to the roof.)
   liftsOf["condo-floor"] = null;
   roomsOf["condo-floor"] = rooms(FL);
-  return { k, far: farSlice(STOREY, false) };
+  return { k, far: farSlice() };
 }
 
 function balconies(k, y0) {
@@ -603,12 +604,125 @@ function rooms(y) {
   return out;
 }
 
-/** The far LOD of one storey: the glass box, the slab band, the balconies. */
-function farSlice(h, roof) {
+/**
+ * What a storey reads as from far off, per style (the far LOD's colours; far-tone.mjs). The
+ * first far LOD was a dark glass box with a dark band and a white balcony, whatever the style: a
+ * condo tower, light from the air (its panes show the pale slabs behind them), turned navy with
+ * one white side where it changed LOD, and so did the white office and the red brick towers
+ * (owner, 2026-11-22). Now a wall is the average of what the near LODs draw there, as two faint
+ * bands a storey:
+ *  - band: the slab's edge line with the wall under the sill and over the head (1.05 m);
+ *  - bay: the panes (pane-renderer.ts: 0x2c3c46, linear 0.025 0.045 0.061, at 0.42) over the
+ *    slab and ceiling seen through them, between the piers (2.55 m). The rooms are lit like the
+ *    open floor (nothing casts a shadow indoors), so from above a bay is as light as its slab;
+ *  - core: the solid wall in front of the stair and the lift, with the slabs' edge lines;
+ *  - balcony: its slab under the glass balustrade.
+ * Checked against the middle LOD 320 m off from the air: a tower's four sides within a quarter
+ * of its brightness (a flat wall is lit more evenly than a storey of rooms, so the sunlit sides
+ * come out a little lighter and the shaded ones a little darker).
+ */
+const FAR_TONE = (() => {
+  const through = blend([[0.025, 0.045, 0.061], 0.42], [K.stone, 0.58]);
+  const band = blend([K.white, 0.4], [K.facade, 0.65]);
+  const bay = blend([through, 0.91], [K.facade, 0.09]);
+  const lum = (c) => 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  const pair =
+    lum(band) > lum(bay)
+      ? bands([bay, HEAD - SILL], [band, STOREY - (HEAD - SILL)])
+      : bands([band, STOREY - (HEAD - SILL)], [bay, HEAD - SILL]);
+  return {
+    band: lum(band) > lum(bay) ? pair.light : pair.dark,
+    bay: lum(band) > lum(bay) ? pair.dark : pair.light,
+    core: blend([K.facade, STOREY - 0.4], [K.white, 0.4]),
+    balcony: K.stone.map((v) => +(v * 0.65).toFixed(3)),
+  };
+})();
+/** Chosen faces of a box as drawn-only quads (s n e w: its sides, t: top, b: bottom). */
+function faces(far, [x0, y0, z0, x1, y1, z1], colour, which) {
+  const quads = {
+    s: [
+      [x0, y0, z1],
+      [x1, y0, z1],
+      [x1, y1, z1],
+      [x0, y1, z1],
+    ],
+    n: [
+      [x1, y0, z0],
+      [x0, y0, z0],
+      [x0, y1, z0],
+      [x1, y1, z0],
+    ],
+    e: [
+      [x1, y0, z1],
+      [x1, y0, z0],
+      [x1, y1, z0],
+      [x1, y1, z1],
+    ],
+    w: [
+      [x0, y0, z0],
+      [x0, y0, z1],
+      [x0, y1, z1],
+      [x0, y1, z0],
+    ],
+    t: [
+      [x0, y1, z0],
+      [x0, y1, z1],
+      [x1, y1, z1],
+      [x1, y1, z0],
+    ],
+    b: [
+      [x0, y0, z0],
+      [x1, y0, z0],
+      [x1, y0, z1],
+      [x0, y0, z1],
+    ],
+  };
+  for (const f of which) far.sheet(...quads[f], colour, { lod: 2 });
+}
+/**
+ * The far LOD of one storey: flat walls in three bands (the slab's line and the sill, the glass
+ * bays, the head), the solid core on the north side, and the balcony as one block.
+ *
+ * Flat on purpose. From the parachute a storey is 3–6 pixels high, and whatever stands proud of
+ * the wall (a slab's edge, a ledge's sunlit top against its shaded face) is a line thinner than
+ * a pixel that comes and goes as the camera moves: the towers "flicker … in the parachute in
+ * higher altitude" (owner, 2026-11-22). Two faint bands a storey on one plane hold still. The
+ * bands meet edge to edge (the same corners) and no two faces overlap in a plane, so nothing
+ * here z-fights or shows a seam.
+ *
+ * No lid, and no floor: a tower is a stack of these, and each one's lid is the storey above
+ * (the roof on the last). A lid inside the walls is hidden only as long as depth is exact, and
+ * under 4× multisampling it is not at a surface's edge: where a lid met the wall behind which it
+ * lay, it came through as single bright pixels (it is lit from above, the wall on the shaded
+ * sides is not), a dotted line round every storey that crawled as the camera moved: 37 of 1,000
+ * pixels flashing, as many as the middle LOD. The walls also hang FAR_SEAM below the storey's
+ * foot, over those of the storey under it (the same colour in the same plane), so no gap can
+ * open between two placements. (far-buildings.ts takes a far LOD with walls all round and no
+ * roof as a box to its top, for the proxy beyond the far ring.)
+ */
+const FAR_SEAM = 0.06;
+function farSlice({ lobby = false } = {}) {
   const far = createKit();
-  far.box([-X, 0, -Z, X, h, Z], roof ? K.stone : K.glass, { lod: 2 });
-  far.box([-X - 0.05, h - 0.6, -Z - 0.05, X + 0.05, h, Z + 0.05], K.dark, { lod: 2 });
-  if (!roof) far.box([-X, 0, Z, X, FL + 1.1, Z + BAL], K.white, { lod: 2 });
+  const y0 = FL + (lobby ? 0.15 : SILL),
+    y1 = FL + HEAD;
+  // The north face's bays in front of the core are solid wall (skin()).
+  const bay = (2 * X) / Math.round((2 * X) / 3.2);
+  const solid = Math.ceil((CORE.x1 + 0.05) / bay) * bay;
+  for (const [a, b, colour] of [
+    [lobby ? 0 : -FAR_SEAM, y0, FAR_TONE.band],
+    [y0, y1, FAR_TONE.bay],
+    [y1, STOREY, FAR_TONE.band],
+  ]) {
+    faces(far, [-X, a, -Z, X, b, Z], colour, "sew");
+    faces(far, [-X, a, -Z, -solid, b, Z], colour, "n");
+    faces(far, [-solid, a, -Z, solid, b, Z], FAR_TONE.core, "n");
+    faces(far, [solid, a, -Z, X, b, Z], colour, "n");
+  }
+  if (lobby) {
+    // The plinth and the entrance's canopy.
+    far.box([-X - 0.5, 0, -Z - 0.5, X + 0.5, FL, Z + 3.5], K.stone, { lod: 2 });
+    faces(far, [-5, 3.2, Z, 5, 3.45, Z + 4.5], K.dark, "sewtb");
+  } else faces(far, [-X + 0.02, 0, Z, X - 0.02, FL + 1.1, Z + BAL], FAR_TONE.balcony, "sewtb");
   return far;
 }
 
@@ -670,7 +784,7 @@ function lobbyModel() {
     { kind: "lobby-lounge", side: 1, y: FL, box: [CORE.x1, X - T, -Z + T, Z - T] },
     { kind: "lobby-front", side: 0, y: FL, box: [CORE.x0, CORE.x1, CORE.z1, Z - T] },
   ];
-  return { k, far: farSlice(STOREY, false) };
+  return { k, far: farSlice({ lobby: true }) };
 }
 
 /**
@@ -901,10 +1015,21 @@ const build = [
   ],
   ["condo-club", clubModel, null, "Skyline Residences: clubhouse"],
 ];
+/**
+ * FAR_ONLY=1: only the storeys' and lobbies' far LODs, as <id>.<TAG>.lod2.glb (the near LODs in
+ * the game went through later passes: zfix-v14, eaves-v1); set_lods.mjs points a manifest at them.
+ */
+const FAR_ONLY = !!process.env.FAR_ONLY;
 for (const [base, fn, size0, title] of build) {
   if (STYLE !== "condo" && base === "condo-club") continue;
   const id = base.replace(/^condo/, PREFIX);
   const { k, far, size } = fn();
+  if (FAR_ONLY) {
+    if (!/-(floor|lobby)$/.test(base)) continue;
+    const out = `public/fps/br/models/${id}.${TAG}.lod2.glb`;
+    console.log(`${id} far LOD → ${out}`, await writeGlb(out, far.geometry(2), id));
+    continue;
+  }
   await publish(id, k, far, {
     tag: TAG,
     title,
@@ -929,6 +1054,7 @@ for (const [base, fn, size0, title] of build) {
     lift: liftsOf[base] ?? null,
   };
 }
+if (FAR_ONLY) process.exit(0);
 // The other styles' storeys stay in the plan (each run writes its own).
 const planFile = "src/lib/fps/br/skyline-plan.json";
 const before = fs.existsSync(planFile) ? JSON.parse(fs.readFileSync(planFile, "utf8")) : null;

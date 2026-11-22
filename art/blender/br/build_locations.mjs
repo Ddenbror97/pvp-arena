@@ -132,7 +132,6 @@ const B = {
         m: "metal",
         tint: [0.55, 0.57, 0.6],
         over: 0.6,
-        farTint: [0.5, 0.52, 0.55],
       },
     },
   },
@@ -162,7 +161,6 @@ const B = {
         m: "metal",
         tint: [0.5, 0.56, 0.6],
         over: 0.8,
-        farTint: [0.45, 0.5, 0.55],
       },
     },
   },
@@ -222,7 +220,6 @@ const B = {
         pitch: 0.32,
         m: "metal",
         tint: [0.48, 0.55, 0.42],
-        farTint: [0.4, 0.46, 0.36],
       },
     },
   },
@@ -252,7 +249,6 @@ const B = {
         pitch: 0.3,
         m: "metal",
         tint: [0.46, 0.52, 0.4],
-        farTint: [0.4, 0.46, 0.36],
       },
     },
   },
@@ -289,7 +285,6 @@ const B = {
         m: "metal",
         tint: [0.46, 0.52, 0.42],
         over: 0.5,
-        farTint: [0.4, 0.46, 0.36],
       },
     },
   },
@@ -387,7 +382,6 @@ const B = {
         m: "metal",
         tint: [0.62, 0.64, 0.66],
         over: 0.5,
-        farTint: [0.55, 0.57, 0.6],
       },
     },
   },
@@ -472,7 +466,6 @@ const B = {
         along: "x",
         pitch: 0.6,
         tint: [0.62, 0.62, 0.68],
-        farTint: [0.4, 0.4, 0.45],
       },
       extra: all(canopy("front", -4.8, 4.8, 2.75, 1.5, [0.2, 0.45, 0.3]), chimney(3, -2, 1.4)),
     },
@@ -521,7 +514,6 @@ const B = {
         along: "x",
         pitch: 0.72,
         tint: [0.62, 0.6, 0.62],
-        farTint: [0.38, 0.38, 0.4],
       },
       extra: chimney(3.8, 0, 1.4),
     },
@@ -549,7 +541,6 @@ const B = {
         pitch: 0.62,
         m: "metal",
         tint: [0.3, 0.3, 0.32],
-        farTint: [0.3, 0.3, 0.32],
       },
       extra: canopy("front", -0.6, 4.2, 2.6, 1.8, [0.95, 0.95, 0.92], true),
     },
@@ -599,7 +590,6 @@ const B = {
         pitch: 0.6,
         m: "metal",
         tint: [0.4, 0.42, 0.45],
-        farTint: [0.36, 0.38, 0.4],
       },
     },
   },
@@ -627,7 +617,6 @@ const B = {
         along: "z",
         pitch: 0.82,
         tint: [0.6, 0.6, 0.66],
-        farTint: [0.38, 0.38, 0.42],
       },
       extra: ({ k, far, Z, top }) => {
         // The bell tower over the back end (solid), its pyramid roof and an open belfry.
@@ -679,15 +668,15 @@ const B = {
             [qx, a, qz],
             [0, apex, c],
             [0, apex, c],
-            "paint",
-            [0.38, 0.38, 0.42],
+            "rooftile",
+            [0.6, 0.6, 0.66],
             { n: nn, facing: nn },
           );
         }
         k.box([-1.9, a, z0 - 0.2, 1.9, a + 0.4, z1 + 0.2], "stone", [0.9, 0.88, 0.84], {
           visible: false,
         });
-        far.box([-1.7, 0, z0, 1.7, a, z1], "paint", [0.78, 0.74, 0.66], { collide: false });
+        far.box([-1.7, 0, z0, 1.7, a, z1], "stone", [0.9, 0.88, 0.84], { collide: false });
       },
     },
   },
@@ -717,7 +706,6 @@ const B = {
         along: "x",
         pitch: 0.55,
         tint: [0.62, 0.6, 0.62],
-        farTint: [0.38, 0.38, 0.4],
       },
       extra: all(canopy("front", -1.6, 1.6, 2.7, 1.4, [0.92, 0.92, 0.88], true), ({ k, top }) => {
         // A little bell cote on the ridge.
@@ -828,7 +816,7 @@ for (const [id, def] of Object.entries(B)) {
     [0.95, 0.78, 0.1],
     { collide: false },
   );
-  far.box([-LEN / 2, 0, -T / 2, LEN / 2, H + 0.25, T / 2], "paint", [0.62, 0.6, 0.56], {
+  far.box([-LEN / 2, 0, -T / 2, LEN / 2, H + 0.25, T / 2], "concrete", [0.78, 0.76, 0.72], {
     collide: false,
   });
   if (!only.length || only.includes("quay-wall")) {
@@ -901,7 +889,7 @@ for (const [id, tint, name] of [
     k.box([X - 0.05, 0.2, zb - 0.025, X + 0.01, H - 0.2, zb + 0.025], "rust", [0.35, 0.35, 0.35], {
       collide: false,
     });
-  far.box([-X, 0, -Z, X, H, Z], "paint", tint, { collide: false });
+  far.box([-X, 0, -Z, X, H, Z], "metal", tint, { collide: false });
   if (!only.length || only.includes(id))
     await publishTextured(id, k, far, {
       tag: TAG,

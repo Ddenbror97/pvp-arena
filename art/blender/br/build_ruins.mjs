@@ -16,7 +16,7 @@
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
-import { createTexturedKit, publishTextured } from "./textured-kit.mjs";
+import { createTexturedKit, farTint, publishTextured } from "./textured-kit.mjs";
 
 // ruins-v2 (2026-11-18): the pyramid (its tier mouldings a ring, not a slab across the inner
 // stair) and the stairs' balustrades closed at their tops (pyramid, temples A and B, acropolis):
@@ -33,8 +33,7 @@ const STONE = "mayastone",
   GLYPH = "glyphs";
 const WHITE = [1, 1, 1];
 /** Far LOD tints (the textures' average colours). */
-const FAR_STONE = [0.4, 0.39, 0.33],
-  FAR_MOSS = [0.26, 0.33, 0.17];
+const FAR_STONE = farTint(STONE);
 
 /** Boxes are [x0, y0, z0, x1, y1, z1]. */
 const overlaps = (a, b) =>
@@ -152,11 +151,7 @@ function kit(mid = "solid") {
       k.box(p, m, tint, { skip, lod, collide: lod === 0 });
     }
   };
-  const mass = (
-    b,
-    cuts = [],
-    { m = STONE, top = MOSS, tint = WHITE, farTint = FAR_STONE } = {},
-  ) => {
+  const mass = (b, cuts = [], { m = STONE, top = MOSS, tint = WHITE } = {}) => {
     draw(b, carve(b, cuts), m, top, tint, 0);
     const e = 1e-6;
     const outer =
@@ -172,7 +167,22 @@ function kit(mid = "solid") {
                 c[4] >= b[4] - e),
           );
     draw(b, carve(b, outer), m, top, tint, "mid");
-    far.box(b, "paint", farTint, { collide: false });
+    // The far LOD: the block in its stone, its top in what grows on it (from the air the ruins
+    // are mostly their mossy tops).
+    const mossy = top && top !== m;
+    far.box(b, m, tint, { collide: false, skip: mossy ? ["top"] : [] });
+    if (mossy)
+      far.quad(
+        [b[0], b[4], b[2]],
+        [b[0], b[4], b[5]],
+        [b[3], b[4], b[5]],
+        [b[3], b[4], b[2]],
+        top,
+        tint,
+        {
+          n: [0, 1, 0],
+        },
+      );
   };
   /** A floor of flagstones (drawn, a thin collision slab under it). */
   const floor = (x0, z0, x1, z1, y = 0.04) => {
@@ -1190,7 +1200,7 @@ for (const [id, len, h, seed, corner] of [
         n: [0, 1, 0],
       });
     }
-  K.far.box([-10, 0, -10, 10, H, 10], "paint", [0.6, 0.6, 0.52], { collide: false });
+  K.far.box([-10, 0, -10, 10, H, 10], FLAG, WHITE, { collide: false });
   await publish(
     "ruin-paving",
     K,

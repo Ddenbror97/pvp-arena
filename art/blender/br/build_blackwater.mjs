@@ -69,6 +69,9 @@ const T = {
   red: [0.55, 0.12, 0.1],
 };
 
+/** The far LODs' tint for stone down by the water: the dry and the wet stone, averaged. */
+const FAR_WET = T.stoneDark.map((v, i) => +((v + T.stoneWet[i]) / 2).toFixed(3));
+
 const plan = { keep: { rooms: [], gates: [], stairs: [] }, tower: { rooms: [] } };
 
 /**
@@ -172,7 +175,7 @@ function keep() {
       }
       wallX(k, -HL, HL, z0, z1, y0, y1, holes, "stone", T.stone);
       // Far: no holes.
-      if (L === 0) far.box([-HL, -7, z0, HL, ROOF + 1.4, z1], "stone", [0.86, 0.82, 0.74]);
+      if (L === 0) far.box([-HL, -7, z0, HL, ROOF + 1.4, z1], "stone", T.stone);
     }
     // A string course at each floor and the cornice under the battlements.
     for (const y of [...Y.slice(1), ROOF]) {
@@ -232,7 +235,7 @@ function keep() {
           "stone",
           T.stone,
         );
-      far.slab(P[0], P[1], Q[0], Q[1], RO - RW, -7, ROOF + 1.4, "stone", [0.86, 0.82, 0.74], {
+      far.slab(P[0], P[1], Q[0], Q[1], RO - RW, -7, ROOF + 1.4, "stone", T.stone, {
         collide: false,
       });
       // String courses.
@@ -291,7 +294,7 @@ function keep() {
           });
       }
       if (roof)
-        far.box([-HL, ROOF - SLAB, zr[0], HL, ROOF, zr[1]], "tiles", [0.6, 0.58, 0.55], {
+        far.box([-HL, ROOF - SLAB, zr[0], HL, ROOF, zr[1]], "tiles", T.roof, {
           collide: false,
         });
     }
@@ -309,18 +312,18 @@ function keep() {
         const ordered = e > 0 ? pts : [...pts].reverse();
         k.poly(ordered, y, m, roof ? T.roof : T.floor, { thick: SLAB });
         if (!ground) k.poly(ordered, y - SLAB, "plaster", T.white, { collide: false, down: true });
-        if (roof) far.poly(ordered, ROOF, "tiles", [0.6, 0.58, 0.55], { collide: false });
+        if (roof) far.poly(ordered, ROOF, "tiles", T.roof, { collide: false });
       }
   }
   // The courtyard: cobbles (straight part and the two half circles).
   k.box([-HL, -0.4, -RC, HL, 0.02, RC], "cobble", T.court, { skip: ["bottom"] });
-  far.box([-HL, -0.4, -RC, HL, 0.02, RC], "paint", [0.55, 0.53, 0.5], { collide: false });
+  far.box([-HL, -0.4, -RC, HL, 0.02, RC], "cobble", T.court, { collide: false });
   for (const e of [1, -1])
     for (let s = 0; s < SEG; s++) {
       const pts = [[e * HL, 0], endPt(e, RC, segAngle(s)), endPt(e, RC, segAngle(s + 1))];
       const ordered = e > 0 ? [pts[0], pts[2], pts[1]] : pts;
       k.poly(ordered.reverse(), 0.02, "cobble", T.court, { thick: 0.42 });
-      far.poly(ordered, 0.02, "paint", [0.55, 0.53, 0.5], { collide: false });
+      far.poly(ordered, 0.02, "cobble", T.court, { collide: false });
     }
 
   // ------------------------------------------------------------ inner walls: rooms and gallery
@@ -529,12 +532,9 @@ function keep() {
         for (const pz of [cz[0] + 0.1, cz[1] - 0.35])
           k.box([px, ROOF, pz, px + 0.25, ROOF + 2.7, pz + 0.25], "rust", T.iron);
       k.box([x0 + 0.2, ROOF + 2.7, cz[0], x1 - 0.2, ROOF + 2.95, cz[1]], "rust", T.iron);
-      far.box(
-        [x0 + 0.2, ROOF + 2.7, cz[0], x1 - 0.2, ROOF + 2.95, cz[1]],
-        "paint",
-        [0.4, 0.38, 0.36],
-        { collide: false },
-      );
+      far.box([x0 + 0.2, ROOF + 2.7, cz[0], x1 - 0.2, ROOF + 2.95, cz[1]], "rust", T.iron, {
+        collide: false,
+      });
       plan.keep.stairs.push({ x: (x0 + x1) / 2, z: s * (RW - 1.7), from: 0, to: ROOF });
     }
   // The courtyard's parapet on the roof (inner edge), 1.1 m.
@@ -785,7 +785,7 @@ function tower() {
       { collide: false },
     );
   }
-  far.box([-TW, -1.5, -TW, TW, top, TW], "paint", [0.8, 0.77, 0.7], { collide: false });
+  far.box([-TW, -1.5, -TW, TW, top, TW], "stone", T.stoneDark, { collide: false });
   // The last flight reaches the cab floor; the cab: floor slab overhanging, a waist wall, glass,
   // corner posts, roof; a walkway outside it (rail), a door out onto it on the south side.
   // The cab's floor slab round the stair's opening (x -TW+W..0, z from the landing strip south).
@@ -978,8 +978,8 @@ function post() {
     [0.62, 0.12, 0.1],
     { collide: false },
   );
-  far.box([-H, -1.2, -H, H, C, H], "paint", [0.8, 0.77, 0.7], { collide: false });
-  far.box([-CH, C, -CH, CH, R + 0.3, CH], "paint", [0.62, 0.62, 0.6], { collide: false });
+  far.box([-H, -1.2, -H, H, C, H], "stone", T.stone, { collide: false });
+  far.box([-CH, C, -CH, CH, R + 0.3, CH], "concrete", [0.62, 0.62, 0.6], { collide: false });
   return { k, far, size: [2 * CH + 1, R + 0.3, 2 * CH + 1] };
 }
 
@@ -1013,7 +1013,7 @@ function bridge() {
     const zz = L / 2 - 5.7 - i * 0.6;
     k.box([-W, -1.2 - i * 0.4, -zz, W, -0.7, zz], "stone", T.stoneDark, { collide: false });
   }
-  far.box([-W, -2, -L / 2, W, 1.0, L / 2], "paint", [0.75, 0.72, 0.66], { collide: false });
+  far.box([-W, -2, -L / 2, W, 1.0, L / 2], "stone", FAR_WET, { collide: false });
   return { k, far, size: [2 * W + 1, 8, L] };
 }
 
@@ -1053,7 +1053,7 @@ function quay() {
       T.stoneWet,
       { collide: false },
     );
-    far.box([-HL, -2, z0, HL, 0.9, z1], "paint", [0.75, 0.72, 0.66], { collide: false });
+    far.box([-HL, -2, z0, HL, 0.9, z1], "stone", FAR_WET, { collide: false });
     void gaps;
   }
   for (const e of [1, -1])
@@ -1062,7 +1062,7 @@ function quay() {
         q = endPt(e, RQ + T2 / 2, segAngle(s + 1));
       const [P, Q] = e > 0 ? [q, p] : [p, q]; // the moat side (inner) faces −n
       slabHoles(k, P, Q, T2, -7, 0.9, [], "stone", T.stone, { ext: 0.3 });
-      far.slab(P[0], P[1], Q[0], Q[1], T2, -2, 0.9, "paint", [0.75, 0.72, 0.66], {
+      far.slab(P[0], P[1], Q[0], Q[1], T2, -2, 0.9, "stone", FAR_WET, {
         collide: false,
       });
     }
