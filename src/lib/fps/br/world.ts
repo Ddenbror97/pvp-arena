@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "soffit-v1",
+  revision: "sweep-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -161,8 +161,13 @@ export const WORLD_ASSETS = {
   // coplanar lift again (zfix-v13); the airfield hangar repainted (paint-v2: silver arch, blue
   // sides, cream ends); the Victorian glasshouses (Riverside Park, Blackwater) glazed: frames cut
   // from the texture, see-through glass between (glass-v4, art/blender/br/glasshouse.mjs).
-  models: "/fps/br/models/models.soffit-v1.json",
-  collision: "/fps/br/models/collision.soffit-v1.json",
+  // sweep-v1 (2026-11-19): every coplanar face left on the island lifted (zfix-v14, 14 passes of
+  // offset_coplanar over the whole revision until none remained: 17,261 faces in 195 models, the
+  // airfield terminal's wall bases among them, owner: "this building at the airfield flicker");
+  // the glow taken off the East Works pipe pieces, Eastport's trawler and the lifeguard booth
+  // (glow-v1, art/blender/br/strip_emissive.mjs: "white items at east works").
+  models: "/fps/br/models/models.sweep-v1.json",
+  collision: "/fps/br/models/collision.sweep-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

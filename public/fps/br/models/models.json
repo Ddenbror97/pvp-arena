@@ -18087,14 +18087,14 @@
     13.69,
     23
    ],
-   "sourceTris": 2362,
+   "sourceTris": 2392,
    "lods": [
     {
-     "file": "/fps/br/models/ew-turbine-hall.works-v1.lod0.glb",
-     "tris": 2362,
+     "file": "/fps/br/models/ew-turbine-hall.works-v2.lod0.glb",
+     "tris": 2392,
      "draws": 7,
      "textureMB": 1.25,
-     "kB": 119,
+     "kB": 120,
      "size": [
       45,
       13.69,
@@ -18102,11 +18102,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/ew-turbine-hall.works-v1.lod1.glb",
-     "tris": 418,
+     "file": "/fps/br/models/ew-turbine-hall.works-v2.lod1.glb",
+     "tris": 448,
      "draws": 5,
      "textureMB": 0.25,
-     "kB": 34,
+     "kB": 35,
      "size": [
       45,
       13.69,
@@ -18114,7 +18114,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ew-turbine-hall.works-v1.lod2.glb",
+     "file": "/fps/br/models/ew-turbine-hall.works-v2.lod2.glb",
      "tris": 48,
      "draws": 1,
      "textureMB": 0,
