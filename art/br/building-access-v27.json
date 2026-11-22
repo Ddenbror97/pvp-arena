@@ -1,0 +1,202 @@
+{
+ "version": "access-v27",
+ "baseManifest": "models.hj-in.json",
+ "baseCollision": "collision.tone-v1.json",
+ "notes": "2026-11-22: the J-type hangar re-cut from its pre-cut model (walls-v1, from git 3a3f938f^) with the cut inside its end walls (their stepped panels stand 43.0\u201344.4 m out: the cut stops at 42.7 m, the grey liners just inside it): v8 had cut them away below 7.3 m and drawn the flat grey liner in their place (owner: \"not completed/incorrect built\"). Base: models.tone-v1.json with hangar-j's LODs set back to its audit-v1 files (hangar-j.walls-v1.lod{0,1,2}.glb, from git 3a3f938f^, the model before v8's cut), written as models.hj-in.json for the run and not kept; the output then went through offset_coplanar (zfix-v17) and set_lods into jungle-v1.",
+ "models": {
+  "hangar-j": {
+   "doors": [
+    {
+     "x": 30.54,
+     "z": 0,
+     "y0": 0.06,
+     "y1": 2.6,
+     "along": "z",
+     "width": 1.6
+    },
+    {
+     "x": -30.54,
+     "z": 0,
+     "y0": 0.06,
+     "y1": 2.6,
+     "along": "z",
+     "width": 1.6
+    }
+   ],
+   "cuts": [
+    [
+     29.94,
+     0,
+     -0.8,
+     31.14,
+     2.6,
+     0.8
+    ],
+    [
+     -31.14,
+     0,
+     -0.8,
+     -29.94,
+     2.6,
+     0.8
+    ],
+    [
+     -30.13,
+     0.07,
+     -42.7,
+     30.13,
+     7.3,
+     42.7
+    ]
+   ],
+   "floors": [
+    [
+     -30.14,
+     0,
+     -42.7,
+     30.14,
+     0.06,
+     42.7
+    ]
+   ],
+   "groups": [
+    {
+     "name": "Interior walls and ceiling",
+     "color": [
+      0.62,
+      0.62,
+      0.6
+     ],
+     "boxes": [
+      [
+       -30.14,
+       0.06,
+       -42.7,
+       30.14,
+       7,
+       -42.550000000000004
+      ],
+      [
+       -30.14,
+       0.06,
+       42.550000000000004,
+       30.14,
+       7,
+       42.7
+      ],
+      [
+       -30.14,
+       0.06,
+       -42.7,
+       -29.99,
+       7,
+       -0.9
+      ],
+      [
+       -30.14,
+       2.81,
+       -0.9,
+       -29.99,
+       7,
+       0.9
+      ],
+      [
+       -30.14,
+       0.06,
+       0.9,
+       -29.99,
+       7,
+       42.7
+      ],
+      [
+       29.99,
+       0.06,
+       -42.7,
+       30.14,
+       7,
+       -0.9
+      ],
+      [
+       29.99,
+       2.81,
+       -0.9,
+       30.14,
+       7,
+       0.9
+      ],
+      [
+       29.99,
+       0.06,
+       0.9,
+       30.14,
+       7,
+       42.7
+      ],
+      [
+       -30.14,
+       7,
+       -42.7,
+       30.14,
+       7.15,
+       42.7
+      ],
+      [
+       30.14,
+       0,
+       -1.05,
+       30.94,
+       7,
+       -0.8
+      ],
+      [
+       30.14,
+       0,
+       0.8,
+       30.94,
+       7,
+       1.05
+      ],
+      [
+       30.14,
+       2.6,
+       -0.8,
+       30.94,
+       7,
+       0.8
+      ],
+      [
+       -30.94,
+       0,
+       -1.05,
+       -30.14,
+       7,
+       -0.8
+      ],
+      [
+       -30.94,
+       0,
+       0.8,
+       -30.14,
+       7,
+       1.05
+      ],
+      [
+       -30.94,
+       2.6,
+       -0.8,
+       -30.14,
+       7,
+       0.8
+      ]
+     ]
+    }
+   ],
+   "stairs": [],
+   "color": [
+    0.42,
+    0.42,
+    0.4
+   ]
+  }
+ }
+}

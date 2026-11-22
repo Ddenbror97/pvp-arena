@@ -28,6 +28,8 @@ export const SHORE_FOAM_FULL_M = 45;
 export const LAKE_BANK = [0.055, 0.075, 0.06] as const;
 const LAKE_BANK_GLSL = `vec3(${LAKE_BANK.map((c) => c.toFixed(3)).join(", ")})`;
 export const SHORE_FOAM_GONE_M = 170;
+/** The water's edge fades out (alpha to coverage) up to the first distance, not past the second (m). */
+export const SHORE_SOFT_M = [120, 200] as const;
 
 /**
  * The terrain's height texture (terrain.ts: R16UI centimetres + offset on a regular grid), so
@@ -512,11 +514,19 @@ export function createWater(
           wDepth = vWaterY - groundAt(vMapUv);
           float depth = wDepth - 0.02;
           if (depth <= 0.0) discard;
-          diffuseColor.a *= smoothstep(0.0, max(fwidth(depth), 0.02), depth);
+          // The last pixel of water fades out through alpha-to-coverage, but only near by
+          // (SHORE_SOFT_M): a GPU turns a partial alpha into a dither of its samples, and from
+          // far off, where the fade is one pixel wide all along every bank, that dither crawled
+          // as the view moved (owner, 2026-11-22: "the waters and rivers render incorrectly on
+          // distance … in diffrent positions in the scope the rivers and waters flicker the
+          // edges"). Out there the water is whole to its edge, and the edge is the depth test
+          // against the bank, which multisampling smooths per sample.
+          float soft = 1.0 - smoothstep(${SHORE_SOFT_M[0].toFixed(1)}, ${SHORE_SOFT_M[1].toFixed(1)}, length(vViewPosition));
+          diffuseColor.a *= mix(1.0, smoothstep(0.0, max(fwidth(depth), 0.02), depth), soft);
         }`,
       );
   };
-  material.customProgramCacheKey = () => `br-water-v9-${ground ? "depth" : "flat"}`;
+  material.customProgramCacheKey = () => `br-water-v10-${ground ? "depth" : "flat"}`;
   // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
   biasLogDepth(material, LOG_BIAS.water);
   const mesh = new THREE.Mesh(geometry, material);

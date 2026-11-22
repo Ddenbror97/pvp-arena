@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "tone-v1",
+  revision: "jungle-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -172,8 +172,13 @@ export const WORLD_ASSETS = {
   // from the parachute. The 99 textured-kit buildings (the fortress, the ruins, the coast towns,
   // East Works, the 2026-11-15 locations, Blackwater) in their textures' own colours (tone-v1;
   // eleven of them through offset_coplanar again, zfix-v16): they were about twice too light.
-  models: "/fps/br/models/models.tone-v1.json",
-  collision: "/fps/br/models/collision.tone-v1.json",
+  // jungle-v1 (2026-11-22, set_lods.mjs + drop_backfaces.mjs): the tall billboards' and the
+  // roadside billboard's middle and far LODs without the inward copies of their ad panels
+  // (back-v1: the panels blinked from the parachute); the J-type hangar re-cut from its pre-cut
+  // model with its end walls kept (access-v27, zfix-v17); the Cessna 402 painted (livery-v1);
+  // Forgotten Ruins' trees and tree-high plants on the "jungle-tree" ring (props-renderer.ts).
+  models: "/fps/br/models/models.jungle-v1.json",
+  collision: "/fps/br/models/collision.jungle-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

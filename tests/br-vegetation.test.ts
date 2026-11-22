@@ -7,7 +7,9 @@ import {
   CELLS,
   cellTrees,
   forEachTrunkNear,
+  SPECIES,
   TREE_STRIDE,
+  TRUNK,
   vegetationWorld,
   type VegetationWorld,
 } from "@/lib/fps/br/vegetation";
@@ -131,15 +133,31 @@ describe("Project Island vegetation (shared by client and server)", () => {
     const perCell = (performance.now() - t0) / 100;
     expect(n).toBeGreaterThan(0);
     expect(perCell).toBeLessThan(5);
-    // A tree's trunk is found from a point next to it.
+    // A tree's trunk is found from a point next to it, where its model's bark stands: within a
+    // metre of the tree's origin, turned with the tree (TRUNK's dx, dz).
     const t = cellTrees(world, 15, 15);
     expect(t.length).toBeGreaterThan(0);
     const x = t[0]!,
       z = t[2]!;
+    const kind = TRUNK[SPECIES[t[5]!]!];
+    const a = t[4]! * Math.PI * 2;
+    const want = [
+      x + (Math.cos(a) * kind.dx + Math.sin(a) * kind.dz) * t[3]!,
+      z + (-Math.sin(a) * kind.dx + Math.cos(a) * kind.dz) * t[3]!,
+    ];
     let found = false;
     forEachTrunkNear(world, x + 1, z, 3, (tx, tz, radius) => {
-      if (tx === x && tz === z && radius > 0.1) found = true;
+      if (Math.hypot(tx - want[0]!, tz - want[1]!) < 1e-4 && radius === kind.radius * t[3]!)
+        found = true;
     });
     expect(found).toBe(true);
+    expect(Math.hypot(want[0]! - x, want[1]! - z)).toBeLessThan(1);
+  });
+
+  it("stands every trunk on its model's bark: the posts used to stand on the origin", () => {
+    // Measured off the models at body height (art/br: trunk.mjs); the jungle tree's trunk is a
+    // stick, not the 1.1 m post it was.
+    expect(TRUNK.jungle.radius).toBeLessThan(0.15);
+    for (const k of SPECIES) expect(Math.hypot(TRUNK[k].dx, TRUNK[k].dz)).toBeLessThan(0.8);
   });
 });
