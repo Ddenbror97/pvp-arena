@@ -518,6 +518,8 @@ export function knifeSwing(
       (t.body.phase === "ground" || t.body.phase === "swim") &&
       Math.hypot(t.body.x - f.body.x, t.body.z - f.body.z) < reach,
   );
+  // Each ray of the swing, and how far it reaches before a wall.
+  const swept: Array<{ dir: { x: number; y: number; z: number }; wall: number }> = [];
   for (const [dyaw, dpitch] of spec.fan) {
     const yaw = input.yaw + dyaw,
       pitch = input.pitch + dpitch;
@@ -531,6 +533,7 @@ export function knifeSwing(
       hitWall && hitWall.distance >= 0 && hitWall.distance <= spec.range
         ? hitWall.distance
         : Infinity;
+    swept.push({ dir, wall });
     for (const t of candidates) {
       const volumes = combatVolumes(history.at(t.seat, now - rewind, t.body));
       for (const zone of ["head", "chest", "stomach", "legs"] as const) {
@@ -540,6 +543,19 @@ export function knifeSwing(
       }
     }
   }
+  // Glass in reach (owner, 2026-11-23: "make the windows breakble with a knife hit"): the
+  // swing breaks the whole panes its rays cross before a wall, or before the player it hits.
+  for (const { dir, wall } of swept)
+    shatterAlong(
+      world,
+      origin.x,
+      origin.y,
+      origin.z,
+      dir.x,
+      dir.y,
+      dir.z,
+      Math.min(spec.range, wall, best ? best.distance : Infinity),
+    );
   if (!best) return events;
   const { t, zone } = best;
   const at = history.at(t.seat, now - rewind, t.body);

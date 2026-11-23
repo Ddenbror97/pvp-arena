@@ -4,7 +4,17 @@ import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import { listPanes, shatterAlong, withPanes, type Pane } from "@/lib/fps/br/panes";
+import { pickUp } from "@/lib/fps/br/inventory";
+import {
+  createBrMatch,
+  seatHuman,
+  stepBrMatch,
+  type BrAct,
+  type BrInput,
+  type BrMatchState,
+} from "@/lib/fps/br/match";
 import type { CollisionData } from "@/lib/fps/br/static-world";
+import { TICK_MS } from "@/lib/fps/simulation";
 import windowPanes from "@/lib/fps/br/window-panes.json";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
 
@@ -141,4 +151,103 @@ describe("the buildings' windows are breakable glass", () => {
       const ray = island.solid.raycast(a[0], a[1], a[2], b[0] - a[0], 0, b[2] - a[2], 1.2);
       expect(ray === null || ray.distance > 1.15).toBe(true);
     });
+});
+
+/**
+ * Not only bullets (owner, 2026-11-23: "make the windows breakble with a knife hit and
+ * granades. it only works with weapons right now"): in a match, a knife swing at a window, a
+ * grenade thrown through one and an HE blast beside one each break it.
+ */
+describe("the windows break to a knife and to grenades", () => {
+  const at = island.layout.findIndex((p) => p.model === "bungalow");
+  // The bungalow's widest ground-floor pane, and the side of it a player can stand on.
+  const pane = all
+    .filter((p) => p.placement === at && p.box[1] - island.layout[at]!.y < 1.5)
+    .sort((a, b) => {
+      const w = (p: Pane) => Math.max(p.box[3] - p.box[0], p.box[5] - p.box[2]);
+      return w(b) - w(a);
+    })[0]!;
+  const { mid, thin } = across(pane, 0);
+
+  /** A match with seat 0 a human standing `d` m out from the pane, facing it; everyone else away. */
+  function stand(d: number) {
+    const state = createBrMatch(meta, 7, (x, z) => hf.heightAt(x, z));
+    seatHuman(state, "u1", "One");
+    state.phase = "active";
+    for (const s of state.seats) {
+      s.body.x = mid[0] + 400 + s.seat * 4;
+      s.body.z = mid[2] + 400;
+      s.body.y = island.solid.supportAt(s.body.x, s.body.z, 0.35, 1e4);
+      s.body.phase = "ground";
+      s.body.grounded = true;
+    }
+    // Outside: the side of the glass where a player standing there is free.
+    let best: { x: number; z: number; y: number } | null = null;
+    for (const sign of [1, -1]) {
+      const x = mid[0] + (thin === 0 ? sign * d : 0),
+        z = mid[2] + (thin === 2 ? sign * d : 0);
+      const y = island.solid.supportAt(x, z, 0.35, mid[1] + 1);
+      if (Math.abs(y - (pane.box[1] - 1)) > 1.6 || island.solid.blocked(x, y, z, 1.8, 0.4))
+        continue;
+      if (!best || y < best.y) best = { x, z, y };
+    }
+    expect(best).not.toBeNull();
+    const me = state.seats[0]!;
+    Object.assign(me.body, { ...best!, phase: "ground", grounded: true, velocityY: 0 });
+    const eye = { x: best!.x, y: best!.y + 1.6, z: best!.z };
+    const yaw = Math.atan2(-(mid[0] - eye.x), -(mid[2] - eye.z));
+    const pitch = Math.atan2(mid[1] - eye.y, d);
+    let t = 1000;
+    const tick = (inp: Partial<BrInput> = {}, acts: BrAct[] = []) => {
+      t += TICK_MS;
+      stepBrMatch(
+        state,
+        island.solid,
+        meta,
+        new Map([[0, { seq: state.tick, forward: 0, strafe: 0, yaw, pitch, ...inp }]]),
+        t,
+        TICK_MS,
+        new Map([[0, acts]]),
+      );
+      return state.combat;
+    };
+    return { state, me, yaw, pitch, tick };
+  }
+  const whole = (state: BrMatchState) => !state.paneBroken?.[pane.id];
+
+  it("a knife slash at the glass breaks it", () => {
+    const { state, me, tick } = stand(0.9);
+    for (let i = 0; i < 12; i++) tick();
+    expect(me.kit.active).toBe(-1);
+    expect(whole(state)).toBe(true);
+    tick({ fire: true });
+    tick();
+    expect(whole(state)).toBe(false);
+  });
+
+  it("a grenade thrown through the window breaks it on the way", () => {
+    const { state, me, tick } = stand(3);
+    pickUp(me.kit, { item: "grenade-smoke", qty: 1 });
+    for (let i = 0; i < 6; i++) tick();
+    tick({}, [{ act: "throw", nade: "smoke", kind: "over" }]);
+    for (let i = 0; i < 30 && whole(state); i++) tick();
+    expect(whole(state)).toBe(false);
+  });
+
+  it("an HE blast beside the window breaks it", () => {
+    const { state, me, tick } = stand(1.5);
+    pickUp(me.kit, { item: "grenade-he", qty: 1 });
+    me.kit.hp = 100_000;
+    for (let i = 0; i < 6; i++) tick();
+    // Dropped at the feet, facing away from the window.
+    tick({ pitch: -1.5, yaw: 0 }, [{ act: "throw", nade: "he", kind: "under" }]);
+    let boom = false;
+    for (let i = 0; i < 120 && !boom; i++) {
+      const e = tick({ pitch: -1.5 });
+      boom = e.some((x) => x.type === "boom");
+      if (!boom) expect(whole(state)).toBe(true);
+    }
+    expect(boom).toBe(true);
+    expect(whole(state)).toBe(false);
+  });
 });

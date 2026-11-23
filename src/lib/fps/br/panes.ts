@@ -352,10 +352,48 @@ export function withPanes(
       onBreak(id);
     }
   };
+  w.blast = function (x, y, z, radius) {
+    if (!set.count || y - radius > set.maxY || y + radius < set.minY) return;
+    const hits: number[] = [];
+    forEachPane(set, x - radius, z - radius, x + radius, z + radius, (id) => {
+      if (broken[id] || hits.includes(id)) return;
+      // The pane's nearest point, within the blast's reach…
+      const b = set.boxes,
+        o = id * 6;
+      const px = Math.max(b[o]!, Math.min(b[o + 3]!, x)),
+        py = Math.max(b[o + 1]!, Math.min(b[o + 4]!, y)),
+        pz = Math.max(b[o + 2]!, Math.min(b[o + 5]!, z));
+      if (Math.hypot(px - x, py - y, pz - z) > radius) return;
+      // …and in its line: a clear ray to its middle, or to its nearest point drawn a third of
+      // the way in (an edge sits in the wall's reveal). A wall or a shut door between shields
+      // the glass (`this`, the world it was called on; rays pass whole panes).
+      const cx = (b[o]! + b[o + 3]!) / 2,
+        cy = (b[o + 1]! + b[o + 4]!) / 2,
+        cz = (b[o + 2]! + b[o + 5]!) / 2;
+      const clear = (tx: number, ty: number, tz: number) => {
+        const lx = tx - x,
+          ly = ty - y,
+          lz = tz - z;
+        const l = Math.hypot(lx, ly, lz);
+        if (l < 0.05) return true;
+        const ray = this.raycast(x, y, z, lx / l, ly / l, lz / l, l);
+        return !ray || ray.distance >= l - 0.1;
+      };
+      if (!clear(cx, cy, cz) && !clear(px + (cx - px) / 3, py + (cy - py) / 3, pz + (cz - pz) / 3))
+        return;
+      hits.push(id);
+    });
+    for (const id of hits) {
+      broken[id] = 1;
+      onBreak(id);
+    }
+  };
   return w;
 }
 
 type PaneWorld = {
+  /** Breaks the whole panes a blast (centre, radius) reaches in a clear line. */
+  blast?: (this: StaticWorld, x: number, y: number, z: number, radius: number) => void;
   shatter?: (
     ox: number,
     oy: number,
@@ -378,6 +416,14 @@ export function shatterAlong(
   length: number,
 ) {
   (world as StaticWorld & PaneWorld).shatter?.(ox, oy, oz, dx, dy, dz, length);
+}
+
+/**
+ * Breaks the panes a blast reaches (owner, 2026-11-23: "make the windows breakble with a knife
+ * hit and granades"): an HE grenade's, from its centre, in a clear line.
+ */
+export function shatterAround(world: StaticWorld, x: number, y: number, z: number, radius: number) {
+  (world as StaticWorld & PaneWorld).blast?.call(world, x, y, z, radius);
 }
 
 /** Whether a StaticWorld carries the island's panes (set by buildIsland). */

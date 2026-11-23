@@ -112,16 +112,31 @@ function sweepBox(
   return enter;
 }
 
-/** Advance whole fixed steps; `onImpact` hears bounces (sounds, the incendiary's floor). */
+/**
+ * Advance whole fixed steps; `onImpact` hears bounces (sounds, the incendiary's floor), `onMove`
+ * every step's path (from, unit direction, length: the glass it crosses breaks, match.ts).
+ */
 export function brNadeAdvance(
   s: BrNadeSim,
   world: StaticWorld,
   steps: number,
   onImpact?: (i: BrNadeImpact) => void,
+  onMove?: (x: number, y: number, z: number, dx: number, dy: number, dz: number, l: number) => void,
 ) {
   for (let i = 0; i < steps; i++) {
     s.n++;
     if (s.rest) continue;
+    const x0 = s.x,
+      y0 = s.y,
+      z0 = s.z;
+    const moved = () => {
+      if (!onMove) return;
+      const ex = s.x - x0,
+        ey = s.y - y0,
+        ez = s.z - z0;
+      const l = Math.hypot(ex, ey, ez);
+      if (l > 1e-6) onMove(x0, y0, z0, ex / l, ey / l, ez / l, l);
+    };
     s.vy -= P.gravity * STEP;
     const dx = s.vx * STEP,
       dy = s.vy * STEP,
@@ -156,6 +171,7 @@ export function brNadeAdvance(
       s.vy *= P.restitution;
       s.vz *= P.restitution;
       const floor = axis === 1 && into < 0;
+      moved();
       onImpact?.({ t: s.n * STEP, x: s.x, y: s.y, z: s.z, floor });
       if (floor && Math.hypot(s.vx, s.vy, s.vz) < P.restSpeed) {
         s.vx = s.vy = s.vz = 0;
@@ -166,6 +182,7 @@ export function brNadeAdvance(
     s.x += dx;
     s.y += dy;
     s.z += dz;
+    moved();
     // Terrain: bounce off the slope's normal (central differences of the heightfield).
     const h = world.hf.heightAt(s.x, s.z);
     if (s.y - R < h) {
