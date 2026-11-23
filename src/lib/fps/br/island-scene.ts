@@ -102,6 +102,7 @@ export async function loadIslandScene(
   const water = createWater(meta, terrain.textures.coverB, {
     texture: terrain.textures.height,
     ...terrain.heightGrid,
+    wet: terrain.textures.wet,
   });
   root.add(water.root);
   progress(0.3, "Placing buildings and forests");

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { biasLogDepth, LOG_BIAS } from "./depth-bias";
 import { STILL_WATER } from "./drop";
+import { WET_DEPTH_STEPS } from "./shore-sink";
 import { WAVES_SWELL_AT_S, WAVES_SWELL_S, waterClock } from "./water-clock";
 import { SKY_GLSL, skyUniforms, sunLook, type SunLook } from "./sun";
 import { WORLD_HALF, WORLD_SIZE, type WorldMeta } from "./world";
@@ -18,6 +19,51 @@ export type WaterControls = { root: THREE.Object3D; dispose: () => void };
 
 /** How far the sea extends beyond the map edge (m), past the camera's far plane from inside. */
 const SEA_MARGIN = 15_000;
+/**
+ * The water is drawn in cells of at most these sizes (m): the sea over the map, a lake.
+ *
+ * It was one sheet 40 km across (two triangles) for the sea and one rectangle a lake. A GPU
+ * works out what each pixel of a triangle shows, and how far away it is, from the triangle's
+ * corners; one of these triangles always passed under or behind the camera, where it is cut at
+ * the near plane 10 cm from the eye, so a pixel of sea 8 km off was found between a corner 10 cm
+ * away and corners 20 km away. In 32-bit arithmetic that leaves its distance and its place on
+ * the map uncertain by tens of metres, differently every frame the camera moves: the far
+ * shorelines of the sea, the strait and the rivers (the sea's own sheet) stood in ragged steps
+ * and blinked from the plane and the parachute, while the lakes (small rectangles) did not
+ * (owner, 2026-11-22: "still flicker for long distances directly in the airplane ... and
+ * in the parachute"; the software renderer the checks run on is exact here and never showed
+ * it). In cells, every far pixel lies between corners about as far away as it is.
+ */
+export const SEA_CELL_M = 312.5;
+export const LAKE_CELL_M = 200;
+
+/** `from`…`to` in equal steps of at most `cell`. */
+function split(from: number, to: number, cell: number): number[] {
+  const n = Math.max(1, Math.ceil((to - from) / cell - 1e-9));
+  return Array.from({ length: n + 1 }, (_, i) => (i === n ? to : from + ((to - from) * i) / n));
+}
+
+/**
+ * The sea grid's lines along one axis (the same along the other): SEA_CELL_M over the map,
+ * wider cells in rings beyond it, out past the far plane.
+ */
+export function seaLines(): number[] {
+  const out = split(-WORLD_HALF, WORLD_HALF, SEA_CELL_M);
+  let edge = WORLD_HALF;
+  // (Twice the cell over the first 2.5 km of open sea, where the plane starts and boats go;
+  // then 1.25 km and 2.5 km cells to the margin.)
+  for (const [reach, cell] of [
+    [2500, SEA_CELL_M * 2],
+    [5000, 1250],
+    [SEA_MARGIN, 2500],
+  ] as const) {
+    const ring = split(edge, WORLD_HALF + reach, cell).slice(1);
+    out.push(...ring);
+    out.unshift(...ring.map((v) => -v).reverse());
+    edge = WORLD_HALF + reach;
+  }
+  return out;
+}
 /**
  * The bank's foam and pale wash are drawn in full within the first distance of the camera and
  * not at all beyond the second: on foot and from a boat they are metres wide, from the air a
@@ -39,7 +85,27 @@ export type WaterGround = {
   spacing: number;
   grid: number;
   offset: number;
+  /**
+   * The share of the ground under water and its mean depth, a texel every second height sample
+   * (shore-sink.ts wetCoverage): what a far pixel reads in place of the exact height.
+   */
+  wet?: THREE.Texture;
 };
+
+/**
+ * Where the water stops asking the exact heights whether a pixel is wet and reads the averaged
+ * coverage instead: by the width of ground a pixel covers (m, the short way across its
+ * footprint). Under the first the exact answer is the right one (a pixel sees less than one
+ * height sample); past the second a pixel spans several and its centre is a matter of chance
+ * (shore-sink.ts). From the plane's 800 m at 720p these are about 1.2 and 2.8 km off.
+ */
+export const SHORE_FAR_FOOT_M = [2.5, 6] as const;
+/**
+ * Far away the water is drawn by its share of the pixel: none under the first share (a pixel
+ * with a puddle in it is land), whole from the second. Between them it is partly there, so a
+ * river narrower than a pixel is a faint line and not a row of dots that come and go.
+ */
+export const SHORE_FAR_SHARE = [0.06, 0.94] as const;
 
 /**
  * Owner, 2026-11-12 (four reference screenshots: a sun-glitter path, pale foam along the banks,
@@ -147,13 +213,6 @@ export function createWater(
   const positions: number[] = [];
   const lake: number[] = [];
   const index: number[] = [];
-  const quad = (x0: number, z0: number, x1: number, z1: number, y: number, isLake: number) => {
-    const o = positions.length / 3;
-    positions.push(x0, y, z0, x1, y, z0, x0, y, z1, x1, y, z1);
-    lake.push(isLake, isLake, isLake, isLake);
-    // Counter-clockwise seen from above (+y).
-    index.push(o, o + 2, o + 1, o + 1, o + 2, o + 3);
-  };
   /** A convex polygon (x, z corners) at y, fanned from its first corner, facing up. */
   const poly = (pts: Array<[number, number]>, y: number, isLake: number) => {
     if (pts.length < 3) return;
@@ -173,20 +232,42 @@ export function createWater(
       if (area < 0) index.push(o, o + i, o + i + 1);
       else index.push(o, o + i + 1, o + i);
   };
-  const far = WORLD_HALF + SEA_MARGIN;
-  quad(-far, -far, far, far, 0, 0);
+  // The sea: a grid, not one sheet (seaLines). Its corners are shared, so the cells meet
+  // without a seam.
+  const lines = seaLines();
+  const seaAt = positions.length / 3,
+    side = lines.length;
+  for (const z of lines)
+    for (const x of lines) {
+      positions.push(x, 0, z);
+      lake.push(0);
+    }
+  for (let j = 0; j + 1 < side; j++)
+    for (let i = 0; i + 1 < side; i++) {
+      const o = seaAt + j * side + i;
+      // Counter-clockwise seen from above (+y).
+      index.push(o, o + side, o + 1, o + 1, o + side, o + side + 1);
+    }
   const cuts = damCuts(meta);
   for (const w of meta.waterBodies) {
     const [x0, z0, x1, z1] = w.bounds;
+    const planes = cuts.get(w.id) ?? [];
     // (2: still water, the prison's moat: no waves, no foam lapping at its stone, drop.ts.)
-    let pts: Array<[number, number]> = [
-      [x0 - 20, z0 - 20],
-      [x1 + 20, z0 - 20],
-      [x1 + 20, z1 + 20],
-      [x0 - 20, z1 + 20],
-    ];
-    for (const c of cuts.get(w.id) ?? []) pts = clipHalf(pts, c);
-    poly(pts, w.level, STILL_WATER.has(w.id) ? 2 : 1);
+    const kind = STILL_WATER.has(w.id) ? 2 : 1;
+    // Cells of at most LAKE_CELL_M, each cut to the lake's side of its dams.
+    const xs = split(x0 - 20, x1 + 20, LAKE_CELL_M),
+      zs = split(z0 - 20, z1 + 20, LAKE_CELL_M);
+    for (let j = 0; j + 1 < zs.length; j++)
+      for (let i = 0; i + 1 < xs.length; i++) {
+        let pts: Array<[number, number]> = [
+          [xs[i]!, zs[j]!],
+          [xs[i + 1]!, zs[j]!],
+          [xs[i + 1]!, zs[j + 1]!],
+          [xs[i]!, zs[j + 1]!],
+        ];
+        for (const c of planes) pts = clipHalf(pts, c);
+        poly(pts, w.level, kind);
+      }
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
@@ -201,6 +282,8 @@ export function createWater(
   geometry.setIndex(index);
   geometry.computeBoundingSphere();
 
+  // (Far shorelines from the averaged coverage, where the terrain supplies it.)
+  const farShore = !!ground?.wet;
   const time = { value: 0 };
   const material = new THREE.MeshStandardMaterial({
     color: 0x24505e,
@@ -219,6 +302,7 @@ export function createWater(
     Object.assign(shader.uniforms, skyUniforms(sun));
     shader.uniforms["uTime"] = time;
     if (ground) shader.uniforms["uGround"] = { value: ground.texture };
+    if (ground?.wet) shader.uniforms["uWet"] = { value: ground.wet };
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
@@ -267,6 +351,10 @@ export function createWater(
         }
         // The water's depth over the ground and the camera's distance (read once per pixel).
         float wDepth = 40.0, wDist = 0.0;
+        // Far away: how much the averaged coverage stands in for the exact height (0–1), the
+        // water's edge by it (above 0: some water in the pixel), how much of the pixel the
+        // water gets, and its mean depth; the exact depth.
+        float wFar = 0.0, wFarEdge = 0.0, wFarAlpha = 1.0, wFarDepth = 40.0, wTrue = 40.0;
         ${
           ground
             ? `precision highp usampler2D;
@@ -287,6 +375,36 @@ export function createWater(
         }`
             : `float groundAt(vec2 uv) { return -40.0; }`
         }
+        ${
+          farShore
+            ? `uniform sampler2D uWet;
+        // The pixel's footprint on the water (m per pixel across and up the screen): how wide
+        // it is the short way decides whether the exact height or the coverage answers.
+        void wFarRead(vec2 uv, vec2 dx, vec2 dy) {
+          float a = length(dx), b = length(dy);
+          float narrow = abs(dx.x * dy.y - dx.y * dy.x) / max(max(a, b), 1e-9) * ${WORLD_SIZE.toFixed(1)};
+          wFar = smoothstep(${SHORE_FAR_FOOT_M[0].toFixed(1)}, ${SHORE_FAR_FOOT_M[1].toFixed(1)}, narrow);
+          if (wFar <= 0.0) return;
+          // (Texel centres stand on every second height sample. The gradients are given: an
+          // automatic mip level is undefined inside a branch.)
+          const float cells = ${(ground!.grid / 2).toFixed(1)};
+          const float scale = cells / (cells + 1.0);
+          vec2 c = textureGrad(uWet, (uv * cells + 0.5) / (cells + 1.0), dx * scale, dy * scale).rg;
+// (The edge as a depth for the lines that read one: only its sign and slope count.
+          // All water comes to the 40 m the open sea past the map's edge has, so the edge's
+          // one-pixel fade does not see a step there.)
+          wFarEdge = (c.r - ${SHORE_FAR_SHARE[0].toFixed(2)}) * ${(40 / (1 - SHORE_FAR_SHARE[0])).toFixed(3)};
+          wFarAlpha = mix(1.0, smoothstep(${SHORE_FAR_SHARE[0].toFixed(2)}, ${SHORE_FAR_SHARE[1].toFixed(2)}, c.r), wFar);
+          wFarDepth = c.g * ${(255 / WET_DEPTH_STEPS).toFixed(3)};
+        }
+        // The water's depth at this pixel for its edge: the exact one near, the coverage's far.
+        float wShore(vec2 uv, vec2 dx, vec2 dy) {
+          wFarRead(uv, dx, dy);
+          wTrue = wFar < 1.0 ? vWaterY - groundAt(uv) : wFarDepth;
+          return mix(wTrue, wFarEdge, wFar);
+        }`
+            : `float wShore(vec2 uv, vec2 dx, vec2 dy) { wTrue = vWaterY - groundAt(uv); return wTrue; }`
+        }
         float wHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
         // How much of a wave layer of this cell size (m) a pixel covering foot m can show:
         // all of it to a cell over 12 pixels, none under 4 (edge-on, a wave a few pixels tall
@@ -304,6 +422,10 @@ export function createWater(
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
+        // (The edge was decided on wDepth; from here on it is how deep the water is. Far away
+        // the water has the share of the pixel that is water.)
+        wDepth = mix(wTrue, wFarDepth, wFar);
+        diffuseColor.a *= wFarAlpha;
         float waterDepth = max(wDepth, 0.0);
         // A wavy waterline: the thinnest film lets the wet ground show through along a noisy
         // contour, instead of the terrain mesh's triangles cutting a stepped edge.
@@ -507,16 +629,22 @@ export function createWater(
         "#include <clipping_planes_fragment>",
         `#include <clipping_planes_fragment>
         // Fixed mask mip: camera distance must not change which bank belongs to a lake.
-        if (vLake > 0.5 && textureLod(uCoverB, vMapUv, 0.0).a < 0.35) discard;
+        // (Far away the coverage below carries the mask: wShore.)
+        bool wInside = all(greaterThanEqual(vMapUv, vec2(0.0))) && all(lessThanEqual(vMapUv, vec2(1.0)));
+        // (The footprint's gradients are taken here, outside any branch: they are undefined
+        // on the pixels where neighbours take different branches, the map's edge for one.)
+        vec2 wDx = dFdx(vMapUv), wDy = dFdy(vMapUv);
+        float wEdge = wInside ? wShore(vMapUv, wDx, wDy) : 40.0;
+        if (vLake > 0.5 && wFar < 1.0 && textureLod(uCoverB, vMapUv, 0.0).a < 0.35) discard;
         if (all(greaterThanEqual(vMapUv, vec2(0.0))) && all(lessThanEqual(vMapUv, vec2(1.0)))) {
-          wDepth = vWaterY - groundAt(vMapUv);
+          wDepth = wEdge;
           float depth = wDepth - 0.02;
           if (depth <= 0.0) discard;
           diffuseColor.a *= smoothstep(0.0, max(fwidth(depth), 0.02), depth);
         }`,
       );
   };
-  material.customProgramCacheKey = () => `br-water-v9-${ground ? "depth" : "flat"}`;
+  material.customProgramCacheKey = () => `br-water-v10-${ground ? "depth" : "flat"}`;
   // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
   biasLogDepth(material, LOG_BIAS.water);
   const mesh = new THREE.Mesh(geometry, material);

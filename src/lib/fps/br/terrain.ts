@@ -10,7 +10,7 @@ import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "./ground-style";
 export { GROUND_LAYERS } from "./ground-style";
 import { Heightfield } from "./heightfield";
 import { buildMinMax, lodRanges, selectPatches, type LodConfig } from "./terrain-lod";
-import { sinkAtlas, sinkLevels, wetLevels } from "./shore-sink";
+import { sinkAtlas, sinkLevels, wetCoverage, wetLevels } from "./shore-sink";
 import { LAND_COVER, WORLD_HALF, WORLD_SIZE, type WorldMeta } from "./world";
 import { FAR_FOREST, SUN_XZ } from "./far-forest";
 
@@ -60,7 +60,13 @@ export type TerrainControls = {
   update: (camera: THREE.PerspectiveCamera) => void;
   stats: () => { patches: number; triangles: number };
   /** Shared with the water (lake mask) and later the map UI; owned by the terrain. */
-  textures: { height: THREE.DataTexture; coverA: THREE.DataTexture; coverB: THREE.DataTexture };
+  textures: {
+    height: THREE.DataTexture;
+    coverA: THREE.DataTexture;
+    coverB: THREE.DataTexture;
+    /** The share of the ground under water and its mean depth (shore-sink.ts wetCoverage). */
+    wet: THREE.DataTexture;
+  };
   /** How to read `textures.height` (the water's depth shading): grid spacing, last index, offset. */
   heightGrid: { spacing: number; grid: number; offset: number };
   /** Load the ground textures (`dir`: the folder with ground.json) and the runway strips. */
@@ -355,6 +361,21 @@ export function createTerrain(
   relief.anisotropy = Math.min(8, worldAnisotropy());
   relief.needsUpdate = true;
   const [coverA, coverB] = landCoverWeights(landcover);
+  // How much of the ground is under water, for the water's far shorelines (shore-sink.ts).
+  const wetData = wetCoverage(
+    hf,
+    meta,
+    coverB.image as { data: Uint8Array; width: number; height: number },
+  );
+  const wet = new THREE.DataTexture(wetData.data, wetData.size, wetData.size, THREE.RGFormat);
+  wet.minFilter = THREE.LinearMipmapLinearFilter;
+  wet.magFilter = THREE.LinearFilter;
+  wet.generateMipmaps = true;
+  wet.wrapS = wet.wrapT = THREE.ClampToEdgeWrapping;
+  // (A far pixel's footprint on the water is many times longer than it is wide; one small
+  // texture read by far water only, so the most every tier's GPU offers.)
+  wet.anisotropy = 16;
+  wet.needsUpdate = true;
   const detail = detailNoise();
 
   // ---------------------------------------------------------------- patch geometry
@@ -925,7 +946,7 @@ export function createTerrain(
 
   return {
     root,
-    textures: { height: heightTex, coverA, coverB },
+    textures: { height: heightTex, coverA, coverB, wet },
     surfaceTexture: () => (uniforms.uSurfaceOn.value ? uniforms.uSurface.value : null),
     heightGrid: { spacing: hf.spacing, grid: n, offset: HEIGHT_OFFSET },
     update(camera) {
@@ -1062,6 +1083,7 @@ export function createTerrain(
       material.dispose();
       heightTex.dispose();
       sinkTex.dispose();
+      wet.dispose();
       coverA.dispose();
       coverB.dispose();
       detail.dispose();
