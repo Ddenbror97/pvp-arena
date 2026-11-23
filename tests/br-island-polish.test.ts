@@ -55,8 +55,13 @@ describe("Superstore island polish", () => {
     expect(count("island-village", homes)).toBeGreaterThan(60);
     expect(count("island-village", ["church", "carousel", "playground"])).toBe(3);
     expect(count("west-point")).toBeGreaterThan(10);
-    for (const m of ["terminal", "airliner", "cargo-plane", "chinook", "bizjet"])
+    for (const m of ["airliner", "cargo-plane", "chinook", "bizjet"])
       expect(count("island-airfield", [m]), m).toBe(1);
+    // The procedural terminal, twice (the old download's spot and the passenger side), and the
+    // procedural hangars in the hangar row and on the passenger side.
+    expect(count("island-airfield", ["air-terminal"])).toBe(2);
+    expect(count("island-airfield", ["air-hangar"])).toBe(4);
+    expect(count("island-airfield", ["terminal", "hangar"])).toBe(0);
   });
 
   it("dresses the woods and the verges", () => {
@@ -66,48 +71,50 @@ describe("Superstore island polish", () => {
     expect(wild("rusty-truck") + wild("burned-car-b") + wild("crashed-car")).toBeGreaterThan(5);
   });
 
-  it("walks into the airfield terminal up both porches, through its doors", () => {
-    const t = island.layout.find((p) => p.model === "terminal")!;
-    for (const route of [
-      [
-        [-1.4, -13],
-        [-1.4, -9],
-        [-1.4, -5],
-      ],
-      [
-        [-5.45, 13],
-        [-5.45, 8.5],
-        [-5.45, 4],
-      ],
-      [
-        [10.45, 10.5],
-        [10.45, 8],
-        [10.45, 3],
-      ],
-    ]) {
-      const pts = route.map(([x, z]) => {
-        const [dx, dz] = turnPoint(x!, z!, t.turn);
-        return [t.x + dx, t.z + dz];
-      });
-      const body: BrBody = {
-        x: pts[0]![0]!,
-        z: pts[0]![1]!,
-        y: hf.heightAt(pts[0]![0]!, pts[0]![1]!),
-        velocityY: 0,
-        grounded: true,
-        crouched: false,
-      };
-      for (const [x, z] of pts.slice(1)) {
-        for (let k = 0; k < 600 && Math.hypot(body.x - x!, body.z - z!) > 0.18; k++)
-          stepBody(
-            open,
-            body,
-            { forward: 1, strafe: 0, yaw: Math.atan2(body.x - x!, body.z - z!) },
-            34,
-          );
-        expect(Math.hypot(body.x - x!, body.z - z!), `to ${x},${z}`).toBeLessThan(0.19);
+  it("walks into both airfield terminals through their doors", () => {
+    const terminals = island.layout.filter((p) => p.model === "air-terminal");
+    expect(terminals.length).toBe(2);
+    for (const t of terminals)
+      for (const route of [
+        [
+          [-8, 11],
+          [-8, 7.9],
+          [-8, 4],
+        ],
+        [
+          [8, 11],
+          [8, 7.9],
+          [8, 4],
+        ],
+        [
+          [0, -11],
+          [0, -7.9],
+          [0, -4],
+        ],
+      ]) {
+        const pts = route.map(([x, z]) => {
+          const [dx, dz] = turnPoint(x!, z!, t.turn);
+          return [t.x + dx, t.z + dz];
+        });
+        const body: BrBody = {
+          x: pts[0]![0]!,
+          z: pts[0]![1]!,
+          y: hf.heightAt(pts[0]![0]!, pts[0]![1]!),
+          velocityY: 0,
+          grounded: true,
+          crouched: false,
+        };
+        for (const [x, z] of pts.slice(1)) {
+          for (let k = 0; k < 600 && Math.hypot(body.x - x!, body.z - z!) > 0.18; k++)
+            stepBody(
+              open,
+              body,
+              { forward: 1, strafe: 0, yaw: Math.atan2(body.x - x!, body.z - z!) },
+              34,
+            );
+          expect(Math.hypot(body.x - x!, body.z - z!), `to ${x},${z}`).toBeLessThan(0.19);
+        }
+        expect(body.y - t.y).toBeCloseTo(0.15, 1);
       }
-      expect(body.y - t.y).toBeCloseTo(0.9, 1);
-    }
   });
 });

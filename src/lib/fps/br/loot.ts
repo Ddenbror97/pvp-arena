@@ -56,7 +56,8 @@ put("city", "indoor", 8, [
 put("city", "indoor", 40, ["superstore"]);
 // The Superstore's fit-out (sales floor, stockroom, mezzanine) and the island airfield's terminal.
 put("city", "indoor", 60, ["superstore-interior"]);
-put("city", "indoor", 14, ["terminal"]);
+// (The procedural terminal, both of them, since 2026-11-22; the old download is no longer placed.)
+put("city", "indoor", 14, ["terminal", "air-terminal"]);
 put("warehouse", "indoor", 12, [
   "warehouse",
   "ind-warehouse-1",
@@ -69,6 +70,9 @@ put("warehouse", "indoor", 12, [
   "ind-terminal",
   "rural-quonset",
   "hangar",
+  // The procedural hangars (in place of "hangar" since 2026-11-22, and the flight lines').
+  "air-hangar",
+  "mil-hangar",
 ]);
 put("warehouse", "indoor", 3, ["container-40", "container-20", "ind-office-trailer"]);
 // The open country (wildlands, 2026-11-08): the hunters' ruined cabins are worth the detour.

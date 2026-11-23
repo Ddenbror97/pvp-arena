@@ -369,14 +369,18 @@ export class BrCanaries {
     // Sideways (unit): +x of the line's right.
     const sx = -uz,
       sz = ux;
-    // (The raised eye first: it sees over the most.)
+    // (The raised eye first: it sees over the most.) Sideways and ahead, eyes no more than
+    // 2 × fatM apart: a step between two of them stays within fatM of one, so a gap between two
+    // covers (a doorway beside the viewer) cannot open between the samples (2026-11-22: a viewer
+    // stepping 0.5 m sideways past a townhouse wall's end saw a spot both side eyes had hidden).
     const eyes: Array<[number, number, number]> = [
       [eye.x, eye.y + EYE + EYE_UP_M, eye.z],
       [eye.x, eye.y + EYE, eye.z],
       [eye.x + ux * EYE_AHEAD_M, eye.y + EYE, eye.z + uz * EYE_AHEAD_M],
-      [eye.x + sx * EYE_SIDE_M, eye.y + EYE, eye.z + sz * EYE_SIDE_M],
-      [eye.x - sx * EYE_SIDE_M, eye.y + EYE, eye.z - sz * EYE_SIDE_M],
+      [eye.x + ux * EYE_AHEAD_M * 0.5, eye.y + EYE, eye.z + uz * EYE_AHEAD_M * 0.5],
     ];
+    for (const k of [0.5, 1, -0.5, -1])
+      eyes.push([eye.x + sx * EYE_SIDE_M * k, eye.y + EYE, eye.z + sz * EYE_SIDE_M * k]);
     const points: Array<[number, number, number]> = [];
     for (const h of BODY) points.push([spot.x, spot.y + h, spot.z]);
     points.push([spot.x + sx * SIDE_M, spot.y + SIDE_Y, spot.z + sz * SIDE_M]);
