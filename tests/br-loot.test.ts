@@ -86,6 +86,9 @@ describe("loot placement", () => {
     expect(counts.village).toBeGreaterThan(60);
     for (const m of [
       "fort-keep",
+      "fort-tower-round",
+      "fort-gatehouse",
+      "fort-wall-42",
       "ruin-pyramid",
       "ruin-great-temple",
       "ew-turbine-hall",

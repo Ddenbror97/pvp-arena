@@ -13,7 +13,8 @@ import type { CollisionData } from "./static-world";
  * 3. Indoor spots need a ceiling and surrounding room walls. Walled spots need the walls but
  *    not the ceiling (a roofless ruin's rooms, a castle's courts); open spots are those or any
  *    floor up on the model (a ruin's terraces, a tower's top, a wall walk), by a wall, never the
- *    plain ground round it. The broader sheltered mode
+ *    plain ground round it; tops spots are the open ones, reached from any floor 2 m up as well
+ *    (a fort's wall walks). The broader sheltered mode
  *    is retained for door inference only. Spots are kept at least `spacing` apart.
  *
  * Deterministic (no randomness): per-match variety comes from which spots spawn and what
@@ -22,7 +23,7 @@ import type { CollisionData } from "./static-world";
 export type Spot = { x: number; y: number; z: number };
 // Door inference needs the original broad sheltered-space topology, including porches.
 // Loot uses the stricter indoor room classification instead.
-type SpotMode = "indoor" | "walled" | "open" | "sheltered" | "beside";
+type SpotMode = "indoor" | "walled" | "open" | "tops" | "sheltered" | "beside";
 
 /** A roof alone also covers porches. Require a room around the point, not just an eave. */
 export function indoorLootPoint(
@@ -169,7 +170,8 @@ function find(
   }
   // (Open: a box the hull would step up on is no obstacle, so the 5 cm steps of the ruins'
   // ramps, a few under one 0.5 m column, read as a slope a player walks up.)
-  const over = mode === "open" ? STEP_HEIGHT : 0.01;
+  const open = mode === "open" || mode === "tops";
+  const over = open ? STEP_HEIGHT : 0.01;
   const clearAt = (c: number, y: number) => {
     const s = spans[c]!;
     for (let j = 0; j < s.length; j += 2)
@@ -201,10 +203,19 @@ function find(
         queue.push([c, 0]);
       }
     }
+  // Tops: also from every floor 2 m up or more (a fort's towers and walls are reached along the
+  // wall walks, from the next piece: never from their own foot).
+  if (mode === "tops")
+    for (let c = 0; c < levels.length; c++)
+      for (let li = 0; li < levels[c]!.length; li++)
+        if (levels[c]![li]! >= 2 && !seen.has(node(c, li))) {
+          seen.add(node(c, li));
+          queue.push([c, li]);
+        }
   // Authored doors/stairs have been walked with the real player hull. A half-metre
   // loot grid can miss a narrow stair tread, leaving an otherwise reachable room empty.
   // Start its interior flood just inside those verified portals as well.
-  for (const d of mode === "indoor" || mode === "walled" || mode === "open" ? entrances : []) {
+  for (const d of mode === "indoor" || mode === "walled" || open ? entrances : []) {
     for (
       let k = Math.max(0, Math.floor((d.z - 1.2 - z0) / CELL));
       k <= Math.min(nz - 1, Math.floor((d.z + 1.2 - z0) / CELL));
@@ -283,13 +294,7 @@ function find(
     // the rails beside flights solid again, access-v13, their treads read as "by a wall").
     if (onFlight(levels, c, nx, y)) continue;
     const inside = roofed(c, y);
-    if (
-      mode === "walled" || mode === "open"
-        ? false
-        : mode !== "beside"
-          ? !inside
-          : inside || y > 0.05
-    )
+    if (mode === "walled" || open ? false : mode !== "beside" ? !inside : inside || y > 0.05)
       continue;
     const x = +(x0 + (i + 0.5) * CELL).toFixed(2),
       z = +(z0 + (k + 0.5) * CELL).toFixed(2);
@@ -297,7 +302,7 @@ function find(
     if (mode === "walled" && !insideRoom(boxes, x, y, z, inside)) continue;
     // Open: up on the model (a terrace, a stair's head, a wall walk), or in a room; never the
     // plain ground round it.
-    if (mode === "open" && y < 0.3 && !insideRoom(boxes, x, y, z, inside)) continue;
+    if (open && y < 0.3 && !insideRoom(boxes, x, y, z, inside)) continue;
     // Deterministic order that spreads picks across floors and rooms.
     const score =
       (Math.imul((i * 73856093) ^ (k * 19349663) ^ (li * 83492791), 2654435761) >>> 0) / 2 ** 32;

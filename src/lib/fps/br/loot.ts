@@ -15,7 +15,7 @@ import type { WorldMeta } from "./world";
  */
 export type LootClass = "residential" | "city" | "warehouse" | "military" | "vehicle";
 
-type LootMode = "indoor" | "walled" | "open" | "beside";
+type LootMode = "indoor" | "walled" | "open" | "tops" | "beside";
 const MODEL_CLASS: Record<string, { cls: LootClass; mode: LootMode; max: number }> = {};
 const put = (cls: LootClass, mode: LootMode, max: number, ids: string[]) => {
   for (const id of ids) MODEL_CLASS[id] = { cls, mode, max };
@@ -155,20 +155,32 @@ put("residential", "indoor", 14, ["bay-apartments"]);
 // The 2026-11-15 to 2026-11-18 locations had no loot (owner, 2026-11-22: "add loot to new
 // locations, like fort, forgotten ruins, all new locations dont have any loot in them").
 // The Old Fortress: the keep, the hall, the barracks and the casemates and cellars under the
-// courtyard (fort-base) hold the most; the chapel and stables a little. The towers and walls
-// are reached from the wall walks, outside their own models: no spots of their own.
-put("military", "indoor", 50, ["fort-base"]);
-put("military", "indoor", 30, ["fort-keep"]);
+// courtyard (fort-base) hold the most; the chapel and stables a little. The towers, the
+// gatehouse and the walls are reached along the wall walks (the tops mode, 2026-11-23).
+put("military", "indoor", 40, ["fort-base"]);
+put("military", "indoor", 26, ["fort-keep"]);
 put("military", "indoor", 20, ["fort-hall", "fort-barracks"]);
 put("city", "indoor", 10, ["fort-chapel"]);
 put("military", "indoor", 6, ["fort-stables"]);
 put("military", "indoor", 4, ["fort-tower-sally"]);
 put("military", "indoor", 2, ["fort-cellar-stair"]);
+put("military", "tops", 8, ["fort-gatehouse"]);
+put("military", "tops", 3, ["fort-tower-round", "fort-tower-square"]);
+put("military", "tops", 1, [
+  "fort-wall-24",
+  "fort-wall-28",
+  "fort-wall-28s",
+  "fort-wall-32",
+  "fort-wall-32g",
+  "fort-wall-42",
+  "fort-wall-62",
+  "fort-wall-62s",
+]);
 // The Forgotten Ruins: roofless, so the open mode (rooms, terraces, stair heads, the tops):
 // the great temple, the pyramid and the palace are the climbs worth the most.
-put("military", "open", 24, ["ruin-great-temple"]);
-put("military", "open", 16, ["ruin-pyramid", "ruin-palace"]);
-put("military", "open", 12, ["ruin-acropolis"]);
+put("military", "open", 20, ["ruin-great-temple"]);
+put("military", "open", 14, ["ruin-pyramid", "ruin-palace"]);
+put("military", "open", 10, ["ruin-acropolis"]);
 put("military", "open", 6, ["ruin-tower"]);
 put("city", "open", 6, ["ruin-temple-a", "ruin-temple-b"]);
 put("city", "open", 4, ["ruin-arcade-a", "ruin-arcade-b", "ruin-arcade-c"]);
