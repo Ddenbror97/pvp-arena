@@ -66,6 +66,12 @@ describe("the buildings' windows are breakable glass", () => {
       "brick-shop",
       "garage",
       "warehouse",
+      "house",
+      "rural-house",
+      "rural-mobile-home",
+      "rural-wood-1",
+      "rural-wood-4",
+      "rural-diner",
     ])
       expect(ids).toContain(id);
     for (const id of ids) {
@@ -101,6 +107,10 @@ describe("the buildings' windows are breakable glass", () => {
     "rural-store-3",
     "brick-shop",
     "garage",
+    "house",
+    "rural-house",
+    "rural-wood-1",
+    "rural-diner",
   ])
     it(`${model}: whole glass stops a player, a shot breaks it, then it is an opening`, () => {
       const broken = new Uint8Array(island.panes.count);

@@ -77,6 +77,163 @@ const WINDOWS = {
   // The quonset's end walls; the long shed's strip windows.
   "rural-quonset": { painted: true, w: 0.9, h: 0.9, sill: 1.2, every: 2.6 },
   warehouse: { w: 1.6, h: 0.8, sill: 1.4, every: 4.0 },
+  // The painted windows the dark-rectangle test cannot see, read off the elevations
+  // (2026-11-23, owner: "fix not done yet"): the clapboard house's shuttered sashes…
+  house: {
+    rects: {
+      front: [
+        [-4.95, -4.25, 3.25, 4.42],
+        [-3.23, -2.56, 3.25, 4.42],
+        [-1.77, -1.14, 3.25, 4.42],
+        [-0.39, 0.36, 3.25, 4.42],
+        [1.36, 2.03, 3.25, 4.42],
+        [-4.95, -4.31, 1.32, 2.18],
+        [-3.25, -2.59, 1.45, 2.18],
+        [-0.39, 0.3, 1.45, 2.18],
+        [1.33, 1.99, 1.32, 2.18],
+      ],
+      back: [
+        [1.09, 1.69, 3.25, 4.4],
+        [-0.75, -0.14, 3.25, 4.4],
+        [-2.75, -2.14, 3.25, 4.4],
+        [-4.64, -4.03, 3.25, 4.4],
+        [1.09, 1.8, 1.05, 2.17],
+        [-0.73, -0.12, 1.05, 2.17],
+        [-2.75, -2.12, 1.05, 2.17],
+        [-4.58, -3.97, 1.05, 2.17],
+        [3.15, 5.75, 1.25, 2.85],
+      ],
+      left: [[-2.12, -1.73, 3.28, 4.37]],
+      right: [[-1.1, -0.49, 3.57, 4.67]],
+    },
+  },
+  // …the stone farmhouse's…
+  "rural-house": {
+    rects: {
+      front: [
+        [-1.86, -1.29, 1.47, 2.41],
+        [1.32, 1.85, 2.05, 2.78],
+      ],
+      back: [
+        [1.27, 1.83, 2.05, 2.78],
+        [-1.89, -1.28, 1.47, 2.47],
+      ],
+      left: [
+        [-1.99, -1.24, 1.44, 2.53],
+        [0.98, 1.7, 1.46, 2.47],
+      ],
+      right: [
+        [0.98, 1.72, 1.44, 2.53],
+        [-2.0, -1.22, 1.44, 2.53],
+      ],
+    },
+  },
+  // …the mobile home's (and its two boarded-up ones)…
+  "rural-mobile-home": {
+    rects: {
+      front: [
+        [-2.29, -1.63, 1.53, 2.56],
+        [-0.01, 0.62, 1.53, 2.56],
+      ],
+      back: [
+        [-0.03, 0.61, 1.53, 2.56],
+        [-2.33, -1.67, 1.53, 2.56],
+      ],
+      left: [
+        [1.39, 2.13, 1.42, 2.53],
+        [3.65, 4.39, 1.42, 2.53],
+      ],
+      right: [
+        [3.66, 4.35, 1.45, 2.5],
+        [1.41, 2.07, 1.45, 2.5],
+        [-1.28, -0.6, 1.45, 2.5],
+      ],
+    },
+  },
+  // …the stilt house's sashes…
+  "rural-wood-1": {
+    rects: {
+      front: [
+        [-4.89, -4.06, 3.92, 4.99],
+        [0.16, 0.99, 3.92, 4.99],
+        [3.0, 3.83, 3.92, 4.99],
+        [6.33, 7.1, 3.92, 4.99],
+        [-0.34, 0.38, 7.72, 8.44],
+      ],
+      back: [
+        [4.56, 5.42, 3.79, 4.99],
+        [-0.44, 0.39, 3.79, 4.99],
+        [-5.46, -4.63, 3.79, 4.99],
+        [-0.38, 0.34, 7.72, 8.44],
+      ],
+      left: [
+        [-4.64, -3.83, 3.79, 4.99],
+        [1.03, 1.84, 3.79, 4.99],
+      ],
+      right: [
+        [1.0, 1.88, 3.79, 4.99],
+        [-4.67, -3.79, 3.79, 4.99],
+      ],
+    },
+  },
+  // …the bungalow's wide ones…
+  "rural-wood-4": {
+    rects: {
+      front: [
+        [-7.67, -5.7, 1.0, 2.45],
+        [-4.0, -2.18, 1.0, 2.45],
+        [2.16, 3.98, 1.0, 2.45],
+        [5.69, 7.65, 1.0, 2.45],
+      ],
+      back: [
+        [5.68, 7.67, 1.0, 2.43],
+        [2.15, 4.17, 1.0, 2.43],
+        [-4.18, -2.16, 1.0, 2.43],
+        [-7.7, -5.69, 1.0, 2.43],
+      ],
+      left: [
+        [-3.67, -1.68, 1.0, 2.46],
+        [1.26, 3.2, 1.0, 2.46],
+      ],
+      right: [
+        [1.28, 3.22, 0.96, 2.41],
+        [-2.25, -1.0, 0.96, 2.41],
+      ],
+    },
+  },
+  // …and the diner's row (not the one with the air conditioner in it), with two new windows
+  // on each of its blank ends.
+  "rural-diner": {
+    framed: ["left", "right"],
+    rects: {
+      front: [
+        [-7.25, -6.13, 2.36, 3.34],
+        [-5.84, -4.71, 2.36, 3.34],
+        [-4.25, -3.13, 2.36, 3.34],
+        [-2.84, -1.71, 2.36, 3.34],
+        [1.83, 2.69, 2.36, 3.34],
+        [3.08, 4.25, 2.36, 3.34],
+        [4.75, 5.87, 2.36, 3.34],
+      ],
+      back: [
+        [6.13, 7.25, 2.36, 3.3],
+        [4.71, 5.84, 2.36, 3.3],
+        [3.13, 4.25, 2.36, 3.3],
+        [1.71, 2.84, 2.36, 3.3],
+        [-4.25, -3.08, 2.36, 3.3],
+        [-5.87, -4.75, 2.36, 3.3],
+        [-7.32, -6.18, 2.36, 3.3],
+      ],
+      left: [
+        [-2.4, -1.3, 2.35, 3.3],
+        [0.6, 1.7, 2.35, 3.3],
+      ],
+      right: [
+        [-2.4, -1.3, 2.35, 3.3],
+        [0.6, 1.7, 2.35, 3.3],
+      ],
+    },
+  },
 };
 
 /** Ray (origin o, unit dir d) against a triangle: distance or Infinity (both faces). */
@@ -214,18 +371,32 @@ function quad(c, n, pos, nrm) {
   }
 }
 
-function addMesh(doc, name, color, pos, nrm, roughness = 0.85) {
+/**
+ * One primitive (one draw) for parts of different colours: per-vertex colour (COLOR_0, as the
+ * procedural buildings carry theirs) on a white material.
+ */
+function addMesh(doc, name, parts, roughness = 0.85) {
+  const pos = [],
+    nrm = [],
+    col = [];
+  for (const p of parts) {
+    pos.push(...p.pos);
+    nrm.push(...p.nrm);
+    for (let i = 0; i < p.pos.length / 3; i++) col.push(...p.color);
+  }
   if (!pos.length) return;
   const material = doc
     .createMaterial(name)
-    .setBaseColorFactor([...color, 1])
+    .setBaseColorFactor([1, 1, 1, 1])
     // glTF's default metallic factor is 1: with no environment map that renders black.
     .setMetallicFactor(0)
     .setRoughnessFactor(roughness);
+  const attr = (a) => doc.createAccessor().setType("VEC3").setArray(new Float32Array(a));
   const prim = doc
     .createPrimitive()
-    .setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(new Float32Array(pos)))
-    .setAttribute("NORMAL", doc.createAccessor().setType("VEC3").setArray(new Float32Array(nrm)))
+    .setAttribute("POSITION", attr(pos))
+    .setAttribute("NORMAL", attr(nrm))
+    .setAttribute("COLOR_0", attr(col))
     .setMaterial(material);
   doc
     .getRoot()
@@ -233,8 +404,41 @@ function addMesh(doc, name, color, pos, nrm, roughness = 0.85) {
     .addChild(doc.createNode(name).setMesh(doc.createMesh(name).addPrimitive(prim)));
 }
 
+/** Adds unindexed triangles (positions, normals) to a primitive (indexed or not). */
+function appendTriangles(doc, prim, pos, nrm) {
+  const P = prim.getAttribute("POSITION"),
+    N = prim.getAttribute("NORMAL"),
+    I = prim.getIndices();
+  const n0 = P.getCount();
+  const p = new Float32Array((n0 + pos.length / 3) * 3),
+    q = new Float32Array((n0 + nrm.length / 3) * 3);
+  p.set(P.getArray());
+  p.set(pos, n0 * 3);
+  q.set(N.getArray());
+  q.set(nrm, n0 * 3);
+  prim.setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(p));
+  prim.setAttribute("NORMAL", doc.createAccessor().setType("VEC3").setArray(q));
+  if (!I) return;
+  const old = I.getArray();
+  const idx = new Uint32Array(old.length + pos.length / 3);
+  idx.set(old);
+  for (let i = 0; i < pos.length / 3; i++) idx[old.length + i] = n0 + i;
+  prim.setIndices(doc.createAccessor().setType("SCALAR").setArray(idx));
+}
+
+/** Triangles of a written model. */
+function counts(doc) {
+  const prims = doc
+    .getRoot()
+    .listMeshes()
+    .flatMap((m) => m.listPrimitives());
+  return { tris: prims.reduce((s, p) => s + p.getIndices().getCount() / 3, 0) };
+}
+
 /** A side's elevation: its painted windows (model space) and a test for plain wall. */
-async function loadElevation(id, sideName) {
+async function loadElevation(id, sideName, opts) {
+  const darkness = typeof opts === "object" ? (opts.dark ?? 0.55) : 0.55,
+    filled = typeof opts === "object" ? (opts.fill ?? 0.7) : 0.7;
   const meta = JSON.parse(fs.readFileSync(path.join(elDir, `${id}.json`), "utf8"));
   const { data, info } = await sharp(path.join(elDir, `${id}-${sideName}.png`))
     .removeAlpha()
@@ -281,7 +485,7 @@ async function loadElevation(id, sideName) {
   // Dark rectangles: connected dark pixels (under 0.55 of the wall's median), mostly filling
   // their bounds; stacked parts of one window (a painted transom) joined.
   const dark = new Uint8Array(W * H);
-  for (let i = 0; i < W * H; i++) dark[i] = wall[i] && lum[i] < 0.55 * med ? 1 : 0;
+  for (let i = 0; i < W * H; i++) dark[i] = wall[i] && lum[i] < darkness * med ? 1 : 0;
   const seen = new Uint8Array(W * H);
   let rects = [];
   for (let i = 0; i < W * H; i++) {
@@ -320,7 +524,7 @@ async function loadElevation(id, sideName) {
     }
     rects.push({ c0, c1, r0, r1, n });
   }
-  rects = rects.filter((r) => r.n / ((r.c1 - r.c0) * (r.r1 - r.r0)) >= 0.7);
+  rects = rects.filter((r) => r.n / ((r.c1 - r.c0) * (r.r1 - r.r0)) >= filled);
   for (let merged = true; merged;) {
     merged = false;
     for (const a of rects)
@@ -440,27 +644,85 @@ for (const [id, spec] of Object.entries(WINDOWS)) {
           ),
         );
     /** The wall over a rectangle (and M round it): its outer and inner depths, or null. */
-    const wallAt = (a0, a1, y0, y1, M) => {
+    let why = "";
+    const fail = (u, y, h, r) => {
+      why = `${r} at ${u.toFixed(2)},${y.toFixed(2)}: ${h
+        .slice(0, 5)
+        .map((x) => `${x.t.toFixed(3)}/${x.n[axis].toFixed(2)}`)
+        .join(" ")}`;
+      return null;
+    };
+    const wallAt = (a0, a1, y0, y1, M, maxD = 1) => {
       let outerD = null,
         innerD = null;
       for (let u = a0 - M; u <= a1 + M + 1e-6; u += STEP)
         for (let y = y0 - M; y <= y1 + M + 1e-6; y += STEP) {
           const h = probe(u, y);
-          // A flat outer face within a metre of the bounds, facing out…
-          if (!h.length || h[0].t > 1 || Math.abs(h[0].n[axis]) < 0.97) return null;
+          // A flat outer face within a metre of the bounds (or maxD), facing out…
+          if (!h.length || h[0].t > maxD || Math.abs(h[0].n[axis]) < 0.97)
+            return fail(u, y, h, "outer");
           // …its inner face a wall's thickness behind (or none: a single sheet)…
           const two = h.length > 1 && h[1].t - h[0].t <= 0.6 && Math.abs(h[1].n[axis]) > 0.97;
           const inner = two ? h[1] : h[0],
             rest = h[two ? 2 : 1];
           // …and a room behind it: the far side of the building, not within 0.8 m.
-          if (!rest || rest.t - inner.t < 0.8) return null;
+          if (!rest || rest.t - inner.t < 0.8) return fail(u, y, h, "room");
           outerD ??= h[0].t;
           innerD ??= inner.t;
-          if (Math.abs(h[0].t - outerD) > 0.03 || Math.abs(inner.t - innerD) > 0.05) return null;
+          if (Math.abs(h[0].t - outerD) > 0.03 || Math.abs(inner.t - innerD) > 0.05)
+            return fail(u, y, h, `flat (${outerD.toFixed(3)}/${innerD.toFixed(3)})`);
         }
       return { outerD, innerD };
     };
-    const el = await loadElevation(id, side.name);
+    /**
+     * The wall behind a window read off by hand: the faces across the window (sashes, shutter
+     * slats, brackets in front of it: anything not facing out or in is passed by) down to its
+     * last layer (siding, sheathing, the interior liner: faces at most 55 cm apart, 75 cm in
+     * all), a room behind, and its outer face within 15 cm everywhere (sashes are set in).
+     */
+    const manualWall = (a0, a1, y0, y1) => {
+      let outerD = Infinity,
+        innerD = -Infinity,
+        first = null;
+      for (let u = a0 + 0.03; u <= a1 - 0.03 + 1e-6; u += STEP)
+        for (let y = y0 + 0.03; y <= y1 - 0.03 + 1e-6; y += STEP) {
+          const all = probe(u, y);
+          const h = all.filter((x) => Math.abs(x.n[axis]) > 0.9);
+          if (!h.length || h[0].t > 4.5) return fail(u, y, all, "outer");
+          let j = 0;
+          while (j + 1 < h.length && h[j + 1].t - h[j].t <= 0.55 && h[j + 1].t - h[0].t <= 0.75)
+            j++;
+          if (!h[j + 1] || h[j + 1].t - h[j].t < 0.8) return fail(u, y, all, "room");
+          first ??= h[0].t;
+          if (Math.abs(h[0].t - first) > 0.15) return fail(u, y, all, `flat (${first.toFixed(3)})`);
+          outerD = Math.min(outerD, h[0].t);
+          innerD = Math.max(innerD, h[j].t);
+        }
+      return first === null ? null : { outerD, innerD };
+    };
+    const el = await loadElevation(id, side.name, spec.painted);
+    // Windows read off the elevations by hand (model space: along the side, then up): the
+    // painted ones the dark-rectangle test cannot see (light glass, shutters, muntins), and
+    // `framed` sides' new ones. (Up to 2.5 m in: behind a porch.)
+    for (const [a0, a1, y0, y1] of spec.rects?.[side.name] ?? []) {
+      const wall = manualWall(a0, a1, y0, y1);
+      const framed = spec.framed?.includes(side.name) ?? false;
+      if (wall) {
+        windows.push({ side, a0, a1, y0, y1, ...wall, painted: !framed });
+        continue;
+      }
+      // An opening already (a window with no glass in it): the wall's depth from just above
+      // it, and only the glass to add.
+      const reason = why;
+      const head = manualWall(a0, a1, y1 + 0.08, y1 + 0.2);
+      const through = probe((a0 + a1) / 2, (y0 + y1) / 2);
+      if (head && (!through.length || through[0].t > head.innerD + 0.5))
+        windows.push({ side, a0, a1, y0, y1, ...head, painted: true, open: true });
+      else
+        report.push(
+          `${id.padEnd(16)} ${side.name} [${a0}, ${a1}, ${y0}, ${y1}]: no plain wall (${reason})`,
+        );
+    }
     // The painted windows (dark rectangles on the wall's texture) made real, where the wall
     // behind them is a plain wall with a room behind it.
     if (spec.painted)
@@ -547,15 +809,20 @@ for (const [id, spec] of Object.entries(WINDOWS)) {
       return b;
     };
     const wall = span(outerD - 0.03, innerD + 0.03);
-    cuts.push(mk(a0, a1, y0, y1, wall));
+    if (!w.open) cuts.push(mk(a0, a1, y0, y1, wall));
     // Collision: the opening through the wall and well either side of it (voxel walls).
     holes.push(mk(a0 + 0.02, a1 - 0.02, y0 + 0.02, y1 - 0.02, span(outerD - 0.4, innerD + 0.4)));
     // The pane: 8 cm of glass in the middle of the wall.
     const mid = (outerD + innerD) / 2;
     const g = span(mid - 0.04, mid + 0.04);
-    const pb = mk(a0, a1, y0, y1, g);
-    panes.push([pb[0], pb[3], pb[2], pb[5], pb[1], pb[4]].map((v) => +v.toFixed(3)));
+    // (Wider than 1.8 m: in equal parts, as glass_panes.mjs splits wide glass.)
+    const parts = Math.ceil((a1 - a0) / 1.8 - 1e-9);
+    for (let k = 0; k < parts; k++) {
+      const pb = mk(a0 + ((a1 - a0) * k) / parts, a0 + ((a1 - a0) * (k + 1)) / parts, y0, y1, g);
+      panes.push([pb[0], pb[3], pb[2], pb[5], pb[1], pb[4]].map((v) => +v.toFixed(3)));
+    }
     // The reveals: the wall's cut faces round the opening, facing into it.
+    if (w.open) continue;
     const ws = span(outerD, innerD);
     const P = (u, y, dd) => {
       const p = [0, y, 0];
@@ -638,20 +905,110 @@ for (const [id, spec] of Object.entries(WINDOWS)) {
   windowPanes.models[id] = [...(windowPanes.models[id] ?? []), ...panes];
   for (const mesh of doc.getRoot().listMeshes())
     for (const prim of mesh.listPrimitives()) cutPrimitive(doc, prim, cuts, false);
-  addMesh(doc, "Window reveals", [0.58, 0.56, 0.52], reveal.pos, reveal.nrm, 0.95);
-  addMesh(doc, "Window frames", [0.86, 0.86, 0.83], frame.pos, frame.nrm, 0.6);
+  // Only reveals (painted windows): onto the model's own plain liner when it has one (its
+  // interior walls' colour, no extra draw); else, and with frames, one vertex-coloured draw.
+  const liner = frame.pos.length
+    ? null
+    : doc
+        .getRoot()
+        .listMeshes()
+        .flatMap((m) => m.listPrimitives())
+        .find(
+          (p) =>
+            p.listSemantics().sort().join() === "NORMAL,POSITION" &&
+            !p.getMaterial()?.getBaseColorTexture(),
+        );
+  let trimDraw = true;
+  if (liner && reveal.pos.length) {
+    appendTriangles(doc, liner, reveal.pos, reveal.nrm);
+    trimDraw = false;
+  } else
+    addMesh(doc, "Window trim", [
+      { color: [0.58, 0.56, 0.52], ...reveal },
+      { color: [0.86, 0.86, 0.83], ...frame },
+    ]);
   await doc.transform(weld(), prune(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
   const out = `/fps/br/models/${id}.${revision}.lod0.glb`;
   await io.write(path.join("public", out), doc);
   const written = await io.read(path.join("public", out));
   lod.file = out;
-  lod.tris = written
-    .getRoot()
-    .listMeshes()
-    .flatMap((m) => m.listPrimitives())
-    .reduce((s, p) => s + p.getIndices().getCount() / 3, 0);
+  lod.tris = counts(written).tris;
+  // (One more draw: the trim. The pane is drawn with the island's glass.)
+  if (lod.draws !== undefined && trimDraw) lod.draws++;
   lod.kB = Math.round(fs.statSync(path.join("public", out)).size / 1024);
   files++;
+  // The middle LOD (100–600 m): the new windows drawn on it, dark glass in a white frame 1.5 cm
+  // proud of its wall, so they do not vanish as the building steps down from its near LOD (the
+  // painted ones are on its texture already).
+  const framed = windows.filter((w) => !w.painted);
+  const mid = entry.lods[1];
+  // (Not a flat facade LOD: those take one atlas, build_facades.mjs, and keep the walls it
+  // baked.)
+  if (framed.length && mid && !mid.facade) {
+    const far = await io.read(modelFile(mid.file));
+    await far.transform(dequantize(), flatten());
+    for (const node of far.getRoot().listNodes()) if (node.getMesh()) clearNodeTransform(node);
+    const farTris = trianglesOf(far).tris;
+    const glass = { pos: [], nrm: [] },
+      rim = { pos: [], nrm: [] };
+    for (const w of framed) {
+      const { side, a0, a1, y0, y1 } = w;
+      const { axis, sign, along } = side;
+      const o = [0, (y0 + y1) / 2, 0];
+      o[along] = (a0 + a1) / 2;
+      o[axis] = sign < 0 ? box[axis + 3] + 1 : box[axis] - 1;
+      const d = [0, 0, 0];
+      d[axis] = sign;
+      let t = Infinity;
+      for (const tri of farTris) if (Math.abs(tri.n[axis]) > 0.9) t = Math.min(t, hit(o, d, tri.P));
+      if (t === Infinity || t > 3.5) continue;
+      const face = o[axis] + sign * (t - 0.015);
+      const P = (u, y) => {
+        const p = [0, y, 0];
+        p[along] = u;
+        p[axis] = face;
+        return p;
+      };
+      const nrm = [0, 0, 0];
+      nrm[axis] = -sign;
+      // Counter-clockwise seen from outside (along −sign on the axis).
+      const q = (u, v, y, Y, into) => {
+        const c = [P(u, y), P(v, y), P(v, Y), P(u, Y)];
+        const e1 = c[1].map((x, k) => x - c[0][k]),
+          e2 = c[2].map((x, k) => x - c[0][k]);
+        const n = [
+          e1[1] * e2[2] - e1[2] * e2[1],
+          e1[2] * e2[0] - e1[0] * e2[2],
+          e1[0] * e2[1] - e1[1] * e2[0],
+        ];
+        quad(n[axis] * -sign > 0 ? c : [c[0], c[3], c[2], c[1]], nrm, into.pos, into.nrm);
+      };
+      const F = 0.06;
+      q(a0 + F, a1 - F, y0 + F, y1 - F, glass);
+      q(a0, a1, y0, y0 + F, rim);
+      q(a0, a1, y1 - F, y1, rim);
+      q(a0, a0 + F, y0 + F, y1 - F, rim);
+      q(a1 - F, a1, y0 + F, y1 - F, rim);
+    }
+    addMesh(
+      far,
+      "Window glass and frames",
+      [
+        { color: [0.1, 0.13, 0.17], ...glass },
+        { color: [0.86, 0.86, 0.83], ...rim },
+      ],
+      0.5,
+    );
+    await far.transform(weld(), prune(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
+    const farOut = `/fps/br/models/${id}.${revision}.lod1.glb`;
+    await io.write(path.join("public", farOut), far);
+    const back = await io.read(path.join("public", farOut));
+    mid.file = farOut;
+    mid.tris = counts(back).tris;
+    if (mid.draws !== undefined) mid.draws++;
+    mid.kB = Math.round(fs.statSync(path.join("public", farOut)).size / 1024);
+    files++;
+  }
 }
 console.log(report.join("\n"));
 if (!dry) {

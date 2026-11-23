@@ -182,8 +182,11 @@ export const WORLD_ASSETS = {
   // kit's see-through glass) is out of 51 models' near LODs and listed as panes
   // (window-panes.json, panes.ts), and the collision boxes in their openings are cut away (a
   // broken pane is an opening). The buildings that had no window at all (the brick corner
-  // shops, the cabin, the garage, the quonset, the long shed) have windows cut through their
-  // plain walls, framed and glazed with panes (cut_windows.mjs). Middle and far LODs unchanged.
+  // shops, the garage, the quonset, the long shed, the diner's ends) have windows cut through
+  // their plain walls, framed and glazed with panes, also drawn on their middle LODs; the
+  // windows that were only painted on (the clapboard and stone farmhouses, the mobile home, the
+  // stilt house, the bungalow, the diner, brick-shop, rural-store-3) are cut and glazed where
+  // they were painted (cut_windows.mjs).
   models: "/fps/br/models/models.windows-v1.json",
   collision: "/fps/br/models/collision.windows-v1.json",
 } as const;
