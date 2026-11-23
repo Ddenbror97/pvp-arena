@@ -116,6 +116,14 @@ export class StaticWorld {
   private readonly occupied = new Uint8Array(Math.ceil((COLS * COLS) / 8));
   private readonly cellStart: Uint32Array;
   private readonly cellItems: Uint32Array;
+  /**
+   * Boxes from `solidCount` on stop shots and sight only (collision-fill.ts): walls, trunks and
+   * objects drawn solid that had no box. Bodies, grenades and loot ignore them, so no walk,
+   * door, ladder or loot spot changes. A cell's shot boxes are `shotItems[shotStart[slot] …]`.
+   */
+  readonly solidCount: number;
+  private readonly shotStart: Uint32Array;
+  private readonly shotItems: Uint32Array;
   private stamp = 0;
   private readonly seen: Uint32Array;
 
@@ -126,6 +134,8 @@ export class StaticWorld {
     vegetation: VegetationWorld | null,
     /** World-space boxes that are not models (bridges): x0, y0, z0, x1, y1, z1. */
     extraBoxes: number[][] = [],
+    /** Model-space boxes per model, flat (6 per box), that stop shots and sight only (collision-fill.ts). */
+    shotModels: Record<string, ArrayLike<number>> = {},
   ) {
     this.hf = hf;
     this.vegetation = vegetation;
@@ -136,10 +146,12 @@ export class StaticWorld {
       if (!local) throw new Error(`No collision for model ${p.model}`);
       count += local.length;
     }
+    const solidCount = (this.solidCount = count);
+    for (const p of placements) count += (shotModels[p.model]?.length ?? 0) / 6;
     const boxes = (this.boxes = new Float32Array(count * 6));
     let at = 0;
-    for (const p of placements)
-      for (const b of collision.models[p.model]!) {
+    const place = (p: Placement, list: number[][]) => {
+      for (const b of list) {
         const [x0, y0, z0, x1, y1, z1] = turnBox(b, p.turn);
         boxes[at++] = x0 + p.x;
         boxes[at++] = y0 + p.y;
@@ -148,10 +160,21 @@ export class StaticWorld {
         boxes[at++] = y1 + p.y;
         boxes[at++] = z1 + p.z;
       }
+    };
+    for (const p of placements) place(p, collision.models[p.model]!);
     for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes[at++] = b[k]!;
+    for (const p of placements) {
+      const shot = shotModels[p.model];
+      if (shot)
+        for (let o = 0; o < shot.length; o += 6)
+          place(p, [
+            [shot[o]!, shot[o + 1]!, shot[o + 2]!, shot[o + 3]!, shot[o + 4]!, shot[o + 5]!],
+          ]);
+    }
     this.seen = new Uint32Array(count);
     // Two passes over the boxes' cells: sizes, then contents.
     const sizes: number[] = [];
+    const shotSizes: number[] = [];
     const eachCell = (visit: (key: number, box: number) => void) => {
       for (let i = 0; i < count; i++) {
         const o = i * 6;
@@ -162,21 +185,31 @@ export class StaticWorld {
         for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) visit(r * COLS + c, i);
       }
     };
-    eachCell((key) => {
+    eachCell((key, box) => {
+      const shot = box >= solidCount ? 1 : 0;
       const s = this.slot.get(key);
       if (s === undefined) {
         this.slot.set(key, sizes.length);
         this.occupied[key >> 3]! |= 1 << (key & 7);
-        sizes.push(1);
-      } else sizes[s]!++;
+        sizes.push(1 - shot);
+        shotSizes.push(shot);
+      } else if (shot) shotSizes[s]!++;
+      else sizes[s]!++;
     });
     const start = (this.cellStart = new Uint32Array(sizes.length + 1));
-    for (let s = 0; s < sizes.length; s++) start[s + 1] = start[s]! + sizes[s]!;
+    const shotStart = (this.shotStart = new Uint32Array(sizes.length + 1));
+    for (let s = 0; s < sizes.length; s++) {
+      start[s + 1] = start[s]! + sizes[s]!;
+      shotStart[s + 1] = shotStart[s]! + shotSizes[s]!;
+    }
     const items = (this.cellItems = new Uint32Array(start[sizes.length]!));
+    const shotItems = (this.shotItems = new Uint32Array(shotStart[sizes.length]!));
     const cursor = start.slice(0, sizes.length);
+    const shotCursor = shotStart.slice(0, sizes.length);
     eachCell((key, box) => {
       const s = this.slot.get(key)!;
-      items[cursor[s]!++] = box;
+      if (box >= solidCount) shotItems[shotCursor[s]!++] = box;
+      else items[cursor[s]!++] = box;
     });
   }
 
@@ -321,6 +354,8 @@ export class StaticWorld {
     dy: number,
     dz: number,
     maxDistance: number,
+    /** Bodies' boxes only, without the shot-only ones (reaching for loot, as before the fill). */
+    solidOnly = false,
   ): RayHit | null {
     const len = Math.hypot(dx, dy, dz);
     if (!(len > 0)) return null;
@@ -354,8 +389,12 @@ export class StaticWorld {
         for (let c = c0; c <= c1; c++) {
           const cs = this.slotOf(r * COLS + c);
           if (cs === undefined) continue;
-          for (let k = this.cellStart[cs]!, e = this.cellStart[cs + 1]!; k < e; k++) {
-            const i = this.cellItems[k]!;
+          // The cell's solid boxes, then its shot-only boxes (k past the first list's end).
+          const e0 = this.cellStart[cs + 1]!,
+            k1 = this.shotStart[cs]!,
+            e = solidOnly ? e0 : e0 + this.shotStart[cs + 1]! - k1;
+          for (let k = this.cellStart[cs]!; k < e; k++) {
+            const i = k < e0 ? this.cellItems[k]! : this.shotItems[k1 + k - e0]!;
             if (this.seen[i] === stamp) continue;
             this.seen[i] = stamp;
             const o = i * 6;

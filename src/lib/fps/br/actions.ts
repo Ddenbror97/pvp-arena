@@ -242,7 +242,7 @@ export function applyBrAct(
       const ty = item.y + 0.15;
       const dist = Math.hypot(item.x - ex, ty - ey, item.z - ez);
       if (dist > INVENTORY.reachM) return res(false, "Too far");
-      const hit = world.raycast(ex, ey, ez, item.x - ex, ty - ey, item.z - ez, dist);
+      const hit = world.raycast(ex, ey, ez, item.x - ex, ty - ey, item.z - ez, dist, true);
       if (hit && hit.distance < dist - 0.3) return res(false, "Out of reach");
       const before = item.qty;
       const out = pickUp(f.kit, item);

@@ -5,6 +5,7 @@ import { islandDoors, modelDoors, type DoorSet } from "./doors";
 import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
 import { islandLayoutSteps, type Placement } from "./layout";
+import { collisionFill } from "./collision-fill";
 import { createRoadGrade, ROAD_GRADE } from "./road-grade";
 import { registerLadders } from "./ladders";
 import { registerLifts } from "./lifts";
@@ -83,11 +84,19 @@ export function* buildIslandSteps(
     planted,
   );
   yield;
-  const solid = new StaticWorld(hf, layout, collision, vegetation, [
-    ...bridgeBoxes(meta, hf),
-    ...wallBoxes(islandWalls(meta)),
-    ...zipStationBoxes((x, z) => hf.heightAt(x, z)),
-  ]);
+  // What is drawn solid but had no box (collision-fill.ts): shots and sight stop at it.
+  const solid = new StaticWorld(
+    hf,
+    layout,
+    collision,
+    vegetation,
+    [
+      ...bridgeBoxes(meta, hf),
+      ...wallBoxes(islandWalls(meta)),
+      ...zipStationBoxes((x, z) => hf.heightAt(x, z)),
+    ],
+    collisionFill(collision),
+  );
   solid.decks = bridgeDecks(meta, hf);
   // Players, vehicles and drops stand on the roads' surface, not under it (on the carriageway;
   // the renderer draws the same grade, structures-renderer.ts).

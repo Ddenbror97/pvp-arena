@@ -2470,7 +2470,7 @@ export function createBrArena(
         dz = i.z - ez;
       const d = Math.hypot(dx, dy, dz);
       if (d > INVENTORY.reachM) continue;
-      const hit = solid().raycast(ex, ey, ez, dx, dy, dz, d);
+      const hit = solid().raycast(ex, ey, ez, dx, dy, dz, d, true);
       if (hit && hit.distance < d - 0.3) continue;
       const def = ITEMS[i.item];
       out.push({
