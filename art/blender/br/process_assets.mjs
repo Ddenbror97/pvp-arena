@@ -158,7 +158,7 @@ function bake(
   piece = null,
   exclude = [],
   zUp = false,
-  { stretch = null, yaw = 0 } = {},
+  { stretch = null, yaw = 0, near = false } = {},
 ) {
   const root = doc.getRoot();
   const scene = root.getDefaultScene() ?? root.listScenes()[0];
@@ -196,8 +196,12 @@ function bake(
   // under any of a list of names (a fuel-pump forecourt out of a whole gas-station scene).
   // `exclude`: sub-trees to drop (a backdrop sphere, a ground plane).
   const pieces = piece === null ? null : [piece].flat();
-  const visit = (node, inside = !pieces) => {
+  // `near`: of the other pieces, only those whose middle lies over the first piece's footprint
+  // (+0.3 m): packs that reuse a wheel's name for two cars (the passenger pack's Wheel_E).
+  const anchor = [];
+  const visit = (node, inside = !pieces, first = false) => {
     if (exclude.includes(node.getName())) return;
+    first = first || (pieces !== null && node.getName() === pieces[0]);
     inside = inside || pieces.includes(node.getName());
     const mesh = inside ? node.getMesh() : null;
     if (mesh) {
@@ -210,11 +214,39 @@ function bake(
         transformPrimitive(p, world);
         copy.addPrimitive(p);
       }
-      baked.push(doc.createNode(node.getName()).setMesh(copy));
+      const n = doc.createNode(node.getName()).setMesh(copy);
+      baked.push(n);
+      if (first) anchor.push(n);
     }
-    for (const c of node.listChildren()) visit(c, inside);
+    for (const c of node.listChildren()) visit(c, inside, first);
   };
   for (const c of scene.listChildren()) visit(c);
+  if (near && anchor.length) {
+    const box = (nodes) => {
+      const lo = [Infinity, Infinity, Infinity],
+        hi = [-Infinity, -Infinity, -Infinity],
+        v = [0, 0, 0];
+      for (const n of nodes)
+        for (const p of n.getMesh().listPrimitives()) {
+          const pos = p.getAttribute("POSITION");
+          for (let i = 0; i < pos.getCount(); i++) {
+            pos.getElement(i, v);
+            for (let k = 0; k < 3; k++)
+              ((lo[k] = Math.min(lo[k], v[k])), (hi[k] = Math.max(hi[k], v[k])));
+          }
+        }
+      return { lo, hi };
+    };
+    const a = box(anchor);
+    for (let i = baked.length - 1; i >= 0; i--) {
+      if (anchor.includes(baked[i])) continue;
+      const b = box([baked[i]]);
+      const cx = (b.lo[0] + b.hi[0]) / 2,
+        cz = (b.lo[2] + b.hi[2]) / 2;
+      if (cx < a.lo[0] - 0.3 || cx > a.hi[0] + 0.3 || cz < a.lo[2] - 0.3 || cz > a.hi[2] + 0.3)
+        baked.splice(i, 1);
+    }
+  }
   for (const node of root.listNodes()) if (!baked.includes(node)) node.dispose();
   for (const n of baked) scene.addChild(n);
   for (const mesh of root.listMeshes())
@@ -224,6 +256,46 @@ function bake(
   const T = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, shift[0], shift[1], shift[2], 1];
   for (const n of baked) for (const p of n.getMesh().listPrimitives()) transformPrimitive(p, T);
   return vertexBounds(doc);
+}
+
+/**
+ * Repaints the saturated pixels (the paintwork) of the base colour textures of the materials
+ * whose names match `re`: each such pixel takes `rgb` (sRGB 0..1), scaled by its brightness
+ * against the paint's own (90th percentile), so panel shading and baked shadow stay. Greys
+ * (chrome, rubber, glass, grilles) are left as they are.
+ */
+async function paint(doc, re, rgb) {
+  const done = new Set();
+  for (const m of doc.getRoot().listMaterials()) {
+    const tex = m.getBaseColorTexture();
+    if (!re.test(m.getName()) || !tex || done.has(tex)) continue;
+    done.add(tex);
+    const { data, info } = await sharp(Buffer.from(tex.getImage()))
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const sat = (i) => {
+      const mx = Math.max(data[i], data[i + 1], data[i + 2]),
+        mn = Math.min(data[i], data[i + 1], data[i + 2]);
+      return mx ? (mx - mn) / mx : 0;
+    };
+    const vals = [];
+    for (let i = 0; i < data.length; i += 4)
+      if (sat(i) > 0.35) vals.push(Math.max(data[i], data[i + 1], data[i + 2]));
+    if (!vals.length) continue;
+    vals.sort((a, b) => a - b);
+    const ref = vals[Math.floor(vals.length * 0.9)] || 255;
+    for (let i = 0; i < data.length; i += 4) {
+      const s = sat(i);
+      const w = Math.min(1, Math.max(0, (s - 0.2) / 0.2));
+      if (!w) continue;
+      const k = Math.min(1.15, Math.max(data[i], data[i + 1], data[i + 2]) / ref);
+      for (let c = 0; c < 3; c++)
+        data[i + c] = Math.round(data[i + c] * (1 - w) + Math.min(255, rgb[c] * 255 * k) * w);
+    }
+    const png = await sharp(data, { raw: info }).png().toBuffer();
+    tex.setImage(new Uint8Array(png)).setMimeType("image/png");
+  }
 }
 
 /** Column-major 4×4 multiply (a · b). */
@@ -506,7 +578,7 @@ for (const item of work) {
   // Measure at scale 1 to compute the fit, then build every LOD from a fresh read.
   const probe = await io.read(file);
   await clean(probe);
-  const xf = { stretch: item.stretch, yaw: item.yaw ?? 0 };
+  const xf = { stretch: item.stretch, yaw: item.yaw ?? 0, near: item.near };
   const raw = bake(probe, 1, item.piece, item.exclude, item.zUp, xf);
   if (!Number.isFinite(raw.min[0])) throw new Error(`${item.id}: piece ${item.piece} not found`);
   const scale = fitScale(raw, item.fit);
@@ -525,6 +597,10 @@ for (const item of work) {
     // material, so the piece does not draw as a bare white shape.
     // `recolour`: textured materials too (their texture dropped): a model whose texture is a
     // near-black bake (the strait pylons).
+    // `paint` (sRGB 0..1) on the materials named by `paintMaterial` (a regular expression): their
+    // texture's paintwork (its saturated pixels) in this colour, shading kept: colour variants
+    // of one car (owner, 2026-11-23: "we have to few diffrenceies on the cars").
+    if (item.paint) await paint(doc, new RegExp(item.paintMaterial ?? "."), item.paint);
     if (item.colour)
       for (const m of doc.getRoot().listMaterials())
         if (!m.getBaseColorTexture() || item.recolour) {

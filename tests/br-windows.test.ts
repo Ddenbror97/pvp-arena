@@ -61,7 +61,16 @@ function across(p: Pane, d: number) {
 
 describe("the buildings' windows are breakable glass", () => {
   it("belong to this world revision, and the near LODs they came out of are its own", () => {
-    expect((windowPanes as { revision: string }).revision).toBe(WORLD_ASSETS.revision);
+    // Cut against the revision named in the file; a later one (vehicles-v1: the parked cars) may
+    // carry them on only with these models' entries exactly as they were.
+    const cut = (windowPanes as { revision: string }).revision;
+    if (cut !== WORLD_ASSETS.revision) {
+      const then = JSON.parse(
+        readFileSync(`public/fps/br/models/models.${cut}.json`, "utf8"),
+      ) as typeof manifest;
+      for (const id of Object.keys(models))
+        expect(manifest.models[id], id).toEqual(then.models[id]);
+    }
     const ids = Object.keys(models);
     // The procedural houses and blocks, the textured kit's towns and works among them.
     for (const id of [
@@ -85,7 +94,7 @@ describe("the buildings' windows are breakable glass", () => {
     ])
       expect(ids).toContain(id);
     for (const id of ids) {
-      expect(manifest.models[id]!.lods[0]!.file).toContain(`.${WORLD_ASSETS.revision}.lod0.`);
+      expect(manifest.models[id]!.lods[0]!.file).toContain(`.${cut}.lod0.`);
       for (const [x0, x1, z0, z1, y0, y1] of models[id]!) {
         // Upright slabs, thin one way.
         expect(Math.min(x1! - x0!, z1! - z0!)).toBeLessThanOrEqual(0.081);

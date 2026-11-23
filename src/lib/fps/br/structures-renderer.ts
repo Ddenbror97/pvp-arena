@@ -13,6 +13,7 @@ import {
 import type { Heightfield } from "./heightfield";
 import { GROUND, type GroundLayer } from "./terrain";
 import { lotHeight } from "./layout";
+import { drawnGround, LOT_LIFT, pavedHeight, RUNWAY_LIFT } from "./paved";
 import { createRoadGrade, ROAD_GRADE } from "./road-grade";
 import { islandWalls } from "./walls";
 import { WORLD_HALF, type WorldMeta } from "./world";
@@ -375,22 +376,7 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield, ground?: RoadUniforms) {
  * it nears the runway's edge and lies that much lower beneath it: 7 cm under the runway's
  * surface (two greys in one plane z-fight).
  */
-export const PAVED_LIFT = { road: ROAD_GRADE.lift, runway: 0.1, under: 0.05 } as const;
-/** Ground samples round a point (m): the corners and sides of a 4 m square, and a 2 m one. */
-const PAVED_STENCIL: ReadonlyArray<readonly [number, number]> = [
-  [-2, -2],
-  [0, -2],
-  [2, -2],
-  [-2, 0],
-  [2, 0],
-  [-2, 2],
-  [0, 2],
-  [2, 2],
-  [-1, -1],
-  [1, -1],
-  [-1, 1],
-  [1, 1],
-];
+export const PAVED_LIFT = { road: ROAD_GRADE.lift, runway: RUNWAY_LIFT, under: 0.05 } as const;
 /**
  * A paved surface's height at a point: the highest ground within 2 m of it, `lift` up. A
  * function of the position alone (as layout.ts lotHeight is for the lots): two pieces of road
@@ -399,16 +385,7 @@ const PAVED_STENCIL: ReadonlyArray<readonly [number, number]> = [
  * the depth test picks, the picture is the same. No crest between two vertices (3.5 × 4 m
  * apart at most, under the terrain's 3.9 m grid) pokes through.
  */
-export function pavedHeight(
-  heightAt: (x: number, z: number) => number,
-  x: number,
-  z: number,
-  lift: number,
-) {
-  let h = heightAt(x, z);
-  for (const [dx, dz] of PAVED_STENCIL) h = Math.max(h, heightAt(x + dx, z + dz));
-  return h + lift;
-}
+export { pavedHeight };
 /** Road cells this far inside a runway (m) are not drawn: the road ends under its edge. */
 const RUNWAY_INSET = 2.5;
 /** The steepest a paved vertex's normal leans (rise over run): a 1-in-2 hill. */
@@ -457,27 +434,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
    * its levels of detail): the higher of the two, which can stand a few centimetres over the
    * bilinear height. Paved surfaces are laid over this.
    */
-  const drawn = (x: number, z: number) => {
-    const gx = (x + WORLD_HALF) / hf.spacing,
-      gz = (z + WORLD_HALF) / hf.spacing;
-    const i = Math.min(hf.width - 2, Math.max(0, Math.floor(gx))),
-      j = Math.min(hf.height - 2, Math.max(0, Math.floor(gz)));
-    const fx = gx - i,
-      fz = gz - j;
-    const o = j * hf.width + i;
-    const h00 = hf.data[o]!,
-      h10 = hf.data[o + 1]!,
-      h01 = hf.data[o + hf.width]!,
-      h11 = hf.data[o + hf.width + 1]!;
-    return Math.max(
-      fx + fz <= 1
-        ? h00 + (h10 - h00) * fx + (h01 - h00) * fz
-        : h11 + (h01 - h11) * (1 - fx) + (h10 - h11) * (1 - fz),
-      fx >= fz
-        ? h00 + (h10 - h00) * fx + (h11 - h10) * fz
-        : h00 + (h11 - h01) * fx + (h01 - h00) * fz,
-    );
-  };
+  const drawn = drawnGround(hf);
   const grade = createRoadGrade(meta, drawn);
   const surface = (x: number, z: number, lift: number) => pavedHeight(drawn, x, z, lift);
   const roadSurface = (x: number, z: number, lift: number) =>
@@ -779,7 +736,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   // its position alone (layout.ts lotHeight), so neighbours share their corners' heights with
   // no seam for the grass to show through.
   // (2 cm over the layout's lot height: its 2 m cells over the ground as drawn.)
-  const lotY = (x: number, z: number) => lotHeight(drawn, x, z) + 0.02;
+  const lotY = (x: number, z: number) => lotHeight(drawn, x, z) + LOT_LIFT;
   const layLots = () => {
     for (const c of lots) {
       const v = (i: number): V => [c[i]!, lotY(c[i]!, c[i + 1]!), c[i + 1]!];

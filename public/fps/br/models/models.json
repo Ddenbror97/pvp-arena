@@ -49737,6 +49737,1788 @@
      ]
     }
    ]
+  },
+  "pc-sedan-silver": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked sedan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7122,
+   "size": [
+    4.36,
+    1.34,
+    1.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-sedan-silver.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 101,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sedan-silver.lod1.glb",
+     "tris": 2344,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 64,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sedan-silver.lod2.glb",
+     "tris": 539,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    }
+   ]
+  },
+  "pc-sedan-white": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked sedan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7122,
+   "size": [
+    4.36,
+    1.34,
+    1.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-sedan-white.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 103,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sedan-white.lod1.glb",
+     "tris": 2344,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 65,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sedan-white.lod2.glb",
+     "tris": 539,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    }
+   ]
+  },
+  "pc-sedan-navy": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked sedan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7122,
+   "size": [
+    4.36,
+    1.34,
+    1.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-sedan-navy.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 98,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sedan-navy.lod1.glb",
+     "tris": 2344,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 62,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sedan-navy.lod2.glb",
+     "tris": 539,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    }
+   ]
+  },
+  "pc-sedan-maroon": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked sedan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7122,
+   "size": [
+    4.36,
+    1.34,
+    1.94
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-sedan-maroon.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 100,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sedan-maroon.lod1.glb",
+     "tris": 2344,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 63,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sedan-maroon.lod2.glb",
+     "tris": 539,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.36,
+      1.34,
+      1.94
+     ]
+    }
+   ]
+  },
+  "pc-wagon": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked wagon (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6982,
+   "size": [
+    4.38,
+    1.38,
+    1.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-wagon.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 98,
+     "size": [
+      4.38,
+      1.38,
+      1.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-wagon.lod1.glb",
+     "tris": 2154,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 57,
+     "size": [
+      4.38,
+      1.38,
+      1.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-wagon.lod2.glb",
+     "tris": 496,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.38,
+      1.38,
+      1.95
+     ]
+    }
+   ]
+  },
+  "pc-wagon-silver": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked wagon (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6982,
+   "size": [
+    4.38,
+    1.38,
+    1.95
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-wagon-silver.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 97,
+     "size": [
+      4.38,
+      1.38,
+      1.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-wagon-silver.lod1.glb",
+     "tris": 2154,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 57,
+     "size": [
+      4.38,
+      1.38,
+      1.95
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-wagon-silver.lod2.glb",
+     "tris": 496,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.38,
+      1.38,
+      1.95
+     ]
+    }
+   ]
+  },
+  "pc-hatchback-red": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked hatchback (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6808,
+   "size": [
+    3.96,
+    1.35,
+    1.74
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-hatchback-red.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 88,
+     "size": [
+      3.96,
+      1.35,
+      1.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-hatchback-red.lod1.glb",
+     "tris": 1934,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 47,
+     "size": [
+      3.96,
+      1.35,
+      1.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-hatchback-red.lod2.glb",
+     "tris": 496,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.96,
+      1.35,
+      1.74
+     ]
+    }
+   ]
+  },
+  "pc-hatchback-white": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked hatchback (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6808,
+   "size": [
+    3.96,
+    1.35,
+    1.74
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-hatchback-white.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 90,
+     "size": [
+      3.96,
+      1.35,
+      1.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-hatchback-white.lod1.glb",
+     "tris": 1934,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 48,
+     "size": [
+      3.96,
+      1.35,
+      1.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-hatchback-white.lod2.glb",
+     "tris": 496,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.96,
+      1.35,
+      1.74
+     ]
+    }
+   ]
+  },
+  "pc-hatchback-grey": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked hatchback (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6808,
+   "size": [
+    3.96,
+    1.35,
+    1.74
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-hatchback-grey.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 84,
+     "size": [
+      3.96,
+      1.35,
+      1.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-hatchback-grey.lod1.glb",
+     "tris": 1934,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 45,
+     "size": [
+      3.96,
+      1.35,
+      1.74
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-hatchback-grey.lod2.glb",
+     "tris": 496,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.96,
+      1.35,
+      1.74
+     ]
+    }
+   ]
+  },
+  "pc-compact-beige": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked compact (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7257,
+   "size": [
+    3.26,
+    1.32,
+    1.61
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-compact-beige.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 90,
+     "size": [
+      3.26,
+      1.32,
+      1.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-compact-beige.lod1.glb",
+     "tris": 1932,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 48,
+     "size": [
+      3.26,
+      1.32,
+      1.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-compact-beige.lod2.glb",
+     "tris": 495,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.26,
+      1.32,
+      1.61
+     ]
+    }
+   ]
+  },
+  "pc-compact-red": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked compact (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7257,
+   "size": [
+    3.26,
+    1.32,
+    1.61
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-compact-red.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 87,
+     "size": [
+      3.26,
+      1.32,
+      1.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-compact-red.lod1.glb",
+     "tris": 1932,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 46,
+     "size": [
+      3.26,
+      1.32,
+      1.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-compact-red.lod2.glb",
+     "tris": 495,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.26,
+      1.32,
+      1.61
+     ]
+    }
+   ]
+  },
+  "pc-compact-silver": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked compact (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7257,
+   "size": [
+    3.26,
+    1.32,
+    1.61
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-compact-silver.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 88,
+     "size": [
+      3.26,
+      1.32,
+      1.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-compact-silver.lod1.glb",
+     "tris": 1932,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 47,
+     "size": [
+      3.26,
+      1.32,
+      1.61
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-compact-silver.lod2.glb",
+     "tris": 495,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.26,
+      1.32,
+      1.61
+     ]
+    }
+   ]
+  },
+  "pc-coupe": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked coupe (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6022,
+   "size": [
+    4.24,
+    1.28,
+    1.88
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-coupe.lod0.glb",
+     "tris": 4997,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 98,
+     "size": [
+      4.24,
+      1.28,
+      1.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-coupe.lod1.glb",
+     "tris": 1798,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 50,
+     "size": [
+      4.24,
+      1.28,
+      1.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-coupe.lod2.glb",
+     "tris": 497,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.24,
+      1.28,
+      1.88
+     ]
+    }
+   ]
+  },
+  "pc-coupe-black": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked coupe (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6022,
+   "size": [
+    4.24,
+    1.28,
+    1.88
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-coupe-black.lod0.glb",
+     "tris": 4997,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 89,
+     "size": [
+      4.24,
+      1.28,
+      1.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-coupe-black.lod1.glb",
+     "tris": 1798,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 46,
+     "size": [
+      4.24,
+      1.28,
+      1.88
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-coupe-black.lod2.glb",
+     "tris": 497,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.24,
+      1.28,
+      1.88
+     ]
+    }
+   ]
+  },
+  "pc-minivan": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked minivan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7450,
+   "size": [
+    4.61,
+    1.76,
+    1.87
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-minivan.lod0.glb",
+     "tris": 4997,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 83,
+     "size": [
+      4.61,
+      1.76,
+      1.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-minivan.lod1.glb",
+     "tris": 1906,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 42,
+     "size": [
+      4.61,
+      1.76,
+      1.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-minivan.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.61,
+      1.76,
+      1.87
+     ]
+    }
+   ]
+  },
+  "pc-minivan-white": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked minivan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7450,
+   "size": [
+    4.61,
+    1.76,
+    1.87
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-minivan-white.lod0.glb",
+     "tris": 4997,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 89,
+     "size": [
+      4.61,
+      1.76,
+      1.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-minivan-white.lod1.glb",
+     "tris": 1906,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 45,
+     "size": [
+      4.61,
+      1.76,
+      1.87
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-minivan-white.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.61,
+      1.76,
+      1.87
+     ]
+    }
+   ]
+  },
+  "pc-sport": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked sport (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6268,
+   "size": [
+    3.91,
+    1.04,
+    1.77
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-sport.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 96,
+     "size": [
+      3.91,
+      1.04,
+      1.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sport.lod1.glb",
+     "tris": 1927,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 50,
+     "size": [
+      3.91,
+      1.04,
+      1.77
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-sport.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.91,
+      1.04,
+      1.77
+     ]
+    }
+   ]
+  },
+  "pc-pickup": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked pickup (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6918,
+   "size": [
+    5.18,
+    1.7,
+    2.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-pickup.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 87,
+     "size": [
+      5.18,
+      1.7,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-pickup.lod1.glb",
+     "tris": 2061,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 49,
+     "size": [
+      5.18,
+      1.7,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-pickup.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      5.18,
+      1.7,
+      2.07
+     ]
+    }
+   ]
+  },
+  "pc-pickup-white": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked pickup (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6918,
+   "size": [
+    5.18,
+    1.7,
+    2.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-pickup-white.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 90,
+     "size": [
+      5.18,
+      1.7,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-pickup-white.lod1.glb",
+     "tris": 2061,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 50,
+     "size": [
+      5.18,
+      1.7,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-pickup-white.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      5.18,
+      1.7,
+      2.07
+     ]
+    }
+   ]
+  },
+  "pc-pickup-grey": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked pickup (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6918,
+   "size": [
+    5.18,
+    1.7,
+    2.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-pickup-grey.lod0.glb",
+     "tris": 4998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 86,
+     "size": [
+      5.18,
+      1.7,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-pickup-grey.lod1.glb",
+     "tris": 2061,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 49,
+     "size": [
+      5.18,
+      1.7,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-pickup-grey.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      5.18,
+      1.7,
+      2.07
+     ]
+    }
+   ]
+  },
+  "pc-suv": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked suv (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 7951,
+   "size": [
+    4.61,
+    1.73,
+    2.07
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-suv.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 89,
+     "size": [
+      4.61,
+      1.73,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-suv.lod1.glb",
+     "tris": 2210,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 51,
+     "size": [
+      4.61,
+      1.73,
+      2.07
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-suv.lod2.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      4.61,
+      1.73,
+      2.07
+     ]
+    }
+   ]
+  },
+  "pc-offroad": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked offroad (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6502,
+   "size": [
+    3.94,
+    1.57,
+    1.96
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-offroad.lod0.glb",
+     "tris": 4997,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 76,
+     "size": [
+      3.94,
+      1.57,
+      1.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-offroad.lod1.glb",
+     "tris": 1955,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 42,
+     "size": [
+      3.94,
+      1.57,
+      1.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-offroad.lod2.glb",
+     "tris": 499,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.94,
+      1.57,
+      1.96
+     ]
+    }
+   ]
+  },
+  "pc-offroad-beige": {
+   "title": "Generic passenger car pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked offroad (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)",
+   "scale": 1,
+   "sourceTris": 6502,
+   "size": [
+    3.94,
+    1.57,
+    1.96
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/pc-offroad-beige.lod0.glb",
+     "tris": 4997,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 81,
+     "size": [
+      3.94,
+      1.57,
+      1.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-offroad-beige.lod1.glb",
+     "tris": 1955,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 44,
+     "size": [
+      3.94,
+      1.57,
+      1.96
+     ]
+    },
+    {
+     "file": "/fps/br/models/pc-offroad-beige.lod2.glb",
+     "tris": 499,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      3.94,
+      1.57,
+      1.96
+     ]
+    }
+   ]
+  },
+  "civ-taxi": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked taxi (vehicles-v1, 2026-11-23)",
+   "scale": 1,
+   "sourceTris": 7282,
+   "size": [
+    5.09,
+    1.5,
+    2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-taxi.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 105,
+     "size": [
+      5.09,
+      1.5,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-taxi.lod1.glb",
+     "tris": 1830,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 51,
+     "size": [
+      5.09,
+      1.5,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-taxi.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      5.09,
+      1.5,
+      2
+     ]
+    }
+   ]
+  },
+  "civ-police": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked police (vehicles-v1, 2026-11-23)",
+   "scale": 1,
+   "sourceTris": 8430,
+   "size": [
+    5.17,
+    1.88,
+    2
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-police.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 91,
+     "size": [
+      5.17,
+      1.88,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-police.lod1.glb",
+     "tris": 1906,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 47,
+     "size": [
+      5.17,
+      1.88,
+      2
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-police.lod2.glb",
+     "tris": 525,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      5.17,
+      1.88,
+      2
+     ]
+    }
+   ]
+  },
+  "civ-ambulance": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked ambulance (vehicles-v1, 2026-11-23)",
+   "scale": 1,
+   "sourceTris": 9404,
+   "size": [
+    6.9,
+    2.57,
+    2.59
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-ambulance.lod0.glb",
+     "tris": 4990,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 107,
+     "size": [
+      6.9,
+      2.57,
+      2.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-ambulance.lod1.glb",
+     "tris": 1766,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 50,
+     "size": [
+      6.9,
+      2.57,
+      2.59
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-ambulance.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      6.9,
+      2.57,
+      2.59
+     ]
+    }
+   ]
+  },
+  "civ-tow": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked tow (vehicles-v1, 2026-11-23)",
+   "scale": 1,
+   "sourceTris": 7953,
+   "size": [
+    6.94,
+    2.39,
+    2.38
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-tow.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 104,
+     "size": [
+      6.94,
+      2.39,
+      2.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-tow.lod1.glb",
+     "tris": 1789,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 10,
+     "size": [
+      6.94,
+      2.39,
+      2.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-tow.lod2.glb",
+     "tris": 494,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      6.94,
+      2.39,
+      2.38
+     ]
+    }
+   ]
+  },
+  "civ-postvan": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked postvan (vehicles-v1, 2026-11-23)",
+   "scale": 1,
+   "sourceTris": 6031,
+   "size": [
+    5.34,
+    1.98,
+    2.19
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-postvan.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 95,
+     "size": [
+      5.34,
+      1.98,
+      2.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-postvan.lod1.glb",
+     "tris": 1813,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 47,
+     "size": [
+      5.34,
+      1.98,
+      2.19
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-postvan.lod2.glb",
+     "tris": 500,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      5.34,
+      1.98,
+      2.19
+     ]
+    }
+   ]
+  },
+  "civ-service": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked service (vehicles-v1, 2026-11-23)",
+   "scale": 1,
+   "sourceTris": 8216,
+   "size": [
+    5.27,
+    2.19,
+    2.23
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-service.lod0.glb",
+     "tris": 4999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 107,
+     "size": [
+      5.27,
+      2.19,
+      2.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-service.lod1.glb",
+     "tris": 1806,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 51,
+     "size": [
+      5.27,
+      2.19,
+      2.23
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-service.lod2.glb",
+     "tris": 494,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      5.27,
+      2.19,
+      2.23
+     ]
+    }
+   ]
+  },
+  "civ-garbage": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked garbage (vehicles-v1, 2026-11-23)",
+   "scale": 1,
+   "sourceTris": 12747,
+   "size": [
+    7.65,
+    2.83,
+    2.62
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-garbage.lod0.glb",
+     "tris": 5934,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 111,
+     "size": [
+      7.65,
+      2.83,
+      2.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-garbage.lod1.glb",
+     "tris": 1996,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 48,
+     "size": [
+      7.65,
+      2.83,
+      2.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-garbage.lod2.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      7.65,
+      2.83,
+      2.62
+     ]
+    }
+   ]
+  },
+  "civ-citybus": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked citybus (vehicles-v1, 2026-11-23)",
+   "scale": 1,
+   "sourceTris": 9062,
+   "size": [
+    9.95,
+    2.52,
+    2.54
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-citybus.lod0.glb",
+     "tris": 5998,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 111,
+     "size": [
+      9.95,
+      2.52,
+      2.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-citybus.lod1.glb",
+     "tris": 2244,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 54,
+     "size": [
+      9.95,
+      2.52,
+      2.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-citybus.lod2.glb",
+     "tris": 637,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      9.95,
+      2.52,
+      2.54
+     ]
+    }
+   ]
+  },
+  "civ-schoolbus": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked schoolbus (vehicles-v1, 2026-11-23)",
+   "scale": 1,
+   "sourceTris": 11472,
+   "size": [
+    7.91,
+    2.67,
+    2.55
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-schoolbus.lod0.glb",
+     "tris": 5999,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 110,
+     "size": [
+      7.91,
+      2.67,
+      2.55
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-schoolbus.lod1.glb",
+     "tris": 1989,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 48,
+     "size": [
+      7.91,
+      2.67,
+      2.55
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-schoolbus.lod2.glb",
+     "tris": 597,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      7.91,
+      2.67,
+      2.55
+     ]
+    }
+   ]
+  },
+  "civ-firetruck": {
+   "title": "Generic civil service vehicles pack",
+   "author": "Comrade1280",
+   "source": "https://sketchfab.com/3d-models/generic-civil-service-vehicles-pack-8ff2a13f30914932a70c7950cfa58465",
+   "licence": "CC BY 4.0",
+   "class": "vehicle",
+   "ring": "vehicle",
+   "use": "parked firetruck (vehicles-v1, 2026-11-23)",
+   "scale": 0.87384,
+   "sourceTris": 12110,
+   "size": [
+    7.3,
+    2.56,
+    2.26
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/civ-firetruck.lod0.glb",
+     "tris": 5931,
+     "draws": 2,
+     "textureMB": 1.33,
+     "kB": 124,
+     "size": [
+      7.3,
+      2.56,
+      2.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-firetruck.lod1.glb",
+     "tris": 1872,
+     "draws": 2,
+     "textureMB": 0.33,
+     "kB": 50,
+     "size": [
+      7.3,
+      2.56,
+      2.26
+     ]
+    },
+    {
+     "file": "/fps/br/models/civ-firetruck.lod2.glb",
+     "tris": 599,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      7.3,
+      2.56,
+      2.26
+     ]
+    }
+   ]
   }
  }
 }

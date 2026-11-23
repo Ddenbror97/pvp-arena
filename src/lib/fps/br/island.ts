@@ -4,9 +4,9 @@ import { bridgeBoxes, bridgeDecks } from "./bridges";
 import { islandDoors, modelDoors, type DoorSet } from "./doors";
 import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
-import { islandLayoutSteps, type Placement } from "./layout";
+import { islandLayoutSteps, pavedLots, type Placement } from "./layout";
 import { collisionFill } from "./collision-fill";
-import { createRoadGrade, ROAD_GRADE } from "./road-grade";
+import { pavedSurface } from "./paved";
 import { registerLadders } from "./ladders";
 import { registerLifts } from "./lifts";
 import { islandPanes, type PaneSet } from "./panes";
@@ -101,13 +101,9 @@ export function* buildIslandSteps(
     fill.body,
   );
   solid.decks = bridgeDecks(meta, hf);
-  // Players, vehicles and drops stand on the roads' surface, not under it (on the carriageway;
-  // the renderer draws the same grade, structures-renderer.ts).
-  const roads = createRoadGrade(meta, (x, z) => hf.heightAt(x, z));
-  solid.roadTop = (x, z) => {
-    const g = roads.at(x, z, true, 0);
-    return g === null ? null : g + ROAD_GRADE.lift;
-  };
+  // Players, vehicles and drops stand on the asphalt, not under it: the roads' carriageway,
+  // the runways and the roadside lots, at the heights the renderer lays them (paved.ts).
+  solid.roadTop = pavedSurface(meta, hf, pavedLots(layout, meta));
   yield;
   // Each model's doorways are found once (doors.ts caches them): one model per step.
   const models = new Set<string>();

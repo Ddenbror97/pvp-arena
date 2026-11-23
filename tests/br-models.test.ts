@@ -128,7 +128,10 @@ describe("Project Island models", () => {
     // bridge, the breach, the scaffold), ~3.3 MB, and the owner's 54 downloads to furnish and
     // besiege it (siege engines, cannons, the outer gate, thrones, tables, racks, shields,
     // banners, chandeliers, the cage, the bell, the smithy, carts, flags), ~3.1 MB, 2026-11-17;
-    // Fisher's Cove's 40 m motor yacht in place of the enterable one, ~0.2 MB, 2026-11-22).
-    expect(total / 1024).toBeLessThan(91.5);
+    // Fisher's Cove's 40 m motor yacht in place of the enterable one, ~0.2 MB, 2026-11-22; the
+    // parked vehicles, 33 from the owner's two Comrade1280 packs (23 cars in their colours, taxi,
+    // patrol car, ambulance, tow truck, vans, buses, garbage and fire trucks), ~4.8 MB,
+    // 2026-11-23).
+    expect(total / 1024).toBeLessThan(96);
   });
 });

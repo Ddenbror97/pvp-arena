@@ -1,21 +1,22 @@
 # Project Island asset inventory
 
-Generated 2026-11-18T01:22:12-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
+Generated 2026-11-23T12:10:17-03:00 by `art/br/assets/inventory.py` (tool v3). Rerun: `python3 -I art/br/assets/inventory.py --out art/br/assets` (incremental; cached by zip sha256).
 
 ## Summary
 
 | | |
 |---|--:|
-| Zip files scanned (present now) | 126 |
-| Unique assets | 1032 |
-| Licence OK / REVIEW / REJECT | 985 / 34 / 13 |
-| Assets with duplicate zips | 79 (89 extra files) |
-| Over budget (tris, per-piece, texture px or draws) | 545 |
+| Zip files scanned (present now) | 131 |
+| Unique assets | 1033 |
+| Licence OK / REVIEW / REJECT | 986 / 34 / 13 |
+| Assets with duplicate zips | 83 (93 extra files) |
+| Over budget (tris, per-piece, texture px or draws) | 546 |
 | Needs conversion (no glTF) | 8 |
 | Unparseable zips | 10 |
 | On the asset list: arrived / not yet | 0 / 0 (list has 0 items) |
-| Not on the asset list | 1032 |
-| Assets first seen in batch 2026-11-18 (today) | 7 |
+| Not on the asset list | 1033 |
+| Assets first seen in batch 2026-11-23 (today) | 1 |
+| Assets first seen in batch 2026-11-18 | 7 |
 | Assets first seen in batch 2026-11-17 | 221 |
 | Assets first seen in batch 2026-11-16 | 2 |
 | Assets first seen in batch 2026-11-15 | 37 |
@@ -384,6 +385,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | FREE Cessna 172SP | NLM | OK | prop | 187.5k | 69 | 2048 | 464 | 3.69×0.897×2.76 | TRIS>15k (12.5x), DRAWS 69, ANIM 1, TEXMB 464 | decimate to 15k (heavy: 12x) or reject; atlas materials (69 draws to ≤12); downscale textures to 1K | 11-17 |
 | FREE FIRE GUN Desert Eagle | ROCK FF 99 | REJECT: Standard/paid licence | prop | 1.9k | 1 | 512 | 1 | 0.858×0.47×0.125 | LIC-REJECT | reject (licence: Standard/paid licence) | 11-09 |
 | Free low poly Hangar model | Herrsher | REJECT: Standard/paid licence | building | 524 | 5 | - | 0 | 7.84×4.38×7.99 | LIC-REJECT | reject (licence: Standard/paid licence) | 11-09 |
+| Free Low Poly Vehicles Pack | RgsDev | OK | vehicle-kit | 39.5k (115 pcs, max 2.9k) | 327 | - | 0 | 37.8×4.3×30.8 | MATS 21 | atlas materials across kit (21 materials) | 11-23 |
 | Free Low Poly Yacth | MarkoJantti | OK | prop | 5.3k | 1 | 1024 | 5 | 2.94×2.18×9.7 | ANIM 1 | use as-is | 11-17 |
 | Free Low-poly Vintage Hippy Camper Van | Libau Media | OK | prop | 5.3k | 7 | - | 0 | 93.7×165×223 | SCALE? 223 m | check scale (largest side 223 m; x0.01 would give 2.23 m) | 11-09 |
 | Free Pack - Human Skeleton | PolyOne Studio | OK | prop | 51.6k | 21 | - | 0 | 0.676×1.83×0.269 | TRIS>15k (3.4x), DRAWS 21 | decimate to 15k; atlas materials (21 draws to ≤12) | 11-17 |
@@ -412,8 +414,8 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Gazebo 1 | Elasta Kristya | OK | prop | 3.2k | 1 | 4096 | 255 | 2.65×3.99×4.16 | TEX 4096px, TEXMB 255 | downscale textures to 1K | 11-04 |
 | General Supermarket - Furniture | Léonard\_Doye / Leoskateman | OK | prop | 19.4k | 98 | 2048 | 64 | 39.6×4.02×16 | TRIS>15k (1.3x), DRAWS 98, TEXMB 64 | decimate to 15k; atlas materials (98 draws to ≤12); downscale textures to 1K | 11-11 |
 | Generator LP | YoeriBervoets | OK | prop | 10.9k | 67 | 4096 | 255 | 110×71.6×74.9 | DRAWS 67, SCALE? 110 m, TEX 4096px, TEXMB 255 | atlas materials (67 draws to ≤12); check scale (largest side 110 m; x0.01 would give 1.1 m); downscale textures to 1K | 11-08 |
-| Generic civil service vehicles pack | Comrade1280 | OK | vehicle-kit | 92.7k (10 pcs, max 12.7k) | 43 | 2048 | 898 | 27.3×2.94×27.8 | MATS 43, TEXMB 898 | atlas materials across kit (43 materials); downscale textures to 2K | 11-03 |
-| Generic passenger car pack | Comrade1280 | OK | kit | 69.3k (51 pcs, max 5.6k) | 75 | 2048 | 814 | 19.3×1.76×19.3 | MATS 41, TEXMB 814 | atlas materials across kit (41 materials); downscale textures to 1K | 11-03 |
+| Generic civil service vehicles pack ⧉ | Comrade1280 | OK | vehicle-kit | 92.7k (10 pcs, max 12.7k) | 43 | 2048 | 898 | 27.3×2.94×27.8 | MATS 43, TEXMB 898 | atlas materials across kit (43 materials); downscale textures to 2K | 11-03 |
+| Generic passenger car pack ⧉ | Comrade1280 | OK | kit | 69.3k (51 pcs, max 5.6k) | 75 | 2048 | 814 | 19.3×1.76×19.3 | MATS 41, TEXMB 814 | atlas materials across kit (41 materials); downscale textures to 1K | 11-03 |
 | Generic Town Bus | own.guest | OK | prop | 55.5k | 34 | 1024 | 6 | 131×32.4×31.9 | TRIS>15k (3.7x), DRAWS 34, SCALE? 131 m | decimate to 15k; atlas materials (34 draws to ≤12); check scale (largest side 131 m; x0.01 would give 1.31 m) | 11-13 |
 | Generic Water Tower \[Free Asset Pack\] | Lex713 | OK | building-kit | 38.6k (36 pcs, max 2.8k) | 36 | 1024 | 32 | 71.2×43.5×11.2 | - | use as-is | 11-03 |
 | GORE BAY AIRPORT CYZE TERMINAL BUILDING | thomas.wiwchar | OK | building | 118.3k | 771 | - | 0 | 17.4×3.86×8.42 | TRIS>60k (2.0x), DRAWS 771 | decimate to 60k; atlas materials (771 draws to ≤12) | 11-08 |
@@ -529,7 +531,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Lifeguard Hut | Daniel Skomorovsky | OK | prop | 21.5k | 49 | 2048 | 66 | 1.71×1.71×3.29 | TRIS>15k (1.4x), DRAWS 49, TEXMB 66 | decimate to 15k; atlas materials (49 draws to ≤12); downscale textures to 1K | 11-15 |
 | Lifeguard Tower | Sololopenko | OK | building | 6.0k | 2 | 2048 | 128 | 0.525×0.555×0.759 | SCALE? 0.759 m, TEXMB 128 | check scale (largest side 0.759 m; x100 would give 75.9 m); downscale textures to 2K | 11-11 |
 | Lightbody '90 MD Tow Truck - Low poly model | Daniel Zhabotinsky | OK | vehicle | 26.1k | 29 | 2048 | 162 | 5.66×1.97×2 | DRAWS 29, TEXMB 162 | atlas materials (29 draws to ≤12); downscale textures to 2K | 11-08 |
-| Lightbody Lifted '85 - Low poly model | Daniel Zhabotinsky | OK | prop | 37.4k | 33 | 2048 | 130 | 4.93×1.94×2.14 | TRIS>15k (2.5x), DRAWS 33, TEXMB 130 | decimate to 15k; atlas materials (33 draws to ≤12); downscale textures to 1K | 11-03 |
+| Lightbody Lifted '85 - Low poly model ⧉ | Daniel Zhabotinsky | OK | prop | 37.4k | 33 | 2048 | 130 | 4.93×1.94×2.14 | TRIS>15k (2.5x), DRAWS 33, TEXMB 130 | decimate to 15k; atlas materials (33 draws to ≤12); downscale textures to 1K | 11-03 |
 | Lily pad and Lotus flower | Evie &lt;3 | OK | prop | 10.7k | 5 | 2048 | 106 | 42.8×12.8×43.1 | SCALE? 43.1 m, TEXMB 106 | check scale (largest side 43.1 m; x0.01 would give 0.431 m); downscale textures to 1K | 11-17 |
 | Lobster Pot | Orricle | OK | prop | 1.2k | 2 | 2048 | 43 | 68.8×34.7×70 | SCALE? 70 m, TEXMB 43 | check scale (largest side 70 m; x0.01 would give 0.7 m); downscale textures to 1K | 11-17 |
 | Locker Room - 1MB | Mehdi Shahsavan | OK | prop | 20.0k | 4 | 2048 | 64 | 1.44×1.8×0.966 | TRIS>15k (1.3x), TEXMB 64 | decimate to 15k; downscale textures to 1K | 11-14 |
@@ -1118,7 +1120,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 | Worn Shed PBR Game-Ready ⧉ | donnichols | OK | building | 2.1k | 8 | 2048 | 335 | 644×355×434 | SCALE? 644 m, TEXMB 335 | check scale (largest side 644 m; x0.01 would give 6.44 m); downscale textures to 2K | 11-02 |
 | Wreck of a white motorboat | Оrрндп ЯТG | OK | prop | 49.9k | 2 | 8192 | 681 | 5.33×1.08×1.97 | TRIS>15k (3.3x), TEX 8192px, TEXMB 681 | decimate to 15k; downscale textures to 1K | 11-08 |
 | WWII Medical Tent | creationwasteland | OK | building | 7.0k | 1 | 2048 | 64 | 2.37×2.04×3.14 | - | use as-is | 11-09 |
-| Yacht | Sergei | OK | prop | 8.5k | 1 | 4096 | 255 | 8.21×15.7×40.3 | SCALE? 40.3 m, TEX 4096px, TEXMB 255 | check scale (largest side 40.3 m; x0.01 would give 0.403 m); downscale textures to 1K | 11-17 |
+| Yacht ⧉ | Sergei | OK | prop | 8.5k | 1 | 4096 | 255 | 8.21×15.7×40.3 | SCALE? 40.3 m, TEX 4096px, TEXMB 255 | check scale (largest side 40.3 m; x0.01 would give 0.403 m); downscale textures to 1K | 11-17 |
 | Yaxchilan Estela 31 | David R. Hixson | OK | prop | 73.3k | 1 | 4096 | 170 | 42.4×18.1×36.2 | TRIS>15k (4.9x), SCALE? 42.4 m, TEX 4096px, TEXMB 170 | decimate to 15k; check scale (largest side 42.4 m; x0.01 would give 0.424 m); downscale textures to 1K | 11-17 |
 | YC-130(Prototype of C-130) | KOG\_THORNS | OK | vehicle | 12.9k | 25 | 2048 | 65 | 39.8×12×28.9 | DRAWS 25 | atlas materials (25 draws to ≤12) | 11-03 |
 | Zil 131 AC 40 | Phobos | OK | prop | 10.2k | 2 | 4096 | 192 | 6.74×2.79×2.49 | TEX 4096px, TEXMB 192 | downscale textures to 1K | 11-13 |
@@ -1148,6 +1150,8 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 - **Freight shipping container - Rusted** (identical files): `freight_shipping_container_-_rusted.zip`, `freight_shipping_container_-_rusted_1.zip`
 - **Furniture Pack For Summer Caffe FREE** (identical files): `furniture_pack_for_summer_caffe_free_1.zip`, `furniture_pack_for_summer_caffe_free.zip`
 - **Gas station** (identical files): `f08c2f36-gas_station.zip`, `a1d89a38-gas_station.zip`
+- **Generic civil service vehicles pack** (identical files): `1793720902326_generic_civil_service_vehicles_pack.zip`, `generic_civil_service_vehicles_pack.zip`
+- **Generic passenger car pack** (identical files): `30a74c70-1793720902324_generic_passenger_car_pack.zip`, `9068c28a-generic_passenger_car_pack.zip`
 - **Gravity Dam** (identical files): `110ee4e4-gravity_dam.zip`, `1ae099cf-gravity_dam.zip`
 - **Green & white picket fence** (identical files): `f9ef592a-green__white_picket_fence.zip`, `62695a93-green__white_picket_fence.zip`
 - **Greenhouse Victorian** (identical files): `4b770879-greenhouse_victorian.zip`, `7f678340-greenhouse_victorian.zip`
@@ -1157,6 +1161,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 - **Jungle Tree** (identical files): `671c5aa3-jungle_tree.zip`, `1409320b-jungle_tree.zip`
 - **Ladder, Railing and Flood Light Set Up** (identical files): `26dd68d2-ladder_railing_and_flood_light_set_up.zip`, `8d157065-ladder_railing_and_flood_light_set_up.zip`
 - **Large Industrial Storage Tanks** (identical files): `6998b9c2-large_industrial_storage_tanks.zip`, `78015d1d-large_industrial_storage_tanks.zip`
+- **Lightbody Lifted '85 - Low poly model** (identical files): `a6d72d1b-1793720902327_lightbody_lifted_85_-_low_poly_model.zip`, `bf578ab9-lightbody_lifted_85_-_low_poly_model.zip`
 - **Log Cabin + Ruined Version** (identical files): `log_cabin__ruined_version.zip`, `log_cabin__ruined_version_1.zip`
 - **Log Pile (Game Ready / 2K PBR)** (identical files): `0e03a918-log_pile_game_ready__2k_pbr.zip`, `c956d28f-log_pile_game_ready__2k_pbr.zip`
 - **Low Poly Humvee FREE** (identical files): `4885731c-low_poly_humvee_free.zip`, `f42bf795-low_poly_humvee_free.zip`
@@ -1205,6 +1210,7 @@ Includes the earlier 5v5 / FPS downloads and the Poly Haven texture sets (the li
 - **Wind sleeve** (identical files): `dead6e18-wind_sleeve.zip`, `b5e0137c-wind_sleeve.zip`
 - **Wooden Scaffoldings** (identical files): `3af18b60-wooden_scaffoldings.zip`, `ee6c7912-wooden_scaffoldings_1.zip`, `a1af1157-wooden_scaffoldings.zip`
 - **Worn Shed PBR Game-Ready** (identical files): `worn_shed_pbr_game-ready.zip`, `worn_shed_pbr_game-ready_1.zip`, `worn_shed_pbr_game-ready_2.zip`
+- **Yacht** (identical files): `c69d8704-yacht.zip`, `af1d6874-yacht.zip`
 
 ## Unparseable zips
 

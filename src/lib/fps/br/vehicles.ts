@@ -33,6 +33,8 @@ export const VEHICLES = {
       name: "Police car",
       model: "car-sedan",
       length: 4.75,
+      /** Each wheel's contact this far to the side of the middle (m; vehicles.glb's hubs). */
+      track: 0.73,
       width: 1.8,
       height: 1.33,
       maxSpeed: 33,
@@ -52,6 +54,8 @@ export const VEHICLES = {
       name: "4x4",
       model: "car-cruiser",
       length: 4.45,
+      /** Each wheel's contact this far to the side of the middle (m; vehicles.glb's hubs). */
+      track: 0.76,
       width: 1.95,
       height: 1.9,
       maxSpeed: 28,
@@ -71,6 +75,8 @@ export const VEHICLES = {
       name: "Pickup",
       model: "car-pickup",
       length: 5.15,
+      /** Each wheel's contact this far to the side of the middle (m; vehicles.glb's hubs). */
+      track: 0.82,
       width: 2.0,
       height: 2.23,
       maxSpeed: 30,
@@ -90,6 +96,8 @@ export const VEHICLES = {
       name: "Dirt bike",
       model: "",
       length: 2.15,
+      /** Each wheel's contact this far to the side of the middle (m; vehicles.glb's hubs). */
+      track: 0,
       width: 0.8,
       height: 1.26,
       maxSpeed: 36,
@@ -204,6 +212,8 @@ type VehicleSpec = {
   brake: number;
   reverse: number;
   wheelbase: number;
+  /** Half the track: the wheels' contacts this far each side of the middle (m). */
+  track: number;
   steer: number;
   health: number;
   crashScale: number;
@@ -315,6 +325,26 @@ function footprint(v: Pick<Vehicle, "x" | "z" | "yaw" | "kind">, grow = 0) {
     [v.x + fx * hl - rx * hw, v.z + fz * hl - rz * hw],
     [v.x - fx * hl + rx * hw, v.z - fz * hl + rz * hw],
     [v.x - fx * hl - rx * hw, v.z - fz * hl - rz * hw],
+  ] as const;
+}
+
+/**
+ * Where the tyres touch: front-right, front-left, back-right, back-left (footprint's order; a
+ * bike's two wheels twice), half the wheelbase ahead and behind, `track` to each side.
+ */
+function wheels(v: Pick<Vehicle, "x" | "z" | "yaw" | "kind">) {
+  const s = spec(v.kind);
+  const fx = -Math.sin(v.yaw),
+    fz = -Math.cos(v.yaw);
+  const rx = -fz,
+    rz = fx;
+  const a = s.wheelbase / 2,
+    t = s.track;
+  return [
+    [v.x + fx * a + rx * t, v.z + fz * a + rz * t],
+    [v.x + fx * a - rx * t, v.z + fz * a - rz * t],
+    [v.x - fx * a + rx * t, v.z - fz * a + rz * t],
+    [v.x - fx * a - rx * t, v.z - fz * a - rz * t],
   ] as const;
 }
 
@@ -593,24 +623,32 @@ export function spawnVehicles(
 
 function settleTilt(world: StaticWorld, v: Vehicle) {
   const s = spec(v.kind);
-  const f = footprint(v);
-  // A flat tyre lowers its corner (footprint order: front-right, front-left, back-right,
-  // back-left = the TYRES bits 2, 1, 8, 4).
+  // The ground under each tyre (owner, 2026-11-23: "the motorbike wheel … its slightly to sink
+  // down so the wheels is under the ground"). It was taken under the body's four corners, a
+  // bumper's length beyond the wheels: over a crest the corners lie lower than the tyres, and
+  // the tyres sank into the road (a bike's by 5 cm over a road's hump); in a dip they floated.
+  const f = wheels(v);
+  // A flat tyre lowers its corner (front-right, front-left, back-right, back-left = the TYRES
+  // bits 2, 1, 8, 4).
   const flat = v.flat ?? 0;
   const h = f.map(
     ([x, z], i) =>
       world.supportAt(x, z, 0.2, v.y + Math.max(0.7, s.climb + 0.05)) -
       (flat & [2, 1, 8, 4][i]! ? 0.1 : 0),
   );
-  // front-left, front-right, back-left, back-right
   const front = (h[0]! + h[1]!) / 2,
     back = (h[2]! + h[3]!) / 2,
-    left = (h[0]! + h[2]!) / 2,
-    right = (h[1]! + h[3]!) / 2;
-  v.y = Math.max(...h.map((y) => y - 0.0));
-  v.y = (front + back) / 2 + Math.abs(front - back) * 0.25;
-  v.pitch = Math.atan2(front - back, s.length);
-  v.roll = s.bike ? 0 : Math.atan2(left - right, s.width);
+    left = (h[1]! + h[3]!) / 2,
+    right = (h[0]! + h[2]!) / 2;
+  v.pitch = Math.atan2(front - back, s.wheelbase);
+  // (+roll lifts the right side, vehicle-renderer.ts.)
+  v.roll = s.bike ? 0 : Math.atan2(right - left, 2 * s.track);
+  // On twisted ground no plane meets all four: it rests on the highest, one tyre off the
+  // ground rather than one in it.
+  const a = Math.sin(v.pitch) * (s.wheelbase / 2),
+    t = Math.sin(v.roll) * s.track;
+  const plane = [a + t, a - t, -a + t, -a - t];
+  v.y = Math.max(...h.map((y, i) => y - plane[i]!));
 }
 
 /**
