@@ -11,6 +11,9 @@ export default defineConfig({
     // Database files call testDatabaseUrl() and refuse SUPABASE_DB_URL.
     // Point TEST_DATABASE_URL at an isolated Postgres before running them.
     testTimeout: 15000,
+    // The BR tests build the island in `beforeAll`: about 10 s since the island grew
+    // (2026-11-23), on the edge of the 10 s default, and they timed out under load.
+    hookTimeout: 60_000,
     // Every database file rebuilds the same pvp_test schema. Those files must
     // run one at a time. Frontend and unit tests do not share that schema, so
     // they keep the default worker pool.
