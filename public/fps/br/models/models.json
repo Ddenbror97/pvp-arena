@@ -17163,14 +17163,14 @@
     37.43,
     8.1
    ],
-   "sourceTris": 10516,
+   "sourceTris": 10616,
    "lods": [
     {
-     "file": "/fps/br/models/ew-chimney.works-v1.lod0.glb",
-     "tris": 10516,
+     "file": "/fps/br/models/ew-chimney.works-v2.lod0.glb",
+     "tris": 10616,
      "draws": 5,
      "textureMB": 0.75,
-     "kB": 209,
+     "kB": 210,
      "size": [
       8.1,
       37.43,
@@ -17178,11 +17178,11 @@
      ]
     },
     {
-     "file": "/fps/br/models/ew-chimney.works-v1.lod1.glb",
-     "tris": 962,
+     "file": "/fps/br/models/ew-chimney.works-v2.lod1.glb",
+     "tris": 1062,
      "draws": 3,
      "textureMB": 0.13,
-     "kB": 28,
+     "kB": 30,
      "size": [
       8.1,
       37.43,
@@ -17190,7 +17190,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/ew-chimney.works-v1.lod2.glb",
+     "file": "/fps/br/models/ew-chimney.works-v2.lod2.glb",
      "tris": 276,
      "draws": 1,
      "textureMB": 0,
