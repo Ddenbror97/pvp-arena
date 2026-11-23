@@ -3,6 +3,7 @@ import arenaPlan from "./arena-plan.json";
 import hospitalPlan from "./hospital-plan.json";
 import skylinePlan from "./skyline-plan.json";
 import stationPlan from "./station-plan.json";
+import windowPanes from "./window-panes.json";
 import { turnBox, type StaticWorld } from "./static-world";
 
 /**
@@ -23,11 +24,29 @@ export type Pane = {
   id: number;
   /** World box: x0, y0, z0, x1, y1, z1. */
   box: [number, number, number, number, number, number];
+  /**
+   * A building's window (WINDOW_PANES): the layout index of its building. It is drawn only while
+   * that building is drawn at its near LOD (its middle and far LODs keep their own glass).
+   */
+  placement?: number;
 };
+/**
+ * The island's panes, packed: since every building's windows became panes (2026-11-23) there
+ * are tens of thousands, and the match room holds them for the whole match next to the rest of
+ * the island under the Durable Object's memory limit, so they are typed arrays, not objects
+ * (an object and its box array per pane took about 11 MB; this takes about 2).
+ */
 export type PaneSet = {
-  panes: Pane[];
-  /** Pane ids per 16 m cell (key: row · 4096 + column). */
-  cells: Map<number, number[]>;
+  count: number;
+  /** Six per pane: the world box x0, y0, z0, x1, y1, z1. */
+  boxes: Float32Array;
+  /** Per pane: its building's layout index for a building's window (Pane.placement), else −1. */
+  placement: Int32Array;
+  /** The CELL (8 m) cells holding panes, ascending (key: (row + 2048) · 4096 + column + 2048). */
+  cellKeys: Int32Array;
+  /** Cell k's pane ids are cellIds[cellStart[k] … cellStart[k + 1]), ascending. */
+  cellStart: Int32Array;
+  cellIds: Int32Array;
   /** The panes' extent (the cheap test that skips almost every query on the island). */
   minY: number;
   maxY: number;
@@ -36,6 +55,18 @@ export type PaneSet = {
   minZ: number;
   maxZ: number;
 };
+
+/** One pane as an object (tools and tests). */
+export function paneAt(set: PaneSet, id: number): Pane {
+  const b = set.boxes,
+    o = id * 6;
+  const box: Pane["box"] = [b[o]!, b[o + 1]!, b[o + 2]!, b[o + 3]!, b[o + 4]!, b[o + 5]!];
+  const at = set.placement[id]!;
+  return at >= 0 ? { id, box, placement: at } : { id, box };
+}
+/** Every pane as an object (tools and tests: allocates the lot). */
+export const listPanes = (set: PaneSet): Pane[] =>
+  Array.from({ length: set.count }, (_, id) => paneAt(set, id));
 
 /** Panes per model (model space: x0, x1, z0, z1, y0, y1): Skyline Residences' storeys and the
  * mega hospital's sky bridges. */
@@ -52,42 +83,120 @@ const MODEL_PANES: Record<string, number[][]> = {
   ...(stationPlan as unknown as { panes?: Record<string, number[][]> }).panes,
 };
 
-const CELL = 16;
+/**
+ * Every building's window glass (owner, 2026-11-23: "Add glass windows to apartments/buildings
+ * … they should have the breaking window ones with the sound. also fix buildings with a window
+ * but no glass, it looks like glass but there is nothing there"): the glass the buildings' near
+ * LODs drew themselves, taken out of them and listed here by art/blender/br/glass_panes.mjs
+ * (the procedural houses' opaque dark slabs no shot or player was stopped by, the textured
+ * kit's see-through glass no shot could break). Model space, as MODEL_PANES.
+ */
+const WINDOW_PANES: Record<string, number[][]> = (
+  windowPanes as unknown as { models: Record<string, number[][]> }
+).models;
+
+/** (8 m: a block of flats holds a hundred panes in a 16 m square, tested on every step.) */
+const CELL = 8;
 const cellOf = (v: number) => Math.floor(v / CELL);
 const cellKey = (c: number, r: number) => (r + 2048) * 4096 + c + 2048;
 
 /** The island's panes (the same layout → the same panes, the same ids). */
 export function islandPanes(layout: readonly Placement[]): PaneSet {
-  const panes: Pane[] = [];
-  const cells = new Map<number, number[]>();
+  let count = 0;
+  for (const p of layout)
+    count += (MODEL_PANES[p.model]?.length ?? 0) + (WINDOW_PANES[p.model]?.length ?? 0);
+  const boxes = new Float32Array(count * 6),
+    placement = new Int32Array(count).fill(-1);
+  // (cell key, id) pairs as one number each (key · 2^20 + id: exact in a double), sorted.
+  let pairs = new Float64Array(count * 2),
+    used = 0;
   let minY = Infinity,
     maxY = -Infinity,
     minX = Infinity,
     maxX = -Infinity,
     minZ = Infinity,
     maxZ = -Infinity;
-  for (const p of layout) {
-    const list = MODEL_PANES[p.model];
-    if (!list?.length) continue;
-    for (const [x0, x1, z0, z1, y0, y1] of list) {
+  let id = 0;
+  for (let at = 0; at < layout.length; at++) {
+    const p = layout[at]!;
+    const planned = MODEL_PANES[p.model] ?? [],
+      windows = WINDOW_PANES[p.model] ?? [];
+    if (!planned.length && !windows.length) continue;
+    for (let k = 0; k < planned.length + windows.length; k++, id++) {
+      const window = k >= planned.length;
+      const [x0, x1, z0, z1, y0, y1] = window ? windows[k - planned.length]! : planned[k]!;
       const [a, b, c, d, e, f] = turnBox([x0!, y0!, z0!, x1!, y1!, z1!], p.turn);
-      const box: Pane["box"] = [p.x + a, p.y + b, p.z + c, p.x + d, p.y + e, p.z + f];
-      const id = panes.length;
-      panes.push({ id, box });
-      minY = Math.min(minY, box[1]);
-      maxY = Math.max(maxY, box[4]);
-      minX = Math.min(minX, box[0]);
-      maxX = Math.max(maxX, box[3]);
-      minZ = Math.min(minZ, box[2]);
-      maxZ = Math.max(maxZ, box[5]);
-      for (let r = cellOf(box[2]); r <= cellOf(box[5]); r++)
-        for (let c2 = cellOf(box[0]); c2 <= cellOf(box[3]); c2++) {
-          const key = cellKey(c2, r);
-          (cells.get(key) ?? cells.set(key, []).get(key)!).push(id);
+      const o = id * 6;
+      boxes[o] = p.x + a;
+      boxes[o + 1] = p.y + b;
+      boxes[o + 2] = p.z + c;
+      boxes[o + 3] = p.x + d;
+      boxes[o + 4] = p.y + e;
+      boxes[o + 5] = p.z + f;
+      if (window) placement[id] = at;
+      minX = Math.min(minX, boxes[o]!);
+      minY = Math.min(minY, boxes[o + 1]!);
+      minZ = Math.min(minZ, boxes[o + 2]!);
+      maxX = Math.max(maxX, boxes[o + 3]!);
+      maxY = Math.max(maxY, boxes[o + 4]!);
+      maxZ = Math.max(maxZ, boxes[o + 5]!);
+      for (let r = cellOf(boxes[o + 2]!); r <= cellOf(boxes[o + 5]!); r++)
+        for (let c2 = cellOf(boxes[o]!); c2 <= cellOf(boxes[o + 3]!); c2++) {
+          if (used === pairs.length) {
+            const grown = new Float64Array(pairs.length * 2 + 16);
+            grown.set(pairs);
+            pairs = grown;
+          }
+          pairs[used++] = cellKey(c2, r) * PAIR + id;
         }
     }
   }
-  return { panes, cells, minY, maxY, minX, maxX, minZ, maxZ };
+  const sorted = pairs.subarray(0, used).sort();
+  let cells = 0;
+  for (let i = 0; i < used; i++)
+    if (i === 0 || Math.floor(sorted[i]! / PAIR) !== Math.floor(sorted[i - 1]! / PAIR)) cells++;
+  const cellKeys = new Int32Array(cells),
+    cellStart = new Int32Array(cells + 1),
+    cellIds = new Int32Array(used);
+  for (let i = 0, k = -1; i < used; i++) {
+    const key = Math.floor(sorted[i]! / PAIR);
+    if (k < 0 || cellKeys[k] !== key) {
+      cellKeys[++k] = key;
+      cellStart[k] = i;
+    }
+    cellIds[i] = sorted[i]! - key * PAIR;
+  }
+  cellStart[cells] = used;
+  return {
+    count,
+    boxes,
+    placement,
+    cellKeys,
+    cellStart,
+    cellIds,
+    minY,
+    maxY,
+    minX,
+    maxX,
+    minZ,
+    maxZ,
+  };
+}
+const PAIR = 2 ** 20;
+
+/** The index of a cell in set.cellKeys, or −1. */
+function cellIndex(set: PaneSet, key: number) {
+  const keys = set.cellKeys;
+  let lo = 0,
+    hi = keys.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1,
+      v = keys[mid]!;
+    if (v === key) return mid;
+    if (v < key) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return -1;
 }
 
 /** Calls `visit` for every pane in the cells over the rectangle (a pane may come twice). */
@@ -100,16 +209,27 @@ function forEachPane(
   visit: (id: number) => void,
 ) {
   for (let r = cellOf(z0); r <= cellOf(z1); r++)
-    for (let c = cellOf(x0); c <= cellOf(x1); c++)
-      for (const id of set.cells.get(cellKey(c, r)) ?? []) visit(id);
+    for (let c = cellOf(x0); c <= cellOf(x1); c++) {
+      const k = cellIndex(set, cellKey(c, r));
+      if (k < 0) continue;
+      for (let i = set.cellStart[k]!; i < set.cellStart[k + 1]!; i++) visit(set.cellIds[i]!);
+    }
 }
 
 /** Whether an upright hull (feet at y, `height` tall, `radius`) overlaps the pane. */
-function hullOnPane(p: Pane, x: number, y: number, z: number, height: number, radius: number) {
-  const [x0, y0, z0, x1, y1, z1] = p.box;
-  if (y + height <= y0 || y >= y1) return false;
-  const cx = Math.max(x0, Math.min(x1, x)),
-    cz = Math.max(z0, Math.min(z1, z));
+function hullOnPane(
+  b: Float32Array,
+  id: number,
+  x: number,
+  y: number,
+  z: number,
+  height: number,
+  radius: number,
+) {
+  const o = id * 6;
+  if (y + height <= b[o + 1]! || y >= b[o + 4]!) return false;
+  const cx = Math.max(b[o]!, Math.min(b[o + 3]!, x)),
+    cz = Math.max(b[o + 2]!, Math.min(b[o + 5]!, z));
   return (cx - x) ** 2 + (cz - z) ** 2 < radius * radius;
 }
 
@@ -121,15 +241,16 @@ function rayBox(
   dx: number,
   dy: number,
   dz: number,
-  b: Pane["box"],
+  b: Float32Array,
+  id: number,
 ) {
   let t0 = 0,
     t1 = Infinity;
   const o = [ox, oy, oz],
     d = [dx, dy, dz];
   for (let k = 0; k < 3; k++) {
-    const lo = b[k]!,
-      hi = b[k + 3]!;
+    const lo = b[id * 6 + k]!,
+      hi = b[id * 6 + k + 3]!;
     if (Math.abs(d[k]!) < 1e-9) {
       if (o[k]! < lo || o[k]! > hi) return Infinity;
       continue;
@@ -158,7 +279,7 @@ export function panesOnRay(
   out: number[] = [],
 ) {
   out.length = 0;
-  if (!set.panes.length) return out;
+  if (!set.count) return out;
   const ex = ox + dx * length,
     ey = oy + dy * length,
     ez = oz + dz * length;
@@ -187,7 +308,7 @@ export function panesOnRay(
       Math.max(z0, z1),
       (id) => {
         if (broken[id] || out.includes(id)) return;
-        if (rayBox(ox, oy, oz, dx, dy, dz, set.panes[id]!.box) <= length) out.push(id);
+        if (rayBox(ox, oy, oz, dx, dy, dz, set.boxes, id) <= length) out.push(id);
       },
     );
   }
@@ -220,7 +341,7 @@ export function withPanes(
       return false;
     let hit = false;
     forEachPane(set, x - radius, z - radius, x + radius, z + radius, (id) => {
-      if (!hit && !broken[id] && hullOnPane(set.panes[id]!, x, y, z, height, radius)) hit = true;
+      if (!hit && !broken[id] && hullOnPane(set.boxes, id, x, y, z, height, radius)) hit = true;
     });
     return hit;
   };
@@ -231,10 +352,48 @@ export function withPanes(
       onBreak(id);
     }
   };
+  w.blast = function (x, y, z, radius) {
+    if (!set.count || y - radius > set.maxY || y + radius < set.minY) return;
+    const hits: number[] = [];
+    forEachPane(set, x - radius, z - radius, x + radius, z + radius, (id) => {
+      if (broken[id] || hits.includes(id)) return;
+      // The pane's nearest point, within the blast's reach…
+      const b = set.boxes,
+        o = id * 6;
+      const px = Math.max(b[o]!, Math.min(b[o + 3]!, x)),
+        py = Math.max(b[o + 1]!, Math.min(b[o + 4]!, y)),
+        pz = Math.max(b[o + 2]!, Math.min(b[o + 5]!, z));
+      if (Math.hypot(px - x, py - y, pz - z) > radius) return;
+      // …and in its line: a clear ray to its middle, or to its nearest point drawn a third of
+      // the way in (an edge sits in the wall's reveal). A wall or a shut door between shields
+      // the glass (`this`, the world it was called on; rays pass whole panes).
+      const cx = (b[o]! + b[o + 3]!) / 2,
+        cy = (b[o + 1]! + b[o + 4]!) / 2,
+        cz = (b[o + 2]! + b[o + 5]!) / 2;
+      const clear = (tx: number, ty: number, tz: number) => {
+        const lx = tx - x,
+          ly = ty - y,
+          lz = tz - z;
+        const l = Math.hypot(lx, ly, lz);
+        if (l < 0.05) return true;
+        const ray = this.raycast(x, y, z, lx / l, ly / l, lz / l, l);
+        return !ray || ray.distance >= l - 0.1;
+      };
+      if (!clear(cx, cy, cz) && !clear(px + (cx - px) / 3, py + (cy - py) / 3, pz + (cz - pz) / 3))
+        return;
+      hits.push(id);
+    });
+    for (const id of hits) {
+      broken[id] = 1;
+      onBreak(id);
+    }
+  };
   return w;
 }
 
 type PaneWorld = {
+  /** Breaks the whole panes a blast (centre, radius) reaches in a clear line. */
+  blast?: (this: StaticWorld, x: number, y: number, z: number, radius: number) => void;
   shatter?: (
     ox: number,
     oy: number,
@@ -257,6 +416,14 @@ export function shatterAlong(
   length: number,
 ) {
   (world as StaticWorld & PaneWorld).shatter?.(ox, oy, oz, dx, dy, dz, length);
+}
+
+/**
+ * Breaks the panes a blast reaches (owner, 2026-11-23: "make the windows breakble with a knife
+ * hit and granades"): an HE grenade's, from its centre, in a clear line.
+ */
+export function shatterAround(world: StaticWorld, x: number, y: number, z: number, radius: number) {
+  (world as StaticWorld & PaneWorld).blast?.call(world, x, y, z, radius);
 }
 
 /** Whether a StaticWorld carries the island's panes (set by buildIsland). */

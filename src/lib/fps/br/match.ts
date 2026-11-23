@@ -24,7 +24,7 @@ import {
   startRappel,
 } from "./rappel";
 import { liftCall, lifts, startRide } from "./lifts";
-import { panesOf, withPanes } from "./panes";
+import { panesOf, shatterAlong, shatterAround, withPanes } from "./panes";
 import {
   COMBAT,
   BrProjectiles,
@@ -792,7 +792,7 @@ export function stepBrMatch(
     }
   }
   const panes = panesOf(island);
-  if (panes && !state.paneBroken) state.paneBroken = new Uint8Array(panes.panes.length);
+  if (panes && !state.paneBroken) state.paneBroken = new Uint8Array(panes.count);
   const glazed =
     panes && state.paneBroken
       ? withPanes(island, panes, state.paneBroken, (id) => state.paneLog.push(id))
@@ -2129,14 +2129,24 @@ function stepNades(state: BrMatchState, world: StaticWorld, now: number) {
     const by = state.seats[n.seat]!;
     if (!n.area) {
       let floorHit: { x: number; y: number; z: number } | null = null;
-      brNadeAdvance(n.sim, world, nadeSteps((now - n.at) / 1000) - n.sim.n, (i) => {
-        if (i.floor && !floorHit) floorHit = { x: i.x, y: i.y, z: i.z };
-      });
+      brNadeAdvance(
+        n.sim,
+        world,
+        nadeSteps((now - n.at) / 1000) - n.sim.n,
+        (i) => {
+          if (i.floor && !floorHit) floorHit = { x: i.x, y: i.y, z: i.z };
+        },
+        // A grenade thrown through a window breaks it and flies on (glass does not stop it:
+        // the clients fly it the same way).
+        (x, y, z, dx, dy, dz, l) => shatterAlong(world, x, y, z, dx, dy, dz, l),
+      );
       const age = now - n.at;
       if (n.type === "he" && age >= GRENADES.he.fuseMs) {
         n.done = true;
         const c = { x: n.sim.x, y: n.sim.y, z: n.sim.z };
         state.combat.push({ type: "boom", id: n.id, x: c.x, y: c.y, z: c.z });
+        // The blast breaks the glass it reaches.
+        shatterAround(world, c.x, c.y, c.z, GRENADES.he.radius);
         for (const v of state.seats)
           if (!v.dead && v.body.phase !== "plane")
             nadeDamage(state, world, v, by, brHeDamage(c, v.body, world), "he");

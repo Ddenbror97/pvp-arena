@@ -121,6 +121,7 @@ let placed: Array<{ model: string; x: number; y: number; z: number; poi: string 
 let meta: WorldMeta;
 let groundAt = (_x: number, _z: number) => 0;
 let doorsFx: ReturnType<typeof createDoorRenderer> | null = null;
+let panesFx: ReturnType<typeof createPaneRenderer> | null = null;
 let torchFx: ReturnType<typeof createTorchFlames> | null = null;
 const ready = (async () => {
   const t0 = performance.now();
@@ -147,7 +148,7 @@ const ready = (async () => {
   solid = islandScene.island.solid;
   // The breakable panorama glass, whole, as a match starts it (?panes=0: without, to compare).
   if (new URLSearchParams(location.search).get("panes") !== "0")
-    createPaneRenderer(scene, islandScene.island.panes);
+    panesFx = createPaneRenderer(scene, islandScene.island.panes, (i) => islandScene.nearDrawn(i));
   // Doors as a match starts them (seed 1).
   const doorSet = islandScene.island.doors;
   doorsFx = createDoorRenderer(scene, doorSet, islandScene.doorLook);
@@ -180,6 +181,7 @@ resize();
 
 function draw() {
   const { selectMs } = islandScene.update(camera);
+  panesFx?.update(16);
   torchFx?.update(performance.now(), camera);
   gpu.begin();
   renderer.render(scene, camera);
@@ -384,6 +386,7 @@ window.explorer = {
     camera.updateMatrixWorld();
     // Every LOD is preloaded behind the loading screen (island-scene.ts): select and draw.
     islandScene.update(camera, true);
+    panesFx?.update(16);
     doorsFx?.update(16, performance.now() + 1e6, camera.position);
     return draw();
   },

@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "yacht-v1",
+  revision: "windows-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -179,8 +179,18 @@ export const WORLD_ASSETS = {
   // Forgotten Ruins' trees and tree-high plants on the "jungle-tree" ring (props-renderer.ts).
   // yacht-v1 (2026-11-22, process_assets.mjs + build_collision.mjs): the 40 m motor yacht
   // (cove-yacht, the owner's download at its own size) for Fisher's Cove's super yacht.
-  models: "/fps/br/models/models.yacht-v1.json",
-  collision: "/fps/br/models/collision.yacht-v1.json",
+  // windows-v1 (2026-11-23, from yacht-v1): every building's window glass breakable (glass_panes.mjs). The
+  // glass the near LODs drew themselves (the procedural houses' opaque dark slabs, the textured
+  // kit's see-through glass) is out of 51 models' near LODs and listed as panes
+  // (window-panes.json, panes.ts), and the collision boxes in their openings are cut away (a
+  // broken pane is an opening). The buildings that had no window at all (the brick corner
+  // shops, the garage, the quonset, the long shed, the diner's ends) have windows cut through
+  // their plain walls, framed and glazed with panes, also drawn on their middle LODs; the
+  // windows that were only painted on (the clapboard and stone farmhouses, the mobile home, the
+  // stilt house, the bungalow, the diner, brick-shop, rural-store-3) are cut and glazed where
+  // they were painted (cut_windows.mjs).
+  models: "/fps/br/models/models.windows-v1.json",
+  collision: "/fps/br/models/collision.windows-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

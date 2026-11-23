@@ -255,6 +255,11 @@ export type PropsControls = {
    */
   setNearFirst: (on: boolean) => void;
   /**
+   * Whether placement `index` (of the placements given to createProps) is drawn at its near LOD
+   * this frame: the buildings' breakable panes go with it (pane-renderer.ts).
+   */
+  nearDrawn: (index: number) => boolean;
+  /**
    * Upload the textures of the LODs about to come into use, a few a frame within `budgetMs`
    * (see WARM_AHEAD). Call once a frame before rendering.
    */
@@ -355,9 +360,13 @@ export function createProps(
   const root = new THREE.Group();
   root.name = "br-props";
   const byModel = new Map<string, Placement[]>();
-  for (const p of placements) {
+  // Each placement's index in its model's list (nearDrawn).
+  const slot = new Int32Array(placements.length);
+  for (let i = 0; i < placements.length; i++) {
+    const p = placements[i]!;
     let list = byModel.get(p.model);
     if (!list) byModel.set(p.model, (list = []));
+    slot[i] = list.length;
     list.push(p);
   }
   const states = new Map<string, ModelState>();
@@ -756,6 +765,13 @@ export function createProps(
   return {
     root,
     ready,
+    nearDrawn(index) {
+      const p = placements[index];
+      const state = p && states.get(p.model);
+      if (!state || state.level[slot[index]!] !== 0) return false;
+      const near = state.lods[0];
+      return !!near && near !== "loading";
+    },
     setNearFirst(on) {
       nearFirst = on;
       for (const c of root.children)

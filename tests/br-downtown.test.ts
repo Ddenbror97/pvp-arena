@@ -30,7 +30,7 @@ const hf = await decodeHeightfield(buffer(`public${WORLD_ASSETS.height}`));
 const cover = await decodeLandCover(buffer(`public${WORLD_ASSETS.landcover}`));
 const island = buildIsland(hf, cover, meta, collision);
 const open = withDoors(
-  withPanes(island.solid, island.panes, new Uint8Array(island.panes.panes.length)),
+  withPanes(island.solid, island.panes, new Uint8Array(island.panes.count)),
   island.doors,
   new Uint8Array(island.doors.doors.length).fill(1),
 );
