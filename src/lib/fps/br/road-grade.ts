@@ -30,6 +30,14 @@ export const ROAD_GRADE = {
   cell: 32,
   /** The drawn surface's rise over the grade (m; the renderer's PAVED_LIFT.road). */
   lift: 0.08,
+  /**
+   * Where roads meet, a road's grade carries on past its edge (and its end) falling `ramp` m per
+   * m for up to `blend` m, so a side road rises onto a higher main road on a slope instead of a
+   * step at the main road's reach (owner, 2026-11-22: "smooth transitions"; 308 road ends rose
+   * 0.3–1 m in half a metre there).
+   */
+  ramp: 0.3,
+  blend: 8,
 } as const;
 
 /**
@@ -67,7 +75,7 @@ export function createRoadGrade(
   const grid = new Map<number, number[]>();
   const key = (i: number, j: number) => (i + 4096) * 8192 + (j + 4096);
   segments.forEach((s, n) => {
-    const r = s.half + ROAD_GRADE.reach + ROAD_GRADE.along;
+    const r = s.half + ROAD_GRADE.reach + ROAD_GRADE.along + ROAD_GRADE.blend;
     const xs = [s.ax, s.ax + s.dx * s.length],
       zs = [s.az, s.az + s.dz * s.length];
     const i0 = Math.floor((Math.min(...xs) - r) / ROAD_GRADE.cell),
@@ -98,16 +106,21 @@ export function createRoadGrade(
     at(x, z, lean = true, reach: number = ROAD_GRADE.reach) {
       const list = grid.get(key(Math.floor(x / ROAD_GRADE.cell), Math.floor(z / ROAD_GRADE.cell)));
       if (!list) return null;
-      let grade = -Infinity;
+      let grade = -Infinity,
+        on = false;
       for (const n of list) {
         const s = segments[n]!;
         const t = (x - s.ax) * s.dx + (z - s.az) * s.dz;
         const across = Math.abs(-(x - s.ax) * s.dz + (z - s.az) * s.dx);
         // Past a segment's ends its neighbour (or the road's end, half a half-width on) carries.
-        if (t < -s.half || t > s.length + s.half || across > s.half + reach) continue;
-        grade = Math.max(grade, profile(s, Math.max(0, Math.min(s.length, t))));
+        // Beyond that (and beyond its reach to the side) it only blends a road meeting it.
+        const out = Math.max(0, across - s.half - reach, -s.half - t, t - s.length - s.half);
+        if (out > ROAD_GRADE.blend) continue;
+        if (out === 0) on = true;
+        const g = profile(s, Math.max(0, Math.min(s.length, t))) - out * ROAD_GRADE.ramp;
+        if (g > grade) grade = g;
       }
-      if (grade === -Infinity) return null;
+      if (!on) return null;
       if (!lean) return grade;
       // The side leans into the ground by at most `lean` (a cutting's wall stands at the edge).
       let ground = heightAt(x, z);

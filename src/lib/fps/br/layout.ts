@@ -7530,6 +7530,105 @@ function poiReach(poi: Poi) {
  * the box grown by `reach` (m; the largest half-footprint the test can care about). Linear scans
  * of the whole list cost seconds once the towns' yards had added ~20,000 fence sections.
  */
+/**
+ * The roads' ends that meet no other road: not within 7 m of another road's centreline (two
+ * carriageways that overlap meet), nor at a bridge's end (its approach carries on), nor at a
+ * runway; as [x, z, ux, uz], the unit heading the road had there.
+ */
+export function deadRoadEnds(meta: WorldMeta): Array<[number, number, number, number]> {
+  const segs: Array<[number, number, number, number, number]> = [];
+  meta.roads.forEach((r, ri) => {
+    for (let k = 0; k + 1 < r.points.length; k++)
+      segs.push([r.points[k]![0], r.points[k]![1], r.points[k + 1]![0], r.points[k + 1]![1], ri]);
+  });
+  const near = (x: number, z: number, own: number) =>
+    segs.some(([ax, az, bx, bz, ri]) => {
+      if (ri === own) return false;
+      if (Math.min(ax, bx) > x + 7 || Math.max(ax, bx) < x - 7) return false;
+      if (Math.min(az, bz) > z + 7 || Math.max(az, bz) < z - 7) return false;
+      const dx = bx - ax,
+        dz = bz - az;
+      const l2 = dx * dx + dz * dz;
+      const t = l2 ? Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / l2)) : 0;
+      return Math.hypot(x - ax - dx * t, z - az - dz * t) <= 7;
+    });
+  const out: Array<[number, number, number, number]> = [];
+  meta.roads.forEach((r, ri) => {
+    const n = r.points.length;
+    if (n < 2) return;
+    for (const [e, p] of [
+      [r.points[0]!, r.points[1]!],
+      [r.points[n - 1]!, r.points[n - 2]!],
+    ] as const) {
+      const [x, z] = e;
+      if (near(x, z, ri)) continue;
+      if (meta.bridges.some((b) => [b.a, b.b].some(([bx, bz]) => Math.hypot(bx - x, bz - z) < 20)))
+        continue;
+      if (onRunway(meta, x, z, 20)) continue;
+      const l = Math.hypot(x - p[0], z - p[1]) || 1;
+      out.push([x, z, (x - p[0]) / l, (z - p[1]) / l]);
+    }
+  });
+  return out;
+}
+
+/** Ground cover, plants, small street furniture and wrecks: not a place a road leads to. */
+const NOT_A_PLACE =
+  /^(rock|tree|pine|birch|oak|bush|log|stump|mossy|fern|grass|boulder|cliff|crag|palm|reed|flower|hay|fence|guardrail|pole|lamp|street-lamp|sign|power|pylon|reflector|cone|barrier|mailbox|fire-hydrant|parasol|bench|trash|litter|puddle|debris|tyre|tire|drum|barrel|pallet|crate|box|crashed|burned|car-|rusty-truck|wreck)/;
+
+/**
+ * Every road leads somewhere (owner, 2026-11-22: "a final audit of the roads, no random
+ * deadends"). The countryside sets a farm, a cabin or a camp at the map's listed dead ends
+ * (meta.roadEnds), but not within a POI's reach or where the ground will not take one, and some
+ * spurs run out unlisted: 18 roads ended with nothing within 80 m (the north mountain roads,
+ * the quarry's two terraces, spurs off Millhaven, Eastport, the base, East Works, the island).
+ * At each end outside the POIs' areas with no building or structure within 90 m: a fire lookout on its legs (a
+ * hillside takes one), else a camp, else a hunting stand, else (the quarry's terraces) an
+ * excavator or a dump truck, a little past the end, facing back down the road.
+ */
+/** Within a POI's area (its radius, its pad and 110 m round it): a road ending there leads in. */
+export const inPoiArea = (meta: WorldMeta, x: number, z: number) =>
+  meta.pois.some(
+    (p) => Math.hypot(p.x - x, p.z - z) < Math.max(p.radius, (p.padRadius ?? 0) + 110),
+  );
+
+/** A place within 90 m of (x, z): a building, a structure, a camp, a machine (not a wreck). */
+export const isPlace = (p: Placement, x: number, z: number) =>
+  Math.hypot(p.x - x, p.z - z) < 90 &&
+  FOOT[p.model] !== undefined &&
+  !NOT_A_PLACE.test(p.model) &&
+  FOOT[p.model]![0] * FOOT[p.model]![1] >= 10;
+
+function roadEndSites(out: Placement[], ctx: Context) {
+  const grid = placementGrid(out);
+  for (const [ex, ez, ux, uz] of deadRoadEnds(ctx.meta)) {
+    if (Math.abs(ex) > 4800 || Math.abs(ez) > 4800) continue;
+    // (Within a POI's area the road leads into the POI.)
+    if (inPoiArea(ctx.meta, ex, ez)) continue;
+    if (grid.some(ex - 90, ez - 90, ex + 90, ez + 90, (p) => isPlace(p, ex, ez))) continue;
+    const put = groundPlacer(ctx, out, "countryside", ex, ez, 150);
+    // Its front (+z) back towards the road's end.
+    const turn = (((Math.round(Math.atan2(-ux, -uz) / (Math.PI / 2)) % 4) + 4) %
+      4) as Placement["turn"];
+    let done = false;
+    for (const [model, flat] of [
+      ["fire-lookout", 1.6],
+      ["campsite", 2.5],
+      ["hunting-stand", 5],
+      ["excavator", 1.5],
+      ["dump-truck", 1.2],
+    ] as const)
+      for (const off of [10, 14, 20, 28, 36])
+        for (const side of [0, 8, -8, 16, -16]) {
+          if (done) break;
+          done = put(model, ex + ux * off - uz * side, ez + uz * off + ux * side, turn, {
+            margin: 1,
+            flat,
+          });
+        }
+  }
+}
+
 function placementGrid(list: Placement[], reach = 90, cell = 128) {
   const cells = new Map<number, Placement[]>();
   let indexed = 0;
@@ -8865,6 +8964,7 @@ export function* islandLayoutSteps(
     highwayStops,
     wildlands,
     nature,
+    roadEndSites,
     roadsThroughBuildings,
   ]) {
     phase(out, ctx);
@@ -10062,7 +10162,9 @@ function summerCamp(out: Placement[], ctx: Context) {
 /**
  * Roads through buildings (owner, 2026-11-11: "audit the roads again … find issues like this and
  * fix across the map"): a street that runs in at one wall and out at the other (Millhaven's
- * factory stood across a 7 m road, the airfield's hangars across its service roads). The
+ * factory stood across a 7 m road, the airfield's hangars across its service roads), or along
+ * inside a wall a metre or more into the carriageway (2026-11-22, "asfalt road that can be walk
+ * into"). The
  * building moves to the nearest free spot off the road (up to 60 m, turned a quarter if that
  * fits), or stays. A
  * driveway that ends inside a building (at a hangar door) is not a road through it.
@@ -10092,13 +10194,26 @@ function roadsThroughBuildings(out: Placement[], ctx: Context) {
       const r = meta.roads[i]!,
         [bx0, bz0, bx1, bz1] = boxes[i]!;
       if (bx1 < x0 || bx0 > x1 || bz1 < z0 || bz0 > z1) continue;
+      // The centreline, and the carriageway a metre inside either edge (2026-11-22: a corner
+      // standing 1–3 m into the asphalt, the road running on into the wall).
       let inside = 0;
-      for (let k = 1; k < r.points.length; k++) {
-        const [ax, az] = r.points[k - 1]!,
-          [bx, bz] = r.points[k]!;
-        if (Math.max(ax, bx) < x0 || Math.min(ax, bx) > x1) continue;
-        if (Math.max(az, bz) < z0 || Math.min(az, bz) > z1) continue;
-        inside += clippedLength(ax, az, bx, bz, x0, z0, x1, z1);
+      for (const off of [0, -2.5, 2.5]) {
+        let along = 0;
+        for (let k = 1; k < r.points.length; k++) {
+          const [px, pz] = r.points[k - 1]!,
+            [qx, qz] = r.points[k]!;
+          const l = Math.hypot(qx - px, qz - pz) || 1;
+          const ox = (-(qz - pz) / l) * off,
+            oz = ((qx - px) / l) * off;
+          const ax = px + ox,
+            az = pz + oz,
+            bx = qx + ox,
+            bz = qz + oz;
+          if (Math.max(ax, bx) < x0 || Math.min(ax, bx) > x1) continue;
+          if (Math.max(az, bz) < z0 || Math.min(az, bz) > z1) continue;
+          along += clippedLength(ax, az, bx, bz, x0, z0, x1, z1);
+        }
+        inside = Math.max(inside, along);
       }
       if (inside < 4) continue;
       const ends = [r.points[0]!, r.points[r.points.length - 1]!].some(

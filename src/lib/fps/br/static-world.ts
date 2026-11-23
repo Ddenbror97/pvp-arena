@@ -92,6 +92,13 @@ export class StaticWorld {
    * (owner, 2026-11-15: "the 2 bridges … makes the car or bike lag/jitter while driving on").
    */
   decks: DeckSurface[] = [];
+  /**
+   * The roads' drawn surface at x/z (road-grade.ts, with its lift), or null off the carriageway:
+   * a road is level across and floats over a side slope's downhill half, and a player stood on
+   * the ground there, ankle-deep in the asphalt (owner, 2026-11-22: "asfalt road that can be
+   * walk into/thro"). Set by island.ts.
+   */
+  roadTop: ((x: number, z: number) => number | null) | null = null;
   readonly vegetation: VegetationWorld | null;
   /** World boxes, 6 floats each: x0, y0, z0, x1, y1, z1. */
   readonly boxes: Float32Array;
@@ -294,6 +301,10 @@ export class StaticWorld {
         continue;
       const t = deckTopAt(d, x, z, radius);
       if (t > top && t <= maxY + 1e-6) top = t;
+    }
+    if (this.roadTop) {
+      const t = this.roadTop(x, z);
+      if (t !== null && t > top && t <= maxY + 1e-6) top = t;
     }
     return top;
   }

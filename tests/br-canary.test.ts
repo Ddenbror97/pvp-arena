@@ -71,8 +71,11 @@ describe("wallhack canaries", () => {
     expect(canaryEvidence({ decisive: 10, won: 8 })).toBeLessThan(Math.log(20));
   });
 
-  it("in a real match: never in sight, honest views give a coin's odds, a wallhack's view does not", () => {
-    const seed = 21;
+  /**
+   * One match: its safety and volume checks, and the canary tallies of the honest and the
+   * wallhack seats.
+   */
+  const playMatch = (seed: number) => {
     const loot = rollLoot(seed, island.layout, collision, island.solid, meta);
     const state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
       vehicles: spawnVehicles(meta, island.solid, seed, island.layout),
@@ -81,13 +84,10 @@ describe("wallhack canaries", () => {
     state.phase = "starting";
     state.phaseAt = 1000;
     const canaries = new BrCanaries(seeded(99), (x, z, g) => waterSurface(meta, g, x, z) !== null);
-    // Seats 0–59 are watched as people. 0–11 play with a wallhack: when a canary is on their
+    // Seats 0–39 are watched as people. 0–7 play with a wallhack: when a canary is on their
     // screen they look at it, in some trials (they do not always notice, or care).
-    const watched = (seat: number) => seat < 60;
-    // (Sixty watched and twelve cheats since 2026-11-22, forty and eight before: a larger
-    // sample, the same bars. With the new locations' loot the bots' match gave eight cheats only
-    // six decisive trials.)
-    const cheat = (seat: number) => seat < 12;
+    const watched = (seat: number) => seat < 40;
+    const cheat = (seat: number) => seat < 8;
     const notices = new Map<number, number>();
     const rand = seeded(5);
     let unsafe = 0,
@@ -97,7 +97,7 @@ describe("wallhack canaries", () => {
     for (let now = 1000; now < 9.5 * 60_000; now += TICK_MS) {
       stepBrMatch(state, island.solid, meta, new Map(), now, TICK_MS);
       // The wallhack: the view turned onto the canary it was sent (for 0.4–1.5 s of a trial).
-      for (let seat = 0; seat < 12; seat++) {
+      for (let seat = 0; seat < 8; seat++) {
         const t = canaries.trialOf(seat);
         if (!t) continue;
         let from = notices.get(seat);
@@ -114,10 +114,10 @@ describe("wallhack canaries", () => {
         s.yaw = Math.atan2(-dx, -dz) + (rand() - 0.5) * 0.04;
         s.pitch = Math.atan2(dy, Math.hypot(dx, dz));
       }
-      for (let seat = 0; seat < 12; seat++) if (!canaries.trialOf(seat)) notices.delete(seat);
-      // Seats 12–35 are honest players who look about a lot: the view sweeping side to side and
+      for (let seat = 0; seat < 8; seat++) if (!canaries.trialOf(seat)) notices.delete(seat);
+      // Seats 8–19 are honest players who look about a lot: the view sweeping side to side and
       // up and down, at their own pace, with no idea where any canary is.
-      for (let seat = 12; seat < 36; seat++) {
+      for (let seat = 8; seat < 20; seat++) {
         const s = state.seats[seat]!;
         if (s.dead) continue;
         s.yaw += Math.sin(now / (700 + seat * 37) + seat) * 0.09;
@@ -126,7 +126,7 @@ describe("wallhack canaries", () => {
       canaries.step(state, world, now, watched);
       // Safety, against the truth: no point of a running canary's crouched body or of its
       // shadow is in a clear line from its viewer's eye.
-      for (let seat = 0; seat < 60; seat++) {
+      for (let seat = 0; seat < 40; seat++) {
         const t = canaries.trialOf(seat);
         if (!t) continue;
         trialTicks++;
@@ -158,7 +158,7 @@ describe("wallhack canaries", () => {
       // The canary rides in the viewer's own view only.
       if (state.tick % 2 === 0 && state.phase === "active") {
         const frame = brViewFrame(state);
-        for (let seat = 0; seat < 60; seat++) {
+        for (let seat = 0; seat < 40; seat++) {
           const view = brViewFor(state, world, sight, seat, now, undefined, frame, true);
           const before = view.players.length;
           canaries.inject(state, seat, view.players, (s) => brFrameRow(state, frame, s));
@@ -181,7 +181,7 @@ describe("wallhack canaries", () => {
     expect(unsafe).toBe(0);
     const honest = { decisive: 0, won: 0 },
       cheats = { decisive: 0, won: 0 };
-    for (let seat = 0; seat < 60; seat++) {
+    for (let seat = 0; seat < 40; seat++) {
       const t = canaries.tally(state.seats[seat]!.id);
       if (!t) continue;
       const into = cheat(seat) ? cheats : honest;
@@ -191,13 +191,29 @@ describe("wallhack canaries", () => {
       if (!cheat(seat)) expect(canaryEvidence(t)).toBeLessThan(Math.log(20));
     }
     let trials = 0;
-    for (let seat = 0; seat < 60; seat++)
+    for (let seat = 0; seat < 40; seat++)
       trials += canaries.tally(state.seats[seat]!.id)?.trials ?? 0;
     expect(trials).toBeGreaterThan(80);
+    return { honest, cheats };
+  };
+
+  it("in a real match: never in sight, honest views give a coin's odds, a wallhack's view does not", () => {
+    // Two matches, their tallies pooled, each bar twice the one-match bar it was (2026-11-22:
+    // one match's count moved with every change to the bots' island, 10 decisive wallhack
+    // trials against a bar of more than 10).
+    const honest = { decisive: 0, won: 0 },
+      cheats = { decisive: 0, won: 0 };
+    for (const seed of [21, 22]) {
+      const m = playMatch(seed);
+      honest.decisive += m.honest.decisive;
+      honest.won += m.honest.won;
+      cheats.decisive += m.cheats.decisive;
+      cheats.won += m.cheats.won;
+    }
     // Honest views (the bots' own looking about, fights included) win about half.
     // (Few: honest views rarely rest on a hidden spot. Whatever the count, a coin's: the
     // two-sided binomial chance of a result this far from half is not small.)
-    expect(honest.decisive).toBeGreaterThan(5);
+    expect(honest.decisive).toBeGreaterThan(10);
     const tail = (n: number, k: number) => {
       let p = 0;
       for (let i = 0; i <= k; i++) {
@@ -210,7 +226,7 @@ describe("wallhack canaries", () => {
     const k = Math.min(honest.won, honest.decisive - honest.won);
     expect(Math.min(1, 2 * tail(honest.decisive, k))).toBeGreaterThan(0.001);
     // The wallhack wins most of its decisive trials.
-    expect(cheats.decisive).toBeGreaterThan(10);
+    expect(cheats.decisive).toBeGreaterThan(20);
     expect(cheats.won / cheats.decisive).toBeGreaterThan(0.7);
-  }, 300_000);
+  }, 600_000);
 });
