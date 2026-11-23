@@ -198,12 +198,13 @@ describe("wallhack canaries", () => {
   };
 
   it("in a real match: never in sight, honest views give a coin's odds, a wallhack's view does not", () => {
-    // Two matches, their tallies pooled, each bar twice the one-match bar it was (2026-11-22:
+    // Three matches, their tallies pooled, each bar twice the one-match bar it was (2026-11-22:
     // one match's count moved with every change to the bots' island, 10 decisive wallhack
-    // trials against a bar of more than 10).
+    // trials against a bar of more than 10; 2026-11-23: two matches' honest count, with the
+    // buildings' windows, came to 9 against more than 10).
     const honest = { decisive: 0, won: 0 },
       cheats = { decisive: 0, won: 0 };
-    for (const seed of [21, 22]) {
+    for (const seed of [21, 22, 23]) {
       const m = playMatch(seed);
       honest.decisive += m.honest.decisive;
       honest.won += m.honest.won;
@@ -228,5 +229,5 @@ describe("wallhack canaries", () => {
     // The wallhack wins most of its decisive trials.
     expect(cheats.decisive).toBeGreaterThan(20);
     expect(cheats.won / cheats.decisive).toBeGreaterThan(0.7);
-  }, 600_000);
+  }, 900_000);
 });
