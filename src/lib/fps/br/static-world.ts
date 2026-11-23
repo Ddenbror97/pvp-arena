@@ -124,19 +124,22 @@ export class StaticWorld {
   readonly solidCount: number;
   private readonly shotStart: Uint32Array;
   private readonly shotItems: Uint32Array;
-  private stamp = 0;
   /**
    * The query that last visited each box (a stamp; 16 bits: a box per entry is 1.7 million
    * entries, and the match room's memory is tight; `nextStamp` clears them when it wraps).
+   * One for the world and every per-match view of it (withDoors, withVehicles, … inherit it):
+   * the views each kept a 6.8 MB copy, two per match (2026-11-23). Queries never interleave
+   * (each runs to its end), so one counter and one array serve them all.
    */
-  private readonly seen: Uint16Array;
+  private readonly scratch: { seen: Uint16Array; stamp: number };
   /** A stamp for a new query (the stamps cleared and restarted when they run out). */
   private nextStamp() {
-    if (this.stamp === 0xffff) {
-      this.seen.fill(0);
-      this.stamp = 0;
+    const s = this.scratch;
+    if (s.stamp === 0xffff) {
+      s.seen.fill(0);
+      s.stamp = 0;
     }
-    return ++this.stamp;
+    return ++s.stamp;
   }
 
   constructor(
@@ -186,7 +189,7 @@ export class StaticWorld {
     for (const p of placements) placeFlat(p, bodyModels[p.model]);
     for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes[at++] = b[k]!;
     for (const p of placements) placeFlat(p, shotModels[p.model]);
-    this.seen = new Uint16Array(count);
+    this.scratch = { seen: new Uint16Array(count), stamp: 0 };
     // Two passes over the boxes' cells: sizes, then contents.
     const sizes: number[] = [];
     const shotSizes: number[] = [];
@@ -256,15 +259,16 @@ export class StaticWorld {
           visit(this.cellItems[k]!);
       return;
     }
-    const stamp = this.nextStamp();
+    const stamp = this.nextStamp(),
+      seen = this.scratch.seen;
     for (let r = r0; r <= r1; r++)
       for (let c = c0; c <= c1; c++) {
         const s = this.slotOf(r * COLS + c);
         if (s === undefined) continue;
         for (let k = this.cellStart[s]!, e = this.cellStart[s + 1]!; k < e; k++) {
           const i = this.cellItems[k]!;
-          if (this.seen[i] === stamp) continue;
-          this.seen[i] = stamp;
+          if (seen[i] === stamp) continue;
+          seen[i] = stamp;
           visit(i);
         }
       }
@@ -387,7 +391,8 @@ export class StaticWorld {
     let nearest = limit;
     let boxHit = false,
       boxIndex = -1;
-    const stamp = this.nextStamp();
+    const stamp = this.nextStamp(),
+      seen = this.scratch.seen;
     for (let s = 0; s < steps; s++) {
       const t0 = s * CELL,
         t1 = Math.min(limit, (s + 1) * CELL);
@@ -410,8 +415,8 @@ export class StaticWorld {
             e = solidOnly ? e0 : e0 + this.shotStart[cs + 1]! - k1;
           for (let k = this.cellStart[cs]!; k < e; k++) {
             const i = k < e0 ? this.cellItems[k]! : this.shotItems[k1 + k - e0]!;
-            if (this.seen[i] === stamp) continue;
-            this.seen[i] = stamp;
+            if (seen[i] === stamp) continue;
+            seen[i] = stamp;
             const o = i * 6;
             // A shot-only box the ray starts in doesn't stop it: a body (or a grenade) that
             // stands in one, which it can, still sees, shoots and blasts out of it.
