@@ -21,7 +21,13 @@ import {
 } from "./quality-tier";
 import { BrChaseLook, BrFollowHeight, BrFrameView, BrVehicleView } from "./frame-view";
 import { capturePointer } from "../pointer-capture";
-import { createSceneTarget, reversedDepthOptIn, wantReversedDepth } from "./scene-target";
+import {
+  createSceneTarget,
+  reversedDepthOptIn,
+  STEADY,
+  steadyWanted,
+  wantReversedDepth,
+} from "./scene-target";
 import { createSharpen, SHARPEN, sharpenWanted } from "./sharpen";
 import { createBrAudio, SPAS12_CUE_LEAD_MS } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
@@ -671,6 +677,19 @@ export function createBrArena(
       : 0;
   const sharpenScene = () =>
     sharpen?.apply(brResolutionScale(budget.scale) < 1 ? SHARPEN.scaledStrength : SHARPEN.strength);
+  // The steadying pass (scene-target.ts STEADY): in the air, where a town, a forest and the
+  // ground are a pixel a piece and sparkle as you move. Not on the low tier (a fullscreen pass,
+  // as the sharpening). Eased in and out over a few frames, so the picture does not change at
+  // once as you jump or land.
+  const steadyOn = !!sceneTarget && tier.tier !== "low" && steadyWanted();
+  let steadyNow = 0;
+  const steadyPresent = (aloft: boolean, dtMs: number) => {
+    if (!steadyOn) return null;
+    const to = aloft ? STEADY.strength : 0;
+    steadyNow += (to - steadyNow) * Math.min(1, dtMs / 250);
+    if (Math.abs(to - steadyNow) < 0.01) steadyNow = to;
+    return steadyNow > 0 ? { camera, strength: steadyNow } : null;
+  };
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
   const budget = new RenderBudget();
@@ -4550,14 +4569,21 @@ export function createBrArena(
     drawn.calls = sceneCalls;
     drawn.triangles = sceneTriangles;
     sharpenScene();
-    viewmodel?.render(
-      camera,
-      // Spectating in first person: the watched player's gun, on foot and not scoped.
+    // Spectating in first person: the watched player's gun, on foot and not scoped.
+    const gunHidden =
       povGunNow || (povSeat >= 0 && povKnife)
         ? scopeUp || inventoryOpen
-        : !onFoot() || seatedMe() || scopeUp || inventoryOpen || !!kit?.dead || rappelBlend > 0.05,
-    );
-    sceneTarget?.present(sharpenPresent());
+        : !onFoot() || seatedMe() || scopeUp || inventoryOpen || !!kit?.dead || rappelBlend > 0.05;
+    viewmodel?.render(camera, gunHidden);
+    // Aloft: in the drop plane, falling, under the canopy, or flying the airfield's aircraft.
+    // (And with no gun drawn: its pass clears the depth the steadying reads.)
+    const inTheAir =
+      gunHidden &&
+      (body.phase === "plane" ||
+        body.phase === "freefall" ||
+        body.phase === "parachute" ||
+        flight.seat !== null);
+    sceneTarget?.present(sharpenPresent(), steadyPresent(inTheAir, dtMs));
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
     // few seconds after opening, while late models such as worn gear finish loading).
     if (inventoryOpen && figure && kit) {

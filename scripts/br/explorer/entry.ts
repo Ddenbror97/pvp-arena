@@ -23,7 +23,7 @@ import { DevOverlay, GpuTimer } from "../../../src/lib/fps/br/dev-overlay";
 import { watchContextLoss } from "../../../src/lib/fps/br/context-loss";
 import { createAtmosphere } from "../../../src/lib/fps/br/atmosphere";
 import { setTextureQuality } from "../../../src/lib/fps/br/texture-quality";
-import { createSceneTarget, wantReversedDepth } from "../../../src/lib/fps/br/scene-target";
+import { createSceneTarget, STEADY, wantReversedDepth } from "../../../src/lib/fps/br/scene-target";
 import { detectBrTier, tierPixelRatio, type BrTier } from "../../../src/lib/fps/br/quality-tier";
 
 declare global {
@@ -194,6 +194,8 @@ function draw() {
   sharpen?.apply();
   sceneTarget?.present(
     tier !== "low" && new URLSearchParams(location.search).get("sharpen") !== "off" ? 0.4 : 0,
+    // ?steady=1: the air's steadying pass (scene-target.ts STEADY), as the game runs it aloft.
+    steadyOn ? { camera, strength: STEADY.strength } : null,
   );
   gpu.end();
   return {
@@ -229,6 +231,25 @@ addEventListener("mousemove", (e) => {
   pitch = Math.max(-1.5, Math.min(1.5, pitch - e.movementY * 0.002));
 });
 let interactive = new URLSearchParams(location.search).get("fly") === "1";
+const steadyOn = new URLSearchParams(location.search).get("steady") === "1";
+// ?buddy=1: a chequered box that rides with the camera, as the aircraft and your canopy do in
+// the game: what the steadying pass must leave alone (it has no motion vectors).
+if (new URLSearchParams(location.search).get("buddy") === "1") {
+  const px = new Uint8Array(8 * 8 * 4);
+  for (let i = 0; i < 64; i++)
+    px.set(((i >> 3) + i) & 1 ? [235, 235, 225, 255] : [40, 60, 90, 255], i * 4);
+  const chequer = new THREE.DataTexture(px, 8, 8);
+  chequer.colorSpace = THREE.SRGBColorSpace;
+  chequer.needsUpdate = true;
+  const buddy = new THREE.Mesh(
+    new THREE.BoxGeometry(7, 2.2, 5),
+    new THREE.MeshStandardMaterial({ map: chequer, roughness: 0.8 }),
+  );
+  buddy.position.set(0, -3.5, -14);
+  buddy.rotation.y = 0.5;
+  camera.add(buddy);
+  scene.add(camera);
+}
 let body: BrBody | null = null;
 let accumulator = 0;
 function loop(now: number) {
