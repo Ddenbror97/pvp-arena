@@ -33,8 +33,14 @@ type Layout = {
 const ROOM = 0.05;
 /** How much of a pane's own tint shows over it from far off. */
 const SHEEN = 0.5;
-/** The game's panes (pane-renderer.ts: 0x2c3c46 at 0.42) the same way. */
-const PANE = new THREE.Color(0x2c3c46).multiplyScalar(0.42).addScalar(0.58 * ROOM + 0.03);
+/**
+ * The game's panes (pane-renderer.ts) from far off. Not their own colour (0x2c3c46 at 0.42 over
+ * a dark room is nearly black): matched to how a tower's windows read on its middle LOD from
+ * the air, where the pane shows the pale slabs behind it, so a tower keeps its tone where its
+ * far LOD takes over (a side of one averaged 143 of 255 on the middle LOD and 125 on a far LOD
+ * with black panes; with this, 138).
+ */
+const PANE = new THREE.Color(0.25, 0.265, 0.28);
 const SS = 2;
 
 async function bake(layout: Layout) {
