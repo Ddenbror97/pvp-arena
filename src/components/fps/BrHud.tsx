@@ -681,8 +681,11 @@ const LOBBY_TIPS = [
  * countdown when the first real player joins; players warm up on the airfield, and bots take
  * every seat left, so a match can be one player and 99 bots.
  */
-export function BrLobbyCard({ hud }: { hud: BrHud }) {
+export function BrLobbyCard({ hud, connection }: { hud: BrHud; connection?: string }) {
   if (hud.phase !== "waiting" && hud.phase !== "starting") return null;
+  // Not in the match yet (the room's server is starting, or the socket is being retried): say
+  // so, not "Waiting for players" (owner, 2026-11-23: players stuck on it after a deploy).
+  const joining = hud.phase === "waiting" && connection !== undefined && connection !== "Connected";
   const humans = Math.max(1, hud.humans ?? 1);
   const left = Math.ceil(hud.countdown ?? 0);
   const total = BR_RULES.countdownMs / 1000;
@@ -692,7 +695,9 @@ export function BrLobbyCard({ hud }: { hud: BrHud }) {
   // Owner, 2026-11-09: "not modern, less windows, clean": no card, just type on the scene.
   return (
     <section className="br-lobby" aria-live="polite">
-      <small>{waiting ? "Waiting for players" : "Take-off in"}</small>
+      <small>
+        {joining ? "Starting the match server" : waiting ? "Waiting for players" : "Take-off in"}
+      </small>
       <b className={waiting ? "waiting" : ""}>{waiting ? "· · ·" : clock}</b>
       <i aria-hidden="true">
         <i style={{ transform: `scaleX(${waiting ? 0 : Math.min(1, 1 - left / total)})` }} />
@@ -700,7 +705,11 @@ export function BrLobbyCard({ hud }: { hud: BrHud }) {
       <span>
         Solo · <b>{humans}</b> {humans === 1 ? "player" : "players"} · <b>{100 - humans}</b> bots
       </span>
-      <p key={tip}>{tip}</p>
+      {joining ? (
+        <p>Right after an update the server needs up to a minute to start. You join on its own.</p>
+      ) : (
+        <p key={tip}>{tip}</p>
+      )}
     </section>
   );
 }
