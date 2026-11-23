@@ -10,7 +10,8 @@ import { GROUND_LAYERS, LAYER_TARGET, PALETTE_PULL } from "./ground-style";
 export { GROUND_LAYERS } from "./ground-style";
 import { Heightfield } from "./heightfield";
 import { buildMinMax, lodRanges, selectPatches, type LodConfig } from "./terrain-lod";
-import { LAND_COVER, WORLD_HALF, WORLD_SIZE } from "./world";
+import { sinkAtlas, sinkLevels, wetLevels } from "./shore-sink";
+import { LAND_COVER, WORLD_HALF, WORLD_SIZE, type WorldMeta } from "./world";
 import { FAR_FOREST, SUN_XZ } from "./far-forest";
 
 /**
@@ -306,6 +307,8 @@ export function bakeRelief(hf: Heightfield, stride: number) {
 export function createTerrain(
   hf: Heightfield,
   landcover: { width: number; height: number; data: Uint8Array },
+  /** The world's lakes (their levels and outlines), for the far shorelines (shore-sink.ts). */
+  meta: WorldMeta | null = null,
 ): TerrainControls {
   const n = hf.width - 1; // 2560 intervals
   const root = new THREE.Group();
@@ -326,6 +329,22 @@ export function createTerrain(
   heightTex.minFilter = heightTex.magFilter = THREE.NearestFilter;
   heightTex.generateMipmaps = false;
   heightTex.needsUpdate = true;
+  // The coarser levels' own heights, held under the water along every bank (shore-sink.ts).
+  const sink = sinkAtlas(
+    sinkLevels(hf, wetLevels(hf, landcover, meta), TERRAIN.levels),
+    HEIGHT_OFFSET,
+  );
+  const sinkTex = new THREE.DataTexture(
+    sink.data,
+    sink.width,
+    sink.height,
+    THREE.RedIntegerFormat,
+    THREE.UnsignedShortType,
+  );
+  sinkTex.internalFormat = "R16UI";
+  sinkTex.minFilter = sinkTex.magFilter = THREE.NearestFilter;
+  sinkTex.generateMipmaps = false;
+  sinkTex.needsUpdate = true;
   // Relief: normals and cavities for every pixel (half resolution where textures are halved).
   const reliefStride = worldTextureScale() < 1 ? 2 : 1;
   const baked = bakeRelief(hf, reliefStride);
@@ -353,6 +372,7 @@ export function createTerrain(
   placeholderCover.needsUpdate = true;
   const uniforms = {
     uHeight: { value: heightTex },
+    uSink: { value: sinkTex },
     uCoverA: { value: coverA },
     uCoverB: { value: coverB },
     uDetail: { value: detail },
@@ -397,12 +417,15 @@ export function createTerrain(
         "#include <common>",
         `#include <common>
         precision highp usampler2D;
-        uniform usampler2D uHeight;
+        uniform usampler2D uHeight, uSink;
         uniform float uSpacing, uGrid, uOffset;
         uniform vec2 uMorph[${TERRAIN.levels}];
         uniform vec3 uCamera;
         attribute vec4 aPatch; // origin x, origin z (grid intervals), step (intervals), level
         varying vec3 vWorld;
+        varying float vGroundY;
+        // Where each level's own heights start in uSink (shore-sink.ts).
+        const int SINK_X[${TERRAIN.levels + 1}] = int[${TERRAIN.levels + 1}](${sink.x.join(", ")});
         float texH(ivec2 g) {
           g = clamp(g, ivec2(0), ivec2(int(uGrid)));
           return float(texelFetch(uHeight, g, 0).r) * 0.01 - uOffset;
@@ -412,6 +435,14 @@ export function createTerrain(
           ivec2 i = ivec2(floor(g));
           float a = texH(i), b = texH(i + ivec2(1, 0)), c = texH(i + ivec2(0, 1)), d = texH(i + ivec2(1, 1));
           return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+        }
+        // The height of level l's vertex at grid position g (on that level's grid): the true
+        // one at full detail, the coarser levels' own (kept under the water along the banks).
+        float levelH(int l, vec2 g) {
+          ivec2 i = ivec2(g + 0.5);
+          if (l == 0) return texH(i);
+          i = clamp(i >> l, ivec2(0), ivec2(int(uGrid) >> l));
+          return float(texelFetch(uSink, ivec2(SINK_X[l] + i.x, i.y), 0).r) * 0.01 - uOffset;
         }`,
       )
       .replace(
@@ -427,7 +458,12 @@ export function createTerrain(
         float morph = clamp((dist - range.x) / max(1.0, range.y - range.x), 0.0, 1.0);
         vec2 odd = mod(cell, 2.0);
         vec2 gm = aPatch.xy + (cell - odd * morph) * aPatch.z;
-        float h = heightAtGrid(gm);
+        // This level's height at the vertex, blended to the next level's at the vertex it
+        // morphs onto (the same vertices and heights on both sides of a border between levels).
+        float h = mix(levelH(lvl, g), levelH(lvl + 1, aPatch.xy + (cell - odd) * aPatch.z), morph);
+        // (The ground's true height there, for what the colour reads from it: the wet sand
+        // at the waterline, the snow line.)
+        vGroundY = heightAtGrid(gm);
         // The surface normal is per pixel (the relief texture), not per vertex.
         vec3 objectNormal = vec3(0.0, 1.0, 0.0);
         #ifdef USE_TANGENT
@@ -459,6 +495,7 @@ export function createTerrain(
         uniform vec4 uRunway[2];
         uniform float uRunwayW[2];
         varying vec3 vWorld;
+        varying float vGroundY;
         const int CLASS_A[8] = int[8](${CLASSES.map((c) => c.a).join(", ")});
         const int CLASS_B[8] = int[8](${CLASSES.map((c) => c.b).join(", ")});
         // Every ground and noise sample below sits inside a branch on distance, zone or slope,
@@ -596,10 +633,10 @@ export function createTerrain(
           float steep = smoothstep(0.3, 0.5, 1.0 - brNw.y) * (1.0 - smoothstep(0.15, 0.5, bank));
           // Inland banks (shore and sand classes above sea level): damp earth and grass instead
           // of pale beach sand; the sea's beaches stay sand.
-          float inlandShore = bank * smoothstep(3.0, 6.0, vWorld.y);
+          float inlandShore = bank * smoothstep(3.0, 6.0, vGroundY);
           col = mix(col, mix(uLayerFar[${L("mud")}], uLayerFar[${L("grass")}], 0.35 + 0.4 * n2) * 0.85, inlandShore * 0.75);
           // Sea beaches: the sand darkens where the waves wet it, just above the waterline.
-          col *= mix(1.0, 0.68, (a.r + b.a) * (1.0 - smoothstep(0.15, 1.1, vWorld.y)) * step(-2.0, vWorld.y));
+          col *= mix(1.0, 0.68, (a.r + b.a) * (1.0 - smoothstep(0.15, 1.1, vGroundY)) * step(-2.0, vGroundY));
           col = mix(col, rock * (0.85 + 0.3 * n1), steep);
           // Rock strata: darker and lighter bands with height (Iron Peaks, quarry walls).
           // Irregular weathering rather than high-frequency horizontal zebra bands at distance.
@@ -607,7 +644,7 @@ export function createTerrain(
           col = mix(col, col * strata, b.r + steep);
           // High peaks: snow on the flats of the tops only (Iron Peaks' summits rise to ~480 m
           // since the 2026-11-04 audit; the rock faces below stay grey).
-          float snow = smoothstep(395.0, 425.0, vWorld.y + n2 * 25.0) * (1.0 - steep);
+          float snow = smoothstep(395.0, 425.0, vGroundY + n2 * 25.0) * (1.0 - steep);
           col = mix(col, uLayerFar[${L("snow")}], snow);
           // Runways: concrete tiles along the airfield's strips.
           float runway = 0.0;
@@ -856,7 +893,7 @@ export function createTerrain(
         nonPerturbedNormal = normal;`,
       );
   };
-  material.customProgramCacheKey = () => "br-terrain-v7";
+  material.customProgramCacheKey = () => "br-terrain-v8";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";
@@ -1024,6 +1061,7 @@ export function createTerrain(
       geometry.dispose();
       material.dispose();
       heightTex.dispose();
+      sinkTex.dispose();
       coverA.dispose();
       coverB.dispose();
       detail.dispose();
