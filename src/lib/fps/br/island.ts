@@ -84,7 +84,9 @@ export function* buildIslandSteps(
     planted,
   );
   yield;
-  // What is drawn solid but had no box (collision-fill.ts): shots and sight stop at it.
+  // What is drawn solid but had no box (collision-fill.ts): shots and sight stop at it, and
+  // bodies at the trunks and logs.
+  const fill = collisionFill(collision);
   const solid = new StaticWorld(
     hf,
     layout,
@@ -95,7 +97,8 @@ export function* buildIslandSteps(
       ...wallBoxes(islandWalls(meta)),
       ...zipStationBoxes((x, z) => hf.heightAt(x, z)),
     ],
-    collisionFill(collision),
+    fill.shot,
+    fill.body,
   );
   solid.decks = bridgeDecks(meta, hf);
   // Players, vehicles and drops stand on the roads' surface, not under it (on the carriageway;

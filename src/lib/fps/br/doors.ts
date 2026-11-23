@@ -580,8 +580,8 @@ export function withDoors(world: StaticWorld, set: DoorSet, open: Uint8Array): S
     });
     return hit;
   };
-  w.raycast = function (ox, oy, oz, dx, dy, dz, maxDistance): RayHit | null {
-    const hit = base.raycast.call(this, ox, oy, oz, dx, dy, dz, maxDistance);
+  w.raycast = function (ox, oy, oz, dx, dy, dz, maxDistance, solidOnly): RayHit | null {
+    const hit = base.raycast.call(this, ox, oy, oz, dx, dy, dz, maxDistance, solidOnly);
     const d = rayDoor(set, open, ox, oy, oz, dx, dy, dz, hit ? hit.distance : maxDistance);
     return d ? { distance: d.distance, kind: "box" } : hit;
   };

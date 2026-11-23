@@ -136,6 +136,8 @@ export class StaticWorld {
     extraBoxes: number[][] = [],
     /** Model-space boxes per model, flat (6 per box), that stop shots and sight only (collision-fill.ts). */
     shotModels: Record<string, ArrayLike<number>> = {},
+    /** Model-space boxes per model, flat, that stop bodies too (the fill's trunks and logs). */
+    bodyModels: Record<string, ArrayLike<number>> = {},
   ) {
     this.hf = hf;
     this.vegetation = vegetation;
@@ -144,7 +146,7 @@ export class StaticWorld {
     for (const p of placements) {
       const local = collision.models[p.model];
       if (!local) throw new Error(`No collision for model ${p.model}`);
-      count += local.length;
+      count += local.length + (bodyModels[p.model]?.length ?? 0) / 6;
     }
     const solidCount = (this.solidCount = count);
     for (const p of placements) count += (shotModels[p.model]?.length ?? 0) / 6;
@@ -161,16 +163,17 @@ export class StaticWorld {
         boxes[at++] = z1 + p.z;
       }
     };
-    for (const p of placements) place(p, collision.models[p.model]!);
-    for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes[at++] = b[k]!;
-    for (const p of placements) {
-      const shot = shotModels[p.model];
-      if (shot)
-        for (let o = 0; o < shot.length; o += 6)
+    const placeFlat = (p: Placement, flat: ArrayLike<number> | undefined) => {
+      if (flat)
+        for (let o = 0; o < flat.length; o += 6)
           place(p, [
-            [shot[o]!, shot[o + 1]!, shot[o + 2]!, shot[o + 3]!, shot[o + 4]!, shot[o + 5]!],
+            [flat[o]!, flat[o + 1]!, flat[o + 2]!, flat[o + 3]!, flat[o + 4]!, flat[o + 5]!],
           ]);
-    }
+    };
+    for (const p of placements) place(p, collision.models[p.model]!);
+    for (const p of placements) placeFlat(p, bodyModels[p.model]);
+    for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes[at++] = b[k]!;
+    for (const p of placements) placeFlat(p, shotModels[p.model]);
     this.seen = new Uint32Array(count);
     // Two passes over the boxes' cells: sizes, then contents.
     const sizes: number[] = [];
@@ -398,6 +401,18 @@ export class StaticWorld {
             if (this.seen[i] === stamp) continue;
             this.seen[i] = stamp;
             const o = i * 6;
+            // A shot-only box the ray starts in doesn't stop it: a body (or a grenade) that
+            // stands in one, which it can, still sees, shoots and blasts out of it.
+            if (
+              k >= e0 &&
+              ox > b[o]! &&
+              ox < b[o + 3]! &&
+              oy > b[o + 1]! &&
+              oy < b[o + 4]! &&
+              oz > b[o + 2]! &&
+              oz < b[o + 5]!
+            )
+              continue;
             const t = slab(
               ox,
               oy,

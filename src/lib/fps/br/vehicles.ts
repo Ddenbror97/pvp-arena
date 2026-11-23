@@ -1036,7 +1036,7 @@ export function withVehicles(
     }
     return top;
   };
-  w.raycast = function (ox, oy, oz, dx, dy, dz, maxDistance): VehicleRayHit | null {
+  w.raycast = function (ox, oy, oz, dx, dy, dz, maxDistance, solidOnly): VehicleRayHit | null {
     const base = proto.raycast.call(
       this,
       ox,
@@ -1046,6 +1046,7 @@ export function withVehicles(
       dy,
       dz,
       maxDistance,
+      solidOnly,
     ) as VehicleRayHit | null;
     const len = Math.hypot(dx, dy, dz);
     if (!(len > 0)) return base;

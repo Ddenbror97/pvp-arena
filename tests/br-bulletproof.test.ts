@@ -1,7 +1,12 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import FILL from "@/lib/fps/br/collision-fill.json";
-import { boxesFingerprint, collisionFill, decodeBoxes } from "@/lib/fps/br/collision-fill";
+import {
+  BODY_FILL,
+  boxesFingerprint,
+  collisionFill,
+  decodeBoxes,
+} from "@/lib/fps/br/collision-fill";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
@@ -37,8 +42,9 @@ describe("collision fill", () => {
 
   it("is for shots and sight only: a body walks where it walked before", () => {
     const c = load();
-    const shot = collisionFill(c);
-    expect(Object.keys(shot).length).toBe(Object.keys(fill).length);
+    const { shot, body } = collisionFill(c);
+    expect(Object.keys(shot).length + Object.keys(body).length).toBe(Object.keys(fill).length);
+    expect(Object.keys(body).sort()).toEqual([...BODY_FILL].filter((id) => id in fill).sort());
     expect(Object.values(c.models).flat().length).toBe(Object.values(load().models).flat().length);
   });
 
@@ -68,6 +74,8 @@ describe("collision fill", () => {
     expect(w.raycast(0, 1, 0, 1, 0, 0, 20, true)).toBeNull();
     expect(w.blocked(10, 0, 0, 1.8, 0.3)).toBe(false);
     expect(w.supportAt(10, 0, 0.3, 5)).toBe(0);
+    // Started inside it (a body or a grenade can be there): it sees and shoots out.
+    expect(w.raycast(10, 1, 0, 1, 0, 0, 20)).toBeNull();
   });
 
   it("has real boxes, none in a doorway", () => {
@@ -105,7 +113,7 @@ describe("in the world", async () => {
   const cover = await decodeLandCover(buffer(`public${WORLD_ASSETS.landcover}`));
   const island = buildIsland(hf, cover, meta, load());
 
-  it("stops a level shot at the palms' and orchard trees' trunks (they had no collision)", () => {
+  it("stops a level shot and a body at the palms' and orchard trees' trunks (they had no collision)", () => {
     for (const model of ["bay-palm", "bay-coconut-palm", "orchard-tree"]) {
       const trees = island.layout.filter((p) => p.model === model).slice(0, 20);
       expect(trees.length, model).toBeGreaterThan(5);
@@ -123,12 +131,11 @@ describe("in the world", async () => {
         const ax = island.solid.raycast(cx - 6, cy, cz, 1, 0, 0, 12);
         const az = island.solid.raycast(cx, cy, cz + 6, 0, 0, -1, 12);
         if (ax && ax.distance < 6 && az && az.distance < 6) stopped++;
-        // Bodies keep the boxes they had: a solid-only ray goes on past the trunk.
-        const body = island.solid.raycast(cx - 6, cy, cz, 1, 0, 0, 12, true);
-        if (body && body.distance < 6.3) bodyStopped++;
+        // Trunks stop bodies too (BODY_FILL): nobody stands inside one, out of reach.
+        if (island.solid.blocked(cx, p.y + 0.3, cz, 1.5, 0.35)) bodyStopped++;
       }
       expect(stopped / trees.length, model).toBeGreaterThan(0.9);
-      expect(bodyStopped / trees.length, model).toBeLessThan(0.5);
+      expect(bodyStopped / trees.length, model).toBeGreaterThan(0.9);
     }
   });
 });

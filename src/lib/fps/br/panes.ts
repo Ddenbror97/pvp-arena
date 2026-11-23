@@ -366,7 +366,8 @@ export function withPanes(
       if (Math.hypot(px - x, py - y, pz - z) > radius) return;
       // …and in its line: a clear ray to its middle, or to its nearest point drawn a third of
       // the way in (an edge sits in the wall's reveal). A wall or a shut door between shields
-      // the glass (`this`, the world it was called on; rays pass whole panes).
+      // the glass (`this`, the world it was called on; rays pass whole panes). Bodies' boxes
+      // only: the bullet fill (collision-fill.ts) fills a frame's voxels round the glass.
       const cx = (b[o]! + b[o + 3]!) / 2,
         cy = (b[o + 1]! + b[o + 4]!) / 2,
         cz = (b[o + 2]! + b[o + 5]!) / 2;
@@ -376,7 +377,7 @@ export function withPanes(
           lz = tz - z;
         const l = Math.hypot(lx, ly, lz);
         if (l < 0.05) return true;
-        const ray = this.raycast(x, y, z, lx / l, ly / l, lz / l, l);
+        const ray = this.raycast(x, y, z, lx / l, ly / l, lz / l, l, true);
         return !ray || ray.distance >= l - 0.1;
       };
       if (!clear(cx, cy, cz) && !clear(px + (cx - px) / 3, py + (cy - py) / 3, pz + (cz - pz) / 3))

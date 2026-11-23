@@ -36,18 +36,36 @@ export function decodeBoxes(text: string): Float32Array {
 }
 
 /**
+ * Models whose fill stops bodies too: trunks and logs out in the open, with no door or stair
+ * for it to block. A body walked through a palm or an orchard tree's trunk before.
+ */
+export const BODY_FILL = new Set([
+  "bay-palm",
+  "bay-palm-2",
+  "bay-coconut-palm",
+  "coconut-palm",
+  "tall-tree",
+  "orchard-tree",
+  "bald-cypress",
+  "rainforest-log",
+  "rainforest-log-b",
+]);
+
+/**
  * The fill's boxes per model (flat, decodeBoxes), for the models whose boxes still match it.
- * They stop shots and sight only (StaticWorld's `shotModels`): walking, doors, ladders,
+ * `shot` stops shots and sight only (StaticWorld's `shotModels`): walking, doors, ladders,
  * grenades and loot keep the boxes they had, so the fill can't block a doorway or a stair.
+ * `body` (BODY_FILL) stops bodies as well.
  */
 export function collisionFill(
   collision: CollisionData,
   fill: Fill = FILL as Fill,
-): Record<string, Float32Array> {
-  const out: Record<string, Float32Array> = {};
+): { shot: Record<string, Float32Array>; body: Record<string, Float32Array> } {
+  const shot: Record<string, Float32Array> = {},
+    body: Record<string, Float32Array> = {};
   for (const [id, variants] of Object.entries(fill)) {
     const v = variants[boxesFingerprint(collision.models[id] ?? [])];
-    if (v) out[id] = decodeBoxes(v);
+    if (v) (BODY_FILL.has(id) ? body : shot)[id] = decodeBoxes(v);
   }
-  return out;
+  return { shot, body };
 }

@@ -119,8 +119,8 @@ export function withAircraft(world: StaticWorld, aircraft: () => Aircraft | null
       if (insideAircraft(a, x, y + height * f, z, radius - 0.05)) return true;
     return false;
   };
-  w.raycast = function (ox, oy, oz, dx, dy, dz, maxDistance) {
-    const base = proto.raycast.call(this, ox, oy, oz, dx, dy, dz, maxDistance);
+  w.raycast = function (ox, oy, oz, dx, dy, dz, maxDistance, solidOnly) {
+    const base = proto.raycast.call(this, ox, oy, oz, dx, dy, dz, maxDistance, solidOnly);
     const a = aircraft();
     if (!a) return base;
     const len = Math.hypot(dx, dy, dz);
