@@ -10491,6 +10491,728 @@
         600,
         400
       ]
+    },
+    {
+      "id": "pc-sedan-silver",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Sedan Body",
+        "Wheel_A",
+        "Wheel_A001",
+        "Wheel_A002",
+        "Wheel_A003"
+      ],
+      "near": true,
+      "yaw": -89.9,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.6,
+        0.62,
+        0.64
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked sedan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-sedan-white",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Sedan Body",
+        "Wheel_A",
+        "Wheel_A001",
+        "Wheel_A002",
+        "Wheel_A003"
+      ],
+      "near": true,
+      "yaw": -89.9,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.86,
+        0.86,
+        0.84
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked sedan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-sedan-navy",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Sedan Body",
+        "Wheel_A",
+        "Wheel_A001",
+        "Wheel_A002",
+        "Wheel_A003"
+      ],
+      "near": true,
+      "yaw": -89.9,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.1,
+        0.16,
+        0.32
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked sedan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-sedan-maroon",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Sedan Body",
+        "Wheel_A",
+        "Wheel_A001",
+        "Wheel_A002",
+        "Wheel_A003"
+      ],
+      "near": true,
+      "yaw": -89.9,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.42,
+        0.07,
+        0.08
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked sedan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-wagon",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Wagon Body",
+        "Wheel_A",
+        "Wheel_A001",
+        "Wheel_A002",
+        "Wheel_A003"
+      ],
+      "near": true,
+      "yaw": 234.6,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked wagon (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-wagon-silver",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Wagon Body",
+        "Wheel_A",
+        "Wheel_A001",
+        "Wheel_A002",
+        "Wheel_A003"
+      ],
+      "near": true,
+      "yaw": 234.6,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.6,
+        0.62,
+        0.64
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked wagon (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-hatchback-red",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Hatchback Body",
+        "Wheel_B",
+        "Wheel_B001",
+        "Wheel_B002",
+        "Wheel_B003"
+      ],
+      "near": true,
+      "yaw": 54.9,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.62,
+        0.1,
+        0.09
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked hatchback (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-hatchback-white",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Hatchback Body",
+        "Wheel_B",
+        "Wheel_B001",
+        "Wheel_B002",
+        "Wheel_B003"
+      ],
+      "near": true,
+      "yaw": 54.9,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.86,
+        0.86,
+        0.84
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked hatchback (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-hatchback-grey",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Hatchback Body",
+        "Wheel_B",
+        "Wheel_B001",
+        "Wheel_B002",
+        "Wheel_B003"
+      ],
+      "near": true,
+      "yaw": 54.9,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.34,
+        0.35,
+        0.36
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked hatchback (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-compact-beige",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Compact Body",
+        "Wheel_C",
+        "Wheel_C001",
+        "Wheel_C002",
+        "Wheel_C003"
+      ],
+      "near": true,
+      "yaw": -53.1,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.7,
+        0.63,
+        0.48
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked compact (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-compact-red",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Compact Body",
+        "Wheel_C",
+        "Wheel_C001",
+        "Wheel_C002",
+        "Wheel_C003"
+      ],
+      "near": true,
+      "yaw": -53.1,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.62,
+        0.1,
+        0.09
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked compact (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-compact-silver",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Compact Body",
+        "Wheel_C",
+        "Wheel_C001",
+        "Wheel_C002",
+        "Wheel_C003"
+      ],
+      "near": true,
+      "yaw": -53.1,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.6,
+        0.62,
+        0.64
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked compact (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-coupe",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Coupe Body",
+        "Wheel_F001",
+        "Wheel_F002",
+        "Wheel_F003",
+        "Wheel_F"
+      ],
+      "near": true,
+      "yaw": -17.7,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked coupe (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-coupe-black",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Coupe Body",
+        "Wheel_F001",
+        "Wheel_F002",
+        "Wheel_F003",
+        "Wheel_F"
+      ],
+      "near": true,
+      "yaw": -17.7,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.07,
+        0.07,
+        0.08
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked coupe (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-minivan",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "minivan body",
+        "Wheel_D",
+        "Wheel_D001",
+        "Wheel_D002",
+        "Wheel_D003"
+      ],
+      "near": true,
+      "yaw": 18.5,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked minivan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-minivan-white",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "minivan body",
+        "Wheel_D",
+        "Wheel_D001",
+        "Wheel_D002",
+        "Wheel_D003"
+      ],
+      "near": true,
+      "yaw": 18.5,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.86,
+        0.86,
+        0.84
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked minivan (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-sport",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Sport body",
+        "Wheel_H",
+        "Wheel_H001",
+        "Wheel_H002",
+        "Wheel_H003"
+      ],
+      "near": true,
+      "yaw": 125.9,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked sport (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-pickup",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Pickup Body",
+        "Wheel_E",
+        "Wheel_E001",
+        "Wheel_E002",
+        "Wheel_E003"
+      ],
+      "near": true,
+      "yaw": 90,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked pickup (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-pickup-white",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Pickup Body",
+        "Wheel_E",
+        "Wheel_E001",
+        "Wheel_E002",
+        "Wheel_E003"
+      ],
+      "near": true,
+      "yaw": 90,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.86,
+        0.86,
+        0.84
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked pickup (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-pickup-grey",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Pickup Body",
+        "Wheel_E",
+        "Wheel_E001",
+        "Wheel_E002",
+        "Wheel_E003"
+      ],
+      "near": true,
+      "yaw": 90,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.34,
+        0.35,
+        0.36
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked pickup (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-suv",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "SUV Body",
+        "Wheel_E",
+        "Wheel_E001",
+        "Wheel_E002",
+        "Wheel_E003"
+      ],
+      "near": true,
+      "yaw": 161.9,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked suv (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-offroad",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Offroad Body",
+        "Wheel_G",
+        "Wheel_G001",
+        "Wheel_G001",
+        "Wheel_G002"
+      ],
+      "near": true,
+      "yaw": 198,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked offroad (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "pc-offroad-beige",
+      "key": "sf:20f9af9b8a404d5cb022ac6fe87f21f5",
+      "piece": [
+        "Offroad Body",
+        "Wheel_G",
+        "Wheel_G001",
+        "Wheel_G001",
+        "Wheel_G002"
+      ],
+      "near": true,
+      "yaw": 198,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "paint": [
+        0.7,
+        0.63,
+        0.48
+      ],
+      "paintMaterial": "^Body",
+      "ring": "vehicle",
+      "use": "parked offroad (vehicles-v1, 2026-11-23: replaces the over-reduced sedan and pickup)"
+    },
+    {
+      "id": "civ-taxi",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "taxi",
+      "yaw": -50,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked taxi (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "civ-police",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "police_sedan",
+      "yaw": 230,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked police (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "civ-ambulance",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "ambulance",
+      "yaw": 20,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked ambulance (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "civ-tow",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "towtruck",
+      "yaw": 200,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked tow (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "civ-postvan",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "postvan",
+      "yaw": -20,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked postvan (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "civ-service",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "rdservtruck",
+      "yaw": 270,
+      "class": "vehicle",
+      "lodTris": [
+        5000,
+        1800,
+        500
+      ],
+      "ring": "vehicle",
+      "use": "parked service (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "civ-garbage",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "garbage_truck",
+      "yaw": 55,
+      "class": "vehicle",
+      "lodTris": [
+        6000,
+        2000,
+        600
+      ],
+      "ring": "vehicle",
+      "use": "parked garbage (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "civ-citybus",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "citybus",
+      "yaw": 90,
+      "class": "vehicle",
+      "lodTris": [
+        6000,
+        2000,
+        600
+      ],
+      "ring": "vehicle",
+      "use": "parked citybus (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "civ-schoolbus",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "school_bus",
+      "yaw": 160,
+      "class": "vehicle",
+      "lodTris": [
+        6000,
+        2000,
+        600
+      ],
+      "ring": "vehicle",
+      "use": "parked schoolbus (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "civ-firetruck",
+      "key": "sf:8ff2a13f30914932a70c7950cfa58465",
+      "piece": "fire_truck",
+      "fit": {
+        "max": 7.3
+      },
+      "yaw": 125,
+      "class": "vehicle",
+      "lodTris": [
+        6000,
+        2000,
+        600
+      ],
+      "ring": "vehicle",
+      "use": "parked firetruck (vehicles-v1, 2026-11-23)"
     }
   ],
   "skipped": [

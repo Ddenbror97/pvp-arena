@@ -65,7 +65,7 @@ describe("the strait's roadside stops", () => {
       }
     expect(Math.max(...hs) - m.y).toBeLessThan(0.28);
     expect(at.filter((p) => p.model === "motel-sign")).toHaveLength(1);
-    expect(at.filter((p) => p.model.startsWith("car-")).length).toBeGreaterThanOrEqual(2);
+    expect(at.filter((p) => /^(car-|pc-)/.test(p.model)).length).toBeGreaterThanOrEqual(2);
     // Its twelve doors (eleven rooms and the office).
     expect(
       island.doors.doors.filter(

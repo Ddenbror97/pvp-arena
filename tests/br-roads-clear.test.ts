@@ -98,7 +98,7 @@ describe("Project Island roads", () => {
   }, 120_000);
 
   it("parks the bridges' abandoned cars lengthwise, inside the rails", () => {
-    const cars = layout.filter((p) => p.poi === "bridges" && /^car-/.test(p.model));
+    const cars = layout.filter((p) => p.poi === "bridges" && /^(car-|pc-)/.test(p.model));
     expect(cars.length).toBeGreaterThan(10);
     for (const c of cars) {
       const b = meta.bridges

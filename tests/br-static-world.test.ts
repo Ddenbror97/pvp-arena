@@ -237,6 +237,7 @@ describe("Project Island static world", () => {
         p.model !== "quay-wall" &&
         // The hospital fire station's engine stands in its bay.
         p.model !== "fire-truck" &&
+        p.model !== "civ-firetruck" &&
         // Skyline Residences' flats: the kitchen runs along their walls, inside the storey.
         p.model !== "kitchen-run" &&
         // Forgotten Ruins' rope bridge spans the great temple's fallen gallery roof.

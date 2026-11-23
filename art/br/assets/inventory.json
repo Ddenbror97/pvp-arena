@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-18T01:22:12-03:00",
+ "generated": "2026-11-23T12:10:17-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -52689,6 +52689,152 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:cb7640039e7a40679a53be705ebff50e",
+   "title": "Free Low Poly Vehicles Pack",
+   "author": "RgsDev",
+   "author_url": "https://sketchfab.com/rgsdev",
+   "source": "https://sketchfab.com/3d-models/free-low-poly-vehicles-pack-cb7640039e7a40679a53be705ebff50e",
+   "uid": "cb7640039e7a40679a53be705ebff50e",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/0e6a7666-free_low_poly_vehicles_pack.zip",
+     "sha256": "d74d3069e821cf4e5e2414ddc2c9b718b4d24782a770cfa987295c8ba30673fe",
+     "size": 406609,
+     "mtime": "2026-11-23T12:09:42-03:00",
+     "batch": "2026-11-23",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-23",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 39535,
+    "verts": 72974,
+    "draws": 327,
+    "unique_tris": 39535,
+    "meshes": 327,
+    "primitives": 327,
+    "materials": 21,
+    "materials_used": 21,
+    "nodes": 445,
+    "mesh_nodes": 327,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     37.814,
+     4.302,
+     30.816
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "All vehicles preview.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 115,
+    "max_piece_tris": 2936,
+    "top_pieces": [
+     {
+      "name": "Firetruck",
+      "tris": 2936,
+      "draws": 10,
+      "size_m": [
+       3.414,
+       3.723,
+       9.599
+      ]
+     },
+     {
+      "name": "Truck with trailer",
+      "tris": 1458,
+      "draws": 7,
+      "size_m": [
+       3.414,
+       3.889,
+       13.421
+      ]
+     },
+     {
+      "name": "Monster Truck",
+      "tris": 1356,
+      "draws": 6,
+      "size_m": [
+       2.926,
+       3.085,
+       5.486
+      ]
+     },
+     {
+      "name": "Muscle 2",
+      "tris": 1328,
+      "draws": 7,
+      "size_m": [
+       2.814,
+       1.6,
+       6.055
+      ]
+     },
+     {
+      "name": "Roadster",
+      "tris": 1186,
+      "draws": 7,
+      "size_m": [
+       2.634,
+       1.6,
+       5.728
+      ]
+     },
+     {
+      "name": "Police Muscle",
+      "tris": 1164,
+      "draws": 7,
+      "size_m": [
+       2.814,
+       1.779,
+       6.055
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle-kit",
+   "flags": [
+    "MATS 21"
+   ],
+   "actions": [
+    "atlas materials across kit (21 materials)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:fafb7f55aeae460a8dbac92968a9a141",
    "title": "Free Low Poly Yacth",
    "author": "MarkoJantti",
@@ -58214,10 +58360,18 @@
      "mtime": "2026-11-03T12:48:37-03:00",
      "batch": "2026-11-03",
      "present": false
+    },
+    {
+     "path": "/mnt/user-data/uploads/generic_civil_service_vehicles_pack.zip",
+     "sha256": "febac26bb9f58346ba0c55ed8ed4edd86aba158230540d7faa4e39a987a670b4",
+     "size": 52361960,
+     "mtime": "2026-11-23T12:09:44-03:00",
+     "batch": "2026-11-23",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-03",
    "formats": [
     "gltf+bin"
@@ -58713,10 +58867,18 @@
      "mtime": "2026-11-03T12:48:37-03:00",
      "batch": "2026-11-03",
      "present": false
+    },
+    {
+     "path": "/mnt/user-data/uploads/9068c28a-generic_passenger_car_pack.zip",
+     "sha256": "a2d97d1a437d1e6dd6f02c4b0d879b7ccdac28993b056bd4b99896476dd96d4a",
+     "size": 24550215,
+     "mtime": "2026-11-23T12:09:43-03:00",
+     "batch": "2026-11-23",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-03",
    "formats": [
     "gltf+bin"
@@ -80489,16 +80651,24 @@
    "list_match": null,
    "zips": [
     {
-     "path": "/mnt/user-data/uploads/bf578ab9-lightbody_lifted_85_-_low_poly_model.zip",
+     "path": "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/a6d72d1b-1793720902327_lightbody_lifted_85_-_low_poly_model.zip",
      "sha256": "0d9609f60c5cc8435df4c309ebe358c0024280d711c8a8408ee69862af5cc495",
      "size": 11313838,
      "mtime": "2026-11-03T12:48:36-03:00",
      "batch": "2026-11-03",
+     "present": false
+    },
+    {
+     "path": "/mnt/user-data/uploads/bf578ab9-lightbody_lifted_85_-_low_poly_model.zip",
+     "sha256": "0d9609f60c5cc8435df4c309ebe358c0024280d711c8a8408ee69862af5cc495",
+     "size": 11313838,
+     "mtime": "2026-11-18T16:10:43-03:00",
+     "batch": "2026-11-18",
      "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-03",
    "formats": [
     "gltf+bin"
@@ -180441,10 +180611,18 @@
      "mtime": "2026-11-17T17:12:28-03:00",
      "batch": "2026-11-17",
      "present": true
+    },
+    {
+     "path": "/mnt/user-data/uploads/af1d6874-yacht.zip",
+     "sha256": "5f44b6685e9ed81269c35674ed24573d7aedd8c16534904da374eeeea5c9bf36",
+     "size": 16690967,
+     "mtime": "2026-11-22T23:04:36-03:00",
+     "batch": "2026-11-22",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-17",
    "formats": [
     "gltf+bin"
@@ -190282,6 +190460,46 @@
    "mtime_ns": 1794975709727385460,
    "mtime": "2026-11-18T01:21:49-03:00",
    "batch": "2026-11-18",
+   "present": true
+  },
+  "/mnt/user-data/uploads/0e6a7666-free_low_poly_vehicles_pack.zip": {
+   "sha256": "d74d3069e821cf4e5e2414ddc2c9b718b4d24782a770cfa987295c8ba30673fe",
+   "size": 406609,
+   "mtime_ns": 1795446582546215167,
+   "mtime": "2026-11-23T12:09:42-03:00",
+   "batch": "2026-11-23",
+   "present": true
+  },
+  "/mnt/user-data/uploads/9068c28a-generic_passenger_car_pack.zip": {
+   "sha256": "a2d97d1a437d1e6dd6f02c4b0d879b7ccdac28993b056bd4b99896476dd96d4a",
+   "size": 24550215,
+   "mtime_ns": 1795446583473958837,
+   "mtime": "2026-11-23T12:09:43-03:00",
+   "batch": "2026-11-23",
+   "present": true
+  },
+  "/mnt/user-data/uploads/af1d6874-yacht.zip": {
+   "sha256": "5f44b6685e9ed81269c35674ed24573d7aedd8c16534904da374eeeea5c9bf36",
+   "size": 16690967,
+   "mtime_ns": 1795399476851958147,
+   "mtime": "2026-11-22T23:04:36-03:00",
+   "batch": "2026-11-22",
+   "present": true
+  },
+  "/mnt/user-data/uploads/bf578ab9-lightbody_lifted_85_-_low_poly_model.zip": {
+   "sha256": "0d9609f60c5cc8435df4c309ebe358c0024280d711c8a8408ee69862af5cc495",
+   "size": 11313838,
+   "mtime_ns": 1795029043435152450,
+   "mtime": "2026-11-18T16:10:43-03:00",
+   "batch": "2026-11-18",
+   "present": true
+  },
+  "/mnt/user-data/uploads/generic_civil_service_vehicles_pack.zip": {
+   "sha256": "febac26bb9f58346ba0c55ed8ed4edd86aba158230540d7faa4e39a987a670b4",
+   "size": 52361960,
+   "mtime_ns": 1795446584477958873,
+   "mtime": "2026-11-23T12:09:44-03:00",
+   "batch": "2026-11-23",
    "present": true
   }
  },
@@ -344422,6 +344640,128 @@
    "sha256": "d11bc26455c684680edbe1e1fd819b3b2ee51ce4729479bf66e354e0893d0816",
    "size": 279442867,
    "parsed_at": "2026-11-18T01:22:12-03:00"
+  },
+  "d74d3069e821cf4e5e2414ddc2c9b718b4d24782a770cfa987295c8ba30673fe": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 3350017,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-13.68.0",
+   "licence": {
+    "title": "Free Low Poly Vehicles Pack",
+    "source": "https://sketchfab.com/3d-models/free-low-poly-vehicles-pack-cb7640039e7a40679a53be705ebff50e",
+    "author": "RgsDev (https://sketchfab.com/rgsdev)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 39535,
+    "verts": 72974,
+    "draws": 327,
+    "unique_tris": 39535,
+    "meshes": 327,
+    "primitives": 327,
+    "materials": 21,
+    "materials_used": 21,
+    "nodes": 445,
+    "mesh_nodes": 327,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     37.814,
+     4.302,
+     30.816
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "All vehicles preview.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.01,
+    "pieces_count": 115,
+    "max_piece_tris": 2936,
+    "top_pieces": [
+     {
+      "name": "Firetruck",
+      "tris": 2936,
+      "draws": 10,
+      "size_m": [
+       3.414,
+       3.723,
+       9.599
+      ]
+     },
+     {
+      "name": "Truck with trailer",
+      "tris": 1458,
+      "draws": 7,
+      "size_m": [
+       3.414,
+       3.889,
+       13.421
+      ]
+     },
+     {
+      "name": "Monster Truck",
+      "tris": 1356,
+      "draws": 6,
+      "size_m": [
+       2.926,
+       3.085,
+       5.486
+      ]
+     },
+     {
+      "name": "Muscle 2",
+      "tris": 1328,
+      "draws": 7,
+      "size_m": [
+       2.814,
+       1.6,
+       6.055
+      ]
+     },
+     {
+      "name": "Roadster",
+      "tris": 1186,
+      "draws": 7,
+      "size_m": [
+       2.634,
+       1.6,
+       5.728
+      ]
+     },
+     {
+      "name": "Police Muscle",
+      "tris": 1164,
+      "draws": 7,
+      "size_m": [
+       2.814,
+       1.779,
+       6.055
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "d74d3069e821cf4e5e2414ddc2c9b718b4d24782a770cfa987295c8ba30673fe",
+   "size": 406609,
+   "parsed_at": "2026-11-23T12:10:15-03:00"
   }
  }
 }

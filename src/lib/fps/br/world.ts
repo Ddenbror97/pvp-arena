@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "windows-v1",
+  revision: "vehicles-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -189,8 +189,14 @@ export const WORLD_ASSETS = {
   // windows that were only painted on (the clapboard and stone farmhouses, the mobile home, the
   // stilt house, the bungalow, the diner, brick-shop, rural-store-3) are cut and glazed where
   // they were painted (cut_windows.mjs).
-  models: "/fps/br/models/models.windows-v1.json",
-  collision: "/fps/br/models/collision.windows-v1.json",
+  // vehicles-v1 (2026-11-23, from windows-v1, process_assets.mjs + build_collision.mjs): 33
+  // parked vehicles from Comrade1280's passenger and civil-service packs (pc-*, civ-*; the
+  // passenger cars also in repainted colours, `paint`), placed where the sedan, pickup, cop
+  // cruiser, taxi, ambulance, tow truck and box truck were: those had been reduced to 13–17 %
+  // of their triangles and drew with hanging bumpers and sunken, leaning wheels (owner,
+  // 2026-11-23: "audit all veicels. some are broken like this taxi").
+  models: "/fps/br/models/models.vehicles-v1.json",
+  collision: "/fps/br/models/collision.vehicles-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

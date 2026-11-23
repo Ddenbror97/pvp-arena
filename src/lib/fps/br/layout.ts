@@ -9,6 +9,7 @@ import blackwaterPlan from "./blackwater-plan.json";
 import locationBuildings from "./location-buildings.json";
 import { FORTRESS } from "./fortress-plan";
 import { condoTower, skyline } from "./skyline";
+import { PARKED_FOOT, swapParkedCars } from "./parked-cars";
 import type { WorldMeta } from "./world";
 
 /**
@@ -1661,6 +1662,7 @@ function roadDistance(meta: WorldMeta, x: number, z: number, limit = 40) {
 
 /** Footprints (x, z extent in m at turn 0, models.json sizes rounded up) of town buildings. */
 const FOOT: Record<string, [number, number]> = {
+  ...PARKED_FOOT,
   // Big models the placers did not know the size of (a hospital landed against a 43 × 83 m
   // clinic block, 2026-11-08): their real footprints.
   "ind-building-10": [43.5, 83.3],
@@ -7574,7 +7576,7 @@ export function deadRoadEnds(meta: WorldMeta): Array<[number, number, number, nu
 
 /** Ground cover, plants, small street furniture and wrecks: not a place a road leads to. */
 const NOT_A_PLACE =
-  /^(rock|tree|pine|birch|oak|bush|log|stump|mossy|fern|grass|boulder|cliff|crag|palm|reed|flower|hay|fence|guardrail|pole|lamp|street-lamp|sign|power|pylon|reflector|cone|barrier|mailbox|fire-hydrant|parasol|bench|trash|litter|puddle|debris|tyre|tire|drum|barrel|pallet|crate|box|crashed|burned|car-|rusty-truck|wreck)/;
+  /^(rock|tree|pine|birch|oak|bush|log|stump|mossy|fern|grass|boulder|cliff|crag|palm|reed|flower|hay|fence|guardrail|pole|lamp|street-lamp|sign|power|pylon|reflector|cone|barrier|mailbox|fire-hydrant|parasol|bench|trash|litter|puddle|debris|tyre|tire|drum|barrel|pallet|crate|box|crashed|burned|car-|pc-|civ-|rusty-truck|wreck)/;
 
 /**
  * Every road leads somewhere (owner, 2026-11-22: "a final audit of the roads, no random
@@ -9024,6 +9026,8 @@ export function* islandLayoutSteps(
         p.y = +(lo + Math.min(0.3, (hi - lo) / 2)).toFixed(2);
     }
   }
+  // The parked cars, taxis, vans and service vehicles (parked-cars.ts, vehicles-v1).
+  swapParkedCars(out);
   standOnRoads(out, ctx);
   return out;
 }
@@ -9045,7 +9049,7 @@ function standOnRoads(out: Placement[], ctx: Context) {
     const surface = g + ROAD_GRADE.lift;
     // (A car or a wreck up to 1.5 m: over a crest or along a cut they stood 0.6–1.2 m into the
     // road, 2026-11-18 road audit. A post or a lamp at the edge keeps its foot in the verge.)
-    const reach = /car|truck|wreck|sedan|pickup|van|bus/.test(p.model) ? 1.5 : 0.6;
+    const reach = /car|truck|wreck|sedan|pickup|van|bus|^pc-|^civ-/.test(p.model) ? 1.5 : 0.6;
     if (p.y < surface - 0.01 && p.y > surface - reach) p.y = +surface.toFixed(2);
   }
 }
