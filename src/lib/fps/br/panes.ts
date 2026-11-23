@@ -184,6 +184,27 @@ export function islandPanes(layout: readonly Placement[]): PaneSet {
 }
 const PAIR = 2 ** 20;
 
+/**
+ * Each pane's building: its layout index, for the planned panes too (`PaneSet.placement` names
+ * only the windows'). For the renderer, which draws a pane where its building is drawn near
+ * enough to have no glass of its own (pane-renderer.ts); the match room has no use for it and
+ * does not hold it.
+ */
+export function paneOwners(layout: readonly Placement[]): Int32Array {
+  let count = 0;
+  for (const p of layout)
+    count += (MODEL_PANES[p.model]?.length ?? 0) + (WINDOW_PANES[p.model]?.length ?? 0);
+  const owner = new Int32Array(count);
+  let id = 0;
+  for (let at = 0; at < layout.length; at++) {
+    const p = layout[at]!;
+    const n = (MODEL_PANES[p.model]?.length ?? 0) + (WINDOW_PANES[p.model]?.length ?? 0);
+    owner.fill(at, id, id + n);
+    id += n;
+  }
+  return owner;
+}
+
 /** The index of a cell in set.cellKeys, or −1. */
 function cellIndex(set: PaneSet, key: number) {
   const keys = set.cellKeys;

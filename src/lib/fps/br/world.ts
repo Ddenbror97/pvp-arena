@@ -195,7 +195,13 @@ export const WORLD_ASSETS = {
   // cruiser, taxi, ambulance, tow truck and box truck were: those had been reduced to 13–17 %
   // of their triangles and drew with hanging bumpers and sunken, leaning wheels (owner,
   // 2026-11-23: "audit all veicels. some are broken like this taxi").
-  models: "/fps/br/models/models.vehicles-v1.json",
+  // far-facades-v1 (2026-11-23, the same world: build_facades.mjs --far on the vehicles-v1
+  // manifest): 191 buildings' far LODs, which were a few flat-coloured boxes, take their near
+  // model's five views from an atlas of their own (`farFacades`), so a town seen from the plane
+  // or under the canopy is filtered texture, not a field of sub-pixel window bars or of blank
+  // boxes (owner, 2026-11-23: "blinking/flicker buildings on distance … in the
+  // airplane/parachute", "the buildings looks strange").
+  models: "/fps/br/models/models.far-facades-v1.json",
   collision: "/fps/br/models/collision.vehicles-v1.json",
 } as const;
 

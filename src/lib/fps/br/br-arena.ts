@@ -133,7 +133,7 @@ import {
   type LiftState,
 } from "./lifts";
 import { createLiftRenderer } from "./lift-renderer";
-import { withPanes } from "./panes";
+import { paneOwners, withPanes } from "./panes";
 import { createPaneRenderer } from "./pane-renderer";
 import { spec, stepVehicle, vehicleGap, VEHICLES, type Vehicle } from "./vehicles";
 import type { NadeEvent } from "./match";
@@ -1350,7 +1350,11 @@ export function createBrArena(
     doorOpen = new Uint8Array(island.island.doors.doors.length);
     // (The buildings' windows go with their buildings' near LODs.)
     const nearDrawn = island.nearDrawn;
-    paneFx = createPaneRenderer(scene, island.island.panes, nearDrawn);
+    // (And the towers' panes with their near and middle ones: the far LOD has its glass.)
+    paneFx = createPaneRenderer(scene, island.island.panes, nearDrawn, {
+      owner: paneOwners(island.island.layout),
+      drawn: island.closeDrawn,
+    });
     // The Tracker perk's footprints: one instanced draw, compiled now (never mid-fight).
     trackFx = createTrackerRenderer(scene);
     void renderer.compileAsync(trackFx.mesh, camera, scene).catch(() => {});

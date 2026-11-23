@@ -111,26 +111,22 @@ describe("BR far buildings (render audit 2026-11-15)", () => {
     expect(proxyShape(walls(0.5))).toBeNull();
   });
 
-  it("stands each proxy on its placement, turned as the model is, with its own far ring", () => {
+  it("stands each proxy on its placement, turned as the model is, numbered for its flag", () => {
     const shape = proxyShape(house())!;
     const placements = [
       { model: "house", x: 100, y: 7, z: -50, turn: 0, poi: "t" },
       { model: "house", x: 300, y: 2, z: 80, turn: 1, poi: "t" },
       { model: "pole", x: 0, y: 0, z: 0, turn: 0, poi: "t" },
     ] as Placement[];
-    const far = createFarBuildings(
-      placements,
-      (m) => (m === "house" ? shape : null),
-      () => 4000,
-      1500,
-    );
+    const far = createFarBuildings(placements, (m) => (m === "house" ? shape : null));
     expect(far.buildings).toBe(2);
     const pos = far.mesh.geometry.getAttribute("position");
     const site = far.mesh.geometry.getAttribute("aSite");
     const box = [new THREE.Box3(), new THREE.Box3()];
     const v = new THREE.Vector3();
     for (let i = 0; i < pos.count; i++) {
-      expect(site.getW(i)).toBe(4000);
+      // The proxy's number: where its "shown" flag sits in the texture.
+      expect(site.getW(i)).toBe(site.getX(i) === 100 ? 0 : 1);
       box[site.getX(i) === 100 ? 0 : 1]!.expandByPoint(v.fromBufferAttribute(pos, i));
     }
     // Unturned: 10 m along x, 8 m along z. A quarter turn swaps them. The ridge is 5 m up.
@@ -143,23 +139,43 @@ describe("BR far buildings (render audit 2026-11-15)", () => {
     far.dispose();
   });
 
-  it("is drawn only beyond the model's ring: the shader folds nearer proxies away", () => {
+  it("is drawn only where the model is not: one flag a building, set by the model's own pass", () => {
+    // Render stability 2026-11-23: the proxy used to fold itself away by this frame's distance
+    // while the model's far LOD was picked by a pass that lags the camera — two clocks, so at
+    // the hand-over a building was drawn twice or not at all for a few frames.
     const shape = proxyShape(house())!;
-    const far = createFarBuildings(
-      [{ model: "house", x: 0, y: 0, z: 0, turn: 0, poi: "t" } as Placement],
-      () => shape,
-      () => 4000,
-      1500,
-    );
+    const placements = [
+      { model: "house", x: 0, y: 0, z: 0, turn: 0, poi: "t" },
+      { model: "pole", x: 5, y: 0, z: 0, turn: 0, poi: "t" },
+      { model: "house", x: 50, y: 0, z: 0, turn: 0, poi: "t" },
+    ] as Placement[];
+    const far = createFarBuildings(placements, (m) => (m === "house" ? shape : null));
     const shader = {
-      uniforms: {},
+      uniforms: {} as Record<string, { value: unknown }>,
       vertexShader: "#include <common>\n#include <begin_vertex>",
       fragmentShader: "#include <common>\n#include <color_fragment>",
     };
     (far.mesh.material as THREE.Material).onBeforeCompile(shader as never, null as never);
-    expect(shader.vertexShader).toContain(
-      "distance(aSite.xyz, cameraPosition) <= max(1500.0, aSite.w * min(uRingK, 1.25))",
-    );
+    expect(shader.vertexShader).toContain("texelFetch(uShown");
+    expect(shader.vertexShader).not.toContain("cameraPosition) <=");
+    // Shown until the model says it is drawn; placements without a proxy have no flag.
+    expect(far.shown(0)).toBe(true);
+    expect(far.shown(1)).toBeNull();
+    expect(far.shown(2)).toBe(true);
+    const flags = shader.uniforms.uShown!.value as THREE.DataTexture;
+    const before = flags.version;
+    far.setDrawn(2, true);
+    expect(far.shown(2)).toBe(false);
+    expect(far.shown(0)).toBe(true);
+    expect((flags.image.data as Uint8Array)[1]).toBe(0);
+    expect(flags.version).toBeGreaterThan(before);
+    // Telling it what it already knows uploads nothing.
+    const same = flags.version;
+    far.setDrawn(2, true);
+    far.setDrawn(1, true);
+    expect(flags.version).toBe(same);
+    far.setDrawn(2, false);
+    expect(far.shown(2)).toBe(true);
     far.dispose();
   });
 });

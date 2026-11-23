@@ -337,7 +337,17 @@ describe("BR props follow the camera up and down (owner, 2026-11-14: houses from
     at(far * 0.8, far * 0.6, 0); // the same distance, 540 m up
     props.update(camera, true);
     expect(drawn(props)).toEqual([0, N, 0]);
-    // On the roof of the tallest tower (under AIR_VIEW.from) nothing changes.
+    // Coming down, what the air view promoted stays until the landing (render stability
+    // 2026-11-23): gliding over a ridge that brings the ground within AIR_VIEW.from must not
+    // drop the town ahead to its far LOD and bring it back on the other side.
+    at(far, AIR_VIEW.from - 10, 0);
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, N, 0]);
+    at(far, 1.7, 0); // landed
+    props.update(camera, true);
+    expect(drawn(props)).toEqual([0, 0, N]);
+    // On the roof of the tallest tower (under AIR_VIEW.from), come from the ground, nothing
+    // changes.
     at(far, AIR_VIEW.from - 10, 0);
     props.update(camera, true);
     expect(drawn(props)).toEqual([0, 0, N]);

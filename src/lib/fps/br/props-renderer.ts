@@ -33,6 +33,8 @@ export type ModelManifest = {
   worldRevision?: string;
   /** The shared atlas of the mid-distance LODs named "facade" (build_facades.mjs). */
   facades?: { atlas: string; width: number; height: number };
+  /** The buildings' far LODs' atlas, material "facade-far" (build_facades.mjs --far). */
+  farFacades?: { atlas: string; width: number; height: number };
   models: Record<
     string,
     {
@@ -132,6 +134,63 @@ const RESELECT = 8;
  */
 export const LOD_HYSTERESIS = 1.08;
 /**
+ * The same at a building's far ring, where it hands over to its far proxy (far-buildings.ts):
+ * it comes in at the ring and goes out this much past it. A parachute turning 4 km from a town
+ * crosses hundreds of its houses' rings back and forth, each a change of model to proxy and
+ * back within a second or two (2026-11-23). Buildings only (the classes with proxies): what
+ * hides or stops a player ends exactly at its ring, the same for everyone.
+ */
+/**
+ * The far atlas' mip levels (of the atlas as it was baked) over which a far LOD's wall fades
+ * from its texture to its mean colour. The atlas packs a view of one building against views of
+ * others with 12 texels of gutter between them (build_facades.mjs), so its mips are a building's
+ * own colours down to the third (8 texels a pixel) and a blend of its neighbours' below: a
+ * white tower three kilometres off would take the brick of the view packed next to it, more
+ * or less of it with every metre flown. By then a window is under a pixel across, and what
+ * the wall averages to is all there is to see: the bake writes that into the LOD's vertex
+ * colours (scripts/br/facades/bake.mjs), and the far proxy beyond the last ring is cut from the
+ * same colours (far-buildings.ts), so texture, mean and proxy hand over without a step.
+ */
+export const FAR_FACADE_FADE = { from: 3, to: 4 };
+
+/** A far LOD's material on the far atlas: its texture, fading to its vertex colours. */
+function farFacadeMaterial(
+  material: THREE.MeshStandardMaterial,
+  atlas: THREE.Texture,
+  size: { width: number; height: number } | undefined,
+) {
+  material.map = atlas;
+  material.color.set(0xffffff);
+  const image = atlas.image as { width: number; height: number } | undefined;
+  // (The atlas as baked: a smaller copy on the low texture tier has the same gutters in UV.)
+  const w = size?.width ?? image?.width ?? 4096,
+    h = size?.height ?? image?.height ?? 2048;
+  const hasColour = material.vertexColors;
+  material.onBeforeCompile = (shader) => {
+    if (!hasColour) return;
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        "#include <map_fragment>",
+        [
+          "#ifdef USE_MAP",
+          "  vec4 sampledDiffuseColor = texture2D( map, vMapUv );",
+          `  vec2 farTexel = vMapUv * vec2( ${w.toFixed(1)}, ${h.toFixed(1)} );`,
+          "  vec2 farDx = dFdx( farTexel ), farDy = dFdy( farTexel );",
+          "  float farLod = 0.5 * log2( max( dot( farDx, farDx ), dot( farDy, farDy ) ) + 1e-8 );",
+          `  sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, vColor.rgb, smoothstep( ${FAR_FACADE_FADE.from.toFixed(2)}, ${FAR_FACADE_FADE.to.toFixed(2)}, farLod ) );`,
+          "  diffuseColor *= sampledDiffuseColor;",
+          "#endif",
+        ].join("\n"),
+      )
+      // (The vertex colour is the fade's other end, not a tint.)
+      .replace("#include <color_fragment>", "");
+  };
+  material.customProgramCacheKey = () => `br-far-facade|${w}|${h}|${hasColour}`;
+  material.needsUpdate = true;
+}
+
+export const FAR_HYSTERESIS = 1.04;
+/**
  * A LOD's textures go to the GPU while it is still this many times its distance away (owner,
  * 2026-11-11: "when entering some buildings it can lag, when entering rooms/doors"). Everything
  * is downloaded and its shaders compiled on the loading screen, but a texture is uploaded (and
@@ -204,6 +263,10 @@ const AIR_CLASSES = new Set(["dwelling", "outbuilding", "shop"]);
  * a player on a balcony is drawn, and hidden, from exactly as far as before.
  */
 export const AIR_FLAT = { from: 100, full: 160, mid: 300 } as const;
+/** Under this height over the ground (m) a flight has landed (the air view's hold ends). */
+const AIR_LANDED = 25;
+/** How far back an air view must come (of its band) before it turns round (startPass). */
+const AIR_TURN = 0.4;
 /** Scaled rings never end closer than this (m): beyond the 1 km range players are sent. */
 const MIN_FAR = 1500;
 const scaleRing = (ring: [number, number, number], k: number): [number, number, number] => [
@@ -259,6 +322,10 @@ export type PropsControls = {
    * this frame: the buildings' breakable panes go with it (pane-renderer.ts).
    */
   nearDrawn: (index: number) => boolean;
+  /** The LOD the last pass chose for placement `index`: 0 near, 1 middle, 2 far, -1 none. */
+  levelOf: (index: number) => number;
+  /** Whether placement `index`'s far proxy is showing (null: it has none, or not built yet). */
+  proxyShown: (index: number) => boolean | null;
   /**
    * Upload the textures of the LODs about to come into use, a few a frame within `budgetMs`
    * (see WARM_AHEAD). Call once a frame before rendering.
@@ -345,6 +412,7 @@ export function createProps(
   {
     preload = false,
     facades = null,
+    farFacades = null,
     detail = worldTextureScale() >= 1,
     ground = null,
   }: {
@@ -353,6 +421,8 @@ export function createProps(
     detail?: boolean;
     /** The facade atlas (manifest.facades), lent to every LOD whose material is "facade". */
     facades?: THREE.Texture | null;
+    /** The far atlas (manifest.farFacades), lent to every LOD whose material is "facade-far". */
+    farFacades?: THREE.Texture | null;
     /** The terrain's height at a point (m), for the camera's height above it (AIR_VIEW). */
     ground?: ((x: number, z: number) => number) | null;
   } = {},
@@ -360,14 +430,19 @@ export function createProps(
   const root = new THREE.Group();
   root.name = "br-props";
   const byModel = new Map<string, Placement[]>();
-  // Each placement's index in its model's list (nearDrawn).
+  // Each placement's index in its model's list (nearDrawn), and back (the far proxies).
   const slot = new Int32Array(placements.length);
+  const indexOf = new Map<string, number[]>();
   for (let i = 0; i < placements.length; i++) {
     const p = placements[i]!;
     let list = byModel.get(p.model);
-    if (!list) byModel.set(p.model, (list = []));
+    if (!list) {
+      byModel.set(p.model, (list = []));
+      indexOf.set(p.model, []);
+    }
     slot[i] = list.length;
     list.push(p);
+    indexOf.get(p.model)!.push(i);
   }
   const states = new Map<string, ModelState>();
   for (const id of byModel.keys()) {
@@ -393,9 +468,51 @@ export function createProps(
   let loadedFiles = 0;
   let stopped = false;
   const FAR_CLASSES = new Set<string>(FAR_BUILDINGS.classes);
+  /**
+   * A building made of several placements on one spot (a tower: its lobby, its storeys and its
+   * roof, one above the other) changes LOD as one: past the near ring, each part's middle and
+   * far LOD and its end go by the distance to the middle of the stack (`anchors`: per model,
+   * x, y, z per placement; absent: its own position). By its own distance every storey crossed
+   * each ring at its own moment (the top of a 100 m tower is 60 m nearer a parachute than its
+   * foot), so a tower stood for seconds as a pile of mismatched slices, dark detailed storeys
+   * between flat pale ones and, at the far ring, storeys missing between proxies (owner,
+   * 2026-11-23: "see the buildings looks strange").
+   */
+  const anchors = new Map<string, Float32Array>();
+  {
+    const stacks = new Map<string, number[]>();
+    for (let i = 0; i < placements.length; i++) {
+      const p = placements[i]!;
+      if (!FAR_CLASSES.has(states.get(p.model)!.cls)) continue;
+      const key = `${p.x}:${p.z}`;
+      const list = stacks.get(key);
+      if (list) list.push(i);
+      else stacks.set(key, [i]);
+    }
+    for (const members of stacks.values()) {
+      if (members.length < 2) continue;
+      let lo = Infinity,
+        hi = -Infinity;
+      for (const i of members) {
+        lo = Math.min(lo, placements[i]!.y);
+        hi = Math.max(hi, placements[i]!.y);
+      }
+      if (hi - lo < 1) continue;
+      for (const i of members) {
+        const p = placements[i]!;
+        let a = anchors.get(p.model);
+        if (!a) {
+          const list = byModel.get(p.model)!;
+          a = new Float32Array(list.length * 3);
+          list.forEach((q, k) => a!.set([q.x, q.y, q.z], k * 3));
+          anchors.set(p.model, a);
+        }
+        a[slot[i]! * 3 + 1] = (lo + hi) / 2;
+      }
+    }
+  }
   const farShapes = new Map<string, ProxyShape | null>();
   let farBuildings: FarBuildings | null = null;
-  let detailScale = 1;
   let nearFirst = false;
   const warmQueue: THREE.Texture[] = [];
   const warmQueued = new WeakSet<object>();
@@ -420,7 +537,7 @@ export function createProps(
       mesh.geometry.dispose();
       for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
         for (const v of Object.values(m))
-          if (v instanceof THREE.Texture && v !== facades) v.dispose();
+          if (v instanceof THREE.Texture && v !== facades && v !== farFacades) v.dispose();
         m.dispose();
       }
     });
@@ -467,6 +584,7 @@ export function createProps(
         !Array.isArray(mesh.material) &&
         bare.isMeshStandardMaterial &&
         bare.name !== "facade" &&
+        bare.name !== "facade-far" &&
         !bare.map &&
         !paintedVertices(mesh.geometry) &&
         bare.color.r > 0.95 &&
@@ -503,6 +621,10 @@ export function createProps(
         else facade.color.set(0x8a8a84);
         facade.needsUpdate = true;
       }
+      // The buildings' far LODs on theirs. (Without it they draw in their vertex colours:
+      // each wall's mean, the look they fade to anyway.)
+      if (!Array.isArray(mesh.material) && facade.name === "facade-far" && farFacades)
+        farFacadeMaterial(facade, farFacades, manifest.farFacades);
       mesh.geometry.computeBoundingBox();
       extent
         .copy(mesh.geometry.boundingBox!)
@@ -559,7 +681,7 @@ export function createProps(
         placements: byModel.get(state.id)!.length,
         model: state.id,
       })),
-      facades,
+      [facades, farFacades],
     );
     for (const b of built) {
       const k = batches.length;
@@ -589,15 +711,13 @@ export function createProps(
   ).then(() => {
     if (stopped) return;
     // Every building beyond its far ring, as one mesh (the far LODs are all in by now).
-    farBuildings = createFarBuildings(
-      placements,
-      (id) => farShapes.get(id),
-      (id) => states.get(id)!.base[2],
-      MIN_FAR,
-    );
-    farBuildings.setRingScale(detailScale);
+    farBuildings = createFarBuildings(placements, (id) => farShapes.get(id));
+    // What a pass already draws keeps its proxy folded from the first frame.
+    for (let i = 0; i < placements.length; i++)
+      farBuildings.setDrawn(i, states.get(placements[i]!.model)!.level[slot[i]!]! >= 0);
     root.add(farBuildings.mesh);
     if (preload) batchFarLods();
+    dirty = true;
   });
   /** Where the last pass started (the camera then). */
   const last = new THREE.Vector3(Infinity, Infinity, Infinity);
@@ -605,6 +725,20 @@ export function createProps(
   /** How far the pass in progress is "in the air": 0 on foot to 1 (AIR_VIEW; AIR_FLAT). */
   let air = 0,
     airFlat = 0;
+  /** In the air since it last stood on the ground (see `airHold`). */
+  let airborne = false;
+  /** Which way each air view is going (-1 down, 1 up): AIR_VIEW's, AIR_FLAT's. */
+  const airWay = [-1, -1];
+  const airTrend = (way: number[], k: number, was: number, now: number) => {
+    if (now <= 0 || now >= 1) {
+      way[k] = now <= 0 ? 1 : -1;
+      return now;
+    }
+    if ((now - was) * way[k]! >= 0) return now;
+    if (Math.abs(now - was) < AIR_TURN) return was;
+    way[k] = -way[k]!;
+    return now;
+  };
   const cam = new THREE.Vector3();
   let instances = 0;
   /** Each placement's matrix, composed once (placements never move): 16 floats each. */
@@ -633,8 +767,16 @@ export function createProps(
     const up = ground ? cam.y - ground(cam.x, cam.z) : 0;
     const eased = (from: number, full: number) =>
       Math.min(1, Math.max(0, (up - from) / (full - from)));
-    air = eased(AIR_VIEW.from, AIR_VIEW.full);
-    airFlat = eased(AIR_FLAT.from, AIR_FLAT.full);
+    // The air view keeps its direction. The height is over the ground straight below, and
+    // that ground rolls: gliding over a 40 m hill and the dip behind it moved the houses'
+    // middle ring 100 m in and out again, and every house in that band went far, middle, far
+    // (flight audit 2026-11-23: 17 such flips in a minute's glide to Northstar). Going down it
+    // only falls, going up it only rises; it turns round once the height has come back by
+    // `AIR_TURN` of the band (and at both ends it is what the height says).
+    air = airTrend(airWay, 0, air, eased(AIR_VIEW.from, AIR_VIEW.full));
+    if (up >= AIR_VIEW.from) airborne = true;
+    else if (up < AIR_LANDED) airborne = false;
+    airFlat = airTrend(airWay, 1, airFlat, eased(AIR_FLAT.from, AIR_FLAT.full));
     dirty = false;
     cursor = 0;
     passInstances = 0;
@@ -658,6 +800,10 @@ export function createProps(
     };
     const list = byModel.get(id)!;
     const mats = placedMatrices.get(id)!;
+    const anchor = anchors.get(id);
+    // The placements' numbers, for their proxies (far-buildings.ts): shown exactly while this
+    // pass draws no LOD of them.
+    const proxied = farBuildings && FAR_CLASSES.has(state.cls) ? indexOf.get(id)! : null;
     const mid = state.airFar
       ? state.ring[1] - airFlat * Math.max(0, state.ring[1] - AIR_FLAT.mid)
       : air && AIR_CLASSES.has(state.cls)
@@ -667,7 +813,22 @@ export function createProps(
       r1 = mid ** 2,
       r2 = state.ring[2] ** 2;
     // Past a ring by less than the margin: the nearer LOD it had stays (never past the far ring).
-    const hold = [Math.min(r2, r0 * LOD_HYSTERESIS ** 2), Math.min(r2, r1 * LOD_HYSTERESIS ** 2)];
+    // (In the air a house keeps the middle LOD it has out to the air view's full reach, however
+    // far down the canopy is: only what comes nearer is taken in at the ring as it shrinks with
+    // the height. Both by the shrinking ring, a house ahead went middle, far and middle again
+    // on the way down, and over rising ground the ring overtook houses it had just taken in:
+    // 48 there-and-back changes in two 70 s glides, flight audit 2026-11-23. On the ground, as
+    // before: "in the air" from AIR_VIEW.from up until AIR_LANDED over the ground, so a ridge
+    // crossed at 80 m does not drop every house beyond 650 m and bring it back behind it.)
+    const airHold =
+      airborne && AIR_CLASSES.has(state.cls)
+        ? Math.min(state.ring[2], state.ring[1] * AIR_VIEW.reach) ** 2
+        : r1;
+    const hold = [
+      Math.min(r2, r0 * LOD_HYSTERESIS ** 2),
+      Math.min(r2, Math.max(r1, airHold) * LOD_HYSTERESIS ** 2),
+    ];
+    const farHold = FAR_CLASSES.has(state.cls) ? r2 * FAR_HYSTERESIS ** 2 : r2;
     const chosen = state.level;
     const w0 = (state.ring[0] * WARM_AHEAD) ** 2,
       w1 = (mid * WARM_AHEAD) ** 2;
@@ -677,13 +838,22 @@ export function createProps(
         dy = p.y - pass.y,
         dz = p.z - pass.z;
       const d2 = dx * dx + dy * dy + dz * dz;
-      let level = d2 <= r0 ? 0 : d2 <= r1 ? 1 : d2 <= r2 ? 2 : -1;
+      // Past the near ring a stacked building goes by its stack's middle (`anchors`).
+      let a2 = d2;
+      if (anchor) {
+        const ax = anchor[i * 3]! - pass.x,
+          ay = anchor[i * 3 + 1]! - pass.y,
+          az = anchor[i * 3 + 2]! - pass.z;
+        a2 = ax * ax + ay * ay + az * az;
+      }
+      let level = d2 <= r0 ? 0 : a2 <= r1 ? 1 : a2 <= r2 ? 2 : -1;
       if (level === 2 && state.cls === "undergrowth" && d2 > THIN.from ** 2) {
         const f = (Math.sqrt(d2) - THIN.from) / (state.ring[2] - THIN.from);
         if ((i * 0.6180339887) % 1 > 1 - (1 - THIN.keep) * Math.min(1, f)) level = -1;
       }
       const was = chosen[i]!;
-      if (was >= 0 && was < 2 && level > was && d2 <= hold[was]!) level = was;
+      if (was >= 0 && was < 2 && level > was && (was === 0 ? d2 : a2) <= hold[was]!) level = was;
+      else if (was === 2 && level < 0 && a2 <= farHold) level = 2;
       chosen[i] = level;
       // Approaching a nearer LOD: its textures go up ahead of it.
       if (level !== 0 && d2 <= w1) {
@@ -692,6 +862,7 @@ export function createProps(
       }
       if (level < 0) {
         hideBatched(i);
+        if (proxied) farBuildings!.setDrawn(proxied[i]!, false);
         continue;
       }
       // Ask for the right LOD; draw the best one available meanwhile (never nothing).
@@ -701,8 +872,10 @@ export function createProps(
       const lod = state.lods[level];
       if (!lod || lod === "loading") {
         hideBatched(i);
+        if (proxied) farBuildings!.setDrawn(proxied[i]!, false);
         continue;
       }
+      if (proxied) farBuildings!.setDrawn(proxied[i]!, true);
       lod.count++;
       passInstances++;
       if (lod.batched) {
@@ -765,6 +938,14 @@ export function createProps(
   return {
     root,
     ready,
+    levelOf(index) {
+      const p = placements[index];
+      const state = p && states.get(p.model);
+      return state ? state.level[slot[index]!]! : -1;
+    },
+    proxyShown(index) {
+      return farBuildings ? farBuildings.shown(index) : null;
+    },
     nearDrawn(index) {
       const p = placements[index];
       const state = p && states.get(p.model);
@@ -779,8 +960,6 @@ export function createProps(
     },
     setDetailScale(k) {
       const scale = Math.max(0.5, Math.min(2, k));
-      detailScale = scale;
-      farBuildings?.setRingScale(scale);
       for (const st of states.values()) if (!st.fixed) st.ring = scaleRing(st.base, scale);
       dirty = true;
     },
@@ -861,7 +1040,7 @@ export function createProps(
               for (const mat of mats) {
                 // (The facade atlas is the caller's: island-scene.ts disposes it once.)
                 for (const v of Object.values(mat))
-                  if (v instanceof THREE.Texture && v !== facades) v.dispose();
+                  if (v instanceof THREE.Texture && v !== facades && v !== farFacades) v.dispose();
                 mat.dispose();
               }
               m.dispose();

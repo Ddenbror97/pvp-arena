@@ -62,14 +62,25 @@ function across(p: Pane, d: number) {
 describe("the buildings' windows are breakable glass", () => {
   it("belong to this world revision, and the near LODs they came out of are its own", () => {
     // Cut against the revision named in the file; a later one (vehicles-v1: the parked cars) may
-    // carry them on only with these models' entries exactly as they were.
+    // carry them on only with these models' entries exactly as they were. (But for a far LOD
+    // on the far atlas, 2026-11-23: the panes came out of the near LOD, and the far one has
+    // its glass in its texture.)
     const cut = (windowPanes as { revision: string }).revision;
     if (cut !== WORLD_ASSETS.revision) {
       const then = JSON.parse(
         readFileSync(`public/fps/br/models/models.${cut}.json`, "utf8"),
       ) as typeof manifest;
-      for (const id of Object.keys(models))
-        expect(manifest.models[id], id).toEqual(then.models[id]);
+      for (const id of Object.keys(models)) {
+        const now = manifest.models[id]! as unknown as { lods: Array<{ farFacade?: boolean }> };
+        const was = then.models[id]! as unknown as { lods: unknown[] };
+        expect(now.lods.length, id).toBe(was.lods.length);
+        const kept = now.lods.map((l) => !l.farFacade);
+        expect(kept[0], id).toBe(true);
+        expect({ ...now, lods: now.lods.filter((_, i) => kept[i]) }, id).toEqual({
+          ...was,
+          lods: was.lods.filter((_, i) => kept[i]),
+        });
+      }
     }
     const ids = Object.keys(models);
     // The procedural houses and blocks, the textured kit's towns and works among them.
