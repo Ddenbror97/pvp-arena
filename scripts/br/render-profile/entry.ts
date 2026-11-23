@@ -48,7 +48,7 @@ let scene = "airfield",
 let manualFeed = false;
 const ready = (async () => {
   const [h, l, m, c] = await Promise.all([
-    fetch("/fps/br/height.v5.hf").then((r) => r.arrayBuffer()),
+    fetch("/fps/br/height.v6.hf").then((r) => r.arrayBuffer()),
     fetch("/fps/br/landcover.v4.lc").then((r) => r.arrayBuffer()),
     fetch("/fps/br/world.v4.json").then((r) => r.json()),
     fetch(WORLD_ASSETS.collision).then((r) => r.json()),

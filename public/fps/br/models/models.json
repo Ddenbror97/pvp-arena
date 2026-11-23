@@ -51519,6 +51519,336 @@
      ]
     }
    ]
+  },
+  "mb-armory": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Armoury",
+   "source": "art/blender/br/build_garrison.mjs",
+   "use": "Southern Military Base: a two-storey armoury of corrugated steel on a concrete plinth, a vehicle gateway, the upper floor and the roof up a stair (procedural, 2026-11-23)",
+   "size": [
+    22.1,
+    8.83,
+    14.1
+   ],
+   "sourceTris": 3530,
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-armory.garrison-v1.lod0.glb",
+     "tris": 3530,
+     "draws": 5,
+     "textureMB": 0.75,
+     "kB": 100,
+     "size": [
+      22.1,
+      8.83,
+      14.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-armory.garrison-v1.lod1.glb",
+     "tris": 462,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 25,
+     "size": [
+      22.1,
+      8.83,
+      14.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-armory.garrison-v1.lod2.glb",
+     "tris": 84,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      22.1,
+      8.83,
+      14.1
+     ]
+    }
+   ]
+  },
+  "mb-barracks-3s": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Barrack block (three storeys)",
+   "source": "art/blender/br/build_garrison.mjs",
+   "use": "Southern Military Base: a three-storey barrack block, rooms on every floor, a stair to each and on to the roof terrace (procedural, 2026-11-23)",
+   "size": [
+    32.1,
+    10.83,
+    11.1
+   ],
+   "sourceTris": 9734,
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-barracks-3s.garrison-v1.lod0.glb",
+     "tris": 9734,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 176,
+     "size": [
+      32.1,
+      10.83,
+      11.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-barracks-3s.garrison-v1.lod1.glb",
+     "tris": 688,
+     "draws": 5,
+     "textureMB": 0.25,
+     "kB": 32,
+     "size": [
+      32.1,
+      10.83,
+      11.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-barracks-3s.garrison-v1.lod2.glb",
+     "tris": 120,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      32.1,
+      10.83,
+      11.1
+     ]
+    }
+   ]
+  },
+  "mb-command-bunker": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Command bunker",
+   "source": "art/blender/br/build_garrison.mjs",
+   "use": "Southern Military Base: a hardened two-storey command bunker, 60 cm walls with gun slits, rooms on both floors, sandbags on the roof, earth berms up to the roof at both ends (procedural, 2026-11-23)",
+   "size": [
+    56.1,
+    6.98,
+    18.7
+   ],
+   "sourceTris": 3998,
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-command-bunker.garrison-v1.lod0.glb",
+     "tris": 3998,
+     "draws": 4,
+     "textureMB": 0.75,
+     "kB": 105,
+     "size": [
+      56.1,
+      6.98,
+      18.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-command-bunker.garrison-v1.lod1.glb",
+     "tris": 604,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 30,
+     "size": [
+      56.1,
+      6.98,
+      18.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-command-bunker.garrison-v1.lod2.glb",
+     "tris": 204,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      56.1,
+      6.98,
+      18.7
+     ]
+    }
+   ]
+  },
+  "mb-ops-tower": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "building",
+   "scale": 1,
+   "title": "Air operations tower",
+   "source": "art/blender/br/build_garrison.mjs",
+   "use": "Southern Military Base: a five-storey operations tower over the flight line, its top floor glazed all round with a catwalk outside, a stair to every floor and the roof (procedural, 2026-11-23)",
+   "size": [
+    12.5,
+    18.38,
+    12.5
+   ],
+   "sourceTris": 6794,
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-ops-tower.garrison-v1.lod0.glb",
+     "tris": 6794,
+     "draws": 6,
+     "textureMB": 1,
+     "kB": 155,
+     "size": [
+      12.5,
+      18.38,
+      12.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-ops-tower.garrison-v1.lod1.glb",
+     "tris": 856,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 29,
+     "size": [
+      12.5,
+      18.38,
+      12.5
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-ops-tower.garrison-v1.lod2.glb",
+     "tris": 156,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      12.5,
+      18.38,
+      12.5
+     ]
+    }
+   ]
+  },
+  "mb-pillbox": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "outbuilding",
+   "scale": 1,
+   "title": "Pillbox",
+   "source": "art/blender/br/build_garrison.mjs",
+   "use": "Southern Military Base: a concrete pillbox at the gates, gun slits on every side, a stair to its sandbagged roof (procedural, 2026-11-23)",
+   "size": [
+    7.1,
+    3.28,
+    7.1
+   ],
+   "sourceTris": 1418,
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-pillbox.garrison-v1.lod0.glb",
+     "tris": 1418,
+     "draws": 4,
+     "textureMB": 0.75,
+     "kB": 71,
+     "size": [
+      7.1,
+      3.28,
+      7.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-pillbox.garrison-v1.lod1.glb",
+     "tris": 1040,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 35,
+     "size": [
+      7.1,
+      3.28,
+      7.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-pillbox.garrison-v1.lod2.glb",
+     "tris": 84,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      7.1,
+      3.28,
+      7.1
+     ]
+    }
+   ]
+  },
+  "mb-wall": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "structure",
+   "ring": "structure",
+   "scale": 1,
+   "source": "art/blender/br/build_garrison.mjs",
+   "title": "Perimeter wall (4 m)",
+   "use": "Southern Military Base: 4 m of the perimeter wall, 3.6 m of precast concrete with barbed wire along its top (procedural, 2026-11-23)",
+   "size": [
+    4,
+    4.2,
+    1.8
+   ],
+   "sourceTris": 214,
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-wall.garrison-v1.lod0.glb",
+     "tris": 214,
+     "draws": 2,
+     "textureMB": 0.25,
+     "kB": 14,
+     "size": [
+      4,
+      4.2,
+      1.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-wall.garrison-v1.lod1.glb",
+     "tris": 46,
+     "draws": 2,
+     "textureMB": 0.06,
+     "kB": 7,
+     "size": [
+      4,
+      4.2,
+      1.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-wall.garrison-v1.lod2.glb",
+     "tris": 6,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      4,
+      4.2,
+      1.8
+     ]
+    }
+   ]
   }
  }
 }

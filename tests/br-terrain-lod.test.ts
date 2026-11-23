@@ -14,7 +14,7 @@ import { WORLD_HALF } from "@/lib/fps/br/world";
 let hf: Heightfield;
 let minMax: MinMaxPyramid;
 beforeAll(async () => {
-  const file = readFileSync("public/fps/br/height.v5.hf");
+  const file = readFileSync("public/fps/br/height.v6.hf");
   hf = await decodeHeightfield(
     file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength),
   );

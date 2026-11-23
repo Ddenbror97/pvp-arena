@@ -32,7 +32,7 @@ const collision = JSON.parse(
 ) as CollisionData;
 let hf: Heightfield, world: StaticWorld;
 beforeAll(async () => {
-  hf = await decodeHeightfield(buffer("public/fps/br/height.v5.hf"));
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v6.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v4.lc"));
   world = buildIsland(hf, cover, meta, collision).solid;
 }, 60_000);

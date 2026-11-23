@@ -32,7 +32,7 @@ const manifest = JSON.parse(fs.readFileSync(pub(WORLD_ASSETS.models), "utf8")) a
   models: Record<string, Entry>;
 };
 const layout = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), "art/br/far-facades-v1.json"), "utf8"),
+  fs.readFileSync(path.join(process.cwd(), "art/br/far-facades-v2.json"), "utf8"),
 ) as {
   width: number;
   height: number;
@@ -94,6 +94,11 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
       "hospital",
       "superstore",
       "police-station",
+      "mb-ops-tower",
+      "mb-command-bunker",
+      "mb-barracks-3s",
+      "mb-armory",
+      "mb-pillbox",
     ])
       expect(manifest.models[id]!.lods.at(-1)!.farFacade, id).toBe(true);
     // Every enterable kind of building whose far LOD was a flat-coloured silhouette.
@@ -104,14 +109,30 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
       if (m.size[1]! < 1) continue; // paint on the ground (the pitch's lines)
       expect(!!last.farFacade || !!last.facade, id).toBe(true);
     }
-    for (const id of ["pylon", "radio-tower", "tower-crane", "sts-crane", "crag", "windmill"])
+    for (const id of [
+      "pylon",
+      "radio-tower",
+      "tower-crane",
+      "sts-crane",
+      "crag",
+      "windmill",
+      "mb-wall",
+    ])
       expect(manifest.models[id]?.lods.at(-1)!.farFacade, id).toBeUndefined();
   });
 
   it("gives each one material for the renderer, its colours, and no more triangles", () => {
-    const before = JSON.parse(
-      fs.readFileSync(pub("/fps/br/models/models.vehicles-v1.json"), "utf8"),
-    ) as { models: Record<string, Entry> };
+    // (The far LODs replaced: the vehicles-v1 world's, and garrison-v2's for the military base's
+    // buildings, 2026-11-23.)
+    const read = (f: string) =>
+      (
+        JSON.parse(fs.readFileSync(pub(`/fps/br/models/${f}`), "utf8")) as {
+          models: Record<string, Entry>;
+        }
+      ).models;
+    const before = {
+      models: { ...read("models.garrison-v2.json"), ...read("models.vehicles-v1.json") },
+    };
     for (const [id, m] of far) {
       const lod = m.lods.at(-1)!;
       const json = glbJson(lod.file);

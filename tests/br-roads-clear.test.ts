@@ -26,7 +26,7 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")).
 >;
 let layout: Placement[], vegetation: VegetationWorld;
 beforeAll(async () => {
-  const hf = await decodeHeightfield(buffer("public/fps/br/height.v5.hf"));
+  const hf = await decodeHeightfield(buffer("public/fps/br/height.v6.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v4.lc"));
   ({ layout, vegetation } = buildIsland(hf, cover, meta, collision));
 }, 120_000);

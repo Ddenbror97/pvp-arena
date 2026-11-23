@@ -26,7 +26,7 @@ export async function simulate(seeds: number[], maxMin = 40) {
   const collision = JSON.parse(
     readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
   ) as CollisionData;
-  const hf = await decodeHeightfield(buffer("public/fps/br/height.v5.hf"));
+  const hf = await decodeHeightfield(buffer("public/fps/br/height.v6.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v4.lc"));
   const island = buildIsland(hf, cover, meta, collision);
   const results = [];

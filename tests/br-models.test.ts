@@ -132,7 +132,9 @@ describe("Project Island models", () => {
     // parked vehicles, 33 from the owner's two Comrade1280 packs (23 cars in their colours, taxi,
     // patrol car, ambulance, tow truck, vans, buses, garbage and fire trucks), ~4.8 MB,
     // 2026-11-23; 191 buildings' far LODs with texture coordinates and their views' mean
-    // colours for the far atlas, ~0.7 MB over the flat ones they replace, 2026-11-23).
-    expect(total / 1024).toBeLessThan(97);
+    // colours for the far atlas, ~0.7 MB over the flat ones they replace, 2026-11-23; the
+    // Southern Military Base's wall and its five new buildings, ~1.3 MB with their far LODs on
+    // the far atlas again, 2026-11-23).
+    expect(total / 1024).toBeLessThan(98.5);
   });
 });

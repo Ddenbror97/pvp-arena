@@ -20,7 +20,8 @@
  *   doors         [{ side: "front"|"back"|"left"|"right", at, w = 1.3, h = 2.3, floor = 0,
  *                   entrance = true }]  (`at`: along the side, x for front/back, z for left/right;
  *                   w 1.3: a door the bake hangs; wider: an open gateway, not an entrance)
- *   windows       { step = 3.2, w = 1.3, sill = 0.9, head = 2.2, sides = all, skip: [[side, a, b]] }
+ *   windows       { step = 3.2, w = 1.3, sill = 0.9, head = 2.2, sides = all, skip: [[side, a, b]],
+ *                   glass = true }  (glass false: open slits, a bunker's firing ports)
  *   extraHoles    [{ side, floor, a, b, y0, y1, glass }]  (y relative to the storey's floor)
  *   stair         { axis: "x"|"z", a0, a1, c0, c1 }  (rising from a0 to a1)
  *   roofAccess    true: the stair runs on to a flat roof, a stair house over it
@@ -149,7 +150,7 @@ export function makeBuilding(S) {
         if (a < s.a0 + 0.5 || b > s.a1 - 0.5) continue;
         if (out.some((h) => a < h[1] + 0.35 && b > h[0] - 0.35)) continue;
         if ((win.skip ?? []).some(([sd, p, q]) => sd === side && a < q && b > p)) continue;
-        out.push([a, b, y0 + win.sill, y0 + win.head, true]);
+        out.push([a, b, y0 + win.sill, y0 + win.head, win.glass ?? true]);
       }
     }
     return out;

@@ -34,7 +34,7 @@ export async function profile(minutes: number, seed = 11, viewers = 100) {
   const collision = JSON.parse(
     readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
   ) as CollisionData;
-  const hf = await decodeHeightfield(buffer("public/fps/br/height.v5.hf"));
+  const hf = await decodeHeightfield(buffer("public/fps/br/height.v6.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v4.lc"));
   const island = buildIsland(hf, cover, meta, collision);
   const loot = rollLoot(seed, island.layout, collision, island.solid, meta);

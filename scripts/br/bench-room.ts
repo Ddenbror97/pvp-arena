@@ -23,7 +23,7 @@ const NEAR = 300,
   FAR = 1000,
   CELL = 250;
 
-const file = readFileSync("public/fps/br/height.v5.hf");
+const file = readFileSync("public/fps/br/height.v6.hf");
 const hf = await decodeHeightfield(
   file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength),
 );

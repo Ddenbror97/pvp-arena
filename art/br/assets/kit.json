@@ -11213,6 +11213,54 @@
       ],
       "ring": "vehicle",
       "use": "parked firetruck (vehicles-v1, 2026-11-23)"
+    },
+    {
+      "id": "mb-ops-tower",
+      "procedural": "art/blender/br/build_garrison.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Southern Military Base: a five-storey operations tower over the flight line, its top floor glazed all round with a catwalk outside, a stair to every floor and the roof (procedural, 2026-11-23)"
+    },
+    {
+      "id": "mb-command-bunker",
+      "procedural": "art/blender/br/build_garrison.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Southern Military Base: a hardened two-storey command bunker, 60 cm walls with gun slits, rooms on both floors, sandbags on the roof, earth berms up to the roof at both ends (procedural, 2026-11-23)"
+    },
+    {
+      "id": "mb-pillbox",
+      "procedural": "art/blender/br/build_garrison.mjs",
+      "class": "building",
+      "ring": "outbuilding",
+      "collision": "boxes",
+      "use": "Southern Military Base: a concrete pillbox at the gates, gun slits on every side, a stair to its sandbagged roof (procedural, 2026-11-23)"
+    },
+    {
+      "id": "mb-barracks-3s",
+      "procedural": "art/blender/br/build_garrison.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Southern Military Base: a three-storey barrack block, rooms on every floor, a stair to each and on to the roof terrace (procedural, 2026-11-23)"
+    },
+    {
+      "id": "mb-armory",
+      "procedural": "art/blender/br/build_garrison.mjs",
+      "class": "building",
+      "ring": "building",
+      "collision": "boxes",
+      "use": "Southern Military Base: a two-storey armoury of corrugated steel on a concrete plinth, a vehicle gateway, the upper floor and the roof up a stair (procedural, 2026-11-23)"
+    },
+    {
+      "id": "mb-wall",
+      "procedural": "art/blender/br/build_garrison.mjs",
+      "class": "structure",
+      "ring": "structure",
+      "collision": "boxes",
+      "use": "Southern Military Base: 4 m of the perimeter wall, 3.6 m of precast concrete with barbed wire along its top (procedural, 2026-11-23)"
     }
   ],
   "skipped": [

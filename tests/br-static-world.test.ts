@@ -28,7 +28,7 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")) 
 let hf: Heightfield, world: StaticWorld, layout: Placement[];
 let roadGrade: ReturnType<typeof createRoadGrade>;
 beforeAll(async () => {
-  hf = await decodeHeightfield(buffer("public/fps/br/height.v5.hf"));
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v6.hf"));
   roadGrade = createRoadGrade(meta, (x, z) => hf.heightAt(x, z));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v4.lc"));
   ({ layout, solid: world } = buildIsland(hf, cover, meta, collision));

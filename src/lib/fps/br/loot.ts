@@ -201,6 +201,11 @@ put("military", "indoor", 8, ["coastguard-station"]);
 put("military", "indoor", 6, ["control-tower"]);
 put("warehouse", "indoor", 10, ["crash-station"]);
 put("military", "indoor", 14, ["barracks-2s", "mess-hall"]);
+// Southern Military Base's new buildings (2026-11-23, build_garrison.mjs).
+put("military", "indoor", 18, ["mb-armory"]);
+put("military", "indoor", 16, ["mb-command-bunker", "mb-barracks-3s"]);
+put("military", "indoor", 12, ["mb-ops-tower"]);
+put("military", "indoor", 3, ["mb-pillbox"]);
 // The Quay and the harbours (2026-11-15).
 put("city", "indoor", 8, ["customs-house", "harbour-office"]);
 put("warehouse", "indoor", 10, ["fish-market"]);

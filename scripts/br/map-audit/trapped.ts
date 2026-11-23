@@ -18,7 +18,7 @@ const meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as 
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
-const hf = await decodeHeightfield(buf("public/fps/br/height.v5.hf"));
+const hf = await decodeHeightfield(buf("public/fps/br/height.v6.hf"));
 const cover = await decodeLandCover(buf("public/fps/br/landcover.v4.lc"));
 const world = buildIsland(hf, cover, meta, collision).solid;
 const route = planeRoute(1);

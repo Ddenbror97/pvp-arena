@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "vehicles-v1",
+  revision: "garrison-v2",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -27,7 +27,10 @@ export const WORLD_ASSETS = {
   // hooks and spikes at the junctions gone, doubled roads and stubs to nowhere removed, roads
   // short of a bridge joined to it, the quarry's haul roads onto the network, longer dead ends
   // given a site; their ground eased smooth along them (bumps over 35 cm: 33 → 7).
-  height: "/fps/br/height.v5.hf",
+  // height.v6 (2026-11-23, art/br/military_apron.py): the Southern Military Base's flight line
+  // levelled to the base's pad between its south wall and the runway (it lay over a 4 m hump,
+  // and every hangar and most aircraft placed there were refused for want of level ground).
+  height: "/fps/br/height.v6.hf",
   landcover: "/fps/br/landcover.v4.lc",
   meta: "/fps/br/world.v4.json",
   // sites-v1 (the facades-v1 manifest, its mid-distance LODs of 54 models on the facade atlas,
@@ -201,16 +204,30 @@ export const WORLD_ASSETS = {
   // or under the canopy is filtered texture, not a field of sub-pixel window bars or of blank
   // boxes (owner, 2026-11-23: "blinking/flicker buildings on distance … in the
   // airplane/parachute", "the buildings looks strange").
-  models: "/fps/br/models/models.far-facades-v1.json",
-  collision: "/fps/br/models/collision.vehicles-v1.json",
+  // garrison-v1 (2026-11-23, from far-facades-v1 and vehicles-v1, build_garrison.mjs +
+  // build_collision.mjs): the Southern Military Base's perimeter wall (mb-wall, in place of
+  // the hesco baskets the base's road ran through) and its new enterable buildings: the air
+  // operations tower, two command bunkers, pillboxes at the gates, three-storey barrack
+  // blocks, armouries (owner, 2026-11-23: "its way to much dead space areas … build new
+  // military buildings and maybe a wall around the military base", "fun military buildings,
+  // bunkers maybe aswell? enterble multible floros").
+  // garrison-v2 (glass_panes.mjs, offset_coplanar.mjs zfix-v20): their windows' glass
+  // breakable (the tower's, the barrack blocks' and the armouries'; the bunkers' and pillboxes'
+  // slits are open), their coplanar faces lifted.
+  // far-facades-v2 (the same world: build_facades.mjs --far on garrison-v2 with the far LODs
+  // the far-facades-v1 pass started from): the far atlas again, with the five new buildings on
+  // it (196 models).
+  models: "/fps/br/models/models.far-facades-v2.json",
+  collision: "/fps/br/models/collision.garrison-v2.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
 export const DOOR_ASSETS = {
   // v25 (2026-11-17): v24 with the coastal towns' 13 houses' doors (build_coast.mjs).
   // v26 (2026-11-17): v25 with East Works' 13 new doors (build_works.mjs).
-  meta: "/fps/br/models/doors.v26.json",
-  atlas: "/fps/br/models/doors.v26.webp",
+  // v27 (2026-11-23): v26 with the Southern Military Base's 14 new doors (build_garrison.mjs).
+  meta: "/fps/br/models/doors.v27.json",
+  atlas: "/fps/br/models/doors.v27.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */
