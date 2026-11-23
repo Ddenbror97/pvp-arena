@@ -9026,10 +9026,68 @@ export function* islandLayoutSteps(
         p.y = +(lo + Math.min(0.3, (hi - lo) / 2)).toFixed(2);
     }
   }
-  // The parked cars, taxis, vans and service vehicles (parked-cars.ts, vehicles-v1).
+  // The parked cars, taxis, vans and service vehicles (parked-cars.ts, vehicles-v1), then an
+  // engine before each fire station and a few garbage trucks on the town streets.
   swapParkedCars(out);
+  serviceVehicles(out, ctx);
   standOnRoads(out, ctx);
   return out;
+}
+
+/**
+ * The fire stations' engines and the towns' garbage trucks (owner, 2026-11-23: "fix the 'not
+ * fixed yet'": no fire engine stood at any station but the hospital's, and no garbage truck in
+ * a town). An engine stands out on the apron before the station's bays, nose out; a garbage
+ * truck takes the place of a parked car along a street in each town (one in about fifty), where
+ * it is clear of everything else. Each goes only where the layout's own placer finds it clear.
+ */
+function serviceVehicles(out: Placement[], ctx: Context) {
+  const stations = out.filter((p) => p.model === "fire-station" && p.poi !== "central-hospital");
+  for (const st of stations) {
+    const put = groundPlacer(ctx, out, st.poi, st.x, st.z, 30);
+    // Model +x (the engine's nose) out of the bays, +z: a quarter turn back, then the station's.
+    const out_ = ((st.turn + 3) & 3) as Placement["turn"];
+    // Before the bays; else along the station's side, nose to the front.
+    const spots: Array<[number, number, Placement["turn"]]> = [
+      ...[6, 2, 10, -2].flatMap((lx) =>
+        [16.3, 17.5].map((lz) => [lx, lz, out_] as [number, number, Placement["turn"]]),
+      ),
+      ...[2, -2, 6].flatMap((lz) =>
+        [17.4, -17.4].map((lx) => [lx, lz, out_] as [number, number, Placement["turn"]]),
+      ),
+    ];
+    for (const [lx, lz, t] of spots) {
+      const [dx, dz] = turnXZ(lx, lz, st.turn);
+      if (put("civ-firetruck", st.x + dx, st.z + dz, t, { margin: 0.3, flat: 0.8 })) break;
+    }
+  }
+  const towns = new Set(ctx.meta.pois.filter((p) => p.town).map((p) => p.id));
+  const cars = out.filter(
+    (p) => towns.has(p.poi) && /^pc-(sedan|hatchback|compact|wagon)/.test(p.model),
+  );
+  let n = 0;
+  for (const c of cars) {
+    // One in about fifty, chosen from where it stands.
+    const r = Math.abs(Math.sin(c.x * 12.9898 + c.z * 78.233) * 43758.5453) % 1;
+    if (r > 0.02) continue;
+    const [w, d] = footAt("civ-garbage", c.turn);
+    const box = [c.x - w / 2 - 0.6, c.z - d / 2 - 0.6, c.x + w / 2 + 0.6, c.z + d / 2 + 0.6];
+    const clear = !out.some((q) => {
+      if (q === c || Math.abs(q.x - c.x) > 25 || Math.abs(q.z - c.z) > 25) return false;
+      const [qw, qd] = footAt(q.model, q.turn);
+      return (
+        box[0]! < q.x + qw / 2 &&
+        box[2]! > q.x - qw / 2 &&
+        box[1]! < q.z + qd / 2 &&
+        box[3]! > q.z - qd / 2
+      );
+    });
+    if (clear) {
+      c.model = "civ-garbage";
+      n++;
+    }
+  }
+  return n;
 }
 
 /**
@@ -12927,16 +12985,19 @@ function militaryUpgrade(out: Placement[], ctx: Context) {
       margin: 2,
       flat: 1.6,
     });
-  // The SAM site east of the compound, the artillery park west of it.
+  // The SAM site east of the compound, the artillery park west of it. (2026-11-23: the Hawk
+  // launchers, the M163s and the M109s had been reduced to 5–18 % of their triangles, missiles
+  // in shards, road wheels and hatches floating beside them, and their sources are gone: Patriot
+  // launchers, Humvees and tanks, which kept their shape, stand in their places. The owner,
+  // 2026-11-23: "fix the 'not fixed yet'".)
   const east: Array<[string, Placement["turn"], number, number]> = [
     ["patriot", 0, 215, -120],
     ["patriot", 0, 240, -95],
-    ["hawk-sam", 0, 215, -60],
-    ["hawk-sam", 0, 232, -45],
-    ["hawk-sam", 0, 249, -60],
+    ["patriot", 0, 215, -55],
+    ["patriot", 0, 245, -50],
     ["radar-truck", 0, 262, -110],
-    ["m163", 1, 205, -20],
-    ["m163", 1, 230, -10],
+    ["humvee", 1, 205, -20],
+    ["humvee", 1, 230, -10],
     ["sandbags", 0, 228, -140],
     ["sandbags", 1, 270, -80],
   ];
@@ -12946,9 +13007,9 @@ function militaryUpgrade(out: Placement[], ctx: Context) {
       flat: 1.2,
     });
   const west: Array<[string, Placement["turn"], number, number]> = [
-    ["m109", 0, -210, -80],
-    ["m109", 0, -198, -80],
-    ["m109", 0, -186, -80],
+    ["tank", 0, -210, -80],
+    ["tank", 0, -198, -80],
+    ["tank", 0, -186, -80],
     ["d30-howitzer", 0, -210, -45],
     ["d30-howitzer", 0, -196, -45],
     ["d30-howitzer", 0, -182, -45],

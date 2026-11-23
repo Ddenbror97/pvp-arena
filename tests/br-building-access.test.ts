@@ -63,7 +63,12 @@ describe("authored BR building entrances and walkable approaches", () => {
         const body: BrBody = {
           x: points[0]![0]!,
           z: points[0]![1]!,
-          y: hf.heightAt(points[0]![0]!, points[0]![1]!),
+          // On the ground there: the terrain, or the asphalt laid over it (paved.ts: a road, a
+          // runway or a roadside lot, the filling station's forecourt among them).
+          y: Math.max(
+            hf.heightAt(points[0]![0]!, points[0]![1]!),
+            island.solid.roadTop?.(points[0]![0]!, points[0]![1]!) ?? -Infinity,
+          ),
           grounded: true,
           crouched: false,
           velocityY: 0,

@@ -12,6 +12,8 @@
  * cannot safely consume canary-enabled snapshots and must reload; 16: the faster canopy glide,
  * plates fitted without a vest, and supply crates that hold their loot (the drop rows carry
  * the ids inside); 17: player rows carry the guns worn on the back (index 12), the rope fields
- * after them).
+ * after them); 18: the ground on the asphalt as drawn (the runways and roadside lots now in the
+ * world, the roads over the drawn ground) and vehicles resting on their tyres, both predicted
+ * by the client.
  */
-export const BR_RULESET_VERSION = 17;
+export const BR_RULESET_VERSION = 18;
