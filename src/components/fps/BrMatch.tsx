@@ -676,7 +676,7 @@ function hint(h: BrHud, b: BrBinds) {
     case "ground":
       if (h.nade)
         return `Left mouse: throw · right mouse: underhand · ${k("grenade")}: next grenade · ${k("primary")}/${k("secondary")}: guns`;
-      return h.kit && h.kit.active < 0 && !h.prompt
+      return !h.flight && h.kit && h.kit.active < 0 && !h.prompt
         ? `Find a weapon · ${k("interact")}: pick up · ${k("inventory")}: inventory`
         : "";
     case "swim":

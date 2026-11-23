@@ -1749,7 +1749,6 @@ export function BrFlight({ hud }: { hud: BrHud }) {
         : f.exit === "slow"
           ? "Exit · slow down"
           : "Exit unsafe";
-  const hp = hud.kit ? Math.ceil(hud.kit.hp) : null;
   return (
     <div className="br-flight" role="status" aria-label="Aircraft instruments">
       <div className="br-flight-tape left">
@@ -1811,17 +1810,11 @@ export function BrFlight({ hud }: { hud: BrHud }) {
             <Bar value={f.throttle} max={1} tone="#e9eef0" />
             <small>{Math.round(f.throttle * 100)} %</small>
           </dd>
-          <dt>RPM</dt>
-          <dd>
-            <small>
-              {f.engine === "starting" ? "Starting…" : f.engine === "off" ? "Off" : f.rpm}
-            </small>
-          </dd>
           <dt>Fuel</dt>
           <dd>
             <Bar value={f.fuel} max={1} tone={f.fuel < 0.15 ? "#ff5a4e" : "#9fd27e"} />
             <small>
-              {f.engine === "running" ? mmss(f.fuelS) : `${Math.round(f.fuel * 100)} %`}
+              {f.engine === "running" ? mmss(f.fuelS) : `${Math.round(f.fuel * 100)}%`}
             </small>
           </dd>
           <dt>Airframe</dt>
@@ -1840,44 +1833,16 @@ export function BrFlight({ hud }: { hud: BrHud }) {
               {f.brake && f.grounded ? " · Brakes" : ""}
             </small>
           </dd>
-          {hp !== null && (
-            <>
-              <dt>Health</dt>
-              <dd>
-                <small>{hp}</small>
-              </dd>
-            </>
-          )}
         </dl>
       </div>
       <div className="br-flight-keys">
         <span className="br-flight-seat">{f.seat === 0 ? "Pilot" : "Passenger"}</span>
         {f.seat === 0 ? (
           <>
-            <span>
-              <kbd>W</kbd>
-              <kbd>S</kbd> accelerate / slow down
-            </span>
-            <span>
-              Hold <kbd>Left mouse</kbd> + drag <kbd>← / →</kbd> steer
-            </span>
-            <span>
-              Drag <kbd>↑ / ↓</kbd> nose up / down
-            </span>
-            <span>Pull up from 55 KT · release mouse for steady flight</span>
-            <span>
-              <kbd>Q</kbd>
-              <kbd>R</kbd> rudder
-            </span>
-            <span>
-              <kbd>G</kbd> flaps
-            </span>
-            <span>
-              <kbd>Space</kbd> brakes
-            </span>
-            <span>
-              <kbd>F</kbd> engine on/off (auto-starts)
-            </span>
+            <span><kbd>W</kbd><kbd>S</kbd> Throttle</span>
+            <span><kbd>Left mouse</kbd> Hold + drag to steer and pitch</span>
+            {f.grounded && <span>Drag up at 55 KT to lift off</span>}
+            {f.grounded && <span><kbd>Space</kbd> Brake</span>}
           </>
         ) : (
           f.canTakeControls && (
@@ -1886,14 +1851,8 @@ export function BrFlight({ hud }: { hud: BrHud }) {
             </span>
           )
         )}
-        <span>
-          <kbd>C</kbd> {f.camera.toLowerCase()} camera
-        </span>
-        <span>
-          <kbd>Alt</kbd> look
-        </span>
         <span className={f.exit === "unsafe" || f.exit === "slow" ? "unsafe" : ""}>
-          <kbd>E</kbd> {exit.toLowerCase()}
+          <kbd>E</kbd> {exit}
         </span>
       </div>
     </div>
