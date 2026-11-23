@@ -27,14 +27,27 @@ const STEPS_PER_CELL = Math.ceil(CELL_SIZE / STEP);
 export const SPECIES = ["pine", "broadleaf", "birch", "jungle", "palm"] as const;
 export type Species = (typeof SPECIES)[number];
 
-/** Collision radius of a trunk at scale 1 (m), and its height to the crown base. */
+/**
+ * A trunk's collision at scale 1 (m): its radius, its height to the crown base, and where it
+ * stands in the tree model (dx, dz from the tree's origin, before the tree's own turn).
+ *
+ * Measured off each model's bark at body height (0.4–1.9 m). The posts used to stand on the
+ * origin with a guessed radius, but the models' trunks do not: the jungle tree's is a stick
+ * 8 cm across 0.39 m to one side, under a 1.1 m post; the palm's stands 0.42 m off its post, the
+ * oak's 0.65 m. Every jungle tree was an invisible post (owner, 2026-11-22: "invisible objects in
+ * the forgotten ruins that make the character/car or bike not pass … spread over the place"),
+ * and beside a palm or an oak a player stopped short of the bark or walked into it.
+ */
 export const TRUNK = {
-  pine: { radius: 0.32, height: 15 },
-  broadleaf: { radius: 0.45, height: 11 },
-  birch: { radius: 0.22, height: 13 },
-  jungle: { radius: 0.55, height: 16 },
-  palm: { radius: 0.24, height: 11 },
-} as const satisfies Record<Species, { radius: number; height: number }>;
+  pine: { radius: 0.34, height: 15, dx: 0.05, dz: -0.22 },
+  broadleaf: { radius: 0.6, height: 11, dx: 0.14, dz: -0.63 },
+  birch: { radius: 0.28, height: 13, dx: -0.1, dz: 0.1 },
+  jungle: { radius: 0.1, height: 16, dx: 0.39, dz: -0.02 },
+  palm: { radius: 0.16, height: 11, dx: -0.35, dz: 0.23 },
+} as const satisfies Record<Species, { radius: number; height: number; dx: number; dz: number }>;
+
+/** The farthest a trunk stands from its tree's origin (m, at the largest scale). */
+const TRUNK_REACH = 1;
 
 /** Floats per tree in a cell's packed array: x, y (ground), z, scale, yaw (0..1), species. */
 export const TREE_STRIDE = 6;
@@ -313,12 +326,23 @@ export function forEachTrunkNear(
     for (let ci = i0; ci <= i1; ci++) {
       const t = cellTrees(world, ci, cj);
       for (let k = 0; k < t.length; k += TREE_STRIDE) {
-        const dx = t[k]! - x,
-          dz = t[k + 2]! - z;
-        if (Math.abs(dx) > range + 1 || Math.abs(dz) > range + 1) continue;
+        // Far ones out first, on the tree's origin (no trunk stands TRUNK_REACH m off it).
+        if (
+          Math.abs(t[k]! - x) > range + 1 + TRUNK_REACH ||
+          Math.abs(t[k + 2]! - z) > range + 1 + TRUNK_REACH
+        )
+          continue;
         const kind = TRUNK[SPECIES[t[k + 5]!]!];
         const s = t[k + 3]!;
-        visit(t[k]!, t[k + 2]!, kind.radius * s, kind.height * s, t[k + 1]!);
+        // The trunk's place in the model, turned and scaled as the renderer does the tree
+        // (vegetation-renderer.ts treeTurn: x' = c·x + s·z, z' = −s·x + c·z).
+        const a = t[k + 4]! * Math.PI * 2,
+          c = Math.cos(a),
+          n = Math.sin(a);
+        const tx = t[k]! + (c * kind.dx + n * kind.dz) * s,
+          tz = t[k + 2]! + (-n * kind.dx + c * kind.dz) * s;
+        if (Math.abs(tx - x) > range + 1 || Math.abs(tz - z) > range + 1) continue;
+        visit(tx, tz, kind.radius * s, kind.height * s, t[k + 1]!);
       }
     }
 }

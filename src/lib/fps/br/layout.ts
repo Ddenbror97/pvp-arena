@@ -169,7 +169,9 @@ function militaryBase(poi: Poi, out: Placement[]) {
   // Aircraft hangars on the western service road (north and south of the barracks), a motor
   // pool and a second container stack: big covered loot halls the concept map draws there.
   at("ind-hangar", -90, -125, 0);
-  at("hangar", -95, 75, 0);
+  // (The Sketchfab "hangar" until 2026-11-22: imported at a tenth of its triangles, it stood
+  // broken; the base's own procedural hangar here since.)
+  at("mil-hangar", -95, 75, 0);
   for (let i = 0; i < 3; i++) at("radar-truck", -20 + i * 14, -140, 1);
   for (let i = 0; i < 4; i++) at("container-40", 60, 130 + i * 5, 0);
   at("barracks", 130, -10, 0);
@@ -1328,8 +1330,12 @@ function westPoint(poi: Poi, out: Placement[], ctx: Context) {
 function airfield(poi: Poi, out: Placement[], ctx: Context) {
   const { at, scatter } = builder(poi, out);
   at("hangar-j", -150, -170, 0);
-  at("hangar", -70, -160, 0);
-  at("hangar", 5, -160, 0);
+  // The middle two: the procedural maintenance hangar, doors to the runway (owner, 2026-11-22:
+  // the Sketchfab "hangar" here was imported at a tenth of its triangles and stood broken).
+  // (The eastern one 13 m east of the old hangar's centre: smaller, it clears the apron road
+  // that ran under the old one's corner.)
+  at("air-hangar", -70, -160, 0);
+  at("air-hangar", 18, -162, 0);
   at("hangar-j", 85, -170, 0);
   at("warehouse", 160, -150, 0);
   at("atc-tower", -90, -60, 0);
@@ -1381,8 +1387,10 @@ function airfieldPolish(poi: Poi, out: Placement[], ctx: Context) {
   /** The first of the candidate spots that takes the model. */
   const first = (model: string, turn: Placement["turn"], spots: number[][], flat = 1.5) =>
     spots.some(([dx, dz]) => at(model, dx!, dz!, turn, flat));
-  // The passenger terminal, airliner and light aircraft (owner's 2026-11-08 downloads).
-  first("terminal", 0, [
+  // The passenger terminal, airliner and light aircraft (owner's 2026-11-08 downloads). The
+  // terminal is the procedural one since 2026-11-22 (owner: "not completed/incorrect built": the
+  // Gore Bay download was imported at a tenth of its triangles, its walls torn).
+  first("air-terminal", 0, [
     [-330, -40],
     [-300, -20],
     [-360, -70],

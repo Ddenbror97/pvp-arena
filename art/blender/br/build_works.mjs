@@ -188,17 +188,18 @@ const B = {
         roofAccess: true,
         roof: { type: "flat", parapet: 1.15, coping: [0.12, 0.11, 0.1] },
         extra: all(({ k, far, top }) => {
-          // Bands up the stack and its blackened crown round the lookout.
-          for (let y = 6; y < top - 2; y += 7.2)
-            k.box([-X - 0.1, y, -Z - 0.1, X + 0.1, y + 0.4, Z + 0.1], "concrete", TRIM, {
-              collide: false,
-            });
-          k.box(
-            [-X - 0.25, top - 1.2, -Z - 0.25, X + 0.25, top + 0.2, Z + 0.25],
-            "paint",
-            [0.12, 0.11, 0.1],
-            { collide: false },
-          );
+          // Bands up the stack and its blackened crown round the lookout: rings on the outside
+          // of the walls only. (Solid slabs across the whole stack used to hang through every
+          // other storey and the stair inside it.)
+          const ring = (o, y0, y1, m, tint) => {
+            const opt = { collide: false };
+            k.box([-X - o, y0, Z, X + o, y1, Z + o], m, tint, { ...opt, skip: ["z0"] });
+            k.box([-X - o, y0, -Z - o, X + o, y1, -Z], m, tint, { ...opt, skip: ["z1"] });
+            k.box([-X - o, y0, -Z, -X, y1, Z], m, tint, { ...opt, skip: ["x1", "z0", "z1"] });
+            k.box([X, y0, -Z, X + o, y1, Z], m, tint, { ...opt, skip: ["x0", "z0", "z1"] });
+          };
+          for (let y = 6; y < top - 2; y += 7.2) ring(0.1, y, y + 0.4, "concrete", TRIM);
+          ring(0.25, top - 1.2, top + 0.2, "paint", [0.12, 0.11, 0.1]);
           // A battered plinth (the stack widens at its foot).
           k.box([-X - 0.5, 0, -Z - 0.5, X + 0.5, 1.2, -Z], DARK_BRICK.m, DARK_BRICK.tint, {
             skip: ["bottom"],

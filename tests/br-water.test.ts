@@ -2,7 +2,12 @@ import * as THREE from "three";
 import { LOG_BIAS } from "@/lib/fps/br/depth-bias";
 import { describe, expect, it } from "vitest";
 import { DROP } from "@/lib/fps/br/drop";
-import { createWater, SHORE_FOAM_FULL_M, SHORE_FOAM_GONE_M } from "@/lib/fps/br/water";
+import {
+  createWater,
+  SHORE_FOAM_FULL_M,
+  SHORE_FOAM_GONE_M,
+  SHORE_SOFT_M,
+} from "@/lib/fps/br/water";
 import type { WorldMeta } from "@/lib/fps/br/world";
 
 /**
@@ -77,7 +82,7 @@ describe("battle royale water", () => {
     expect(f).toMatch(/if \(see > 0\.0\)/);
     expect(f).toMatch(/if \(waterDepth < 1\.1 && shoreNear > 0\.0 && vStill < 0\.5\)/);
     // (With the shore's depth bias for logarithmic depth: depth-bias.ts.)
-    expect(material.customProgramCacheKey()).toBe(`br-water-v9-depth|log-bias-${LOG_BIAS.water}`);
+    expect(material.customProgramCacheKey()).toBe(`br-water-v10-depth|log-bias-${LOG_BIAS.water}`);
   });
 
   // Owner, 2026-11-13: "in the parachute ... the edges of the water rivers is too white, looks
@@ -93,6 +98,22 @@ describe("battle royale water", () => {
     expect(SHORE_FOAM_GONE_M).toBeLessThanOrEqual(200);
     // The drop starts at the plane's 800 m, under the canopy all the way down.
     expect(SHORE_FOAM_GONE_M).toBeLessThan(DROP.planeAltitude / 4);
+  });
+
+  // Owner, 2026-11-22: "in diffrent positions in the scope the rivers and waters flicker the
+  // edges". A partial alpha at the edge becomes a sample dither on a real GPU; far off, where
+  // the fade is a pixel wide along every bank, it crawled as the view moved.
+  it("fades the water's edge near the camera only, whole to its edge further out", () => {
+    const f = compiled().shader.fragmentShader;
+    expect(f).toContain(
+      `float soft = 1.0 - smoothstep(${SHORE_SOFT_M[0].toFixed(1)}, ${SHORE_SOFT_M[1].toFixed(1)}, length(vViewPosition));`,
+    );
+    expect(f).toContain(
+      "diffuseColor.a *= mix(1.0, smoothstep(0.0, max(fwidth(depth), 0.02), depth), soft);",
+    );
+    // The fade still reaches a player at the water's edge, and is gone before a scope's range.
+    expect(SHORE_SOFT_M[0]).toBeGreaterThanOrEqual(100);
+    expect(SHORE_SOFT_M[1]).toBeLessThanOrEqual(250);
   });
 });
 

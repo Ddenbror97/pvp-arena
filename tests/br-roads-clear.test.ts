@@ -153,8 +153,9 @@ describe("Project Island roads", () => {
       }
       return t1 > t0 ? (t1 - t0) * Math.hypot(dx, dz) : 0;
     };
-    // (The airfield's three hangars stand where its apron roads were laid round them; they stay.)
-    const ALLOWED = new Set(["hangar-j", "hangar"]);
+    // (The airfield's two J-type hangars stand where its apron roads were laid round them; they
+    // stay. The procedural hangars between them since 2026-11-22 clear the roads.)
+    const ALLOWED = new Set(["hangar-j"]);
     for (const p of layout) {
       const m = models[p.model];
       if (!m || m.class !== "building" || ALLOWED.has(p.model)) continue;
