@@ -54,7 +54,19 @@ describe("the buildings' windows are breakable glass", () => {
     expect((windowPanes as { revision: string }).revision).toBe(WORLD_ASSETS.revision);
     const ids = Object.keys(models);
     // The procedural houses and blocks, the textured kit's towns and works among them.
-    for (const id of ["apartment", "bungalow", "townhouse", "bauhaus-block", "cove-house-red"])
+    for (const id of [
+      "apartment",
+      "bungalow",
+      "townhouse",
+      "bauhaus-block",
+      "cove-house-red",
+      "rural-store-1",
+      "rural-store-3",
+      "rural-store-5",
+      "brick-shop",
+      "garage",
+      "warehouse",
+    ])
       expect(ids).toContain(id);
     for (const id of ids) {
       expect(manifest.models[id]!.lods[0]!.file).toContain(`.${WORLD_ASSETS.revision}.lod0.`);
@@ -78,7 +90,18 @@ describe("the buildings' windows are breakable glass", () => {
       expect(models[island.layout[p.placement!]!.model]).toBeDefined();
   });
 
-  for (const model of ["bungalow", "apartment", "cove-house-red", "ew-control-house"])
+  // (The procedural houses, the textured kit's towns and works, and the windows cut_windows.mjs
+  // cut through blank walls and painted-on windows.)
+  for (const model of [
+    "bungalow",
+    "apartment",
+    "cove-house-red",
+    "ew-control-house",
+    "rural-store-1",
+    "rural-store-3",
+    "brick-shop",
+    "garage",
+  ])
     it(`${model}: whole glass stops a player, a shot breaks it, then it is an opening`, () => {
       const broken = new Uint8Array(island.panes.count);
       const glazed = withPanes(island.solid, island.panes, broken);
@@ -86,9 +109,10 @@ describe("the buildings' windows are breakable glass", () => {
       expect(at).toBeGreaterThanOrEqual(0);
       const panes = all.filter((p) => p.placement === at);
       expect(panes.length).toBe(models[model]!.length);
-      // A pane on the ground floor with room for a hull (the widest at the lowest storey).
+      // A pane with room for a hull (the widest at the lowest storey).
+      const lowest = Math.min(...panes.map((p) => p.box[1]));
       const pane = panes
-        .filter((p) => p.box[1] - island.layout[at]!.y < 3)
+        .filter((p) => p.box[1] < lowest + 0.5)
         .sort((a, b) => {
           const w = (p: Pane) => Math.max(p.box[3] - p.box[0], p.box[5] - p.box[2]);
           return w(b) - w(a);

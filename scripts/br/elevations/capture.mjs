@@ -51,7 +51,10 @@ const page = await browser.newPage({ viewport: { width: 4000, height: 2000 } });
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.waitForFunction(() => window.elevation);
 const manifest = JSON.parse(
-  fs.readFileSync(path.join(ROOT, `public/fps/br/models/models.${rev ?? "panes-v1"}.json`), "utf8"),
+  fs.readFileSync(
+    path.join(ROOT, `public/fps/br/models/models.${rev ?? "windows-v1"}.json`),
+    "utf8",
+  ),
 );
 for (const id of ids) {
   const file = manifest.models[id].lods[0].file;

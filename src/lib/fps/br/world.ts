@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "panes-v1",
+  revision: "windows-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -177,13 +177,15 @@ export const WORLD_ASSETS = {
   // (back-v1: the panels blinked from the parachute); the J-type hangar re-cut from its pre-cut
   // model with its end walls kept (access-v27, zfix-v17); the Cessna 402 painted (livery-v1);
   // Forgotten Ruins' trees and tree-high plants on the "jungle-tree" ring (props-renderer.ts).
-  // panes-v1 (2026-11-23, glass_panes.mjs): every building's window glass breakable. The glass
-  // the near LODs drew themselves (the procedural houses' opaque dark slabs, the textured kit's
-  // see-through glass) is out of 51 models' near LODs and listed as panes (window-panes.json,
-  // panes.ts), and the collision boxes in their openings are cut away (a broken pane is an
-  // opening). Middle and far LODs unchanged.
-  models: "/fps/br/models/models.panes-v1.json",
-  collision: "/fps/br/models/collision.panes-v1.json",
+  // windows-v1 (2026-11-23): every building's window glass breakable (glass_panes.mjs). The
+  // glass the near LODs drew themselves (the procedural houses' opaque dark slabs, the textured
+  // kit's see-through glass) is out of 51 models' near LODs and listed as panes
+  // (window-panes.json, panes.ts), and the collision boxes in their openings are cut away (a
+  // broken pane is an opening). The buildings that had no window at all (the brick corner
+  // shops, the cabin, the garage, the quonset, the long shed) have windows cut through their
+  // plain walls, framed and glazed with panes (cut_windows.mjs). Middle and far LODs unchanged.
+  models: "/fps/br/models/models.windows-v1.json",
+  collision: "/fps/br/models/collision.windows-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

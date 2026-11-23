@@ -320,8 +320,11 @@ describe("Central Hospital: the mega hospital", () => {
   });
   it("glazes the sky bridges with panes a shot breaks, one bay at a time", () => {
     // (Owner, 2026-11-13: "the hospital bridge windows should also be breakble by shooting it".)
+    // (The hospital's own panes: not the windows of the buildings round it.)
     const near = listPanes(island.panes).filter(
-      (p) => Math.hypot((p.box[0] + p.box[3]) / 2 - poi.x, (p.box[2] + p.box[5]) / 2 - poi.z) < 120,
+      (p) =>
+        p.placement === undefined &&
+        Math.hypot((p.box[0] + p.box[3]) / 2 - poi.x, (p.box[2] + p.box[5]) / 2 - poi.z) < 120,
     );
     // The bridges' bays, and (2026-11-13: "the windows on the bridge can be broken with weapons
     // but not the rest of the windows on the hospital") every window of the four blocks.
