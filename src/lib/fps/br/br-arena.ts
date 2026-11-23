@@ -1348,7 +1348,9 @@ export function createBrArena(
     vehiclesFx = createVehicleRenderer(scene, island.loader, island.manifest, base);
     aircraftFx = createAircraftRenderer(scene, island.loader, base);
     doorOpen = new Uint8Array(island.island.doors.doors.length);
-    paneFx = createPaneRenderer(scene, island.island.panes);
+    // (The buildings' windows go with their buildings' near LODs.)
+    const nearDrawn = island.nearDrawn;
+    paneFx = createPaneRenderer(scene, island.island.panes, nearDrawn);
     // The Tracker perk's footprints: one instanced draw, compiled now (never mid-fight).
     trackFx = createTrackerRenderer(scene);
     void renderer.compileAsync(trackFx.mesh, camera, scene).catch(() => {});

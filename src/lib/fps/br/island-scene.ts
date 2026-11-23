@@ -62,6 +62,8 @@ export type IslandScene = {
   setGrassRange(m: number): void;
   /** Upload the textures of the buildings and props about to be drawn near (a few a frame). */
   warm(renderer: THREE.WebGLRenderer): void;
+  /** Whether layout placement `index` is drawn at its near LOD (props-renderer.ts nearDrawn). */
+  nearDrawn(index: number): boolean;
   /** Settles once the ground textures are in (or failed: the flat colours stay). */
   groundReady: Promise<void>;
   footstepSurface(x: number, y: number, z: number): FootstepSurface;
@@ -293,6 +295,7 @@ export async function loadIslandScene(
       structures.setGround(terrain.groundLayer("asphalt"), m);
     },
     groundReady,
+    nearDrawn: (index) => props.nearDrawn(index),
     footstepSurface: createBrFootstepSurface(hf, cover, island.layout, collision, meta),
     setGrassRange(m) {
       grass?.setRange(m);

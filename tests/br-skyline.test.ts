@@ -41,7 +41,7 @@ const meta = JSON.parse(readFileSync(`public${WORLD_ASSETS.meta}`, "utf8")) as W
 const hf = await decodeHeightfield(buffer(`public${WORLD_ASSETS.height}`));
 const cover = await decodeLandCover(buffer(`public${WORLD_ASSETS.landcover}`));
 const island = buildIsland(hf, cover, meta, collision);
-const broken = new Uint8Array(island.panes.panes.length);
+const broken = new Uint8Array(island.panes.count);
 const glazed = withPanes(island.solid, island.panes, broken);
 const open = withDoors(glazed, island.doors, new Uint8Array(island.doors.doors.length).fill(1));
 const poi = meta.pois.find((p) => p.id === "skyline")!;

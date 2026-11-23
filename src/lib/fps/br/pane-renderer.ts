@@ -2,49 +2,95 @@ import * as THREE from "three";
 import { biasLogDepth, LOG_BIAS } from "./depth-bias";
 import type { PaneSet } from "./panes";
 
+/** How often the buildings' windows are matched to their buildings' LODs (frames). */
+const NEAR_EVERY = 4;
+
 /**
  * The panorama glass (panes.ts): every whole pane as one instance of a tinted, see-through slab
  * (one draw for the island's few hundred panes), hidden when it breaks; a break throws a burst
  * of shards that fall and fade (a second instanced draw, reused).
+ *
+ * The buildings' windows (panes with a `placement`: tens of thousands over the island) are a
+ * third draw, of the windows of the buildings drawn at their near LOD this frame (`nearDrawn`,
+ * from the props renderer): the near LOD is the one without glass of its own; the middle and
+ * far LODs keep theirs. Without `nearDrawn` (tools) they are all drawn.
  */
-export function createPaneRenderer(scene: THREE.Scene, set: PaneSet) {
-  const n = set.panes.length;
-  const glass = new THREE.InstancedMesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshStandardMaterial({
-      color: 0x2c3c46,
-      metalness: 0.6,
-      roughness: 0.08,
-      transparent: true,
-      opacity: 0.42,
-      depthWrite: false,
-      // Pulled toward the eye: the storeys' middle and far LODs (condo-floor's glass box) draw
-      // their own glass on the pane's plane, and from a few hundred metres the two took turns
-      // pixel by pixel, the tower's side flickering dark (owner, 2026-11-15: "Downtown
-      // apartments flicker on the side of the building … the glass").
-      polygonOffset: true,
-      polygonOffsetFactor: -2,
-      polygonOffsetUnits: -8,
-    }),
-    Math.max(1, n),
-  );
+export function createPaneRenderer(
+  scene: THREE.Scene,
+  set: PaneSet,
+  nearDrawn: ((placement: number) => boolean) | null = null,
+) {
+  const n = set.count;
+  // The planned panes (the towers', the hospital's, the arena's, the station's: a few hundred)
+  // are the first draw's instances; the buildings' windows are not in it.
+  const slot = new Int32Array(n).fill(-1);
+  let planned = 0;
+  for (let id = 0; id < n; id++) if (set.placement[id]! < 0) slot[id] = planned++;
+  const material = new THREE.MeshStandardMaterial({
+    color: 0x2c3c46,
+    metalness: 0.6,
+    roughness: 0.08,
+    transparent: true,
+    opacity: 0.42,
+    depthWrite: false,
+    // Pulled toward the eye: the storeys' middle and far LODs (condo-floor's glass box) draw
+    // their own glass on the pane's plane, and from a few hundred metres the two took turns
+    // pixel by pixel, the tower's side flickering dark (owner, 2026-11-15: "Downtown
+    // apartments flicker on the side of the building … the glass").
+    polygonOffset: true,
+    polygonOffsetFactor: -2,
+    polygonOffsetUnits: -8,
+  });
   // Under the default logarithmic depth that offset does nothing (depth-bias.ts): this is the
   // pull that takes effect there.
-  biasLogDepth(glass.material, LOG_BIAS.pane);
-  glass.count = n;
+  biasLogDepth(material, LOG_BIAS.pane);
+  const box = new THREE.BoxGeometry(1, 1, 1);
+  const glass = new THREE.InstancedMesh(box, material, Math.max(1, planned));
+  glass.count = planned;
   glass.renderOrder = 1;
+  // The windows' panes by building: [placement, first pane, pane count], in id order.
+  const buildings: number[] = [];
+  for (let id = 0; id < n; id++) {
+    const at = set.placement[id]!;
+    if (at < 0) continue;
+    const last = buildings.length - 3;
+    if (last >= 0 && buildings[last] === at) buildings[last + 2]!++;
+    else buildings.push(at, id, 1);
+  }
+  const windows = new THREE.InstancedMesh(box, material, Math.max(1, n - planned));
+  windows.count = 0;
+  windows.renderOrder = 1;
+  windows.frustumCulled = false;
+  if (buildings.length) scene.add(windows);
+  let frame = 0,
+    stale = true;
   const m = new THREE.Matrix4();
   const q = new THREE.Quaternion();
   const pos = new THREE.Vector3(),
     size = new THREE.Vector3();
   const hidden = new THREE.Matrix4().makeScale(0, 0, 0);
-  for (const p of set.panes) {
-    const [x0, y0, z0, x1, y1, z1] = p.box;
+  /**
+   * A pane's matrix: its box, a touch thinner than its collision (the slab is 8 cm), and as wide
+   * (a ribbon window split into panes reads as one sheet, and meets its frame).
+   */
+  const scratch = [0, 0, 0, 0, 0, 0] as [number, number, number, number, number, number];
+  /** A pane's box (x0, y0, z0, x1, y1, z1) in a reused array. */
+  const corners = (id: number) => {
+    for (let k = 0; k < 6; k++) scratch[k] = set.boxes[id * 6 + k]!;
+    return scratch;
+  };
+  const paneMatrix = (id: number) => {
+    const [x0, y0, z0, x1, y1, z1] = corners(id);
+    const thinX = x1 - x0 < z1 - z0;
     pos.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
-    // Drawn a touch thinner than its collision (the slab is 8 cm).
-    size.set(Math.max(0.02, x1 - x0 - 0.04), y1 - y0, Math.max(0.02, z1 - z0 - 0.04));
-    glass.setMatrixAt(p.id, m.compose(pos, q, size));
-  }
+    size.set(
+      thinX ? Math.max(0.02, x1 - x0 - 0.04) : x1 - x0,
+      y1 - y0,
+      thinX ? z1 - z0 : Math.max(0.02, z1 - z0 - 0.04),
+    );
+    return m.compose(pos, q, size);
+  };
+  for (let id = 0; id < n; id++) if (slot[id]! >= 0) glass.setMatrixAt(slot[id]!, paneMatrix(id));
   glass.instanceMatrix.needsUpdate = true;
   glass.computeBoundingSphere();
   scene.add(glass);
@@ -76,7 +122,7 @@ export function createPaneRenderer(scene: THREE.Scene, set: PaneSet) {
   const e = new THREE.Euler();
 
   function burst(id: number) {
-    const [x0, y0, z0, x1, y1, z1] = set.panes[id]!.box;
+    const [x0, y0, z0, x1, y1, z1] = corners(id);
     const thinX = x1 - x0 < z1 - z0;
     for (let k = 0; k < 28 && live.length < POOL; k++) {
       const a = Math.random(),
@@ -109,16 +155,35 @@ export function createPaneRenderer(scene: THREE.Scene, set: PaneSet) {
       for (const id of ids) {
         if (id < 0 || id >= n || broken[id]) continue;
         broken[id] = 1;
-        glass.setMatrixAt(id, hidden);
-        glass.instanceMatrix.needsUpdate = true;
+        if (slot[id]! >= 0) {
+          glass.setMatrixAt(slot[id]!, hidden);
+          glass.instanceMatrix.needsUpdate = true;
+        } else stale = true;
         if (fx) {
           burst(id);
-          const [x0, y0, z0, x1, y1, z1] = set.panes[id]!.box;
+          const [x0, y0, z0, x1, y1, z1] = corners(id);
           sound?.([(x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2]);
         }
       }
     },
     update(dtMs: number) {
+      // The windows of the buildings at their near LOD (every few frames, or on a break).
+      if (buildings.length && (stale || ++frame >= NEAR_EVERY)) {
+        frame = 0;
+        stale = false;
+        let k = 0;
+        for (let b = 0; b < buildings.length; b += 3) {
+          if (nearDrawn && !nearDrawn(buildings[b]!)) continue;
+          const first = buildings[b + 1]!,
+            count = buildings[b + 2]!;
+          for (let id = first; id < first + count; id++)
+            if (!broken[id]) windows.setMatrixAt(k++, paneMatrix(id));
+        }
+        windows.count = k;
+        windows.instanceMatrix.clearUpdateRanges();
+        windows.instanceMatrix.addUpdateRange(0, k * 16);
+        windows.instanceMatrix.needsUpdate = true;
+      }
       if (!live.length) {
         shards.count = 0;
         return;
@@ -145,9 +210,9 @@ export function createPaneRenderer(scene: THREE.Scene, set: PaneSet) {
       shards.instanceMatrix.needsUpdate = true;
     },
     dispose() {
-      scene.remove(glass, shards);
-      glass.geometry.dispose();
-      (glass.material as THREE.Material).dispose();
+      scene.remove(glass, windows, shards);
+      box.dispose();
+      material.dispose();
       shards.geometry.dispose();
       shardMat.dispose();
     },

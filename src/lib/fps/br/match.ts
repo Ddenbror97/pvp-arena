@@ -792,7 +792,7 @@ export function stepBrMatch(
     }
   }
   const panes = panesOf(island);
-  if (panes && !state.paneBroken) state.paneBroken = new Uint8Array(panes.panes.length);
+  if (panes && !state.paneBroken) state.paneBroken = new Uint8Array(panes.count);
   const glazed =
     panes && state.paneBroken
       ? withPanes(island, panes, state.paneBroken, (id) => state.paneLog.push(id))

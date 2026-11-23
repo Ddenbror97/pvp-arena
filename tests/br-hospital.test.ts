@@ -7,7 +7,7 @@ import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import { HOSPITAL_CAMPUS, HOSPITAL_RING } from "@/lib/fps/br/layout";
 import { modelSpots } from "@/lib/fps/br/loot-spots";
-import { panesOnRay, shatterAlong, withPanes } from "@/lib/fps/br/panes";
+import { listPanes, panesOnRay, shatterAlong, withPanes } from "@/lib/fps/br/panes";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import type { CollisionData } from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
@@ -320,7 +320,7 @@ describe("Central Hospital: the mega hospital", () => {
   });
   it("glazes the sky bridges with panes a shot breaks, one bay at a time", () => {
     // (Owner, 2026-11-13: "the hospital bridge windows should also be breakble by shooting it".)
-    const near = island.panes.panes.filter(
+    const near = listPanes(island.panes).filter(
       (p) => Math.hypot((p.box[0] + p.box[3]) / 2 - poi.x, (p.box[2] + p.box[5]) / 2 - poi.z) < 120,
     );
     // The bridges' bays, and (2026-11-13: "the windows on the bridge can be broken with weapons
@@ -332,7 +332,7 @@ describe("Central Hospital: the mega hospital", () => {
     );
     expect(windows).toBeGreaterThan(250);
     expect(near.length).toBe(4 * 2 * 6 + 2 * 24 + windows);
-    const broken = new Uint8Array(island.panes.panes.length);
+    const broken = new Uint8Array(island.panes.count);
     const glazed = withPanes(island.solid, island.panes, broken);
     // The courtyard bridge (along x, its walkway 8 m up at z −11.5): a shot from beside its
     // middle post out through the south side.
@@ -347,10 +347,10 @@ describe("Central Hospital: the mega hospital", () => {
   });
   it("glazes every block's windows with panes a shot breaks", () => {
     // The west wing's first-floor windows on its courtyard (+x) side: a shot out of a room.
-    const broken = new Uint8Array(island.panes.panes.length);
+    const broken = new Uint8Array(island.panes.count);
     const glazed = withPanes(island.solid, island.panes, broken);
     const wing = island.layout.find((p) => p.model === "hosp-west" && p.poi === poi.id)!;
-    const ids = island.panes.panes.filter(
+    const ids = listPanes(island.panes).filter(
       (p) =>
         p.box[0] > wing.x + 9 &&
         p.box[3] < wing.x + 10.5 &&

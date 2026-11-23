@@ -1,4 +1,5 @@
 import { WORLD_ASSETS } from "@/lib/fps/br/world";
+import windowPanes from "@/lib/fps/br/window-panes.json";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
@@ -57,7 +58,10 @@ describe("Project Island models", () => {
       expect(l0.tris, a.id).toBeLessThanOrEqual(lod0Cap);
       expect(l0.draws, a.id).toBeLessThanOrEqual(budget.draws + 1);
       expect(l0.textureMB, a.id).toBeLessThanOrEqual(budget.textureMB + 0.01);
-      expect(l1.tris, a.id).toBeLessThanOrEqual(l0.tris);
+      // (A building whose window glass became panes, window-panes.json, lost the glass from its
+      // near LOD only: a pane is a box of 12 triangles drawn on its own.)
+      const panes = (windowPanes.models as Record<string, unknown[]>)[a.id]?.length ?? 0;
+      expect(l1.tris, a.id).toBeLessThanOrEqual(l0.tris + 12 * panes);
       expect(l2.tris, a.id).toBeLessThanOrEqual(l1.tris);
       // The farthest LOD is one draw, except foliage, which keeps its alpha-tested materials.
       if (a.class === "tree" || a.class === "bush")
