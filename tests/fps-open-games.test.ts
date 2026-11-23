@@ -36,7 +36,9 @@ describe("recent FPS open games", () => {
       { stake: -100 },
       { stake: 100.5 },
       { stake: 5001 },
-      { stake: 300 },
+      // (Below the $1 minimum; any whole-cent entry from $1 to $50 is allowed since custom
+      // entries, migration 20261119165153_fps_custom_stakes.)
+      { stake: 99 },
     ];
     expect(
       openGames(
@@ -44,6 +46,18 @@ describe("recent FPS open games", () => {
         now,
       ).map((r) => r.id),
     ).toEqual(["room-a"]);
+  });
+  it("lists custom entries within the $1-$50 limits, not only the preset stakes", () => {
+    expect(
+      openGames(
+        lobby([
+          room({ id: "low", stake: 100 }),
+          room({ id: "custom", stake: 300 }),
+          room({ id: "high", stake: 5000 }),
+        ]),
+        now,
+      ).map((r) => r.id),
+    ).toEqual(["low", "custom", "high"]);
   });
   it("bounds the payload and deduplicates rooms without inventing a total inventory", () => {
     const input = Array.from({ length: 30 }, (_, i) => room({ id: `room-${i}` }));

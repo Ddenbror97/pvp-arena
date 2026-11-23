@@ -251,7 +251,11 @@ describe("game signup invite policy", () => {
     expect(text).not.toMatch(/guaranteed|instantly withdraw|direct USDC transfer/i);
     expect(GAME_SIGNUP_DIALOG_CLASS).toContain("max-w-[26.25rem]");
     expect(GAME_SIGNUP_DIALOG_CLASS).toContain("w-[calc(100%-2rem)]");
-    expect(GAME_SIGNUP_DIALOG_CLASS).toContain("env(safe-area-inset-bottom)");
+    // The dialog has no padding of its own since the modal's redesign; its footer keeps the
+    // buttons clear of the phone's home indicator.
+    expect(readFileSync("src/components/promo/GameSignupPromo.tsx", "utf8")).toMatch(
+      /pb-\[max\([^)]*env\(safe-area-inset-bottom\)\)\]/,
+    );
     expect(GAME_SIGNUP_DIALOG_CLASS).toContain("motion-reduce:animate-none");
     expect(GAME_SIGNUP_DIALOG_CLASS).toContain("duration-200");
     const migration = readFileSync(
