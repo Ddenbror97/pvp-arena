@@ -150,6 +150,18 @@ export const GROUND = {
    * soft side at a slant. The normal maps keep the exact level (a sharper one would sparkle).
    */
   sharpen: 0.71,
+  /**
+   * Stretch (owner, 2026-11-23: "can we can higher quality future infront of the character of
+   * the ground floor? see the diffrence on close distance and abit future infront"). From eye
+   * height a pixel's footprint on flat ground is about distance / 1.6 times longer than wide:
+   * 16 × at 26 m (8 × at 13 m on the balanced tier), all the GPU's anisotropic filter covers.
+   * Past that it drops to coarser mips and the tile goes soft, a few metres ahead of the feet.
+   * There the tiles' colour takes four taps along the footprint's long axis, each filtered
+   * over a quarter of it: four times the reach (64 ×, about 100 m out) at the same sharpness,
+   * with no shimmer (the taps tile the footprint). Only those pixels pay: a thin band of the
+   * screen under the horizon. Not on the lite ground.
+   */
+  stretch: 4,
 };
 /**
  * Mid field (owner, 2026-11-09: the ground was a blur from the parachute): beyond the near
@@ -422,6 +434,7 @@ export function createTerrain(
     uGroundOn: { value: 0 },
     uGroundRange: { value: GROUND.range },
     uGroundLite: { value: 0 },
+    uGroundAniso: { value: worldAnisotropy() },
     uLayerTint: { value: GROUND_LAYERS.map(() => new THREE.Vector3(1, 1, 1)) },
     uLayerFar: { value: GROUND_LAYERS.map((id) => new THREE.Vector3(...LAYER_TARGET[id])) },
     uLayerScale: { value: GROUND_LAYERS.map(() => 0.25) },
@@ -510,7 +523,7 @@ export function createTerrain(
         uniform sampler2D uCanopy;
         uniform float uCanopyOn;
         uniform vec2 uTreeRing;
-        uniform float uGroundOn, uGroundRange, uGroundLite;
+        uniform float uGroundOn, uGroundRange, uGroundLite, uGroundAniso;
         uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
         uniform float uLayerScale[${GROUND_LAYERS.length}];
         uniform vec4 uRunway[2];
@@ -529,7 +542,20 @@ export function createTerrain(
         vec3 groundAlbedo(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
           k *= ${GROUND.sharpen.toFixed(2)};
-          vec3 c = textureGrad(uGroundA, vec3(p * uLayerScale[layer], float(layer)), px * k, py * k).rgb;
+          vec3 uvw = vec3(p * uLayerScale[layer], float(layer));
+          vec2 gx = px * k, gy = py * k;
+          // Stretched footprints (GROUND.stretch): past what the GPU's anisotropic filter
+          // covers, four taps along the footprint's long axis, each a quarter of it.
+          float lx = dot(gx, gx), ly = dot(gy, gy);
+          if (uGroundLite < 0.5 && max(lx, ly) > uGroundAniso * uGroundAniso * min(lx, ly)) {
+            vec2 major = (lx > ly ? gx : gy) * 0.25, minor = lx > ly ? gy : gx;
+            vec3 a = textureGrad(uGroundA, uvw - vec3(major * 1.5, 0.0), major, minor).rgb;
+            vec3 b = textureGrad(uGroundA, uvw - vec3(major * 0.5, 0.0), major, minor).rgb;
+            vec3 c = textureGrad(uGroundA, uvw + vec3(major * 0.5, 0.0), major, minor).rgb;
+            vec3 d = textureGrad(uGroundA, uvw + vec3(major * 1.5, 0.0), major, minor).rgb;
+            return 0.25 * (a * a + b * b + c * c + d * d) * uLayerTint[layer];
+          }
+          vec3 c = textureGrad(uGroundA, uvw, gx, gy).rgb;
           return c * c * uLayerTint[layer]; // sRGB → linear (cheap square), toward the palette
         }
         vec3 groundNormal(int layer, vec2 p, vec2 px, vec2 py) {
