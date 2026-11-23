@@ -48,6 +48,7 @@ const scatter = () =>
       cover,
       meta,
       supportAt: (x, z, r, y) => island.solid.supportAt(x, z, r, y),
+      topBetween: (x, z, r, y0, y1) => island.solid.topBetween(x, z, r, y0, y1),
       lots: pavedLots(island.layout, meta),
     },
     kit.clumps,
@@ -166,6 +167,8 @@ describe("where grass grows", () => {
         expect(ground).toBeGreaterThan(0.8);
         expect(hf.slopeAt(g.x, g.z)).toBeLessThanOrEqual(0.75);
         expect(island.solid.supportAt(g.x, g.z, 0.12, ground + 6)).toBeLessThan(ground + 0.07);
+        // Never in a room: no floor laid at the ground or under it over the clump.
+        expect(island.solid.topBetween(g.x, g.z, 0.12, ground - 1.5, ground + 0.06)).toBe(false);
         // Clear of every road's edge plus the verge (checked against each nearby segment).
         let closest = Infinity;
         for (const [ax, az, bx, bz, clear] of nearby) {

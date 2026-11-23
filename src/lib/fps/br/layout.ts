@@ -1731,6 +1731,7 @@ const FOOT: Record<string, [number, number]> = {
   "pool-villa": [34.7, 35],
   "modern-house": [36, 15.2],
   "lux-yacht": [8.5, 39.7],
+  "cove-yacht": [8.2, 40],
   "swimming-pool": [16.4, 12],
   "lifeguard-tower": [4.4, 6.3],
   parasol: [2.8, 3.3],
@@ -11365,20 +11366,22 @@ function estates(out: Placement[], ctx: Context) {
   modern(-4566, 1658, 6, 9_750, 1);
   // ---- Fisher's Cove: the super yacht stern-to at the end of one of the hamlet's piers (they
   // run south into the bay; the coaster lies in the channel by the quay). Bow to the open sea
-  // (+z), keel 2.2 m under the water, the swim platform 0.58 m up at the pier's end (deck
-  // 0.7 m); its boarding steps go down into the sea for swimmers.
+  // (+z).
   const piers = out
     .filter((p) => p.model === "pier" && p.turn === 0 && Math.hypot(p.x + 3700, p.z - 3400) < 350)
     .sort((a, b) => Math.abs(a.x + 3700) - Math.abs(b.x + 3700));
+  // (Since 2026-11-22 the 40 m motor yacht, cove-yacht, not enterable: the owner found the
+  // enterable one "still broke" and chose this download. Its stern 0.3 m off the pier's end,
+  // its keel 2.3 m under the water like the marina's yachts at their size.)
   for (const pier of piers) {
     const x = pier.x,
-      c = pier.z + 12 + 16.6;
+      c = pier.z + 12.3 + 20;
     let deep = true;
-    for (const dx of [-4.3, 0, 4.3])
-      for (let dz = -16.5; dz <= 19.5; dz += 3)
+    for (const dx of [-3.6, 0, 3.6])
+      for (let dz = -19.5; dz <= 19.5; dz += 3)
         if (ctx.heightAt(x + dx, c + dz) > -2.8) deep = false;
-    if (!deep || !kit.free(x - 6, c - 16.4, x + 6, c + 22)) continue;
-    out.push({ model: "lux-yacht", x, y: -2.2, z: +c.toFixed(2), turn: 0, poi: "shore" });
+    if (!deep || !kit.free(x - 5, c - 20, x + 5, c + 21)) continue;
+    out.push({ model: "cove-yacht", x, y: -2.3, z: +c.toFixed(2), turn: 0, poi: "shore" });
     kit.mark(out[out.length - 1]!);
     break;
   }

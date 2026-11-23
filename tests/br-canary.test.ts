@@ -81,10 +81,13 @@ describe("wallhack canaries", () => {
     state.phase = "starting";
     state.phaseAt = 1000;
     const canaries = new BrCanaries(seeded(99), (x, z, g) => waterSurface(meta, g, x, z) !== null);
-    // Seats 0–39 are watched as people. 0–7 play with a wallhack: when a canary is on their
+    // Seats 0–59 are watched as people. 0–11 play with a wallhack: when a canary is on their
     // screen they look at it, in some trials (they do not always notice, or care).
-    const watched = (seat: number) => seat < 40;
-    const cheat = (seat: number) => seat < 8;
+    const watched = (seat: number) => seat < 60;
+    // (Sixty watched and twelve cheats since 2026-11-22, forty and eight before: a larger
+    // sample, the same bars. With the new locations' loot the bots' match gave eight cheats only
+    // six decisive trials.)
+    const cheat = (seat: number) => seat < 12;
     const notices = new Map<number, number>();
     const rand = seeded(5);
     let unsafe = 0,
@@ -94,7 +97,7 @@ describe("wallhack canaries", () => {
     for (let now = 1000; now < 9.5 * 60_000; now += TICK_MS) {
       stepBrMatch(state, island.solid, meta, new Map(), now, TICK_MS);
       // The wallhack: the view turned onto the canary it was sent (for 0.4–1.5 s of a trial).
-      for (let seat = 0; seat < 8; seat++) {
+      for (let seat = 0; seat < 12; seat++) {
         const t = canaries.trialOf(seat);
         if (!t) continue;
         let from = notices.get(seat);
@@ -111,10 +114,10 @@ describe("wallhack canaries", () => {
         s.yaw = Math.atan2(-dx, -dz) + (rand() - 0.5) * 0.04;
         s.pitch = Math.atan2(dy, Math.hypot(dx, dz));
       }
-      for (let seat = 0; seat < 8; seat++) if (!canaries.trialOf(seat)) notices.delete(seat);
-      // Seats 8–19 are honest players who look about a lot: the view sweeping side to side and
+      for (let seat = 0; seat < 12; seat++) if (!canaries.trialOf(seat)) notices.delete(seat);
+      // Seats 12–35 are honest players who look about a lot: the view sweeping side to side and
       // up and down, at their own pace, with no idea where any canary is.
-      for (let seat = 8; seat < 20; seat++) {
+      for (let seat = 12; seat < 36; seat++) {
         const s = state.seats[seat]!;
         if (s.dead) continue;
         s.yaw += Math.sin(now / (700 + seat * 37) + seat) * 0.09;
@@ -123,7 +126,7 @@ describe("wallhack canaries", () => {
       canaries.step(state, world, now, watched);
       // Safety, against the truth: no point of a running canary's crouched body or of its
       // shadow is in a clear line from its viewer's eye.
-      for (let seat = 0; seat < 40; seat++) {
+      for (let seat = 0; seat < 60; seat++) {
         const t = canaries.trialOf(seat);
         if (!t) continue;
         trialTicks++;
@@ -155,7 +158,7 @@ describe("wallhack canaries", () => {
       // The canary rides in the viewer's own view only.
       if (state.tick % 2 === 0 && state.phase === "active") {
         const frame = brViewFrame(state);
-        for (let seat = 0; seat < 40; seat++) {
+        for (let seat = 0; seat < 60; seat++) {
           const view = brViewFor(state, world, sight, seat, now, undefined, frame, true);
           const before = view.players.length;
           canaries.inject(state, seat, view.players, (s) => brFrameRow(state, frame, s));
@@ -178,7 +181,7 @@ describe("wallhack canaries", () => {
     expect(unsafe).toBe(0);
     const honest = { decisive: 0, won: 0 },
       cheats = { decisive: 0, won: 0 };
-    for (let seat = 0; seat < 40; seat++) {
+    for (let seat = 0; seat < 60; seat++) {
       const t = canaries.tally(state.seats[seat]!.id);
       if (!t) continue;
       const into = cheat(seat) ? cheats : honest;
@@ -188,7 +191,7 @@ describe("wallhack canaries", () => {
       if (!cheat(seat)) expect(canaryEvidence(t)).toBeLessThan(Math.log(20));
     }
     let trials = 0;
-    for (let seat = 0; seat < 40; seat++)
+    for (let seat = 0; seat < 60; seat++)
       trials += canaries.tally(state.seats[seat]!.id)?.trials ?? 0;
     expect(trials).toBeGreaterThan(80);
     // Honest views (the bots' own looking about, fights included) win about half.

@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "jungle-v1",
+  revision: "yacht-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -177,8 +177,10 @@ export const WORLD_ASSETS = {
   // (back-v1: the panels blinked from the parachute); the J-type hangar re-cut from its pre-cut
   // model with its end walls kept (access-v27, zfix-v17); the Cessna 402 painted (livery-v1);
   // Forgotten Ruins' trees and tree-high plants on the "jungle-tree" ring (props-renderer.ts).
-  models: "/fps/br/models/models.jungle-v1.json",
-  collision: "/fps/br/models/collision.jungle-v1.json",
+  // yacht-v1 (2026-11-22, process_assets.mjs + build_collision.mjs): the 40 m motor yacht
+  // (cove-yacht, the owner's download at its own size) for Fisher's Cove's super yacht.
+  models: "/fps/br/models/models.yacht-v1.json",
+  collision: "/fps/br/models/collision.yacht-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

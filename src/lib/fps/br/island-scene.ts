@@ -157,6 +157,7 @@ export async function loadIslandScene(
         cover,
         meta,
         supportAt: (x, z, r, maxY) => island.solid.supportAt(x, z, r, maxY),
+        topBetween: (x, z, r, y0, y1) => island.solid.topBetween(x, z, r, y0, y1),
         lots,
       },
       kit,

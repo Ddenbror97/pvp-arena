@@ -216,6 +216,31 @@ export class StaticWorld {
   }
 
   /**
+   * Whether a box overlapping the square of half-width `radius` at x/z has its top between `y0`
+   * and `y1`: a floor laid at the ground (the grass keeps off building floors flush with it or
+   * buried under it).
+   */
+  topBetween(x: number, z: number, radius: number, y0: number, y1: number): boolean {
+    let hit = false;
+    const b = this.boxes;
+    this.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
+      if (hit) return;
+      const o = i * 6;
+      const t = b[o + 4]!;
+      if (
+        t >= y0 &&
+        t <= y1 &&
+        x + radius > b[o]! &&
+        x - radius < b[o + 3]! &&
+        z + radius > b[o + 2]! &&
+        z - radius < b[o + 5]!
+      )
+        hit = true;
+    });
+    return hit;
+  }
+
+  /**
    * Whether a standing (or crouched) player hull — a square of half-width `radius` from `y` to
    * `y + height` — overlaps a box or a trunk.
    */

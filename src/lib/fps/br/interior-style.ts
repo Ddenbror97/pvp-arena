@@ -14,7 +14,7 @@ import type * as THREE from "three";
 export const INTERIOR_WALLS = "Interior walls and ceiling";
 export const INTERIOR_FLOORS = "Access floor and steps";
 
-export type InteriorKind = "home" | "shop" | "office";
+export type InteriorKind = "home" | "shop" | "office" | "works" | "hall";
 
 /** The buildings whose rooms are painted, and how. */
 export const INTERIOR_STYLE: Record<string, InteriorKind> = {
@@ -39,6 +39,26 @@ export const INTERIOR_STYLE: Record<string, InteriorKind> = {
   "fire-station": "office",
   "police-station": "office",
   "ind-office-trailer": "office",
+  // (2026-11-22, owner: "audit missing buildings with no colors on the walls or floor": the
+  // halls, sheds and churches below kept the liners' flat pale grey walls and floors.)
+  "factory-hall": "works",
+  "ind-smith": "works",
+  "ind-warehouse-1": "works",
+  "ind-warehouse-3": "works",
+  "ind-warehouse-4": "works",
+  "ind-warehouse-5": "works",
+  "ind-building-1": "works",
+  "ind-terminal": "works",
+  "ind-factory": "works",
+  "ind-generic-2": "works",
+  "rural-quonset": "works",
+  "hangar-j": "works",
+  "brick-substation": "works",
+  "rail-depot": "works",
+  barn: "works",
+  church: "hall",
+  chapel: "hall",
+  conservatory: "hall",
 };
 
 /** sRGB palettes (converted to linear in the shader), picked by the placement's hash. */
@@ -71,7 +91,37 @@ const WALLS: Record<InteriorKind, number[][]> = {
     [0.86, 0.84, 0.78],
     [0.74, 0.8, 0.76],
   ],
+  // Painted works walls (a darker dado band below 1.2 m, works.dado).
+  works: [
+    [0.7, 0.8, 0.68], // works green
+    [0.9, 0.86, 0.7], // cream
+    [0.66, 0.74, 0.82], // blue grey
+    [0.92, 0.84, 0.52], // safety yellow, faded
+    [0.78, 0.6, 0.5], // brick red wash
+    [0.82, 0.82, 0.8], // light grey
+  ],
+  // Whitewash, limewash and pale stone.
+  hall: [
+    [0.95, 0.93, 0.86],
+    [0.9, 0.86, 0.76],
+    [0.84, 0.86, 0.88],
+    [0.92, 0.88, 0.8],
+  ],
 };
+/** Works floors: concrete and painted epoxy; hall floors: stone flags. */
+const CONCRETE = [
+  [0.58, 0.58, 0.56],
+  [0.5, 0.52, 0.5],
+  [0.42, 0.56, 0.46], // green epoxy
+  [0.62, 0.56, 0.44], // ochre epoxy
+  [0.54, 0.4, 0.36], // oxide red
+];
+const STONE = [
+  [0.74, 0.68, 0.56], // sandstone
+  [0.6, 0.6, 0.58], // grey slate
+  [0.7, 0.62, 0.52],
+  [0.8, 0.76, 0.68],
+];
 /** Floor woods (planks), tile colours, carpets. */
 const WOODS = [
   [0.66, 0.46, 0.28], // oak
@@ -99,6 +149,8 @@ const FLOOR_MIX: Record<InteriorKind, [number, number]> = {
   home: [0.6, 0.82],
   shop: [0.25, 0.9],
   office: [0.2, 0.5],
+  works: [0, 0],
+  hall: [0, 0],
 };
 
 const glslList = (name: string, list: number[][]) =>
@@ -127,7 +179,7 @@ export function applyInteriorStyle(material: THREE.MeshStandardMaterial, kind: I
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nvarying vec3 vBrInWorld;\nvarying vec4 vBrInSeed;",
+        "#include <common>\nvarying vec3 vBrInWorld;\nvarying vec4 vBrInSeed;\nvarying float vBrInBase;",
       )
       .replace(
         "#include <project_vertex>",
@@ -141,6 +193,7 @@ export function applyInteriorStyle(material: THREE.MeshStandardMaterial, kind: I
           #endif
           vBrInWorld = (modelMatrix * brW).xyz;
           vec3 o = (modelMatrix * brO).xyz;
+          vBrInBase = o.y;
           // Four independent picks from where the building stands.
           vBrInSeed = fract(sin(vec4(dot(floor(o.xz), vec2(12.9898, 78.233)), dot(floor(o.xz), vec2(39.346, 11.135)), dot(floor(o.xz), vec2(73.156, 52.235)), dot(floor(o.xz), vec2(27.42, 91.71)))) * 43758.5453);
         }`,
@@ -151,10 +204,13 @@ export function applyInteriorStyle(material: THREE.MeshStandardMaterial, kind: I
         `#include <common>
         varying vec3 vBrInWorld;
         varying vec4 vBrInSeed;
+        varying float vBrInBase;
         ${glslList("brWall", walls)}
         ${glslList("brWood", WOODS)}
         ${glslList("brTile", TILES)}
         ${glslList("brCarpet", CARPETS)}
+        ${glslList("brConcrete", CONCRETE)}
+        ${glslList("brStone", STONE)}
         float brHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }`,
       )
       .replace(
@@ -173,7 +229,33 @@ export function applyInteriorStyle(material: THREE.MeshStandardMaterial, kind: I
           if (isFlat && below) {
             // Along x or along z.
             vec2 uv = s.y < 0.5 ? vBrInWorld.xz : vBrInWorld.zx;
-            if (s.x < ${planks.toFixed(2)}) {
+            ${
+              kind === "works"
+                ? `if (true) {
+              // Cast slabs 3 m square with saw cuts, mottled; a yellow lane line on some.
+              vec2 t = uv / 3.0;
+              vec2 f = fract(t);
+              float cut = step(0.006, f.x) * step(0.006, f.y);
+              vec3 c = brConcrete(floor(s.z * ${CONCRETE.length}.0));
+              float mott = 0.88 + 0.12 * brHash(floor(uv * 1.7)) + 0.06 * (brHash(floor(uv * 9.0)) - 0.5);
+              vec3 col = c * mott * mix(0.62, 1.0, cut);
+              float lane = s.x < 0.5 ? step(abs(fract(uv.x / 9.0) - 0.5) * 9.0, 0.06) : 0.0;
+              diffuseColor.rgb = mix(col, pow(vec3(0.88, 0.72, 0.18), vec3(2.2)), lane);
+            }`
+                : kind === "hall"
+                  ? `if (true) {
+              // Stone flags 0.6 m by 0.9 m, laid in courses, each its own shade.
+              float row = floor(uv.y / 0.6);
+              float u = uv.x + 0.45 * mod(row, 2.0);
+              vec2 cell = vec2(floor(u / 0.9), row);
+              float gu = fract(u / 0.9), gv = fract(uv.y / 0.6);
+              float joint = step(0.02, gu) * step(0.03, gv);
+              vec3 st = brStone(floor(s.z * ${STONE.length}.0));
+              diffuseColor.rgb = st * (0.84 + 0.22 * brHash(cell)) * mix(0.55, 1.0, joint);
+            }`
+                  : `if (s.x < ${planks.toFixed(2)}) {`
+            }
+            ${kind === "works" || kind === "hall" ? "else if (false) {" : ""}
               float row = floor(uv.y / 0.17);
               float u = uv.x + brHash(vec2(row, 3.1)) * 4.0;
               float seg = floor(u / 1.35);
@@ -217,6 +299,14 @@ export function applyInteriorStyle(material: THREE.MeshStandardMaterial, kind: I
             }`
                 : ""
             }
+            ${
+              kind === "works"
+                ? `// A darker dado band below 1.2 m, a line on its top.
+            float h = vBrInWorld.y - vBrInBase;
+            float hk = mod(h, 4.2);
+            wall *= hk < 1.2 ? 0.62 : hk < 1.27 ? 0.4 : 1.0;`
+                : ""
+            }
             diffuseColor.rgb = wall;
           }`
           }
@@ -226,6 +316,6 @@ export function applyInteriorStyle(material: THREE.MeshStandardMaterial, kind: I
   };
   const key = material.customProgramCacheKey;
   material.customProgramCacheKey = () =>
-    `${key.call(material)}|br-interior-v1-${floors ? "f" : "w"}-${kind}`;
+    `${key.call(material)}|br-interior-v2-${floors ? "f" : "w"}-${kind}`;
   material.needsUpdate = true;
 }

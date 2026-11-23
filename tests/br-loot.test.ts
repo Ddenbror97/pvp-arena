@@ -66,6 +66,33 @@ describe("loot placement", () => {
     expect(counts["ammo-9mm"]).toBeGreaterThan(counts["mp5"]!);
     expect(counts["ammo-50ae"]).toBeGreaterThan(counts["deagle"]!);
   }, 60_000);
+  it("fills the new locations' buildings (fort, ruins, works, village, quay)", () => {
+    // Items within a placement's footprint, by its location (owner, 2026-11-22: "add loot to
+    // new locations, like fort, forgotten ruins, all new locations dont have any loot in them").
+    const at = (poi: string, models: (m: string) => boolean) => {
+      const own = layout.filter((p) => p.poi === poi && models(p.model));
+      return a.filter((i) => own.some((p) => Math.hypot(i.x - p.x, i.z - p.z) < 45)).length;
+    };
+    const counts = {
+      fort: at("old-fortress", (m) => m.startsWith("fort-")),
+      ruins: at("forgotten-ruins", (m) => m.startsWith("ruin-")),
+      works: at("east-works", (m) => m.startsWith("ew-")),
+      village: at("island-village", (m) => m.startsWith("cottage-") || m === "village-inn"),
+    };
+    console.log("new locations' loot", JSON.stringify(counts));
+    expect(counts.fort).toBeGreaterThan(80);
+    expect(counts.ruins).toBeGreaterThan(120);
+    expect(counts.works).toBeGreaterThan(60);
+    expect(counts.village).toBeGreaterThan(60);
+    for (const m of [
+      "fort-keep",
+      "ruin-pyramid",
+      "ruin-great-temple",
+      "ew-turbine-hall",
+      "cottage-stone",
+    ])
+      expect(lootClassOf(m), m).not.toBeNull();
+  }, 60_000);
   it("fills the map with real items and stays within the caps", () => {
     const s = lootSummary(a);
     console.log("loot", JSON.stringify(s), "roll ms", rollMs.toFixed(0));
