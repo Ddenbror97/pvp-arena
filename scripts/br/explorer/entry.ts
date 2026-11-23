@@ -11,6 +11,7 @@ import type { StaticWorld } from "../../../src/lib/fps/br/static-world";
 import { loadIslandScene, type IslandScene } from "../../../src/lib/fps/br/island-scene";
 import { createDoorRenderer } from "../../../src/lib/fps/br/door-renderer";
 import { createPaneRenderer } from "../../../src/lib/fps/br/pane-renderer";
+import { paneOwners } from "../../../src/lib/fps/br/panes";
 import { createTorchFlames } from "../../../src/lib/fps/br/torch-flames";
 import { initialDoors } from "../../../src/lib/fps/br/doors";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
@@ -148,7 +149,10 @@ const ready = (async () => {
   solid = islandScene.island.solid;
   // The breakable panorama glass, whole, as a match starts it (?panes=0: without, to compare).
   if (new URLSearchParams(location.search).get("panes") !== "0")
-    panesFx = createPaneRenderer(scene, islandScene.island.panes, (i) => islandScene.nearDrawn(i));
+    panesFx = createPaneRenderer(scene, islandScene.island.panes, (i) => islandScene.nearDrawn(i), {
+      owner: paneOwners(islandScene.island.layout),
+      drawn: (i) => islandScene.closeDrawn(i),
+    });
   // Doors as a match starts them (seed 1).
   const doorSet = islandScene.island.doors;
   doorsFx = createDoorRenderer(scene, doorSet, islandScene.doorLook);
@@ -386,7 +390,8 @@ window.explorer = {
     camera.updateMatrixWorld();
     // Every LOD is preloaded behind the loading screen (island-scene.ts): select and draw.
     islandScene.update(camera, true);
-    panesFx?.update(16);
+    // (The panes follow their buildings' LODs every few frames: enough of them for this view.)
+    for (let i = 0; i < 4; i++) panesFx?.update(4);
     doorsFx?.update(16, performance.now() + 1e6, camera.position);
     return draw();
   },

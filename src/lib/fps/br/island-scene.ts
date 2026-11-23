@@ -65,6 +65,8 @@ export type IslandScene = {
   warm(renderer: THREE.WebGLRenderer): void;
   /** Whether layout placement `index` is drawn at its near LOD (props-renderer.ts nearDrawn). */
   nearDrawn(index: number): boolean;
+  /** Whether it is drawn at its near or its middle LOD: not its far one, and not hidden. */
+  closeDrawn(index: number): boolean;
   /** Settles once the ground textures are in (or failed: the flat colours stay). */
   groundReady: Promise<void>;
   footstepSurface(x: number, y: number, z: number): FootstepSurface;
@@ -227,27 +229,33 @@ export async function loadIslandScene(
   progress(0.55, "Loading buildings");
   // The mid-distance buildings' shared facade atlas (image rows as the UVs were written:
   // top-down). If it fails, those LODs fall back to a plain wall colour.
-  const facades = manifest.facades
-    ? await downloadBrAsset(url(manifest.facades.atlas), signal, () =>
-        progress(0, "Restoring texture download"),
-      )
-        .then(async (bytes) => {
-          const objectUrl = URL.createObjectURL(new Blob([bytes]));
-          try {
-            const atlas = await textureLoader.loadAsync(objectUrl);
-            atlas.flipY = false;
-            atlas.colorSpace = THREE.SRGBColorSpace;
-            atlas.anisotropy = 4;
-            return shrinkImageTexture(atlas);
-          } finally {
-            URL.revokeObjectURL(objectUrl);
-          }
-        })
-        .catch(() => null)
-    : null;
+  const atlas = (file: string | undefined) =>
+    file
+      ? downloadBrAsset(url(file), signal, () => progress(0, "Restoring texture download"))
+          .then(async (bytes) => {
+            const objectUrl = URL.createObjectURL(new Blob([bytes]));
+            try {
+              const atlas = await textureLoader.loadAsync(objectUrl);
+              atlas.flipY = false;
+              atlas.colorSpace = THREE.SRGBColorSpace;
+              atlas.anisotropy = 4;
+              return shrinkImageTexture(atlas);
+            } finally {
+              URL.revokeObjectURL(objectUrl);
+            }
+          })
+          .catch(() => null)
+      : Promise.resolve(null);
+  // And the buildings' far LODs' atlas (render stability 2026-11-23). If it fails, they draw in
+  // their vertex colours.
+  const [facades, farFacades] = await Promise.all([
+    atlas(manifest.facades?.atlas),
+    atlas(manifest.farFacades?.atlas),
+  ]);
   const props = createProps(island.layout, fixed, loader, {
     preload: true,
     facades,
+    farFacades,
     ground: (x, z) => hf.heightAt(x, z),
   });
   root.add(props.root);
@@ -306,6 +314,10 @@ export async function loadIslandScene(
     },
     groundReady,
     nearDrawn: (index) => props.nearDrawn(index),
+    closeDrawn: (index) => {
+      const level = props.levelOf(index);
+      return level === 0 || level === 1;
+    },
     footstepSurface: createBrFootstepSurface(hf, cover, island.layout, collision, meta),
     setGrassRange(m) {
       grass?.setRange(m);
@@ -365,6 +377,7 @@ export async function loadIslandScene(
       // own material but not the texture it was given (leak check, 2026-11-09).
       doorLook?.atlas.dispose();
       facades?.dispose(); // lent to the props, like the door atlas
+      farFacades?.dispose();
       root.removeFromParent();
     },
   };

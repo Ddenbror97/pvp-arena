@@ -13,8 +13,17 @@ import type { Placement } from "./layout";
  *    gabled house keeps its ridge, a tower its height, a hall its long flat roof; roof and
  *    walls take the far LOD's own mean colours.
  *  - It stands exactly where the placement does (the same position and quarter turn), and is
- *    drawn only while the camera is beyond that model's far ring: the vertex shader folds
- *    every nearer building's proxy into a point, so a building is never drawn twice.
+ *    drawn only while the model itself is not: the props' LOD pass marks each placement it
+ *    draws (`setDrawn`), and the vertex shader folds a marked building's proxy into a point. One
+ *    decision for both, so a building is never drawn twice and never not at all.
+ *
+ *    (Until 2026-11-23 the shader folded by the camera's distance this frame, while the model's
+ *    far LOD is chosen by a pass that starts every 8 m of movement and is spread over frames:
+ *    two clocks. Coming in, a building's proxy went the moment the camera crossed its ring and
+ *    its model came a pass later: gone for up to 0.3 s under the canopy, and 0.1–0.2 s for every
+ *    building the plane brings into range, a ring of blinking buildings 1.5–4 km out. Going away
+ *    both were drawn, one through the other. Owner, 2026-11-23: "blinking/flicker buildings on
+ *    distance … in the airplane/parachute".)
  *
  * Far scenery only: no proxy is ever shown within a ring (1.5 km at the least), so nothing in
  * the fight range changes, and nothing here has collision.
@@ -191,20 +200,23 @@ export type FarBuildings = {
   mesh: THREE.Mesh;
   triangles: number;
   buildings: number;
-  /** The view distance's scale of the far rings (props-renderer.ts scaleRing). */
-  setRingScale: (k: number) => void;
+  /**
+   * Placement `index` (of the placements given) is drawn as its model (true) or not (false:
+   * its proxy stands in). Takes effect at the next frame drawn. No proxy: ignored.
+   */
+  setDrawn: (index: number, drawn: boolean) => void;
+  /** Whether placement `index`'s proxy is showing (null: it has none). */
+  shown: (index: number) => boolean | null;
   dispose: () => void;
 };
 
 /**
- * One mesh of every placement's proxy. `shape(model)`: its proxy or null; `far(model)`: the
- * model's far ring (m) at view-distance scale 1; `minFar`: scaled rings never end nearer.
+ * One mesh of every placement's proxy. `shape(model)`: its proxy or null. Every proxy shows
+ * until its placement is marked drawn (`setDrawn`).
  */
 export function createFarBuildings(
   placements: readonly Placement[],
   shape: (model: string) => ProxyShape | null | undefined,
-  far: (model: string) => number,
-  minFar: number,
 ): FarBuildings {
   let vertices = 0,
     indices = 0,
@@ -222,15 +234,22 @@ export function createFarBuildings(
     index = new Uint32Array(indices);
   let vn = 0,
     ix = 0;
+  /** Each placement's proxy number (-1: none), and per proxy whether it shows (255) or folds. */
+  const proxyOf = new Int32Array(placements.length).fill(-1);
+  const WIDE = 128;
+  const flags = new Uint8Array(WIDE * Math.max(1, Math.ceil(buildings / WIDE))).fill(255);
+  let proxy = 0;
   // Linear colour to the 8 bits the attribute holds (a square root keeps the dark end).
   const byte = (x: number) => Math.round(255 * Math.sqrt(Math.min(1, Math.max(0, x))));
-  for (const p of placements) {
+  for (let n = 0; n < placements.length; n++) {
+    const p = placements[n]!;
     const s = shape(p.model);
     if (!s) continue;
+    const id = proxy++;
+    proxyOf[n] = id;
     const a = (p.turn * Math.PI) / 2,
       cos = Math.cos(a),
       sin = Math.sin(a);
-    const ring = far(p.model);
     const [x0, y0, z0, sx, sz] = s.box;
     const push = (lx: number, ly: number, lz: number, c: [number, number, number]) => {
       // three.js rotation about +y: x' = x cos a + z sin a, z' = −x sin a + z cos a.
@@ -240,7 +259,7 @@ export function createFarBuildings(
       site[vn * 4] = p.x;
       site[vn * 4 + 1] = p.y;
       site[vn * 4 + 2] = p.z;
-      site[vn * 4 + 3] = ring;
+      site[vn * 4 + 3] = id;
       colour[vn * 4] = byte(c[0]);
       colour[vn * 4 + 1] = byte(c[1]);
       colour[vn * 4 + 2] = byte(c[2]);
@@ -297,7 +316,11 @@ export function createFarBuildings(
   geometry.setAttribute("aTint", new THREE.BufferAttribute(colour, 4, true));
   geometry.setIndex(new THREE.BufferAttribute(index, 1));
   geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 1e5);
-  const ringK = { value: 1 };
+  const shownMap = new THREE.DataTexture(flags, WIDE, flags.length / WIDE, THREE.RedFormat);
+  shownMap.minFilter = shownMap.magFilter = THREE.NearestFilter;
+  shownMap.generateMipmaps = false;
+  shownMap.needsUpdate = true;
+  const shown = { value: shownMap };
   // Both faces: a quarter turn of a mirrored footprint must not show the inside of a wall.
   const material = new THREE.MeshStandardMaterial({
     roughness: 0.9,
@@ -307,22 +330,24 @@ export function createFarBuildings(
   });
   material.name = "far-buildings";
   material.onBeforeCompile = (shader) => {
-    shader.uniforms["uRingK"] = ringK;
+    shader.uniforms["uShown"] = shown;
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
         `#include <common>
-        attribute vec4 aSite; // the placement (x, y, z) and its far ring (m)
+        attribute vec4 aSite; // the placement (x, y, z) and its proxy's number
         attribute vec4 aTint;
-        uniform float uRingK;
+        uniform highp sampler2D uShown;
         varying vec3 vFarTint;`,
       )
       .replace(
         "#include <begin_vertex>",
         `vec3 transformed = position;
         vFarTint = aTint.rgb * aTint.rgb;
-        // Within its ring the model itself is drawn: this proxy folds into a point.
-        if (distance(aSite.xyz, cameraPosition) <= max(${minFar.toFixed(1)}, aSite.w * min(uRingK, 1.25)))
+        // While the model itself is drawn (props-renderer.ts marks it), this proxy folds into a
+        // point.
+        int farId = int(aSite.w + 0.5);
+        if (texelFetch(uShown, ivec2(farId % ${WIDE}, farId / ${WIDE}), 0).r < 0.5)
           transformed = aSite.xyz;`,
       );
     shader.fragmentShader = shader.fragmentShader
@@ -332,7 +357,7 @@ export function createFarBuildings(
         "#include <color_fragment>\ndiffuseColor.rgb *= vFarTint;",
       );
   };
-  material.customProgramCacheKey = () => `br-far-buildings-${minFar}`;
+  material.customProgramCacheKey = () => "br-far-buildings-shown";
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-far-buildings";
   mesh.frustumCulled = false;
@@ -341,12 +366,22 @@ export function createFarBuildings(
     mesh,
     triangles: indices / 3,
     buildings,
-    setRingScale(k) {
-      ringK.value = k;
+    setDrawn(index, drawn) {
+      const id = proxyOf[index];
+      if (id === undefined || id < 0) return;
+      const v = drawn ? 0 : 255;
+      if (flags[id] === v) return;
+      flags[id] = v;
+      shownMap.needsUpdate = true;
+    },
+    shown(index) {
+      const id = proxyOf[index];
+      return id === undefined || id < 0 ? null : flags[id] === 255;
     },
     dispose() {
       geometry.dispose();
       material.dispose();
+      shownMap.dispose();
     },
   };
 }

@@ -30,13 +30,18 @@ export type Batch = {
   geometry: number[];
 };
 
+/** The atlases a batch may be textured by: none, one, or several (each its own batch). */
+type Shared = THREE.Texture | null | ReadonlyArray<THREE.Texture | null>;
+const isShared = (shared: Shared, t: THREE.Texture) =>
+  Array.isArray(shared) ? shared.includes(t) : t === shared;
+
 /**
  * Whether a material can be shared by a batch: opaque, standard, and untextured or textured
- * only by `shared` (the facade atlas, one texture for every model that uses it).
+ * only by `shared` (a facade atlas, one texture for every model that uses it).
  */
 export function batchable(
   material: THREE.Material | THREE.Material[],
-  shared: THREE.Texture | null = null,
+  shared: Shared = null,
 ): boolean {
   if (Array.isArray(material)) return false;
   const m = material as THREE.MeshStandardMaterial;
@@ -44,7 +49,8 @@ export function batchable(
     return false;
   if (m.transparent || m.alphaTest > 0 || m.opacity < 1 || m.alphaToCoverage) return false;
   if (m.emissive.getHex() !== 0) return false;
-  for (const v of Object.values(m)) if (v instanceof THREE.Texture && v !== shared) return false;
+  for (const v of Object.values(m))
+    if (v instanceof THREE.Texture && !isShared(shared, v)) return false;
   return true;
 }
 
@@ -60,6 +66,9 @@ function materialKey(m: THREE.MeshStandardMaterial, g: THREE.BufferGeometry) {
     !!g.attributes["normal"],
     !!g.attributes["color"] && m.vertexColors,
     !!m.map && !!g.attributes["uv"],
+    // (After the fields buildBatches reads back.) Which atlas, and which shader of its own.
+    m.map?.uuid ?? "",
+    Object.hasOwn(m, "onBeforeCompile") ? m.customProgramCacheKey() : "",
   ].join("|");
 }
 
@@ -124,7 +133,7 @@ function normalise(
  */
 export function buildBatches(
   members: BatchMember[],
-  shared: THREE.Texture | null = null,
+  shared: Shared = null,
 ): Array<Batch & { members: number[] }> {
   const groups = new Map<string, number[]>();
   members.forEach((m, i) => {
@@ -155,8 +164,14 @@ export function buildBatches(
     for (const i of list) capacity.set(members[i]!.model, members[i]!.placements);
     let instances = 0;
     for (const c of capacity.values()) instances += c;
-    const material = (members[list[0]!]!.mesh.material as THREE.MeshStandardMaterial).clone();
+    const source = members[list[0]!]!.mesh.material as THREE.MeshStandardMaterial;
+    const material = source.clone();
     material.name = "props-batch";
+    // (A clone does not take a shader patch along: the far facades' fade, props-renderer.ts.)
+    if (Object.hasOwn(source, "onBeforeCompile")) {
+      material.onBeforeCompile = source.onBeforeCompile;
+      material.customProgramCacheKey = source.customProgramCacheKey;
+    }
     const mesh = new THREE.BatchedMesh(instances, vertices, indices, material);
     mesh.name = `br-props-batch-${batches.length}`;
     // Placements are static and the whole set was drawn before (no culling): the draw list is

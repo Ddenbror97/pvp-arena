@@ -14,18 +14,40 @@ const NEAR_EVERY = 4;
  * third draw, of the windows of the buildings drawn at their near LOD this frame (`nearDrawn`,
  * from the props renderer): the near LOD is the one without glass of its own; the middle and
  * far LODs keep theirs. Without `nearDrawn` (tools) they are all drawn.
+ *
+ * The planned panes are drawn where their building is at its near or its middle LOD
+ * (`planned`: each pane's building, and whether that building is drawn so). They were drawn
+ * at every distance: 6,000 see-through slabs 3 m by 2.4 m over Downtown's towers, a pixel
+ * each from a kilometre off, and a pane is geometry, which nothing filters: each one
+ * covered its pixel or missed it, so a tower's sides broke into light and dark squares that
+ * changed with every metre flown (owner, 2026-11-23: "blinking/flicker buildings on distance
+ * … in the airplane/parachute", "the buildings looks strange"). A building's far LOD has its
+ * glass in its texture (build_facades.mjs --far), averaged to what a pixel covers.
  */
 export function createPaneRenderer(
   scene: THREE.Scene,
   set: PaneSet,
   nearDrawn: ((placement: number) => boolean) | null = null,
+  planned: { owner: Int32Array; drawn: (placement: number) => boolean } | null = null,
 ) {
   const n = set.count;
   // The planned panes (the towers', the hospital's, the arena's, the station's: a few hundred)
   // are the first draw's instances; the buildings' windows are not in it.
   const slot = new Int32Array(n).fill(-1);
-  let planned = 0;
-  for (let id = 0; id < n; id++) if (set.placement[id]! < 0) slot[id] = planned++;
+  let slots = 0;
+  for (let id = 0; id < n; id++) if (set.placement[id]! < 0) slot[id] = slots++;
+  // The planned panes by building: [building, first pane, pane count], in id order (a
+  // building's panes are consecutive ids), and whether each group is showing.
+  const groups: number[] = [];
+  for (let id = 0; planned && id < n; id++) {
+    if (slot[id]! < 0) continue;
+    const at = planned.owner[id]!;
+    const last = groups.length - 3;
+    if (last >= 0 && groups[last] === at && groups[last + 1]! + groups[last + 2]! === id)
+      groups[last + 2]!++;
+    else groups.push(at, id, 1);
+  }
+  const showing = new Uint8Array(groups.length / 3).fill(1);
   const material = new THREE.MeshStandardMaterial({
     color: 0x2c3c46,
     metalness: 0.6,
@@ -45,8 +67,8 @@ export function createPaneRenderer(
   // pull that takes effect there.
   biasLogDepth(material, LOG_BIAS.pane);
   const box = new THREE.BoxGeometry(1, 1, 1);
-  const glass = new THREE.InstancedMesh(box, material, Math.max(1, planned));
-  glass.count = planned;
+  const glass = new THREE.InstancedMesh(box, material, Math.max(1, slots));
+  glass.count = slots;
   glass.renderOrder = 1;
   // The windows' panes by building: [placement, first pane, pane count], in id order.
   const buildings: number[] = [];
@@ -57,13 +79,14 @@ export function createPaneRenderer(
     if (last >= 0 && buildings[last] === at) buildings[last + 2]!++;
     else buildings.push(at, id, 1);
   }
-  const windows = new THREE.InstancedMesh(box, material, Math.max(1, n - planned));
+  const windows = new THREE.InstancedMesh(box, material, Math.max(1, n - slots));
   windows.count = 0;
   windows.renderOrder = 1;
   windows.frustumCulled = false;
   if (buildings.length) scene.add(windows);
   let frame = 0,
-    stale = true;
+    stale = true,
+    glassMoved = false;
   const m = new THREE.Matrix4();
   const q = new THREE.Quaternion();
   const pos = new THREE.Vector3(),
@@ -158,6 +181,7 @@ export function createPaneRenderer(
         if (slot[id]! >= 0) {
           glass.setMatrixAt(slot[id]!, hidden);
           glass.instanceMatrix.needsUpdate = true;
+          glassMoved = true;
         } else stale = true;
         if (fx) {
           burst(id);
@@ -167,10 +191,32 @@ export function createPaneRenderer(
       }
     },
     update(dtMs: number) {
-      // The windows of the buildings at their near LOD (every few frames, or on a break).
-      if (buildings.length && (stale || ++frame >= NEAR_EVERY)) {
+      const due = stale || ++frame >= NEAR_EVERY;
+      if (due) {
         frame = 0;
         stale = false;
+      }
+      // The planned panes of the buildings drawn near enough to need them: a building's are
+      // rewritten when it comes into that range or leaves it.
+      if (planned && due) {
+        for (let g = 0; g < showing.length; g++) {
+          const show = planned.drawn(groups[g * 3]!) ? 1 : 0;
+          if (show === showing[g]) continue;
+          showing[g] = show;
+          const first = groups[g * 3 + 1]!,
+            count = groups[g * 3 + 2]!;
+          for (let id = first; id < first + count; id++)
+            glass.setMatrixAt(slot[id]!, show && !broken[id] ? paneMatrix(id) : hidden);
+          glassMoved = true;
+        }
+        // (Its cull sphere stays the one round every pane: a hidden pane is a point.)
+        if (glassMoved) {
+          glassMoved = false;
+          glass.instanceMatrix.needsUpdate = true;
+        }
+      }
+      // The windows of the buildings at their near LOD (every few frames, or on a break).
+      if (buildings.length && due) {
         let k = 0;
         for (let b = 0; b < buildings.length; b += 3) {
           if (nearDrawn && !nearDrawn(buildings[b]!)) continue;
