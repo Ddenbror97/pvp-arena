@@ -88,7 +88,15 @@ export function createPaneRenderer(
     stale = true,
     glassMoved = false;
   const m = new THREE.Matrix4();
-  const q = new THREE.Quaternion();
+  /** A pane is never turned (its box is world-aligned): always the identity. */
+  const unturned = new THREE.Quaternion();
+  // The shards' own scratch. Until 2026-11-23 they shared the panes': a shard's spin was left
+  // in it, and every window drawn after a break (they are rewritten every few frames) took
+  // that spin and size, so the island's glass turned and tumbled with the last shard (owner,
+  // 2026-11-23: "the glass in the windows we built to buildings is spinning and not sitting
+  // correctly").
+  const shardTurn = new THREE.Quaternion(),
+    shardSize = new THREE.Vector3();
   const pos = new THREE.Vector3(),
     size = new THREE.Vector3();
   const hidden = new THREE.Matrix4().makeScale(0, 0, 0);
@@ -111,7 +119,7 @@ export function createPaneRenderer(
       y1 - y0,
       thinX ? z1 - z0 : Math.max(0.02, z1 - z0 - 0.04),
     );
-    return m.compose(pos, q, size);
+    return m.compose(pos, unturned, size);
   };
   for (let id = 0; id < n; id++) if (slot[id]! >= 0) glass.setMatrixAt(slot[id]!, paneMatrix(id));
   glass.instanceMatrix.needsUpdate = true;
@@ -249,8 +257,8 @@ export function createPaneRenderer(
       live.length = k;
       for (let i = 0; i < live.length; i++) {
         const s = live[i]!;
-        q.setFromEuler(e.copy(s.r));
-        shards.setMatrixAt(i, m.compose(s.p, q, size.setScalar(s.s)));
+        shardTurn.setFromEuler(e.copy(s.r));
+        shards.setMatrixAt(i, m.compose(s.p, shardTurn, shardSize.setScalar(s.s)));
       }
       shards.count = live.length;
       shards.instanceMatrix.needsUpdate = true;
