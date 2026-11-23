@@ -42,15 +42,15 @@ describe("battle royale water", () => {
     expect(meshes).toHaveLength(1);
     expect(material.transparent).toBe(false);
     expect(meshes[0]!.castShadow).toBe(false);
-    // The sea's quad and the lake's, in one geometry.
-    expect(meshes[0]!.geometry.getIndex()!.count).toBe(12);
+    // The sea's cells and the lake's, in one geometry (tests/br-water-far.test.ts).
+    expect(meshes[0]!.geometry.getIndex()!.count).toBeGreaterThan(12);
   });
 
   it("adds glitter, foam and caustics without a texture or a second height read", () => {
     const { shader, material } = compiled();
     const f = shader.fragmentShader;
     // Every hook took (a three.js upgrade that renames a chunk would drop one silently).
-    for (const mark of ["path of glitter", "laps in and out", "caustics", "wDepth = vWaterY"])
+    for (const mark of ["path of glitter", "laps in and out", "caustics", "wTrue = vWaterY"])
       expect(f, mark).toContain(mark);
     expect(shader.uniforms["uSunDir"]).toBeDefined();
     // Only the two maps it always had (the lakes' mask and the ground's height): the sky it
@@ -76,7 +76,7 @@ describe("battle royale water", () => {
     // waves are travelling trains worked out from sines.
     for (const mark of ["brSky(mirror)", "halfV", "wTrain(wp"]) expect(f, mark).toContain(mark);
     // The ground's height (four texel fetches) is read once per pixel.
-    expect(f.match(/groundAt\(vMapUv\)/g)).toHaveLength(1);
+    expect(f.match(/= vWaterY - groundAt\(uv\)/g)).toHaveLength(1);
     // The costly parts sit behind branches only the pixels that show them take.
     expect(f).toMatch(/if \(lobe > 0\.004\)/);
     expect(f).toMatch(/if \(see > 0\.0\)/);
