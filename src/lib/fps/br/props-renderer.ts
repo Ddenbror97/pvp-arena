@@ -100,6 +100,14 @@ export const RINGS: Record<string, [number, number, number]> = {
   // fern, the palm clump: ≈ 30 placed, up to 12k each): their old distances, about 0.3 M
   // triangles less at the plaza (UNDERGROWTH_HEAVY).
   "undergrowth-heavy": [30, 100, 220],
+  // Trees and tree-high plants placed as props (Forgotten Ruins' palms, kapok-like trees and
+  // cypresses, its palm clumps and bamboo: manifest ring "jungle-tree"): as far as the island's
+  // own trees (VEGETATION_VIEW.viewDistance), every one of them. They stopped at 1,000 m (the
+  // trees) and 220 m (the palm clumps), and the 5–6 m palms and bamboo thinned out past 120 m
+  // with the ferns, so the ruins' forest grew in ahead of a player while the trees round it had
+  // stood since 1.5 km (owner, 2026-11-22: "threes and bushes load in late in forgotten ruins,
+  // should be synced how the rest of the worlds threes/gras loads in").
+  "jungle-tree": [70, 250, 1500],
   // House-lot fences (by the thousand in the towns): see-through and without collision, so
   // they neither hide nor stop anyone; boards up close, a panel mid-range, gone past 500 m.
   yard: [35, 140, 500],
@@ -164,6 +172,7 @@ const FIXED_RINGS = new Set([
   "bush",
   "undergrowth",
   "undergrowth-heavy",
+  "jungle-tree",
   "yard",
 ]);
 /**

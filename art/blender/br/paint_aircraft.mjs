@@ -11,7 +11,12 @@
  * are unwelded so each keeps its own. Geometry, LOD triangle counts and collision are unchanged.
  * Writes `<id>.livery-v1.lod<N>.glb` and points both manifests' LODs at them.
  *
+ * The Cessna 402 at the island airfield (owner, 2026-11-22: "some airplane at the island airfield
+ * with no color"): its download has one untextured default material, so it was white all over;
+ * the same navy and white, with its engine nacelles navy.
+ *
  *   node art/blender/br/paint_aircraft.mjs        (run from the repo root)
+ *   ONLY=cessna-402 MANIFESTS=models.x.json node art/blender/br/paint_aircraft.mjs
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -27,7 +32,8 @@ const io = new NodeIO()
   .registerDependencies({ "meshopt.decoder": MeshoptDecoder, "meshopt.encoder": MeshoptEncoder });
 const TAG = "livery-v1";
 const dir = "public/fps/br/models";
-const MANIFESTS = ["models.locations-v1.json", "models.json"];
+const MANIFESTS = process.env.MANIFESTS?.split(",") ?? ["models.locations-v1.json", "models.json"];
+const ONLY = process.env.ONLY?.split(",");
 
 const srgb = (r, g, b) => [r, g, b].map((c) => Math.pow(c, 2.2)); // vertex colours are linear
 const WHITE = srgb(0.95, 0.95, 0.94);
@@ -45,6 +51,16 @@ const RULES = {
     const body = ax < 0.66 && z > -4.6 && z < 4.6;
     return body && y < 1.3 ? NAVY : WHITE; // lower body
   },
+  // Cessna 402 (nose toward +z): fuselage |x| < 0.85 m from z −5.2 to 5.2 m, cabin floor at
+  // 0.66 m, wing at 1.1–1.3 m; the nacelles at |x| 1.6–3.0 m below the wing, ahead of z −0.5 m
+  // (the propellers at z 3.1 m); the fin above 2.1 m behind z −3 m.
+  "cessna-402": ([x, y, z]) => {
+    const ax = Math.abs(x);
+    if (ax < 0.5 && z < -3 && y > 2.1) return NAVY; // fin
+    if (ax > 1.6 && ax < 3.0 && z > -0.5 && y < 1.05) return NAVY; // engine nacelles
+    const body = ax < 0.86 && z > -4.6 && z < 4.6;
+    return body && y < 1.25 ? NAVY : WHITE; // lower body
+  },
 };
 
 /** The face's current colour is the source white (not a window, tyre or dark trim). */
@@ -55,6 +71,7 @@ for (const file of MANIFESTS) {
   const raw = fs.readFileSync(manifestFile, "utf8");
   const manifest = JSON.parse(raw);
   for (const [id, rule] of Object.entries(RULES)) {
+    if (ONLY && !ONLY.includes(id)) continue;
     const model = manifest.models[id];
     if (!model) throw new Error(`${id}: not in ${file}`);
     for (const [level, lod] of model.lods.entries()) {
