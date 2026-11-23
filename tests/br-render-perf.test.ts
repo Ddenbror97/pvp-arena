@@ -322,10 +322,15 @@ describe("BR props follow the camera up and down (owner, 2026-11-14: houses from
     props.dispose();
   });
 
-  it("keeps houses on their textured LOD twice as far from the air, and only from the air", async () => {
-    // `dwelling`: near to 100 m, middle to 600 m, far to 4 km.
+  it("hands houses to their far LOD at the same distance from the air as on foot", async () => {
+    // `dwelling`: near to 100 m, middle to 600 m, far to 4 km. Until 2026-11-23 the middle LOD
+    // was kept twice as far from the air (AIR_VIEW.reach 2), because a far LOD was one flat
+    // colour, "a pale dot, not a house". A far LOD is the near model's five views now
+    // (build_facades.mjs --far): from the canopy the two read the same, and the middle one's
+    // geometry is what sparkles there. A third of a million triangles less over Northstar.
+    expect(AIR_VIEW.reach).toBe(1);
     const ring = RINGS["dwelling"]!;
-    const far = ring[1] * 1.5; // past the middle ring on foot, inside it from the air
+    const far = ring[1] * 1.5; // past the middle ring
     const props = createProps(town(), manifest("dwelling"), loader, {
       preload: true,
       ground: () => 0,
@@ -336,21 +341,11 @@ describe("BR props follow the camera up and down (owner, 2026-11-14: houses from
     expect(drawn(props)).toEqual([0, 0, N]);
     at(far * 0.8, far * 0.6, 0); // the same distance, 540 m up
     props.update(camera, true);
-    expect(drawn(props)).toEqual([0, N, 0]);
-    // Coming down, what the air view promoted stays until the landing (render stability
-    // 2026-11-23): gliding over a ridge that brings the ground within AIR_VIEW.from must not
-    // drop the town ahead to its far LOD and bring it back on the other side.
-    at(far, AIR_VIEW.from - 10, 0);
+    expect(drawn(props)).toEqual([0, 0, N]);
+    // Inside the middle ring it is the middle LOD from any height.
+    at(ring[1] * 0.8 * 0.8, ring[1] * 0.8 * 0.6, 0);
     props.update(camera, true);
     expect(drawn(props)).toEqual([0, N, 0]);
-    at(far, 1.7, 0); // landed
-    props.update(camera, true);
-    expect(drawn(props)).toEqual([0, 0, N]);
-    // On the roof of the tallest tower (under AIR_VIEW.from), come from the ground, nothing
-    // changes.
-    at(far, AIR_VIEW.from - 10, 0);
-    props.update(camera, true);
-    expect(drawn(props)).toEqual([0, 0, N]);
     // Never past the far ring, and props that are cover keep their rings in the air.
     const cover = createProps(town(), manifest("prop"), loader, { preload: true, ground: () => 0 });
     await cover.ready;

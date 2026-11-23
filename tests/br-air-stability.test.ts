@@ -223,6 +223,26 @@ describe("buildings from the air", async () => {
       return [x, Math.max(hf.heightAt(x, z) + 50, y0 - P.glideDown * t), z];
     };
   };
+  // On the ground (the hand-overs are the same code, seen from eye height): a drive along a
+  // line at car speed, and a walk there and back across a ring.
+  const drive =
+    (from: [number, number], to: [number, number], speed: number): Flight =>
+    (t) => {
+      const length = Math.hypot(to[0] - from[0], to[1] - from[1]);
+      const k = Math.min(1, (speed * t) / length);
+      const x = from[0] + (to[0] - from[0]) * k,
+        z = from[1] + (to[1] - from[1]) * k;
+      return [x, hf.heightAt(x, z) + 1.6, z];
+    };
+  const pace =
+    (at: [number, number], along: [number, number], reach: number, speed: number): Flight =>
+    (t) => {
+      const turn = (2 * reach) / speed;
+      const k = Math.abs(((t / turn) % 2) - 1) * 2 - 1; // −1 … 1 … −1
+      const x = at[0] + along[0] * reach * k,
+        z = at[1] + along[1] * reach * k;
+      return [x, hf.heightAt(x, z) + 1.6, z];
+    };
   const results: Record<string, Awaited<ReturnType<typeof fly>>> = {};
   const flights: Array<[string, Flight, number, number?]> = [
     ["plane", plane, 30],
@@ -240,6 +260,21 @@ describe("buildings from the air", async () => {
       "glide over the hills to Downtown",
       hills([downtown.x - 1700, downtown.z - 1100], downtown),
       70,
+    ],
+    [
+      "drive into Downtown from 4.6 km and out the other side",
+      drive([downtown.x - 4600, downtown.z + 600], [downtown.x + 900, downtown.z - 100], 30),
+      185,
+    ],
+    [
+      "drive past Northstar at 1.5 km",
+      drive([northstar.x - 2500, northstar.z + 1500], [northstar.x + 2500, northstar.z + 1500], 30),
+      170,
+    ],
+    [
+      "walk 40 m there and back across Downtown's far ring",
+      pace([downtown.x - 4000, downtown.z], [1, 0], 40, 7),
+      60,
     ],
   ];
 

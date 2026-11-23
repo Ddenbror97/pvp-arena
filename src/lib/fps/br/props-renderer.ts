@@ -235,16 +235,22 @@ const FIXED_RINGS = new Set([
   "yard",
 ]);
 /**
- * From the air (the plane, free fall, the canopy), houses keep their textured middle LOD up to
- * twice as far (owner, 2026-11-14: "houses don't display until like 50 metres" under the
- * parachute). On foot a house 900 m off is a sliver behind others; from 400 m up every roof of a
- * town is in view at once, and the far LOD's one flat colour reads as a pale dot, not a house.
- * The boost grows from `from` metres above the ground (above the tallest roof, so a tower's top
- * floor is still "on foot") to all of it at `full`. There is less else to draw up there: over
- * Northstar it costs 0.3–0.4 M triangles (1.17 → 1.54 M from 700 m up, 1.32 → 1.71 M from 450 m),
- * against 3.75 M on foot in the same town with its grass.
+ * From the air (the plane, free fall, the canopy), houses kept their textured middle LOD up to
+ * `reach` times as far: twice, from 2026-11-14 (owner: "houses don't display until like 50
+ * metres" under the parachute), because from 400 m up every roof of a town is in view at once
+ * and the far LOD's one flat colour read as a pale dot, not a house. The boost grows from `from`
+ * metres above the ground (above the tallest roof, so a tower's top floor is still "on foot")
+ * to all of it at `full`.
+ *
+ * `reach` is 1 since 2026-11-23: no boost. A far LOD is the near model's five views on the far
+ * atlas now (build_facades.mjs --far), and from the canopy a town reads the same on either, so
+ * the boost bought nothing but what it cost: 0.33 M triangles and 20 draw calls over Northstar
+ * (1.36 → 1.02 M of props from 380 m up), and a kilometre-wide band of houses drawn as geometry
+ * a pixel fine, which is what sparkled there (owner, 2026-11-23: "blinking/flicker buildings on
+ * distance … in the airplane/parachute"). The heights still say when the camera is "in the
+ * air" for AIR_FLAT below.
  */
-export const AIR_VIEW = { from: 100, full: 350, reach: 2 } as const;
+export const AIR_VIEW = { from: 100, full: 350, reach: 1 } as const;
 const AIR_CLASSES = new Set(["dwelling", "outbuilding", "shop"]);
 /**
  * Blocks of storeys do the opposite (owner, 2026-11-22: the apartments with balconies and the
