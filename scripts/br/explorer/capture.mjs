@@ -3,7 +3,7 @@
  * real terrain renderer, screenshots and draw statistics.
  *
  *   node scripts/br/explorer/capture.mjs [outDir] [--chromium=/path] [--size=1280x720]
- *   VIEW_FILE=<views.json> VIEWS=<name,…> QUERY=tier=low (see below)
+ *   VIEW_FILE=<views.json> VIEWS=<name,…> QUERY=tier=low PROBE=<file.js> (see below)
  *
  * Also writes outDir/site/ (index.html, explorer.js and the world files) for a real-GPU check:
  * open it with ?fly=1 (WASD, mouse, Shift fast, F walk).
@@ -85,6 +85,10 @@ await page.goto(
 );
 await page.waitForFunction(() => window.explorer, null, { timeout: 60000 });
 await page.evaluate(() => window.explorer.ready);
+// PROBE=<file.js>: run in the page once the world is up (window.explorer.scene and .camera are
+// there): hide a layer, change a material, to tell whose pixels a measure is counting.
+if (process.env.PROBE)
+  console.log("probe", await page.evaluate(fs.readFileSync(process.env.PROBE, "utf8")));
 // VIEW_FILE=<file.json>: these views instead ({ name: [[x, y, z], [lookX, lookY, lookZ]] }).
 const customViews = process.env.VIEW_FILE
   ? JSON.parse(fs.readFileSync(process.env.VIEW_FILE, "utf8"))
@@ -486,13 +490,18 @@ const report = { loadMs, views: {} };
 const only = process.env.VIEWS?.split(",");
 const clockStart = process.env.CLOCK_MS ? await page.evaluate(() => performance.now()) : 0;
 let frame = 0;
-for (const [name, [pos, look]] of Object.entries(customViews ?? views)) {
+// (A view's optional third entry: the explorer's view options, e.g. { "fov": 75, "near": 0.1 }
+// for the game's own camera.)
+for (const [name, [pos, look, opts]] of Object.entries(customViews ?? views)) {
   if (only && !only.some((v) => name.startsWith(`${v}-`))) continue;
   if (process.env.CLOCK_MS) {
     const at = clockStart + frame++ * Number(process.env.CLOCK_MS);
     await page.evaluate((ms) => window.__stopClock(ms), at);
   }
-  const s = await page.evaluate(([p, l]) => window.explorer.view(p, l), [pos, look]);
+  const s = await page.evaluate(
+    ([p, l, o]) => window.explorer.view(p, l, o ?? {}),
+    [pos, look, opts ?? null],
+  );
   // SHOT=png: lossless frames (for frame-to-frame flicker measures; JPEG noise swamps them).
   if (process.env.SHOT === "png") await page.screenshot({ path: path.join(outDir, `${name}.png`) });
   else await page.screenshot({ path: path.join(outDir, `${name}.jpg`), type: "jpeg", quality: 82 });

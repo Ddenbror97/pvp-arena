@@ -166,3 +166,117 @@ export function sinkAtlas(levels: SinkLevel[], offset: number) {
   }
   return { data, width, height, x };
 }
+
+/** The water's own rule for a wet pixel (water.ts): a film of this depth (m) or more. */
+export const WET_FILM_M = 0.02;
+/** …and, for a lake, at least this much of the land cover's softened water mask. */
+export const WET_MASK = 0.35;
+/** The coverage texture's depth channel: this many steps a metre (255 steps: 12.75 m). */
+export const WET_DEPTH_STEPS = 20;
+
+/**
+ * How much of the ground round every second height sample is under water, and how deep on
+ * average: what the water reads far away in place of the exact heights (water.ts).
+ *
+ * Up close a pixel of water covers less ground than one height sample, and asking "is the ground
+ * under the water here?" at the pixel's centre gives the shoreline exactly. From the plane a
+ * pixel covers 5 to 50 m of ground and the centre is one point in it: a bank, a bar or a river
+ * narrower than the pixel is water or land by where that point happens to fall, and it falls
+ * somewhere else every time the view turns by a fraction of a pixel. The far shorelines blinked
+ * (owner, 2026-11-22: "still flicker for long distances directly in the airplane ... and in
+ * the parachute").
+ *
+ * This is the same question answered once for every sample, by the same rule the shader uses
+ * (the sea where the ground is below 0, a lake inside its outline where the cover's mask says
+ * water and the ground is below its level), and averaged: the GPU's mip levels and anisotropic
+ * filter then hand each far pixel the share of its own footprint that is wet, which changes
+ * smoothly as the view moves. Two bytes a texel: [share wet, mean depth].
+ *
+ * `mask` is the land cover's softened water weight as the water's material reads it (the alpha
+ * of cover texture B: RGBA bytes).
+ */
+export function wetCoverage(
+  hf: Heightfield,
+  meta: WorldMeta | null,
+  mask: { data: ArrayLike<number>; width: number; height: number } | null,
+) {
+  const w = hf.width,
+    n = w - 1;
+  // Depth of water over every sample (0: dry).
+  const depth = new Float32Array(w * w);
+  for (let i = 0; i < depth.length; i++) {
+    const h = hf.data[i]!;
+    if (h < -WET_FILM_M) depth[i] = -h;
+  }
+  if (meta && mask) {
+    const cuts = damCuts(meta);
+    const grid = (v: number) => (v + WORLD_HALF) / hf.spacing;
+    // The mask as the GPU reads it at its sharpest level: bilinear between texel centres,
+    // clamped at the edge.
+    const alpha = (x: number, z: number) => {
+      const u = ((x + WORLD_HALF) / WORLD_SIZE) * mask.width - 0.5,
+        v = ((z + WORLD_HALF) / WORLD_SIZE) * mask.height - 0.5;
+      const i = Math.floor(u),
+        j = Math.floor(v),
+        fu = u - i,
+        fv = v - j;
+      const at = (ii: number, jj: number) =>
+        mask.data[
+          (Math.min(mask.height - 1, Math.max(0, jj)) * mask.width +
+            Math.min(mask.width - 1, Math.max(0, ii))) *
+            4 +
+            3
+        ]! / 255;
+      return (
+        (at(i, j) * (1 - fu) + at(i + 1, j) * fu) * (1 - fv) +
+        (at(i, j + 1) * (1 - fu) + at(i + 1, j + 1) * fu) * fv
+      );
+    };
+    for (const body of meta.waterBodies) {
+      const [x0, z0, x1, z1] = body.bounds;
+      const planes = cuts.get(body.id) ?? [];
+      const gx0 = Math.max(0, Math.ceil(grid(x0 - 20))),
+        gx1 = Math.min(n, Math.floor(grid(x1 + 20))),
+        gz0 = Math.max(0, Math.ceil(grid(z0 - 20))),
+        gz1 = Math.min(n, Math.floor(grid(z1 + 20)));
+      for (let gz = gz0; gz <= gz1; gz++)
+        for (let gx = gx0; gx <= gx1; gx++) {
+          const i = gz * w + gx,
+            d = body.level - hf.data[i]!;
+          if (d <= WET_FILM_M || d <= depth[i]!) continue;
+          const x = gx * hf.spacing - WORLD_HALF,
+            z = gz * hf.spacing - WORLD_HALF;
+          if (planes.some((p) => (x - p.px) * p.nx + (z - p.pz) * p.nz < 0)) continue;
+          if (alpha(x, z) < WET_MASK) continue;
+          depth[i] = d;
+        }
+    }
+  }
+  // Every second sample, each the 1-2-1 average of its neighbours both ways.
+  const size = (n >> 1) + 1;
+  const data = new Uint8Array(size * size * 2);
+  const k = [1, 2, 1];
+  for (let j = 0; j < size; j++)
+    for (let i = 0; i < size; i++) {
+      let wet = 0,
+        sum = 0,
+        total = 0;
+      for (let dj = -1; dj <= 1; dj++) {
+        const z = Math.min(n, Math.max(0, 2 * j + dj));
+        for (let di = -1; di <= 1; di++) {
+          const x = Math.min(n, Math.max(0, 2 * i + di));
+          const d = depth[z * w + x]!,
+            g = k[di + 1]! * k[dj + 1]!;
+          total += g;
+          if (d > 0) {
+            wet += g;
+            sum += g * d;
+          }
+        }
+      }
+      const o = (j * size + i) * 2;
+      data[o] = Math.round((wet / total) * 255);
+      data[o + 1] = Math.min(255, Math.round((sum / total) * WET_DEPTH_STEPS));
+    }
+  return { data, size };
+}
