@@ -35,6 +35,10 @@ swap(
   "const w = innerWidth,\n    h = innerHeight;",
   "const w = benchSize?.[0] ?? innerWidth,\n    h = benchSize?.[1] ?? innerHeight;",
 );
+src =
+  'import { GROUND_TAPS as benchGroundTaps } from "@/lib/fps/br/terrain";\n' +
+  src +
+  "\n(window as unknown as { brGroundTaps: unknown }).brGroundTaps = (n: number) => void (benchGroundTaps.value = n);\n";
 src += `
 type BenchView = { pos: number[]; look: number[]; lookAgl?: boolean; aloft?: boolean };
 (window as unknown as { brBench: unknown }).brBench = async (
