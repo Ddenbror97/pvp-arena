@@ -9,6 +9,7 @@ import { pavedLots } from "./layout";
 import { decodeLandCover } from "./landcover";
 import { createProps, type ModelManifest } from "./props-renderer";
 import type { CollisionData } from "./static-world";
+import { createFloorPatches } from "./floor-patches";
 import { createPowerLines, createStructures } from "./structures-renderer";
 import { createTerrain, GROUND } from "./terrain";
 import { createVegetation, TREE_MODELS, VEGETATION_VIEW } from "./vegetation-renderer";
@@ -160,6 +161,7 @@ export async function loadIslandScene(
         cover,
         meta,
         supportAt: (x, z, r, maxY) => island.solid.supportAt(x, z, r, maxY),
+        topBetween: (x, z, r, y0, y1) => island.solid.topBetween(x, z, r, y0, y1),
         lots,
       },
       kit,
@@ -214,7 +216,14 @@ export async function loadIslandScene(
   const grass: GrassControls | null = await loadGrass(lots).catch(() => null);
   if (grass) root.add(grass.root);
   const lines = createPowerLines(island.layout);
-  root.add(structures.root, lines.root);
+  // The buildings' floors where the ground rises through them, drawn on that ground.
+  const floorPatches = createFloorPatches(
+    island.layout,
+    collision,
+    hf,
+    (id) => fixed.models[id]?.class === "building",
+  );
+  root.add(structures.root, lines.root, floorPatches.root);
   progress(0.55, "Loading buildings");
   // The mid-distance buildings' shared facade atlas (image rows as the UVs were written:
   // top-down). If it fails, those LODs fall back to a plain wall colour.
@@ -281,6 +290,7 @@ export async function loadIslandScene(
     update(camera, full = false) {
       const a = performance.now();
       terrain.update(camera);
+      floorPatches.update(camera);
       vegetation.update(camera);
       grass?.update(camera, terrain.surfaceTexture(), full);
       props.update(camera, full);

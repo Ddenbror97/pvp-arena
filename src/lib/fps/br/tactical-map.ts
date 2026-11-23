@@ -293,6 +293,7 @@ const LANDMARKS: Record<string, { name: string; cluster: number }> = {
   "rail-depot": { name: "Rail Depot", cluster: 500 },
   "brick-substation": { name: "Power Station", cluster: 500 },
   "lux-yacht": { name: "Super Yacht", cluster: 500 },
+  "cove-yacht": { name: "Super Yacht", cluster: 500 },
   "pool-villa": { name: "Villas", cluster: 600 },
   "roadside-gas": { name: "Gas", cluster: 150 },
   "roadside-motel": { name: "Motel", cluster: 150 },

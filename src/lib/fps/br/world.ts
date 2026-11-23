@@ -177,7 +177,9 @@ export const WORLD_ASSETS = {
   // (back-v1: the panels blinked from the parachute); the J-type hangar re-cut from its pre-cut
   // model with its end walls kept (access-v27, zfix-v17); the Cessna 402 painted (livery-v1);
   // Forgotten Ruins' trees and tree-high plants on the "jungle-tree" ring (props-renderer.ts).
-  // windows-v1 (2026-11-23): every building's window glass breakable (glass_panes.mjs). The
+  // yacht-v1 (2026-11-22, process_assets.mjs + build_collision.mjs): the 40 m motor yacht
+  // (cove-yacht, the owner's download at its own size) for Fisher's Cove's super yacht.
+  // windows-v1 (2026-11-23, from yacht-v1): every building's window glass breakable (glass_panes.mjs). The
   // glass the near LODs drew themselves (the procedural houses' opaque dark slabs, the textured
   // kit's see-through glass) is out of 51 models' near LODs and listed as panes
   // (window-panes.json, panes.ts), and the collision boxes in their openings are cut away (a

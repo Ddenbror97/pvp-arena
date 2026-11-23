@@ -15580,6 +15580,60 @@
     }
    ]
   },
+  "cove-yacht": {
+   "title": "Yacht",
+   "author": "Sergei",
+   "source": "https://sketchfab.com/3d-models/yacht-0dd451f295d049cea20c17d3ffa87ee3",
+   "licence": "CC BY 4.0",
+   "class": "hero",
+   "ring": "hero",
+   "use": "Fisher's Cove: the super yacht stern-to at a pier's end, in place of the enterable one (owner, 2026-11-22: \"still broke\"; his download, Sergei's motor yacht at its own 40 m)",
+   "scale": 0.991806,
+   "sourceTris": 8534,
+   "size": [
+    8.14,
+    15.53,
+    40
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/cove-yacht.lod0.glb",
+     "tris": 8534,
+     "draws": 1,
+     "textureMB": 5.33,
+     "kB": 159,
+     "size": [
+      8.14,
+      15.53,
+      40
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-yacht.lod1.glb",
+     "tris": 2992,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 70,
+     "size": [
+      8.14,
+      15.53,
+      40
+     ]
+    },
+    {
+     "file": "/fps/br/models/cove-yacht.lod2.glb",
+     "tris": 898,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 6,
+     "size": [
+      8.14,
+      15.53,
+      40
+     ]
+    }
+   ]
+  },
   "crag": {
    "title": "Stránská rock 1",
    "author": "3dhdscan",

@@ -2,7 +2,7 @@ import { waterSurface } from "./drop";
 import type { Loose } from "./inventory";
 import { ITEMS, RARITY, type Category, type ItemId, type Rarity, type WeaponDef } from "./items";
 import type { Placement } from "./layout";
-import { modelSpots, turnPoint, indoorLootPoint } from "./loot-spots";
+import { modelSpots, turnPoint, indoorLootPoint, walledLootPoint } from "./loot-spots";
 import type { CollisionData, StaticWorld } from "./static-world";
 import type { WorldMeta } from "./world";
 
@@ -15,8 +15,9 @@ import type { WorldMeta } from "./world";
  */
 export type LootClass = "residential" | "city" | "warehouse" | "military" | "vehicle";
 
-const MODEL_CLASS: Record<string, { cls: LootClass; mode: "indoor" | "beside"; max: number }> = {};
-const put = (cls: LootClass, mode: "indoor" | "beside", max: number, ids: string[]) => {
+type LootMode = "indoor" | "walled" | "open" | "tops" | "beside";
+const MODEL_CLASS: Record<string, { cls: LootClass; mode: LootMode; max: number }> = {};
+const put = (cls: LootClass, mode: LootMode, max: number, ids: string[]) => {
   for (const id of ids) MODEL_CLASS[id] = { cls, mode, max };
 };
 put("residential", "indoor", 6, [
@@ -151,6 +152,63 @@ put("residential", "indoor", 8, [
 ]);
 put("city", "indoor", 6, ["cove-house-green", "bay-beach-club"]);
 put("residential", "indoor", 14, ["bay-apartments"]);
+// The 2026-11-15 to 2026-11-18 locations had no loot (owner, 2026-11-22: "add loot to new
+// locations, like fort, forgotten ruins, all new locations dont have any loot in them").
+// The Old Fortress: the keep, the hall, the barracks and the casemates and cellars under the
+// courtyard (fort-base) hold the most; the chapel and stables a little. The towers, the
+// gatehouse and the walls are reached along the wall walks (the tops mode, 2026-11-23).
+put("military", "indoor", 40, ["fort-base"]);
+put("military", "indoor", 26, ["fort-keep"]);
+put("military", "indoor", 20, ["fort-hall", "fort-barracks"]);
+put("city", "indoor", 10, ["fort-chapel"]);
+put("military", "indoor", 6, ["fort-stables"]);
+put("military", "indoor", 4, ["fort-tower-sally"]);
+put("military", "indoor", 2, ["fort-cellar-stair"]);
+put("military", "tops", 8, ["fort-gatehouse"]);
+put("military", "tops", 3, ["fort-tower-round", "fort-tower-square"]);
+put("military", "tops", 1, [
+  "fort-wall-24",
+  "fort-wall-28",
+  "fort-wall-28s",
+  "fort-wall-32",
+  "fort-wall-32g",
+  "fort-wall-42",
+  "fort-wall-62",
+  "fort-wall-62s",
+]);
+// The Forgotten Ruins: roofless, so the open mode (rooms, terraces, stair heads, the tops):
+// the great temple, the pyramid and the palace are the climbs worth the most.
+put("military", "open", 20, ["ruin-great-temple"]);
+put("military", "open", 14, ["ruin-pyramid", "ruin-palace"]);
+put("military", "open", 10, ["ruin-acropolis"]);
+put("military", "open", 6, ["ruin-tower"]);
+put("city", "open", 6, ["ruin-temple-a", "ruin-temple-b"]);
+put("city", "open", 4, ["ruin-arcade-a", "ruin-arcade-b", "ruin-arcade-c"]);
+put("residential", "open", 3, ["ruin-house-a", "ruin-house-b"]);
+put("residential", "open", 2, ["ruin-shrine"]);
+// East Works: the halls and the boiler towers' floors; the chimney's storeys.
+put("warehouse", "indoor", 24, ["ew-turbine-hall"]);
+put("warehouse", "indoor", 12, ["ew-boiler-tower", "ew-control-house"]);
+put("warehouse", "indoor", 10, ["ew-workshop"]);
+put("military", "indoor", 6, ["ew-chimney"]);
+// The island village and West Point (2026-11-15): cottages, the inn, shops, school, chapel.
+put("residential", "indoor", 4, ["cottage-stone", "cottage-white", "cottage-wood"]);
+put("residential", "indoor", 10, ["village-inn"]);
+put("city", "indoor", 8, ["village-store", "schoolhouse"]);
+put("city", "indoor", 6, ["bakery", "village-chapel"]);
+put("military", "indoor", 8, ["coastguard-station"]);
+// The airfield's passenger side and the base's new blocks (2026-11-15).
+put("military", "indoor", 6, ["control-tower"]);
+put("warehouse", "indoor", 10, ["crash-station"]);
+put("military", "indoor", 14, ["barracks-2s", "mess-hall"]);
+// The Quay and the harbours (2026-11-15).
+put("city", "indoor", 8, ["customs-house", "harbour-office"]);
+put("warehouse", "indoor", 10, ["fish-market"]);
+put("warehouse", "indoor", 16, ["port-warehouse"]);
+// (The older roadside and town buildings that hold none, the motels, the burger joint, the
+// showroom, stay empty: the match checkpoint's 1.5 MB has no room for them.)
+put("military", "walled", 4, ["lighthouse"]);
+put("military", "indoor", 2, ["bridge-guardtower"]);
 // Initial ground loot belongs inside buildings. Vehicles and outdoor props must not
 // create roadside piles that look like misplaced house loot. Player drops/airdrops remain.
 
@@ -166,11 +224,14 @@ export const LOOT = {
    */
   poiDensity: {
     // Raised 2026-11-11 (owner: "more loot in bigger houses/cities/neighbourhoods").
-    "northstar-town": 0.65,
-    millhaven: 0.65,
+    // (Each 0.1 lower since 2026-11-22, Downtown 0.05 and the Arena District 0.05 too: the new
+    // locations' loot took the match checkpoint over its 1.5 MB; the grid towns still hold the
+    // most.)
+    "northstar-town": 0.55,
+    millhaven: 0.55,
     "island-superstore": 1.15,
-    crossroads: 0.65,
-    riverwood: 0.7,
+    crossroads: 0.55,
+    riverwood: 0.6,
     // Bayview and Fisher's Cove rebuilt (2026-11-17) with more enterable houses (Bayview's grid,
     // its seafront on the bluff, the cove's quay terrace and village): each spot holds loot less
     // often, so the two hold a little more than before in all and the match checkpoint stays
@@ -194,12 +255,15 @@ export const LOOT = {
     // Downtown (2026-11-13): a city core, its towers and blocks. 9 × 9 blocks and sixteen towers
     // since 2026-11-14: at the grid towns' rate (it still holds the most loot on the island; at
     // 1.05 it rolled 5,200 items, a quarter of the island's, past the checkpoint's budget).
-    downtown: 0.45,
+    downtown: 0.4,
     // The Arena District (2026-11-14): the arena and its city blocks.
-    stadium: 0.6,
+    stadium: 0.55,
     // The flagship (2026-11-14): "the place everyone wants to go".
     "blackwater-prison": 1.25,
     "east-works": 1.1,
+    // The 2026-11-17 locations (loot since 2026-11-22): above the towns' rate, as the big sites.
+    "old-fortress": 1.1,
+    "forgotten-ruins": 1,
     "redstone-quarry": 1.05,
   } as Record<string, number>,
   /** Category weights per location class (LOOT-SPEC §5). */
@@ -409,6 +473,20 @@ function settle(world: StaticWorld, meta: WorldMeta, x: number, y: number, z: nu
 /** Loot spots per placement of the island (the placements live as long as the island). */
 const spotsOf = new WeakMap<Placement, Array<{ x: number; y: number; z: number }>>();
 
+/** The spot still lies in its room in the world (indoor: walls and a ceiling; walled: walls). */
+function roomPoint(
+  mode: LootMode,
+  collision: CollisionData,
+  model: string,
+  x: number,
+  y: number,
+  z: number,
+) {
+  if (mode === "indoor") return indoorLootPoint(collision, model, x, y, z);
+  if (mode === "walled") return walledLootPoint(collision, model, x, y, z);
+  return true;
+}
+
 function placementSpots(
   p: Placement,
   info: (typeof MODEL_CLASS)[string],
@@ -425,8 +503,7 @@ function placementSpots(
         z = +(p.z + dz).toFixed(2);
       const y = settle(world, meta, x, p.y + s.y, z);
       if (y === null) continue;
-      if (info.mode === "indoor" && !indoorLootPoint(collision, p.model, s.x, y - p.y, s.z))
-        continue;
+      if (!roomPoint(info.mode, collision, p.model, s.x, y - p.y, s.z)) continue;
       found.push({ x, y, z });
     }
     spotsOf.set(p, found);
@@ -519,7 +596,7 @@ export function rollLoot(
         if (
           ay !== null &&
           Math.abs(ay - y) < 0.3 &&
-          (info.mode !== "indoor" || indoorLootPoint(collision, p.model, lx, ay - p.y, lz))
+          roomPoint(info.mode, collision, p.model, lx, ay - p.y, lz)
         )
           add({ item: w.ammo, qty: LOOT.companionAmmo[w.ammo] ?? 30 }, ax, ay, az);
       } else if ("durability" in d) add({ item, qty: 1, durability: d.durability }, x, y, z);

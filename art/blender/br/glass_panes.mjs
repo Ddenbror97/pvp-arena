@@ -61,6 +61,7 @@ const SKIP = new Set([
   "conservatory", // a glasshouse (glasshouse.mjs): its glass is the whole building
   "bw-greenhouse",
   "lux-yacht",
+  "cove-yacht", // (vessels: their glass is not a building's windows)
 ]);
 const PLANNED =
   /^(condo|office|brick)-(lobby|floor|roof-a|roof-b|club)$|^hosp-bridge|^arena$|^rail-station$/;

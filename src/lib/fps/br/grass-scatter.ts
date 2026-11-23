@@ -24,9 +24,9 @@ import { WORLD_HALF, WORLD_SIZE, type WorldMeta } from "./world";
  *
  * Kept off what is not soil: roads and their verges, runways, the roadside lots, beaches, rock,
  * water, steep banks, the snow line, and anything standing on the ground (buildings, walls,
- * rocks, props: their collision boxes). No clump is taller than `GRASS.maxHeight` (fairness: it
- * never hides a crouching player, whose eyes are at 0.95 m), and everyone grows the same grass
- * from the same seed.
+ * rocks, props: their collision boxes, and floors laid at or under the ground). No clump is
+ * taller than `GRASS.maxHeight` (fairness: it never hides a crouching player, whose eyes are at
+ * 0.95 m), and everyone grows the same grass from the same seed.
  *
  * Pure and deterministic: a cell's clumps follow from its coordinates and the world.
  */
@@ -61,6 +61,8 @@ export type GrassWorld = {
   meta: WorldMeta;
   /** Highest support at x/z (StaticWorld.supportAt): a box above the ground means a structure. */
   supportAt?: (x: number, z: number, radius: number, maxY: number) => number;
+  /** A box top between y0 and y1 over x/z (StaticWorld.topBetween): a floor at the ground. */
+  topBetween?: (x: number, z: number, radius: number, y0: number, y1: number) => boolean;
   /** Paved lots (layout.ts pavedLots: quads by corners). */
   lots?: number[][];
 };
@@ -265,6 +267,9 @@ export function createGrassScatter(world: GrassWorld, clumps: readonly ClumpInfo
           // (A little wider than a clump's foot: its position is stored as 32-bit floats, and a
           // clump right at a wall's foot otherwise rounds onto it: Forgotten Ruins' terrace.)
           if (world.supportAt && world.supportAt(x, z, 0.15, y + 6) > y + 0.06) continue;
+          // Nor through a floor laid flush with the ground or under it (a hangar's, a depot's,
+          // a cottage's on a slope: 2026-11-22, grass standing in rooms).
+          if (world.topBetween && world.topBetween(x, z, 0.15, y - 1.5, y + 0.06)) continue;
           if (
             meta.waterBodies.some(
               (w) =>

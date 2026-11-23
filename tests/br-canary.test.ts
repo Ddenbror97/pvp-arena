@@ -71,141 +71,150 @@ describe("wallhack canaries", () => {
     expect(canaryEvidence({ decisive: 10, won: 8 })).toBeLessThan(Math.log(20));
   });
 
-  it("in a real match: never in sight, honest views give a coin's odds, a wallhack's view does not", () => {
-    // Two matches (the canaries' own draws 99 and 98), their tallies summed. (2026-11-23: one
-    // match gave the wallhack a dozen or so decisive trials, and any change to the world, which
-    // sends the chaotic match another way, could leave them under the bar by chance: the
-    // buildings' windows did, 9 of 14.)
+  /**
+   * One match: its safety and volume checks, and the canary tallies of the honest and the
+   * wallhack seats.
+   */
+  const playMatch = (seed: number) => {
+    const loot = rollLoot(seed, island.layout, collision, island.solid, meta);
+    const state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
+      vehicles: spawnVehicles(meta, island.solid, seed, island.layout),
+      open: (x, z) => !island.solid.blocked(x, hf.heightAt(x, z) + 0.1, z, 1.8, 0.6),
+    });
+    state.phase = "starting";
+    state.phaseAt = 1000;
+    const canaries = new BrCanaries(seeded(99), (x, z, g) => waterSurface(meta, g, x, z) !== null);
+    // Seats 0–39 are watched as people. 0–7 play with a wallhack: when a canary is on their
+    // screen they look at it, in some trials (they do not always notice, or care).
+    const watched = (seat: number) => seat < 40;
+    const cheat = (seat: number) => seat < 8;
+    const notices = new Map<number, number>();
+    const rand = seeded(5);
+    let unsafe = 0,
+      trialTicks = 0,
+      injected = 0;
+    const sight = new BrSight();
+    for (let now = 1000; now < 9.5 * 60_000; now += TICK_MS) {
+      stepBrMatch(state, island.solid, meta, new Map(), now, TICK_MS);
+      // The wallhack: the view turned onto the canary it was sent (for 0.4–1.5 s of a trial).
+      for (let seat = 0; seat < 8; seat++) {
+        const t = canaries.trialOf(seat);
+        if (!t) continue;
+        let from = notices.get(seat);
+        if (from === undefined || from > now + 5000) {
+          from = rand() < 0.75 ? now + rand() * 1500 : Infinity;
+          notices.set(seat, from);
+        }
+        if (now < from || now > from + 400 + rand() * 1100) continue;
+        const s = state.seats[seat]!,
+          g = t.spots[t.ghost];
+        const dx = g.x - s.body.x,
+          dy = g.y + 0.75 - (s.body.y + 1.6),
+          dz = g.z - s.body.z;
+        s.yaw = Math.atan2(-dx, -dz) + (rand() - 0.5) * 0.04;
+        s.pitch = Math.atan2(dy, Math.hypot(dx, dz));
+      }
+      for (let seat = 0; seat < 8; seat++) if (!canaries.trialOf(seat)) notices.delete(seat);
+      // Seats 8–19 are honest players who look about a lot: the view sweeping side to side and
+      // up and down, at their own pace, with no idea where any canary is.
+      for (let seat = 8; seat < 20; seat++) {
+        const s = state.seats[seat]!;
+        if (s.dead) continue;
+        s.yaw += Math.sin(now / (700 + seat * 37) + seat) * 0.09;
+        s.pitch = Math.sin(now / (1900 + seat * 53)) * 0.25 - 0.05;
+      }
+      canaries.step(state, world, now, watched);
+      // Safety, against the truth: no point of a running canary's crouched body or of its
+      // shadow is in a clear line from its viewer's eye.
+      for (let seat = 0; seat < 40; seat++) {
+        const t = canaries.trialOf(seat);
+        if (!t) continue;
+        trialTicks++;
+        const e = state.seats[seat]!.body,
+          g = t.spots[t.ghost];
+        const points: Array<[number, number, number]> = [];
+        for (const h of [0.05, 0.3, 0.6, 0.9, 1.15, 1.3]) points.push([g.x, g.y + h, g.z]);
+        const d = Math.hypot(g.x - e.x, g.z - e.z) || 1;
+        const sx = -(g.z - e.z) / d,
+          sz = (g.x - e.x) / d;
+        for (const side of [-0.35, 0.35])
+          points.push([g.x + sx * side, g.y + 0.8, g.z + sz * side]);
+        for (const side of [-0.25, 0.25])
+          points.push([g.x + sx * side, g.y + 1.2, g.z + sz * side]);
+        for (const k of [0.3, 0.6, 1]) {
+          const x = g.x + BR_SUN_SHADOW.x * k * BR_SUN_SHADOW.perMetre * 1.3,
+            z = g.z + BR_SUN_SHADOW.z * k * BR_SUN_SHADOW.perMetre * 1.3;
+          points.push([x, hf.heightAt(x, z) + 0.02, z]);
+        }
+        for (const [px, py, pz] of points) {
+          const dx = px - e.x,
+            dy = py - (e.y + 1.6),
+            dz = pz - e.z;
+          const len = Math.hypot(dx, dy, dz);
+          const ray = world.raycast(e.x, e.y + 1.6, e.z, dx, dy, dz, len);
+          if (!ray || ray.distance >= len - 0.05) unsafe++;
+        }
+      }
+      // The canary rides in the viewer's own view only.
+      if (state.tick % 2 === 0 && state.phase === "active") {
+        const frame = brViewFrame(state);
+        for (let seat = 0; seat < 40; seat++) {
+          const view = brViewFor(state, world, sight, seat, now, undefined, frame, true);
+          const before = view.players.length;
+          canaries.inject(state, seat, view.players, (s) => brFrameRow(state, frame, s));
+          if (view.players.length > before) {
+            injected++;
+            const t = canaries.trialOf(seat)!;
+            const row = view.players[view.players.length - 1]!;
+            expect(row[0]).toBe(t.donor);
+            expect(row[7]! & 1).toBe(1);
+            expect(row[7]! & 4).toBe(4);
+          }
+        }
+      }
+      state.combat = [];
+      state.events = [];
+      if (state.phase === "ended" || state.phase === "completed") break;
+    }
+    expect(trialTicks).toBeGreaterThan(500);
+    expect(injected).toBeGreaterThan(100);
+    expect(unsafe).toBe(0);
     const honest = { decisive: 0, won: 0 },
       cheats = { decisive: 0, won: 0 };
-    const play = (canarySeed: number) => {
-      const seed = 21;
-      const loot = rollLoot(seed, island.layout, collision, island.solid, meta);
-      const state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
-        vehicles: spawnVehicles(meta, island.solid, seed, island.layout),
-        open: (x, z) => !island.solid.blocked(x, hf.heightAt(x, z) + 0.1, z, 1.8, 0.6),
-      });
-      state.phase = "starting";
-      state.phaseAt = 1000;
-      const canaries = new BrCanaries(
-        seeded(canarySeed),
-        (x, z, g) => waterSurface(meta, g, x, z) !== null,
-      );
-      // Seats 0–39 are watched as people. 0–7 play with a wallhack: when a canary is on their
-      // screen they look at it, in some trials (they do not always notice, or care).
-      const watched = (seat: number) => seat < 40;
-      const cheat = (seat: number) => seat < 8;
-      const notices = new Map<number, number>();
-      const rand = seeded(5);
-      let unsafe = 0,
-        trialTicks = 0,
-        injected = 0;
-      const sight = new BrSight();
-      for (let now = 1000; now < 9.5 * 60_000; now += TICK_MS) {
-        stepBrMatch(state, island.solid, meta, new Map(), now, TICK_MS);
-        // The wallhack: the view turned onto the canary it was sent (for 0.4–1.5 s of a trial).
-        for (let seat = 0; seat < 8; seat++) {
-          const t = canaries.trialOf(seat);
-          if (!t) continue;
-          let from = notices.get(seat);
-          if (from === undefined || from > now + 5000) {
-            from = rand() < 0.75 ? now + rand() * 1500 : Infinity;
-            notices.set(seat, from);
-          }
-          if (now < from || now > from + 400 + rand() * 1100) continue;
-          const s = state.seats[seat]!,
-            g = t.spots[t.ghost];
-          const dx = g.x - s.body.x,
-            dy = g.y + 0.75 - (s.body.y + 1.6),
-            dz = g.z - s.body.z;
-          s.yaw = Math.atan2(-dx, -dz) + (rand() - 0.5) * 0.04;
-          s.pitch = Math.atan2(dy, Math.hypot(dx, dz));
-        }
-        for (let seat = 0; seat < 8; seat++) if (!canaries.trialOf(seat)) notices.delete(seat);
-        // Seats 8–19 are honest players who look about a lot: the view sweeping side to side and
-        // up and down, at their own pace, with no idea where any canary is.
-        for (let seat = 8; seat < 20; seat++) {
-          const s = state.seats[seat]!;
-          if (s.dead) continue;
-          s.yaw += Math.sin(now / (700 + seat * 37) + seat) * 0.09;
-          s.pitch = Math.sin(now / (1900 + seat * 53)) * 0.25 - 0.05;
-        }
-        canaries.step(state, world, now, watched);
-        // Safety, against the truth: no point of a running canary's crouched body or of its
-        // shadow is in a clear line from its viewer's eye.
-        for (let seat = 0; seat < 40; seat++) {
-          const t = canaries.trialOf(seat);
-          if (!t) continue;
-          trialTicks++;
-          const e = state.seats[seat]!.body,
-            g = t.spots[t.ghost];
-          const points: Array<[number, number, number]> = [];
-          for (const h of [0.05, 0.3, 0.6, 0.9, 1.15, 1.3]) points.push([g.x, g.y + h, g.z]);
-          const d = Math.hypot(g.x - e.x, g.z - e.z) || 1;
-          const sx = -(g.z - e.z) / d,
-            sz = (g.x - e.x) / d;
-          for (const side of [-0.35, 0.35])
-            points.push([g.x + sx * side, g.y + 0.8, g.z + sz * side]);
-          for (const side of [-0.25, 0.25])
-            points.push([g.x + sx * side, g.y + 1.2, g.z + sz * side]);
-          for (const k of [0.3, 0.6, 1]) {
-            const x = g.x + BR_SUN_SHADOW.x * k * BR_SUN_SHADOW.perMetre * 1.3,
-              z = g.z + BR_SUN_SHADOW.z * k * BR_SUN_SHADOW.perMetre * 1.3;
-            points.push([x, hf.heightAt(x, z) + 0.02, z]);
-          }
-          for (const [px, py, pz] of points) {
-            const dx = px - e.x,
-              dy = py - (e.y + 1.6),
-              dz = pz - e.z;
-            const len = Math.hypot(dx, dy, dz);
-            const ray = world.raycast(e.x, e.y + 1.6, e.z, dx, dy, dz, len);
-            if (!ray || ray.distance >= len - 0.05) unsafe++;
-          }
-        }
-        // The canary rides in the viewer's own view only.
-        if (state.tick % 2 === 0 && state.phase === "active") {
-          const frame = brViewFrame(state);
-          for (let seat = 0; seat < 40; seat++) {
-            const view = brViewFor(state, world, sight, seat, now, undefined, frame, true);
-            const before = view.players.length;
-            canaries.inject(state, seat, view.players, (s) => brFrameRow(state, frame, s));
-            if (view.players.length > before) {
-              injected++;
-              const t = canaries.trialOf(seat)!;
-              const row = view.players[view.players.length - 1]!;
-              expect(row[0]).toBe(t.donor);
-              expect(row[7]! & 1).toBe(1);
-              expect(row[7]! & 4).toBe(4);
-            }
-          }
-        }
-        state.combat = [];
-        state.events = [];
-        if (state.phase === "ended" || state.phase === "completed") break;
-      }
-      expect(trialTicks).toBeGreaterThan(500);
-      expect(injected).toBeGreaterThan(100);
-      expect(unsafe).toBe(0);
-      for (let seat = 0; seat < 40; seat++) {
-        const t = canaries.tally(state.seats[seat]!.id);
-        if (!t) continue;
-        const into = cheat(seat) ? cheats : honest;
-        into.decisive += t.decisive;
-        into.won += t.won;
-        // Nobody honest gets anywhere near evidence in one match.
-        if (!cheat(seat)) expect(canaryEvidence(t)).toBeLessThan(Math.log(20));
-      }
-      let trials = 0;
-      for (let seat = 0; seat < 40; seat++)
-        trials += canaries.tally(state.seats[seat]!.id)?.trials ?? 0;
-      expect(trials).toBeGreaterThan(80);
-    };
-    play(99);
-    play(98);
+    for (let seat = 0; seat < 40; seat++) {
+      const t = canaries.tally(state.seats[seat]!.id);
+      if (!t) continue;
+      const into = cheat(seat) ? cheats : honest;
+      into.decisive += t.decisive;
+      into.won += t.won;
+      // Nobody honest gets anywhere near evidence in one match.
+      if (!cheat(seat)) expect(canaryEvidence(t)).toBeLessThan(Math.log(20));
+    }
+    let trials = 0;
+    for (let seat = 0; seat < 40; seat++)
+      trials += canaries.tally(state.seats[seat]!.id)?.trials ?? 0;
+    expect(trials).toBeGreaterThan(80);
+    return { honest, cheats };
+  };
+
+  it("in a real match: never in sight, honest views give a coin's odds, a wallhack's view does not", () => {
+    // Three matches, their tallies pooled, each bar twice the one-match bar it was (2026-11-22:
+    // one match's count moved with every change to the bots' island, 10 decisive wallhack
+    // trials against a bar of more than 10; 2026-11-23: two matches' honest count, with the
+    // buildings' windows, came to 9 against more than 10).
+    const honest = { decisive: 0, won: 0 },
+      cheats = { decisive: 0, won: 0 };
+    for (const seed of [21, 22, 23]) {
+      const m = playMatch(seed);
+      honest.decisive += m.honest.decisive;
+      honest.won += m.honest.won;
+      cheats.decisive += m.cheats.decisive;
+      cheats.won += m.cheats.won;
+    }
     // Honest views (the bots' own looking about, fights included) win about half.
     // (Few: honest views rarely rest on a hidden spot. Whatever the count, a coin's: the
     // two-sided binomial chance of a result this far from half is not small.)
-    expect(honest.decisive).toBeGreaterThan(5);
+    expect(honest.decisive).toBeGreaterThan(10);
     const tail = (n: number, k: number) => {
       let p = 0;
       for (let i = 0; i <= k; i++) {
@@ -218,7 +227,7 @@ describe("wallhack canaries", () => {
     const k = Math.min(honest.won, honest.decisive - honest.won);
     expect(Math.min(1, 2 * tail(honest.decisive, k))).toBeGreaterThan(0.001);
     // The wallhack wins most of its decisive trials.
-    expect(cheats.decisive).toBeGreaterThan(10);
+    expect(cheats.decisive).toBeGreaterThan(20);
     expect(cheats.won / cheats.decisive).toBeGreaterThan(0.7);
-  }, 600_000);
+  }, 900_000);
 });
