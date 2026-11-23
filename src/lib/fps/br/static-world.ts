@@ -125,7 +125,19 @@ export class StaticWorld {
   private readonly shotStart: Uint32Array;
   private readonly shotItems: Uint32Array;
   private stamp = 0;
-  private readonly seen: Uint32Array;
+  /**
+   * The query that last visited each box (a stamp; 16 bits: a box per entry is 1.7 million
+   * entries, and the match room's memory is tight; `nextStamp` clears them when it wraps).
+   */
+  private readonly seen: Uint16Array;
+  /** A stamp for a new query (the stamps cleared and restarted when they run out). */
+  private nextStamp() {
+    if (this.stamp === 0xffff) {
+      this.seen.fill(0);
+      this.stamp = 0;
+    }
+    return ++this.stamp;
+  }
 
   constructor(
     hf: Heightfield,
@@ -174,7 +186,7 @@ export class StaticWorld {
     for (const p of placements) placeFlat(p, bodyModels[p.model]);
     for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes[at++] = b[k]!;
     for (const p of placements) placeFlat(p, shotModels[p.model]);
-    this.seen = new Uint32Array(count);
+    this.seen = new Uint16Array(count);
     // Two passes over the boxes' cells: sizes, then contents.
     const sizes: number[] = [];
     const shotSizes: number[] = [];
@@ -244,7 +256,7 @@ export class StaticWorld {
           visit(this.cellItems[k]!);
       return;
     }
-    const stamp = ++this.stamp;
+    const stamp = this.nextStamp();
     for (let r = r0; r <= r1; r++)
       for (let c = c0; c <= c1; c++) {
         const s = this.slotOf(r * COLS + c);
@@ -375,7 +387,7 @@ export class StaticWorld {
     let nearest = limit;
     let boxHit = false,
       boxIndex = -1;
-    const stamp = ++this.stamp;
+    const stamp = this.nextStamp();
     for (let s = 0; s < steps; s++) {
       const t0 = s * CELL,
         t1 = Math.min(limit, (s + 1) * CELL);

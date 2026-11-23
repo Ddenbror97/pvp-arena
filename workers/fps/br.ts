@@ -1,4 +1,5 @@
 import { LiveCalibration, type CalibrationRow } from "./calibration";
+import { isolateOnce } from "./isolate-once";
 import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
 import { AimWatch, logAimReport, type WatchPlayer } from "../../src/lib/fps/anticheat/aim-watch";
 
@@ -91,30 +92,35 @@ const MAX_ACT_BACKLOG = 8;
 // ------------------------------------------------------------------------------ island
 /** The longest a cold island build may hold the isolate before letting other work run. */
 const BUILD_SLICE_MS = 8;
-/** Run a stepped job to its end, yielding to the event loop every BUILD_SLICE_MS of work. */
-async function paced<T>(steps: Generator<void, T, void>): Promise<T> {
+/**
+ * Run a stepped job to its end, yielding to the event loop every BUILD_SLICE_MS of work (and
+ * telling `beat` it is still going).
+ */
+async function paced<T>(steps: Generator<void, T, void>, beat: () => void = () => {}): Promise<T> {
   let since = Date.now();
   for (;;) {
     const step = steps.next();
     if (step.done) return step.value;
     if (Date.now() - since >= BUILD_SLICE_MS) {
+      beat();
       await new Promise((resolve) => setTimeout(resolve, 0));
       since = Date.now();
     }
   }
 }
 type Loaded = { island: Island; meta: WorldMeta; collision: CollisionData };
-let loadedIsland: Loaded | null = null;
+/**
+ * The island, once per isolate (isolate-once.ts): every room in the isolate, and every retry
+ * of a socket while it is being built, waits for the one build instead of starting its own.
+ * (After a deploy several at once took the isolate past its memory, and it was reset again
+ * and again: players stuck on "Waiting for players", 2026-11-23.)
+ */
+const island = isolateOnce<Loaded>();
 
 /** The island, loaded once per isolate from the site's static files (`BR_ASSETS_URL`). */
 export async function loadIsland(env: Env): Promise<Loaded> {
-  // Never cache an in-flight promise at module scope. Durable Object requests can overlap,
-  // and Workers bind promise continuations to the request that created them. A later request
-  // awaiting that promise can fail if its creator has already ended. Cache only the completed
-  // world; simultaneous cold starts may build independently, then share the result.
-  if (loadedIsland) return loadedIsland;
-
-  const loaded = await (async () => {
+  if (island.value) return island.value;
+  return island.get(async (beat) => {
     const base = (env.BR_ASSETS_URL ?? env.ALLOWED_ORIGIN).replace(/\/$/, "");
     const get = async (path: string) => {
       const r = await fetch(`${base}${path}`);
@@ -127,16 +133,15 @@ export async function loadIsland(env: Env): Promise<Loaded> {
       get(WORLD_ASSETS.meta).then((r) => r.json() as Promise<WorldMeta>),
       get(WORLD_ASSETS.collision).then((r) => r.json() as Promise<CollisionData>),
     ]);
+    beat();
     assertIslandRevision(collision);
     const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
     // Built in steps with pauses (foundation audit 2026-11-10): about three seconds of work
     // that used to run in one piece and stall every other room in this isolate.
-    const island = await paced(buildIslandSteps(hf, cover, meta, collision));
-    await paced(warmLootSteps(island.layout, collision, island.solid, meta));
-    return { island, meta, collision };
-  })();
-  loadedIsland ??= loaded;
-  return loadedIsland;
+    const built = await paced(buildIslandSteps(hf, cover, meta, collision), beat);
+    await paced(warmLootSteps(built.layout, collision, built.solid, meta), beat);
+    return { island: built, meta, collision };
+  });
 }
 
 // ------------------------------------------------------------------------------ lobby

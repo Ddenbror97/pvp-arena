@@ -15,5 +15,9 @@
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BrRoom", "BrLobby"] }],
   "vars": { "ALLOWED_ORIGIN": "http://localhost:5173", "SUPABASE_URL": "" },
   "observability": { "enabled": true },
-  "limits": { "cpu_ms": 30000 }
+  // 5 minutes of CPU per request (the Durable Object maximum): a cold room builds the island
+  // (tens of seconds of CPU on a slow machine since the island grew) inside the first player's
+  // socket request, and a build cut off at 30 s left every player stuck at "Waiting for players"
+  // after a deploy (2026-11-23). A running room's ticks use a few ms each.
+  "limits": { "cpu_ms": 300000 }
 }
