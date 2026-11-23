@@ -92,6 +92,13 @@ export class StaticWorld {
    * (owner, 2026-11-15: "the 2 bridges … makes the car or bike lag/jitter while driving on").
    */
   decks: DeckSurface[] = [];
+  /**
+   * The roads' drawn surface at x/z (road-grade.ts, with its lift), or null off the carriageway:
+   * a road is level across and floats over a side slope's downhill half, and a player stood on
+   * the ground there, ankle-deep in the asphalt (owner, 2026-11-22: "asfalt road that can be
+   * walk into/thro"). Set by island.ts.
+   */
+  roadTop: ((x: number, z: number) => number | null) | null = null;
   readonly vegetation: VegetationWorld | null;
   /** World boxes, 6 floats each: x0, y0, z0, x1, y1, z1. */
   readonly boxes: Float32Array;
@@ -216,6 +223,31 @@ export class StaticWorld {
   }
 
   /**
+   * Whether a box overlapping the square of half-width `radius` at x/z has its top between `y0`
+   * and `y1`: a floor laid at the ground (the grass keeps off building floors flush with it or
+   * buried under it).
+   */
+  topBetween(x: number, z: number, radius: number, y0: number, y1: number): boolean {
+    let hit = false;
+    const b = this.boxes;
+    this.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
+      if (hit) return;
+      const o = i * 6;
+      const t = b[o + 4]!;
+      if (
+        t >= y0 &&
+        t <= y1 &&
+        x + radius > b[o]! &&
+        x - radius < b[o + 3]! &&
+        z + radius > b[o + 2]! &&
+        z - radius < b[o + 5]!
+      )
+        hit = true;
+    });
+    return hit;
+  }
+
+  /**
    * Whether a standing (or crouched) player hull — a square of half-width `radius` from `y` to
    * `y + height` — overlaps a box or a trunk.
    */
@@ -269,6 +301,10 @@ export class StaticWorld {
         continue;
       const t = deckTopAt(d, x, z, radius);
       if (t > top && t <= maxY + 1e-6) top = t;
+    }
+    if (this.roadTop) {
+      const t = this.roadTop(x, z);
+      if (t !== null && t > top && t <= maxY + 1e-6) top = t;
     }
     return top;
   }

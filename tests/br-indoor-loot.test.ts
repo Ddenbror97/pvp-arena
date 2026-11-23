@@ -145,3 +145,40 @@ test("enterable buildings and companion ammo stay indoors at all four rotations"
   }
   expect(checked).toBeGreaterThan(100);
 });
+
+test("roofless rooms hold walled loot; open loot lies up on a ruin, never on the ground round it", () => {
+  const collision = {
+    voxel: 1,
+    models: {
+      // A roofless room with a doorway (a ruined house).
+      ruin: [
+        [-4, 0, -4, 4, 0.2, 4],
+        [-4, 0.2, -4, -3.8, 2.6, 4],
+        [3.8, 0.2, -4, 4, 2.6, 4],
+        [-4, 0.2, -4, 4, 2.6, -3.8],
+        [-4, 0.2, 3.8, -0.8, 2.6, 4],
+        [0.8, 0.2, 3.8, 4, 2.6, 4],
+      ],
+      // A terrace 2 m up, walled at its back, reached by 5 cm steps along +z (a ruin's ramp).
+      terrace: [
+        [-5, 0, -8, 5, 2, -2],
+        [-5, 2, -8, 5, 3.5, -7.6],
+        ...Array.from({ length: 40 }, (_, k) => [
+          -1,
+          0,
+          -2 + k * 0.15,
+          1,
+          2 - k * 0.05,
+          -1.85 + k * 0.15,
+        ]),
+      ],
+    },
+  } as unknown as Parameters<typeof modelSpots>[0];
+  expect(modelSpots(collision, "ruin", "indoor", 1, 40)).toEqual([]);
+  const walled = modelSpots(collision, "ruin", "walled", 1, 40);
+  expect(walled.length).toBeGreaterThan(4);
+  for (const s of walled) expect(Math.max(Math.abs(s.x), Math.abs(s.z))).toBeLessThan(4);
+  const open = modelSpots(collision, "terrace", "open", 1, 40);
+  expect(open.length).toBeGreaterThan(2);
+  for (const s of open) expect(s.y).toBeGreaterThan(1.5);
+});

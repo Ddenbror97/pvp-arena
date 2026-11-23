@@ -8962,6 +8962,24 @@
       "use": "Coastal towns (owner's 2026-11-17 downloads): Bayview marina town: motor yachts in the marina"
     },
     {
+      "id": "cove-yacht",
+      "key": "sf:0dd451f295d049cea20c17d3ffa87ee3",
+      "class": "hero",
+      "fit": {
+        "max": 40
+      },
+      "collision": "voxel",
+      "voxel": 0.5,
+      "ring": "hero",
+      "lodTris": [
+        8600,
+        3000,
+        900
+      ],
+      "draws": 1,
+      "use": "Fisher's Cove: the super yacht stern-to at a pier's end, in place of the enterable one (owner, 2026-11-22: \"still broke\"; his download, Sergei's motor yacht at its own 40 m)"
+    },
+    {
       "id": "bay-sailboat",
       "key": "sf:76d0b1e24be14d2f9a524bfce3001aeb",
       "class": "prop",

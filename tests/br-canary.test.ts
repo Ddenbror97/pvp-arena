@@ -71,8 +71,11 @@ describe("wallhack canaries", () => {
     expect(canaryEvidence({ decisive: 10, won: 8 })).toBeLessThan(Math.log(20));
   });
 
-  it("in a real match: never in sight, honest views give a coin's odds, a wallhack's view does not", () => {
-    const seed = 21;
+  /**
+   * One match: its safety and volume checks, and the canary tallies of the honest and the
+   * wallhack seats.
+   */
+  const playMatch = (seed: number) => {
     const loot = rollLoot(seed, island.layout, collision, island.solid, meta);
     const state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
       vehicles: spawnVehicles(meta, island.solid, seed, island.layout),
@@ -191,10 +194,26 @@ describe("wallhack canaries", () => {
     for (let seat = 0; seat < 40; seat++)
       trials += canaries.tally(state.seats[seat]!.id)?.trials ?? 0;
     expect(trials).toBeGreaterThan(80);
+    return { honest, cheats };
+  };
+
+  it("in a real match: never in sight, honest views give a coin's odds, a wallhack's view does not", () => {
+    // Two matches, their tallies pooled, each bar twice the one-match bar it was (2026-11-22:
+    // one match's count moved with every change to the bots' island, 10 decisive wallhack
+    // trials against a bar of more than 10).
+    const honest = { decisive: 0, won: 0 },
+      cheats = { decisive: 0, won: 0 };
+    for (const seed of [21, 22]) {
+      const m = playMatch(seed);
+      honest.decisive += m.honest.decisive;
+      honest.won += m.honest.won;
+      cheats.decisive += m.cheats.decisive;
+      cheats.won += m.cheats.won;
+    }
     // Honest views (the bots' own looking about, fights included) win about half.
     // (Few: honest views rarely rest on a hidden spot. Whatever the count, a coin's: the
     // two-sided binomial chance of a result this far from half is not small.)
-    expect(honest.decisive).toBeGreaterThan(5);
+    expect(honest.decisive).toBeGreaterThan(10);
     const tail = (n: number, k: number) => {
       let p = 0;
       for (let i = 0; i <= k; i++) {
@@ -207,7 +226,7 @@ describe("wallhack canaries", () => {
     const k = Math.min(honest.won, honest.decisive - honest.won);
     expect(Math.min(1, 2 * tail(honest.decisive, k))).toBeGreaterThan(0.001);
     // The wallhack wins most of its decisive trials.
-    expect(cheats.decisive).toBeGreaterThan(10);
+    expect(cheats.decisive).toBeGreaterThan(20);
     expect(cheats.won / cheats.decisive).toBeGreaterThan(0.7);
-  }, 300_000);
+  }, 600_000);
 });

@@ -5,6 +5,7 @@ import { islandDoors, modelDoors, type DoorSet } from "./doors";
 import type { Heightfield } from "./heightfield";
 import type { LandCoverMap } from "./landcover";
 import { islandLayoutSteps, type Placement } from "./layout";
+import { createRoadGrade, ROAD_GRADE } from "./road-grade";
 import { registerLadders } from "./ladders";
 import { registerLifts } from "./lifts";
 import { islandPanes, type PaneSet } from "./panes";
@@ -88,6 +89,13 @@ export function* buildIslandSteps(
     ...zipStationBoxes((x, z) => hf.heightAt(x, z)),
   ]);
   solid.decks = bridgeDecks(meta, hf);
+  // Players, vehicles and drops stand on the roads' surface, not under it (on the carriageway;
+  // the renderer draws the same grade, structures-renderer.ts).
+  const roads = createRoadGrade(meta, (x, z) => hf.heightAt(x, z));
+  solid.roadTop = (x, z) => {
+    const g = roads.at(x, z, true, 0);
+    return g === null ? null : g + ROAD_GRADE.lift;
+  };
   yield;
   // Each model's doorways are found once (doors.ts caches them): one model per step.
   const models = new Set<string>();
