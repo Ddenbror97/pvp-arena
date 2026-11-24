@@ -242,12 +242,11 @@ describe("the steadying pass", () => {
     // A pixel that kept its colour is shown as drawn: the picture stays sharp.
     expect(STEADY.from).toBeLessThan(STEADY.to);
     expect(STEADY.to).toBeLessThanOrEqual(0.1);
-    expect(fragment).toContain(`#define STEADY_FROM ${STEADY.from.toFixed(3)}`);
-    expect(fragment).toContain("smoothstep(STEADY_FROM, STEADY_TO,");
+    expect(fragment).toContain("float jump = smoothstep(uJump.x, uJump.y, g);");
     // Nothing near the camera: the aircraft you sit in, your canopy, yourself.
     expect(STEADY.near).toBeGreaterThanOrEqual(60);
     expect(STEADY.far).toBeGreaterThan(STEADY.near);
-    expect(fragment).toContain("smoothstep(STEADY_NEAR, STEADY_FAR, dist)");
+    expect(fragment).toContain("smoothstep(uRange.x, uRange.y, dist)");
     // The last frame counts only where it showed a surface about as far away.
     expect(fragment).toContain("STEADY_DEPTH * was.w");
     // Clamped to the colours round the pixel now, and each frame keeps its distances.
@@ -280,6 +279,64 @@ describe("the steadying pass", () => {
     expect(asDrawn).toBeTruthy();
     expect(asDrawn).not.toBe(history);
     expect(pass.fragmentShader).toContain("layout(location = 1) out highp vec4 drawnOut;");
+    target.dispose();
+  });
+  it("from the air: STEADY's range, its jumps, no cap", () => {
+    const { renderer, drawn } = fakeRenderer();
+    const target = createSceneTarget(renderer, 4);
+    const steady = { camera: eye(0, 400, 0), strength: STEADY.strength };
+    for (let f = 0; f < 3; f++) target.present(0, steady);
+    const pass = drawn.filter((d) => d.material.name === "br-steady").at(-1)!.material;
+    const r = pass.uniforms["uRange"]!.value as THREE.Vector4;
+    expect([r.x, r.y]).toEqual([STEADY.near, STEADY.far]);
+    expect(r.w).toBeLessThanOrEqual(r.z);
+    const j = pass.uniforms["uJump"]!.value as THREE.Vector2;
+    expect([j.x, j.y]).toEqual([STEADY.from, STEADY.to]);
+    target.dispose();
+  });
+
+  it("on foot: blended before the weapon, from a few metres, the shimmer only, the weapon laid over", () => {
+    // Owner, 2026-11-24, the airfield's apron from eye height: "blurry and flicker".
+    const { renderer, drawn, bound } = fakeRenderer();
+    const target = createSceneTarget(renderer, 4);
+    const scene = bound()!;
+    const foot = { camera: eye(0, 1.7, 0), strength: STEADY.strength, ...STEADY.foot };
+    for (let f = 0; f < 3; f++) {
+      target.steady(foot);
+      // The weapon pass draws into the scene target between the two.
+      expect(bound()).toBe(scene);
+      target.present(0.4, null, true);
+    }
+    const pass = drawn.filter((d) => d.material.name === "br-steady").at(-1)!.material;
+    const r = pass.uniforms["uRange"]!.value as THREE.Vector4;
+    expect(STEADY.foot.near).toBeGreaterThanOrEqual(5);
+    expect(STEADY.foot.far).toBeGreaterThan(STEADY.foot.near);
+    expect([r.x, r.y, r.z, r.w]).toEqual([
+      STEADY.foot.near,
+      STEADY.foot.far,
+      STEADY.foot.capFrom,
+      STEADY.foot.capTo,
+    ]);
+    // Big jumps (a tracer, a flash, a player stepping out) are shown as drawn.
+    expect(STEADY.foot.capTo).toBeGreaterThan(STEADY.foot.capFrom);
+    expect(STEADY.foot.capTo).toBeLessThanOrEqual(0.4);
+    expect(pass.fragmentShader).toContain("jump *= 1.0 - smoothstep(uRange.z, uRange.w, g);");
+    // One blend a frame (from the second: the first turns the depth resolve on), and the
+    // present pass shows it with the weapon over it.
+    expect(drawn.filter((d) => d.material.name === "br-steady")).toHaveLength(2);
+    const present = drawn.at(-1)!.material;
+    expect(present.name).toBe("br-present");
+    expect(target.steadied()).toBe(true);
+    expect(present.uniforms["uOverlay"]!.value).toBe(1);
+    expect(present.uniforms["tOverlay"]!.value).toBe(scene.texture);
+    expect(present.uniforms["tScene"]!.value).not.toBe(scene.texture);
+    // The weapon: where its pass left a depth, or changed the colour (its flash writes none).
+    expect(present.fragmentShader).toContain("texture2D(tOverlayDepth, uv).r > 0.0");
+    expect(present.fragmentShader).toContain("uOverlay > 0.5 && overlaid(uv)");
+    // With no weapon drawn, the blend alone.
+    target.steady(foot);
+    target.present(0.4, null, false);
+    expect(drawn.at(-1)!.material.uniforms["uOverlay"]!.value).toBe(0);
     target.dispose();
   });
 });

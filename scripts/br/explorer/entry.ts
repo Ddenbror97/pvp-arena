@@ -194,8 +194,13 @@ function draw() {
   sharpen?.apply();
   sceneTarget?.present(
     tier !== "low" && new URLSearchParams(location.search).get("sharpen") !== "off" ? 0.4 : 0,
-    // ?steady=1: the air's steadying pass (scene-target.ts STEADY), as the game runs it aloft.
-    steadyOn ? { camera, strength: STEADY.strength } : null,
+    // ?steady=1: the air's steadying pass (scene-target.ts STEADY), as the game runs it aloft;
+    // ?steady=foot: as it runs on foot (STEADY.foot).
+    steadyOn
+      ? steadyFoot
+        ? { camera, strength: STEADY.strength, ...STEADY.foot }
+        : { camera, strength: STEADY.strength }
+      : null,
   );
   gpu.end();
   return {
@@ -231,7 +236,9 @@ addEventListener("mousemove", (e) => {
   pitch = Math.max(-1.5, Math.min(1.5, pitch - e.movementY * 0.002));
 });
 let interactive = new URLSearchParams(location.search).get("fly") === "1";
-const steadyOn = new URLSearchParams(location.search).get("steady") === "1";
+const steadyParam = new URLSearchParams(location.search).get("steady");
+const steadyOn = steadyParam === "1" || steadyParam === "foot";
+const steadyFoot = steadyParam === "foot";
 // ?buddy=1: a chequered box that rides with the camera, as the aircraft and your canopy do in
 // the game: what the steadying pass must leave alone (it has no motion vectors).
 if (new URLSearchParams(location.search).get("buddy") === "1") {

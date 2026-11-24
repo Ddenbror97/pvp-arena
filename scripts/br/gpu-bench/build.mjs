@@ -40,6 +40,7 @@ src =
   src +
   "\n(window as unknown as { brGroundTaps: unknown }).brGroundTaps = (n: number) => void (benchGroundTaps.value = n);\n" +
   "(window as unknown as { brGroundReach: unknown }).brGroundReach = (reach: number, grow: number) => void benchGroundReach.value.set(reach, grow);\n" +
+  "(window as unknown as { brSteadyFoot: unknown }).brSteadyFoot = STEADY.foot;\n" +
   "(window as unknown as { brDraw: unknown }).brDraw = (w: number, h: number) => { pixelRatioOverride = 1; benchSize = [w, h]; resize(); draw(); return renderer.domElement; };\n";
 src += `
 type BenchView = { pos: number[]; look: number[]; lookAgl?: boolean; aloft?: boolean };
