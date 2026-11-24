@@ -256,6 +256,8 @@ export function BrMatch() {
     /** A close or a frame after which this page cannot play on: said once, no reconnect. */
     const fail = (message: string) => {
       failed.current = true;
+      // (The loading screen comes back over the match: its buttons need the cursor.)
+      if (document.pointerLockElement) document.exitPointerLock();
       setError(message);
       return null;
     };
@@ -361,6 +363,7 @@ export function BrMatch() {
       },
       unreachable(again) {
         failed.current = true;
+        if (document.pointerLockElement) document.exitPointerLock();
         setRetryLabel(undefined);
         setConnection("Server unreachable");
         setError("The Battle Royale server is temporarily unavailable. Try again in a moment.");
