@@ -310,9 +310,13 @@ const SCENARIOS: Record<string, () => Promise<void>> = {
     await wait(500);
   },
   async water() {
-    const yaw = sim().toWater!(5);
-    await wait(2500);
+    // Wading in from the shore as a player does (the lake's surroundings streamed in first):
+    // the first entry into the water, then swimming.
+    const yaw = sim().toWater!(0.8);
+    arena().look(yaw, -0.05);
+    await wait(6000);
     key("KeyW", true);
+    await measure("water-entry", 6000);
     await measure("swim", 6000, (p) => arena().look(yaw + p * 0.8, -0.05));
     key("KeyW", false);
   },

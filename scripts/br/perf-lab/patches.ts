@@ -41,7 +41,8 @@ EventTarget.prototype.addEventListener = function (
   type: string,
   ...rest: unknown[]
 ) {
-  if (this === window && type === "beforeunload") return;
+  // (`addEventListener(...)` called bare in a strict module has no `this`: the window's.)
+  if ((this === window || this === undefined) && type === "beforeunload") return;
   return (add as (...a: unknown[]) => void).call(this, type, ...rest);
 } as typeof add;
 
