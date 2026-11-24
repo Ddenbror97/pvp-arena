@@ -134,10 +134,10 @@ function find(boxes: number[][]): ModelDoor[] {
     /** A wall reaching head height (not a counter, a shelf or a sill). */
     tall = new Uint8Array(nx * nz),
     lintel = new Float32Array(nx * nz).fill(Infinity);
-  // Boxes bucketed by the columns whose centre they cover (only the ground storey matters).
-  const cols: number[][][] = Array.from({ length: nx * nz }, () => []);
-  for (const b of boxes) {
-    if (b[1]! > 6) continue;
+  // Boxes bucketed by the columns whose centre they cover (only the ground storey matters):
+  // counted, then laid out flat per column in the boxes' order (no array per column).
+  const start = new Int32Array(nx * nz + 1);
+  const cover = (b: number[], visit: (c: number) => void) => {
     const i0 = Math.max(0, Math.ceil((b[0]! - x0) / G - 0.5)),
       i1 = Math.min(nx - 1, Math.floor((b[3]! - x0) / G - 0.5)),
       k0 = Math.max(0, Math.ceil((b[2]! - z0) / G - 0.5)),
@@ -146,24 +146,68 @@ function find(boxes: number[][]): ModelDoor[] {
       for (let i = i0; i <= i1; i++) {
         const px = cx(i),
           pz = cz(k);
-        if (px > b[0]! && px < b[3]! && pz > b[2]! && pz < b[5]!) cols[k * nx + i]!.push(b);
+        if (px > b[0]! && px < b[3]! && pz > b[2]! && pz < b[5]!) visit(k * nx + i);
       }
-  }
+  };
+  const low = boxes.filter((b) => b[1]! <= 6);
+  for (const b of low) cover(b, (c) => start[c + 1]!++);
+  for (let c = 0; c < nx * nz; c++) start[c + 1]! += start[c]!;
+  const fillAt = start.slice(0, nx * nz),
+    items: number[][] = new Array(start[nx * nz]!);
+  for (const b of low) cover(b, (c) => (items[fillAt[c]!++] = b));
   for (let c = 0; c < nx * nz; c++) {
-    const here = cols[c]!;
+    const s0 = start[c]!,
+      s1 = start[c + 1]!;
     let f = 0;
     // The floor: a step or two up at most (stacked wall voxels above that are wall).
-    for (const b of here) if (b[4]! <= 0.65 && b[4]! > f) f = b[4]!;
+    for (let j = s0; j < s1; j++) {
+      const b = items[j]!;
+      if (b[4]! <= 0.65 && b[4]! > f) f = b[4]!;
+    }
     floor[c] = f;
-    for (const b of here) {
+    for (let j = s0; j < s1; j++) {
+      const b = items[j]!;
       if (b[1]! < f + 1.85 && b[4]! > f + 0.05) wall[c] = 1;
       if (b[1]! < f + 1.85 && b[4]! >= f + 2.0) tall[c] = 1;
       if (b[1]! >= f + 1.85 && b[1]! < lintel[c]!) lintel[c] = b[1]!;
     }
   }
   const free = (i: number, k: number) => i >= 0 && k >= 0 && i < nx && k < nz && !wall[k * nx + i];
+  // Per cell and direction: how many free cells follow before a wall or the grid's edge. The
+  // runs below read these instead of stepping cell by cell (load-time audit 2026-11-24: the
+  // stepping was a second of every island build; the doorways found are the same).
+  const n = nx * nz;
+  const toW = new Int32Array(n),
+    toE = new Int32Array(n),
+    toN = new Int32Array(n),
+    toS = new Int32Array(n);
+  for (let k = 0; k < nz; k++) {
+    for (let i = 1; i < nx; i++) {
+      const c = k * nx + i;
+      toW[c] = wall[c - 1] ? 0 : toW[c - 1]! + 1;
+    }
+    for (let i = nx - 2; i >= 0; i--) {
+      const c = k * nx + i;
+      toE[c] = wall[c + 1] ? 0 : toE[c + 1]! + 1;
+    }
+  }
+  for (let i = 0; i < nx; i++) {
+    for (let k = 1; k < nz; k++) {
+      const c = k * nx + i;
+      toN[c] = wall[c - nx] ? 0 : toN[c - nx]! + 1;
+    }
+    for (let k = nz - 2; k >= 0; k--) {
+      const c = k * nx + i;
+      toS[c] = wall[c + nx] ? 0 : toS[c + nx]! + 1;
+    }
+  }
   /** Free cells from (i,k) along the axis before a wall, up to `max`; -1 when no wall found. */
   const run = (i: number, k: number, di: number, dk: number, max: number) => {
+    if (i >= 0 && k >= 0 && i < nx && k < nz && Math.abs(di) + Math.abs(dk) === 1) {
+      const c = k * nx + i;
+      const d = di < 0 ? toW[c]! : di > 0 ? toE[c]! : dk < 0 ? toN[c]! : toS[c]!;
+      return d + 1 <= max ? d : -1;
+    }
     for (let s = 1; s <= max; s++) if (!free(i + di * s, k + dk * s)) return s - 1;
     return -1;
   };
@@ -176,7 +220,8 @@ function find(boxes: number[][]): ModelDoor[] {
     for (let i = 0; i < nx; i++) {
       if (!free(i, k)) continue;
       for (const along of ["x", "z"] as const) {
-        const [di, dk] = along === "x" ? [1, 0] : [0, 1];
+        const di = along === "x" ? 1 : 0,
+          dk = along === "x" ? 0 : 1;
         const l = run(i, k, -di, -dk, maxCells),
           r = run(i, k, di, dk, maxCells);
         if (l < 0 || r < 0) continue;
