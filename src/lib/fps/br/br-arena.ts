@@ -175,7 +175,7 @@ import { createSwimSplash } from "./swim-splash";
 
 /** The guns worn on the back (the Desert Eagle has the thigh holster). */
 const CARRY_GUNS = new Set<string>(["ak47", "m4", "awp", "hunting", "mp5", "spas12"]);
-import { RenderBudget } from "../presentation";
+import { BrRenderBudget } from "./render-budget";
 import { deathPose } from "../death-presentation";
 import { LocalGrenadeHands } from "../grenades/grenade-timeline";
 import { createWeaponKit } from "../weapon";
@@ -632,9 +632,6 @@ function drawMap(island: IslandScene) {
   return c.toDataURL("image/png");
 }
 
-/** GPU time per frame (ms) from which slow frames are taken to be the GPU's (60 fps: 16.7). */
-const GPU_BUSY_MS = 10;
-
 export function createBrArena(
   host: HTMLElement,
   base: string,
@@ -693,7 +690,8 @@ export function createBrArena(
   };
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
-  const budget = new RenderBudget();
+  // The adaptive resolution (render-budget.ts): lowered only where the GPU is the bottleneck.
+  const budget = new BrRenderBudget({ resolution: brResolutionScale });
   /** When the match left the lobby (frame clock), for the budget's warm-up; null in the lobby. */
   let playingSince: number | null = null;
   /** For the next session's tier: time played, and time at the budget's floor (ms). */
@@ -2585,15 +2583,13 @@ export function createBrArena(
       playedMs += dtMs;
       if (budget.scale <= 0.6001) floorMs += dtMs;
     }
-    // Lower resolution only buys time when the GPU is what is slow. Where the GPU's own time is
-    // measured and short, a late frame is something else (the display's 60 Hz pacing, a busy
-    // main thread, another window): it counts as on time, so the picture is not blurred for
-    // nothing (owner, 2026-11-09: no frame-rate problem, but a soft, low-resolution island).
-    const gpuIdle = gpu.last !== null && gpu.last < GPU_BUSY_MS;
+    // Lower resolution only buys time when the GPU is what is slow (owner, 2026-11-09: no
+    // frame-rate problem, but a soft, low-resolution island). The budget weighs each frame
+    // against the GPU's own time where the browser measures it (render-budget.ts).
     if (
       playingSince !== null &&
       now - playingSince > 2500 &&
-      budget.update(gpuIdle ? Math.min(dtMs, 16) : dtMs)
+      budget.update(dtMs, gpu.supported ? gpu.last : null)
     ) {
       resize();
       applyGroundRange();
@@ -4616,7 +4612,7 @@ export function createBrArena(
       triangles: sceneTriangles,
       entities: visible,
       pixelRatio: renderer.getPixelRatio(),
-      note: `${tierNote}\nbudget ${budget.scale.toFixed(1)}, ground ${groundLite ? "lite" : "full"}\nmouse ${looker.rate ? `${Math.round(looker.rate)} Hz, drawn ${looker.lag.toFixed(1)} ms behind` : "not moved yet"}`,
+      note: `${tierNote}\nbudget ${budget.scale.toFixed(1)}${budget.reason ? ` (${budget.reason})` : ""}, ground ${groundLite ? "lite" : "full"}\nmouse ${looker.rate ? `${Math.round(looker.rate)} Hz, drawn ${looker.lag.toFixed(1)} ms behind` : "not moved yet"}`,
     });
     if (now - lastHud > 66 && hudListener) {
       lastHud = now;
