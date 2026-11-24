@@ -11,6 +11,7 @@ import { createAtmosphere } from "./atmosphere";
 import { sunLook } from "./sun";
 import { GRASS_RANGE } from "./grass";
 import { setTextureQuality } from "./texture-quality";
+import { setGroundFootprint } from "./terrain";
 import {
   dedicatedGpu,
   detectBrTier,
@@ -716,6 +717,8 @@ export function createBrArena(
     resolution: brResolutionScale,
     slowMs: tier.tier === "low" ? LOW_TIER_SLOW_MS : undefined,
   });
+  /** The drawing buffer's size, each frame (the ground's filter footprint: setGroundFootprint). */
+  const drawSize = new THREE.Vector2();
   /** When the match left the lobby (frame clock), for the budget's warm-up; null in the lobby. */
   let playingSince: number | null = null;
   /** For the next session's tier: time played, and time at the budget's floor (ms). */
@@ -2608,6 +2611,8 @@ export function createBrArena(
     applyLook(now);
     if (!island || !latest || !route) {
       if (island && !context.lost) {
+        renderer.getDrawingBufferSize(drawSize);
+        setGroundFootprint(camera, drawSize.x, drawSize.y);
         island.update(camera);
         updateSceneRoots(scene, island.root);
         renderer.render(scene, camera);
@@ -4595,6 +4600,8 @@ export function createBrArena(
       if (strides.advance(o.seat, o.pos.x, o.pos.y, o.pos.z, grounded, o.crouched, now))
         audio.step(island.footstepSurface(o.pos.x, o.pos.y, o.pos.z), [o.pos.x, o.pos.y, o.pos.z]);
     }
+    renderer.getDrawingBufferSize(drawSize);
+    setGroundFootprint(camera, drawSize.x, drawSize.y);
     const { selectMs } = island.update(camera);
     island.warm(renderer);
     updateSceneRoots(scene, island.root);

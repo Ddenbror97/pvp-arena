@@ -892,7 +892,10 @@ function roadGrainGlsl(weight: string) {
           float near = uOn * (GRAIN_W) * (1.0 - smoothstep(uRange * 0.6, uRange, distance(vRoadWorld, cameraPosition)));
           // Gradients taken outside the branch: inside it the mip level is undefined on the
           // ring where the texture starts, which drew a dashed line across the road there.
-          vec2 rdx = dFdx(vRoadWorld.xz) * uScale, rdy = dFdy(vRoadWorld.xz) * uScale;
+          vec3 rdx3 = dFdx(vRoadWorld), rdy3 = dFdy(vRoadWorld);
+          // (The surface's plane from the two: exact even when they are per 2 × 2 block.)
+          groundFootprint(vRoadWorld, normalize(cross(rdx3, rdy3)), rdx3, rdy3);
+          vec2 rdx = rdx3.xz * uScale, rdy = rdy3.xz * uScale;
           float dark = 1.0 - smoothstep(0.25, 0.45, dot(diffuseColor.rgb, vec3(0.3333)));
           if (near > 0.0) {
             vec3 t = groundTile(uGroundA, vec3(vRoadWorld.xz * uScale, uLayer), rdx, rdy, uScale, true, 0.0);
