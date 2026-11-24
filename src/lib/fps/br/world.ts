@@ -20,7 +20,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
  * revision has left behind in public/.
  */
 export const WORLD_ASSETS = {
-  revision: "milprops-v1",
+  revision: "plinth-v2",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -230,8 +230,15 @@ export const WORLD_ASSETS = {
   // items aswell to download"): concrete roadblocks, L-shaped sandbag positions, ammunition
   // crates and boxes, olive and fuel drums, loaded missile racks (the JAC3D pack's FBX through
   // art/br/assets/convert_fbx.mjs); with world.v5 (the south road off the runway).
-  models: "/fps/br/models/models.milprops-v1.json",
-  collision: "/fps/br/models/collision.milprops-v1.json",
+  // plinth-v1/v2 (2026-11-24, from milprops-v1; build_garrison.mjs TAG garrison-v3,
+  // offset_coplanar.mjs --tag=zfix-v21, glass_panes.mjs plinth-v1 plinth-v2): flicker (owner,
+  // 2026-11-24: "fix those flicker"). The base's buildings' plinths stand 3 cm proud of their
+  // walls (flush, they fought the walls' bottom), the perimeter wall's olive band is part of its
+  // panel, and the coplanar lift now works in rounds (faces stacked on one plane were lifted the
+  // same 1.5 cm and fought again): every model's faces that still overlapped are apart, among
+  // them the roadside motel's and the warehouse's. Far LODs unchanged (far-facades-v2).
+  models: "/fps/br/models/models.plinth-v2.json",
+  collision: "/fps/br/models/collision.plinth-v2.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

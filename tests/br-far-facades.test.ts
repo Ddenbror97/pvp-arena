@@ -146,8 +146,14 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
       for (const a of ["POSITION", "TEXCOORD_0", "COLOR_0"]) expect(attributes, id).toContain(a);
       expect(lod.textureMB, id).toBe(0);
       expect(lod.tris, id).toBeLessThanOrEqual(before.models[id]!.lods.at(-1)!.tris);
-      // The LODs before it are the ones the game drew before.
-      expect(m.lods.slice(0, -1), id).toEqual(before.models[id]!.lods.slice(0, -1));
+      // The LODs before it are the ones the game drew before, or those with their last
+      // overlapping faces lifted apart (zfix-v21) or the military base's buildings with their
+      // plinths proud of the walls (plinth-v2), 2026-11-24: the same triangles.
+      for (const [i, l] of m.lods.slice(0, -1).entries()) {
+        const was = before.models[id]!.lods[i]!;
+        if (/\.(zfix-v21|plinth-v2)\.lod\d\.glb$/.test(l.file)) expect(l.tris, id).toBe(was.tris);
+        else expect(l, id).toEqual(was);
+      }
     }
   });
 

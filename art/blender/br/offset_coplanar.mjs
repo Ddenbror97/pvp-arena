@@ -52,6 +52,8 @@ const WHY = args.includes("--why");
 const CLASSES = new Set(["building", "structure", "dwelling", "outbuilding", "hero"]);
 /** How far the smaller face is lifted (m): beyond the depth buffer's step at LOD distances. */
 const LIFT = 0.015;
+/** Most times one face is lifted (faces stacked on one plane). */
+const ROUNDS = 4;
 /** Same plane: normals within ~2.5°, offsets within this (m). */
 const PLANE = 0.004;
 
@@ -175,7 +177,10 @@ for (const [id, model] of Object.entries(manifest.models)) {
         }
       }
     }
-    const grid = new Map();
+    // Lifted in rounds (2026-11-24): two smaller faces on one larger one (a sill and a door
+    // frame on a wall, the base's plinth and the wall's lining) were both lifted the same
+    // 1.5 cm and fought again one level up; each round looks again at the planes as lifted, and
+    // a face lifted n times moves n * LIFT. Up to ROUNDS levels.
     const key = (t, dd = 0) =>
       [
         Math.round(t.n[0] * 20),
@@ -183,22 +188,34 @@ for (const [id, model] of Object.entries(manifest.models)) {
         Math.round(t.n[2] * 20),
         Math.round(t.d / 0.05) + dd,
       ].join();
-    for (const t of tris) {
-      const k = key(t);
-      (grid.get(k) ?? grid.set(k, []).get(k)).push(t);
+    const lifts = new Map();
+    for (let round = 0; round < ROUNDS; round++) {
+      const grid = new Map();
+      for (const t of tris) {
+        const k = key(t);
+        (grid.get(k) ?? grid.set(k, []).get(k)).push(t);
+      }
+      const now = new Set();
+      for (const t of tris) {
+        if (now.has(t)) continue;
+        for (const dd of [-1, 0, 1])
+          for (const u of grid.get(key(t, dd)) ?? []) {
+            if (u === t || now.has(u)) continue;
+            const dot = t.n[0] * u.n[0] + t.n[1] * u.n[1] + t.n[2] * u.n[2];
+            if (dot < 0.999 || Math.abs(t.d - u.d) > PLANE) continue;
+            if (!(inside(t, u.c) || inside(u, t.c)) && overlapArea(t, u) < MIN_OVERLAP) continue;
+            now.add(u.area <= t.area ? u : t);
+          }
+      }
+      if (!now.size) break;
+      for (const t of now) {
+        lifts.set(t, (lifts.get(t) ?? 0) + 1);
+        t.d += LIFT;
+        t.v = t.v.map((v) => v.map((x, k) => x + t.n[k] * LIFT));
+        t.c = t.c.map((x, k) => x + t.n[k] * LIFT);
+      }
     }
-    const lift = new Set();
-    for (const t of tris) {
-      if (lift.has(t)) continue;
-      for (const dd of [-1, 0, 1])
-        for (const u of grid.get(key(t, dd)) ?? []) {
-          if (u === t || lift.has(u)) continue;
-          const dot = t.n[0] * u.n[0] + t.n[1] * u.n[1] + t.n[2] * u.n[2];
-          if (dot < 0.999 || Math.abs(t.d - u.d) > PLANE) continue;
-          if (!(inside(t, u.c) || inside(u, t.c)) && overlapArea(t, u) < MIN_OVERLAP) continue;
-          lift.add(u.area <= t.area ? u : t);
-        }
-    }
+    const lift = new Set(lifts.keys());
     if (!lift.size) continue;
     for (const t of lift) {
       const pos = t.p.getAttribute("POSITION");
@@ -210,7 +227,7 @@ for (const [id, model] of Object.entries(manifest.models)) {
         (m[4] * t.n[0] + m[5] * t.n[1] + m[6] * t.n[2]) / s,
         (m[8] * t.n[0] + m[9] * t.n[1] + m[10] * t.n[2]) / s,
       ];
-      const off = LIFT / s;
+      const off = (LIFT * lifts.get(t)) / s;
       for (let k = 0; k < 3; k++) {
         const v = pos.getElement(t.i + k, []);
         pos.setElement(t.i + k, [v[0] + ln[0] * off, v[1] + ln[1] * off, v[2] + ln[2] * off]);
