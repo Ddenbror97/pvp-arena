@@ -8,7 +8,7 @@ import {
   Scripts,
   useRouterState,
 } from "@tanstack/react-router";
-import { lazy, memo, Suspense, useLayoutEffect, type ReactNode } from "react";
+import { lazy, memo, Suspense, useEffect, useLayoutEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import manropeFace from "../fonts/manrope-latin.woff2?url";
 import unboundedFace from "../fonts/unbounded-latin.woff2?url";
@@ -22,6 +22,7 @@ import { PoolJoinNotice } from "@/components/pool/PoolJoinNotice";
 import { FpsQueueNotice } from "@/components/fps/FpsQueueNotice";
 import { SlotJoinNotice } from "@/components/slott/SlotJoinNotice";
 import { GameSignupPromo } from "@/components/promo/GameSignupPromo";
+import { installStaleChunkReload } from "@/lib/build-freshness";
 
 const ProfileSetupDialog = lazy(() =>
   import("@/components/ProfileSetupDialog").then((m) => ({ default: m.ProfileSetupDialog })),
@@ -230,6 +231,8 @@ const RootOverlays = memo(function RootOverlays() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  // A page left open across a deploy reloads when one of its chunks is gone (build-freshness.ts).
+  useEffect(() => installStaleChunkReload(), []);
   // The router flips `location` when a navigation starts but swaps the rendered matches only
   // when it commits; the page chrome must follow the page that is actually on screen.
   const pathname = useRouterState({
