@@ -1604,6 +1604,7 @@ function vehicleAct(
   const v = state.vehicles[a.id];
   if (!v) return res(false, "Gone");
   if (v.destroyed) return res(false, "Destroyed");
+  if (v.drowned) return res(false, "Flooded");
   if (v.driver >= 0) return res(false, "Occupied");
   if (vehicleGap(v, s.body.x, s.body.z) > VEHICLES.enterReach + VEHICLES.enterSlack)
     return res(false, "Too far");
@@ -1673,7 +1674,8 @@ function stepVehicles(
     if (v.destroyed) continue;
     const driver = v.driver >= 0 ? state.seats[v.driver] : undefined;
     if (driver && (driver.dead || driver.vehicle !== v.id)) v.driver = -1;
-    if (v.driver < 0 && v.speed === 0 && !v.slip) continue;
+    // (A vehicle in the air or sinking keeps moving with nobody at the wheel.)
+    if (v.driver < 0 && v.speed === 0 && !v.slip && !v.air && !v.vy) continue;
     // A tick without the driver's input (network jitter) keeps the last one for a moment,
     // as the client predicted, instead of braking.
     let input = driver && v.driver >= 0 ? (inputs.get(driver.seat) ?? null) : null;
@@ -1686,6 +1688,11 @@ function stepVehicles(
     const impact = stepVehicle(island, meta, v, input, dtMs, state.vehicles);
     invalidateVehicleQueries(world);
     if (impact) hurtVehicle(state, world, v.id, crashDamage(v.kind, impact));
+    // Flooded (VEHICLES.water): the driver is put out to swim.
+    if (v.drowned && driver && driver.vehicle === v.id) {
+      if (!leaveVehicle(state, driver, world)) leaveVehicle(state, driver, null);
+      continue;
+    }
     if (driver && driver.vehicle === v.id) {
       placeDriver(driver, v);
       if (input) {
@@ -2710,8 +2717,9 @@ const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
 /**
  * Vehicle rows: [id, kind (0 sedan, 1 suv, 2 pickup, 3 bike), x, y, z, yaw, pitch, roll,
  * speed, health, max health, driver seat or −1, destroyed 0/1, condition (0 good, 1 used, 2 damaged),
- * steering wheel (−1…1), sideways slide (m/s), flat tyres (bits, vehicles.ts TYRES)]: the
- * wheel and slide let the driver's prediction resume a slide exactly where the server has it.
+ * steering wheel (−1…1), sideways slide (m/s), flat tyres (bits, vehicles.ts TYRES), vertical
+ * speed (m/s), in the air 0/1, flooded 0/1]: the wheel, slide and vertical speed let the
+ * driver's prediction resume a slide or a jump exactly where the server has it.
  */
 function vehicleRow(v: Vehicle) {
   const r = (n: number, k = 100) => Math.round(n * k) / k;
@@ -2733,6 +2741,9 @@ function vehicleRow(v: Vehicle) {
     r(v.steer ?? 0, 1000),
     r(v.slip ?? 0, 1000),
     v.flat ?? 0,
+    r(v.vy ?? 0, 1000),
+    v.air ? 1 : 0,
+    v.drowned ? 1 : 0,
   ];
 }
 

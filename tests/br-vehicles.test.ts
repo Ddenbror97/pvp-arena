@@ -173,7 +173,7 @@ describe("vehicles", () => {
     for (let i = 0; i < 60; i++) step(state, { forward: 1, strafe: 1, jump: i > 40 });
     const view = brViewFor(state, world, new BrSight(), 0, t, new BrSeatSync());
     const row = view.vehicles!.rows.find((r) => r[0] === v.id)!;
-    expect(row).toHaveLength(17);
+    expect(row).toHaveLength(20);
     expect(row[14]).toBeCloseTo(v.steer ?? 0, 2);
     expect(row[15]).toBeCloseTo(v.slip ?? 0, 2);
     expect(Math.abs(row[15]!)).toBeGreaterThan(0);
@@ -242,13 +242,17 @@ describe("vehicles", () => {
     for (let i = 0; i < 40_000 / TICK_MS; i++) {
       const want = Math.atan2(-(peak.x - bike.x), -(peak.z - bike.z));
       const d = Math.atan2(Math.sin(want - bike.yaw), Math.cos(want - bike.yaw));
-      impacts += stepVehicle(
+      // (Into the hillside: a landing after a jump off a steeper face further on, which it
+      // may now take at full throttle (vehicles.ts VEHICLES.air), is not that.)
+      const flying = !!bike.air;
+      const impact = stepVehicle(
         world,
         meta,
         bike,
         { forward: 1, strafe: Math.max(-1, Math.min(1, -d * 3)) } as never,
         TICK_MS,
       );
+      if (!flying) impacts += impact;
       steepest = Math.max(steepest, Math.tan(bike.pitch));
     }
     expect(impacts).toBe(0);
