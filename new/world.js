@@ -4945,13 +4945,9 @@ diffuseColor.rgb = pow(fpFloor(vFpWorld, vFpInfo.x, vFpInfo.y), vec3(2.2));`)},a
         uniform sampler2D uCanopy;
         uniform float uCanopyOn;
         uniform vec2 uTreeRing;
-<<<<<<< HEAD
         uniform float uGroundOn, uGroundRange, uGroundLite, uGroundSharpen;
-=======
-        uniform float uGroundOn, uGroundRange, uGroundLite;
         uniform vec2 uPixelRay;
         uniform vec3 uCamera;
->>>>>>> fix/intel-ground-derivatives-2026-11-24
         uniform vec3 uLayerTint[${Yr.length}], uLayerFar[${Yr.length}];
         uniform float uLayerScale[${Yr.length}];
         uniform vec4 uRunway[2];
