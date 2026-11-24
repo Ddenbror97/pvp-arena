@@ -169,6 +169,7 @@ export function GameChat({
       >
         <div className="flex items-center gap-2.5">
           <MessageSquare
+            aria-hidden="true"
             className="h-[18px] w-[18px] shrink-0 fill-primary/25 text-primary-soft"
             strokeWidth={2.25}
           />
