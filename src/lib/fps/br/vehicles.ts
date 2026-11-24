@@ -212,16 +212,17 @@ export const VEHICLES = {
    */
   air: {
     gravity: 12,
-    /** Leaves the ground when the ballistic path is this far above it (m). */
-    lift: 0.08,
     /** Below this speed (m/s) it keeps to the ground, except off a ledge (`ledge` m). */
     minSpeed: 7,
     /**
      * The suspension keeps the wheels down while the ground falls away from them at up to this
-     * (m/s across the slope ahead): a kink in a hillside or a dip in the road at speed. A ramp
-     * or a crest taken fast parts faster, and flies.
+     * (m/s across the slope ahead): the facets of the hillside, a dip in the road. Faster (a
+     * crest or a bump taken at speed, a ramp's lip) it flies. (2.5 at first, with a 0.08 m
+     * rise asked of a single 33 ms step, which almost nothing but a ramp with a drop behind
+     * it gave: "still dont leave the ground … glued to the ground", 2026-11-24. Now: a jump
+     * about every 10 s at 30 m/s on the island's roads and hills, half of them 0.7 m or more.)
      */
-    suspension: 2.5,
+    suspension: 1,
     ledge: 0.5,
     /** Air control (rad/s at full key): yaw from the steering, the nose up from S. */
     yawRate: 1.6,
@@ -976,12 +977,13 @@ function vertical(world: StaticWorld, v: Vehicle, input: DriveInput | null, dt: 
     roll = v.roll;
   settleTilt(world, v);
   const ballistic = was + rate * dt - 0.5 * g * dt * dt;
+  // (Above the ground at all: one step's parting is centimetres; the speed decides.)
   const off = ballistic - v.y;
   // How fast it would part from the ground ahead, across that ground's slope: the suspension
   // takes up to `suspension` of it (a kink in a hillside, a dip in the road), past that it flies.
   const parting = rate * Math.cos(v.pitch) - v.speed * Math.sin(v.pitch);
   if (
-    off > A.lift &&
+    off > 0 &&
     ((Math.abs(v.speed) >= A.minSpeed && parting > A.suspension) || was - v.y > A.ledge)
   ) {
     // Off a crest, a ramp's lip or a ledge: airborne with the speed it rose at.
