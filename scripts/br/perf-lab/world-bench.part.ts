@@ -143,10 +143,10 @@ async function labRun(plan: LabPlan) {
         // (A disjoint flag — the GPU's clock changed, e.g. a power state — is counted, not
         // used to drop the batch: some drivers raise it often.)
         if (ext && (gl.getParameter(ext.GPU_DISJOINT_EXT) as boolean)) disjoints++;
-        for (const qq of queries.splice(0)) {
-          if (gl.getQueryParameter(qq, gl.QUERY_RESULT_AVAILABLE))
-            gpuMs.push((gl.getQueryParameter(qq, gl.QUERY_RESULT) as number) / 1e6);
-          else unavailable++;
+        // (Results can lag the finish on some drivers: collected in order as they come.)
+        while (queries.length && gl.getQueryParameter(queries[0]!, gl.QUERY_RESULT_AVAILABLE)) {
+          const qq = queries.shift()!;
+          gpuMs.push((gl.getQueryParameter(qq, gl.QUERY_RESULT) as number) / 1e6);
           gl.deleteQuery(qq);
         }
         // Yield to the page now and then (the tab stays responsive), outside the timing.
@@ -154,6 +154,17 @@ async function labRun(plan: LabPlan) {
         t0 = performance.now();
       }
     }
+    // The last results: a few more tasks for them to arrive, then the rest are counted lost.
+    for (let k = 0; k < 40 && queries.length; k++) {
+      await new Promise((r) => setTimeout(r, 25));
+      while (queries.length && gl.getQueryParameter(queries[0]!, gl.QUERY_RESULT_AVAILABLE)) {
+        const qq = queries.shift()!;
+        gpuMs.push((gl.getQueryParameter(qq, gl.QUERY_RESULT) as number) / 1e6);
+        gl.deleteQuery(qq);
+      }
+    }
+    unavailable = queries.length;
+    for (const qq of queries.splice(0)) gl.deleteQuery(qq);
     results[item.name] = {
       frameMs: labPct(batch, 0.5),
       frameP95: labPct(batch, 0.95),
