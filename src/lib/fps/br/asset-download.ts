@@ -60,6 +60,15 @@ function releaseSlot() {
  * always was.
  */
 export const BR_ASSET_HASHES = "/fps/br/asset-hashes.json";
+/**
+ * Set by the build that writes the list (vite.config.ts, production builds only). Anything
+ * else that bundles this code (the development server, the check harnesses under scripts/, the
+ * tests) has no list to ask for and does not ask: a request that could only fail would show
+ * as an error in every tool that watches the console.
+ */
+declare const __BR_ASSET_HASHES__: boolean | undefined;
+export const brAssetHashesBuilt = () =>
+  typeof __BR_ASSET_HASHES__ !== "undefined" && __BR_ASSET_HASHES__ === true;
 /** Hex digits of a file's SHA-1 kept as its fingerprint (the same in the build's script). */
 export const BR_ASSET_HASH_HEX = 12;
 /** A deployed file's path below /fps/br/ → its fingerprint. */

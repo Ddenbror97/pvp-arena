@@ -2,7 +2,13 @@ import * as THREE from "three";
 import { shrinkImageTexture, shrinkModelTextures, worldTextureScale } from "./texture-quality";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-import { BR_ASSET_HASHES, brAssetHash, downloadBrAsset, loadBrAssetHashes } from "./asset-download";
+import {
+  BR_ASSET_HASHES,
+  brAssetHash,
+  brAssetHashesBuilt,
+  downloadBrAsset,
+  loadBrAssetHashes,
+} from "./asset-download";
 import { decodeHeightfield, type Heightfield } from "./heightfield";
 import { buildIsland, type Island } from "./island";
 import { pavedLots } from "./layout";
@@ -82,8 +88,11 @@ export async function loadIslandScene(
 ): Promise<IslandScene> {
   const url = (path: string) => new URL(path.replace(/^\//, ""), base).href;
   // What this deploy's files contain (asset-download.ts): a stored copy that is still the
-  // deployed file is used without asking the server about it. Asked for once, first.
-  const hashes = loadBrAssetHashes(url(BR_ASSET_HASHES), signal);
+  // deployed file is used without asking the server about it. Asked for once, first, by a
+  // build that wrote the list.
+  const hashes = brAssetHashesBuilt()
+    ? loadBrAssetHashes(url(BR_ASSET_HASHES), signal)
+    : Promise.resolve(null);
   /** Download `href` (absolute), by the same cancellable, retrying, slot-limited path. */
   const download = async (href: string, restoring: string) =>
     downloadBrAsset(href, signal, () => progress(0, restoring), brAssetHash(await hashes, href));

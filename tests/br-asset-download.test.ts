@@ -7,6 +7,7 @@ import {
   BR_ASSET_HASHES,
   brAssetFingerprint,
   brAssetHash,
+  brAssetHashesBuilt,
   downloadBrAsset,
   loadBrAssetHashes,
   MAX_PARALLEL_DOWNLOADS,
@@ -307,6 +308,14 @@ describe("stored copies of the island's files, checked by content", () => {
       );
       expect(await loadBrAssetHashes(BR_ASSET_HASHES, signal)).toBeNull();
     }
+  });
+
+  it("asks for the list only in a build that wrote one", () => {
+    // (The development server, the harnesses under scripts/ and these tests have none: a
+    // request that could only fail would be an error in every tool that watches the console.)
+    expect(brAssetHashesBuilt()).toBe(false);
+    vi.stubGlobal("__BR_ASSET_HASHES__", true); // what vite.config.ts defines for a build
+    expect(brAssetHashesBuilt()).toBe(true);
   });
 
   it("does not hold the loading screen for a list that does not arrive", async () => {
