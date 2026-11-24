@@ -165,6 +165,35 @@ export const GROUND = {
    * noise; the frame is bound by the CPU there.
    */
   stretch: 16,
+  /**
+   * Reach (owner, 2026-11-24: "increase even more the distance on the ground to not be blurry
+   * like 50-70 meters infront of the character"). Filtered over its whole footprint (the
+   * stretch above), the tile is exact and, from 15–25 m on, flat: a pixel there is 0.2–0.5 m of
+   * ground along the view and more than 2 m at 60 m, each the average of many stones. The
+   * owner's RTX 2050 showed just that (the software renderer used for captures does not: it
+   * filters short, which is why the stretch looked done there). So the filter along the view
+   * is kept short on purpose: `reach` metres where the footprint is that long, growing by the
+   * power `reachGrow` of how much longer it is (0.13 m at 15 m, 0.2 m at 26 m, 0.37 m at 60 m),
+   * which keeps the detail a pixel shows about level from 7 m to 95 m. The price is some
+   * crawl in the far ground as you move (it samples less than it covers); these values hold
+   * the change from frame to frame there below what the near ground has anyway.
+   * Measured on the RTX 2050 (gpu-bench, 1632 × 918, apron at the airfield, columns of bare
+   * ground; detail = mean |Δ luma| between neighbours, of 255; change = between frames 8 cm
+   * apart):
+   *   distance (m)     7–10   12–18  20–30  35–45  50–70  75–95
+   *   exact  detail    4.3    1.3    1.9    2.3    1.0    1.5
+   *   reach  detail    5.0    3.5    5.4    5.8    3.7    4.4
+   *   exact  change    17.6   6.0    4.1    2.7    1.1    0.9
+   *   reach  change    19.2   13.1   11.2   7.4    4.1    3.5
+   * (Grass and earth beside the runway: detail 0.8–1.7 exact, 1.7–2.8 with the reach, from
+   * 12 m to 95 m. Frame time 2.3–3.2 ms either way; the views from the air are unchanged.)
+   * From `range` to `reachEnd` metres it eases back to the exact filter: beyond the near
+   * textures (from the air) a pixel is metres wide both ways and a short filter only sparkles.
+   * The road meshes' asphalt takes the same (structures-renderer.ts).
+   */
+  reach: 0.05,
+  reachGrow: 0.5,
+  reachEnd: 280,
 };
 /**
  * The most taps a stretched footprint takes (shared, so the GPU bench can set it): GROUND.stretch
@@ -172,6 +201,50 @@ export const GROUND = {
  * measured), none below. Set when the terrain is made (the tier's anisotropy is known then).
  */
 export const GROUND_TAPS = { value: GROUND.stretch };
+/** GROUND.reach and GROUND.reachGrow (shared, so the GPU bench can set them). */
+export const GROUND_REACH = { value: new THREE.Vector2(GROUND.reach, GROUND.reachGrow) };
+/** The anisotropy the ground tiles are filtered with (shared with the road meshes' asphalt). */
+export const GROUND_ANISO = { value: 16 };
+/**
+ * A ground tile's colour (linear) for a pixel whose footprint is `gx`, `gy` (the tile's uv per
+ * screen pixel; `perMetre`: uv per metre): GROUND.reach, then GROUND.stretch. Shared by the
+ * terrain and the road meshes (structures-renderer.ts). `full` false: one plain sample.
+ * Uniforms: uGroundReach, uGroundAniso, uGroundTaps (groundTileUniforms).
+ */
+export const GROUND_TILE_GLSL = `
+        uniform vec2 uGroundReach;
+        uniform float uGroundAniso, uGroundTaps;
+        vec3 groundTile(sampler2DArray tiles, vec3 uvw, vec2 gx, vec2 gy, float perMetre, bool full, float exact) {
+          float lx = dot(gx, gx), ly = dot(gy, gy);
+          vec2 major = lx > ly ? gx : gy, minor = lx > ly ? gy : gx;
+          if (full) {
+            // Reach: the long axis is filtered over uGroundReach.x metres at most (growing by
+            // the power uGroundReach.y of what the footprint is longer than that).
+            float len = sqrt(max(lx, ly)), reach = uGroundReach.x * perMetre;
+            if (len > reach) major *= pow(reach / len, (1.0 - uGroundReach.y) * (1.0 - exact));
+            // Stretch: past what the GPU's anisotropic filter covers, as many taps along the
+            // long axis as it takes to cover it (up to uGroundTaps), each over its own share.
+            float ratio = length(major) / max(sqrt(min(lx, ly)), 1e-6);
+            if (uGroundTaps > 1.5 && ratio > uGroundAniso) {
+              float n = min(uGroundTaps, ceil(ratio / uGroundAniso));
+              vec3 sum = vec3(0.0);
+              for (int i = 0; i < ${GROUND.stretch}; i++) {
+                if (float(i) >= n) break;
+                vec3 t = textureGrad(tiles, uvw + vec3(major * ((float(i) + 0.5) / n - 0.5), 0.0), major / n, minor).rgb;
+                sum += t * t;
+              }
+              return sum / n;
+            }
+          }
+          vec3 c = textureGrad(tiles, uvw, major, minor).rgb;
+          return c * c; // sRGB → linear (cheap square)
+        }`;
+/** The uniforms GROUND_TILE_GLSL reads (set when the terrain is made, shared by reference). */
+export const groundTileUniforms = () => ({
+  uGroundReach: GROUND_REACH,
+  uGroundAniso: GROUND_ANISO,
+  uGroundTaps: GROUND_TAPS,
+});
 const tierTaps = () => (worldAnisotropy() >= 16 ? GROUND.stretch : worldAnisotropy() >= 8 ? 4 : 1);
 /**
  * Mid field (owner, 2026-11-09: the ground was a blur from the parachute): beyond the near
@@ -444,8 +517,9 @@ export function createTerrain(
     uGroundOn: { value: 0 },
     uGroundRange: { value: GROUND.range },
     uGroundLite: { value: 0 },
-    uGroundAniso: { value: worldAnisotropy() },
-    uGroundTaps: ((GROUND_TAPS.value = tierTaps()), GROUND_TAPS),
+    ...((GROUND_ANISO.value = worldAnisotropy()),
+    (GROUND_TAPS.value = tierTaps()),
+    groundTileUniforms()),
     uLayerTint: { value: GROUND_LAYERS.map(() => new THREE.Vector3(1, 1, 1)) },
     uLayerFar: { value: GROUND_LAYERS.map((id) => new THREE.Vector3(...LAYER_TARGET[id])) },
     uLayerScale: { value: GROUND_LAYERS.map(() => 0.25) },
@@ -534,7 +608,7 @@ export function createTerrain(
         uniform sampler2D uCanopy;
         uniform float uCanopyOn;
         uniform vec2 uTreeRing;
-        uniform float uGroundOn, uGroundRange, uGroundLite, uGroundAniso, uGroundTaps;
+        uniform float uGroundOn, uGroundRange, uGroundLite;
         uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
         uniform float uLayerScale[${GROUND_LAYERS.length}];
         uniform vec4 uRunway[2];
@@ -550,29 +624,15 @@ export function createTerrain(
         // with the camera (owner, 2026-11-10). So each sample is given its gradients, taken
         // once from the world position at the top of main (brDx, brDy).
         vec3 brDx, brDy;
+        // 0 on foot, 1 beyond the near textures (GROUND.reachEnd): the reach is for the ground
+        // seen from eye height; from the air a short filter would sparkle.
+        float brExact = 0.0;
+        ${GROUND_TILE_GLSL}
         vec3 groundAlbedo(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
+          vec3 uvw = vec3(p * k, float(layer));
           k *= ${GROUND.sharpen.toFixed(2)};
-          vec3 uvw = vec3(p * uLayerScale[layer], float(layer));
-          vec2 gx = px * k, gy = py * k;
-          // Stretched footprints (GROUND.stretch): past what the GPU's anisotropic filter
-          // covers, as many taps along the footprint's long axis as it takes to cover it (up to
-          // uGroundTaps), each filtered over its own share.
-          float lx = dot(gx, gx), ly = dot(gy, gy);
-          float ratio = sqrt(max(lx, ly) / max(min(lx, ly), 1e-12));
-          if (uGroundLite < 0.5 && uGroundTaps > 1.5 && ratio > uGroundAniso) {
-            float n = min(uGroundTaps, ceil(ratio / uGroundAniso));
-            vec2 major = lx > ly ? gx : gy, minor = lx > ly ? gy : gx;
-            vec3 sum = vec3(0.0);
-            for (int i = 0; i < ${GROUND.stretch}; i++) {
-              if (float(i) >= n) break;
-              vec3 t = textureGrad(uGroundA, uvw + vec3(major * ((float(i) + 0.5) / n - 0.5), 0.0), major / n, minor).rgb;
-              sum += t * t;
-            }
-            return sum / n * uLayerTint[layer];
-          }
-          vec3 c = textureGrad(uGroundA, uvw, gx, gy).rgb;
-          return c * c * uLayerTint[layer]; // sRGB → linear (cheap square), toward the palette
+          return groundTile(uGroundA, uvw, px * k, py * k, k, uGroundLite < 0.5, brExact) * uLayerTint[layer];
         }
         vec3 groundNormal(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
@@ -638,6 +698,7 @@ export function createTerrain(
           float vField = smoothstep(0.47, 0.53, vf);
           // AIR: ragged zone borders and resolvable grain between the near textures and the haze.
           float camDist = distance(vWorld, cameraPosition);
+          brExact = smoothstep(${GROUND.range.toFixed(1)}, ${GROUND.reachEnd.toFixed(1)}, camDist);
           float airRange = uGroundOn * smoothstep(${(GROUND.range * 0.6).toFixed(1)}, ${(GROUND.range * 1.6).toFixed(1)}, camDist) * (1.0 - smoothstep(${(AIR.range * 0.6).toFixed(1)}, ${AIR.range.toFixed(1)}, camDist));
           // Roads keep an even surface (their mesh carries its own asphalt). Lots and yards take
           // most of the grain: without it their concrete half was a smooth grey wash beside
@@ -956,7 +1017,7 @@ export function createTerrain(
         nonPerturbedNormal = normal;`,
       );
   };
-  material.customProgramCacheKey = () => "br-terrain-v8";
+  material.customProgramCacheKey = () => "br-terrain-v9";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";

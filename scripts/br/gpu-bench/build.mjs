@@ -36,9 +36,11 @@ swap(
   "const w = benchSize?.[0] ?? innerWidth,\n    h = benchSize?.[1] ?? innerHeight;",
 );
 src =
-  'import { GROUND_TAPS as benchGroundTaps } from "@/lib/fps/br/terrain";\n' +
+  'import { GROUND_TAPS as benchGroundTaps, GROUND_REACH as benchGroundReach } from "@/lib/fps/br/terrain";\n' +
   src +
-  "\n(window as unknown as { brGroundTaps: unknown }).brGroundTaps = (n: number) => void (benchGroundTaps.value = n);\n";
+  "\n(window as unknown as { brGroundTaps: unknown }).brGroundTaps = (n: number) => void (benchGroundTaps.value = n);\n" +
+  "(window as unknown as { brGroundReach: unknown }).brGroundReach = (reach: number, grow: number) => void benchGroundReach.value.set(reach, grow);\n" +
+  "(window as unknown as { brDraw: unknown }).brDraw = (w: number, h: number) => { pixelRatioOverride = 1; benchSize = [w, h]; resize(); draw(); return renderer.domElement; };\n";
 src += `
 type BenchView = { pos: number[]; look: number[]; lookAgl?: boolean; aloft?: boolean };
 (window as unknown as { brBench: unknown }).brBench = async (
