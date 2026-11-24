@@ -638,13 +638,13 @@ const GPU_BUSY_MS = 10;
 /**
  * The low tier's anti-aliasing (2026-11-24): without any, Intel UHD's picture crawled and
  * blinked at edges, roof lines and the ground as the camera moved. "fxaa" (default): FXAA in
- * the present pass (scene-target.ts FXAA_LOW_GLSL); "msaa2": 2× MSAA; "off": none, as before.
+ * the present pass (scene-target.ts FXAA_LOW_GLSL); "msaa2" / "msaa4": 2× / 4× MSAA; "off": none, as before.
  * localStorage "br-low-aa" picks one (comparisons).
  */
-function lowTierAa(): "fxaa" | "msaa2" | "off" {
+function lowTierAa(): "fxaa" | "msaa2" | "msaa4" | "off" {
   try {
     const v = localStorage.getItem("br-low-aa");
-    if (v === "msaa2" || v === "off") return v;
+    if (v === "msaa2" || v === "msaa4" || v === "off") return v;
   } catch {
     // storage blocked: the default
   }
