@@ -177,6 +177,46 @@ for (const id of ONLY) {
         i = j + 1;
       }
     }
+    // 1b. Ledges: the top and underside of a band, cornice or sill board standing at most LEDGE
+    //     proud of a wall (the Bauhaus block's cornice at every slab line, 6 cm): from the street
+    //     the same sub-pixel strip as a sill, all along the facade. Lit as the wall's face.
+    const LEDGE = 0.15;
+    let ledges = 0;
+    for (const t of tris) {
+      if (Math.abs(t.n[1]) < 0.99 || found.has(t)) continue;
+      const y = t.v[0][1];
+      const up = t.n[1] > 0;
+      for (const ax of [0, 2]) {
+        const lh =
+          across(t, ax) ??
+          (() => {
+            const [lo, hi] = range(t, ax);
+            return hi - lo <= THIN && hi - lo >= 0.01 ? [lo, hi] : null;
+          })();
+        if (!lh) continue;
+        const [a0, a1] = range(t, 2 - ax);
+        let hit = null;
+        for (const sign of [-1, 1]) {
+          const f = sign > 0 ? lh[1] : lh[0];
+          if (!faceAt(ax, f, sign, y, y, a0, a1)) continue;
+          // The wall's face, behind the ledge's front, going on above (below) it.
+          const yy = up ? y + 0.2 : y - 0.2;
+          for (let d = 0.01; d <= LEDGE + 1e-9; d += EPS / 2) {
+            const w = f - sign * d;
+            if ((w - lh[0]) * (lh[1] - w) <= 0) break;
+            if (faceAt(ax, w, sign, yy, yy, a0, a1, PIER)) {
+              hit = ax === 0 ? [sign, 0, 0] : [0, 0, sign];
+              break;
+            }
+          }
+          if (hit) break;
+        }
+        if (!hit) continue;
+        found.set(t, hit);
+        ledges++;
+        break;
+      }
+    }
     // 2. Tops level with a sill just inside it (a kitchen worktop, a desk along the window wall):
     //    seen from the street through the opening they run on from the sill as one line, as thin.
     //    They take the sill's normal. (Within 4 m of the wall.)
@@ -304,7 +344,7 @@ for (const id of ONLY) {
       caps++;
     }
     report.push(
-      `${id} lod${level}: ${caps} faces (${caps - jambs - flush} sills/heads, ${flush} level with a sill, ${jambs} jambs)`,
+      `${id} lod${level}: ${caps} faces (${caps - jambs - flush - ledges} sills/heads, ${ledges} ledges, ${flush} level with a sill, ${jambs} jambs)`,
     );
     if (dry || !caps) continue;
     await doc.transform(
