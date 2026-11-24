@@ -852,18 +852,26 @@ export function createProps(
           az = anchor[i * 3 + 2]! - pass.z;
         a2 = ax * ax + ay * ay + az * az;
       }
-      let level = d2 <= r0 ? 0 : a2 <= r1 ? 1 : a2 <= r2 ? 2 : -1;
+      // In the air the near ring too goes by the stack's middle: by its own distance every
+      // storey of a tower took its detailed LOD at its own moment, the top first (60 m nearer a
+      // parachute than the foot), so the storeys' detailed colours ran down the tower like a
+      // waterfall as the canopy came down (owner, 2026-11-24: "the downtown late color rending
+      // is still to late, i tried parachute there and it do still waterfall with painting the
+      // apartments color"). On the ground each storey keeps its own distance (the storey you
+      // stand by is detailed, the ones 80 m above you need not be).
+      const n2 = airborne ? a2 : d2;
+      let level = n2 <= r0 ? 0 : a2 <= r1 ? 1 : a2 <= r2 ? 2 : -1;
       if (level === 2 && state.cls === "undergrowth" && d2 > THIN.from ** 2) {
         const f = (Math.sqrt(d2) - THIN.from) / (state.ring[2] - THIN.from);
         if ((i * 0.6180339887) % 1 > 1 - (1 - THIN.keep) * Math.min(1, f)) level = -1;
       }
       const was = chosen[i]!;
-      if (was >= 0 && was < 2 && level > was && (was === 0 ? d2 : a2) <= hold[was]!) level = was;
+      if (was >= 0 && was < 2 && level > was && (was === 0 ? n2 : a2) <= hold[was]!) level = was;
       else if (was === 2 && level < 0 && a2 <= farHold) level = 2;
       chosen[i] = level;
       // Approaching a nearer LOD: its textures go up ahead of it.
-      if (level !== 0 && d2 <= w1) {
-        const near = state.lods[d2 <= w0 ? 0 : 1];
+      if (level !== 0 && Math.min(d2, n2) <= w1) {
+        const near = state.lods[n2 <= w0 ? 0 : 1];
         if (near && near !== "loading") queueWarm(near);
       }
       if (level < 0) {
