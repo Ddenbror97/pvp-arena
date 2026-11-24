@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { fetchFpsAsset } from "./asset-cache";
 
 /**
  * The death animation (owner, 2026-11-10: replace the rigid tip-over in 1v1, 5v5 and the battle
@@ -30,7 +31,7 @@ export function loadDeathClip(): Promise<DeathData | null> {
     loading =
       typeof fetch === "undefined" || typeof location === "undefined"
         ? Promise.resolve(null)
-        : fetch(DEATH_URL)
+        : fetchFpsAsset(DEATH_URL)
             .then((r) => (r.ok ? (r.json() as Promise<DeathData>) : null))
             .then((d) => (data = d))
             .catch(() => null);

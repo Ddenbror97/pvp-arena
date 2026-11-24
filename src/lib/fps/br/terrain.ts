@@ -84,6 +84,11 @@ export type TerrainControls = {
    */
   setGroundLite: (on: boolean) => void;
   /**
+   * The tiles' exact mip level instead of GROUND.sharpen's half level sharper: the low tier
+   * (its 720p made the sharper ground crawl as the camera moved on Intel UHD, 2026-11-24).
+   */
+  setGroundSoft: (on: boolean) => void;
+  /**
    * The forest beyond the tree ring (far-forest.ts): the tree-cover texture (null: off; the
    * caller owns it) and the distance (m) the trees themselves are drawn to.
    */
@@ -551,6 +556,7 @@ export function createTerrain(
     uGroundOn: { value: 0 },
     uGroundRange: { value: GROUND.range },
     uGroundLite: { value: 0 },
+    uGroundSharpen: { value: GROUND.sharpen },
     ...((GROUND_ANISO.value = worldAnisotropy()),
     (GROUND_TAPS.value = tierTaps()),
     groundTileUniforms()),
@@ -642,7 +648,7 @@ export function createTerrain(
         uniform sampler2D uCanopy;
         uniform float uCanopyOn;
         uniform vec2 uTreeRing;
-        uniform float uGroundOn, uGroundRange, uGroundLite;
+        uniform float uGroundOn, uGroundRange, uGroundLite, uGroundSharpen;
         uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
         uniform float uLayerScale[${GROUND_LAYERS.length}];
         uniform vec4 uRunway[2];
@@ -665,7 +671,7 @@ export function createTerrain(
         vec3 groundAlbedo(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
           vec3 uvw = vec3(p * k, float(layer));
-          k *= ${GROUND.sharpen.toFixed(2)};
+          k *= uGroundSharpen;
           return groundTile(uGroundA, uvw, px * k, py * k, k, uGroundLite < 0.5, brExact) * uLayerTint[layer];
         }
         vec3 groundNormal(int layer, vec2 p, vec2 px, vec2 py) {
@@ -1198,6 +1204,9 @@ export function createTerrain(
     },
     setGroundLite(on) {
       uniforms.uGroundLite.value = on ? 1 : 0;
+    },
+    setGroundSoft(on) {
+      uniforms.uGroundSharpen.value = on ? 1 : GROUND.sharpen;
     },
     setFrontToBack(on) {
       frontToBack = on;

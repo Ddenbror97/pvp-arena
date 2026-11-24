@@ -176,7 +176,7 @@ import { createSwimSplash } from "./swim-splash";
 
 /** The guns worn on the back (the Desert Eagle has the thigh holster). */
 const CARRY_GUNS = new Set<string>(["ak47", "m4", "awp", "hunting", "mp5", "spas12"]);
-import { RenderBudget } from "../presentation";
+import { BrRenderBudget, LOW_TIER_SLOW_MS } from "./render-budget";
 import { deathPose } from "../death-presentation";
 import { LocalGrenadeHands } from "../grenades/grenade-timeline";
 import { createWeaponKit } from "../weapon";
@@ -633,8 +633,21 @@ function drawMap(island: IslandScene) {
   return c.toDataURL("image/png");
 }
 
-/** GPU time per frame (ms) from which slow frames are taken to be the GPU's (60 fps: 16.7). */
-const GPU_BUSY_MS = 10;
+/**
+ * The low tier's anti-aliasing (2026-11-24): without any, Intel UHD's picture crawled and
+ * blinked at edges, roof lines and the ground as the camera moved. "fxaa" (default): FXAA in
+ * the present pass (scene-target.ts FXAA_LOW_GLSL); "msaa2" / "msaa4": 2× / 4× MSAA; "off": none, as before.
+ * localStorage "br-low-aa" picks one (comparisons).
+ */
+function lowTierAa(): "fxaa" | "msaa2" | "msaa4" | "off" {
+  try {
+    const v = localStorage.getItem("br-low-aa");
+    if (v === "msaa2" || v === "msaa4" || v === "off") return v;
+  } catch {
+    // storage blocked: the default
+  }
+  return "fxaa";
+}
 
 export function createBrArena(
   host: HTMLElement,
@@ -663,8 +676,10 @@ export function createBrArena(
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   setTextureQuality(renderer, tier.tier);
+  // The low tier's anti-aliasing (lowTierAa): FXAA in the present pass by default.
+  const lowAa = tier.tier === "low" ? lowTierAa() : null;
   const sceneTarget = renderer.capabilities.reversedDepthBuffer
-    ? createSceneTarget(renderer, tier.tier === "low" ? 0 : 4)
+    ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa ? 0 : 4, { fxaa: lowAa === "fxaa" })
     : null;
   // Sharpening over the finished scene (sharpen.ts). Not on the low tier, where a fullscreen
   // pass is not free, and not with the offscreen scene target (its own present pass).
@@ -680,10 +695,12 @@ export function createBrArena(
   const sharpenScene = () =>
     sharpen?.apply(brResolutionScale(budget.scale) < 1 ? SHARPEN.scaledStrength : SHARPEN.strength);
   // The steadying pass (scene-target.ts STEADY): in the air, where a town, a forest and the
-  // ground are a pixel a piece and sparkle as you move. Not on the low tier (a fullscreen pass,
-  // as the sharpening). Eased in and out over a few frames, so the picture does not change at
-  // once as you jump or land.
-  const steadyOn = !!sceneTarget && tier.tier !== "low" && steadyWanted();
+  // ground are a pixel a piece and sparkle as you move. Eased in and out over a few frames, so
+  // the picture does not change at once as you jump or land. Also on the low tier since
+  // 2026-11-24: its 720p made the towns below the plane and the parachute blink like fairy
+  // lights on Intel UHD (owner), and in the air the GPU has room for the pass (the plane and
+  // the canopy drew in 9–12 ms there, against 15–22 ms on the ground).
+  const steadyOn = !!sceneTarget && steadyWanted();
   let steadyNow = 0;
   const steadyPresent = (aloft: boolean, dtMs: number) => {
     if (!steadyOn) return null;
@@ -694,7 +711,12 @@ export function createBrArena(
   };
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
-  const budget = new RenderBudget();
+  // The adaptive resolution (render-budget.ts): lowered only where the GPU is the bottleneck.
+  // The low tier keeps its 720p unless the game would fall under 30 fps (LOW_TIER_SLOW_MS).
+  const budget = new BrRenderBudget({
+    resolution: brResolutionScale,
+    slowMs: tier.tier === "low" ? LOW_TIER_SLOW_MS : undefined,
+  });
   /** The drawing buffer's size, each frame (the ground's filter footprint: setGroundFootprint). */
   const drawSize = new THREE.Vector2();
   /** When the match left the lobby (frame clock), for the budget's warm-up; null in the lobby. */
@@ -960,6 +982,7 @@ export function createBrArena(
     island?.setGroundRange(budget.scale >= 0.8 ? view.ground : Math.min(80, view.ground));
     groundLite = tier.tier === "low" || (budget.scale < 1 && !aloft);
     island?.setGroundLite(groundLite);
+    island?.setGroundSoft(tier.tier === "low");
     // Ground grass (grass.ts): by the graphics tier only. It is part of the map: never cut
     // back when the frame budget steps down (owner, 2026-11-13).
     island?.setGrassRange(GRASS_RANGE[tier.tier]);
@@ -1484,9 +1507,25 @@ export function createBrArena(
     await figureActor.ready;
     if (disposed) return;
     figure = createOperatorFigure(renderer, figureActor.root);
-    // Fully kitted for the compile (every piece visible: hidden ones are skipped).
-    poseFigure(63, "m4", null, null);
-    await figure.prepare();
+    // Kitted for the compile at every gear level and with every gun (hidden pieces are
+    // skipped, and each level's helmet, vest and pack are their own models). With level 3 only,
+    // the level 1 and 2 pieces' figure variants compiled on the first opening of the
+    // inventory: a 1.7 s stall in the performance audit's check (2026-11-24), the inventory's
+    // opening hitch. Cache hits cost next to nothing.
+    for (const [gear, gun] of [
+      [21, "ak47"],
+      [42, "awp"],
+      [63, "m4"],
+      [63, "mp5"],
+      [63, "hunting"],
+      [63, "spas12"],
+      [63, "deagle"],
+      [0, "none"],
+    ] as const) {
+      poseFigure(gear, gun, null, null);
+      await figure.prepare();
+      if (disposed) return;
+    }
     figureKey = "";
     if (disposed) return;
     // Everyone's worn gear is fitted now, not on the frame a character first comes into view:
@@ -2590,15 +2629,13 @@ export function createBrArena(
       playedMs += dtMs;
       if (budget.scale <= 0.6001) floorMs += dtMs;
     }
-    // Lower resolution only buys time when the GPU is what is slow. Where the GPU's own time is
-    // measured and short, a late frame is something else (the display's 60 Hz pacing, a busy
-    // main thread, another window): it counts as on time, so the picture is not blurred for
-    // nothing (owner, 2026-11-09: no frame-rate problem, but a soft, low-resolution island).
-    const gpuIdle = gpu.last !== null && gpu.last < GPU_BUSY_MS;
+    // Lower resolution only buys time when the GPU is what is slow (owner, 2026-11-09: no
+    // frame-rate problem, but a soft, low-resolution island). The budget weighs each frame
+    // against the GPU's own time where the browser measures it (render-budget.ts).
     if (
       playingSince !== null &&
       now - playingSince > 2500 &&
-      budget.update(gpuIdle ? Math.min(dtMs, 16) : dtMs)
+      budget.update(dtMs, gpu.supported ? gpu.last : null)
     ) {
       resize();
       applyGroundRange();
@@ -4604,7 +4641,13 @@ export function createBrArena(
         figureKey = key;
         figureSecond = Math.floor((now - figureOpenedAt) / 1000);
         poseFigure(gear, gun?.item ?? "none", gun?.optic ?? null, gun?.muzzle ?? null);
-        figureUrl = figure.render() ?? figureUrl;
+        void figure.render().then((url) => {
+          if (!url) return;
+          // (Pictures finish in the order asked: operator-figure renders one at a time.)
+          if (disposed) return URL.revokeObjectURL(url);
+          if (figureUrl?.startsWith("blob:")) URL.revokeObjectURL(figureUrl);
+          figureUrl = url;
+        });
       }
     } else figureOpenedAt = 0;
     audio.captain(
@@ -4623,7 +4666,7 @@ export function createBrArena(
       triangles: sceneTriangles,
       entities: visible,
       pixelRatio: renderer.getPixelRatio(),
-      note: `${tierNote}\nbudget ${budget.scale.toFixed(1)}, ground ${groundLite ? "lite" : "full"}\nmouse ${looker.rate ? `${Math.round(looker.rate)} Hz, drawn ${looker.lag.toFixed(1)} ms behind` : "not moved yet"}`,
+      note: `${tierNote}\nbudget ${budget.scale.toFixed(1)}${budget.reason ? ` (${budget.reason})` : ""}, ground ${groundLite ? "lite" : "full"}\nmouse ${looker.rate ? `${Math.round(looker.rate)} Hz, drawn ${looker.lag.toFixed(1)} ms behind` : "not moved yet"}`,
     });
     if (now - lastHud > 66 && hudListener) {
       lastHud = now;
@@ -4975,6 +5018,8 @@ export function createBrArena(
       dropSmoke.dispose();
       viewmodel?.dispose();
       figure?.dispose();
+      if (figureUrl?.startsWith("blob:")) URL.revokeObjectURL(figureUrl);
+      figureUrl = null;
       // The operator pool, your own figure and the inventory's figure, and the rifle kit they
       // share (cleanup 2026-11-09: none of these were disposed, so every match left 100
       // character rigs' geometry and textures on the GPU).
