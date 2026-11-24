@@ -30,6 +30,16 @@ export function setTextureQuality(renderer: THREE.WebGLRenderer, tier: BrTier = 
 /** The anisotropy for world textures (ground, aerial surface, buildings and props). */
 export const worldAnisotropy = () => max;
 
+let multisampled = true;
+/**
+ * Whether the world is drawn with MSAA (the arena sets it with its scene target; the low tier
+ * draws without). Alpha-to-coverage softens cut-out edges only under MSAA.
+ */
+export const worldMultisampled = () => multisampled;
+export function setWorldMultisampled(on: boolean) {
+  multisampled = on;
+}
+
 /** Linear size factor for world textures: 1, or 0.5 on the low tier. */
 export const worldTextureScale = () => scale;
 
