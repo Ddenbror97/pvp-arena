@@ -216,6 +216,68 @@ describe("vehicles", () => {
     expect(VEHICLES.enterReach).toBeLessThanOrEqual(1.5);
   });
 
+  it("at speed on the island's roads a car gets air over crests and bumps (not glued down)", () => {
+    // (Owner, 2026-11-24: "the drivble cars/motorbike still dont leave the ground"; the first
+    // airtime asked a 0.08 m rise of one step and almost never flew off anything but a ramp.)
+    const roads = (meta as unknown as { roads: Array<{ points: number[][] }> }).roads;
+    let ticks = 0,
+      jumps = 0,
+      clear = 0;
+    for (const r of roads.slice(0, 60)) {
+      if (r.points.length < 3) continue;
+      const [x, z] = r.points[0]!;
+      const v: Vehicle = {
+        id: 0,
+        kind: "sedan",
+        condition: "good",
+        x: x!,
+        y: hf.heightAt(x!, z!),
+        z: z!,
+        yaw: 0,
+        speed: 30,
+        pitch: 0,
+        roll: 0,
+        health: 900,
+        maxHealth: 900,
+        driver: 0,
+        destroyed: false,
+      };
+      let k = 1,
+        was = false,
+        top = 0;
+      for (let i = 0; i < 900 && k < r.points.length; i++) {
+        const [tx, tz] = r.points[k]!;
+        if (Math.hypot(tx! - v.x, tz! - v.z) < 8) {
+          k++;
+          continue;
+        }
+        const want = Math.atan2(-(tx! - v.x), -(tz! - v.z));
+        if (i === 0) v.yaw = want;
+        const d = Math.atan2(Math.sin(want - v.yaw), Math.cos(want - v.yaw));
+        stepVehicle(
+          world,
+          meta,
+          v,
+          { forward: 1, strafe: Math.max(-1, Math.min(1, -d * 3)) } as never,
+          TICK_MS,
+        );
+        ticks++;
+        if (v.air && !was) {
+          jumps++;
+          top = 0;
+        }
+        if (v.air) top = Math.max(top, v.y - hf.heightAt(v.x, v.z));
+        if (was && !v.air && top > 0.3) clear++;
+        was = !!v.air;
+      }
+    }
+    const minutes = (ticks * TICK_MS) / 60_000;
+    // A jump every few seconds to every half minute: air, not a bouncing ride.
+    expect(jumps / minutes).toBeGreaterThan(2);
+    expect(jumps / minutes).toBeLessThan(20);
+    expect(clear).toBeGreaterThan(5);
+  });
+
   it("a dirt bike rides up Iron Peaks' hillside: the slope slows it, it never crashes into it", () => {
     const peak = meta.pois.find((p) => p.id === "iron-peaks")!;
     const x = -506,
