@@ -152,7 +152,8 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
       // (reveal-v1), 2026-11-24: the same triangles.
       for (const [i, l] of m.lods.slice(0, -1).entries()) {
         const was = before.models[id]!.lods[i]!;
-        if (/\.(zfix-v21|plinth-v2|reveal-v1)\.lod\d\.glb$/.test(l.file)) expect(l.tris, id).toBe(was.tris);
+        if (/\.(zfix-v21|plinth-v2|reveal-v1)\.lod\d\.glb$/.test(l.file))
+          expect(l.tris, id).toBe(was.tris);
         else expect(l, id).toEqual(was);
       }
     }
