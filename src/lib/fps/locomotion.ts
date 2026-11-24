@@ -1,3 +1,4 @@
+import { fetchFpsAsset } from "./asset-cache";
 /**
  * Rifle locomotion for the third-person characters (owner, 2026-11-10: enemies' walk and run
  * looked poor). Foot paths, toe roll, hip bounce and pelvis sway from Adobe Mixamo's rifle
@@ -46,7 +47,7 @@ export function loadLocomotion(): Promise<LocomotionClips | null> {
     loading =
       typeof fetch === "undefined" || typeof location === "undefined"
         ? Promise.resolve(null)
-        : fetch(LOCOMOTION_URL)
+        : fetchFpsAsset(LOCOMOTION_URL)
             .then((r) => (r.ok ? (r.json() as Promise<{ clips: LocomotionClips }>) : null))
             .then((data) => (clips = data?.clips ?? null))
             .catch(() => null);

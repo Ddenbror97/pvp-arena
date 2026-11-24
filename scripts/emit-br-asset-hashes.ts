@@ -22,16 +22,20 @@ export const BR_ASSET_DIR = "public/fps/br";
 export const BR_ASSET_HASHES_FILE = "asset-hashes.json";
 const HASH_HEX = 12;
 
-/** Each file under `dir` (but the list itself and the attribution notes) → its fingerprint. */
-export function brAssetHashes(dir: string): Record<string, string> {
+/**
+ * Each file under `dir` (but the list itself and the attribution notes) → its fingerprint.
+ * `skip`: top-level folders left out (the other modes' list leaves out br/, which has its own).
+ */
+export function brAssetHashes(dir: string, skip: readonly string[] = []): Record<string, string> {
   const files: Record<string, string> = {};
   const walk = (at: string, prefix: string) => {
     for (const entry of readdirSync(at, { withFileTypes: true }).sort((a, b) =>
       a.name < b.name ? -1 : a.name > b.name ? 1 : 0,
     )) {
       const name = prefix + entry.name;
-      if (entry.isDirectory()) walk(join(at, entry.name), name + "/");
-      else if (name !== BR_ASSET_HASHES_FILE && !name.endsWith(".md"))
+      if (entry.isDirectory()) {
+        if (!(prefix === "" && skip.includes(entry.name))) walk(join(at, entry.name), name + "/");
+      } else if (name !== BR_ASSET_HASHES_FILE && !name.endsWith(".md"))
         files[name] = createHash("sha1")
           .update(readFileSync(join(at, entry.name)))
           .digest("hex")
@@ -55,8 +59,28 @@ export function emitBrAssetHashes(build: boolean, dir = resolve(root, BR_ASSET_D
   return Object.keys(files).length;
 }
 
+/**
+ * The same for everything else the game downloads under public/fps (the 1v1, Defuse the Bomb
+ * and BR characters, weapons, sounds and animation clips: src/lib/fps/asset-cache.ts), BR's
+ * island folder left out. Final performance audit 2026-11-24: these ~105 files were asked
+ * about again on every match.
+ */
+export const FPS_ASSET_DIR = "public/fps";
+export function emitFpsAssetHashes(build: boolean, dir = resolve(root, FPS_ASSET_DIR)): number {
+  const out = join(dir, BR_ASSET_HASHES_FILE);
+  if (!build) {
+    rmSync(out, { force: true });
+    return 0;
+  }
+  if (!existsSync(dir)) return 0;
+  const files = brAssetHashes(dir, ["br"]);
+  writeFileSync(out, JSON.stringify({ v: 1, files }) + "\n");
+  return Object.keys(files).length;
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const listed = emitBrAssetHashes(!process.argv.includes("--remove"));
+  emitFpsAssetHashes(!process.argv.includes("--remove"));
   console.log(
     listed
       ? `${BR_ASSET_DIR}/${BR_ASSET_HASHES_FILE}: ${listed} files`

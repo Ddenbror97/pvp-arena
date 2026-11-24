@@ -3,6 +3,7 @@ import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
 import { drawGlassOnce } from "./blended-once";
+import { fetchFpsAsset, fpsAssetHashesBuilt } from "./asset-cache";
 
 type AssetEntry = {
   refs: number;
@@ -25,7 +26,7 @@ let sharedMap: Promise<SharedMap> | null = null;
 const sharedTextures = new WeakSet<THREE.Texture>();
 const packMaterials = new WeakMap<GLTF, THREE.MeshStandardMaterial[]>();
 const loadSharedMap = () =>
-  (sharedMap ??= fetch(SHARED_MAP)
+  (sharedMap ??= fetchFpsAsset(SHARED_MAP)
     .then((r): Promise<SharedMap> => (r.ok ? r.json() : Promise.resolve({})))
     .catch((): SharedMap => ({})));
 const SLOTS = ["map", "normalMap", "metalnessMap", "roughnessMap", "aoMap", "emissiveMap"] as const;
@@ -115,7 +116,19 @@ export function retainAuthoredAsset(url: string) {
   if (!entry) {
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
-    const created: AssetEntry = { refs: 0, ready: loader.loadAsync(url) };
+    // Built with the deploy's file list: the file's bytes through the game's file cache
+    // (asset-cache.ts), parsed by this loader. Otherwise (development, tests) as before.
+    const created: AssetEntry = {
+      refs: 0,
+      ready: fpsAssetHashesBuilt()
+        ? fetchFpsAsset(url)
+            .then((r) => {
+              if (!r.ok) throw new Error(`Arena asset HTTP ${r.status}`);
+              return r.arrayBuffer();
+            })
+            .then((data) => loader.parseAsync(data, THREE.LoaderUtils.extractUrlBase(url)))
+        : loader.loadAsync(url),
+    };
     created.ready = created.ready.then(async (source) => {
       if (url === SHARED_PACK) {
         const materials = (await Promise.all(

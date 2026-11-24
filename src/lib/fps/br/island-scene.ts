@@ -14,6 +14,7 @@ import { buildIsland, type Island } from "./island";
 import { pavedLots } from "./layout";
 import { decodeLandCover } from "./landcover";
 import { createProps, type ModelManifest } from "./props-renderer";
+import { fpsAssetHashes, fpsAssetKey } from "../asset-cache";
 import { createTextureShare, type ImageParser } from "./shared-textures";
 import type { CollisionData } from "./static-world";
 import { createFloorPatches } from "./floor-patches";
@@ -83,6 +84,12 @@ export type IslandScene = {
   dispose(): void;
 };
 
+/** The other modes' list's fingerprint for `href` (a shared file under /fps/, not /fps/br/). */
+const fpsAssetHash = (hashes: ReadonlyMap<string, string> | null, href: string) => {
+  const key = fpsAssetKey(href);
+  return (key && hashes?.get(key)) ?? null;
+};
+
 export async function loadIslandScene(
   base: string,
   progress: (value: number, label: string) => void = () => {},
@@ -96,8 +103,15 @@ export async function loadIslandScene(
     ? loadBrAssetHashes(url(BR_ASSET_HASHES), signal)
     : Promise.resolve(null);
   /** Download `href` (absolute), by the same cancellable, retrying, slot-limited path. */
+  // (The shared characters' and weapons' files loaded through this loader, the world rifles
+  // on the ground for one, are listed by the other modes' list: asset-cache.ts.)
   const download = async (href: string, restoring: string) =>
-    downloadBrAsset(href, signal, () => progress(0, restoring), brAssetHash(await hashes, href));
+    downloadBrAsset(
+      href,
+      signal,
+      () => progress(0, restoring),
+      brAssetHash(await hashes, href) ?? fpsAssetHash(await fpsAssetHashes(), href),
+    );
   const get = async (path: string) => {
     const data = await download(url(path), "Restoring asset download");
     return {

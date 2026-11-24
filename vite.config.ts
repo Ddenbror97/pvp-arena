@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { emitGuideAssets } from "./scripts/emit-guide-assets";
-import { emitBrAssetHashes } from "./scripts/emit-br-asset-hashes";
+import { emitBrAssetHashes, emitFpsAssetHashes } from "./scripts/emit-br-asset-hashes";
 
 const DEV_WASM = "\0dev-wasm-module:";
 let serving = false;
@@ -53,7 +53,11 @@ export default defineConfig({
         name: "br-asset-hashes",
         config(_config, { command }) {
           emitBrAssetHashes(command === "build");
-          return command === "build" ? { define: { __BR_ASSET_HASHES__: "true" } } : undefined;
+          // And the other modes' files (src/lib/fps/asset-cache.ts), the same way.
+          emitFpsAssetHashes(command === "build");
+          return command === "build"
+            ? { define: { __BR_ASSET_HASHES__: "true", __FPS_ASSET_HASHES__: "true" } }
+            : undefined;
         },
       },
       {
