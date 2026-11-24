@@ -49,17 +49,21 @@ export function TacticalMap({
       cx = MAP_SIZE / 2,
       cy = MAP_SIZE / 2;
     const dpr = Math.min(2, devicePixelRatio || 1);
+    /** The view changed since the last picture (input or resize): redraw on the next frame. */
+    let viewMoved = true;
     const resize = () => {
       size = Math.floor(Math.min(box.clientWidth, box.clientHeight));
       el.width = el.height = Math.floor(size * dpr);
       el.style.width = el.style.height = `${size}px`;
       fit = size / MAP_SIZE;
+      viewMoved = true;
     };
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(box);
     const scale = () => fit * zoom;
     const clamp = () => {
+      viewMoved = true;
       const half = size / 2 / scale();
       const lo = Math.min(half, MAP_SIZE / 2),
         hi = Math.max(MAP_SIZE - half, MAP_SIZE / 2);
@@ -115,18 +119,21 @@ export function TacticalMap({
         const [mx, my] = toMap(...local(e));
         if (mx >= 0 && my >= 0 && mx <= MAP_SIZE && my <= MAP_SIZE)
           arena.setWaypoint(mapToWorld(mx, my));
+        viewMoved = true;
       }
       drag = null;
     };
     const onContext = (e: MouseEvent) => {
       e.preventDefault();
       arena.setWaypoint(null);
+      viewMoved = true;
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.code === "KeyR") recenter();
       if (e.code === "KeyF") {
         zoom = 1;
         cx = cy = MAP_SIZE / 2;
+        viewMoved = true;
       }
     };
     el.addEventListener("wheel", onWheel, { passive: false });
@@ -138,9 +145,17 @@ export function TacticalMap({
 
     // ---------------------------------------------------------------- drawing
     let raf = 0,
-      lastInfo = 0;
+      lastInfo = 0,
+      lastDraw = -Infinity;
     const draw = (t: number) => {
       raf = requestAnimationFrame(draw);
+      // At most 30 times a second unless the view moved (zoom, pan, a key): what it shows
+      // moves slowly (you at running speed are a pixel or two a frame; the circles; the pulse),
+      // and redrawing the whole island's picture every frame cost several ms a frame on
+      // integrated graphics (performance audit 2026-11-24) with the match still drawn behind.
+      if (!viewMoved && t - lastDraw < 33) return;
+      viewMoved = false;
+      lastDraw = t;
       const s: BrMapState = arena.mapState();
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.fillStyle = "#0b0f12";

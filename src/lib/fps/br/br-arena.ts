@@ -1504,9 +1504,25 @@ export function createBrArena(
     await figureActor.ready;
     if (disposed) return;
     figure = createOperatorFigure(renderer, figureActor.root);
-    // Fully kitted for the compile (every piece visible: hidden ones are skipped).
-    poseFigure(63, "m4", null, null);
-    await figure.prepare();
+    // Kitted for the compile at every gear level and with every gun (hidden pieces are
+    // skipped, and each level's helmet, vest and pack are their own models). With level 3 only,
+    // the level 1 and 2 pieces' figure variants compiled on the first opening of the
+    // inventory: a 1.7 s stall in the performance audit's check (2026-11-24), the inventory's
+    // opening hitch. Cache hits cost next to nothing.
+    for (const [gear, gun] of [
+      [21, "ak47"],
+      [42, "awp"],
+      [63, "m4"],
+      [63, "mp5"],
+      [63, "hunting"],
+      [63, "spas12"],
+      [63, "deagle"],
+      [0, "none"],
+    ] as const) {
+      poseFigure(gear, gun, null, null);
+      await figure.prepare();
+      if (disposed) return;
+    }
     figureKey = "";
     if (disposed) return;
     // Everyone's worn gear is fitted now, not on the frame a character first comes into view:
@@ -4618,7 +4634,13 @@ export function createBrArena(
         figureKey = key;
         figureSecond = Math.floor((now - figureOpenedAt) / 1000);
         poseFigure(gear, gun?.item ?? "none", gun?.optic ?? null, gun?.muzzle ?? null);
-        figureUrl = figure.render() ?? figureUrl;
+        void figure.render().then((url) => {
+          if (!url) return;
+          // (Pictures finish in the order asked: operator-figure renders one at a time.)
+          if (disposed) return URL.revokeObjectURL(url);
+          if (figureUrl?.startsWith("blob:")) URL.revokeObjectURL(figureUrl);
+          figureUrl = url;
+        });
       }
     } else figureOpenedAt = 0;
     audio.captain(
@@ -4989,6 +5011,8 @@ export function createBrArena(
       dropSmoke.dispose();
       viewmodel?.dispose();
       figure?.dispose();
+      if (figureUrl?.startsWith("blob:")) URL.revokeObjectURL(figureUrl);
+      figureUrl = null;
       // The operator pool, your own figure and the inventory's figure, and the rifle kit they
       // share (cleanup 2026-11-09: none of these were disposed, so every match left 100
       // character rigs' geometry and textures on the GPU).
