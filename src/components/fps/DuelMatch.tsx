@@ -57,6 +57,7 @@ import { buyBlocked, type BuyItem } from "@/lib/fps/buy";
 import { DEAGLE } from "@/lib/fps/sidearm";
 import { duelBuyWindow, primaryStats } from "@/lib/fps/simulation";
 import { primaryOf, type Primary } from "@/lib/fps/primary";
+import { reloadIfStale } from "@/lib/build-freshness";
 import {
   DEFAULT_STRIKE_SETTINGS,
   readStrikeSettings,
@@ -389,8 +390,14 @@ export function DuelMatch({
         observations.current.reset();
         setError(null);
       },
-      admit: async () =>
-        (!spectate && takeDuelEntry(userId, matchId)) || admission({ data: { matchId, spectate } }),
+      admit: async () => {
+        // A page from before a deploy: reload into the deployed build (build-freshness.ts).
+        if (await reloadIfStale()) return new Promise<never>(() => {});
+        return (
+          (!spectate && takeDuelEntry(userId, matchId)) ||
+          admission({ data: { matchId, spectate } })
+        );
+      },
       address: (ticket) => ticket.url,
       // Older runtimes and fixtures don't report a map: they play Dustfront.
       created: (ticket) => setAdmittedMapId(ticket.mapId ?? DEFAULT_MAP_ID),

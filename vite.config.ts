@@ -4,13 +4,17 @@
 //     nitro (build-only using cloudflare as a default target), VITE_* env injection, @ path alias,
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
-import { readFileSync } from "node:fs";
+import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { emitGuideAssets } from "./scripts/emit-guide-assets";
 import { emitBrAssetHashes, emitFpsAssetHashes } from "./scripts/emit-br-asset-hashes";
 
 const DEV_WASM = "\0dev-wasm-module:";
+// One id per build (src/lib/build-freshness.ts): baked into the client and published at
+// /build.json, so a page left open across a deploy can tell and reload itself. Made once per
+// process, so every build in it (client and server) agrees with the file.
+const BUILD_ID = `${Date.now().toString(36)}-${createHash("sha256").update(String(Math.random())).digest("hex").slice(0, 8)}`;
 let serving = false;
 
 export default defineConfig({
@@ -36,6 +40,18 @@ export default defineConfig({
             throw new Error(
               `Browser build requires ${missing.join(", ")}. Load the intended environment before building; Worker runtime variables cannot configure an already-built browser bundle.`,
             );
+        },
+      },
+      {
+        name: "build-id",
+        config(_config, { command }) {
+          const file = new URL("./public/build.json", import.meta.url);
+          if (command !== "build") {
+            rmSync(file, { force: true });
+            return undefined;
+          }
+          writeFileSync(file, JSON.stringify({ id: BUILD_ID }));
+          return { define: { __APP_BUILD__: JSON.stringify(BUILD_ID) } };
         },
       },
       {
@@ -81,7 +97,7 @@ export default defineConfig({
         load(id) {
           if (!id.startsWith(DEV_WASM)) return null;
           const path = JSON.stringify(id.slice(DEV_WASM.length));
-          return `import { readFileSync } from "node:fs";\nexport default new WebAssembly.Module(readFileSync(${path}));`;
+          return `import { readFileSync, rmSync, writeFileSync } from "node:fs";\nexport default new WebAssembly.Module(readFileSync(${path}));`;
         },
       },
     ],

@@ -45,13 +45,16 @@ import {
   BrZone,
   useBrFeed,
 } from "./BrHud";
+import { reloadIfStale } from "@/lib/build-freshness";
 import "./duel.css";
 import "./br.css";
 
 let arenaModule: Promise<typeof import("@/lib/fps/br/br-arena")> | undefined;
 const loadArena = () =>
-  (arenaModule ??= import("@/lib/fps/br/br-arena").catch((e) => {
+  (arenaModule ??= import("@/lib/fps/br/br-arena").catch(async (e) => {
     arenaModule = undefined;
+    // (The chunk of a build that is no longer deployed: the page reloads into the new one.)
+    if (await reloadIfStale()) await new Promise<never>(() => {});
     throw e;
   }));
 
@@ -217,6 +220,9 @@ export function BrMatch() {
       ref: socket,
       connecting: (attempt) => setConnection(attempt ? "Reconnecting" : "Finding a match"),
       async admit() {
+        // A page from before a deploy cannot join the new match servers (its admission call
+        // no longer exists there): reload into the deployed build instead of retrying forever.
+        if (await reloadIfStale()) return new Promise<never>(() => {});
         let deadline: ReturnType<typeof setTimeout> | undefined;
         try {
           return await Promise.race([

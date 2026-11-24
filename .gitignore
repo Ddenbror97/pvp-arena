@@ -67,3 +67,4 @@ art/br/build/
 # Mixamo source clips: Adobe's licence allows them in games but not redistribution as files.
 # Download them again from mixamo.com (see art/mixamo/README.md) to re-run the bake.
 art/mixamo/*.fbx
+public/build.json
