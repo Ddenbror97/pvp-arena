@@ -1,0 +1,1585 @@
+[
+ {
+  "name": "downtown-brick-shop-0",
+  "group": "downtown",
+  "models": [
+   "brick-shop"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 1024,
+  "h": 1024,
+  "alpha": false,
+  "bytes": 131894,
+  "file": "downtown-brick-shop-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 147587,
+    "encodeMs": 4069
+   },
+   "etc1sHi": {
+    "bytes": 220290,
+    "encodeMs": 2934
+   },
+   "uastc": {
+    "bytes": 995656,
+    "encodeMs": 18983
+   }
+  }
+ },
+ {
+  "name": "ruins-ruin-great-temple-0",
+  "group": "ruins",
+  "models": [
+   "ruin-great-temple",
+   "ruin-arcade-a"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 47109,
+  "file": "ruins-ruin-great-temple-0.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 47079,
+    "encodeMs": 802
+   },
+   "etc1sHi": {
+    "bytes": 65791,
+    "encodeMs": 773
+   },
+   "uastc": {
+    "bytes": 249798,
+    "encodeMs": 4760
+   }
+  }
+ },
+ {
+  "name": "ruins-ruin-great-temple-1",
+  "group": "ruins",
+  "models": [
+   "ruin-great-temple",
+   "ruin-arcade-a"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 50145,
+  "file": "ruins-ruin-great-temple-1.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 45720,
+    "encodeMs": 919
+   },
+   "etc1sHi": {
+    "bytes": 60890,
+    "encodeMs": 937
+   },
+   "uastc": {
+    "bytes": 223357,
+    "encodeMs": 5075
+   }
+  }
+ },
+ {
+  "name": "ruins-ruin-great-temple-2",
+  "group": "ruins",
+  "models": [
+   "ruin-great-temple",
+   "ruin-arcade-a"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 35131,
+  "file": "ruins-ruin-great-temple-2.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 42086,
+    "encodeMs": 718
+   },
+   "etc1sHi": {
+    "bytes": 56333,
+    "encodeMs": 586
+   },
+   "uastc": {
+    "bytes": 220807,
+    "encodeMs": 4584
+   }
+  }
+ },
+ {
+  "name": "ruins-ruin-great-temple-3",
+  "group": "ruins",
+  "models": [
+   "ruin-great-temple",
+   "ruin-arcade-a"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 30957,
+  "file": "ruins-ruin-great-temple-3.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 38303,
+    "encodeMs": 572
+   },
+   "etc1sHi": {
+    "bytes": 48254,
+    "encodeMs": 498
+   },
+   "uastc": {
+    "bytes": 211656,
+    "encodeMs": 4356
+   }
+  }
+ },
+ {
+  "name": "ruins-ruin-house-b-0",
+  "group": "ruins",
+  "models": [
+   "ruin-house-b",
+   "ruin-paving"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 15883,
+  "file": "ruins-ruin-house-b-0.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 14060,
+    "encodeMs": 255
+   },
+   "etc1sHi": {
+    "bytes": 23861,
+    "encodeMs": 242
+   },
+   "uastc": {
+    "bytes": 75796,
+    "encodeMs": 1240
+   }
+  }
+ },
+ {
+  "name": "ruins-ruin-house-b-1",
+  "group": "ruins",
+  "models": [
+   "ruin-house-b"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 10425,
+  "file": "ruins-ruin-house-b-1.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 13410,
+    "encodeMs": 173
+   },
+   "etc1sHi": {
+    "bytes": 20611,
+    "encodeMs": 166
+   },
+   "uastc": {
+    "bytes": 62771,
+    "encodeMs": 1109
+   }
+  }
+ },
+ {
+  "name": "ruins-ruin-house-b-2",
+  "group": "ruins",
+  "models": [
+   "ruin-house-b"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 9100,
+  "file": "ruins-ruin-house-b-2.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 12630,
+    "encodeMs": 182
+   },
+   "etc1sHi": {
+    "bytes": 18914,
+    "encodeMs": 130
+   },
+   "uastc": {
+    "bytes": 61889,
+    "encodeMs": 1034
+   }
+  }
+ },
+ {
+  "name": "fortress-fort-base-0",
+  "group": "fortress",
+  "models": [
+   "fort-base",
+   "fort-keep",
+   "fort-tower-round",
+   "fort-wall-28"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 18447,
+  "file": "fortress-fort-base-0.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 32194,
+    "encodeMs": 415
+   },
+   "etc1sHi": {
+    "bytes": 36717,
+    "encodeMs": 389
+   },
+   "uastc": {
+    "bytes": 169065,
+    "encodeMs": 4511
+   }
+  }
+ },
+ {
+  "name": "fortress-fort-base-1",
+  "group": "fortress",
+  "models": [
+   "fort-base",
+   "fort-keep",
+   "fort-tower-round"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 18943,
+  "file": "fortress-fort-base-1.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 27734,
+    "encodeMs": 459
+   },
+   "etc1sHi": {
+    "bytes": 30435,
+    "encodeMs": 425
+   },
+   "uastc": {
+    "bytes": 157007,
+    "encodeMs": 4364
+   }
+  }
+ },
+ {
+  "name": "fortress-fort-base-2",
+  "group": "fortress",
+  "models": [
+   "fort-base",
+   "fort-tower-round",
+   "fort-wall-28"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 25868,
+  "file": "fortress-fort-base-2.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 32104,
+    "encodeMs": 606
+   },
+   "etc1sHi": {
+    "bytes": 35621,
+    "encodeMs": 460
+   },
+   "uastc": {
+    "bytes": 169895,
+    "encodeMs": 4366
+   }
+  }
+ },
+ {
+  "name": "fortress-fort-base-3",
+  "group": "fortress",
+  "models": [
+   "fort-base"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 46125,
+  "file": "fortress-fort-base-3.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 53936,
+    "encodeMs": 616
+   },
+   "etc1sHi": {
+    "bytes": 95235,
+    "encodeMs": 853
+   },
+   "uastc": {
+    "bytes": 316371,
+    "encodeMs": 4555
+   }
+  }
+ },
+ {
+  "name": "fortress-fort-keep-2",
+  "group": "fortress",
+  "models": [
+   "fort-keep"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 24170,
+  "file": "fortress-fort-keep-2.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 25422,
+    "encodeMs": 450
+   },
+   "etc1sHi": {
+    "bytes": 26647,
+    "encodeMs": 406
+   },
+   "uastc": {
+    "bytes": 127003,
+    "encodeMs": 3641
+   }
+  }
+ },
+ {
+  "name": "fortress-fort-keep-3",
+  "group": "fortress",
+  "models": [
+   "fort-keep",
+   "fort-tower-round"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 35027,
+  "file": "fortress-fort-keep-3.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 42806,
+    "encodeMs": 500
+   },
+   "etc1sHi": {
+    "bytes": 73829,
+    "encodeMs": 685
+   },
+   "uastc": {
+    "bytes": 237947,
+    "encodeMs": 4693
+   }
+  }
+ },
+ {
+  "name": "northstar-rural-wood-1-0",
+  "group": "northstar",
+  "models": [
+   "rural-wood-1"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 128,
+  "h": 512,
+  "alpha": false,
+  "bytes": 3484,
+  "file": "northstar-rural-wood-1-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 10224,
+    "encodeMs": 103
+   },
+   "etc1sHi": {
+    "bytes": 11889,
+    "encodeMs": 108
+   },
+   "uastc": {
+    "bytes": 47015,
+    "encodeMs": 1026
+   }
+  }
+ },
+ {
+  "name": "northstar-rural-wood-1-1",
+  "group": "northstar",
+  "models": [
+   "rural-wood-1"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 512,
+  "alpha": false,
+  "bytes": 26452,
+  "file": "northstar-rural-wood-1-1.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 28802,
+    "encodeMs": 492
+   },
+   "etc1sHi": {
+    "bytes": 46951,
+    "encodeMs": 516
+   },
+   "uastc": {
+    "bytes": 140227,
+    "encodeMs": 2348
+   }
+  }
+ },
+ {
+  "name": "northstar-house-0",
+  "group": "northstar",
+  "models": [
+   "house"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 1024,
+  "h": 1024,
+  "alpha": false,
+  "bytes": 83838,
+  "file": "northstar-house-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 134542,
+    "encodeMs": 2240
+   },
+   "etc1sHi": {
+    "bytes": 193173,
+    "encodeMs": 2368
+   },
+   "uastc": {
+    "bytes": 789270,
+    "encodeMs": 17679
+   }
+  }
+ },
+ {
+  "name": "northstar-rural-store-3-0",
+  "group": "northstar",
+  "models": [
+   "rural-store-3"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 33512,
+  "file": "northstar-rural-store-3-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 54274,
+    "encodeMs": 1088
+   },
+   "etc1sHi": {
+    "bytes": 79214,
+    "encodeMs": 1190
+   },
+   "uastc": {
+    "bytes": 265875,
+    "encodeMs": 5133
+   }
+  }
+ },
+ {
+  "name": "northstar-rural-store-3-1",
+  "group": "northstar",
+  "models": [
+   "rural-store-3"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 512,
+  "alpha": false,
+  "bytes": 9358,
+  "file": "northstar-rural-store-3-1.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 21499,
+    "encodeMs": 232
+   },
+   "etc1sHi": {
+    "bytes": 29438,
+    "encodeMs": 236
+   },
+   "uastc": {
+    "bytes": 96814,
+    "encodeMs": 2126
+   }
+  }
+ },
+ {
+  "name": "military-mil-hangar-0",
+  "group": "military",
+  "models": [
+   "mil-hangar",
+   "mb-command-bunker"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 21040,
+  "file": "military-mil-hangar-0.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 14572,
+    "encodeMs": 224
+   },
+   "etc1sHi": {
+    "bytes": 29581,
+    "encodeMs": 234
+   },
+   "uastc": {
+    "bytes": 86774,
+    "encodeMs": 1229
+   }
+  }
+ },
+ {
+  "name": "military-mil-hangar-1",
+  "group": "military",
+  "models": [
+   "mil-hangar"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 9109,
+  "file": "military-mil-hangar-1.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 7959,
+    "encodeMs": 131
+   },
+   "etc1sHi": {
+    "bytes": 8457,
+    "encodeMs": 94
+   },
+   "uastc": {
+    "bytes": 29060,
+    "encodeMs": 1239
+   }
+  }
+ },
+ {
+  "name": "military-mil-hangar-2",
+  "group": "military",
+  "models": [
+   "mil-hangar"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 15336,
+  "file": "military-mil-hangar-2.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 14405,
+    "encodeMs": 156
+   },
+   "etc1sHi": {
+    "bytes": 27677,
+    "encodeMs": 181
+   },
+   "uastc": {
+    "bytes": 82022,
+    "encodeMs": 1195
+   }
+  }
+ },
+ {
+  "name": "military-mb-command-bunker-1",
+  "group": "military",
+  "models": [
+   "mb-command-bunker"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 11990,
+  "file": "military-mb-command-bunker-1.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 13222,
+    "encodeMs": 139
+   },
+   "etc1sHi": {
+    "bytes": 26270,
+    "encodeMs": 129
+   },
+   "uastc": {
+    "bytes": 74416,
+    "encodeMs": 1385
+   }
+  }
+ },
+ {
+  "name": "military-mb-command-bunker-2",
+  "group": "military",
+  "models": [
+   "mb-command-bunker",
+   "mb-wall"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/jpeg",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 7606,
+  "file": "military-mb-command-bunker-2.jpg",
+  "ktx": {
+   "etc1s": {
+    "bytes": 10741,
+    "encodeMs": 256
+   },
+   "etc1sHi": {
+    "bytes": 18231,
+    "encodeMs": 295
+   },
+   "uastc": {
+    "bytes": 45964,
+    "encodeMs": 1434
+   }
+  }
+ },
+ {
+  "name": "military-barracks-0",
+  "group": "military",
+  "models": [
+   "barracks"
+  ],
+  "slots": [
+   "base:BLEND"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 9540,
+  "file": "military-barracks-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 31877,
+    "encodeMs": 875
+   },
+   "etc1sHi": {
+    "bytes": 35018,
+    "encodeMs": 1213
+   },
+   "uastc": {
+    "bytes": 123768,
+    "encodeMs": 5737
+   }
+  }
+ },
+ {
+  "name": "military-barracks-1",
+  "group": "military",
+  "models": [
+   "barracks"
+  ],
+  "slots": [
+   "base:BLEND"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 16844,
+  "file": "military-barracks-1.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 33030,
+    "encodeMs": 730
+   },
+   "etc1sHi": {
+    "bytes": 39646,
+    "encodeMs": 589
+   },
+   "uastc": {
+    "bytes": 156151,
+    "encodeMs": 5179
+   }
+  }
+ },
+ {
+  "name": "military-barracks-2",
+  "group": "military",
+  "models": [
+   "barracks"
+  ],
+  "slots": [
+   "base:BLEND"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 12802,
+  "file": "military-barracks-2.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 37424,
+    "encodeMs": 533
+   },
+   "etc1sHi": {
+    "bytes": 47930,
+    "encodeMs": 539
+   },
+   "uastc": {
+    "bytes": 184012,
+    "encodeMs": 4470
+   }
+  }
+ },
+ {
+  "name": "military-barracks-3",
+  "group": "military",
+  "models": [
+   "barracks"
+  ],
+  "slots": [
+   "base:BLEND"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 17856,
+  "file": "military-barracks-3.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 35727,
+    "encodeMs": 530
+   },
+   "etc1sHi": {
+    "bytes": 43869,
+    "encodeMs": 440
+   },
+   "uastc": {
+    "bytes": 194465,
+    "encodeMs": 4423
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-pine-0",
+  "group": "vegetation",
+  "models": [
+   "tree-pine"
+  ],
+  "slots": [
+   "base:BLEND"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 256,
+  "alpha": true,
+  "bytes": 19472,
+  "file": "vegetation-tree-pine-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 21092,
+    "encodeMs": 390
+   },
+   "etc1sHi": {
+    "bytes": 29205,
+    "encodeMs": 311
+   },
+   "uastc": {
+    "bytes": 58841,
+    "encodeMs": 1160
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-pine-1",
+  "group": "vegetation",
+  "models": [
+   "tree-pine"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 10594,
+  "file": "vegetation-tree-pine-1.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 11929,
+    "encodeMs": 98
+   },
+   "etc1sHi": {
+    "bytes": 24447,
+    "encodeMs": 122
+   },
+   "uastc": {
+    "bytes": 66238,
+    "encodeMs": 1053
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-oak-0",
+  "group": "vegetation",
+  "models": [
+   "tree-oak"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 19742,
+  "file": "vegetation-tree-oak-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 14005,
+    "encodeMs": 186
+   },
+   "etc1sHi": {
+    "bytes": 28678,
+    "encodeMs": 190
+   },
+   "uastc": {
+    "bytes": 85487,
+    "encodeMs": 1138
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-oak-1",
+  "group": "vegetation",
+  "models": [
+   "tree-oak"
+  ],
+  "slots": [
+   "base:MASK"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 256,
+  "alpha": true,
+  "bytes": 33656,
+  "file": "vegetation-tree-oak-1.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 23388,
+    "encodeMs": 419
+   },
+   "etc1sHi": {
+    "bytes": 34823,
+    "encodeMs": 466
+   },
+   "uastc": {
+    "bytes": 57675,
+    "encodeMs": 778
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-birch-0",
+  "group": "vegetation",
+  "models": [
+   "tree-birch"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 17364,
+  "file": "vegetation-tree-birch-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 13594,
+    "encodeMs": 157
+   },
+   "etc1sHi": {
+    "bytes": 27673,
+    "encodeMs": 179
+   },
+   "uastc": {
+    "bytes": 82362,
+    "encodeMs": 1135
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-birch-1",
+  "group": "vegetation",
+  "models": [
+   "tree-birch"
+  ],
+  "slots": [
+   "base:MASK"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 256,
+  "alpha": true,
+  "bytes": 15694,
+  "file": "vegetation-tree-birch-1.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 17546,
+    "encodeMs": 283
+   },
+   "etc1sHi": {
+    "bytes": 20252,
+    "encodeMs": 232
+   },
+   "uastc": {
+    "bytes": 36879,
+    "encodeMs": 518
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-palm-0",
+  "group": "vegetation",
+  "models": [
+   "tree-palm"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 256,
+  "alpha": false,
+  "bytes": 15978,
+  "file": "vegetation-tree-palm-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 15236,
+    "encodeMs": 235
+   },
+   "etc1sHi": {
+    "bytes": 25210,
+    "encodeMs": 214
+   },
+   "uastc": {
+    "bytes": 77663,
+    "encodeMs": 1220
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-palm-1",
+  "group": "vegetation",
+  "models": [
+   "tree-palm"
+  ],
+  "slots": [
+   "base:MASK"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 256,
+  "alpha": true,
+  "bytes": 35140,
+  "file": "vegetation-tree-palm-1.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 21511,
+    "encodeMs": 608
+   },
+   "etc1sHi": {
+    "bytes": 31320,
+    "encodeMs": 427
+   },
+   "uastc": {
+    "bytes": 51265,
+    "encodeMs": 589
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-jungle-0",
+  "group": "vegetation",
+  "models": [
+   "tree-jungle"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 256,
+  "h": 512,
+  "alpha": false,
+  "bytes": 43652,
+  "file": "vegetation-tree-jungle-0.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 30439,
+    "encodeMs": 552
+   },
+   "etc1sHi": {
+    "bytes": 58420,
+    "encodeMs": 666
+   },
+   "uastc": {
+    "bytes": 170721,
+    "encodeMs": 2972
+   }
+  }
+ },
+ {
+  "name": "vegetation-tree-jungle-1",
+  "group": "vegetation",
+  "models": [
+   "tree-jungle"
+  ],
+  "slots": [
+   "base:BLEND"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": true,
+  "bytes": 122934,
+  "file": "vegetation-tree-jungle-1.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 70904,
+    "encodeMs": 1530
+   },
+   "etc1sHi": {
+    "bytes": 115019,
+    "encodeMs": 1622
+   },
+   "uastc": {
+    "bytes": 221123,
+    "encodeMs": 3889
+   }
+  }
+ },
+ {
+  "name": "facades",
+  "group": "downtown",
+  "models": [
+   "models/atlas.facades-v1.webp"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 4096,
+  "h": 1264,
+  "alpha": true,
+  "bytes": 612328,
+  "file": "facades.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 522930,
+    "encodeMs": 15045
+   },
+   "etc1sHi": {
+    "bytes": 693781,
+    "encodeMs": 22067
+   },
+   "uastc": {
+    "bytes": 3206730,
+    "encodeMs": 64154
+   }
+  }
+ },
+ {
+  "name": "far-facades",
+  "group": "downtown",
+  "models": [
+   "models/atlas.far-facades-v2.webp"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 4096,
+  "h": 1680,
+  "alpha": true,
+  "bytes": 827808,
+  "file": "far-facades.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 770586,
+    "encodeMs": 22546
+   },
+   "etc1sHi": {
+    "bytes": 1010523,
+    "encodeMs": 28139
+   },
+   "uastc": {
+    "bytes": 4816236,
+    "encodeMs": 114674
+   }
+  }
+ },
+ {
+  "name": "grass",
+  "group": "vegetation",
+  "models": [
+   "grass/grass-v1.webp"
+  ],
+  "slots": [
+   "base:MASK"
+  ],
+  "mime": "image/webp",
+  "w": 2048,
+  "h": 2048,
+  "alpha": true,
+  "bytes": 779202,
+  "file": "grass.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 576332,
+    "encodeMs": 17489
+   },
+   "etc1sHi": {
+    "bytes": 759917,
+    "encodeMs": 17078
+   },
+   "uastc": {
+    "bytes": 2195542,
+    "encodeMs": 66768
+   }
+  }
+ },
+ {
+  "name": "impostor-oak",
+  "group": "vegetation",
+  "models": [
+   "models/tree-oak.impostor.png"
+  ],
+  "slots": [
+   "base:MASK"
+  ],
+  "mime": "image/png",
+  "w": 256,
+  "h": 512,
+  "alpha": true,
+  "bytes": 121383,
+  "file": "impostor-oak.png",
+  "ktx": {
+   "etc1s": {
+    "bytes": 31783,
+    "encodeMs": 597
+   },
+   "etc1sHi": {
+    "bytes": 43746,
+    "encodeMs": 539
+   },
+   "uastc": {
+    "bytes": 86399,
+    "encodeMs": 1659
+   }
+  }
+ },
+ {
+  "name": "impostor-pine",
+  "group": "vegetation",
+  "models": [
+   "models/tree-pine.impostor.png"
+  ],
+  "slots": [
+   "base:MASK"
+  ],
+  "mime": "image/png",
+  "w": 256,
+  "h": 512,
+  "alpha": true,
+  "bytes": 142577,
+  "file": "impostor-pine.png",
+  "ktx": {
+   "etc1s": {
+    "bytes": 32606,
+    "encodeMs": 409
+   },
+   "etc1sHi": {
+    "bytes": 44674,
+    "encodeMs": 396
+   },
+   "uastc": {
+    "bytes": 85430,
+    "encodeMs": 1776
+   }
+  }
+ },
+ {
+  "name": "doors",
+  "group": "vegetation",
+  "models": [
+   "models/doors.v27.webp"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 2048,
+  "h": 12800,
+  "alpha": false,
+  "bytes": 578766,
+  "file": "doors.webp",
+  "ktx": {},
+  "skip": "Total source texels 26214400 exceed the encoder limit of 12582912 (~12 Mpix across all 1 slice(s)). Reduce resolution or"
+ },
+ {
+  "name": "ground-albedo-grass",
+  "group": "ground",
+  "models": [
+   "ground/albedo.webp"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 1024,
+  "h": 1024,
+  "alpha": false,
+  "bytes": 267661,
+  "file": "ground-albedo-grass.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 176221,
+    "encodeMs": 3452
+   },
+   "etc1sHi": {
+    "bytes": 258072,
+    "encodeMs": 3288
+   },
+   "uastc": {
+    "bytes": 1301906,
+    "encodeMs": 27476
+   }
+  }
+ },
+ {
+  "name": "ground-albedo-forest",
+  "group": "ground",
+  "models": [
+   "ground/albedo.webp"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 1024,
+  "h": 1024,
+  "alpha": false,
+  "bytes": 267661,
+  "file": "ground-albedo-forest.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 177173,
+    "encodeMs": 10826
+   },
+   "etc1sHi": {
+    "bytes": 275362,
+    "encodeMs": 10590
+   },
+   "uastc": {
+    "bytes": 1340963,
+    "encodeMs": 26700
+   }
+  }
+ },
+ {
+  "name": "ground-albedo-rock",
+  "group": "ground",
+  "models": [
+   "ground/albedo.webp"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 1024,
+  "h": 1024,
+  "alpha": false,
+  "bytes": 267661,
+  "file": "ground-albedo-rock.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 152110,
+    "encodeMs": 1814
+   },
+   "etc1sHi": {
+    "bytes": 212813,
+    "encodeMs": 2104
+   },
+   "uastc": {
+    "bytes": 962208,
+    "encodeMs": 18886
+   }
+  }
+ },
+ {
+  "name": "ground-albedo-concrete",
+  "group": "ground",
+  "models": [
+   "ground/albedo.webp"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 1024,
+  "h": 1024,
+  "alpha": false,
+  "bytes": 267661,
+  "file": "ground-albedo-concrete.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 152052,
+    "encodeMs": 2384
+   },
+   "etc1sHi": {
+    "bytes": 235150,
+    "encodeMs": 3861
+   },
+   "uastc": {
+    "bytes": 1091061,
+    "encodeMs": 30537
+   }
+  }
+ },
+ {
+  "name": "ground-albedo-asphalt",
+  "group": "ground",
+  "models": [
+   "ground/albedo.webp"
+  ],
+  "slots": [
+   "base"
+  ],
+  "mime": "image/webp",
+  "w": 1024,
+  "h": 1024,
+  "alpha": false,
+  "bytes": 267661,
+  "file": "ground-albedo-asphalt.webp",
+  "ktx": {
+   "etc1s": {
+    "bytes": 196418,
+    "encodeMs": 6116
+   },
+   "etc1sHi": {
+    "bytes": 276428,
+    "encodeMs": 6284
+   },
+   "uastc": {
+    "bytes": 1306702,
+    "encodeMs": 24994
+   }
+  }
+ },
+ {
+  "name": "ground-normal-grass",
+  "group": "ground",
+  "models": [
+   "ground/normal.webp"
+  ],
+  "slots": [
+   "normal"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 123600,
+  "file": "ground-normal-grass.webp",
+  "ktx": {
+   "uastc": {
+    "bytes": 340934,
+    "encodeMs": 5534
+   }
+  }
+ },
+ {
+  "name": "ground-normal-forest",
+  "group": "ground",
+  "models": [
+   "ground/normal.webp"
+  ],
+  "slots": [
+   "normal"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 123600,
+  "file": "ground-normal-forest.webp",
+  "ktx": {
+   "uastc": {
+    "bytes": 342024,
+    "encodeMs": 5744
+   }
+  }
+ },
+ {
+  "name": "ground-normal-rock",
+  "group": "ground",
+  "models": [
+   "ground/normal.webp"
+  ],
+  "slots": [
+   "normal"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 123600,
+  "file": "ground-normal-rock.webp",
+  "ktx": {
+   "uastc": {
+    "bytes": 327608,
+    "encodeMs": 5656
+   }
+  }
+ },
+ {
+  "name": "ground-normal-concrete",
+  "group": "ground",
+  "models": [
+   "ground/normal.webp"
+  ],
+  "slots": [
+   "normal"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 123600,
+  "file": "ground-normal-concrete.webp",
+  "ktx": {
+   "uastc": {
+    "bytes": 341199,
+    "encodeMs": 5447
+   }
+  }
+ },
+ {
+  "name": "ground-normal-asphalt",
+  "group": "ground",
+  "models": [
+   "ground/normal.webp"
+  ],
+  "slots": [
+   "normal"
+  ],
+  "mime": "image/webp",
+  "w": 512,
+  "h": 512,
+  "alpha": false,
+  "bytes": 123600,
+  "file": "ground-normal-asphalt.webp",
+  "ktx": {
+   "uastc": {
+    "bytes": 331460,
+    "encodeMs": 5511
+   }
+  }
+ }
+]
