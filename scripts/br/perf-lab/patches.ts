@@ -14,7 +14,7 @@
 import duelCss from "@/components/fps/duel.css";
 import brCss from "@/components/fps/br.css";
 
-type Frame = { t: number; cb: number; calls: number; tick: number };
+type Frame = { t: number; cb: number; calls: number; tick: number; width: number };
 type G = typeof globalThis & {
   __labSize?: [number, number];
   __brAssumeLock?: boolean;
@@ -45,6 +45,7 @@ EventTarget.prototype.addEventListener = function (
   return (add as (...a: unknown[]) => void).call(this, type, ...rest);
 } as typeof add;
 
+let canvas: HTMLCanvasElement | null = null;
 class Recorder {
   on = false;
   frames: Frame[] = [];
@@ -67,7 +68,8 @@ class Recorder {
   frameStart(t: number) {
     if (this.cur && this.cur.t === t) return this.cur;
     if (this.cur && this.on) this.frames.push(this.cur);
-    this.cur = { t, cb: 0, calls: 0, tick: this.tickAcc };
+    canvas ??= document.querySelector("#arena canvas");
+    this.cur = { t, cb: 0, calls: 0, tick: this.tickAcc, width: canvas?.width ?? 0 };
     this.tickAcc = 0;
     this.calls = 0;
     this.total++;
@@ -142,6 +144,17 @@ class Recorder {
       longTasks: this.long.length,
       longTaskMs: +this.long.reduce((a, b) => a + b, 0).toFixed(0),
       longTaskMax: this.long.length ? +Math.max(...this.long).toFixed(0) : 0,
+      // The drawing buffer's width over the frames (the adaptive resolution at work).
+      widths: Object.fromEntries(
+        [
+          ...f.reduce(
+            (m, x) => m.set(x.width, (m.get(x.width) ?? 0) + 1),
+            new Map<number, number>(),
+          ),
+        ]
+          .sort((a, b) => b[0] - a[0])
+          .map(([w, n]) => [w, +(n / Math.max(1, f.length)).toFixed(2)]),
+      ),
       heapMinMB: this.heap.length ? +Math.min(...this.heap).toFixed(0) : null,
       heapMaxMB: this.heap.length ? +Math.max(...this.heap).toFixed(0) : null,
     };

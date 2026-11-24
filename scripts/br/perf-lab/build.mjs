@@ -63,6 +63,27 @@ const lab = {
         "quality-tier.ts",
       ),
     }));
+    // `__labFixedRes`: the adaptive resolution held at full scale (the tier's native size), to
+    // measure a fixed resolution apart from the adaptive one. Whichever budget the tree has.
+    const FIXED = "if ((globalThis as { __labFixedRes?: boolean }).__labFixedRes) return false;";
+    b.onLoad({ filter: /src[\\/]lib[\\/]fps[\\/]presentation\.ts$/ }, (args) => ({
+      loader: "ts",
+      contents: swapIn(
+        fs.readFileSync(args.path, "utf8"),
+        "  update(ms: number) {",
+        `  update(ms: number) {\n    ${FIXED}`,
+        "presentation.ts",
+      ),
+    }));
+    b.onLoad({ filter: /src[\\/]lib[\\/]fps[\\/]br[\\/]render-budget\.ts$/ }, (args) => ({
+      loader: "ts",
+      contents: swapIn(
+        fs.readFileSync(args.path, "utf8"),
+        "  update(ms: number, gpuMs: number | null): boolean {",
+        `  update(ms: number, gpuMs: number | null): boolean {\n    ${FIXED}`,
+        "render-budget.ts",
+      ),
+    }));
     b.onLoad({ filter: /src[\\/]lib[\\/]fps[\\/]br[\\/]tactical-map\.ts$/ }, (args) => ({
       loader: "ts",
       contents: swapIn(

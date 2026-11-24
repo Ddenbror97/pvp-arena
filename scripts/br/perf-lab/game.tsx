@@ -324,6 +324,38 @@ const SCENARIOS: Record<string, () => Promise<void>> = {
     await wait(500);
     await measure("zipline", 7000);
   },
+  /**
+   * Late game: the match played on (open the page with &zone=0.05 to run the zone 20× faster)
+   * until 30 or fewer are left or four minutes pass, then you in the middle of the circle with
+   * the survivors around: a look round, a run and a firefight.
+   */
+  async late() {
+    const { state } = inside();
+    if (state.phase === "starting" || state.phase === "waiting") sim().takeOff!();
+    const t0 = performance.now();
+    while (performance.now() - t0 < 240_000) {
+      const alive = state.seats.filter((x) => !x.dead).length;
+      if (state.phase === "active" && alive <= 30) break;
+      await wait(2000);
+    }
+    const z = (state as unknown as { zoneNow?: { now: { x: number; z: number; r: number } } })
+      .zoneNow;
+    const c = z?.now ?? { x: 0, z: 0, r: 0 };
+    const at = await goTo(c.x, c.z);
+    const alive = state.seats.filter((x) => !x.dead).length;
+    log(
+      `late game: ${alive} alive, circle r ${Math.round(c.r)} at ${Math.round(c.x)},${Math.round(c.z)}`,
+    );
+    await measure("late-look", 8000, pan(-0.04, 1, at.yaw));
+    sim().giveGun!("m4", "sight-holo", null);
+    await wait(800);
+    await hold("Digit1", 300);
+    await wait(1000);
+    crowdHere(Math.min(16, alive), at.yaw);
+    mouse(0, true);
+    await measure("late-fight", 6000, sweep(at.yaw, 0.6));
+    mouse(0, false);
+  },
   async drive() {
     const { state, me } = inside();
     const b = state.seats[me]!.body;
@@ -377,7 +409,8 @@ async function suite() {
   out.results = {};
   out.status = "running";
   await wait(3000);
-  const plan = L.__labPlan ?? Object.keys(SCENARIOS);
+  // (The late game plays the match on for minutes: asked for by name.)
+  const plan = L.__labPlan ?? Object.keys(SCENARIOS).filter((n) => n !== "late");
   for (const name of plan) {
     try {
       await SCENARIOS[name]!();
