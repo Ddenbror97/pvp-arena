@@ -15,7 +15,7 @@ test.beforeAll(async () => {
     "@/lib/fps/br/loading": `export const BR_LOADING_IMAGE=null;export const warmBrLoadingImage=()=>{};`,
     "@/lib/fps/br/br-arena": `export function createBrArena(_host,_base,progress){const q=window.qa;q.created=true;q.createdCount++;return {
       ready:new Promise((resolve,reject)=>{q.release=()=>{q.assetsReady=true;progress(1,'Ready');resolve()};q.fail=()=>reject(Error('asset failure'));}),
-      onHud:f=>q.hud=f,onFeed(){},setSender(){},snapshot(s){q.snapshots++;if(q.assetsReady&&s.route){q.baseline={route:true,loot:s.loot?.add[0]?.[0]===42,doors:s.doors?.open[0]===1};if(!location.search.includes('slow-frame'))q.hud({phase:'waiting',myPhase:'ground',kit:q.kit,nearby:[],onFoot:true});}},
+      onHud:f=>q.hud=f,onFeed(){},onGraphics(){},onOpenCrate(){},fast(){},setSender(){},snapshot(s){q.snapshots++;if(q.assetsReady&&s.route){q.baseline={route:true,loot:s.loot?.add[0]?.[0]===42,doors:s.doors?.open[0]===1};if(!location.search.includes('slow-frame'))q.hud({phase:'waiting',myPhase:'ground',kit:q.kit,nearby:[],onFoot:true});}},
       setScenePresented:v=>q.presented=v,setSensitivity(){},setVolume(){},setBinds(){},setViewDistance(){},setInventoryOpen(v){q.inventory=v;},
       mapImage:()=>null,operatorFigure:()=>null,mapState:()=>({waypoint:null}),dispose(){q.disposedCount++;},act(){},relock(){},
     }};`,
@@ -44,7 +44,7 @@ test.beforeAll(async () => {
             resolveDir: process.cwd(),
           }));
           b.onLoad({ filter: /.*/, namespace: "overlay" }, () => ({
-            contents: `import React from 'react';export {BrInventory} from '${path.resolve("src/components/fps/BrHud.tsx").replaceAll("\\", "/")}';export const GameSettings=p=>p.open?React.createElement('div',{role:'dialog','aria-label':'Game settings',style:{position:'absolute',inset:0,zIndex:20,padding:'200px'}},p.leaveAction):null;export const useBrFeed=()=>({onFeed(){},out:null});${["BrSettingsGeneral", "BrKeyBindings", "TacticalMap", "BrCanopyGauges", "BrAirdropAlert", "BrCentre", "BrEnd", "BrFeedView", "BrGasFx", "BrLobbyCard", "BrStatus", "BrTablet", "BrTopStatus", "BrZone"].map((n) => `export const ${n}=()=>null;`).join("")}`,
+            contents: `import React from 'react';export {BrInventory} from '${path.resolve("src/components/fps/BrHud.tsx").replaceAll("\\", "/")}';export const GameSettings=p=>p.open?React.createElement('div',{role:'dialog','aria-label':'Game settings',style:{position:'absolute',inset:0,zIndex:20,padding:'200px'}},p.leaveAction):null;export const useBrFeed=()=>({onFeed(){},out:null});${["BrSettingsGeneral", "BrKeyBindings", "TacticalMap", "BrCanopyGauges", "BrFlight", "BrAirdropAlert", "BrCentre", "BrEnd", "BrFeedView", "BrGasFx", "BrLobbyCard", "BrStatus", "BrTablet", "BrTopStatus", "BrZone"].map((n) => `export const ${n}=()=>null;`).join("")}`,
             loader: "js",
             resolveDir: process.cwd(),
           }));
@@ -256,4 +256,44 @@ test("inventory clicks stay in the match/fullscreen, and leaving needs a separat
   await expect(page.getByRole("alertdialog")).toHaveCount(0);
   expect(page.url()).toBe(origin + "/");
   expect(errors).toEqual([]);
+});
+
+test("asset failure offers a fresh start and the way back to the lobby", async ({ page }) => {
+  await page.goto(origin);
+  await page.waitForFunction(() => window.qa?.created);
+  await page.evaluate(() => window.qa.fail());
+  await expect(page.getByRole("alert")).toContainText("island assets are unavailable");
+  await expect(page.getByRole("button", { name: "Try again", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("link", { name: "Back to lobby", exact: true })).toHaveAttribute(
+    "href",
+    "/",
+  );
+  expect(await page.evaluate(() => window.qa.admissions)).toBe(0);
+});
+
+test("a first frame that never comes stops after two minutes with Try again and the lobby", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto(origin + "/?stall");
+  await page.waitForFunction(() => window.qa?.created);
+  await page.evaluate(() => window.qa.release());
+  await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "99");
+  // While it still waits, the message comes with the way back to the lobby.
+  await page.clock.runFor(30_100);
+  await expect(page.getByRole("alert")).toContainText("Restoring match connection");
+  await expect(page.getByRole("link", { name: "Back to lobby", exact: true })).toHaveCount(1);
+  await page.clock.runFor(91_000);
+  await expect(page.getByRole("alert")).toContainText("The match did not start");
+  const sockets = await page.evaluate(() => window.qa.sockets);
+  const admissions = await page.evaluate(() => window.qa.admissions);
+  // Stopped: no more connections behind the message.
+  await page.clock.runFor(60_000);
+  expect(await page.evaluate(() => window.qa.sockets)).toBe(sockets);
+  expect(await page.evaluate(() => window.qa.admissions)).toBe(admissions);
+  // Try again: a new ticket, the same island.
+  await page.getByRole("button", { name: "Try again", exact: true }).click();
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.qa.admissions)).toBe(admissions + 1);
+  expect(await page.evaluate(() => window.qa.createdCount)).toBe(1);
 });

@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { STRIKE_LOADING_IMAGE } from "@/lib/fps/loading";
 
 export function ArenaLoadingScreen({
@@ -72,10 +73,18 @@ export function ArenaLoadingScreen({
             {error}
           </p>
         )}
-        {error && onRetry && (
-          <button type="button" className="duel-loading-retry" onClick={onRetry}>
-            {retryLabel}
-          </button>
+        {error && (
+          <div className="duel-loading-actions">
+            {onRetry && (
+              <button type="button" className="duel-loading-retry" onClick={onRetry}>
+                {retryLabel}
+              </button>
+            )}
+            {/* Never only a message: a way out of every stopped or long wait. */}
+            <Link className="duel-loading-retry duel-loading-leave" to="/">
+              Back to lobby
+            </Link>
+          </div>
         )}
       </div>
     </section>

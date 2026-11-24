@@ -89,7 +89,9 @@ export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
     left = false,
     retry: ReturnType<typeof setTimeout> | undefined,
     attempt = 0,
-    refused = 0;
+    refused = 0,
+    /** Bumped by a pause: a connection still waiting for its ticket then gives up. */
+    generation = 0;
   const again = () => {
     if (left) return;
     stopped = false;
@@ -100,18 +102,19 @@ export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
   };
   const connect = async () => {
     if (stopped) return;
+    const gen = generation;
     o.connecting(attempt);
     let ticket: Ticket;
     try {
       ticket = await o.admit();
     } catch (error) {
-      if (stopped) return;
+      if (stopped || gen !== generation) return;
       const delay = o.admitFailed(error, ++attempt);
       if (delay === null) stopped = true;
       else retry = setTimeout(() => void connect(), delay);
       return;
     }
-    if (stopped) return;
+    if (stopped || gen !== generation) return;
     const ws = new WebSocket(o.address(ticket));
     o.ref.current = ws;
     o.created?.(ticket);
@@ -182,17 +185,31 @@ export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
     };
   };
   void connect();
+  /** No reconnect, and the current socket's handlers hear nothing more. */
+  const halt = (reason: string) => {
+    stopped = true;
+    generation++;
+    clearTimeout(retry);
+    const ws = o.ref.current;
+    o.ref.current = null;
+    if (!ws) return;
+    ws.onclose = ws.onmessage = ws.onerror = null;
+    ws.close(1000, reason);
+  };
   return {
     /** Leave: no reconnect, and the socket's handlers hear nothing more. */
     close(reason: string) {
-      stopped = true;
       left = true;
-      clearTimeout(retry);
-      const ws = o.ref.current;
-      o.ref.current = null;
-      if (!ws) return;
-      ws.onclose = ws.onmessage = ws.onerror = null;
-      ws.close(1000, reason);
+      halt(reason);
     },
+    /**
+     * Stop for now (the mode gave up waiting and says so), keeping the way back: `again`
+     * starts over with a new ticket, as after `unreachable`.
+     */
+    pause(reason: string) {
+      if (left) return;
+      halt(reason);
+    },
+    again,
   };
 }
