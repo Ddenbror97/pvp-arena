@@ -27,6 +27,7 @@ import {
   reversedDepthOptIn,
   STEADY,
   steadyWanted,
+  type SteadyArgs,
   wantReversedDepth,
 } from "./scene-target";
 import { createSharpen, SHARPEN, sharpenWanted } from "./sharpen";
@@ -700,14 +701,24 @@ export function createBrArena(
   // 2026-11-24: its 720p made the towns below the plane and the parachute blink like fairy
   // lights on Intel UHD (owner), and in the air the GPU has room for the pass (the plane and
   // the canopy drew in 9–12 ms there, against 15–22 ms on the ground).
+  // On foot too (2026-11-24, owner: the airfield's apron from eye height "blurry and flicker"):
+  // from STEADY.foot.near metres on, only the shimmer, run before the weapon pass. Not on the
+  // low tier on foot, where the GPU has no room for it (15–22 ms on the ground).
   const steadyOn = !!sceneTarget && steadyWanted();
   let steadyNow = 0;
-  const steadyPresent = (aloft: boolean, dtMs: number) => {
+  const steadyArgs = (aloft: boolean, dtMs: number): SteadyArgs | null => {
     if (!steadyOn) return null;
-    const to = aloft ? STEADY.strength : 0;
+    const to = aloft || tier.tier !== "low" ? STEADY.strength : 0;
     steadyNow += (to - steadyNow) * Math.min(1, dtMs / 250);
     if (Math.abs(to - steadyNow) < 0.01) steadyNow = to;
-    return steadyNow > 0 ? { camera, strength: steadyNow } : null;
+    if (steadyNow <= 0) return null;
+    return aloft
+      ? { camera, strength: steadyNow }
+      : {
+          camera,
+          strength: steadyNow,
+          ...STEADY.foot,
+        };
   };
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
@@ -4619,16 +4630,16 @@ export function createBrArena(
       povGunNow || (povSeat >= 0 && povKnife)
         ? scopeUp || inventoryOpen
         : !onFoot() || seatedMe() || scopeUp || inventoryOpen || !!kit?.dead || rappelBlend > 0.05;
-    viewmodel?.render(camera, gunHidden);
     // Aloft: in the drop plane, falling, under the canopy, or flying the airfield's aircraft.
-    // (And with no gun drawn: its pass clears the depth the steadying reads.)
     const inTheAir =
-      gunHidden &&
-      (body.phase === "plane" ||
-        body.phase === "freefall" ||
-        body.phase === "parachute" ||
-        flight.seat !== null);
-    sceneTarget?.present(sharpenPresent(), steadyPresent(inTheAir, dtMs));
+      body.phase === "plane" ||
+      body.phase === "freefall" ||
+      body.phase === "parachute" ||
+      flight.seat !== null;
+    // The steadying, on the scene alone: the gun pass clears the depth it reads.
+    sceneTarget?.steady(steadyArgs(inTheAir, dtMs));
+    const gunDrawn = viewmodel?.render(camera, gunHidden) ?? false;
+    sceneTarget?.present(sharpenPresent(), null, gunDrawn);
     // The inventory's picture of you: re-drawn when what you wear or hold changes (and, for a
     // few seconds after opening, while late models such as worn gear finish loading).
     if (inventoryOpen && figure && kit) {

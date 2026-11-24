@@ -101,9 +101,17 @@ export function reversedDepthSupported(): boolean {
  *    sub-pixel jitter and a second sharpening; this needs neither.)
  *
  * No sub-pixel camera jitter: standing still the previous frame equals this one and the
- * picture is exactly what it was. It costs one fullscreen pass and a depth resolve, so it is
- * asked for only where it earns that (br-arena.ts: in the air), and only while nothing is
- * drawn into the target after the scene (the weapon pass clears depth).
+ * picture is exactly what it was. It costs one fullscreen pass and a depth resolve.
+ *
+ * On foot too (owner, 2026-11-24, the airfield's apron from eye height: "its blurry and flicker
+ * … this must be solvable?"). From eye height a pixel 40–100 m out covers metres of ground along
+ * the view: filtered over all of it the paving goes soft, filtered short (GROUND.reach) it
+ * crawls. Held steady, it can stay sharp. The weapon is drawn into the target after the scene
+ * and clears the depth this pass reads, so the blend runs between the two (`steady`), on the
+ * scene alone, and the present pass lays the weapon over it (`present`'s `overlay`: wherever
+ * the weapon pass left a depth). On foot (`STEADY.foot`) only the shimmer is held: from `near`
+ * to `far` metres, and only jumps under `cap` (a tracer, a muzzle flash, a player stepping out
+ * are big jumps and are shown as drawn).
  */
 export const STEADY = {
   /** The previous frame's share where this frame jumped away from it. */
@@ -134,8 +142,43 @@ export const STEADY = {
    */
   near: 80,
   far: 160,
+  /**
+   * Jumps bigger than this (the same scale as `from`/`to`) are shown as drawn: none from the
+   * air (where what sparkles is whole storeys and trees a pixel across).
+   */
+  cap: Infinity,
+  /**
+   * On foot: blended from `near` to `far` metres (what moves with you, a car you drive, is
+   * nearer), and only the shimmer: jumps from `from`→`to` (the ground's crawl is a few
+   * hundredths, finer than what sparkles from the air), and none over `capFrom`→`capTo`.
+   * Measured on the RTX 2050 (gpu-bench, walking 11 cm a frame across the airfield's apron at
+   * eye height; change between frames after following the ground / detail between
+   * neighbours, of 255):
+   *   distance (m)     12–20        20–35
+   *   off              11.4 / 4.8   7.2 / 4.8
+   *   on               4.6 / 4.3    4.3 / 4.7
+   * (Filtering the paving over its whole footprint instead: 5.9 / 2.3, 4.7 / 3.9, the detail
+   * gone.) Cost: 0.2–0.6 ms a frame at 1632 × 918 (the pass and a depth resolve).
+   */
+  foot: { near: 6, far: 14, from: 0.004, to: 0.02, capFrom: 0.18, capTo: 0.3 },
   /** Frames without it after which its two history buffers are freed. */
   idleFrames: 600,
+};
+
+/**
+ * The steadying pass's settings for a frame: the camera the scene was drawn with, the old
+ * frame's share, and (on foot) where it applies and which jumps it holds.
+ */
+export type SteadyArgs = {
+  camera: THREE.PerspectiveCamera;
+  strength: number;
+  near?: number;
+  far?: number;
+  capFrom?: number;
+  capTo?: number;
+  /** What counts as a jump (STEADY.from / to unless given). */
+  from?: number;
+  to?: number;
 };
 
 /** The player's or tester's switch: localStorage "br-steady" = "off" (never throws). */
@@ -159,10 +202,14 @@ export type SceneTarget = {
    * was just drawn with. It takes effect from the second frame it is asked for (the first
    * turns the depth resolve on).
    */
-  present: (
-    sharpen?: number,
-    steady?: { camera: THREE.PerspectiveCamera; strength: number } | null,
-  ) => void;
+  present: (sharpen?: number, steady?: SteadyArgs | null, overlay?: boolean) => void;
+  /**
+   * Blend the scene just drawn with the frame before (STEADY), before anything else is drawn
+   * into the target (the weapon pass clears the depth this reads). `present` then shows the
+   * blend, with `overlay` true when a pass drew over the scene since (the weapon: laid over the
+   * blend wherever it left a depth).
+   */
+  steady: (steady: SteadyArgs | null) => void;
   /** Whether the last frame presented was blended with the one before (tools, tests). */
   steadied: () => boolean;
   dispose: () => void;
@@ -233,6 +280,14 @@ export function createSceneTarget(
     defines: fxaa ? { FXAA: "" } : {},
     uniforms: {
       tScene: { value: target.texture },
+      // The weapon over the steadied scene: the target as drawn, where the weapon pass left a
+      // depth (it clears the depth to 0, reversed).
+      tOverlay: { value: target.texture },
+      tOverlayDepth: { value: depth },
+      // The scene as it was before the weapon (squashed: the history's second picture). Where
+      // the target differs from it the weapon pass drew too (its flash writes no depth).
+      tUnder: { value: null as THREE.Texture | null },
+      uOverlay: { value: 0 },
       uTexel: { value: new THREE.Vector2(1, 1) },
       uSharpen: { value: 0 },
     },
@@ -244,13 +299,25 @@ export function createSceneTarget(
       }`,
     fragmentShader: /* glsl */ `
       uniform sampler2D tScene;
+      uniform sampler2D tOverlay;
+      uniform sampler2D tOverlayDepth;
+      uniform sampler2D tUnder;
+      uniform float uOverlay;
+      bool overlaid(vec2 uv) {
+        if (texture2D(tOverlayDepth, uv).r > 0.0) return true;
+        vec3 p = max(texture2D(tOverlay, uv).rgb, 0.0);
+        vec3 q = texture2D(tUnder, uv).rgb;
+        q = q / max(1e-4, 1.0 - max(q.r, max(q.g, q.b)));
+        vec3 d = abs(p - q);
+        return max(d.r, max(d.g, d.b)) > 0.004 + 0.01 * max(p.r, max(p.g, p.b));
+      }
       uniform vec2 uTexel;
       uniform float uSharpen;
       varying vec2 vUv;
       ${SHARPEN_WEIGHT_GLSL}
       // A pixel as the canvas shows it: tone-mapped and encoded (sharpen.ts works on that).
       vec3 shown(vec2 uv) {
-        vec4 c = texture2D(tScene, uv);
+        vec4 c = uOverlay > 0.5 && overlaid(uv) ? texture2D(tOverlay, uv) : texture2D(tScene, uv);
         #ifdef TONE_MAPPING
           c.rgb = toneMapping(c.rgb);
         #endif
@@ -305,6 +372,10 @@ export function createSceneTarget(
       // 1 / projection[0][0], 1 / projection[1][1], near, far.
       uLens: { value: new THREE.Vector4(1, 1, 0.1, 14000) },
       uStrength: { value: 0 },
+      // Blended from x to y metres; jumps from z to w are shown as drawn (w ≤ z: no cap).
+      uRange: { value: new THREE.Vector4(STEADY.near, STEADY.far, 0, 0) },
+      // A jump: from x to y.
+      uJump: { value: new THREE.Vector2(STEADY.from, STEADY.to) },
     },
     vertexShader: /* glsl */ `
       varying vec2 vUv;
@@ -324,12 +395,10 @@ export function createSceneTarget(
       uniform mat4 uReproject;
       uniform vec4 uLens;
       uniform float uStrength;
+      uniform vec4 uRange;
+      uniform vec2 uJump;
       varying vec2 vUv;
-      #define STEADY_FROM ${STEADY.from.toFixed(3)}
-      #define STEADY_TO ${STEADY.to.toFixed(3)}
       #define STEADY_DEPTH ${STEADY.depth.toFixed(3)}
-      #define STEADY_NEAR ${STEADY.near.toFixed(1)}
-      #define STEADY_FAR ${STEADY.far.toFixed(1)}
       // Half-float light into a range a clamp and a mix behave in (a sun glint does not own
       // its neighbourhood), and back.
       vec3 squash(vec3 c) { return c / (1.0 + max(c.r, max(c.g, c.b))); }
@@ -401,8 +470,11 @@ export function createSceneTarget(
           // sharp as it was; one that jumped is held near where it was.
           // (Measured as the eye sees it: a step from dark green to black is a jump.)
           vec3 gap = abs(sqrt(c) - sqrt(was0));
-          float jump = smoothstep(STEADY_FROM, STEADY_TO, max(gap.r, max(gap.g, gap.b)));
-          c = mix(c, h, uStrength * jump * smoothstep(STEADY_NEAR, STEADY_FAR, dist));
+          float g = max(gap.r, max(gap.g, gap.b));
+          float jump = smoothstep(uJump.x, uJump.y, g);
+          // (On foot: only the shimmer; a tracer, a flash, a player stepping out as drawn.)
+          if (uRange.w > uRange.z) jump *= 1.0 - smoothstep(uRange.z, uRange.w, g);
+          c = mix(c, h, uStrength * jump * smoothstep(uRange.x, uRange.y, dist));
         }
         steadyOut = vec4(swell(c), dist);
       }`,
@@ -463,48 +535,84 @@ export function createSceneTarget(
   resize();
   renderer.setRenderTarget(target);
 
+  /** This frame was blended already (`steady`), whether it was blended, and asked for. */
+  let blended = false,
+    lastBlend = false,
+    wanted = false;
+  const blend = (steady: SteadyArgs | null) => {
+    blended = true;
+    const want = !!steady && steady.strength > 0;
+    wanted = want;
+    // The depth this frame was drawn with is in the texture only if the resolve was on
+    // while it was drawn: asked for at the end of the frame before (or never needed: a
+    // target without samples draws into the texture itself).
+    const depthHere = target.samples === 0 || target.resolveDepthBuffer;
+    lastSteadied = false;
+    lastBlend = false;
+    if (want && depthHere) {
+      const camera = steady!.camera;
+      history ??= [
+        historyTarget(target.width, target.height),
+        historyTarget(target.width, target.height),
+      ];
+      const to = 1 - held;
+      const u = steadyMaterial.uniforms;
+      u["tHistory"]!.value = history[held]!.textures[0];
+      u["tDrawn"]!.value = history[held]!.textures[1];
+      // previous clip ← world ← this frame's view space, worked out in doubles: the camera's
+      // own place (kilometres from the origin) cancels before the GPU sees a number.
+      reproject.multiplyMatrices(previous, camera.matrixWorld);
+      u["uReproject"]!.value.copy(reproject);
+      const p = camera.projectionMatrix.elements;
+      u["uLens"]!.value.set(1 / p[0]!, 1 / p[5]!, camera.near, camera.far);
+      u["uStrength"]!.value = remembered ? Math.min(0.98, steady!.strength) : 0;
+      const capFrom = steady!.capFrom ?? 0,
+        capTo = steady!.capTo ?? 0;
+      u["uRange"]!.value.set(
+        steady!.near ?? STEADY.near,
+        steady!.far ?? STEADY.far,
+        Number.isFinite(capFrom) ? capFrom : 0,
+        Number.isFinite(capTo) ? capTo : 0,
+      );
+      u["uJump"]!.value.set(steady!.from ?? STEADY.from, steady!.to ?? STEADY.to);
+      renderer.setRenderTarget(history[to]!);
+      renderer.render(steadyScene, presentCamera);
+      renderer.setRenderTarget(target);
+      lastSteadied = remembered;
+      held = to;
+      remembered = true;
+      previous.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      idle = 0;
+      lastBlend = true;
+    } else {
+      remembered = false;
+      if (history && ++idle > STEADY.idleFrames) freeHistory();
+    }
+  };
+
   return {
     resize,
-    present(sharpen = 0, steady = null) {
+    steady(steady) {
+      blend(steady);
+    },
+    present(sharpen = 0, steady = null, overlay = false) {
       material.uniforms["uSharpen"]!.value = sharpen;
-      const want = !!steady && steady.strength > 0;
-      // The depth this frame was drawn with is in the texture only if the resolve was on
-      // while it was drawn: asked for at the end of the frame before (or never needed: a
-      // target without samples draws into the texture itself).
-      const depthHere = target.samples === 0 || target.resolveDepthBuffer;
-      lastSteadied = false;
-      if (want && depthHere) {
-        const camera = steady!.camera;
-        history ??= [
-          historyTarget(target.width, target.height),
-          historyTarget(target.width, target.height),
-        ];
-        const to = 1 - held;
-        const u = steadyMaterial.uniforms;
-        u["tHistory"]!.value = history[held]!.textures[0];
-        u["tDrawn"]!.value = history[held]!.textures[1];
-        // previous clip ← world ← this frame's view space, worked out in doubles: the camera's
-        // own place (kilometres from the origin) cancels before the GPU sees a number.
-        reproject.multiplyMatrices(previous, camera.matrixWorld);
-        u["uReproject"]!.value.copy(reproject);
-        const p = camera.projectionMatrix.elements;
-        u["uLens"]!.value.set(1 / p[0]!, 1 / p[5]!, camera.near, camera.far);
-        u["uStrength"]!.value = remembered ? Math.min(0.98, steady!.strength) : 0;
-        renderer.setRenderTarget(history[to]!);
-        renderer.render(steadyScene, presentCamera);
-        lastSteadied = remembered;
-        held = to;
-        remembered = true;
-        previous.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
-        material.uniforms["tScene"]!.value = history[held]!.texture;
-        idle = 0;
+      // Not blended before the weapon this frame: blended now (nothing drawn over the scene).
+      if (!blended) {
+        blend(steady);
+        overlay = false;
+      }
+      blended = false;
+      if (lastBlend) {
+        material.uniforms["tScene"]!.value = history![held]!.texture;
+        material.uniforms["tUnder"]!.value = history![held]!.textures[1];
+        material.uniforms["uOverlay"]!.value = overlay ? 1 : 0;
       } else {
-        remembered = false;
         material.uniforms["tScene"]!.value = target.texture;
-        if (history && ++idle > STEADY.idleFrames) freeHistory();
+        material.uniforms["uOverlay"]!.value = 0;
       }
       // For the next frame's scene pass.
-      if (target.samples > 0) target.resolveDepthBuffer = want;
+      if (target.samples > 0) target.resolveDepthBuffer = wanted;
       renderer.setRenderTarget(null);
       renderer.render(presentScene, presentCamera);
       renderer.setRenderTarget(target);

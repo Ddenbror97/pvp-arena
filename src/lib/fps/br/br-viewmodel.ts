@@ -487,8 +487,9 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       nadeHands.update(dt / 1000, view);
       handsUp = view.kind !== "hidden";
     },
+    /** Draw the gun over the scene; true when it was drawn (its pass clears the depth). */
     render(camera: THREE.PerspectiveCamera, hidden: boolean) {
-      if (hidden || (!current && !handsUp && !knifeUp)) return;
+      if (hidden || (!current && !handsUp && !knifeUp)) return false;
       if (viewCamera.aspect !== camera.aspect) {
         viewCamera.aspect = camera.aspect;
         viewCamera.updateProjectionMatrix();
@@ -500,6 +501,7 @@ export function createBrViewmodel(renderer: THREE.WebGLRenderer, loader: GLTFLoa
       renderer.clearDepth();
       renderer.render(viewScene, viewCamera);
       renderer.autoClear = true;
+      return true;
     },
     dispose() {
       for (const v of Object.values(views)) v.dispose();
