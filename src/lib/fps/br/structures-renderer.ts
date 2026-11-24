@@ -11,7 +11,7 @@ import {
   inSpillway,
 } from "./bridges";
 import type { Heightfield } from "./heightfield";
-import { GROUND, type GroundLayer } from "./terrain";
+import { GROUND, GROUND_TILE_GLSL, groundTileUniforms, type GroundLayer } from "./terrain";
 import { lotHeight } from "./layout";
 import { drawnGround, LOT_LIFT, pavedHeight, RUNWAY_LIFT } from "./paved";
 import { createRoadGrade, ROAD_GRADE } from "./road-grade";
@@ -87,7 +87,7 @@ type RoadUniforms = {
   uScale: { value: number };
   uTint: { value: THREE.Vector3 };
   uFar: { value: THREE.Vector3 };
-};
+} & ReturnType<typeof groundTileUniforms>;
 
 /** Box from 8 corners into position/colour arrays (flat-shaded: non-indexed with normals). */
 function pushQuad(
@@ -364,7 +364,7 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield, ground?: RoadUniforms) {
           `#include <color_fragment>\n${roadGrainGlsl("smoothstep(0.7, 0.9, abs(vUp))")}`,
         );
     };
-    material.customProgramCacheKey = () => "br-bridges-v2";
+    material.customProgramCacheKey = () => "br-bridges-v3";
   }
   const mesh = new THREE.Mesh(g, material);
   mesh.name = "br-bridges";
@@ -775,6 +775,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
     uScale: { value: 0.2 },
     uTint: { value: new THREE.Vector3(1, 1, 1) },
     uFar: { value: new THREE.Vector3(0.25, 0.25, 0.25) },
+    ...groundTileUniforms(),
   };
   uniforms.uGroundA.value.needsUpdate = true;
   material.userData["ground"] = uniforms;
@@ -823,7 +824,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
         "#include <normal_fragment_begin>\nnormal = normalize(vNormal);\nnonPerturbedNormal = normal;",
       );
   };
-  material.customProgramCacheKey = () => "br-roads-v9";
+  material.customProgramCacheKey = () => "br-roads-v10";
   // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
   biasLogDepth(material, LOG_BIAS.road);
   const mesh = new THREE.Mesh(g, material);
@@ -877,7 +878,8 @@ const ROAD_GRAIN_UNIFORMS = `precision highp sampler2DArray;
         uniform sampler2DArray uGroundA;
         uniform float uOn, uRange, uLayer, uScale;
         uniform vec3 uTint, uFar;
-        varying vec3 vRoadWorld;`;
+        varying vec3 vRoadWorld;
+        ${GROUND_TILE_GLSL}`;
 /**
  * The asphalt grain over a paved surface's colour (after <color_fragment>): the terrain's
  * asphalt near the camera, enlarged copies of it beyond. `weight`: a GLSL expression (0–1) for
@@ -893,8 +895,8 @@ function roadGrainGlsl(weight: string) {
           vec2 rdx = dFdx(vRoadWorld.xz) * uScale, rdy = dFdy(vRoadWorld.xz) * uScale;
           float dark = 1.0 - smoothstep(0.25, 0.45, dot(diffuseColor.rgb, vec3(0.3333)));
           if (near > 0.0) {
-            vec3 t = textureGrad(uGroundA, vec3(vRoadWorld.xz * uScale, uLayer), rdx, rdy).rgb;
-            t = t * t * uTint / max(uFar, vec3(1e-3));
+            vec3 t = groundTile(uGroundA, vec3(vRoadWorld.xz * uScale, uLayer), rdx, rdy, uScale, true, 0.0);
+            t = t * uTint / max(uFar, vec3(1e-3));
             diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * t, near * mix(0.3, 1.0, dark));
           }
           // Beyond that, and from the parachute (owner, 2026-11-11: roads must be crisp from
