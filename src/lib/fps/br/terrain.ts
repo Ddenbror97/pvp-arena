@@ -201,6 +201,26 @@ export const GROUND = {
   reachEnd: 280,
 };
 /**
+ * Paving on the terrain (owner, 2026-11-24, the Island Airfield's apron from eye height: "it
+ * looks better but can be improved", after the roads (structures-renderer.ts ROAD_GRAIN); "when
+ * i jump the flicker/blurr is stopping": higher up, the footprint along the view is shorter and
+ * the reach shortens it less). Asphalt, concrete, gravel and tiles took GROUND.reach and the
+ * half-level sharpening (`sharpen`) until their footprint passed `grazeFrom`–`grazeTo`, and the
+ * mid grain's enlarged samples, whose footprints are small in their own scale, kept both all
+ * the way out. Now paving is filtered over its whole footprint at its exact level, and its
+ * deviation from the layer's mean is raised by up to `gain` as the footprint grows from
+ * `gainFrom` to `gainTo` metres (a function of the filtered colour: nothing new to crawl).
+ * Measured on the RTX 2050 (gpu-bench, walking 11 cm a frame across the apron at eye height;
+ * change between frames after following the ground's motion / detail between neighbours):
+ *   distance (m)        12–20       20–35       35–55
+ *   before              11.4 / 4.8   7.2 / 4.8   3.9 / 5.5
+ *   whole footprint      4.8 / 2.0   3.7 / 3.5   3.2 / 5.3
+ *   + gain 1.0           5.9 / 2.3   4.7 / 3.9   3.4 / 5.5
+ * Grass, soil, sand and the rest keep the reach.
+ */
+export const PAVED = { gain: 1.0, gainFrom: 0.04, gainTo: 0.4 };
+/**
+ * The most taps a stretched footprint takes/**
  * The most taps a stretched footprint takes (shared, so the GPU bench can set it): GROUND.stretch
  * on the standard tier (16 × anisotropy), 4 on the balanced tier (integrated graphics, not
  * measured), none below. Set when the terrain is made (the tier's anisotropy is known then).
@@ -671,14 +691,19 @@ export function createTerrain(
         vec3 groundAlbedo(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
           vec3 uvw = vec3(p * k, float(layer));
-          // The airfield apron blends concrete and gravel; the runway also uses tiles.
-          // Filter each of those layers over the whole pixel once the grain gets too small.
-          // The larger world-space samples in the mid field still supply visible detail.
+          // Paving (asphalt, concrete, gravel, tiles: the aprons, lots, yards and the runway):
+          // filtered over the whole footprint, at its exact level, and its contrast raised as
+          // the footprint grows (PAVED). The reach's crawl showed on it as nowhere else.
           bool paved = layer == ${L("asphalt")} || layer == ${L("concrete")} ||
                        layer == ${L("gravel")} || layer == ${L("tiles")};
-          float grazing = paved ? smoothstep(${GROUND.grazeFrom}, ${GROUND.grazeTo}, max(length(px), length(py))) : 0.0;
-          k *= mix(uGroundSharpen, 1.0, grazing);
-          return groundTile(uGroundA, uvw, px * k, py * k, k, uGroundLite < 0.5, max(brExact, grazing)) * uLayerTint[layer];
+          if (!paved) k *= uGroundSharpen;
+          vec3 gc = groundTile(uGroundA, uvw, px * k, py * k, k, uGroundLite < 0.5, paved ? 1.0 : brExact) * uLayerTint[layer];
+          if (paved) {
+            vec3 fr = max(uLayerFar[layer], vec3(1e-3));
+            float fp = max(length(px), length(py));
+            gc = fr * clamp(vec3(1.0) + (gc / fr - 1.0) * (1.0 + ${PAVED.gain.toFixed(2)} * smoothstep(${PAVED.gainFrom.toFixed(2)}, ${PAVED.gainTo.toFixed(2)}, fp)), 0.4, 1.8);
+          }
+          return gc;
         }
         vec3 groundNormal(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
@@ -1067,7 +1092,7 @@ export function createTerrain(
         nonPerturbedNormal = normal;`,
       );
   };
-  material.customProgramCacheKey = () => "br-terrain-v9";
+  material.customProgramCacheKey = () => "br-terrain-v10";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";
