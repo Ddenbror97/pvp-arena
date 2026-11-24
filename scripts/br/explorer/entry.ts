@@ -78,8 +78,17 @@ const renderer = new THREE.WebGLRenderer({
   stencil: true,
 });
 setTextureQuality(renderer, tier);
+// The low tier's anti-aliasing as the game picks it (br-arena.ts lowTierAa): FXAA in the
+// present pass, or ?aa=msaa2 / msaa4 / off for comparisons.
+const aaParam = new URLSearchParams(location.search).get("aa");
+const lowAa =
+  aaParam === "msaa2" || aaParam === "msaa4" || aaParam === "off" ? aaParam : ("fxaa" as const);
 const sceneTarget = renderer.capabilities.reversedDepthBuffer
-  ? createSceneTarget(renderer, tier === "low" ? 0 : 4)
+  ? tier === "low"
+    ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa === "msaa4" ? 4 : 0, {
+        fxaa: lowAa === "fxaa",
+      })
+    : createSceneTarget(renderer, 4)
   : null;
 // As the game (br-arena): sharpened unless ?sharpen=off, on the low tier, or with a scene target.
 const sharpen =

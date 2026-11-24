@@ -680,7 +680,9 @@ export function createBrArena(
   // The low tier's anti-aliasing (lowTierAa): FXAA in the present pass by default.
   const lowAa = tier.tier === "low" ? lowTierAa() : null;
   const sceneTarget = renderer.capabilities.reversedDepthBuffer
-    ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa ? 0 : 4, { fxaa: lowAa === "fxaa" })
+    ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa && lowAa !== "msaa4" ? 0 : 4, {
+        fxaa: lowAa === "fxaa",
+      })
     : null;
   // Sharpening over the finished scene (sharpen.ts). Not on the low tier, where a fullscreen
   // pass is not free, and not with the offscreen scene target (its own present pass).
