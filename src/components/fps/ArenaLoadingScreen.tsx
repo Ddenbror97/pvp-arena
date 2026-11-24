@@ -8,6 +8,7 @@ export function ArenaLoadingScreen({
   modeName,
   image = STRIKE_LOADING_IMAGE,
   onRetry,
+  retryLabel = "Try again",
 }: {
   progress: number;
   label: string;
@@ -19,6 +20,8 @@ export function ArenaLoadingScreen({
   image?: string | null;
   /** Shown with the error: try again (the server was unreachable). */
   onRetry?: (() => void) | undefined;
+  /** The retry button's words. */
+  retryLabel?: string | undefined;
 }) {
   const percent = Math.max(0, Math.min(100, progress));
   return (
@@ -71,7 +74,7 @@ export function ArenaLoadingScreen({
         )}
         {error && onRetry && (
           <button type="button" className="duel-loading-retry" onClick={onRetry}>
-            Try again
+            {retryLabel}
           </button>
         )}
       </div>

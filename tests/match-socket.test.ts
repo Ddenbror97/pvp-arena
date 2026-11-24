@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   openMatchSocket,
   REFUSED_LIMIT,
+  REPLACED_CLOSE,
   type MatchSocketOptions,
 } from "../src/lib/fps/match-socket";
 
@@ -191,5 +192,34 @@ describe("match socket", () => {
     again!();
     await tick();
     expect(FakeSocket.all).toHaveLength(REFUSED_LIMIT);
+  });
+  it("a seat taken by another connection of the account stops reconnecting until `again`", async () => {
+    // Two pages that each reconnected when replaced took the seat from each other every few
+    // seconds, for good (owner, 2026-11-24: "really big lagg in the battle royale").
+    let again: (() => void) | null = null;
+    const closed = vi.fn(() => 500);
+    const c = connection({ replaced: (a) => void (again = a), closed });
+    await tick();
+    const ws = FakeSocket.all[0]!;
+    ws.open();
+    ws.drop(REPLACED_CLOSE, "Replaced by a new connection");
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(FakeSocket.all).toHaveLength(1);
+    expect(closed).not.toHaveBeenCalled();
+    expect(again).not.toBeNull();
+    // Play here: one new connection, which takes the seat back.
+    again!();
+    await tick();
+    expect(FakeSocket.all).toHaveLength(2);
+    c.link.close("left");
+  });
+
+  it("without a `replaced` hook the close goes to `closed` as before (1v1 handles it there)", async () => {
+    const closed = vi.fn(() => null);
+    connection({ closed });
+    await tick();
+    FakeSocket.all[0]!.open();
+    FakeSocket.all[0]!.drop(REPLACED_CLOSE, "Replaced by a new connection");
+    expect(closed).toHaveBeenCalledTimes(1);
   });
 });

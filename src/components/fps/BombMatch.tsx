@@ -108,6 +108,7 @@ export function BombMatch() {
     [error, setError] = useState<string | null>(null),
     /** Set when the server refused every connection: the loading screen's "Try again". */
     [retry, setRetry] = useState<(() => void) | null>(null),
+    [retryLabel, setRetryLabel] = useState<string | undefined>(undefined),
     [arenaReady, setArenaReady] = useState(false),
     [locked, setLocked] = useState(false),
     [muted, setMuted] = useState(false),
@@ -477,7 +478,27 @@ export function BombMatch() {
         setError("The Bomb Defusal server is unavailable right now. Retrying…");
         return Math.min(8000, 1000 * attempt);
       },
+      replaced(again) {
+        // Open on this account somewhere else, which has the seat now: this page stops instead
+        // of taking it back every few seconds (match-socket.ts REPLACED_CLOSE).
+        setKitPending(false);
+        arena.current?.suspend(true);
+        setLocked(false);
+        if (document.pointerLockElement) document.exitPointerLock();
+        setConnection("Opened in another tab");
+        setError(
+          "Defuse the Bomb is open on this account in another tab or window. Close it there, or play here instead.",
+        );
+        setRetryLabel("Play here");
+        setRetry(() => () => {
+          setError(null);
+          setRetry(null);
+          setRetryLabel(undefined);
+          again();
+        });
+      },
       unreachable(again) {
+        setRetryLabel(undefined);
         setConnection("Server unreachable");
         setError("The Bomb Defusal server is temporarily unavailable. Try again in a moment.");
         setRetry(() => () => {
@@ -788,6 +809,7 @@ export function BombMatch() {
           label={view ? progress.label : `${progress.label} · ${connection}`}
           error={error}
           onRetry={retry ?? undefined}
+          retryLabel={retryLabel}
           mapName={mapId ? bombMap(mapId).name : "Choosing the map"}
           modeName="Defuse the bomb"
           image={mapId ? BOMB_LOADING_IMAGES[mapId] : BOMB_LOADING_IMAGE}
@@ -1026,6 +1048,14 @@ export function BombMatch() {
       {error && !showLoading && (
         <p className="bomb-error" role="alert">
           {error}
+          {retry && retryLabel && (
+            <>
+              {" "}
+              <button type="button" className="duel-loading-retry" onClick={retry}>
+                {retryLabel}
+              </button>
+            </>
+          )}
         </p>
       )}
     </div>
