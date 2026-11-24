@@ -30,6 +30,21 @@ export function modelFile(file) {
   return fs.existsSync(stored) ? stored : published;
 }
 
+/**
+ * The manifests a model edit updates, in this order: the game's live one (world.ts
+ * WORLD_ASSETS.models, read from the source so a new revision needs no edit here) and the
+ * tools' base one (models.json). Tools used to name the live revision ("models.locations-v1
+ * .json") and broke when a later revision retired it (final audit 2026-11-24).
+ */
+export function editedManifests() {
+  const world = fs.readFileSync(path.join(REPO, "src/lib/fps/br/world.ts"), "utf8");
+  const live = /\bmodels:\s*"\/fps\/br\/models\/(models\.[\w.-]+\.json)"/.exec(world)?.[1];
+  if (!live) throw new Error("world.ts: WORLD_ASSETS.models not found");
+  if (!fs.existsSync(path.join(PUBLISHED, "fps/br/models", live)))
+    throw new Error(`world.ts names ${live}, which is not in public/fps/br/models`);
+  return [live, "models.json"];
+}
+
 /** For the review tools' servers: the store's copy of a URL the public folder does not have. */
 export function storedFile(url) {
   if (!url.startsWith("/fps/br/models/") || fs.existsSync(path.join(PUBLISHED, url))) return null;

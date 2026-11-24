@@ -19,7 +19,7 @@ import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { dequantize, meshopt, prune, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
-import { modelFile } from "./model-files.mjs";
+import { editedManifests, modelFile } from "./model-files.mjs";
 
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO()
@@ -29,7 +29,7 @@ const io = new NodeIO()
 const TAG = process.env.TAG ?? "glass-v1";
 const dry = process.argv.includes("--dry");
 const dir = "public/fps/br/models";
-const MANIFESTS = process.env.MANIFESTS?.split(",") ?? ["models.locations-v1.json", "models.json"];
+const MANIFESTS = process.env.MANIFESTS?.split(",") ?? editedManifests();
 /** Same plane: within this along the normal (m; stored positions step about 1 mm here). */
 const PLANE = 0.004;
 

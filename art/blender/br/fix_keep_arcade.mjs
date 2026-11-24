@@ -27,7 +27,7 @@ import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { dequantize, meshopt, prune, unweld, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
-import { modelFile } from "./model-files.mjs";
+import { editedManifests, modelFile } from "./model-files.mjs";
 
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO()
@@ -37,7 +37,7 @@ const dry = process.argv.includes("--dry");
 const ID = "bw-keep";
 const TAG = "arcade-v1";
 const dir = "public/fps/br/models";
-const MANIFESTS = ["models.locations-v1.json", "models.json"];
+const MANIFESTS = editedManifests();
 
 // build_blackwater.mjs's numbers.
 const HL = 27.5,
