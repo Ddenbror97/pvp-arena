@@ -152,7 +152,10 @@ export function BrMatch() {
     setError(null);
     setGraphics(null);
     setProgress({ value: 0, label: "Loading Project Island" });
-    void loadArena()
+    // A page from before a deploy reloads into the deployed build before it spends tens of
+    // seconds on the island (the admission checks again; a match server may have changed too).
+    void reloadIfStale()
+      .then((reloading) => (reloading ? new Promise<never>(() => {}) : loadArena()))
       .then(({ createBrArena }) => {
         if (stopped || !host.current) return;
         const a = createBrArena(host.current, location.origin + "/", (value, label) => {
