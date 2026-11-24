@@ -94,9 +94,14 @@ export function createOperatorFigure(renderer: THREE.WebGLRenderer, character: T
     prepare() {
       return draw(true) ?? Promise.resolve();
     },
-    /** Render the character as it is posed now; a PNG data URL, or null if unavailable. */
-    render(): string | null {
-      if (!ctx || !image) return null;
+    /**
+     * Render the character as it is posed now; a PNG object URL, or null if unavailable. The
+     * picture is encoded off the frame (toBlob): the synchronous PNG encoding of toDataURL was
+     * part of the inventory's opening hitch (performance audit 2026-11-24). The caller revokes
+     * the URL it replaces.
+     */
+    render(): Promise<string | null> {
+      if (!ctx || !image) return Promise.resolve(null);
       draw(false);
       renderer.readRenderTargetPixels(target, 0, 0, FIGURE_SIZE.w, FIGURE_SIZE.h, pixels);
       const out = image.data,
@@ -116,7 +121,9 @@ export function createOperatorFigure(renderer: THREE.WebGLRenderer, character: T
           out[o + 3] = Math.round(Math.min(1, a) * 255);
         }
       ctx.putImageData(image, 0, 0);
-      return canvas.toDataURL("image/png");
+      return new Promise((resolve) =>
+        canvas.toBlob((blob) => resolve(blob ? URL.createObjectURL(blob) : null), "image/png"),
+      );
     },
     dispose() {
       scene.remove(character);
