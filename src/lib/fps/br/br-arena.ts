@@ -10,7 +10,7 @@ import { AIRDROP } from "./airdrops";
 import { createAtmosphere } from "./atmosphere";
 import { sunLook } from "./sun";
 import { GRASS_RANGE } from "./grass";
-import { setTextureQuality, setWorldMultisampled } from "./texture-quality";
+import { setTextureQuality } from "./texture-quality";
 import {
   dedicatedGpu,
   detectBrTier,
@@ -680,12 +680,9 @@ export function createBrArena(
   setTextureQuality(renderer, tier.tier);
   // The low tier's anti-aliasing (lowTierAa): FXAA in the present pass by default.
   const lowAa = tier.tier === "low" ? lowTierAa() : null;
-  const samples = lowAa === "msaa2" ? 2 : lowAa ? 0 : 4;
   const sceneTarget = renderer.capabilities.reversedDepthBuffer
-    ? createSceneTarget(renderer, samples, { fxaa: lowAa === "fxaa" })
+    ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa ? 0 : 4, { fxaa: lowAa === "fxaa" })
     : null;
-  // (Cut-out edges, the grass's, are softened by alpha-to-coverage only with samples.)
-  setWorldMultisampled(sceneTarget ? samples > 0 : tier.tier !== "low");
   // Sharpening over the finished scene (sharpen.ts). Not on the low tier, where a fullscreen
   // pass is not free, and not with the offscreen scene target (its own present pass).
   const sharpen =

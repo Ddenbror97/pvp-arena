@@ -11,7 +11,6 @@ import {
 import type { BrTier } from "./quality-tier";
 import { markFoliage } from "./sharpen";
 import { sunLook } from "./sun";
-import { worldMultisampled } from "./texture-quality";
 import { WORLD_HALF, WORLD_SIZE } from "./world";
 
 /**
@@ -208,18 +207,6 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
     // Soft blade edges under MSAA (the alpha test alone with none).
     alphaToCoverage: true,
   });
-  // Without MSAA (the low tier) the alpha test alone left hard blades that crawled and blinked
-  // in front of you as you moved (owner, Intel UHD, 2026-11-24). There the blades are blended
-  // instead, their alpha sharpened to about a pixel's width at the cut (as alpha-to-coverage
-  // does with samples), still writing depth: inside a blade it is opaque, as before.
-  const soft = !worldMultisampled();
-  if (soft) {
-    material.alphaTest = 0;
-    material.alphaToCoverage = false;
-    material.transparent = true;
-    material.depthWrite = true;
-    material.defines = { ...material.defines, GRASS_SOFT: "" };
-  }
   // Not sharpened: that hardens the blades' soft edges again (sharpen.ts markFoliage).
   markFoliage(material);
   material.onBeforeCompile = (shader) => {
@@ -312,11 +299,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         }
         col *= mix(0.5, 1.0, smoothstep(0.0, 0.75, vH));
         col *= 1.0 + 0.09 * vGust;
-        diffuseColor *= vec4(col, blade.a);
-        #ifdef GRASS_SOFT
-          diffuseColor.a = clamp((diffuseColor.a - 0.5) / max(fwidth(diffuseColor.a), 1e-4) + 0.5, 0.0, 1.0);
-          if (diffuseColor.a < 0.01) discard;
-        #endif`,
+        diffuseColor *= vec4(col, blade.a);`,
       )
       // Both faces lit alike (DoubleSide would turn the bent-up normal down on the back face).
       .replace(
@@ -331,7 +314,7 @@ export function createGrass(world: GrassWorld, kit: GrassKit, range: number): Gr
         #include <opaque_fragment>`,
       );
   };
-  material.customProgramCacheKey = () => (soft ? "br-grass-v1-soft" : "br-grass-v1");
+  material.customProgramCacheKey = () => "br-grass-v1";
 
   // One geometry per clump: its vertices, the height share (for the bend and the shading), and
   // the instance attributes (grown as needed).
