@@ -987,9 +987,7 @@ export function withVehicles(
   generation?: () => number,
 ): StaticWorld {
   const w = Object.create(world) as StaticWorld;
-  // Private scratch for the inherited queries (the world itself may serve other matches).
-  Object.assign(w, { seen: new Uint32Array(world.boxes.length / 6), stamp: 0 });
-  // The base's own methods (it may itself be a view, e.g. withDoors), on this view's scratch.
+  // The base's own methods (it may itself be a view, e.g. withDoors).
   const proto = { blocked: world.blocked, supportAt: world.supportAt, raycast: world.raycast };
   // (Box rejects before any square root: with 130–165 vehicles a match, these run for every
   // movement and shot query.)

@@ -568,8 +568,7 @@ export function rayDoor(
  */
 export function withDoors(world: StaticWorld, set: DoorSet, open: Uint8Array): StaticWorld {
   const w = Object.create(world) as StaticWorld;
-  Object.assign(w, { seen: new Uint32Array(world.boxes.length / 6), stamp: 0 });
-  // The base's own methods (it may itself be a view), called on this view's scratch state.
+  // The base's own methods (it may itself be a view).
   const base = { blocked: world.blocked, raycast: world.raycast };
   w.blocked = function (x, y, z, height, radius) {
     if (base.blocked.call(this, x, y, z, height, radius)) return true;
