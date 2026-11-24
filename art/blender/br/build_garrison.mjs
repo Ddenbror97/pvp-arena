@@ -221,6 +221,8 @@ const B = {
         midShell: true,
         fh,
         base: 0.2,
+        // Proud of the walls (a flush plinth fights the bottom of every wall: owner, 2026-11-24).
+        plinthOut: 0.03,
         wall: SAND,
         trim: OD,
         bands: true,
@@ -307,6 +309,8 @@ const B = {
         fh,
         wt,
         base: 0.2,
+        // Proud of the walls (a flush plinth fights the bottom of every wall: owner, 2026-11-24).
+        plinthOut: 0.03,
         wall: GREY,
         trim: OD,
         floorM: "floor",
@@ -387,6 +391,8 @@ const B = {
         fh,
         wt,
         base: 0.2,
+        // Proud of the walls (a flush plinth fights the bottom of every wall: owner, 2026-11-24).
+        plinthOut: 0.03,
         wall: GREY,
         trim: OD,
         floorM: "floor",
@@ -425,6 +431,8 @@ const B = {
         floors: 3,
         midShell: true,
         fh,
+        // Proud of the walls (a flush plinth fights the bottom of every wall: owner, 2026-11-24).
+        plinthOut: 0.03,
         wall: SAND,
         trim: OD,
         bands: true,
@@ -538,16 +546,19 @@ function wallSection() {
   k.box([-X, 0, -0.9, X, 0.35, 0.9], "yard", GREY.tint, { skip: ["bottom"] });
   // (Its ends drawn: at a gate the wall ends; where two sections meet, the two ends lie
   // face to face inside the wall.)
-  k.box([-X, 0.35, -T / 2, X, H, T / 2], "yard", [0.94, 0.92, 0.86]);
-  // The joints between panels (every 2 m: two panels a section) and the olive band.
+  // The panel in three courses, the olive band the middle one: in the wall's own faces, not a
+  // skin laid 1 cm over them (that skin flickered against the wall from a distance at some
+  // angles: owner, 2026-11-24).
+  k.box([-X, 0.35, -T / 2, X, H - 0.75, T / 2], "yard", [0.94, 0.92, 0.86], { skip: ["top"] });
+  k.box([-X, H - 0.75, -T / 2, X, H - 0.45, T / 2], "paint", OD, { skip: ["top", "bottom"] });
+  k.box([-X, H - 0.45, -T / 2, X, H, T / 2], "yard", [0.94, 0.92, 0.86], { skip: ["bottom"] });
+  // The joints between panels (every 2 m: two panels a section), near only, 3 cm proud.
   for (const x of [-X, 0])
     for (const z of [T / 2, -T / 2])
-      k.box([x - 0.02, 0.35, z - 0.012, x + 0.02, H, z + 0.012], "paint", [0.42, 0.42, 0.4], {
+      k.box([x - 0.025, 0.35, z - 0.03, x + 0.025, H, z + 0.03], "paint", [0.42, 0.42, 0.4], {
         collide: false,
         lod: 0,
       });
-  for (const z of [T / 2, -T / 2])
-    k.box([-X, H - 0.75, z - 0.01, X, H - 0.45, z + 0.01], "paint", OD, { collide: false });
   for (const x of [-1.5, 0.5]) {
     k.beam([x, H, 0], [x, H + 0.55, 0.32], 0.05, 0.05, "paint", STEEL, { lod: 0 });
     k.beam([x, H, 0], [x, H + 0.55, -0.32], 0.05, 0.05, "paint", STEEL, { lod: 0 });

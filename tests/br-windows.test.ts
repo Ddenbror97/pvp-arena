@@ -101,8 +101,14 @@ describe("the buildings' windows are breakable glass", () => {
         const now = manifest.models[id]! as unknown as { lods: Array<{ farFacade?: boolean }> };
         const was = then.models[id]! as unknown as { lods: unknown[] };
         expect(now.lods.length, id).toBe(was.lods.length);
-        const kept = now.lods.map((l) => !l.farFacade);
-        expect(kept[0], id).toBe(true);
+        // (Or one with its last overlapping faces lifted apart, 2026-11-24: the same triangles,
+        // a few moved 1.5 cm along their normal.)
+        const lifted = (l: unknown) => /\.zfix-v21\.lod\d\.glb$/.test((l as { file: string }).file);
+        for (const [i, l] of now.lods.entries())
+          if (lifted(l))
+            expect((l as { tris: number }).tris, id).toBe((was.lods[i] as { tris: number }).tris);
+        const kept = now.lods.map((l) => !l.farFacade && !lifted(l));
+        expect(kept[0] || lifted(now.lods[0]), id).toBe(true);
         expect({ ...now, lods: now.lods.filter((_, i) => kept[i]) }, id).toEqual({
           ...was,
           lods: was.lods.filter((_, i) => kept[i]),
@@ -132,7 +138,10 @@ describe("the buildings' windows are breakable glass", () => {
     ])
       expect(ids).toContain(id);
     for (const id of ids) {
-      expect(manifest.models[id]!.lods[0]!.file).toContain(`.${cuts[id] ?? cut}.lod0.`);
+      // (Or that file with its last overlapping faces lifted apart, zfix-v21.)
+      expect(manifest.models[id]!.lods[0]!.file).toMatch(
+        new RegExp(`\\.(${cuts[id] ?? cut}|zfix-v21)\\.lod0\\.`),
+      );
       for (const [x0, x1, z0, z1, y0, y1] of models[id]!) {
         // Upright slabs, thin one way.
         expect(Math.min(x1! - x0!, z1! - z0!)).toBeLessThanOrEqual(0.081);

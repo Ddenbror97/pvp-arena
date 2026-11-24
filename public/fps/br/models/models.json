@@ -51593,7 +51593,7 @@
    "sourceTris": 9734,
    "lods": [
     {
-     "file": "/fps/br/models/mb-barracks-3s.garrison-v1.lod0.glb",
+     "file": "/fps/br/models/mb-barracks-3s.garrison-v3.lod0.glb",
      "tris": 9734,
      "draws": 6,
      "textureMB": 1,
@@ -51605,7 +51605,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-barracks-3s.garrison-v1.lod1.glb",
+     "file": "/fps/br/models/mb-barracks-3s.garrison-v3.lod1.glb",
      "tris": 688,
      "draws": 5,
      "textureMB": 0.25,
@@ -51617,7 +51617,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-barracks-3s.garrison-v1.lod2.glb",
+     "file": "/fps/br/models/mb-barracks-3s.garrison-v3.lod2.glb",
      "tris": 120,
      "draws": 1,
      "textureMB": 0,
@@ -51648,7 +51648,7 @@
    "sourceTris": 3998,
    "lods": [
     {
-     "file": "/fps/br/models/mb-command-bunker.garrison-v1.lod0.glb",
+     "file": "/fps/br/models/mb-command-bunker.garrison-v3.lod0.glb",
      "tris": 3998,
      "draws": 4,
      "textureMB": 0.75,
@@ -51660,7 +51660,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-command-bunker.garrison-v1.lod1.glb",
+     "file": "/fps/br/models/mb-command-bunker.garrison-v3.lod1.glb",
      "tris": 604,
      "draws": 4,
      "textureMB": 0.19,
@@ -51672,7 +51672,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-command-bunker.garrison-v1.lod2.glb",
+     "file": "/fps/br/models/mb-command-bunker.garrison-v3.lod2.glb",
      "tris": 204,
      "draws": 1,
      "textureMB": 0,
@@ -51703,7 +51703,7 @@
    "sourceTris": 6794,
    "lods": [
     {
-     "file": "/fps/br/models/mb-ops-tower.garrison-v1.lod0.glb",
+     "file": "/fps/br/models/mb-ops-tower.garrison-v3.lod0.glb",
      "tris": 6794,
      "draws": 6,
      "textureMB": 1,
@@ -51715,7 +51715,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-ops-tower.garrison-v1.lod1.glb",
+     "file": "/fps/br/models/mb-ops-tower.garrison-v3.lod1.glb",
      "tris": 856,
      "draws": 4,
      "textureMB": 0.19,
@@ -51727,7 +51727,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-ops-tower.garrison-v1.lod2.glb",
+     "file": "/fps/br/models/mb-ops-tower.garrison-v3.lod2.glb",
      "tris": 156,
      "draws": 1,
      "textureMB": 0,
@@ -51758,7 +51758,7 @@
    "sourceTris": 1418,
    "lods": [
     {
-     "file": "/fps/br/models/mb-pillbox.garrison-v1.lod0.glb",
+     "file": "/fps/br/models/mb-pillbox.garrison-v3.lod0.glb",
      "tris": 1418,
      "draws": 4,
      "textureMB": 0.75,
@@ -51770,7 +51770,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-pillbox.garrison-v1.lod1.glb",
+     "file": "/fps/br/models/mb-pillbox.garrison-v3.lod1.glb",
      "tris": 1040,
      "draws": 4,
      "textureMB": 0.19,
@@ -51782,7 +51782,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-pillbox.garrison-v1.lod2.glb",
+     "file": "/fps/br/models/mb-pillbox.garrison-v3.lod2.glb",
      "tris": 84,
      "draws": 1,
      "textureMB": 0,
@@ -51810,11 +51810,11 @@
     4.2,
     1.8
    ],
-   "sourceTris": 214,
+   "sourceTris": 206,
    "lods": [
     {
-     "file": "/fps/br/models/mb-wall.garrison-v1.lod0.glb",
-     "tris": 214,
+     "file": "/fps/br/models/mb-wall.garrison-v3.lod0.glb",
+     "tris": 206,
      "draws": 2,
      "textureMB": 0.25,
      "kB": 14,
@@ -51825,8 +51825,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-wall.garrison-v1.lod1.glb",
-     "tris": 46,
+     "file": "/fps/br/models/mb-wall.garrison-v3.lod1.glb",
+     "tris": 38,
      "draws": 2,
      "textureMB": 0.06,
      "kB": 7,
@@ -51837,7 +51837,7 @@
      ]
     },
     {
-     "file": "/fps/br/models/mb-wall.garrison-v1.lod2.glb",
+     "file": "/fps/br/models/mb-wall.garrison-v3.lod2.glb",
      "tris": 6,
      "draws": 1,
      "textureMB": 0,
