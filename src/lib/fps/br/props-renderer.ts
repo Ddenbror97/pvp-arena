@@ -140,6 +140,7 @@ export const LOD_HYSTERESIS = 1.08;
  * back within a second or two (2026-11-23). Buildings only (the classes with proxies): what
  * hides or stops a player ends exactly at its ring, the same for everyone.
  */
+export const FAR_HYSTERESIS = 1.04;
 /**
  * The far atlas' mip levels (of the atlas as it was baked) over which a far LOD's wall fades
  * from its texture to its mean colour. The atlas packs a view of one building against views of
@@ -189,7 +190,6 @@ function farFacadeMaterial(
   material.needsUpdate = true;
 }
 
-export const FAR_HYSTERESIS = 1.04;
 /**
  * A LOD's textures go to the GPU while it is still this many times its distance away (owner,
  * 2026-11-11: "when entering some buildings it can lag, when entering rooms/doors"). Everything
@@ -411,9 +411,9 @@ export function createProps(
   manifest: ModelManifest,
   loader: GLTFLoader,
   /**
-   * Load every LOD before `ready` (all models and LODs are ~6 MB): the game does this behind the
-   * loading screen so it can compile every shader up front and never hitch mid-match. Off, nearer
-   * LODs stream in on demand (tools).
+   * Load every LOD before `ready` (2,735 files, 95 MB, as of 2026-11-23): the game does this
+   * behind the loading screen so it can compile every shader up front and never hitch
+   * mid-match. Off, nearer LODs stream in on demand (tools).
    */
   {
     preload = false,

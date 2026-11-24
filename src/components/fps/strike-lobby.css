@@ -898,16 +898,6 @@
   font-size: 12px;
   min-height: 36px;
 }
-.strike-room-skeletons {
-  display: grid;
-  gap: 8px;
-}
-.strike-room-skeleton {
-  height: 76px;
-  border: 1px solid #ffffff0c;
-  border-radius: 10px;
-  background: linear-gradient(100deg, #ffffff04, #ffffff09, #ffffff04);
-}
 .strike-join-dialog .strike-fineprint {
   line-height: 1.6;
 }

@@ -641,8 +641,9 @@ export function createBrArena(
   progress: (value: number, label: string) => void,
 ): BrArenaControls {
   // A 14 km world and a 10 cm near plane exhaust ordinary depth precision at aerial distances.
-  // Logarithmic depth on the canvas by default. Opt-in (scene-target.ts): reversed-Z into a
-  // float depth target, which keeps the GPU's early depth test (it also changes the far haze).
+  // Reversed-Z into a float depth target where the browser supports it (scene-target.ts, the
+  // default since 2026-11-16: it keeps the GPU's early depth test); logarithmic depth on the
+  // canvas elsewhere, or with localStorage "br-depth" = "log".
   const reversedDepth = wantReversedDepth(reversedDepthOptIn());
   // The hardware tier decides what cannot change later: canvas MSAA and texture sizes
   // (quality-tier.ts). Nothing that hides or reveals a player depends on it.
@@ -3983,7 +3984,7 @@ export function createBrArena(
     // The loot inside each landed crate (sent after the drop's fields).
     crateLoot.clear();
     for (const d of latest.drops ?? []) for (let k = 7; k < d.length; k++) crateLoot.add(d[k]!);
-    loot?.hide(new Set(crateLoot));
+    loot?.hide(crateLoot);
     for (const d of latest.drops ?? []) {
       // Announced ahead (the warning): nothing in the sky until the crate's fall starts.
       if (server < d[4]!) continue;

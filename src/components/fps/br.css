@@ -408,11 +408,6 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
-.br-end-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
 /* Driving (LOOT-SPEC §31). */
 /* Driving: a floating speedometer, no panel (shadows keep it legible on any background). */
 .br-speed {

@@ -304,6 +304,3 @@ export function createAircraftRenderer(scene: THREE.Scene, loader: GLTFLoader, b
     },
   };
 }
-
-/** How far the wing's tips are from the CG (m): the chase camera's minimum distance. */
-export const AIRCRAFT_SPAN = AIRCRAFT.span;
