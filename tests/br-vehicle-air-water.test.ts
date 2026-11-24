@@ -68,6 +68,31 @@ describe("vehicles fly off ramps and crests", () => {
       expect(v.y).toBeCloseTo(5, 1);
     });
 
+  // A smooth hill, no ledge anywhere (owner, 2026-11-24: "when driving fast and driving over
+  // a bump or hill the vehicle do not get air born … glued to the ground"): 1.5 m high, 24 m
+  // long (a cosine bump along −z).
+  const hill = world((_x, z) =>
+    z < 0 && z > -24 ? 5 + 0.75 * (1 - Math.cos((2 * Math.PI * -z) / 24)) : 5,
+  );
+  for (const kind of ["sedan", "bike"] as const)
+    it(`${kind}: fast over a smooth hill it leaves the ground; slow it stays down`, () => {
+      const fast = car(kind, 20, 5, 28),
+        slow = car(kind, 20, 5, 9);
+      let fastTop = 0,
+        slowAir = false;
+      for (let i = 0; i < 120; i++) {
+        stepVehicle(hill, dry, fast, gas, TICK);
+        stepVehicle(hill, dry, slow, { forward: 0.3, strafe: 0 }, TICK);
+        if (fast.air) fastTop = Math.max(fastTop, fast.y - ground(fast.z));
+        slowAir ||= !!slow.air;
+      }
+      expect(fastTop).toBeGreaterThan(0.3);
+      expect(slowAir).toBe(false);
+      function ground(z: number) {
+        return z < 0 && z > -24 ? 5 + 0.75 * (1 - Math.cos((2 * Math.PI * -z) / 24)) : 5;
+      }
+    });
+
   it("at a crawl over the same ramp it keeps to the ground (a step down, not a flight)", () => {
     const v = car("sedan", 4, 5, 3);
     let flew = false;
