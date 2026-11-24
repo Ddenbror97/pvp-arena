@@ -124,3 +124,19 @@ describe("BR adaptive resolution", () => {
     });
   });
 });
+
+describe("BrRenderBudget on the low tier (slowMs 30)", () => {
+  it("keeps full resolution at 40–55 fps even when the GPU is most of the frame", () => {
+    const b = new BrRenderBudget({ resolution: (s) => Math.min(1, s + 0.1), slowMs: 30 });
+    for (let i = 0; i < 60 * 60; i++) {
+      const ms = 20 + (i % 7); // 38–50 fps
+      b.update(ms, ms * 0.9);
+    }
+    expect(b.scale).toBe(1);
+  });
+  it("still steps down when frames fall under 30 fps on the GPU", () => {
+    const b = new BrRenderBudget({ resolution: (s) => Math.min(1, s + 0.1), slowMs: 30 });
+    for (let i = 0; i < 30 * 10; i++) b.update(36, 34);
+    expect(b.scale).toBeLessThan(1);
+  });
+});

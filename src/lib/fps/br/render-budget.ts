@@ -56,11 +56,21 @@ const HOLD_MAX = 320;
 
 export const BUDGET_MIN = 0.6;
 
+/**
+ * The low tier's late frame (33 fps). Its native size is already 720p, and below it the picture
+ * of a town or a forest is a few pixels a building or a tree that blink as the camera moves
+ * (owner, Intel UHD, 2026-11-24: at SLOW_MS the budget held it at 896 × 504 almost everywhere,
+ * at 54–99 fps). So on the low tier the resolution gives way only to keep the game above 30 fps.
+ */
+export const LOW_TIER_SLOW_MS = 30;
+
 const round = (s: number) => Math.round(s * 10) / 10;
 
 export type BrBudgetOptions = {
   /** The resolution a budget scale draws at (br-settings.ts brResolutionScale). */
   resolution: (scale: number) => number;
+  /** A frame slower than this is late (ms; default SLOW_MS). */
+  slowMs?: number;
 };
 
 export class BrRenderBudget {
@@ -68,6 +78,9 @@ export class BrRenderBudget {
   /** Why the scale last changed (dev overlay, lab). */
   reason = "";
   private readonly resolution: (scale: number) => number;
+  private readonly slowMs: number;
+  /** Step up only if the next step's predicted GPU time is under this (ms). */
+  private readonly raiseGpuMs: number;
   private window = 0;
   // This window's frames.
   private elapsed = 0;
@@ -93,6 +106,8 @@ export class BrRenderBudget {
 
   constructor(options: BrBudgetOptions) {
     this.resolution = options.resolution;
+    this.slowMs = options.slowMs ?? SLOW_MS;
+    this.raiseGpuMs = this.slowMs * (RAISE_GPU_MS / SLOW_MS);
   }
 
   /**
@@ -108,7 +123,7 @@ export class BrRenderBudget {
     if (ms >= STALL_MS) this.stalls++;
     else {
       this.sumMs += ms;
-      if (ms > SLOW_MS) this.slow++;
+      if (ms > this.slowMs) this.slow++;
     }
     if (gpuMs !== null && Number.isFinite(gpuMs) && gpuMs >= 0) {
       this.sumGpu += gpuMs;
@@ -182,7 +197,7 @@ export class BrRenderBudget {
       const fresh = known && this.window - known.at <= SEEN_WINDOWS ? known.gpu : null;
       const r = this.resolution(next) / Math.max(1e-6, this.resolution(before));
       const predicted = fresh ?? gpu * r * r * RAISE_MARGIN;
-      if (predicted < RAISE_GPU_MS) {
+      if (predicted < this.raiseGpuMs) {
         if (++this.fastWindows >= RAISE_WINDOWS) {
           this.scale = next;
           this.fastWindows = 0;
@@ -196,7 +211,7 @@ export class BrRenderBudget {
     // step's pixels, would leave the same headroom go up as quickly as with it (a display
     // faster than 60 Hz shows it; at 60 Hz vsync hides it and the slow path below decides).
     const r = this.resolution(next) / Math.max(1e-6, this.resolution(before));
-    if (late < 0.02 && meanMs * r * r * RAISE_MARGIN < RAISE_GPU_MS) {
+    if (late < 0.02 && meanMs * r * r * RAISE_MARGIN < this.raiseGpuMs) {
       if (++this.fastWindows >= RAISE_WINDOWS) {
         this.scale = next;
         this.fastWindows = this.heldWindows = 0;

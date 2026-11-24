@@ -175,7 +175,7 @@ import { createSwimSplash } from "./swim-splash";
 
 /** The guns worn on the back (the Desert Eagle has the thigh holster). */
 const CARRY_GUNS = new Set<string>(["ak47", "m4", "awp", "hunting", "mp5", "spas12"]);
-import { BrRenderBudget } from "./render-budget";
+import { BrRenderBudget, LOW_TIER_SLOW_MS } from "./render-budget";
 import { deathPose } from "../death-presentation";
 import { LocalGrenadeHands } from "../grenades/grenade-timeline";
 import { createWeaponKit } from "../weapon";
@@ -691,7 +691,11 @@ export function createBrArena(
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
   // The adaptive resolution (render-budget.ts): lowered only where the GPU is the bottleneck.
-  const budget = new BrRenderBudget({ resolution: brResolutionScale });
+  // The low tier keeps its 720p unless the game would fall under 30 fps (LOW_TIER_SLOW_MS).
+  const budget = new BrRenderBudget({
+    resolution: brResolutionScale,
+    slowMs: tier.tier === "low" ? LOW_TIER_SLOW_MS : undefined,
+  });
   /** When the match left the lobby (frame clock), for the budget's warm-up; null in the lobby. */
   let playingSince: number | null = null;
   /** For the next session's tier: time played, and time at the budget's floor (ms). */
