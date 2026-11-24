@@ -251,11 +251,35 @@ describe("the steadying pass", () => {
     // The last frame counts only where it showed a surface about as far away.
     expect(fragment).toContain("STEADY_DEPTH * was.w");
     // Clamped to the colours round the pixel now, and each frame keeps its distances.
-    expect(fragment).toContain("clamp(squash(before(uv)), lo, hi)");
-    expect(fragment).toContain("gl_FragColor = vec4(swell(c), dist);");
+    expect(fragment).toContain("clamp(squash(before(tHistory, uv)), lo, hi)");
+    expect(fragment).toContain("steadyOut = vec4(swell(c), dist);");
+    // The jump is measured against the frame before as it was drawn, not the blended picture
+    // (a blended storey band locked in until it was wider than the clamp, top first: the
+    // Downtown "waterfall", owner 2026-11-24).
+    expect(fragment).toContain("before(tDrawn, uv)");
+    expect(fragment).toContain("abs(sqrt(c) - sqrt(was0))");
+    expect(fragment).toContain("drawnOut = vec4(c, 1.0);");
     // Most of the old frame where it applies, never all of it.
     expect(STEADY.strength).toBeGreaterThan(0.7);
     expect(STEADY.strength).toBeLessThan(0.95);
+    target.dispose();
+  });
+
+  it("keeps the frame as drawn beside the blended one, and measures jumps against it", () => {
+    const { renderer, drawn } = fakeRenderer();
+    const target = createSceneTarget(renderer, 4);
+    const steady = { camera: eye(0, 400, 0), strength: STEADY.strength };
+    target.present(0, steady);
+    target.present(0, steady);
+    const pass = drawn.filter((d) => d.material.name === "br-steady").at(-1)!
+      .material as THREE.ShaderMaterial;
+    expect(pass.glslVersion).toBe(THREE.GLSL3);
+    const history = pass.uniforms["tHistory"]!.value as THREE.Texture;
+    const asDrawn = pass.uniforms["tDrawn"]!.value as THREE.Texture;
+    expect(history).toBeTruthy();
+    expect(asDrawn).toBeTruthy();
+    expect(asDrawn).not.toBe(history);
+    expect(pass.fragmentShader).toContain("layout(location = 1) out highp vec4 drawnOut;");
     target.dispose();
   });
 });
