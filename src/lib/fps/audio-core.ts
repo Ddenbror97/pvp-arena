@@ -1,5 +1,6 @@
 import { STEP_VARIANTS, type FootstepSurface } from "./footstep-surfaces";
 import { materialFootstep } from "./footsteps";
+import { fetchFpsAsset } from "./asset-cache";
 
 /**
  * What the two PvPStrike audio engines share (audio.ts for the 1v1 and Defuse the Bomb,
@@ -32,7 +33,7 @@ export function masterChain(context: AudioContext, mix: MasterMix) {
 
 /** One recorded sample, decoded. Rejects when the file is missing or not audio. */
 export async function fetchSample(context: BaseAudioContext, url: string): Promise<AudioBuffer> {
-  const response = await fetch(url);
+  const response = await fetchFpsAsset(url);
   if (!response.ok) throw Error("AUDIO_UNAVAILABLE");
   return context.decodeAudioData(await response.arrayBuffer());
 }

@@ -1,5 +1,6 @@
 import type * as THREE from "three";
 import { bindPoseClip, type PoseClipData } from "./death-clip";
+import { fetchFpsAsset } from "./asset-cache";
 
 /**
  * Climbing a ladder (owner, 2026-11-11: "add climbing ladder animation, use attached file"):
@@ -26,7 +27,7 @@ export function loadLadderClip(): Promise<LadderClipData | null> {
     loading =
       typeof fetch === "undefined" || typeof location === "undefined"
         ? Promise.resolve(null)
-        : fetch(LADDER_URL)
+        : fetchFpsAsset(LADDER_URL)
             .then((r) => (r.ok ? (r.json() as Promise<LadderClipData>) : null))
             .then((d) => (data = d))
             .catch(() => null);

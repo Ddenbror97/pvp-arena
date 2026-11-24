@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { poseClipDrive } from "./death-clip";
+import { fetchFpsAsset } from "./asset-cache";
 
 /**
  * The rappel's animation (owner, 2026-11-15: "use blend to build the animation … the animation
@@ -51,7 +52,7 @@ export function loadRappelClip(): Promise<RappelClipData | null> {
     loading =
       typeof fetch === "undefined" || typeof location === "undefined"
         ? Promise.resolve(null)
-        : fetch(RAPPEL_CLIP_URL)
+        : fetchFpsAsset(RAPPEL_CLIP_URL)
             .then((r) => (r.ok ? (r.json() as Promise<RappelClipData>) : null))
             .then((d) => (data = d))
             .catch(() => null);
