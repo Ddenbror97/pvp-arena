@@ -14,6 +14,7 @@
  * the ids inside); 17: player rows carry the guns worn on the back (index 12), the rope fields
  * after them); 18: the ground on the asphalt as drawn (the runways and roadside lots now in the
  * world, the roads over the drawn ground) and vehicles resting on their tyres, both predicted
- * by the client.
+ * by the client; 19: the Southern Military Base's wall, new buildings and levelled flight line
+ * (world garrison-v2, height.v6), predicted by the client.
  */
-export const BR_RULESET_VERSION = 18;
+export const BR_RULESET_VERSION = 19;

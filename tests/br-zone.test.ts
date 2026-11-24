@@ -27,14 +27,14 @@ const buffer = (path: string) => {
   const f = readFileSync(path);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v5.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
 let hf: Heightfield, island: Island;
 beforeAll(async () => {
-  hf = await decodeHeightfield(buffer("public/fps/br/height.v5.hf"));
-  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v4.lc"));
+  hf = await decodeHeightfield(buffer("public/fps/br/height.v6.hf"));
+  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v5.lc"));
   island = buildIsland(hf, cover, meta, collision);
 }, 60_000);
 
@@ -297,8 +297,9 @@ describe("checkpoints", () => {
     expect(a.phase).toBe("active");
     // Through JSON, as Durable Object storage keeps it.
     const json = JSON.stringify(checkpointBrMatch(a));
-    // SQLite-backed Durable Object storage takes values up to 2 MB (measured ~354 KiB).
-    expect(json.length).toBeLessThan(1_500_000);
+    // SQLite-backed Durable Object storage takes values up to 2 MB. Measured 1.505 MB at
+    // garrison-v2 (20,130 loot items; the loot rows are ~88% of it), 1.491 MB before.
+    expect(json.length).toBeLessThan(1_600_000);
     const saved = JSON.parse(json);
     const b = restoreBrMatch(meta, (x, z) => hf.heightAt(x, z), saved, { zoneTimeScale: 0.3 });
     expect(b.bots).toEqual(a.bots);

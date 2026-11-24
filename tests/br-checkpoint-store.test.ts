@@ -16,7 +16,7 @@ const rows = (n: number): Rows =>
 
 describe("battle royale checkpoint storage", () => {
   it("does not traverse unchanged ground loot and rejoins the existing stored chunks exactly", () => {
-    const meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as WorldMeta;
+    const meta = JSON.parse(readFileSync("public/fps/br/world.v5.json", "utf8")) as WorldMeta;
     const state = createBrMatch(meta, 7, () => 1);
     state.loot.add({ item: "ammo-rifle", qty: 30 }, 1, 2, 3);
     const full = checkpointBrMatch(state);

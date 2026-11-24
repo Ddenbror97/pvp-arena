@@ -66,11 +66,22 @@ describe("the buildings' windows are breakable glass", () => {
     // on the far atlas, 2026-11-23: the panes came out of the near LOD, and the far one has
     // its glass in its texture.)
     const cut = (windowPanes as { revision: string }).revision;
+    // Buildings whose panes were cut in a later revision, as they were built (the military
+    // base's, garrison-v2, 2026-11-23).
+    const cuts = (windowPanes as { cuts?: Record<string, string> }).cuts ?? {};
+    for (const rev of new Set(Object.values(cuts))) {
+      const then = JSON.parse(
+        readFileSync(`public/fps/br/models/models.${rev}.json`, "utf8"),
+      ) as typeof manifest;
+      for (const [id, r] of Object.entries(cuts))
+        if (r === rev) expect(manifest.models[id]!.lods[0], id).toEqual(then.models[id]!.lods[0]);
+    }
     if (cut !== WORLD_ASSETS.revision) {
       const then = JSON.parse(
         readFileSync(`public/fps/br/models/models.${cut}.json`, "utf8"),
       ) as typeof manifest;
       for (const id of Object.keys(models)) {
+        if (cuts[id]) continue;
         const now = manifest.models[id]! as unknown as { lods: Array<{ farFacade?: boolean }> };
         const was = then.models[id]! as unknown as { lods: unknown[] };
         expect(now.lods.length, id).toBe(was.lods.length);
@@ -105,7 +116,7 @@ describe("the buildings' windows are breakable glass", () => {
     ])
       expect(ids).toContain(id);
     for (const id of ids) {
-      expect(manifest.models[id]!.lods[0]!.file).toContain(`.${cut}.lod0.`);
+      expect(manifest.models[id]!.lods[0]!.file).toContain(`.${cuts[id] ?? cut}.lod0.`);
       for (const [x0, x1, z0, z1, y0, y1] of models[id]!) {
         // Upright slabs, thin one way.
         expect(Math.min(x1! - x0!, z1! - z0!)).toBeLessThanOrEqual(0.081);

@@ -106,40 +106,172 @@ function builder(poi: Poi, out: Placement[]) {
   return { at, row, scatter };
 }
 
-/** Southern Military Base (G7, mainland, north of the strait): hesco perimeter with gates and
+/**
+ * The Southern Military Base's small props (owner's 2026-11-23 downloads, milprops-v1: "find
+ * sketch 3D items aswell to download"), in base coordinates (the compound ±165 m, its south wall
+ * at z 235, the flight line's level apron south of it to the runway). Nothing on a road.
+ *
+ * The sandbag corner (mb-sandbag-corner) is an L: its long leg on its -z side, its short leg on
+ * its +x side, so turn 0 covers north and east, 1 west and north, 2 south and west, 3 east and
+ * south. Beside each field gate, one either side, its legs to the outside and to the gap.
+ */
+function baseProps(at: ReturnType<typeof builder>["at"]) {
+  // Field gates (north, west, east; no road through them): a chicane of roadblocks just inside.
+  // The wall's 4 m sections leave the north and east gaps open from -9 to 11 and the west one
+  // from -49 to -29; a row of five 1.92 m blocks runs from one side of the gap to just short of
+  // its middle, and 7-8 m further in a row from the other side, so a vehicle has to weave (on
+  // foot there is a 0.7 m lane straight through). The north rows stop short of the radar truck.
+  for (let i = 0; i < 5; i++) {
+    const a = 0.96 + 0.04 + i * 1.92;
+    at("mb-roadblock", -9 + a, -153, 0); // north
+    at("mb-roadblock", 11 - a, -146, 0);
+    at("mb-roadblock", -150, -49 + a, 1); // west
+    at("mb-roadblock", -142, -29 - a, 1);
+    at("mb-roadblock", 150, -9 + a, 1); // east
+    at("mb-roadblock", 142, 11 - a, 1);
+  }
+  // Sandbag corners either side of each field gate (clear of the jeep and the humvee parked
+  // there), west of the south gate's booth, and in front of the field hangars facing the runway
+  // (between the hangar row, to z 306, and the parked aircraft, from z 357).
+  for (const [x, z, t] of [
+    [-14, -150, 0],
+    [21, -155, 1],
+    [-148, -52, 2],
+    [-148, -28, 1],
+    [152, -22, 3],
+    [150, 12, 0],
+    [-70, 224, 3],
+    [-115, 325, 2],
+    [0, 322, 3],
+    [85, 325, 2],
+  ] as Array<[number, number, Placement["turn"]]>)
+    at("mb-sandbag-corner", x, z, t);
+  // Ammunition beside the armouries (off their ends) and on the flight line: crates on the
+  // ground, metal boxes beside them two high.
+  const ammo = (x: number, z: number) => {
+    at("mb-ammo-crate", x, z, 1);
+    at("mb-ammo-crate", x, z + 2, 1);
+    at("mb-ammo-box", x + 1.6, z + 0.4, 0);
+    at("mb-ammo-box", x + 1.6, z + 0.4, 0, 0.31);
+    at("mb-ammo-box", x + 1.6, z + 1.2, 0);
+  };
+  ammo(9.5, 108); // the armoury south of the HQ
+  ammo(125.5, -152); // the north-east armoury (west of it)
+  ammo(-125, 196); // the south-west armoury, short of the ops tower
+  ammo(-15, 325); // the flight line
+  ammo(75, 325);
+  // Drums in tight clusters (0.67 m drums at 0.75 m): fuel by the fuel tanks and in the gaps
+  // between the hangars, olive by the industrial hangar and the tents.
+  const drums = (model: string, x: number, z: number, n: number) => {
+    for (let i = 0; i < n; i++) at(model, x + (i % 3) * 0.75, z + Math.floor(i / 3) * 0.75, 0);
+  };
+  drums("mb-barrel-fuel", 147, 43, 5);
+  drums("mb-barrel-fuel", 95, 245, 4);
+  drums("mb-barrel-fuel", -128, 268, 4);
+  drums("mb-barrel-green", -58, -150, 3);
+  drums("mb-barrel-green", 112, -75, 4);
+  // Loaded munitions racks on the flight line, one in front of each parked jet.
+  for (const x of [-67, -42, -17]) at("mb-missile-rack", x, 333, 0); // the F-16s
+  for (const x of [22, 47]) at("mb-missile-rack", x, 330, 0); // the A-10s
+}
+
+/** Southern Military Base (G7, mainland, north of the strait): a walled compound with gates and
  * towers, HQ, barracks, camp, helipads. */
 function militaryBase(poi: Poi, out: Placement[]) {
   const { at, row, scatter } = builder(poi, out);
-  const h = 165; // half side of the walled compound (pad radius 280 m)
-  const gates: Array<[number, number]> = [
-    [0, h],
-    [0, -h],
-    [h, 0],
-  ];
-  row("hesco", -h, -h, h, -h, 1.3, 0, gates);
-  row("hesco", -h, h, h, h, 1.3, 0, gates);
-  row("hesco", -h, -h, -h, h, 1.3, 1, gates);
-  row("hesco", h, -h, h, h, 1.3, 1, gates);
-  // Gates: a booth just inside, a chicane of barriers just outside.
-  for (const side of [1, -1]) {
-    at("checkpoint", 12, side * (h - 9), 0);
-    at("jersey", -4, side * (h + 14), 1);
-    at("jersey", 4, side * (h + 16), 1);
-  }
+  const h = 165; // half width of the walled compound (pad radius 280 m)
+  // The wall (owner, 2026-11-23: "road at the airfield going incorrectly, there is some metalic
+  // mini wall that the road cross … maybe a wall around the military base"). Until then the
+  // compound was ringed by knee-high hesco baskets (1.2 m of wire mesh) on a square of ±h, with
+  // gaps at x 0 and z 0 only: the base's two roads end in a turning loop at its south side
+  // (z 147–220) and ran through the baskets twice, 30 m and 55 m off the gap. Now 3.6 m of
+  // precast concrete (mb-wall, 4 m sections) takes the loop in: its south side at S, gates
+  // where the roads come through (the south road at x −36, the east road at z 195), and the
+  // north, west and east gates for the fields.
+  const S = 235;
+  const GATE = 8; // half width of a gate (a road and its verges)
+  const wall = (
+    x0: number,
+    z0: number,
+    x1: number,
+    z1: number,
+    gates: number[],
+    turn: Placement["turn"],
+  ) => {
+    const alongX = z0 === z1;
+    const a0 = alongX ? x0 : z0,
+      a1 = alongX ? x1 : z1;
+    for (let c = a0 + 2; c <= a1 - 2 + 1e-6; c += 4) {
+      if (gates.some((g) => Math.abs(c - g) < GATE + 2)) continue;
+      if (alongX) at("mb-wall", c, z0, turn);
+      else at("mb-wall", x0, c, turn);
+    }
+  };
+  wall(-h, -h, h, -h, [0], 0); // north: the field gate
+  // south: the road out on to the flight line (it went on across the runway to the coast road
+  // until world.v5, art/br/runway_road.py)
+  wall(-h, S, h, S, [-36], 0);
+  wall(-h, -h, -h, S, [-40], 1); // west: the field gate
+  wall(h, -h, h, S, [0, 195], 1); // east: the field gate and the road from Riverwood
+  // Gates: a booth just inside, barriers just outside (beside the roads), a pillbox either
+  // side outside the wall, its slits on the approach.
+  at("checkpoint", 12, -h + 9, 0);
+  at("jersey", -4, -h - 14, 1);
+  at("jersey", 4, -h - 16, 1);
   at("checkpoint", h - 9, 12, 1);
   at("jersey", h + 14, -4, 0);
   at("jersey", h + 16, 4, 0);
+  at("checkpoint", h - 9, 208, 1);
+  at("jersey", h + 10, 188.5, 0);
+  at("jersey", h + 10, 202.5, 0);
+  at("checkpoint", -52, S - 9, 0);
+  at("jersey", -50, S + 10, 1);
+  at("jersey", -30, S + 10, 1);
+  at("checkpoint", -h + 9, -52, 1);
+  at("jersey", -h - 12, -49, 0);
+  at("jersey", -h - 12, -31, 0);
+  for (const [x, z, t] of [
+    [-16, -h - 11, 2],
+    [16, -h - 11, 2],
+    [-58, S + 12, 0],
+    [-16, S + 13, 0],
+    [h + 11, -16, 1],
+    [h + 11, 16, 1],
+    [h + 11, 180, 1],
+    [h + 11, 211, 1],
+    [-h - 11, -56, 3],
+    [-h - 11, -24, 3],
+  ] as Array<[number, number, Placement["turn"]]>)
+    at("mb-pillbox", x, z, t);
   for (const [x, z] of [
     [-h + 4, -h + 4],
     [h - 4, -h + 4],
-    [-h + 4, h - 4],
-    [h - 4, h - 4],
+    [-h + 4, S - 4],
+    [h - 4, S - 4],
     [-h + 4, 0],
     [0, -h + 4 + 40],
   ])
     at("guard-tower", x!, z!, 0);
-  at("watchtower", 60, h - 6, 0);
+  at("watchtower", 95, S - 6, 0);
   at("watchtower", -60, -h + 6, 2);
+  // The new buildings (2026-11-23; owner: "its way to much dead space areas … build new
+  // military buildings", "fun military buildings, bunkers maybe aswell? enterble multible
+  // floros"): build_garrison.mjs. In the compound's empty quarters: the air operations tower
+  // over the flight line by the south gate, the command bunkers (their berms up on to the
+  // roof) in the south-west and against the west wall, armouries south of the HQ, in the
+  // north-east and the south-west corner, three-storey barrack blocks along the north wall, in
+  // the north and either side of the east road inside the south wall.
+  at("mb-ops-tower", -110, 205, 0);
+  at("mb-command-bunker", -100, 150, 0);
+  at("mb-command-bunker", -146, 60, 1);
+  at("mb-armory", -5, 112, 0);
+  at("mb-armory", 140, -148, 0);
+  at("mb-armory", -140, 200, 0);
+  at("mb-barracks-3s", -25, -88, 0);
+  at("mb-barracks-3s", 55, -152, 0);
+  at("mb-barracks-3s", 110, 160, 2);
+  at("mb-barracks-3s", 125, 220, 2);
+  baseProps(at);
   // Headquarters in the middle, barracks rows to the west, tents to the east.
   at("military-hq", 0, 0, 0);
   for (let i = 0; i < 3; i++) {
@@ -198,7 +330,7 @@ function militaryBase(poi: Poi, out: Placement[]) {
   for (const x of [104, 120, 136, 152]) at("ammo-stack", x, 100, 0);
   at("sandbags", 128, 88, 0);
   at("sandbags", 104, 88, 0);
-  at("humvee", -12, h - 14, 1);
+  at("humvee", -62, 221, 0);
   at("humvee", h - 16, -14, 0);
   at("mil-jeep", 14, -h + 16, 1);
 }
