@@ -4615,7 +4615,7 @@ export function createBrArena(
         poseFigure(gear, gun?.item ?? "none", gun?.optic ?? null, gun?.muzzle ?? null);
         void figure.render().then((url) => {
           if (!url) return;
-          // (A later picture can finish first only if an earlier one was slower: keep the newest.)
+          // (Pictures finish in the order asked: operator-figure renders one at a time.)
           if (disposed) return URL.revokeObjectURL(url);
           if (figureUrl?.startsWith("blob:")) URL.revokeObjectURL(figureUrl);
           figureUrl = url;

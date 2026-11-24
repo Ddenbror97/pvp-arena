@@ -89,6 +89,35 @@ export function createOperatorFigure(renderer: THREE.WebGLRenderer, character: T
     return null;
   }
 
+  let queue: Promise<string | null> = Promise.resolve(null),
+    gone = false;
+  async function picture(): Promise<string | null> {
+    if (!ctx || !image || gone) return null;
+    draw(false);
+    await renderer.readRenderTargetPixelsAsync(target, 0, 0, FIGURE_SIZE.w, FIGURE_SIZE.h, pixels);
+    if (gone) return null;
+    const out = image.data,
+      { w, h } = FIGURE_SIZE;
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        // WebGL rows run bottom-up.
+        const i = ((h - 1 - y) * w + x) * 4,
+          o = (y * w + x) * 4;
+        const a = pixels[i + 3]!;
+        if (a <= 0.002) {
+          out[o + 3] = 0;
+          continue;
+        }
+        // The target holds linear light, premultiplied at the antialiased edges.
+        aces(pixels[i]! / a, pixels[i + 1]! / a, pixels[i + 2]! / a, out, o);
+        out[o + 3] = Math.round(Math.min(1, a) * 255);
+      }
+    ctx.putImageData(image, 0, 0);
+    return new Promise((resolve) =>
+      canvas.toBlob((blob) => resolve(blob ? URL.createObjectURL(blob) : null), "image/png"),
+    );
+  }
+
   return {
     /** Compile the figure's shaders ahead (they differ from the screen's: an off-screen target). */
     prepare() {
@@ -97,35 +126,18 @@ export function createOperatorFigure(renderer: THREE.WebGLRenderer, character: T
     /**
      * Render the character as it is posed now; a PNG object URL, or null if unavailable. The
      * picture is encoded off the frame (toBlob): the synchronous PNG encoding of toDataURL was
-     * part of the inventory's opening hitch (performance audit 2026-11-24). The caller revokes
-     * the URL it replaces.
+     * part of the inventory's opening hitch (performance audit 2026-11-24), and so is the read
+     * back: asynchronous (a fence), so the frame does not wait for the GPU to finish the scene
+     * queued before it. The caller revokes the URL it replaces.
      */
     render(): Promise<string | null> {
-      if (!ctx || !image) return Promise.resolve(null);
-      draw(false);
-      renderer.readRenderTargetPixels(target, 0, 0, FIGURE_SIZE.w, FIGURE_SIZE.h, pixels);
-      const out = image.data,
-        { w, h } = FIGURE_SIZE;
-      for (let y = 0; y < h; y++)
-        for (let x = 0; x < w; x++) {
-          // WebGL rows run bottom-up.
-          const i = ((h - 1 - y) * w + x) * 4,
-            o = (y * w + x) * 4;
-          const a = pixels[i + 3]!;
-          if (a <= 0.002) {
-            out[o + 3] = 0;
-            continue;
-          }
-          // The target holds linear light, premultiplied at the antialiased edges.
-          aces(pixels[i]! / a, pixels[i + 1]! / a, pixels[i + 2]! / a, out, o);
-          out[o + 3] = Math.round(Math.min(1, a) * 255);
-        }
-      ctx.putImageData(image, 0, 0);
-      return new Promise((resolve) =>
-        canvas.toBlob((blob) => resolve(blob ? URL.createObjectURL(blob) : null), "image/png"),
-      );
+      // One at a time: the pixel buffer and the canvas are shared.
+      const run = queue.then(picture);
+      queue = run.catch(() => null);
+      return run;
     },
     dispose() {
+      gone = true;
       scene.remove(character);
       target.dispose();
       environment.dispose();
