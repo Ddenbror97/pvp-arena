@@ -635,6 +635,22 @@ function drawMap(island: IslandScene) {
 /** GPU time per frame (ms) from which slow frames are taken to be the GPU's (60 fps: 16.7). */
 const GPU_BUSY_MS = 10;
 
+/**
+ * The low tier's anti-aliasing (2026-11-24): without any, Intel UHD's picture crawled and
+ * blinked at edges, roof lines and the ground as the camera moved. "fxaa" (default): FXAA in
+ * the present pass (scene-target.ts FXAA_LOW_GLSL); "msaa2": 2× MSAA; "off": none, as before.
+ * localStorage "br-low-aa" picks one (comparisons).
+ */
+function lowTierAa(): "fxaa" | "msaa2" | "off" {
+  try {
+    const v = localStorage.getItem("br-low-aa");
+    if (v === "msaa2" || v === "off") return v;
+  } catch {
+    // storage blocked: the default
+  }
+  return "fxaa";
+}
+
 export function createBrArena(
   host: HTMLElement,
   base: string,
@@ -662,8 +678,10 @@ export function createBrArena(
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   setTextureQuality(renderer, tier.tier);
+  // The low tier's anti-aliasing (lowTierAa): FXAA in the present pass by default.
+  const lowAa = tier.tier === "low" ? lowTierAa() : null;
   const sceneTarget = renderer.capabilities.reversedDepthBuffer
-    ? createSceneTarget(renderer, tier.tier === "low" ? 0 : 4)
+    ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa ? 0 : 4, { fxaa: lowAa === "fxaa" })
     : null;
   // Sharpening over the finished scene (sharpen.ts). Not on the low tier, where a fullscreen
   // pass is not free, and not with the offscreen scene target (its own present pass).
