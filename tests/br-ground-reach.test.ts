@@ -1,6 +1,13 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { GROUND, GROUND_REACH, GROUND_TILE_GLSL, groundTileUniforms } from "@/lib/fps/br/terrain";
+import * as THREE from "three";
+import {
+  GROUND,
+  GROUND_REACH,
+  GROUND_TILE_GLSL,
+  groundTileUniforms,
+  setGroundFootprint,
+} from "@/lib/fps/br/terrain";
 
 /**
  * The ground's reach (terrain.ts GROUND.reach; owner, 2026-11-24: "increase even more the
@@ -51,5 +58,68 @@ describe("ground reach", () => {
       expect(src).toContain("${GROUND_TILE_GLSL}");
       expect(src).toContain("groundTile(uGroundA,");
     }
+  });
+});
+
+/**
+ * Calm (GROUND.calm; owner, 2026-11-24: "myrornas krig" in the far ground while walking): the
+ * reach is for the still view; while the pixels move over the ground the filter is exact.
+ */
+describe("ground reach only while the view is still", () => {
+  const camera = new THREE.PerspectiveCamera(70, 16 / 9, 0.1, 1000);
+  camera.updateProjectionMatrix();
+  let now = 1_000_000;
+  // 60 frames a second for `seconds`, the camera changed by `step` before each.
+  const run = (seconds: number, step: () => void = () => {}) => {
+    for (let i = 0; i < seconds * 60; i++) {
+      step();
+      now += 1000 / 60;
+      setGroundFootprint(camera, 1632, 918, now);
+    }
+    return GROUND_REACH.value.y;
+  };
+  const exact = 1;
+
+  it("standing still: the reach, after a moment", () => {
+    now += 10_000; // a jump in time: starts from the exact filter
+    expect(run(1 / 60)).toBe(exact);
+    expect(run(0.2)).toBeGreaterThan(GROUND.reachGrow);
+    expect(run(1)).toBeCloseTo(GROUND.reachGrow, 6);
+  });
+
+  it("walking, running, crouching: exact within a few frames, and back when standing", () => {
+    for (const speed of [1.5, 5.5]) {
+      run(1);
+      expect(run(0.2, () => (camera.position.z -= speed / 60))).toBe(exact);
+      expect(run(2, () => (camera.position.z -= speed / 60))).toBe(exact);
+      expect(run(1)).toBeCloseTo(GROUND.reachGrow, 6);
+    }
+    expect(run(0.2, () => (camera.position.y -= 1.5 / 60))).toBe(exact);
+  });
+
+  it("looking up or down, zooming: exact; turning on the spot keeps the reach", () => {
+    run(1);
+    expect(run(0.2, () => camera.rotateX(0.2 / 60))).toBe(exact);
+    camera.rotation.set(0, 0, 0);
+    run(1);
+    expect(run(1, () => camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), 2 / 60))).toBeCloseTo(
+      GROUND.reachGrow,
+      6,
+    );
+    expect(
+      run(0.2, () => {
+        camera.fov -= 30 / 60;
+        camera.updateProjectionMatrix();
+      }),
+    ).toBe(exact);
+  });
+
+  it("a hand resting on the mouse does not break it", () => {
+    run(1);
+    let i = 0;
+    expect(run(1, () => camera.rotateX((i++ % 2 ? 1 : -1) * 0.00002))).toBeCloseTo(
+      GROUND.reachGrow,
+      2,
+    );
   });
 });

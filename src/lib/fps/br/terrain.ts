@@ -199,6 +199,21 @@ export const GROUND = {
   reach: 0.05,
   reachGrow: 0.5,
   reachEnd: 280,
+  /**
+   * Calm (owner, 2026-11-24, of the reach: "while walking the future distance of the asfalt
+   * ground floor is flimmering/flicker ... myrornas krig ... keep the ground floor not blurry
+   * and long distance but you need to fix the myrornas krig while character is
+   * walking/moving"). The reach samples less ground than a pixel covers, so whenever the
+   * pixels move over the ground (the camera walks, bobs, looks up or down, zooms) each one
+   * lands on other stones: static. No filter is both that sharp and steady there: a pixel at
+   * 60 m is 2.8 m of ground, and anything it can show steadily is that long (tried on the RTX
+   * 2050: the tile enlarged to the footprint, filtered exactly, is steady and reads as smeared
+   * streaks). So the reach is for the still view: it eases in over `rise` seconds once the
+   * camera stands (below `speed[0]` m/s, `pitch[0]` rad/s, `zoom[0]` of the zoom a second) and
+   * out to the exact, steady filter over `fall` seconds when it moves (fully by the second
+   * value of each). Turning on the spot keeps it.
+   */
+  calm: { speed: [0.05, 0.4], pitch: [0.004, 0.03], zoom: [0.02, 0.2], rise: 0.5, fall: 0.12 },
 };
 /**
  * The most taps a stretched footprint takes (shared, so the GPU bench can set it): GROUND.stretch
@@ -215,11 +230,49 @@ export const GROUND_ANISO = { value: 16 };
  * setGroundFootprint runs (tools): the GPU's derivatives then.
  */
 export const GROUND_PIXEL_RAY = { value: new THREE.Vector2() };
-/** Per frame, with the camera and the size drawn at (pixels). */
-export function setGroundFootprint(camera: THREE.PerspectiveCamera, width: number, height: number) {
+/** Per frame, with the camera and the size drawn at (pixels); `now` in ms. */
+export function setGroundFootprint(
+  camera: THREE.PerspectiveCamera,
+  width: number,
+  height: number,
+  now = performance.now(),
+) {
   const pe = camera.projectionMatrix.elements;
   if (width > 0 && height > 0 && pe[0]! > 0 && pe[5]! > 0)
     GROUND_PIXEL_RAY.value.set(2 / width / pe[0]!, 2 / height / pe[5]!);
+  GROUND_REACH.value.y = 1 - (1 - GROUND.reachGrow) * groundCalm(camera, now);
+}
+const calm = { at: -1, pos: new THREE.Vector3(), pitch: 0, zoom: 0, value: 0 };
+const calmForward = new THREE.Vector3();
+const fade = (lo: number, hi: number, x: number) => {
+  const t = Math.min(1, Math.max(0, (x - lo) / (hi - lo)));
+  return 1 - t * t * (3 - 2 * t);
+};
+/**
+ * How still the view of the ground is, 0–1 (GROUND.calm): 1 once the camera has stood, kept
+ * its pitch and its zoom for a moment; 0 while it moves. Turning on the spot does not count:
+ * the ground then only slides sideways across the screen, each point at its own distance.
+ */
+export function groundCalm(camera: THREE.PerspectiveCamera, now: number): number {
+  const C = GROUND.calm;
+  const dt = (now - calm.at) / 1000;
+  const pitch = Math.asin(
+    Math.min(1, Math.max(-1, calmForward.set(0, 0, -1).applyQuaternion(camera.quaternion).y)),
+  );
+  const zoom = camera.projectionMatrix.elements[5]!;
+  if (calm.at < 0 || dt <= 0 || dt > 0.25) calm.value = 0;
+  else {
+    const still =
+      fade(C.speed[0]!, C.speed[1]!, calm.pos.distanceTo(camera.position) / dt) *
+      fade(C.pitch[0]!, C.pitch[1]!, Math.abs(pitch - calm.pitch) / dt) *
+      fade(C.zoom[0]!, C.zoom[1]!, Math.abs(zoom - calm.zoom) / Math.max(zoom, 1e-6) / dt);
+    calm.value += Math.min(dt / C.rise, Math.max(-dt / C.fall, still - calm.value));
+  }
+  calm.at = now;
+  calm.pos.copy(camera.position);
+  calm.pitch = pitch;
+  calm.zoom = zoom;
+  return calm.value;
 }
 /**
  * A ground tile's colour (linear) for a pixel whose footprint is `gx`, `gy` (the tile's uv per

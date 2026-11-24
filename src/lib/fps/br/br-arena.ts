@@ -2612,7 +2612,7 @@ export function createBrArena(
     if (!island || !latest || !route) {
       if (island && !context.lost) {
         renderer.getDrawingBufferSize(drawSize);
-        setGroundFootprint(camera, drawSize.x, drawSize.y);
+        setGroundFootprint(camera, drawSize.x, drawSize.y, now);
         island.update(camera);
         updateSceneRoots(scene, island.root);
         renderer.render(scene, camera);
@@ -4601,7 +4601,7 @@ export function createBrArena(
         audio.step(island.footstepSurface(o.pos.x, o.pos.y, o.pos.z), [o.pos.x, o.pos.y, o.pos.z]);
     }
     renderer.getDrawingBufferSize(drawSize);
-    setGroundFootprint(camera, drawSize.x, drawSize.y);
+    setGroundFootprint(camera, drawSize.x, drawSize.y, now);
     const { selectMs } = island.update(camera);
     island.warm(renderer);
     updateSceneRoots(scene, island.root);
