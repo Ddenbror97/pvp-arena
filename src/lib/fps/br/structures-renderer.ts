@@ -892,6 +892,10 @@ function roadGrainGlsl(weight: string) {
           vec3 rdx3 = dFdx(vRoadWorld), rdy3 = dFdy(vRoadWorld);
           // (The surface's plane from the two: exact even when they are per 2 × 2 block.)
           groundFootprint(vRoadWorld, normalize(cross(rdx3, rdy3)), rdx3, rdy3);
+          float grazing = smoothstep(${GROUND.grazeFrom}, ${GROUND.grazeTo}, max(length(rdx3.xz), length(rdy3.xz)));
+          // Hand off to the two fixed-scale wear textures when the fine aggregate
+          // becomes subpixel, including on the runway seen from walking height.
+          near *= 1.0 - grazing;
           vec2 rdx = rdx3.xz * uScale, rdy = rdy3.xz * uScale;
           float dark = 1.0 - smoothstep(0.25, 0.45, dot(diffuseColor.rgb, vec3(0.3333)));
           if (near > 0.0) {
@@ -924,7 +928,8 @@ function roadGrainGlsl(weight: string) {
               t += high * 0.5 * (ta * ta + tb * tb);
             }
             t = t * uTint / max(uFar, vec3(1e-3));
-            t = clamp(mix(vec3(1.0), t, ${ROAD_FAR.strength.toFixed(2)}), 0.6, 1.5);
+            float wearContrast = ${ROAD_FAR.strength.toFixed(2)} * (1.0 + grazing * (1.0 - high));
+            t = clamp(mix(vec3(1.0), t, wearContrast), 0.5, 1.65);
             diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * t, far * mix(0.3, 1.0, dark));
           }
         }`;

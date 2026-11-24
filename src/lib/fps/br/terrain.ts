@@ -194,7 +194,7 @@ export const GROUND = {
    * 12 m to 95 m. Frame time 2.3–3.2 ms either way; the views from the air are unchanged.)
    * From `range` to `reachEnd` metres it eases back to the exact filter: beyond the near
    * textures (from the air) a pixel is metres wide both ways and a short filter only sparkles.
-   * The road meshes' asphalt takes the same (structures-renderer.ts).
+   * Paved surfaces use the full footprint and retain larger-scale detail at grazing angles.
    */
   reach: 0.05,
   reachGrow: 0.5,
@@ -671,8 +671,14 @@ export function createTerrain(
         vec3 groundAlbedo(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
           vec3 uvw = vec3(p * k, float(layer));
-          k *= uGroundSharpen;
-          return groundTile(uGroundA, uvw, px * k, py * k, k, uGroundLite < 0.5, brExact) * uLayerTint[layer];
+          // The airfield apron blends concrete and gravel; the runway also uses tiles.
+          // Filter each of those layers over the whole pixel once the grain gets too small.
+          // The larger world-space samples in the mid field still supply visible detail.
+          bool paved = layer == ${L("asphalt")} || layer == ${L("concrete")} ||
+                       layer == ${L("gravel")} || layer == ${L("tiles")};
+          float grazing = paved ? smoothstep(${GROUND.grazeFrom}, ${GROUND.grazeTo}, max(length(px), length(py))) : 0.0;
+          k *= mix(uGroundSharpen, 1.0, grazing);
+          return groundTile(uGroundA, uvw, px * k, py * k, k, uGroundLite < 0.5, max(brExact, grazing)) * uLayerTint[layer];
         }
         vec3 groundNormal(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
@@ -885,7 +891,10 @@ export function createTerrain(
             // 2026-11-10). Grass, moss, straw, soil, forest floor and sand have no such features.
             float stony = lm > ${L("sand")} ? 1.0 : 0.0;
             col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (1.0 - ${MID.stony.toFixed(2)} * stony));
-            midRatio = ratio;
+            // Recover local contrast from the filtered, coarser grain on paving.
+            // Its coordinates stay fixed as the player walks or jumps.
+            float pavement = max(runway, clamp(w[5] + w[6], 0.0, 1.0));
+            midRatio = clamp(vec3(1.0) + (ratio - 1.0) * (1.0 + pavement), 0.45, 1.85);
             midStony = stony;
             // (No mid normal on rock: one tile at one scale shows as a weave on a bare slope;
             // the far-rock relief lights it instead.)
