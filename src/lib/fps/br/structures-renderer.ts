@@ -87,6 +87,7 @@ type RoadUniforms = {
   uScale: { value: number };
   uTint: { value: THREE.Vector3 };
   uFar: { value: THREE.Vector3 };
+  uRoadGrain: { value: THREE.Vector2 };
 } & ReturnType<typeof groundTileUniforms>;
 
 /** Box from 8 corners into position/colour arrays (flat-shaded: non-indexed with normals). */
@@ -364,7 +365,7 @@ function bridgeMesh(meta: WorldMeta, hf: Heightfield, ground?: RoadUniforms) {
           `#include <color_fragment>\n${roadGrainGlsl("smoothstep(0.7, 0.9, abs(vUp))")}`,
         );
     };
-    material.customProgramCacheKey = () => "br-bridges-v3";
+    material.customProgramCacheKey = () => "br-bridges-v4";
   }
   const mesh = new THREE.Mesh(g, material);
   mesh.name = "br-bridges";
@@ -772,6 +773,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
     uScale: { value: 0.2 },
     uTint: { value: new THREE.Vector3(1, 1, 1) },
     uFar: { value: new THREE.Vector3(0.25, 0.25, 0.25) },
+    uRoadGrain: ROAD_GRAIN_MODE,
     ...groundTileUniforms(),
   };
   uniforms.uGroundA.value.needsUpdate = true;
@@ -821,7 +823,7 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
         "#include <normal_fragment_begin>\nnormal = normalize(vNormal);\nnonPerturbedNormal = normal;",
       );
   };
-  material.customProgramCacheKey = () => "br-roads-v10";
+  material.customProgramCacheKey = () => "br-roads-v11";
   // Over the ground without drawing over the foot of what stands on it (depth-bias.ts).
   pullDepth(material, DEPTH_PULL.paved);
   const mesh = new THREE.Mesh(g, material);
@@ -870,11 +872,50 @@ const RUNWAY_PAINT_GLSL = `
   }
 `;
 
+/**
+ * The roads' near asphalt (owner, 2026-11-24: "Back to the asfalt infront of the character in
+ * POV. it still looks broken/poor ux with that flicker infront, i rather have the blurr then
+ * that"; "its only the asfalt roads not the gras").
+ *
+ * The road meshes took the ground's GROUND.reach (#332): the tile filtered over a few
+ * centimetres along the view where a pixel covers tens of centimetres to metres, sharp on
+ * purpose and crawling as you move. On grass that crawl hides in the tufts; on asphalt, a fine
+ * high-contrast aggregate on a flat grey, it is all you see. Measured on the owner's RTX 2050
+ * (gpu-bench, walking 11 cm a frame along a straight road at eye height; change between frames
+ * after following the road's motion, of 255, in the road's own columns):
+ *   distance (m)            12–20   20–35   35–55
+ *   reach (before)          9.6     10.7    6.3
+ *   whole footprint         6.5     4.6     2.6
+ *   whole footprint + gain  7.0     6.5     4.1
+ * with the detail between neighbours 3.3 / 3.0 / 1.7 before, 1.9 / 1.0 / 0.6 over the whole
+ * footprint and 2.1 / 1.5 / 1.0 with the gain. The near grain is the whole of it (the far wear
+ * alone: 0.4 / 1.6 from 20 m).
+ *
+ * So the roads filter the tile over the whole footprint (no reach: steady), and give back some
+ * of the contrast that averaging takes: the tile's deviation from its mean is raised by up to
+ * `gain` as the footprint grows from `gainFrom` to `gainTo` metres. A function of the filtered
+ * colour alone, so what it raises is as steady as the filtered tile (it adds no new detail
+ * that could crawl). The grass keeps the reach.
+ *
+ * localStorage "br-road-grain" compares: "reach" (as before), "exact" (no gain).
+ */
+export const ROAD_GRAIN = { gain: 1.0, gainFrom: 0.04, gainTo: 0.4 };
+/** uRoadGrain: x 1 the whole footprint (0 the ground's reach), y the gain. */
+export const ROAD_GRAIN_MODE = { value: new THREE.Vector2(1, ROAD_GRAIN.gain) };
+try {
+  const v = typeof localStorage !== "undefined" ? localStorage.getItem("br-road-grain") : null;
+  if (v === "reach") ROAD_GRAIN_MODE.value.set(0, 0);
+  else if (v === "exact") ROAD_GRAIN_MODE.value.set(1, 0);
+} catch {
+  // Storage blocked: the default.
+}
+
 /** The asphalt grain's uniforms and the world position it is drawn from (roadGrainGlsl). */
 const ROAD_GRAIN_UNIFORMS = `precision highp sampler2DArray;
         uniform sampler2DArray uGroundA;
         uniform float uOn, uRange, uLayer, uScale;
         uniform vec3 uTint, uFar;
+        uniform vec2 uRoadGrain;
         varying vec3 vRoadWorld;
         ${GROUND_TILE_GLSL}`;
 /**
@@ -899,8 +940,12 @@ function roadGrainGlsl(weight: string) {
           vec2 rdx = rdx3.xz * uScale, rdy = rdy3.xz * uScale;
           float dark = 1.0 - smoothstep(0.25, 0.45, dot(diffuseColor.rgb, vec3(0.3333)));
           if (near > 0.0) {
-            vec3 t = groundTile(uGroundA, vec3(vRoadWorld.xz * uScale, uLayer), rdx, rdy, uScale, true, 0.0);
+            // Over its whole footprint (uRoadGrain.x 1: no GROUND.reach), its contrast raised as
+            // the footprint grows (ROAD_GRAIN): steady where the ground keeps its short reach.
+            vec3 t = groundTile(uGroundA, vec3(vRoadWorld.xz * uScale, uLayer), rdx, rdy, uScale, true, uRoadGrain.x);
             t = t * uTint / max(uFar, vec3(1e-3));
+            float fpRoad = max(length(rdx3.xz), length(rdy3.xz));
+            t = clamp(vec3(1.0) + (t - vec3(1.0)) * (1.0 + uRoadGrain.y * smoothstep(${ROAD_GRAIN.gainFrom.toFixed(2)}, ${ROAD_GRAIN.gainTo.toFixed(2)}, fpRoad)), 0.4, 1.8);
             diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * t, near * mix(0.3, 1.0, dark));
           }
           // Beyond that, and from the parachute (owner, 2026-11-11: roads must be crisp from
