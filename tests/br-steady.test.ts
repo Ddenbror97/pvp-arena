@@ -271,7 +271,8 @@ describe("the steadying pass", () => {
     const steady = { camera: eye(0, 400, 0), strength: STEADY.strength };
     target.present(0, steady);
     target.present(0, steady);
-    const pass = drawn.filter((d) => d.material.name === "br-steady").at(-1)!.material as THREE.ShaderMaterial;
+    const pass = drawn.filter((d) => d.material.name === "br-steady").at(-1)!
+      .material as THREE.ShaderMaterial;
     expect(pass.glslVersion).toBe(THREE.GLSL3);
     const history = pass.uniforms["tHistory"]!.value as THREE.Texture;
     const asDrawn = pass.uniforms["tDrawn"]!.value as THREE.Texture;
