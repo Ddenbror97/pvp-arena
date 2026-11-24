@@ -2,12 +2,19 @@ import * as THREE from "three";
 import { shrinkImageTexture, shrinkModelTextures, worldTextureScale } from "./texture-quality";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-import { downloadBrAsset } from "./asset-download";
+import {
+  BR_ASSET_HASHES,
+  brAssetHash,
+  brAssetHashesBuilt,
+  downloadBrAsset,
+  loadBrAssetHashes,
+} from "./asset-download";
 import { decodeHeightfield, type Heightfield } from "./heightfield";
 import { buildIsland, type Island } from "./island";
 import { pavedLots } from "./layout";
 import { decodeLandCover } from "./landcover";
 import { createProps, type ModelManifest } from "./props-renderer";
+import { createTextureShare } from "./shared-textures";
 import type { CollisionData } from "./static-world";
 import { createFloorPatches } from "./floor-patches";
 import { createPowerLines, createStructures } from "./structures-renderer";
@@ -80,10 +87,17 @@ export async function loadIslandScene(
   signal: AbortSignal = new AbortController().signal,
 ): Promise<IslandScene> {
   const url = (path: string) => new URL(path.replace(/^\//, ""), base).href;
+  // What this deploy's files contain (asset-download.ts): a stored copy that is still the
+  // deployed file is used without asking the server about it. Asked for once, first, by a
+  // build that wrote the list.
+  const hashes = brAssetHashesBuilt()
+    ? loadBrAssetHashes(url(BR_ASSET_HASHES), signal)
+    : Promise.resolve(null);
+  /** Download `href` (absolute), by the same cancellable, retrying, slot-limited path. */
+  const download = async (href: string, restoring: string) =>
+    downloadBrAsset(href, signal, () => progress(0, restoring), brAssetHash(await hashes, href));
   const get = async (path: string) => {
-    const data = await downloadBrAsset(url(path), signal, () =>
-      progress(0, "Restoring asset download"),
-    );
+    const data = await download(url(path), "Restoring asset download");
     return {
       arrayBuffer: async () => data,
       json: async () => JSON.parse(new TextDecoder().decode(data)) as unknown,
@@ -114,14 +128,17 @@ export async function loadIslandScene(
   const island = buildIsland(hf, cover, meta, collision);
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
+  const textureShare = createTextureShare();
   // Fetch through the same cancellable/retrying path for buildings, weapons and gear.
   // Parsing stays on this configured GLTFLoader (Meshopt/plugins/resource resolution).
   loader.loadAsync = async (path) => {
-    const data = await downloadBrAsset(path, signal, () => progress(0, "Restoring model download"));
+    const data = await download(path, "Restoring model download");
     signal.throwIfAborted();
     const gltf = await loader.parseAsync(data, THREE.LoaderUtils.extractUrlBase(path));
     // Low tier: half-size textures, swapped in before anything reaches the GPU.
     await shrinkModelTextures(gltf.scene);
+    // A picture another model file already brought is not kept twice (shared-textures.ts).
+    await textureShare.share(gltf);
     drawGlassOnce(gltf.scene);
     return gltf;
   };
@@ -175,9 +192,7 @@ export async function loadIslandScene(
       const info = (
         fixed.models[id] as unknown as { impostor: { file: string; width: number; height: number } }
       ).impostor;
-      const data = await downloadBrAsset(url(info.file), signal, () =>
-        progress(0, "Restoring texture download"),
-      );
+      const data = await download(url(info.file), "Restoring texture download");
       const objectUrl = URL.createObjectURL(new Blob([data]));
       let texture: THREE.Texture;
       try {
@@ -231,7 +246,7 @@ export async function loadIslandScene(
   // top-down). If it fails, those LODs fall back to a plain wall colour.
   const atlas = (file: string | undefined) =>
     file
-      ? downloadBrAsset(url(file), signal, () => progress(0, "Restoring texture download"))
+      ? download(url(file), "Restoring texture download")
           .then(async (bytes) => {
             const objectUrl = URL.createObjectURL(new Blob([bytes]));
             try {
@@ -263,9 +278,7 @@ export async function loadIslandScene(
   // Fitted building doors: their atlas and per-doorway shapes (a plain panel if this fails).
   const doorLook = await Promise.all([
     get(DOOR_ASSETS.meta).then((r) => r.json() as Promise<DoorLookData>),
-    downloadBrAsset(url(DOOR_ASSETS.atlas), signal, () =>
-      progress(0, "Restoring texture download"),
-    ),
+    download(url(DOOR_ASSETS.atlas), "Restoring texture download"),
   ])
     .then(async ([data, bytes]) => {
       const objectUrl = URL.createObjectURL(new Blob([bytes]));
@@ -378,6 +391,7 @@ export async function loadIslandScene(
       doorLook?.atlas.dispose();
       facades?.dispose(); // lent to the props, like the door atlas
       farFacades?.dispose();
+      textureShare.clear();
       root.removeFromParent();
     },
   };

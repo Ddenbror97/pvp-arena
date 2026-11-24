@@ -8,6 +8,7 @@ import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { emitGuideAssets } from "./scripts/emit-guide-assets";
+import { emitBrAssetHashes } from "./scripts/emit-br-asset-hashes";
 
 const DEV_WASM = "\0dev-wasm-module:";
 let serving = false;
@@ -41,6 +42,18 @@ export default defineConfig({
         name: "guide-bodies",
         async config() {
           await emitGuideAssets();
+        },
+      },
+      {
+        // What is deployed under public/fps/br, by content: a Battle Royale match then reuses
+        // the browser's stored copy of every file that is still the deployed one, instead of
+        // asking the server about each of ~2,900 files (src/lib/fps/br/asset-download.ts).
+        // Builds only (which also tells the game there is a list to ask for); a development
+        // server removes a leftover list.
+        name: "br-asset-hashes",
+        config(_config, { command }) {
+          emitBrAssetHashes(command === "build");
+          return command === "build" ? { define: { __BR_ASSET_HASHES__: "true" } } : undefined;
         },
       },
       {

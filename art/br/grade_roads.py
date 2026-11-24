@@ -16,7 +16,7 @@ and `FLAT` m beyond each edge exactly, eased back into the hillside over `BLEND`
 cutting through the rock, an embankment below it). Stretches within `BRIDGE_CLEAR` m of a
 bridge's ends are left alone (their approaches are graded to the deck).
 
-Reads public/fps/br/height.v1.hf, writes public/fps/br/height.v2.hf (the same format: "PIH2",
+Reads art/br/world-base/height.v1.hf, writes art/br/world-base/height.v2.hf (the same format: "PIH2",
 plane-predictor residuals, zlib). The server and the client load the same file.
 
     python3 -I art/br/grade_roads.py
@@ -30,9 +30,12 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-SRC = ROOT / "public/fps/br/height.v1.hf"
-OUT = ROOT / "public/fps/br/height.v2.hf"
-META = ROOT / "public/fps/br/world.v1.json"
+# Superseded world files are kept out of the deploy, in art/br/world-base (cleanup 2026-11-23):
+# only the live height, land cover and meta (src/lib/fps/br/world.ts WORLD_ASSETS) are published.
+BASE = ROOT / "art/br/world-base"
+SRC = BASE / "height.v1.hf"
+OUT = BASE / "height.v2.hf"
+META = BASE / "world.v1.json"
 WORLD_HALF = 5000.0
 
 STEP = 2.0

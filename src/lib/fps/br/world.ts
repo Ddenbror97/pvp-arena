@@ -13,7 +13,12 @@ export const WORLD_HALF = WORLD_SIZE / 2;
 export const MAP_CELL = 1_000;
 export const MAP_COLUMNS = "ABCDEFGHIJ";
 
-/** Static data published with the world (public/fps/br/world.v3.json). */
+/**
+ * Static data published with the world. Only the files named here are published: the steps
+ * they were derived from are kept in art/br/world-base (heights, land covers, metas) and
+ * art/br/models-base (models), and `node scripts/br/published-assets.mjs` lists what a new
+ * revision has left behind in public/.
+ */
 export const WORLD_ASSETS = {
   revision: "milprops-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
@@ -244,7 +249,7 @@ export function assertIslandRevision(...parts: Array<{ worldRevision?: string }>
     throw new Error("Island assets version mismatch");
 }
 
-/** Land-cover classes in landcover.v1.lc and v2.lc (byte value = class id). */
+/** Land-cover classes in the land-cover file (byte value = class id). */
 export const LAND_COVER = [
   "water",
   "sand",

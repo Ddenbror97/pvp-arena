@@ -123,15 +123,16 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
 
   it("gives each one material for the renderer, its colours, and no more triangles", () => {
     // (The far LODs replaced: the vehicles-v1 world's, and garrison-v2's for the military base's
-    // buildings, 2026-11-23.)
-    const read = (f: string) =>
-      (
-        JSON.parse(fs.readFileSync(pub(`/fps/br/models/${f}`), "utf8")) as {
-          models: Record<string, Entry>;
-        }
-      ).models;
+    // buildings, 2026-11-23. Those two manifests are no longer published: the entries this
+    // compares against are kept in tests/fixtures/br-superseded-manifests.json.)
+    const kept = JSON.parse(
+      fs.readFileSync(
+        path.join(process.cwd(), "tests/fixtures/br-superseded-manifests.json"),
+        "utf8",
+      ),
+    ) as Record<string, { models: Record<string, Entry> }>;
     const before = {
-      models: { ...read("models.garrison-v2.json"), ...read("models.vehicles-v1.json") },
+      models: { ...kept["garrison-v2"]!.models, ...kept["vehicles-v1"]!.models },
     };
     for (const [id, m] of far) {
       const lod = m.lods.at(-1)!;

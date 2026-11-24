@@ -44,10 +44,12 @@ from pathlib import Path
 
 import numpy as np
 
-BR = Path(__file__).resolve().parents[2] / "public/fps/br"
-SRC_M, OUT_M = BR / "world.v3.json", BR / "world.v4.json"
-SRC_C, OUT_C = BR / "landcover.v3.lc", BR / "landcover.v4.lc"
-SRC_H, OUT_H = BR / "height.v4.hf", BR / "height.v5.hf"
+# Superseded world files are kept out of the deploy, in art/br/world-base (cleanup 2026-11-23):
+# only the live height, land cover and meta (src/lib/fps/br/world.ts WORLD_ASSETS) are published.
+BASE = Path(__file__).resolve().parents[2] / "art/br/world-base"
+SRC_M, OUT_M = BASE / "world.v3.json", BASE / "world.v4.json"
+SRC_C, OUT_C = BASE / "landcover.v3.lc", BASE / "landcover.v4.lc"
+SRC_H, OUT_H = BASE / "height.v4.hf", BASE / "height.v5.hf"
 HALF = 5000.0
 WATER, GRASS, FIELD, FOREST, ROCK, URBAN, ROAD = 0, 2, 3, 4, 5, 6, 7
 

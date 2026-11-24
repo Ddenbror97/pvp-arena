@@ -536,9 +536,17 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       dirty = true;
     },
     /** The items now inside supply crates (redrawn only when the set changes). */
-    hide(ids: Set<number>) {
-      if (ids.size === hidden.size && [...ids].every((id) => hidden.has(id))) return;
-      hidden = ids;
+    hide(ids: ReadonlySet<number>) {
+      // (Called every frame with the caller's own set: compared in place, copied on a change.)
+      let same = ids.size === hidden.size;
+      if (same)
+        for (const id of ids)
+          if (!hidden.has(id)) {
+            same = false;
+            break;
+          }
+      if (same) return;
+      hidden = new Set(ids);
       dirty = true;
     },
     update(eye: THREE.Vector3) {

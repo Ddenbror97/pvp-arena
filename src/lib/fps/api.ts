@@ -39,19 +39,6 @@ export async function fetchDuelView(id: string): Promise<DuelView> {
   if (!data) throw new Error("MATCH_NOT_FOUND");
   return data as DuelView;
 }
-export async function fetchDuelRankings(): Promise<
-  Array<{ id: string; username: string; rating: number; played: number; wins: number }>
-> {
-  const { data, error } = await db.rpc("fps_stats");
-  if (error) throw new Error(error.message);
-  return data as Array<{
-    id: string;
-    username: string;
-    rating: number;
-    played: number;
-    wins: number;
-  }>;
-}
 const DUEL_ERRORS: Record<string, string> = {
   CREATOR_AWAY: "The creator is offline. Your entry was not charged. Choose another room.",
   READY_WINDOW_EXPIRED: "The ready window expired. Both entries are refunded without a fee.",

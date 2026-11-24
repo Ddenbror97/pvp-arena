@@ -30,6 +30,10 @@ __pycache__/
 public/guide-bodies/
 src/content/guides/catalog.generated.ts
 
+# Fingerprints of the deployed Battle Royale files, written by the build from those files
+# (scripts/emit-br-asset-hashes.ts). Never committed: it must describe what is deployed.
+public/fps/br/asset-hashes.json
+
 # Base deposit HD backups. The generator encrypts these. Never commit them.
 *.deposit-hd.txt
 *.deposit-hd.xpub

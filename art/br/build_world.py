@@ -13,13 +13,13 @@ World coordinates (shared with src/lib/fps/br/world.ts):
     at pixels [13, 1193) x [11, 1191): 118 px per km.
 
 Outputs:
-  public/fps/br/height.v1.hf     2561 x 2561 heights (3.906 m spacing): 16-byte header ("PIH2",
+  art/br/world-base/height.v1.hf     2561 x 2561 heights (3.906 m spacing): 16-byte header ("PIH2",
                                  u16 width, u16 height, f32 spacing, f32 offset), then zlib of
                                  uint16 residuals of the plane predictor (left + up - up-left)
                                  over heights stored as (h + 50 m) in centimetres
-  public/fps/br/landcover.v1.lc  1280 x 1280 land-cover classes (7.8 m per pixel): 8-byte header
+  art/br/world-base/landcover.v1.lc  1280 x 1280 land-cover classes (7.8 m per pixel): 8-byte header
                                  ("PIC1", u16 width, u16 height), then zlib of one class id per byte
-  public/fps/br/world.v1.json    water bodies, POIs, bridges, height encoding
+  art/br/world-base/world.v1.json    water bodies, POIs, bridges, height encoding
   art/br/build/*.png             review images (hillshade, land cover, water)
 """
 
@@ -37,7 +37,11 @@ from scipy import ndimage as nd
 
 ROOT = Path(__file__).resolve().parents[2]
 CONCEPT = ROOT / "art/br/concept/project-island-concept.png"
-OUT = ROOT / "public/fps/br"
+# The world as first built (v1). Later steps derive from it (grade_roads.py, forgotten_ruins.py,
+# old_fortress.py, polish_roads.py, military_apron.py, runway_road.py); only their last outputs
+# are published, so v1 is written to the store beside the other superseded steps
+# (cleanup 2026-11-23).
+OUT = ROOT / "art/br/world-base"
 BUILD = ROOT / "art/br/build"
 
 WORLD = 10_000.0  # metres
