@@ -52,7 +52,8 @@ export type MatchSocketOptions<Ticket> = {
    */
   unreachable?(again: () => void): void;
   /**
-   * The room gave this seat to a newer connection of the same account (REPLACED_CLOSE).
+   * The room gave this seat to a newer connection of the same account (REPLACED_CLOSE), or
+   * kept it for another page of the account that plays it (OCCUPIED_CLOSE).
    * Reconnecting stops: two pages that each reconnected when replaced took the seat from each
    * other every few seconds, for good (owner, 2026-11-24: "a really big lagg in the battle
    * royale, seems like a server lag. character is hacking while walking/in parachute"). The
@@ -67,6 +68,18 @@ export type MatchSocketOptions<Ticket> = {
  * forgotten window, another computer): the newer connection has the seat.
  */
 export const REPLACED_CLOSE = 4001;
+
+/**
+ * The room kept the seat for another page of the account that is playing it, and refused this
+ * one (workers/fps/seat-claim.ts): this page may take it over only when the player says so.
+ */
+export const OCCUPIED_CLOSE = 4002;
+
+/** This page load's name for the rooms (kept across its reconnects; seat-claim.ts). */
+export const PAGE_ID =
+  typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `p-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
 
 /** Sockets refused in a row (closed before they opened) before the mode is told it is unreachable. */
 export const REFUSED_LIMIT = 4;
@@ -152,7 +165,7 @@ export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
         window.dispatchEvent(new Event(RESTRICTED_EVENT));
         return;
       }
-      if (event.code === REPLACED_CLOSE && o.replaced) {
+      if ((event.code === REPLACED_CLOSE || event.code === OCCUPIED_CLOSE) && o.replaced) {
         stopped = true;
         o.replaced(again);
         return;

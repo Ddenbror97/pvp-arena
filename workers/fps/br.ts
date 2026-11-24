@@ -1,5 +1,6 @@
 import { LiveCalibration, type CalibrationRow } from "./calibration";
 import { isolateOnce } from "./isolate-once";
+import { OCCUPIED_CLOSE, pageName, seatClaim } from "./seat-claim";
 import { BR_RULESET_VERSION } from "../../src/lib/fps/br/ruleset";
 import { AimWatch, logAimReport, type WatchPlayer } from "../../src/lib/fps/anticheat/aim-watch";
 
@@ -165,6 +166,8 @@ type Attachment = SessionIdentity & {
   window: number;
   count: number;
   seq: number;
+  /** The page this connection came from (seat-claim.ts). */
+  page?: string | null;
 };
 
 export class BrRoom {
@@ -442,11 +445,27 @@ export class BrRoom {
     if (typeof claims.avatar === "string" && claims.avatar.length <= 2048)
       state.seats[seat]!.avatar = claims.avatar;
     else delete state.seats[seat]!.avatar;
-    // The same user's older socket is replaced.
-    for (const old of this.ctx.getWebSockets()) {
-      const a = old.deserializeAttachment() as Attachment;
-      if (a.sub === claims.sub) old.close(4001, "Replaced by a new connection");
+    // The same user's older socket: replaced when it is this page's (a reconnect) or the
+    // player asked to play here; another page that plays the seat keeps it (seat-claim.ts).
+    const page = pageName(url.searchParams.get("page"));
+    const mine = this.ctx
+      .getWebSockets()
+      .filter((old) => (old.deserializeAttachment() as Attachment).sub === claims.sub);
+    const claim = seatClaim(
+      mine.map((old) => ({
+        page: (old.deserializeAttachment() as Attachment).page,
+        open: old.readyState === WebSocket.OPEN,
+      })),
+      page,
+      url.searchParams.get("takeover") === "1",
+    );
+    if (claim === "refuse") {
+      const pair = new WebSocketPair();
+      pair[1].accept();
+      pair[1].close(OCCUPIED_CLOSE, "Open on this account elsewhere");
+      return new Response(null, { status: 101, webSocket: pair[0] });
     }
+    for (const old of mine) old.close(4001, "Replaced by a new connection");
     this.away.delete(seat);
     const now = Date.now();
     const pair = new WebSocketPair();
@@ -463,6 +482,7 @@ export class BrRoom {
       window: now,
       count: 0,
       seq: -1,
+      page,
     } satisfies Attachment);
     this.queues.delete(seat);
     this.acts.delete(seat);

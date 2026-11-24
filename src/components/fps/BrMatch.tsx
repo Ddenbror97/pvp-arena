@@ -1,4 +1,4 @@
-import { openMatchSocket } from "@/lib/fps/match-socket";
+import { openMatchSocket, PAGE_ID } from "@/lib/fps/match-socket";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -199,7 +199,14 @@ export function BrMatch() {
     // connection. Do not admit a seat until their renderer exists and can consume them.
     if (!userId || !desktop || !ready || !arena.current) return;
     let left = false,
-      receivedSnapshot = false;
+      receivedSnapshot = false,
+      /**
+       * The next connection takes the seat from another page of the account: this page's
+       * first (a newly opened tab or a reload wins, as before) and "Play here". The page that
+       * loses it stops (`replaced`), and a client without a page name can never take it
+       * (workers/fps/seat-claim.ts), so nothing takes it back on its own.
+       */
+      takeover = true;
     const watchStartup = () => {
       if (left || presented.current || failed.current) return;
       setStartupError(
@@ -240,10 +247,17 @@ export function BrMatch() {
         const url = new URL(ticket.url);
         url.searchParams.set("worldRevision", WORLD_ASSETS.revision);
         url.searchParams.set("rulesVersion", String(BR_RULESET_VERSION));
+        // This page's name, and "Play here" (workers/fps/seat-claim.ts): another page of the
+        // account that plays the seat keeps it unless the player takes it over here.
+        url.searchParams.set("page", PAGE_ID);
+        if (takeover) url.searchParams.set("takeover", "1");
         return url;
       },
       created: () => void (receivedSnapshot = false),
-      opened: () => setConnection("Connected"),
+      opened: () => {
+        takeover = false;
+        setConnection("Connected");
+      },
       maxFrame: 200_000,
       oversize(link) {
         link.stop();
@@ -306,6 +320,7 @@ export function BrMatch() {
           setError(null);
           setRetry(null);
           setRetryLabel(undefined);
+          takeover = true;
           again();
         });
       },

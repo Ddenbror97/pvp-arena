@@ -54,9 +54,9 @@ type View = Frame & {
   players: number[][];
   aboard: number;
 };
-async function open(matchId: string, sub: string, name = "Tester") {
+async function open(matchId: string, sub: string, name = "Tester", query = "") {
   const r = await mf.dispatchFetch(
-    `https://runtime.test/br/${matchId}/socket?worldRevision=${WORLD_ASSETS.revision}&rulesVersion=${BR_RULESET_VERSION}&ticket=${await ticket(matchId, sub, name)}`,
+    `https://runtime.test/br/${matchId}/socket?worldRevision=${WORLD_ASSETS.revision}&rulesVersion=${BR_RULESET_VERSION}&ticket=${await ticket(matchId, sub, name)}${query}`,
     {
       headers: { Upgrade: "websocket", Origin: origin },
     },
@@ -309,6 +309,35 @@ describe("Battle royale runtime (Phase 2)", () => {
     expect(await join(late)).not.toBe(matchId);
     // The player who holds a seat still goes back to it.
     expect(await join(first)).toBe(matchId);
+  }, 120_000);
+
+  it("another page of the account cannot take a played seat unless the player takes it over", async () => {
+    // Owner, 2026-11-24: a client that reconnected whenever it was replaced threw the playing
+    // page out every few seconds, and both drove the same body (workers/fps/seat-claim.ts).
+    const matchId = crypto.randomUUID();
+    const sub = crypto.randomUUID();
+    const a = await open(matchId, sub, "Me", "&page=page-aaaaaaaa");
+    await until(() => latest(a.frames), 30_000);
+    // An old client (no page name), and another page: refused, the playing page keeps it.
+    const old = await open(matchId, sub, "Me");
+    await until(() => old.closed.code, 10_000);
+    expect(old.closed.code).toBe(4002);
+    const other = await open(matchId, sub, "Me", "&page=page-bbbbbbbb");
+    await until(() => other.closed.code, 10_000);
+    expect(other.closed.code).toBe(4002);
+    await pause(200);
+    expect(a.closed.code).toBeUndefined();
+    // The same page reconnecting replaces its own older socket, as before.
+    const again = await open(matchId, sub, "Me", "&page=page-aaaaaaaa");
+    await until(() => a.closed.code, 10_000);
+    expect(a.closed.code).toBe(4001);
+    await until(() => latest(again.frames), 10_000);
+    // "Play here" on the other page takes the seat over.
+    const here = await open(matchId, sub, "Me", "&page=page-bbbbbbbb&takeover=1");
+    await until(() => again.closed.code, 10_000);
+    expect(again.closed.code).toBe(4001);
+    await until(() => latest(here.frames), 10_000);
+    expect(here.closed.code).toBeUndefined();
   }, 120_000);
 
   it("two players jump together and see each other's parachutes; early jumps and forged state are refused", async () => {
