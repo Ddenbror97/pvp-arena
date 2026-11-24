@@ -28,6 +28,8 @@ const REPICK_M = 10;
 /** The doors by cell (m) for that. */
 const PICK_CELL = 130;
 const SWING = Math.PI * 0.48;
+/** How far inside each face of the wall a door's lining ends (m). */
+export const LINING_INSET = 0.0025;
 const SPEED = 7; // rad/s
 
 /** The door atlas meta (DOOR_ASSETS.meta): per model, per doorway (doors.ts order). */
@@ -216,9 +218,17 @@ export function createDoorRenderer(scene: THREE.Scene, set: DoorSet, look: DoorL
     panels.instanceMatrix.needsUpdate = true;
   };
 
+  /**
+   * A door's lining: two jambs and a head, as deep as the wall less LINING_INSET (owner,
+   * 2026-11-24: "it can be some flicker from the doors edges inside/interiors"). It stood 1 cm
+   * proud of both faces of the wall, a ledge a pixel or less wide down both sides of every
+   * door that shimmered as you walked past (measured on the RTX 2050, a Downtown tower's lobby
+   * door seen through its glass from 26 m: 150 pixels flashing down its jamb; flush 8; inset
+   * 4; 3 cm proud 324). Inside the wall's faces it still covers the cut through the wall.
+   */
   const lining = (k: number, f: Fit) => {
     const t = f.lining,
-      depth = f.front + f.back + 0.02,
+      depth = Math.max(t, f.front + f.back - 2 * LINING_INSET),
       shift = (f.front - f.back) / 2;
     const rx = Math.cos(f.theta),
       rz = -Math.sin(f.theta);
