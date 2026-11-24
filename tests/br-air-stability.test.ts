@@ -115,6 +115,7 @@ describe("buildings from the air", async () => {
       nearGrazes: 0,
       mixedStackFrames: 0,
       mixedFarStackFrames: 0,
+      mixedNearAirFrames: 0,
       changes: 0,
     };
     const gone = new Int32Array(layout.length);
@@ -166,16 +167,23 @@ describe("buildings from the air", async () => {
           since[i] = f;
         }
       }
+      // In the air a tower takes its detailed storeys at once, never from the top down (owner,
+      // 2026-11-24: "it do still waterfall with painting the apartments color").
+      const aloft = c.y - hf.heightAt(c.x, c.z) >= 100;
       for (const m of stacks) {
         let lo = 9,
           hi = -9,
-          far = 0;
+          far = 0,
+          near = 0,
+          other = 0;
         for (const i of m) {
           // (A tower's roof keeps its middle LOD from the air: its pool deck and helipad are
           // what you look for. Its lobby and storeys go as one.)
           if (manifest.models[layout[i]!.model]!.air !== "far") continue;
           const l = props.levelOf(i);
-          if (l === 0) continue; // the near ring is each part's own (its panes go with it)
+          if (l === 0) near++;
+          else other++;
+          if (l === 0) continue; // the near ring is each part's own on the ground (panes with it)
           lo = Math.min(lo, l);
           hi = Math.max(hi, l);
           if (l === 2) far++;
@@ -184,6 +192,7 @@ describe("buildings from the air", async () => {
           out.mixedStackFrames++;
           if (lo < 0 || far) out.mixedFarStackFrames++;
         }
+        if (aloft && near && other) out.mixedNearAirFrames++;
       }
     }
     props.dispose();
@@ -287,6 +296,8 @@ describe("buildings from the air", async () => {
       expect(r.both, "doubled building-frames").toBe(0);
       // A tower is one LOD past its near ring.
       expect(r.mixedStackFrames, "towers in mixed LODs").toBe(0);
+      // In the air, not even at the near ring.
+      expect(r.mixedNearAirFrames, "towers detailed from the top down, in the air").toBe(0);
       // Nothing goes there and back.
       expect(r.flips, "there-and-back LOD changes").toBe(0);
     }, 600_000);
