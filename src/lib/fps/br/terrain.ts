@@ -58,8 +58,6 @@ export type TerrainControls = {
   root: THREE.Object3D;
   /** Re-select patches for this camera (call once per frame before rendering). */
   update: (camera: THREE.PerspectiveCamera) => void;
-  /** The size drawn at (pixels): the ground's filter footprint is worked out from it. */
-  setViewport: (width: number, height: number) => void;
   stats: () => { patches: number; triangles: number };
   /** Shared with the water (lake mask) and later the map UI; owned by the terrain. */
   textures: {
@@ -208,6 +206,17 @@ export const GROUND_REACH = { value: new THREE.Vector2(GROUND.reach, GROUND.reac
 /** The anisotropy the ground tiles are filtered with (shared with the road meshes' asphalt). */
 export const GROUND_ANISO = { value: 16 };
 /**
+ * A pixel's step on a camera ray at unit depth (x, y), for groundFootprint (GLSL); 0 until
+ * setGroundFootprint runs (tools): the GPU's derivatives then.
+ */
+export const GROUND_PIXEL_RAY = { value: new THREE.Vector2() };
+/** Per frame, with the camera and the size drawn at (pixels). */
+export function setGroundFootprint(camera: THREE.PerspectiveCamera, width: number, height: number) {
+  const pe = camera.projectionMatrix.elements;
+  if (width > 0 && height > 0 && pe[0]! > 0 && pe[5]! > 0)
+    GROUND_PIXEL_RAY.value.set(2 / width / pe[0]!, 2 / height / pe[5]!);
+}
+/**
  * A ground tile's colour (linear) for a pixel whose footprint is `gx`, `gy` (the tile's uv per
  * screen pixel; `perMetre`: uv per metre): GROUND.reach, then GROUND.stretch. Shared by the
  * terrain and the road meshes (structures-renderer.ts). `full` false: one plain sample.
@@ -216,6 +225,28 @@ export const GROUND_ANISO = { value: 16 };
 export const GROUND_TILE_GLSL = `
         uniform vec2 uGroundReach;
         uniform float uGroundAniso, uGroundTaps;
+        uniform vec2 uGroundPixelRay;
+        // The world footprint of this pixel (dx, dy) on the plane through p with normal n, from
+        // the camera (ray differentials). dFdx/dFdy may be per 2 × 2 block (coarse), as on
+        // Intel's D3D11 drivers: a ground filter fed those stepped every two rows, and at a
+        // slant asphalt and paving tens of metres ahead shimmered as the camera moved (owner,
+        // Intel UHD, 2026-11-24). With per-pixel derivatives the two agree. dx, dy are left as
+        // passed (the GPU's) with an orthographic camera, before setGroundFootprint, or where a
+        // neighbour's ray misses the plane (the horizon).
+        void groundFootprint(vec3 p, vec3 n, inout vec3 dx, inout vec3 dy) {
+          if (uGroundPixelRay.x <= 0.0 || isOrthographic) return;
+          vec3 rel = p - cameraPosition;
+          vec3 fwd = -vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]);
+          float depth = dot(rel, fwd);
+          if (depth < 1e-3) return;
+          vec3 d = rel / depth;
+          vec3 sx = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]) * uGroundPixelRay.x;
+          vec3 sy = vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]) * uGroundPixelRay.y;
+          float rn = dot(rel, n), nx = dot(d + sx, n), ny = dot(d + sy, n);
+          if (rn * nx <= 1e-6 || rn * ny <= 1e-6) return;
+          dx = (d + sx) * (rn / nx) - rel;
+          dy = (d + sy) * (rn / ny) - rel;
+        }
         vec3 groundTile(sampler2DArray tiles, vec3 uvw, vec2 gx, vec2 gy, float perMetre, bool full, float exact) {
           float lx = dot(gx, gx), ly = dot(gy, gy);
           vec2 major = lx > ly ? gx : gy, minor = lx > ly ? gy : gx;
@@ -243,6 +274,7 @@ export const GROUND_TILE_GLSL = `
         }`;
 /** The uniforms GROUND_TILE_GLSL reads (set when the terrain is made, shared by reference). */
 export const groundTileUniforms = () => ({
+  uGroundPixelRay: GROUND_PIXEL_RAY,
   uGroundReach: GROUND_REACH,
   uGroundAniso: GROUND_ANISO,
   uGroundTaps: GROUND_TAPS,
@@ -488,7 +520,6 @@ export function createTerrain(
   let disposed = false;
   const placeholderCover = new THREE.DataTexture(new Uint8Array([0, 0]), 1, 1, THREE.RGFormat);
   placeholderCover.needsUpdate = true;
-  const viewport = new THREE.Vector2();
   const uniforms = {
     uHeight: { value: heightTex },
     uSink: { value: sinkTex },
@@ -514,8 +545,6 @@ export function createTerrain(
       value: ranges.map((r) => new THREE.Vector2(r * TERRAIN.morphStart, r * TERRAIN.morphEnd)),
     },
     uCamera: { value: new THREE.Vector3() },
-    /** A pixel's step on a ray at unit depth (x, y); 0 until setViewport: the GPU's derivatives. */
-    uPixelRay: { value: new THREE.Vector2() },
     // Ground textures (placeholders until loadGround; uGroundOn 0 keeps them unsampled).
     uGroundA: { value: placeholderArray() },
     uGroundN: { value: placeholderArray() },
@@ -614,8 +643,6 @@ export function createTerrain(
         uniform float uCanopyOn;
         uniform vec2 uTreeRing;
         uniform float uGroundOn, uGroundRange, uGroundLite;
-        uniform vec2 uPixelRay;
-        uniform vec3 uCamera;
         uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
         uniform float uLayerScale[${GROUND_LAYERS.length}];
         uniform vec4 uRunway[2];
@@ -680,28 +707,7 @@ export function createTerrain(
           brNw = normalize(vec3(nxz.x, sqrt(max(0.05, 1.0 - dot(nxz, nxz))), nxz.y));
           brDx = dFdx(vWorld);
           brDy = dFdy(vWorld);
-          // The footprint worked out from the camera instead (ray differentials on the
-          // surface's plane): dFdx/dFdy may be per 2 × 2 block (coarse), as on Intel's D3D11
-          // drivers, and then the ground's filter steps every two rows; at a slant the asphalt
-          // and the paving tens of metres ahead shimmered as the camera moved (owner, Intel
-          // UHD, 2026-11-24). On GPUs with per-pixel derivatives the two agree.
-          if (uPixelRay.x > 0.0 && !isOrthographic) {
-            vec3 rel = vWorld - uCamera;
-            vec3 right = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
-            vec3 up = vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]);
-            vec3 fwd = -vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]);
-            float depth = dot(rel, fwd);
-            vec3 d = rel / max(depth, 1e-4);
-            vec3 sx = right * uPixelRay.x;
-            vec3 sy = up * uPixelRay.y;
-            float rn = dot(rel, brNw);
-            float nx = dot(d + sx, brNw), ny = dot(d + sy, brNw);
-            // (A neighbour's ray that misses the plane, at the horizon: keep the GPU's.)
-            if (depth > 1e-3 && rn * nx > 1e-6 && rn * ny > 1e-6) {
-              brDx = (d + sx) * (rn / nx) - rel;
-              brDy = (d + sy) * (rn / ny) - rel;
-            }
-          }
+          groundFootprint(vWorld, brNw, brDx, brDy);
           vec4 a = texture2D(uCoverA, uv); // sand, grass, field, forest floor
           vec4 b = texture2D(uCoverB, uv); // rock, urban, road, (shore)
           // Ragged zone borders (AIR.wobble): the land cover and the aerial bake are read a few
@@ -1081,18 +1087,12 @@ export function createTerrain(
     textures: { height: heightTex, coverA, coverB, wet },
     surfaceTexture: () => (uniforms.uSurfaceOn.value ? uniforms.uSurface.value : null),
     heightGrid: { spacing: hf.spacing, grid: n, offset: HEIGHT_OFFSET },
-    setViewport(width, height) {
-      viewport.set(width, height);
-    },
     update(camera) {
       camera.updateMatrixWorld();
       viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
       frustum.setFromProjectionMatrix(viewProjection);
       cam.setFromMatrixPosition(camera.matrixWorld);
       uniforms.uCamera.value.copy(cam);
-      const pe = camera.projectionMatrix.elements;
-      if (viewport.x > 0 && pe[0]! > 0 && pe[5]! > 0)
-        uniforms.uPixelRay.value.set(2 / viewport.x / pe[0]!, 2 / viewport.y / pe[5]!);
       count = selectPatches(
         TERRAIN,
         minMax,
