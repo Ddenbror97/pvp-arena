@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   openMatchSocket,
   REFUSED_LIMIT,
+  OCCUPIED_CLOSE,
+  PAGE_ID,
   REPLACED_CLOSE,
   type MatchSocketOptions,
 } from "../src/lib/fps/match-socket";
@@ -221,5 +223,19 @@ describe("match socket", () => {
     FakeSocket.all[0]!.open();
     FakeSocket.all[0]!.drop(REPLACED_CLOSE, "Replaced by a new connection");
     expect(closed).toHaveBeenCalledTimes(1);
+  });
+  it("a seat kept for another page (OCCUPIED_CLOSE) stops reconnecting as a replaced one does", async () => {
+    let again: (() => void) | null = null;
+    connection({ replaced: (a) => void (again = a) });
+    await tick();
+    FakeSocket.all[0]!.open();
+    FakeSocket.all[0]!.drop(OCCUPIED_CLOSE, "Open on this account elsewhere");
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(FakeSocket.all).toHaveLength(1);
+    expect(again).not.toBeNull();
+  });
+
+  it("names the page once per load, as the room expects it", () => {
+    expect(PAGE_ID).toMatch(/^[A-Za-z0-9-]{8,64}$/);
   });
 });
