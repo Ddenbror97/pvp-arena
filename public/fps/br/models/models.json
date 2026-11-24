@@ -51849,6 +51849,384 @@
      ]
     }
    ]
+  },
+  "mb-roadblock": {
+   "title": "Lowpoly Concrete Barrier",
+   "author": "l0wpoly",
+   "source": "https://sketchfab.com/3d-models/lowpoly-concrete-barrier-e0fb4ba5ee434433bbdb4a16aaa2f8fb",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Southern Military Base (owner's 2026-11-23 downloads): concrete roadblocks in the gate chicanes",
+   "scale": 0.010588,
+   "sourceTris": 36,
+   "size": [
+    1.92,
+    0.9,
+    0.53
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-roadblock.lod0.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0.17,
+     "kB": 12,
+     "size": [
+      1.92,
+      0.9,
+      0.53
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-roadblock.lod1.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0.04,
+     "kB": 6,
+     "size": [
+      1.92,
+      0.9,
+      0.53
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-roadblock.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      1.92,
+      0.9,
+      0.53
+     ]
+    }
+   ]
+  },
+  "mb-sandbag-corner": {
+   "title": "Sandbag Wall 04",
+   "author": "Pypunk",
+   "source": "https://sketchfab.com/3d-models/sandbag-wall-04-a5ea125e9d534b54a3185f349da6aabd",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Southern Military Base (owner's 2026-11-23 downloads): L-shaped sandbag fighting positions (waist-high cover, the corner kept open)",
+   "scale": 0.027718,
+   "sourceTris": 1176,
+   "size": [
+    2.04,
+    1,
+    2.68
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-sandbag-corner.lod0.glb",
+     "tris": 1176,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 71,
+     "size": [
+      2.04,
+      1,
+      2.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-sandbag-corner.lod1.glb",
+     "tris": 520,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 20,
+     "size": [
+      2.04,
+      1,
+      2.68
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-sandbag-corner.lod2.glb",
+     "tris": 400,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      2.04,
+      1,
+      2.68
+     ]
+    }
+   ]
+  },
+  "mb-ammo-crate": {
+   "title": "Millitary Crate",
+   "author": "ShaoChiChen",
+   "source": "https://sketchfab.com/3d-models/millitary-crate-e8b7b508c49f4030996fc161c45ea5d8",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "clutter",
+   "use": "Southern Military Base (owner's 2026-11-23 downloads): wooden ammunition crates at the armories and on the flight line",
+   "scale": 0.196022,
+   "sourceTris": 996,
+   "size": [
+    1.2,
+    0.64,
+    0.79
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-ammo-crate.lod0.glb",
+     "tris": 996,
+     "draws": 1,
+     "textureMB": 1.33,
+     "kB": 30,
+     "size": [
+      1.2,
+      0.64,
+      0.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-ammo-crate.lod1.glb",
+     "tris": 564,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 17,
+     "size": [
+      1.2,
+      0.64,
+      0.79
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-ammo-crate.lod2.glb",
+     "tris": 148,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.2,
+      0.64,
+      0.79
+     ]
+    }
+   ]
+  },
+  "mb-barrel-green": {
+   "title": "JAC3D Military Props Pack (Milprops pack 01)",
+   "author": "JAC3D (iambadga)",
+   "source": "https://iambadga.itch.io/jac3d-military-props-pack",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Southern Military Base (owner's 2026-11-23 downloads): olive drums in the supply yards (converted from FBX, art/br/assets/convert_fbx.mjs)",
+   "scale": 0.013929,
+   "sourceTris": 1760,
+   "size": [
+    0.67,
+    0.88,
+    0.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-barrel-green.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 13,
+     "size": [
+      0.67,
+      0.88,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-barrel-green.lod1.glb",
+     "tris": 342,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.67,
+      0.88,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-barrel-green.lod2.glb",
+     "tris": 120,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.67,
+      0.88,
+      0.67
+     ]
+    }
+   ]
+  },
+  "mb-barrel-fuel": {
+   "title": "JAC3D Military Props Pack (Milprops pack 01)",
+   "author": "JAC3D (iambadga)",
+   "source": "https://iambadga.itch.io/jac3d-military-props-pack",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Southern Military Base (owner's 2026-11-23 downloads): black fuel drums by the hangars (converted from FBX, art/br/assets/convert_fbx.mjs)",
+   "scale": 0.013929,
+   "sourceTris": 1760,
+   "size": [
+    0.67,
+    0.88,
+    0.67
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-barrel-fuel.lod0.glb",
+     "tris": 600,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 15,
+     "size": [
+      0.67,
+      0.88,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-barrel-fuel.lod1.glb",
+     "tris": 342,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 9,
+     "size": [
+      0.67,
+      0.88,
+      0.67
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-barrel-fuel.lod2.glb",
+     "tris": 120,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.67,
+      0.88,
+      0.67
+     ]
+    }
+   ]
+  },
+  "mb-ammo-box": {
+   "title": "JAC3D Military Props Pack (Milprops pack 01)",
+   "author": "JAC3D (iambadga)",
+   "source": "https://iambadga.itch.io/jac3d-military-props-pack",
+   "licence": "CC BY 4.0",
+   "class": "small",
+   "ring": "clutter",
+   "use": "Southern Military Base (owner's 2026-11-23 downloads): metal ammunition boxes, stacked (converted from FBX, art/br/assets/convert_fbx.mjs)",
+   "scale": 0.010083,
+   "sourceTris": 616,
+   "size": [
+    0.62,
+    0.31,
+    0.62
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-ammo-box.lod0.glb",
+     "tris": 596,
+     "draws": 1,
+     "textureMB": 0.33,
+     "kB": 13,
+     "size": [
+      0.62,
+      0.31,
+      0.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-ammo-box.lod1.glb",
+     "tris": 222,
+     "draws": 1,
+     "textureMB": 0.08,
+     "kB": 8,
+     "size": [
+      0.62,
+      0.31,
+      0.62
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-ammo-box.lod2.glb",
+     "tris": 68,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      0.62,
+      0.31,
+      0.62
+     ]
+    }
+   ]
+  },
+  "mb-missile-rack": {
+   "title": "JAC3D Military Props Pack (Milprops pack 01)",
+   "author": "JAC3D (iambadga)",
+   "source": "https://iambadga.itch.io/jac3d-military-props-pack",
+   "licence": "CC BY 4.0",
+   "class": "prop",
+   "ring": "prop",
+   "use": "Southern Military Base (owner's 2026-11-23 downloads): munitions racks with four missiles each on the flight line (converted from FBX, art/br/assets/convert_fbx.mjs)",
+   "scale": 0.014231,
+   "sourceTris": 4264,
+   "size": [
+    1.97,
+    0.64,
+    3
+   ],
+   "lods": [
+    {
+     "file": "/fps/br/models/mb-missile-rack.lod0.glb",
+     "tris": 2562,
+     "draws": 2,
+     "textureMB": 0.67,
+     "kB": 49,
+     "size": [
+      1.97,
+      0.64,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-missile-rack.lod1.glb",
+     "tris": 900,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 5,
+     "size": [
+      1.97,
+      0.64,
+      3
+     ]
+    },
+    {
+     "file": "/fps/br/models/mb-missile-rack.lod2.glb",
+     "tris": 250,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      1.97,
+      0.64,
+      3
+     ]
+    }
+   ]
   }
  }
 }

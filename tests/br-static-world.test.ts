@@ -18,7 +18,7 @@ const buffer = (path: string) => {
   const f = readFileSync(path);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v5.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
@@ -30,7 +30,7 @@ let roadGrade: ReturnType<typeof createRoadGrade>;
 beforeAll(async () => {
   hf = await decodeHeightfield(buffer("public/fps/br/height.v6.hf"));
   roadGrade = createRoadGrade(meta, (x, z) => hf.heightAt(x, z));
-  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v4.lc"));
+  const cover = await decodeLandCover(buffer("public/fps/br/landcover.v5.lc"));
   ({ layout, solid: world } = buildIsland(hf, cover, meta, collision));
 }, 60_000);
 

@@ -86,6 +86,23 @@ CATEGORY_OVERRIDES = {
     "concrete girder beam bridges tunnels free": "building-kit",
 }
 
+# Downloads only in a format process_assets.mjs cannot read, converted to a glTF zip by a script
+# in this folder; keyed by the original zip's sha256. The record keeps the original zip and puts
+# the converted one first (the one process_assets stages), with the credit the download's own
+# files do not give (the JAC3D pack's readme names no author or page).
+CONVERTED = {
+    # Milprops_pack_01.zip (owner, 2026-11-23), FBX + PNG only.
+    "30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2": {
+        "title": "JAC3D Military Props Pack (Milprops pack 01)",
+        "author": "JAC3D (iambadga)",
+        "author_url": "https://iambadga.itch.io",
+        "source": "https://iambadga.itch.io/jac3d-military-props-pack",
+        "zip": "/home/claude/br-converted/milprops_pack_01_gltf.zip",
+        "command": "node art/br/assets/convert_fbx.mjs /mnt/user-data/uploads/Milprops_pack_01.zip "
+                   "/home/claude/br-converted/milprops_pack_01_gltf.zip",
+    },
+}
+
 # ---------------------------------------------------------------- helpers
 
 def now_local():
@@ -966,6 +983,20 @@ def build(args):
         area = match["area"] if match else None
         a["category"] = classify(a["title"], area, dict(rec, uid=uid))
         assess(a)
+        conv = next((CONVERTED[sh] for sh in shas if sh in CONVERTED), None)
+        if conv:
+            for k in ("title", "author", "author_url", "source"):
+                a[k] = conv[k]
+            a["licence"]["link"] = a["licence"]["link"] or licence_link("CC-BY-4.0")
+            present = os.path.exists(conv["zip"])
+            a["zips"].insert(0, {"path": conv["zip"], "sha256": sha256_file(conv["zip"]) if present else None,
+                                 "size": os.path.getsize(conv["zip"]) if present else None, "mtime": None,
+                                 "batch": a["zips"][0]["batch"], "present": present,
+                                 "converted_from": a["zips"][0]["path"], "command": conv["command"]})
+            a["formats"], a["gltf_member"] = ["gltf+bin"], "scene.gltf"
+            a["flags"] = [f for f in a["flags"] if f != "needs-conversion"] + ["CONVERTED"]
+            a["actions"] = [x for x in a["actions"] if not x.startswith("needs-conversion")]
+            a["actions"].append("converted to glTF: " + conv["command"])
         assets.append(a)
 
     area_order = [x["id"] for x in areas]

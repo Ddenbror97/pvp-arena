@@ -1,6 +1,6 @@
 {
  "tool_version": 3,
- "generated": "2026-11-23T12:10:17-03:00",
+ "generated": "2026-11-23T21:01:23-03:00",
  "command": "python3 -I art/br/assets/inventory.py --out art/br/assets",
  "inputs": [
   "/mnt/user-data/attachments/6a16bbd3-946b-525c-a56d-aa69438e92da/*.zip",
@@ -74876,6 +74876,346 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sha:30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2",
+   "title": "JAC3D Military Props Pack (Milprops pack 01)",
+   "author": "JAC3D (iambadga)",
+   "author_url": "https://iambadga.itch.io",
+   "source": "https://iambadga.itch.io/jac3d-military-props-pack",
+   "uid": null,
+   "licence": {
+    "string": "creativecommons.org/licenses/by/4.0",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "Milprops_pack_01/Readme.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/home/claude/br-converted/milprops_pack_01_gltf.zip",
+     "sha256": "fa8b5f133179c66af7cc0a1a0361ff649950aff1254c83d9c101efe40fdd7471",
+     "size": 6287818,
+     "mtime": null,
+     "batch": "2026-11-23",
+     "present": true,
+     "converted_from": "/mnt/user-data/uploads/Milprops_pack_01.zip",
+     "command": "node art/br/assets/convert_fbx.mjs /mnt/user-data/uploads/Milprops_pack_01.zip /home/claude/br-converted/milprops_pack_01_gltf.zip"
+    },
+    {
+     "path": "/mnt/user-data/uploads/Milprops_pack_01.zip",
+     "sha256": "30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2",
+     "size": 44925872,
+     "mtime": "2026-11-23T20:34:24-03:00",
+     "batch": "2026-11-23",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-23",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": null,
+   "textures": {
+    "count": 39,
+    "images": [
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_diffuse_black.png",
+      "name": "Milprops_pack_01/Barrels/barrel_diffuse_black.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_diffuse_black_flammable.png",
+      "name": "Milprops_pack_01/Barrels/barrel_diffuse_black_flammable.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_diffuse_green.png",
+      "name": "Milprops_pack_01/Barrels/barrel_diffuse_green.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_diffuse_green_flammable.png",
+      "name": "Milprops_pack_01/Barrels/barrel_diffuse_green_flammable.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_metal.png",
+      "name": "Milprops_pack_01/Barrels/barrel_metal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_normal.png",
+      "name": "Milprops_pack_01/Barrels/barrel_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_roughness.png",
+      "name": "Milprops_pack_01/Barrels/barrel_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Box/box_diffuse.png",
+      "name": "Milprops_pack_01/Box/box_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Box/box_metal.png",
+      "name": "Milprops_pack_01/Box/box_metal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Box/box_normal.png",
+      "name": "Milprops_pack_01/Box/box_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Box/box_roughness.png",
+      "name": "Milprops_pack_01/Box/box_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_black_diffuse.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_black_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_diffuse_black.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_diffuse_black.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_diffuse_green.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_diffuse_green.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_green_diffuse.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_green_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_normal.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_roughness.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_metal.png",
+      "name": "Milprops_pack_01/Magazines/magazine_metal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_black_diffuse.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_black_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_diffuse_black.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_diffuse_black.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_diffuse_green.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_diffuse_green.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_green_diffuse.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_green_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_normal.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_roughness.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missile Rack/missile_rack_diffuse.png",
+      "name": "Milprops_pack_01/Missile Rack/missile_rack_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missile Rack/missile_rack_metal.png",
+      "name": "Milprops_pack_01/Missile Rack/missile_rack_metal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missile Rack/missile_rack_normal.png",
+      "name": "Milprops_pack_01/Missile Rack/missile_rack_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missile Rack/missile_rack_roughness.png",
+      "name": "Milprops_pack_01/Missile Rack/missile_rack_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_diffuse_green.png",
+      "name": "Milprops_pack_01/Missiles/missile_diffuse_green.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_diffuse_white.png",
+      "name": "Milprops_pack_01/Missiles/missile_diffuse_white.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_green_diffuse.png",
+      "name": "Milprops_pack_01/Missiles/missile_green_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_metal.png",
+      "name": "Milprops_pack_01/Missiles/missile_metal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_normal.png",
+      "name": "Milprops_pack_01/Missiles/missile_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_roughness.png",
+      "name": "Milprops_pack_01/Missiles/missile_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_white_diffuse.png",
+      "name": "Milprops_pack_01/Missiles/missile_white_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Shells/shells_atlas_diffuse.png",
+      "name": "Milprops_pack_01/Shells/shells_atlas_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Shells/shells_atlas_normal.png",
+      "name": "Milprops_pack_01/Shells/shells_atlas_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Shells/shells_atlas_roughness.png",
+      "name": "Milprops_pack_01/Shells/shells_atlas_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Shells/shells_metal.png",
+      "name": "Milprops_pack_01/Shells/shells_metal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 750.1,
+    "unreadable": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 750",
+    "CONVERTED"
+   ],
+   "actions": [
+    "downscale textures to 1K",
+    "converted to glTF: node art/br/assets/convert_fbx.mjs /mnt/user-data/uploads/Milprops_pack_01.zip /home/claude/br-converted/milprops_pack_01_gltf.zip"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
    "key": "sf:c3cbb936025841999185b57947e2b645",
    "title": "Jail Cell Door",
    "author": "matheusDsouza14",
@@ -84881,10 +85221,18 @@
      "mtime": "2026-11-04T08:10:48-03:00",
      "batch": "2026-11-04",
      "present": false
+    },
+    {
+     "path": "/mnt/user-data/uploads/d3f26e63-low_poly_camping.zip",
+     "sha256": "abcb249273826ec5e930f4e68641ef4f5510ba8e9f7c26891b4c19d4c7c560df",
+     "size": 248811,
+     "mtime": "2026-11-23T20:34:22-03:00",
+     "batch": "2026-11-23",
+     "present": true
     }
    ],
-   "duplicate": false,
-   "duplicate_kind": null,
+   "duplicate": true,
+   "duplicate_kind": "identical files",
    "batch": "2026-11-04",
    "formats": [
     "gltf+bin"
@@ -91800,6 +92148,120 @@
     "downscale textures to 2K"
    ],
    "over_budget": true,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:e0fb4ba5ee434433bbdb4a16aaa2f8fb",
+   "title": "Lowpoly Concrete Barrier",
+   "author": "l0wpoly",
+   "author_url": "https://sketchfab.com/l0wpoly",
+   "source": "https://sketchfab.com/3d-models/lowpoly-concrete-barrier-e0fb4ba5ee434433bbdb4a16aaa2f8fb",
+   "uid": "e0fb4ba5ee434433bbdb4a16aaa2f8fb",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/f52e958f-lowpoly_concrete_barrier.zip",
+     "sha256": "378df4f6363812089b0bac80031030ed785321d32a7155d3c765723a61d6a479",
+     "size": 901022,
+     "mtime": "2026-11-23T20:34:22-03:00",
+     "batch": "2026-11-23",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-23",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 82,
+    "verts": 108,
+    "draws": 2,
+    "unique_tris": 82,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 9,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     181.541,
+     85.275,
+     149.866
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "roadblocks.FBX",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 46,
+    "top_pieces": [
+     {
+      "name": "roadblock2",
+      "tris": 46,
+      "draws": 1,
+      "size_m": [
+       89.872,
+       85.275,
+       49.866
+      ]
+     },
+     {
+      "name": "roadblock1",
+      "tris": 36,
+      "draws": 1,
+      "size_m": [
+       181.541,
+       85.0,
+       49.866
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/roadblock1_baseColor.png",
+      "name": "textures/roadblock1_baseColor.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 2.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 182 m"
+   ],
+   "actions": [
+    "check scale (largest side 182 m; x0.01 would give 1.82 m)"
+   ],
+   "over_budget": false,
    "budget_ratio": 0.0
   },
   {
@@ -106338,6 +106800,155 @@
    "budget_ratio": 0.0
   },
   {
+   "key": "sf:91f495435f624d8b97a768f692aa6ce9",
+   "title": "Military Landvehicle Kit 1.2 (CC0)",
+   "author": "britdawgmasterfunk",
+   "author_url": "https://sketchfab.com/britdawgmasterfunk",
+   "source": "https://sketchfab.com/3d-models/military-landvehicle-kit-12-cc0-91f495435f624d8b97a768f692aa6ce9",
+   "uid": "91f495435f624d8b97a768f692aa6ce9",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/military_landvehicle_kit_1_2_cc0.zip",
+     "sha256": "5410fe832b52028e9be1edcf12afe03539fd0f7d88d546d63a530fe9af7fb464",
+     "size": 52770861,
+     "mtime": "2026-11-23T20:34:25-03:00",
+     "batch": "2026-11-23",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-23",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 3508277,
+    "verts": 2751948,
+    "draws": 309,
+    "unique_tris": 3508277,
+    "meshes": 309,
+    "primitives": 309,
+    "materials": 14,
+    "materials_used": 14,
+    "nodes": 598,
+    "mesh_nodes": 309,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     37.378,
+     14.829,
+     16.433
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 286,
+    "max_piece_tris": 393216,
+    "top_pieces": [
+     {
+      "name": "Circle.004_259",
+      "tris": 393216,
+      "draws": 13,
+      "size_m": [
+       3.477,
+       0.081,
+       3.477
+      ]
+     },
+     {
+      "name": "Tires.001_208",
+      "tris": 331776,
+      "draws": 4,
+      "size_m": [
+       1.559,
+       1.559,
+       0.348
+      ]
+     },
+     {
+      "name": "screw 12.001_183",
+      "tris": 201728,
+      "draws": 2,
+      "size_m": [
+       0.438,
+       0.011,
+       1.015
+      ]
+     },
+     {
+      "name": "Bolt 3_124",
+      "tris": 193536,
+      "draws": 2,
+      "size_m": [
+       0.063,
+       0.08,
+       1.284
+      ]
+     },
+     {
+      "name": "Jeep Floor.009_160",
+      "tris": 148112,
+      "draws": 2,
+      "size_m": [
+       0.169,
+       0.495,
+       3.05
+      ]
+     },
+     {
+      "name": "Jeep Frame.237_162",
+      "tris": 142618,
+      "draws": 2,
+      "size_m": [
+       6.684,
+       3.413,
+       2.691
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "vehicle-kit",
+   "flags": [
+    "PIECE>80k (4.9x)",
+    "KIT-TOTAL 3508k",
+    "MATS 14"
+   ],
+   "actions": [
+    "decimate heavy pieces to 80k",
+    "atlas materials across kit (14 materials)"
+   ],
+   "over_budget": true,
+   "budget_ratio": 4.92
+  },
+  {
    "key": "sf:1671685e1dd94b6e9216ead632f08f6e",
    "title": "Military Style Building (with animations)",
    "author": "TampaJoey",
@@ -107745,6 +108356,144 @@
    "flags": [],
    "actions": [
     "use as-is"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
+  },
+  {
+   "key": "sf:e8b7b508c49f4030996fc161c45ea5d8",
+   "title": "Millitary Crate",
+   "author": "ShaoChiChen",
+   "author_url": "https://sketchfab.com/Brandon..Chen",
+   "source": "https://sketchfab.com/3d-models/millitary-crate-e8b7b508c49f4030996fc161c45ea5d8",
+   "uid": "e8b7b508c49f4030996fc161c45ea5d8",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/a9f68290-millitary_crate.zip",
+     "sha256": "0fb15bb29b9fa8c401307bc72e63570c846ac57d02fee7759858e81f1a4ec2b9",
+     "size": 11129231,
+     "mtime": "2026-11-23T20:34:23-03:00",
+     "batch": "2026-11-23",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-23",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 996,
+    "verts": 928,
+    "draws": 3,
+    "unique_tris": 996,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 10,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.122,
+     3.276,
+     4.051
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "64781653ab674740b29f7c48a2d46486.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.001,
+    "pieces_count": 3,
+    "max_piece_tris": 466,
+    "top_pieces": [
+     {
+      "name": "Crate_02_low",
+      "tris": 466,
+      "draws": 1,
+      "size_m": [
+       6.053,
+       0.69,
+       4.0
+      ]
+     },
+     {
+      "name": "Crate_01_low",
+      "tris": 350,
+      "draws": 1,
+      "size_m": [
+       5.99,
+       2.585,
+       4.0
+      ]
+     },
+     {
+      "name": "Crate_03_low",
+      "tris": 180,
+      "draws": 1,
+      "size_m": [
+       6.122,
+       0.482,
+       4.051
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Crate_baseColor.png",
+      "name": "textures/Crate_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Crate_metallicRoughness.png",
+      "name": "textures/Crate_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Crate_normal.png",
+      "name": "textures/Crate_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "TEXMB 64"
+   ],
+   "actions": [
+    "downscale textures to 1K"
    ],
    "over_budget": false,
    "budget_ratio": 0.0
@@ -146461,6 +147210,115 @@
    ],
    "over_budget": true,
    "budget_ratio": 12.45
+  },
+  {
+   "key": "sf:a5ea125e9d534b54a3185f349da6aabd",
+   "title": "Sandbag Wall 04",
+   "author": "Pypunk",
+   "author_url": "https://sketchfab.com/PieterSnauwaert",
+   "source": "https://sketchfab.com/3d-models/sandbag-wall-04-a5ea125e9d534b54a3185f349da6aabd",
+   "uid": "a5ea125e9d534b54a3185f349da6aabd",
+   "licence": {
+    "string": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "label": "CC BY 4.0",
+    "link": "https://creativecommons.org/licenses/by/4.0/",
+    "file": "license.txt",
+    "verdict": "OK",
+    "reason": "CC BY"
+   },
+   "list_match": null,
+   "zips": [
+    {
+     "path": "/mnt/user-data/uploads/63323b3f-sandbag_wall_04.zip",
+     "sha256": "381e4a9401528236861ed6992d13e83cb575351b2ba53d15b5a8ed9f7a141360",
+     "size": 681215,
+     "mtime": "2026-11-23T20:34:22-03:00",
+     "batch": "2026-11-23",
+     "present": true
+    }
+   ],
+   "duplicate": false,
+   "duplicate_kind": null,
+   "batch": "2026-11-23",
+   "formats": [
+    "gltf+bin"
+   ],
+   "gltf_member": "scene.gltf",
+   "model": {
+    "tris": 1176,
+    "verts": 1680,
+    "draws": 1,
+    "unique_tris": 1176,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     73.741,
+     36.077,
+     96.826
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "49f21c55f66949eb9818185d716e707e.fbx",
+     "RootNode",
+     "Box003"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1176,
+    "top_pieces": [
+     {
+      "name": "Box003_Fabric_0",
+      "tris": 1176,
+      "draws": 1,
+      "size_m": [
+       73.741,
+       36.077,
+       96.826
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Fabric_diffuse.jpeg",
+      "name": "textures/Fabric_diffuse.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 5.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "skipped_members": [],
+   "errors": [],
+   "polyhaven_like": false,
+   "category": "prop",
+   "flags": [
+    "SCALE? 96.8 m",
+    "SPEC-GLOSS"
+   ],
+   "actions": [
+    "check scale (largest side 96.8 m; x0.01 would give 0.968 m)",
+    "convert spec/gloss materials to metal/rough (three.js r147+ dropped the extension)"
+   ],
+   "over_budget": false,
+   "budget_ratio": 0.0
   },
   {
    "key": "sf:8cda4370170746d393aa311a7c080c50",
@@ -190499,6 +191357,54 @@
    "size": 52361960,
    "mtime_ns": 1795446584477958873,
    "mtime": "2026-11-23T12:09:44-03:00",
+   "batch": "2026-11-23",
+   "present": true
+  },
+  "/mnt/user-data/uploads/63323b3f-sandbag_wall_04.zip": {
+   "sha256": "381e4a9401528236861ed6992d13e83cb575351b2ba53d15b5a8ed9f7a141360",
+   "size": 681215,
+   "mtime_ns": 1795476862841585981,
+   "mtime": "2026-11-23T20:34:22-03:00",
+   "batch": "2026-11-23",
+   "present": true
+  },
+  "/mnt/user-data/uploads/Milprops_pack_01.zip": {
+   "sha256": "30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2",
+   "size": 44925872,
+   "mtime_ns": 1795476864376503637,
+   "mtime": "2026-11-23T20:34:24-03:00",
+   "batch": "2026-11-23",
+   "present": true
+  },
+  "/mnt/user-data/uploads/a9f68290-millitary_crate.zip": {
+   "sha256": "0fb15bb29b9fa8c401307bc72e63570c846ac57d02fee7759858e81f1a4ec2b9",
+   "size": 11129231,
+   "mtime_ns": 1795476863192503594,
+   "mtime": "2026-11-23T20:34:23-03:00",
+   "batch": "2026-11-23",
+   "present": true
+  },
+  "/mnt/user-data/uploads/d3f26e63-low_poly_camping.zip": {
+   "sha256": "abcb249273826ec5e930f4e68641ef4f5510ba8e9f7c26891b4c19d4c7c560df",
+   "size": 248811,
+   "mtime_ns": 1795476862736473847,
+   "mtime": "2026-11-23T20:34:22-03:00",
+   "batch": "2026-11-23",
+   "present": true
+  },
+  "/mnt/user-data/uploads/f52e958f-lowpoly_concrete_barrier.zip": {
+   "sha256": "378df4f6363812089b0bac80031030ed785321d32a7155d3c765723a61d6a479",
+   "size": 901022,
+   "mtime_ns": 1795476862805778087,
+   "mtime": "2026-11-23T20:34:22-03:00",
+   "batch": "2026-11-23",
+   "present": true
+  },
+  "/mnt/user-data/uploads/military_landvehicle_kit_1_2_cc0.zip": {
+   "sha256": "5410fe832b52028e9be1edcf12afe03539fd0f7d88d546d63a530fe9af7fb464",
+   "size": 52770861,
+   "mtime_ns": 1795476865188503666,
+   "mtime": "2026-11-23T20:34:25-03:00",
    "batch": "2026-11-23",
    "present": true
   }
@@ -344762,6 +345668,713 @@
    "sha256": "d74d3069e821cf4e5e2414ddc2c9b718b4d24782a770cfa987295c8ba30673fe",
    "size": 406609,
    "parsed_at": "2026-11-23T12:10:15-03:00"
+  },
+  "381e4a9401528236861ed6992d13e83cb575351b2ba53d15b5a8ed9f7a141360": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 742396,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.66.0",
+   "licence": {
+    "title": "Sandbag Wall 04",
+    "source": "https://sketchfab.com/3d-models/sandbag-wall-04-a5ea125e9d534b54a3185f349da6aabd",
+    "author": "Pypunk (https://sketchfab.com/PieterSnauwaert)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 1176,
+    "verts": 1680,
+    "draws": 1,
+    "unique_tris": 1176,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 5,
+    "mesh_nodes": 1,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     73.741,
+     36.077,
+     96.826
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "49f21c55f66949eb9818185d716e707e.fbx",
+     "RootNode",
+     "Box003"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 1,
+    "max_piece_tris": 1176,
+    "top_pieces": [
+     {
+      "name": "Box003_Fabric_0",
+      "tris": 1176,
+      "draws": 1,
+      "size_m": [
+       73.741,
+       36.077,
+       96.826
+      ]
+     }
+    ],
+    "extensions_used": [
+     "KHR_materials_pbrSpecularGlossiness"
+    ]
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/Fabric_diffuse.jpeg",
+      "name": "textures/Fabric_diffuse.jpeg",
+      "w": 1024,
+      "h": 1024,
+      "format": "JPEG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 5.3,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "381e4a9401528236861ed6992d13e83cb575351b2ba53d15b5a8ed9f7a141360",
+   "size": 681215,
+   "parsed_at": "2026-11-23T21:01:23-03:00"
+  },
+  "30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "fbx"
+   ],
+   "member_count": 55,
+   "uncompressed_bytes": 45758686,
+   "licence": {
+    "licence": "creativecommons.org/licenses/by/4.0",
+    "file": "Milprops_pack_01/Readme.txt"
+   },
+   "textures": {
+    "count": 39,
+    "images": [
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_diffuse_black.png",
+      "name": "Milprops_pack_01/Barrels/barrel_diffuse_black.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_diffuse_black_flammable.png",
+      "name": "Milprops_pack_01/Barrels/barrel_diffuse_black_flammable.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_diffuse_green.png",
+      "name": "Milprops_pack_01/Barrels/barrel_diffuse_green.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_diffuse_green_flammable.png",
+      "name": "Milprops_pack_01/Barrels/barrel_diffuse_green_flammable.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_metal.png",
+      "name": "Milprops_pack_01/Barrels/barrel_metal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_normal.png",
+      "name": "Milprops_pack_01/Barrels/barrel_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Barrels/barrel_roughness.png",
+      "name": "Milprops_pack_01/Barrels/barrel_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Box/box_diffuse.png",
+      "name": "Milprops_pack_01/Box/box_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Box/box_metal.png",
+      "name": "Milprops_pack_01/Box/box_metal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Box/box_normal.png",
+      "name": "Milprops_pack_01/Box/box_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Box/box_roughness.png",
+      "name": "Milprops_pack_01/Box/box_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_black_diffuse.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_black_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_diffuse_black.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_diffuse_black.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_diffuse_green.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_diffuse_green.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_green_diffuse.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_green_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_normal.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_large_roughness.png",
+      "name": "Milprops_pack_01/Magazines/magazine_large_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_metal.png",
+      "name": "Milprops_pack_01/Magazines/magazine_metal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_black_diffuse.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_black_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_diffuse_black.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_diffuse_black.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_diffuse_green.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_diffuse_green.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_green_diffuse.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_green_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_normal.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Magazines/magazine_small_roughness.png",
+      "name": "Milprops_pack_01/Magazines/magazine_small_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missile Rack/missile_rack_diffuse.png",
+      "name": "Milprops_pack_01/Missile Rack/missile_rack_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missile Rack/missile_rack_metal.png",
+      "name": "Milprops_pack_01/Missile Rack/missile_rack_metal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missile Rack/missile_rack_normal.png",
+      "name": "Milprops_pack_01/Missile Rack/missile_rack_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missile Rack/missile_rack_roughness.png",
+      "name": "Milprops_pack_01/Missile Rack/missile_rack_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_diffuse_green.png",
+      "name": "Milprops_pack_01/Missiles/missile_diffuse_green.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_diffuse_white.png",
+      "name": "Milprops_pack_01/Missiles/missile_diffuse_white.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_green_diffuse.png",
+      "name": "Milprops_pack_01/Missiles/missile_green_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_metal.png",
+      "name": "Milprops_pack_01/Missiles/missile_metal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_normal.png",
+      "name": "Milprops_pack_01/Missiles/missile_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_roughness.png",
+      "name": "Milprops_pack_01/Missiles/missile_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Missiles/missile_white_diffuse.png",
+      "name": "Milprops_pack_01/Missiles/missile_white_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Shells/shells_atlas_diffuse.png",
+      "name": "Milprops_pack_01/Shells/shells_atlas_diffuse.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Shells/shells_atlas_normal.png",
+      "name": "Milprops_pack_01/Shells/shells_atlas_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Shells/shells_atlas_roughness.png",
+      "name": "Milprops_pack_01/Shells/shells_atlas_roughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "Milprops_pack_01/Shells/shells_metal.png",
+      "name": "Milprops_pack_01/Shells/shells_metal.png",
+      "w": 512,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 750.1,
+    "unreadable": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2",
+   "size": 44925872,
+   "parsed_at": "2026-11-23T21:01:23-03:00"
+  },
+  "0fb15bb29b9fa8c401307bc72e63570c846ac57d02fee7759858e81f1a4ec2b9": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 7,
+   "uncompressed_bytes": 11167681,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-12.68.0",
+   "licence": {
+    "title": "Millitary Crate",
+    "source": "https://sketchfab.com/3d-models/millitary-crate-e8b7b508c49f4030996fc161c45ea5d8",
+    "author": "ShaoChiChen (https://sketchfab.com/Brandon..Chen)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 996,
+    "verts": 928,
+    "draws": 3,
+    "unique_tris": 996,
+    "meshes": 3,
+    "primitives": 3,
+    "materials": 1,
+    "materials_used": 1,
+    "nodes": 10,
+    "mesh_nodes": 3,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     6.122,
+     3.276,
+     4.051
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "64781653ab674740b29f7c48a2d46486.fbx",
+     "RootNode"
+    ],
+    "root_scale": 0.001,
+    "pieces_count": 3,
+    "max_piece_tris": 466,
+    "top_pieces": [
+     {
+      "name": "Crate_02_low",
+      "tris": 466,
+      "draws": 1,
+      "size_m": [
+       6.053,
+       0.69,
+       4.0
+      ]
+     },
+     {
+      "name": "Crate_01_low",
+      "tris": 350,
+      "draws": 1,
+      "size_m": [
+       5.99,
+       2.585,
+       4.0
+      ]
+     },
+     {
+      "name": "Crate_03_low",
+      "tris": 180,
+      "draws": 1,
+      "size_m": [
+       6.122,
+       0.482,
+       4.051
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 3,
+    "images": [
+     {
+      "member": "textures/Crate_baseColor.png",
+      "name": "textures/Crate_baseColor.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Crate_metallicRoughness.png",
+      "name": "textures/Crate_metallicRoughness.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     },
+     {
+      "member": "textures/Crate_normal.png",
+      "name": "textures/Crate_normal.png",
+      "w": 2048,
+      "h": 2048,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 2048,
+    "rgba_mb": 63.8,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "0fb15bb29b9fa8c401307bc72e63570c846ac57d02fee7759858e81f1a4ec2b9",
+   "size": 11129231,
+   "parsed_at": "2026-11-23T21:01:23-03:00"
+  },
+  "378df4f6363812089b0bac80031030ed785321d32a7155d3c765723a61d6a479": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 5,
+   "uncompressed_bytes": 908911,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-17.15.0",
+   "licence": {
+    "title": "Lowpoly Concrete Barrier",
+    "source": "https://sketchfab.com/3d-models/lowpoly-concrete-barrier-e0fb4ba5ee434433bbdb4a16aaa2f8fb",
+    "author": "l0wpoly (https://sketchfab.com/l0wpoly)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 82,
+    "verts": 108,
+    "draws": 2,
+    "unique_tris": 82,
+    "meshes": 2,
+    "primitives": 2,
+    "materials": 2,
+    "materials_used": 2,
+    "nodes": 9,
+    "mesh_nodes": 2,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     181.541,
+     85.275,
+     149.866
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "roadblocks.FBX",
+     "RootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 2,
+    "max_piece_tris": 46,
+    "top_pieces": [
+     {
+      "name": "roadblock2",
+      "tris": 46,
+      "draws": 1,
+      "size_m": [
+       89.872,
+       85.275,
+       49.866
+      ]
+     },
+     {
+      "name": "roadblock1",
+      "tris": 36,
+      "draws": 1,
+      "size_m": [
+       181.541,
+       85.0,
+       49.866
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 1,
+    "images": [
+     {
+      "member": "textures/roadblock1_baseColor.png",
+      "name": "textures/roadblock1_baseColor.png",
+      "w": 1024,
+      "h": 512,
+      "format": "PNG"
+     }
+    ],
+    "max_px": 1024,
+    "rgba_mb": 2.7,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "378df4f6363812089b0bac80031030ed785321d32a7155d3c765723a61d6a479",
+   "size": 901022,
+   "parsed_at": "2026-11-23T21:01:23-03:00"
+  },
+  "5410fe832b52028e9be1edcf12afe03539fd0f7d88d546d63a530fe9af7fb464": {
+   "errors": [],
+   "skipped_members": [],
+   "formats": [
+    "gltf+bin"
+   ],
+   "member_count": 3,
+   "uncompressed_bytes": 139842509,
+   "gltf_member": "scene.gltf",
+   "gltf_generator": "Sketchfab-15.31.0",
+   "licence": {
+    "title": "Military Landvehicle Kit 1.2 (CC0)",
+    "source": "https://sketchfab.com/3d-models/military-landvehicle-kit-12-cc0-91f495435f624d8b97a768f692aa6ce9",
+    "author": "britdawgmasterfunk (https://sketchfab.com/britdawgmasterfunk)",
+    "licence": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "file": "license.txt"
+   },
+   "model": {
+    "tris": 3508277,
+    "verts": 2751948,
+    "draws": 309,
+    "unique_tris": 3508277,
+    "meshes": 309,
+    "primitives": 309,
+    "materials": 14,
+    "materials_used": 14,
+    "nodes": 598,
+    "mesh_nodes": 309,
+    "skins": 0,
+    "animations": 0,
+    "morph_targets": false,
+    "non_triangle_primitives": 0,
+    "size_m": [
+     37.378,
+     14.829,
+     16.433
+    ],
+    "root_wrappers": [
+     "Sketchfab_model",
+     "root",
+     "GLTF_SceneRootNode"
+    ],
+    "root_scale": 1.0,
+    "pieces_count": 286,
+    "max_piece_tris": 393216,
+    "top_pieces": [
+     {
+      "name": "Circle.004_259",
+      "tris": 393216,
+      "draws": 13,
+      "size_m": [
+       3.477,
+       0.081,
+       3.477
+      ]
+     },
+     {
+      "name": "Tires.001_208",
+      "tris": 331776,
+      "draws": 4,
+      "size_m": [
+       1.559,
+       1.559,
+       0.348
+      ]
+     },
+     {
+      "name": "screw 12.001_183",
+      "tris": 201728,
+      "draws": 2,
+      "size_m": [
+       0.438,
+       0.011,
+       1.015
+      ]
+     },
+     {
+      "name": "Bolt 3_124",
+      "tris": 193536,
+      "draws": 2,
+      "size_m": [
+       0.063,
+       0.08,
+       1.284
+      ]
+     },
+     {
+      "name": "Jeep Floor.009_160",
+      "tris": 148112,
+      "draws": 2,
+      "size_m": [
+       0.169,
+       0.495,
+       3.05
+      ]
+     },
+     {
+      "name": "Jeep Frame.237_162",
+      "tris": 142618,
+      "draws": 2,
+      "size_m": [
+       6.684,
+       3.413,
+       2.691
+      ]
+     }
+    ],
+    "extensions_used": []
+   },
+   "textures": {
+    "count": 0,
+    "images": [],
+    "max_px": 0,
+    "rgba_mb": 0,
+    "unreadable": 0,
+    "unreferenced_image_files": 0
+   },
+   "polyhaven_like": false,
+   "sha256": "5410fe832b52028e9be1edcf12afe03539fd0f7d88d546d63a530fe9af7fb464",
+   "size": 52770861,
+   "parsed_at": "2026-11-23T21:01:23-03:00"
   }
  }
 }

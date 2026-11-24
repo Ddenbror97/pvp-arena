@@ -1,0 +1,13 @@
+{
+  "size": 4096,
+  "worldSize": 10000,
+  "flipY": false,
+  "sourceEncoding": "parsed-json-v1",
+  "palette": "cc4d155a82d2186759cd7d4185586d83720eeee5d777617ddbfdbe74a55c902c",
+  "sources": {
+    "public/fps/br/landcover.v5.lc": "bab1bd80690bfdd7be4f20b1dd333b0d3856ffdab2dd7a745d4c0ea729728bd8",
+    "public/fps/br/ground/ground.json": "38f6b74f00439f1b0a8b70ba6cd3a9523d172668afced50f862891659992ec82",
+    "public/fps/br/ground/albedo.webp": "f9db04dccea1ee7a439bf037c9f7f4dae5b776fdee620a965dd1bc558ba9e8ca"
+  },
+  "output": "b3e45c951521ae5e8435fac00b38960af7ba3f02a2d367cfb1e5281ee9e1e1a6"
+}

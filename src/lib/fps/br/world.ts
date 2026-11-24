@@ -15,7 +15,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
 
 /** Static data published with the world (public/fps/br/world.v3.json). */
 export const WORLD_ASSETS = {
-  revision: "garrison-v2",
+  revision: "milprops-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -31,8 +31,11 @@ export const WORLD_ASSETS = {
   // levelled to the base's pad between its south wall and the runway (it lay over a 4 m hump,
   // and every hangar and most aircraft placed there were refused for want of level ground).
   height: "/fps/br/height.v6.hf",
-  landcover: "/fps/br/landcover.v4.lc",
-  meta: "/fps/br/world.v4.json",
+  // landcover.v5, world.v5 (2026-11-23, art/br/runway_road.py): the base's south road (1095)
+  // ends 50 m out on the flight line instead of crossing the runway to the coast road; the
+  // ground surface re-baked from it (surface-v5).
+  landcover: "/fps/br/landcover.v5.lc",
+  meta: "/fps/br/world.v5.json",
   // sites-v1 (the facades-v1 manifest, its mid-distance LODs of 54 models on the facade atlas,
   // with the 2026-11-11 location models added by add_models.mjs; "sites" because a
   // locations-v1 revision already existed) with the works halls' fit-outs measured again and
@@ -217,8 +220,13 @@ export const WORLD_ASSETS = {
   // far-facades-v2 (the same world: build_facades.mjs --far on garrison-v2 with the far LODs
   // the far-facades-v1 pass started from): the far atlas again, with the five new buildings on
   // it (196 models).
-  models: "/fps/br/models/models.far-facades-v2.json",
-  collision: "/fps/br/models/collision.garrison-v2.json",
+  // milprops-v1 (2026-11-23, from far-facades-v2 and garrison-v2, process_assets.mjs +
+  // build_collision.mjs): the owner's downloads for the base (owner, 2026-11-23: "find sketch 3D
+  // items aswell to download"): concrete roadblocks, L-shaped sandbag positions, ammunition
+  // crates and boxes, olive and fuel drums, loaded missile racks (the JAC3D pack's FBX through
+  // art/br/assets/convert_fbx.mjs); with world.v5 (the south road off the runway).
+  models: "/fps/br/models/models.milprops-v1.json",
+  collision: "/fps/br/models/collision.milprops-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

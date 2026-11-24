@@ -11261,6 +11261,108 @@
       "ring": "structure",
       "collision": "boxes",
       "use": "Southern Military Base: 4 m of the perimeter wall, 3.6 m of precast concrete with barbed wire along its top (procedural, 2026-11-23)"
+    },
+    {
+      "id": "mb-roadblock",
+      "key": "sf:e0fb4ba5ee434433bbdb4a16aaa2f8fb",
+      "piece": "roadblock1",
+      "class": "small",
+      "fit": {
+        "y": 0.9
+      },
+      "collision": "solid",
+      "ring": "clutter",
+      "use": "Southern Military Base (owner's 2026-11-23 downloads): concrete roadblocks in the gate chicanes"
+    },
+    {
+      "id": "mb-sandbag-corner",
+      "key": "sf:a5ea125e9d534b54a3185f349da6aabd",
+      "class": "prop",
+      "lodTris": [
+        1176,
+        520,
+        400
+      ],
+      "fit": {
+        "y": 1.0
+      },
+      "collision": "voxel",
+      "use": "Southern Military Base (owner's 2026-11-23 downloads): L-shaped sandbag fighting positions (waist-high cover, the corner kept open)"
+    },
+    {
+      "id": "mb-ammo-crate",
+      "key": "sf:e8b7b508c49f4030996fc161c45ea5d8",
+      "class": "prop",
+      "fit": {
+        "max": 1.2
+      },
+      "collision": "solid",
+      "ring": "clutter",
+      "use": "Southern Military Base (owner's 2026-11-23 downloads): wooden ammunition crates at the armories and on the flight line"
+    },
+    {
+      "id": "mb-barrel-green",
+      "key": "sha:30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2",
+      "piece": "barrel_green",
+      "class": "small",
+      "permissive": true,
+      "lodTris": [
+        600,
+        300,
+        120
+      ],
+      "fit": {
+        "y": 0.88
+      },
+      "collision": "solid",
+      "ring": "clutter",
+      "use": "Southern Military Base (owner's 2026-11-23 downloads): olive drums in the supply yards (converted from FBX, art/br/assets/convert_fbx.mjs)"
+    },
+    {
+      "id": "mb-barrel-fuel",
+      "key": "sha:30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2",
+      "piece": "barrel_fuel",
+      "class": "small",
+      "permissive": true,
+      "lodTris": [
+        600,
+        300,
+        120
+      ],
+      "fit": {
+        "y": 0.88
+      },
+      "collision": "solid",
+      "ring": "clutter",
+      "use": "Southern Military Base (owner's 2026-11-23 downloads): black fuel drums by the hangars (converted from FBX, art/br/assets/convert_fbx.mjs)"
+    },
+    {
+      "id": "mb-ammo-box",
+      "key": "sha:30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2",
+      "piece": "box",
+      "class": "small",
+      "fit": {
+        "max": 0.62
+      },
+      "collision": "solid",
+      "ring": "clutter",
+      "use": "Southern Military Base (owner's 2026-11-23 downloads): metal ammunition boxes, stacked (converted from FBX, art/br/assets/convert_fbx.mjs)"
+    },
+    {
+      "id": "mb-missile-rack",
+      "key": "sha:30a3f8adaae5eba931992258a4444fe0bec45ff3a1041a1719302d10952634c2",
+      "piece": "missile_rack_loaded",
+      "class": "prop",
+      "fit": {
+        "max": 3.0
+      },
+      "lodTris": [
+        2500,
+        900,
+        250
+      ],
+      "collision": "solid",
+      "use": "Southern Military Base (owner's 2026-11-23 downloads): munitions racks with four missiles each on the flight line (converted from FBX, art/br/assets/convert_fbx.mjs)"
     }
   ],
   "skipped": [

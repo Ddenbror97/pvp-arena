@@ -11,7 +11,7 @@ const world = {
   hf: { heightAt: () => 10 },
   blocked: () => false,
 } as unknown as StaticWorld;
-const meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v5.json", "utf8")) as WorldMeta;
 
 describe("supply drops (owner, 2026-11-13)", () => {
   it("three a match: the first three minutes after the first circle's reveal, then phases 3 and 5", () => {

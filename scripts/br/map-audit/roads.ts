@@ -10,7 +10,7 @@ const buf = (p: string) => {
   const f = readFileSync(p);
   return f.buffer.slice(f.byteOffset, f.byteOffset + f.byteLength);
 };
-const meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v5.json", "utf8")) as WorldMeta;
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
@@ -19,7 +19,7 @@ const models = JSON.parse(readFileSync(`public${WORLD_ASSETS.models}`, "utf8")).
   { class: string; size: number[] }
 >;
 const hf = await decodeHeightfield(buf("public/fps/br/height.v6.hf"));
-const cover = await decodeLandCover(buf("public/fps/br/landcover.v4.lc"));
+const cover = await decodeLandCover(buf("public/fps/br/landcover.v5.lc"));
 const island = buildIsland(hf, cover, meta, collision);
 type Seg = [number, number, number, number, number];
 const segs: Seg[] = [];

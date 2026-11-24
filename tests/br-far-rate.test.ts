@@ -9,7 +9,7 @@ import type { WorldMeta } from "@/lib/fps/br/world";
  * Half rate for far players (the room's BR_FAR_HALF_RATE, off by default): beyond the
  * always-send range a player goes out in every other view; the client carries them forward.
  */
-const meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as WorldMeta;
+const meta = JSON.parse(readFileSync("public/fps/br/world.v5.json", "utf8")) as WorldMeta;
 const sight = { visible: () => true, smoke: () => {} } as unknown as BrSight;
 const world = {} as StaticWorld;
 

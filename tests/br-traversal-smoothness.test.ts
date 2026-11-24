@@ -99,7 +99,7 @@ function walk(world: StaticWorld, body: BrBody, points: number[][], sprint: bool
 
 describe("BR traversal smoothness", () => {
   it("sends your own body exactly, so the client replays from the room's own state", () => {
-    const meta = JSON.parse(readFileSync("public/fps/br/world.v4.json", "utf8")) as WorldMeta;
+    const meta = JSON.parse(readFileSync("public/fps/br/world.v5.json", "utf8")) as WorldMeta;
     const state = createBrMatch(meta, 7, () => 0);
     Object.assign(state.seats[0]!.body, {
       phase: "ground",

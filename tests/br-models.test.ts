@@ -39,7 +39,8 @@ describe("Project Island models", () => {
       }
       expect(m.licence, id).toBe("CC BY 4.0");
       expect(m.author, id).toBeTruthy();
-      expect(m.source, id).toMatch(/^https:\/\/sketchfab\.com\//);
+      // Sketchfab, or a creator's itch.io page (the JAC3D military props, 2026-11-23).
+      expect(m.source, id).toMatch(/^https:\/\/(sketchfab\.com|[\w-]+\.itch\.io)\//);
       expect(attribution).toContain(m.source);
     }
   });
