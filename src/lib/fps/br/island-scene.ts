@@ -14,7 +14,7 @@ import { buildIsland, type Island } from "./island";
 import { pavedLots } from "./layout";
 import { decodeLandCover } from "./landcover";
 import { createProps, type ModelManifest } from "./props-renderer";
-import { createTextureShare } from "./shared-textures";
+import { createTextureShare, type ImageParser } from "./shared-textures";
 import type { CollisionData } from "./static-world";
 import { createFloorPatches } from "./floor-patches";
 import { createPowerLines, createStructures } from "./structures-renderer";
@@ -129,6 +129,8 @@ export async function loadIslandScene(
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
   const textureShare = createTextureShare();
+  // An image an earlier file brought is not decoded again (shared-textures.ts).
+  loader.register((parser) => textureShare.plugin(parser as unknown as ImageParser));
   // Fetch through the same cancellable/retrying path for buildings, weapons and gear.
   // Parsing stays on this configured GLTFLoader (Meshopt/plugins/resource resolution).
   loader.loadAsync = async (path) => {

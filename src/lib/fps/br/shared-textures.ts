@@ -35,7 +35,23 @@ type ParsedGltf = {
   };
 };
 
+/** The parts of GLTFLoader's parser the decode-time sharing uses (one parser per file). */
+export type ImageParser = {
+  json: { images?: Array<{ bufferView?: number }> };
+  sourceCache: Record<number, Promise<THREE.Texture> | undefined>;
+  loadImageSource(sourceIndex: number, loader: unknown): Promise<THREE.Texture>;
+  getDependency(type: "bufferView", index: number): Promise<ArrayBuffer>;
+};
+
 export type TextureShare = {
+  /**
+   * For GLTFLoader.register: an image whose bytes an earlier file already brought is not
+   * decoded again (final audit 2026-11-24, item 3). The file gets a copy of the texture
+   * decoded first (three's clone: the same source), as GLTFLoader itself does for an image a
+   * file uses twice; its sampler, name and colour space are set on the copy as on any other.
+   * On any failure the file decodes its own image, as before.
+   */
+  plugin(parser: ImageParser): { name: string };
   /**
    * Point every texture of a freshly parsed model whose image was loaded before at that
    * image; register the rest. Call before anything of the model is drawn (and after its
@@ -43,8 +59,11 @@ export type TextureShare = {
    * own textures, as before.
    */
   share(gltf: ParsedGltf): Promise<void>;
-  /** Distinct images kept, and textures that took an earlier image instead of their own. */
-  stats(): { images: number; shared: number };
+  /**
+   * Distinct images kept, textures that took an earlier image instead of their own after
+   * decoding it, and images not decoded at all because an earlier file had decoded them.
+   */
+  stats(): { images: number; shared: number; skipped: number };
   /** Forget the kept images (the island is going). */
   clear(): void;
 };
@@ -66,7 +85,55 @@ export function createTextureShare(): TextureShare {
     return key;
   }
 
+  /** Image bytes' digest → the texture decoded for it first (its source is the one kept). */
+  const decoded = new Map<string, Promise<THREE.Texture>>();
+  let skipped = 0;
+
   return {
+    plugin(parser) {
+      const own = parser.loadImageSource.bind(parser);
+      parser.loadImageSource = (sourceIndex, loader) => {
+        const view = parser.json.images?.[sourceIndex]?.bufferView;
+        // (An image the file already asked for: GLTFLoader's own cache makes the copy.)
+        if (!subtle || view === undefined || parser.sourceCache[sourceIndex] !== undefined)
+          return own(sourceIndex, loader);
+        // Decoding it here after all: GLTFLoader's own path, past the cache entry set below
+        // (which stays this file's: it settles with what that path returns).
+        const decodeOwn = () => {
+          delete parser.sourceCache[sourceIndex];
+          const mine = own(sourceIndex, loader);
+          parser.sourceCache[sourceIndex] = texture;
+          return mine;
+        };
+        const texture: Promise<THREE.Texture> = parser
+          .getDependency("bufferView", view)
+          .then(keyOf)
+          .then((key) => {
+            const first = decoded.get(key);
+            if (first)
+              return first.then(
+                (t) => {
+                  skipped++;
+                  return t.clone();
+                },
+                // (The first decode failed: this file tries its own.)
+                decodeOwn,
+              );
+            // Decoded here first: kept for the files after (the file's cache entry is the one
+            // GLTFLoader set, so its own reuse clones it as usual).
+            const mine = decodeOwn();
+            decoded.set(key, mine);
+            mine.catch(() => {
+              if (decoded.get(key) === mine) decoded.delete(key);
+            });
+            return mine;
+          }, decodeOwn);
+        // The file's later uses of this image clone what it got here.
+        parser.sourceCache[sourceIndex] ??= texture;
+        return texture;
+      };
+      return { name: "br-shared-images" };
+    },
     async share(gltf) {
       // (No SubtleCrypto: a page not served over https. The models keep their own textures.)
       if (!subtle) return;
@@ -118,10 +185,11 @@ export function createTextureShare(): TextureShare {
         // The model draws with the textures it was parsed with.
       }
     },
-    stats: () => ({ images: sources.size, shared }),
+    stats: () => ({ images: sources.size, shared, skipped }),
     clear() {
       sources.clear();
       kept.clear();
+      decoded.clear();
     },
   };
 }

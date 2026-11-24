@@ -24,7 +24,7 @@ import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { dequantize, meshopt, prune, unweld, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
-import { modelFile } from "./model-files.mjs";
+import { editedManifests, modelFile } from "./model-files.mjs";
 
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO()
@@ -32,7 +32,7 @@ const io = new NodeIO()
   .registerDependencies({ "meshopt.decoder": MeshoptDecoder, "meshopt.encoder": MeshoptEncoder });
 const TAG = "livery-v1";
 const dir = "public/fps/br/models";
-const MANIFESTS = process.env.MANIFESTS?.split(",") ?? ["models.locations-v1.json", "models.json"];
+const MANIFESTS = process.env.MANIFESTS?.split(",") ?? editedManifests();
 const ONLY = process.env.ONLY?.split(",");
 
 const srgb = (r, g, b) => [r, g, b].map((c) => Math.pow(c, 2.2)); // vertex colours are linear
