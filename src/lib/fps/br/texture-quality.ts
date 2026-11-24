@@ -107,14 +107,24 @@ export async function shrinkModelTextures(root: THREE.Object3D) {
         (t as THREE.CompressedTexture).isCompressedTexture
       )
         return;
-      const small = await worldBitmap(image);
-      if (small !== image) {
-        t.image = small;
+      // A picture already at the tier's size (a copy another file's texture shares, resized
+      // there: shared-textures.ts) is not halved again; one being resized for another file
+      // is waited for, not resized twice.
+      if (resized.has(image)) return;
+      let small = resizing.get(image);
+      if (!small) resizing.set(image, (small = worldBitmap(image)));
+      const done = await small;
+      if (done !== image) {
+        resized.add(done);
+        t.image = done;
         t.needsUpdate = true;
       }
     }),
   );
 }
+/** Bitmaps made at the tier's size, and the resizes in flight (by the picture resized). */
+const resized = new WeakSet<object>();
+const resizing = new WeakMap<object, Promise<Sized | ImageBitmap>>();
 
 /**
  * Low tier: a TextureLoader texture (an <img>, flipped on upload) at half size, through a
