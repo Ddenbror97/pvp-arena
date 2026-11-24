@@ -70,7 +70,7 @@ export type BrBudgetOptions = {
   /** The resolution a budget scale draws at (br-settings.ts brResolutionScale). */
   resolution: (scale: number) => number;
   /** A frame slower than this is late (ms; default SLOW_MS). */
-  slowMs?: number;
+  slowMs?: number | undefined;
 };
 
 export class BrRenderBudget {
