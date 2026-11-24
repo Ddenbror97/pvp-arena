@@ -58,6 +58,8 @@ export type TerrainControls = {
   root: THREE.Object3D;
   /** Re-select patches for this camera (call once per frame before rendering). */
   update: (camera: THREE.PerspectiveCamera) => void;
+  /** The size drawn at (pixels): the ground's filter footprint is worked out from it. */
+  setViewport: (width: number, height: number) => void;
   stats: () => { patches: number; triangles: number };
   /** Shared with the water (lake mask) and later the map UI; owned by the terrain. */
   textures: {
@@ -486,6 +488,7 @@ export function createTerrain(
   let disposed = false;
   const placeholderCover = new THREE.DataTexture(new Uint8Array([0, 0]), 1, 1, THREE.RGFormat);
   placeholderCover.needsUpdate = true;
+  const viewport = new THREE.Vector2();
   const uniforms = {
     uHeight: { value: heightTex },
     uSink: { value: sinkTex },
@@ -511,6 +514,8 @@ export function createTerrain(
       value: ranges.map((r) => new THREE.Vector2(r * TERRAIN.morphStart, r * TERRAIN.morphEnd)),
     },
     uCamera: { value: new THREE.Vector3() },
+    /** A pixel's step on a ray at unit depth (x, y); 0 until setViewport: the GPU's derivatives. */
+    uPixelRay: { value: new THREE.Vector2() },
     // Ground textures (placeholders until loadGround; uGroundOn 0 keeps them unsampled).
     uGroundA: { value: placeholderArray() },
     uGroundN: { value: placeholderArray() },
@@ -609,6 +614,8 @@ export function createTerrain(
         uniform float uCanopyOn;
         uniform vec2 uTreeRing;
         uniform float uGroundOn, uGroundRange, uGroundLite;
+        uniform vec2 uPixelRay;
+        uniform vec3 uCamera;
         uniform vec3 uLayerTint[${GROUND_LAYERS.length}], uLayerFar[${GROUND_LAYERS.length}];
         uniform float uLayerScale[${GROUND_LAYERS.length}];
         uniform vec4 uRunway[2];
@@ -666,13 +673,35 @@ export function createTerrain(
         "#include <color_fragment>",
         `#include <color_fragment>
         {
-          brDx = dFdx(vWorld);
-          brDy = dFdy(vWorld);
           vec2 uv = (vWorld.xz + ${WORLD_HALF.toFixed(1)}) / ${WORLD_SIZE.toFixed(1)};
           // Relief: this pixel's surface normal and cavities, from the full heightfield.
           vec4 relief = texture2D(uRelief, vWorld.xz * uReliefMap.x + uReliefMap.y);
           vec2 nxz = relief.rg * 2.0 - 1.0;
           brNw = normalize(vec3(nxz.x, sqrt(max(0.05, 1.0 - dot(nxz, nxz))), nxz.y));
+          brDx = dFdx(vWorld);
+          brDy = dFdy(vWorld);
+          // The footprint worked out from the camera instead (ray differentials on the
+          // surface's plane): dFdx/dFdy may be per 2 × 2 block (coarse), as on Intel's D3D11
+          // drivers, and then the ground's filter steps every two rows; at a slant the asphalt
+          // and the paving tens of metres ahead shimmered as the camera moved (owner, Intel
+          // UHD, 2026-11-24). On GPUs with per-pixel derivatives the two agree.
+          if (uPixelRay.x > 0.0 && !isOrthographic) {
+            vec3 rel = vWorld - uCamera;
+            vec3 right = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
+            vec3 up = vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]);
+            vec3 fwd = -vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]);
+            float depth = dot(rel, fwd);
+            vec3 d = rel / max(depth, 1e-4);
+            vec3 sx = right * uPixelRay.x;
+            vec3 sy = up * uPixelRay.y;
+            float rn = dot(rel, brNw);
+            float nx = dot(d + sx, brNw), ny = dot(d + sy, brNw);
+            // (A neighbour's ray that misses the plane, at the horizon: keep the GPU's.)
+            if (depth > 1e-3 && rn * nx > 1e-6 && rn * ny > 1e-6) {
+              brDx = (d + sx) * (rn / nx) - rel;
+              brDy = (d + sy) * (rn / ny) - rel;
+            }
+          }
           vec4 a = texture2D(uCoverA, uv); // sand, grass, field, forest floor
           vec4 b = texture2D(uCoverB, uv); // rock, urban, road, (shore)
           // Ragged zone borders (AIR.wobble): the land cover and the aerial bake are read a few
@@ -1052,12 +1081,18 @@ export function createTerrain(
     textures: { height: heightTex, coverA, coverB, wet },
     surfaceTexture: () => (uniforms.uSurfaceOn.value ? uniforms.uSurface.value : null),
     heightGrid: { spacing: hf.spacing, grid: n, offset: HEIGHT_OFFSET },
+    setViewport(width, height) {
+      viewport.set(width, height);
+    },
     update(camera) {
       camera.updateMatrixWorld();
       viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
       frustum.setFromProjectionMatrix(viewProjection);
       cam.setFromMatrixPosition(camera.matrixWorld);
       uniforms.uCamera.value.copy(cam);
+      const pe = camera.projectionMatrix.elements;
+      if (viewport.x > 0 && pe[0]! > 0 && pe[5]! > 0)
+        uniforms.uPixelRay.value.set(2 / viewport.x / pe[0]!, 2 / viewport.y / pe[5]!);
       count = selectPatches(
         TERRAIN,
         minMax,

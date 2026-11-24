@@ -47,6 +47,8 @@ export type IslandScene = {
   doorLook: DoorLook | null;
   /** Per frame; `full` finishes the props' LOD pass at once (still captures, teleports). */
   update(camera: THREE.PerspectiveCamera, full?: boolean): { selectMs: number };
+  /** The size the scene is drawn at (pixels; terrain.ts setViewport). */
+  setViewport(width: number, height: number): void;
   /** Ground textures shown within this distance (m); the render budget shortens it. */
   setGroundRange(m: number): void;
   /** Lite ground shading (terrain.ts setGroundLite): the budget's first step on slow GPUs. */
@@ -310,6 +312,9 @@ export async function loadIslandScene(
     manifest: fixed,
     loader,
     doorLook,
+    setViewport(width, height) {
+      terrain.setViewport(width, height);
+    },
     update(camera, full = false) {
       const a = performance.now();
       terrain.update(camera);
