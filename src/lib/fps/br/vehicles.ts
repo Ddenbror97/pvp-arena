@@ -198,9 +198,70 @@ export const VEHICLES = {
   drag: 0.35,
   rolling: 1.2,
   gravity: 9.8,
-  /** Water deeper than this stops a vehicle (it stalls). */
-  wadeDepth: 0.8,
+  /**
+   * Airtime (owner, 2026-11-23: "make the drivble car/bike able to air lift if they drive in
+   * high speed over a bump or ramp … see how warzone/pubg works and make it similar to ours but
+   * more fun/better"; "right now drivble cars/bike is glued to the ground"). On the ground the
+   * body rises and falls with the ground at speed · sin(pitch); where the ground falls away
+   * faster than gravity can follow (a crest, a ramp's lip, a ledge) the vehicle leaves it with
+   * that upward speed and flies: gravity (a little heavier than the world's, as Warzone's and
+   * GTA's arcade cars, so a jump is a snap and not a float), no drive or brakes, the velocity
+   * kept. In the air the steering yaws the body (air control, as Warzone's bikes) and the nose
+   * follows the flight path (S lifts it, to soften a big jump's landing). A landing harder than `safeLand` (m/s into the ground, across its slope) costs
+   * health as a crash.
+   */
+  air: {
+    gravity: 12,
+    /** Leaves the ground when the ballistic path is this far above it (m). */
+    lift: 0.08,
+    /** Below this speed (m/s) it keeps to the ground, except off a ledge (`ledge` m). */
+    minSpeed: 7,
+    /**
+     * The suspension keeps the wheels down while the ground falls away from them at up to this
+     * (m/s across the slope ahead): a kink in a hillside or a dip in the road at speed. A ramp
+     * or a crest taken fast parts faster, and flies.
+     */
+    suspension: 2.5,
+    ledge: 0.5,
+    /** Air control (rad/s at full key): yaw from the steering, the nose up from S. */
+    yawRate: 1.6,
+    pitchRate: 0.8,
+    /** The nose's ease toward the flight path with no key (1/s). */
+    noseFollow: 1.2,
+    /** Sideways slide decay in the air (1/s): almost none. */
+    slideDecay: 0.4,
+    /** Landing: m/s into the ground taken without harm (a 4 m drop on the flat; a bike 3.4 m). */
+    safeLand: 10,
+    safeLandBike: 9,
+    /** Share of the speed a landing scrubs off at full mismatch. */
+    scrub: 0.35,
+  },
+  /**
+   * Water (owner, 2026-11-23: "fix so drivble cars/bike cannot drive thro water, it should
+   * just zink"). Shallow water (a ford) slows a vehicle by its depth; at its `wade` depth
+   * (the body's sill: kinds below) the engine floods: it stops for good, sinks to the bottom
+   * and the driver is put out to swim (Warzone's vehicles are lost in deep water too; PUBG's
+   * cars sink). One that flies into deep water splashes: most of its speed is gone at once,
+   * then it sinks.
+   */
+  water: {
+    /** Speed lost per second per metre of depth in shallow water (1/s/m). */
+    drag: 2.5,
+    /** Sinking speed through the water (m/s). */
+    sink: 1.6,
+    /** Share of the speed left after a splash into deep water. */
+    splash: 0.3,
+    /** Speed lost per second while sinking (1/s). */
+    sinkDrag: 2.2,
+  },
 } as const;
+/** Water a vehicle floods in (m above the ground under it): the sill of each kind. */
+export const WADE: Record<VehicleKind, number> = {
+  sedan: 0.55,
+  suv: 0.8,
+  pickup: 0.8,
+  bike: 0.5,
+};
 type VehicleSpec = {
   name: string;
   model: string;
@@ -256,6 +317,15 @@ export type Vehicle = {
    * 4 rear-left, 8 rear-right (a bike: 1 front, 4 rear).
    */
   flat?: number;
+  /**
+   * Vertical speed (m/s, + up): in the air its flight; on the ground the rate the body rises
+   * with the ground (speed · sin pitch), which it leaves the ground with (VEHICLES.air).
+   */
+  vy?: number;
+  /** In the air (VEHICLES.air). */
+  air?: boolean;
+  /** Flooded (VEHICLES.water): it does not drive again, and sinks to the bottom. */
+  drowned?: boolean;
 };
 export type DriveInput = { forward: number; strafe: number; jump?: boolean };
 
@@ -666,11 +736,18 @@ export function stepVehicle(
   if (v.destroyed) return 0;
   const s = spec(v.kind);
   const dt = dtMs / 1000;
+  if (v.drowned) {
+    sinkStep(world, v, dt);
+    return 0;
+  }
+  const A = VEHICLES.air;
+  const air = !!v.air;
   const cond = VEHICLES.conditions[v.condition];
   // Rough or steep ground under the wheels (last step's tilt): less grip, and a road car slows.
   const rough =
-    Math.abs(Math.tan(v.pitch)) > VEHICLES.handling.roughSlope ||
-    Math.abs(Math.tan(v.roll)) > VEHICLES.handling.roughSlope;
+    !air &&
+    (Math.abs(Math.tan(v.pitch)) > VEHICLES.handling.roughSlope ||
+      Math.abs(Math.tan(v.roll)) > VEHICLES.handling.roughSlope);
   const flat = v.flat ?? 0;
   const flats = (flat & 1) + ((flat >> 1) & 1) + ((flat >> 2) & 1) + ((flat >> 3) & 1);
   const top =
@@ -698,26 +775,37 @@ export function stepVehicle(
   // slope and gravity rolls it back. Below its grade it drives up, slower the steeper.
   const uphill = Math.tan(v.pitch) * Math.sign(throttle);
   const traction = Math.max(0, Math.min(1, 1 - (uphill - s.grade) / 0.25));
-  if (throttle > 0)
+  // In the air nothing reaches the ground: no drive, no brakes, no rolling or slope (below).
+  if (air) {
+    /* the speed is kept */
+  } else if (throttle > 0)
     v.speed +=
       (v.speed < 0 ? s.brake : s.accel * (1 - Math.max(0, v.speed) / top) * traction) *
       throttle *
       dt;
   else if (throttle < 0)
     v.speed -= (v.speed > 0.3 ? s.brake : s.accel * 0.6 * traction) * -throttle * dt;
-  if (brakeHard)
-    v.speed -= Math.sign(v.speed) * Math.min(Math.abs(v.speed), s.brake * dt * (input ? 1 : 0.6));
-  // Handbrake: the rear wheels lock (it slows, less than the brakes) and let go sideways.
-  if (handbrake) v.speed -= Math.sign(v.speed) * Math.min(Math.abs(v.speed), H.handbrakeDecel * dt);
-  v.speed -=
-    Math.sign(v.speed) *
-    Math.min(Math.abs(v.speed), (VEHICLES.rolling + VEHICLES.drag * Math.abs(v.speed) * 0.05) * dt);
-  v.speed -= VEHICLES.gravity * Math.sin(v.pitch) * dt * 0.8;
-  v.speed = Math.max(-s.reverse, Math.min(top, v.speed));
-  // Steering: less lock at speed (a bike much less), turn rate from the bicycle model.
+  if (!air) {
+    if (brakeHard)
+      v.speed -= Math.sign(v.speed) * Math.min(Math.abs(v.speed), s.brake * dt * (input ? 1 : 0.6));
+    // Handbrake: the rear wheels lock (it slows, less than the brakes) and let go sideways.
+    if (handbrake)
+      v.speed -= Math.sign(v.speed) * Math.min(Math.abs(v.speed), H.handbrakeDecel * dt);
+    v.speed -=
+      Math.sign(v.speed) *
+      Math.min(
+        Math.abs(v.speed),
+        (VEHICLES.rolling + VEHICLES.drag * Math.abs(v.speed) * 0.05) * dt,
+      );
+    v.speed -= VEHICLES.gravity * Math.sin(v.pitch) * dt * 0.8;
+    v.speed = Math.max(-s.reverse, Math.min(top, v.speed));
+  }
+  // Steering: less lock at speed (a bike much less), turn rate from the bicycle model. In the
+  // air the key yaws the body (air control); the velocity keeps its direction (slip, below).
   const lock = s.steer / (1 + Math.abs(v.speed) / (s.bike ? 9 : 14));
-  const yawRate =
-    (v.speed / s.wheelbase) * Math.tan(lock * steerIn) * (handbrake ? H.handbrakeTurn : 1);
+  const yawRate = air
+    ? A.yawRate * steerIn
+    : (v.speed / s.wheelbase) * Math.tan(lock * steerIn) * (handbrake ? H.handbrakeTurn : 1);
   const nyaw = v.yaw - yawRate * dt;
   // The velocity keeps its direction in the world while the body turns: re-read it along the
   // new heading (speed) and across it (slip), then the tyres catch the slide.
@@ -731,14 +819,16 @@ export function stepVehicle(
     rz = -Math.sin(nyaw);
   v.speed = vx * fx + vz * fz;
   let slip = vx * rx + vz * rz;
-  const grip =
-    (handbrake ? H.handbrakeGrip : s.bike ? H.bikeGrip : H.grip) *
-    (rough ? s.offroad : 1) *
-    (1 - flats * TYRES.gripLoss);
+  const grip = air
+    ? A.slideDecay
+    : (handbrake ? H.handbrakeGrip : s.bike ? H.bikeGrip : H.grip) *
+      (rough ? s.offroad : 1) *
+      (1 - flats * TYRES.gripLoss);
   slip *= Math.exp(-grip * dt);
   if (Math.abs(slip) < 0.01) slip = 0;
-  // Grip turns part of a caught slide's energy into scrub (it never adds speed).
-  v.speed = Math.max(-s.reverse, Math.min(top, v.speed));
+  // Grip turns part of a caught slide's energy into scrub (it never adds speed). (In the air
+  // the speed along the new heading may be anything the flight carries: not capped.)
+  if (!air) v.speed = Math.max(-s.reverse, Math.min(top, v.speed));
   const nx = v.x + (fx * v.speed + rx * slip) * dt,
     nz = v.z + (fz * v.speed + rz * slip) * dt;
   const next = { ...v, x: nx, z: nz, yaw: nyaw };
@@ -746,10 +836,11 @@ export function stepVehicle(
   // vehicles. Off road (owner, 2026-11-11: "a motorbike explodes driving on a rock"): a rock,
   // a log or a kerb up to `climb` is ridden over (the ground under the wheels takes it).
   const clearance = Math.max(0.45, s.climb);
+  // (In the air the body's own height: it clears what passes under it.)
   let hit = circles(next).some(([cx, cz, r]) =>
     world.blocked(
       cx,
-      Math.max(v.y, world.hf.heightAt(cx, cz)) + clearance,
+      (air ? v.y : Math.max(v.y, world.hf.heightAt(cx, cz))) + clearance,
       cz,
       s.height - clearance - 0.1,
       r,
@@ -769,7 +860,7 @@ export function stepVehicle(
   // only ground near vertical (a cliff) stops it, softly.
   let bump = false,
     cliff = false;
-  if (!hit) {
+  if (!hit && !air) {
     const h = groundUnder(world, next);
     const before = footprint(v),
       after = footprint(next);
@@ -806,19 +897,144 @@ export function stepVehicle(
     v.z = nz;
     v.yaw = nyaw;
   }
-  // Follow the ground (no floating, no sinking); water too deep stalls it.
-  const before = v.y;
-  settleTilt(world, v);
-  if (v.y < before - 0.5) v.y = before - Math.min(before - v.y, 9.8 * dt * 2); // drive off a ledge: drop, not snap
-  const water = waterSurface(meta, world.hf.heightAt(v.x, v.z), v.x, v.z);
-  if (water !== null && water - v.y > VEHICLES.wadeDepth) v.speed *= 0.6;
+  impact = Math.max(impact, vertical(world, v, input, dt));
+  // Water: a ford slows it by its depth; at the sill it floods and sinks (VEHICLES.water).
+  const bed = world.hf.heightAt(v.x, v.z);
+  const water = waterSurface(meta, bed, v.x, v.z);
+  if (water !== null && water > v.y) {
+    const W = VEHICLES.water;
+    const depth = water - Math.max(v.y, bed);
+    if (water - bed >= WADE[v.kind] && (!v.air || v.y < water - 0.3)) {
+      // Flooded (or flown in: a splash).
+      if (v.air) {
+        v.speed *= W.splash;
+        slip *= W.splash;
+      }
+      v.drowned = true;
+      v.air = false;
+      v.vy = Math.max(Math.min(v.vy ?? 0, 0), -W.sink);
+    } else if (!v.air) v.speed *= Math.exp(-W.drag * depth * dt);
+  }
   v.slip = Math.round(slip * 1000) / 1000;
   v.steer = Math.round(v.steer * 1000) / 1000;
   v.x = Math.round(v.x * 1000) / 1000;
   v.z = Math.round(v.z * 1000) / 1000;
   v.y = Math.round(v.y * 1000) / 1000;
+  v.vy = Math.round((v.vy ?? 0) * 1000) / 1000;
   v.yaw = Math.atan2(Math.sin(v.yaw), Math.cos(v.yaw));
   return impact;
+}
+
+/**
+ * The body's height and tilt after a step's move: on the ground it follows the ground, leaving
+ * it where the ground falls away faster than gravity can follow; in the air it flies and lands
+ * (VEHICLES.air). Returns a landing's impact speed (0 if none), for damage as a crash.
+ */
+function vertical(world: StaticWorld, v: Vehicle, input: DriveInput | null, dt: number) {
+  const A = VEHICLES.air;
+  const s = spec(v.kind);
+  const g = A.gravity;
+  if (v.air) {
+    const vy = (v.vy ?? 0) - g * dt;
+    const y = v.y + ((v.vy ?? 0) + vy) * 0.5 * dt;
+    // The ground under it (settled as if it stood there).
+    const ground = { ...v, y };
+    settleTilt(world, ground);
+    // The nose follows the flight path, lagging it (a car lands on its wheels, not its nose).
+    // S lifts it a little (a nose-heavy landing off a big jump is the driver's to soften); W,
+    // which every driver holds over a jump, does nothing to it.
+    const back = input ? Math.max(0, -(input.forward || 0)) : 0;
+    const path = Math.atan2(vy, Math.max(1, Math.abs(v.speed))) * Math.sign(v.speed || 1);
+    v.pitch += (path - v.pitch) * (1 - Math.exp(-A.noseFollow * dt)) + back * A.pitchRate * dt;
+    v.pitch = Math.max(-1.1, Math.min(1.1, v.pitch));
+    v.roll *= Math.exp(-2 * dt);
+    if (y > ground.y) {
+      v.y = y;
+      v.vy = vy;
+      return 0;
+    }
+    // Landing: the speed into the ground, across its slope (down a hillside at speed it is
+    // the hill's own fall, and lands softly), and the nose's mismatch with the slope (it
+    // scrubs speed).
+    const into = v.speed * Math.sin(ground.pitch) - vy * Math.cos(ground.pitch);
+    const mismatch = Math.abs(v.pitch - ground.pitch);
+    v.y = ground.y;
+    v.pitch = ground.pitch;
+    v.roll = ground.roll;
+    v.air = false;
+    v.vy = v.speed * Math.sin(v.pitch);
+    const safe = s.bike ? A.safeLandBike : A.safeLand;
+    const hard = Math.max(0, into - safe);
+    v.speed *= 1 - A.scrub * Math.min(1, mismatch / 1.2);
+    // As an impact past the crash threshold (crashDamage).
+    return hard > 0 ? VEHICLES.crash.threshold + hard * 1.3 : 0;
+  }
+  // On the ground: rising and falling with it at speed · sin(pitch).
+  const was = v.y,
+    rate = v.vy ?? 0,
+    pitch = v.pitch,
+    roll = v.roll;
+  settleTilt(world, v);
+  const ballistic = was + rate * dt - 0.5 * g * dt * dt;
+  const off = ballistic - v.y;
+  // How fast it would part from the ground ahead, across that ground's slope: the suspension
+  // takes up to `suspension` of it (a kink in a hillside, a dip in the road), past that it flies.
+  const parting = rate * Math.cos(v.pitch) - v.speed * Math.sin(v.pitch);
+  if (
+    off > A.lift &&
+    ((Math.abs(v.speed) >= A.minSpeed && parting > A.suspension) || was - v.y > A.ledge)
+  ) {
+    // Off a crest, a ramp's lip or a ledge: airborne with the speed it rose at.
+    v.y = ballistic;
+    v.vy = rate - g * dt;
+    v.pitch = pitch;
+    v.roll = roll;
+    v.air = true;
+    return 0;
+  }
+  // (Down a small step at a crawl: it settles, a little at a time.)
+  if (v.y < was - 0.5) v.y = was - Math.min(was - v.y, 9.8 * dt * 2);
+  v.vy = v.speed * Math.sin(v.pitch);
+  return 0;
+}
+
+/** A flooded vehicle (VEHICLES.water): it slows to a stop and sinks to the bottom. */
+function sinkStep(world: StaticWorld, v: Vehicle, dt: number) {
+  const W = VEHICLES.water;
+  const k = Math.exp(-W.sinkDrag * dt);
+  v.speed *= k;
+  v.slip = (v.slip ?? 0) * k;
+  if (Math.abs(v.speed) < 0.05) v.speed = 0;
+  if (Math.abs(v.slip) < 0.05) v.slip = 0;
+  const fx = -Math.sin(v.yaw),
+    fz = -Math.cos(v.yaw),
+    rx = Math.cos(v.yaw),
+    rz = -Math.sin(v.yaw);
+  const nx = v.x + (fx * v.speed + rx * v.slip) * dt,
+    nz = v.z + (fz * v.speed + rz * v.slip) * dt;
+  const s = spec(v.kind);
+  if (
+    !circles({ ...v, x: nx, z: nz }).some(([cx, cz, r]) =>
+      world.blocked(cx, v.y + 0.45, cz, s.height - 0.55, r),
+    )
+  ) {
+    v.x = nx;
+    v.z = nz;
+  } else {
+    v.speed = 0;
+    v.slip = 0;
+  }
+  const bottom = { ...v };
+  settleTilt(world, bottom);
+  const y = Math.max(bottom.y, v.y - W.sink * dt);
+  v.vy = y > bottom.y ? -W.sink : 0;
+  v.y = y;
+  const ease = 1 - Math.exp(-2 * dt);
+  v.pitch += (bottom.pitch - v.pitch) * ease;
+  v.roll += (bottom.roll - v.roll) * ease;
+  v.x = Math.round(v.x * 1000) / 1000;
+  v.z = Math.round(v.z * 1000) / 1000;
+  v.y = Math.round(v.y * 1000) / 1000;
 }
 
 /**

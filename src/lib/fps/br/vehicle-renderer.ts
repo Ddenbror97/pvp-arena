@@ -547,6 +547,9 @@ export function createVehicleRenderer(
         steer: b[14] ?? 0,
         slip: b[15] ?? 0,
         flat: b[16] ?? 0,
+        vy: b[17] ?? 0,
+        air: b[18] === 1,
+        drowned: b[19] === 1,
       }));
     },
     dispose() {
