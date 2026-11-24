@@ -46,7 +46,10 @@ describe("reloadIfStale", () => {
     deployed(null, false);
     const { reloadIfStale } = await load("b1");
     expect(await reloadIfStale()).toBe(false);
-    vi.stubGlobal("fetch", vi.fn(async () => Promise.reject(new Error("offline"))));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Promise.reject(new Error("offline"))),
+    );
     expect(await reloadIfStale()).toBe(false);
     expect(reload).not.toHaveBeenCalled();
   });
