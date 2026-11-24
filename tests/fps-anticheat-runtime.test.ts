@@ -136,9 +136,11 @@ async function open(mode: Mode, id: string, user: string) {
     secret,
   );
   const prefix = mode === "duel" ? "matches" : mode;
+  // The BR client names its page (workers/fps/seat-claim.ts, PR #344): its reconnects take
+  // the seat back from its own earlier sockets. Without a page a held seat is never taken.
   const extra =
     mode === "br"
-      ? `&worldRevision=${WORLD_ASSETS.revision}&rulesVersion=${BR_RULESET_VERSION}`
+      ? `&worldRevision=${WORLD_ASSETS.revision}&rulesVersion=${BR_RULESET_VERSION}&page=${user}`
       : "";
   const response = await mf!.dispatchFetch(
     `https://runtime.test/${prefix}/${id}/socket?ticket=${ticket}${extra}`,
