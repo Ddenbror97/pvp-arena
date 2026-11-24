@@ -8,10 +8,10 @@
  * for a tier:
  *
  *  - "standard": everything as before.
- *  - "balanced" (2026-11-10): for integrated graphics of the last few years. The owner's laptop
- *    ran the island on its Intel UHD at 78 fps on the low tier, which looked coarse next to
- *    1v1 (that has no tiers). Anti-aliasing on, a 900p pixel budget, 8× anisotropy, full-size
- *    textures where the machine has the memory; the shortest view distance to start with.
+ *  - "balanced" (2026-11-10): for integrated graphics fast enough for it (Ryzen Vega 8 and up;
+ *    Intel UHD went back to low on 2026-11-24, see BALANCED_GPU). Anti-aliasing on, a 900p
+ *    pixel budget, 8× anisotropy, full-size textures where the machine has the memory; the
+ *    shortest view distance to start with.
  *  - "low": no MSAA, a 720p pixel budget, the lite ground shader from the start, half-size
  *    world textures, 4× anisotropy.
  *
@@ -68,11 +68,17 @@ const LOW_GPU = [
 const STANDARD_GPU = [/\barc\b|iris.*xe|\bxe\b/i, /\brtx\b|gtx ?(9[6-9]0|1\d{3})/i, /apple m\d/i];
 
 /**
- * Integrated graphics fast enough for anti-aliasing at 900p (checked before LOW_GPU): Intel
- * "UHD Graphics" with no model number (the Xe-based ones since 2020; the older UHD 6xx carry
- * a number) and Ryzen's Vega 8 and up.
+ * Integrated graphics fast enough for anti-aliasing at 900p (checked before LOW_GPU): Ryzen's
+ * Vega 8 and up.
+ *
+ * Intel "UHD Graphics" with no model number (the Xe-based ones since 2020) was here until the
+ * production performance audit (2026-11-24, owner's laptop, UHD 0x46A3, real GPU timer
+ * queries): at balanced the island alone took 22–35 ms of GPU per frame in Downtown, the
+ * fields, Northstar and Forgotten Ruins, the adaptive resolution then dropped it below 720p,
+ * and a fight ran at 21–23 fps; at low the same places took 8–19 ms and the client ran at
+ * 39–66 fps. It now starts on the low tier with the older UHD 6xx (LOW_GPU).
  */
-const BALANCED_GPU = [/intel.*uhd graphics(?! ?p?\d)/i, /radeon.*vega (8|1[01])\b/i];
+const BALANCED_GPU = [/radeon.*vega (8|1[01])\b/i];
 
 export function tierFromGpuName(gpu: string): BrTier | null {
   if (!gpu) return null;
