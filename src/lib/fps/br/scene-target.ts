@@ -149,18 +149,19 @@ export const STEADY = {
   cap: Infinity,
   /**
    * On foot: blended from `near` to `far` metres (what moves with you, a car you drive, is
-   * nearer), and only the shimmer: jumps from `from`→`to` (the ground's crawl is a few
-   * hundredths, finer than what sparkles from the air), and none over `capFrom`→`capTo`.
-   * Measured on the RTX 2050 (gpu-bench, walking 11 cm a frame across the airfield's apron at
-   * eye height; change between frames after following the ground / detail between
-   * neighbours, of 255):
-   *   distance (m)     12–20        20–35
-   *   off              11.4 / 4.8   7.2 / 4.8
-   *   on               4.6 / 4.3    4.3 / 4.7
-   * (Filtering the paving over its whole footprint instead: 5.9 / 2.3, 4.7 / 3.9, the detail
-   * gone.) Cost: 0.2–0.6 ms a frame at 1632 × 918 (the pass and a depth resolve).
+   * nearer), and only the shimmer: every jump from `from` to `to` (the ground's crawl far off
+   * is a few thousandths on this scale, much finer than what sparkles from the air), none over
+   * `capFrom`→`capTo` (a tracer, a flash, a player stepping out). Measured on the RTX 2050
+   * (gpu-bench, walking 11 cm a frame across the airfield's apron at eye height; change
+   * between frames after following the ground, ground pixels only), with the mid grain exact
+   * (terrain.ts):
+   *   distance (m)            12–25   25–40   40–70
+   *   off                     12.5    3.1     1.2
+   *   jumps 0.004–0.02         5.1    2.9     1.3
+   *   jumps 0–0.004            3.3    2.0     1.2
+   * Cost: 0.2–0.6 ms a frame at 1632 × 918 (the pass and a depth resolve).
    */
-  foot: { near: 6, far: 14, from: 0.004, to: 0.02, capFrom: 0.18, capTo: 0.3 },
+  foot: { near: 6, far: 14, from: 0, to: 0.004, capFrom: 0.18, capTo: 0.3 },
   /** Frames without it after which its two history buffers are freed. */
   idleFrames: 600,
 };

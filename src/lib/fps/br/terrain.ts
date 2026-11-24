@@ -200,7 +200,30 @@ export const GROUND = {
   reachGrow: 0.5,
   reachEnd: 280,
 };
+/*
+ * The mid grain's samples are exact (owner, 2026-11-24, the airfield's apron from eye height:
+ * "after the red line it is still same issue. when character moves the ground is flicker/
+ * myrornas krig … it feels we are looping").
+ *
+ * Found by switching the ground shader's parts off one at a time on the owner's RTX 2050
+ * (gpu-bench, walking 11 cm a frame across the apron; change between frames after following
+ * the ground, on ground pixels only: buildings masked out, where this measure is blind):
+ *   distance (m)                         12–25   25–40   40–70   70–120
+ *   as live (before)                     13.0    6.1     2.4     0.9
+ *   no near textures at all               0.7     0.6     0.9     0.7   (the floor)
+ *   the grazing mid grain off            12.4    1.9     0.9     0.5
+ *   the mid grain exact, no ×2 on paving 12.5    3.1     1.2     0.6   (this)
+ * The normal map, the noise, the air grain and the far mid grain made no difference. The
+ * grain laid over the near colour where it is filtered away at a slant (`graze`) took its
+ * enlarged samples through groundAlbedo with gradients divided by the enlargement: small
+ * footprints by that measure, so they kept GROUND.reach and the half-level sharpening all the
+ * way out, and on paving their contrast was doubled on top (b08fbfdd). Every metre beyond
+ * about 25 m crawled. They are now filtered exactly, at their level, without the doubling.
+ * With the steadying pass on foot (scene-target.ts STEADY.foot) on top: 3.3 / 2.0 / 1.2 / 0.6.
+ * (In the shader: `brMid`.)
+ */
 /**
+ * The most taps a stretched footprint takes/**
  * The most taps a stretched footprint takes (shared, so the GPU bench can set it): GROUND.stretch
  * on the standard tier (16 × anisotropy), 4 on the balanced tier (integrated graphics, not
  * measured), none below. Set when the terrain is made (the tier's anisotropy is known then).
@@ -667,6 +690,9 @@ export function createTerrain(
         // 0 on foot, 1 beyond the near textures (GROUND.reachEnd): the reach is for the ground
         // seen from eye height; from the air a short filter would sparkle.
         float brExact = 0.0;
+        // 1 while the mid grain's enlarged samples are taken: filtered exactly (the note "The mid
+        // grain's samples are exact" above GROUND_TAPS).
+        float brMid = 0.0;
         ${GROUND_TILE_GLSL}
         vec3 groundAlbedo(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
@@ -677,8 +703,8 @@ export function createTerrain(
           bool paved = layer == ${L("asphalt")} || layer == ${L("concrete")} ||
                        layer == ${L("gravel")} || layer == ${L("tiles")};
           float grazing = paved ? smoothstep(${GROUND.grazeFrom}, ${GROUND.grazeTo}, max(length(px), length(py))) : 0.0;
-          k *= mix(uGroundSharpen, 1.0, grazing);
-          return groundTile(uGroundA, uvw, px * k, py * k, k, uGroundLite < 0.5, max(brExact, grazing)) * uLayerTint[layer];
+          k *= mix(uGroundSharpen, 1.0, max(grazing, brMid));
+          return groundTile(uGroundA, uvw, px * k, py * k, k, uGroundLite < 0.5, max(max(brExact, brMid), grazing)) * uLayerTint[layer];
         }
         vec3 groundNormal(int layer, vec2 p, vec2 px, vec2 py) {
           float k = uLayerScale[layer];
@@ -873,6 +899,10 @@ export function createTerrain(
             vec3 far = max(uLayerFar[lt], vec3(1e-3));
             // Lite (slow GPUs): one sample; the lattice is far less visible than a lower resolution.
             vec2 mdx = mpx / ${MID.scale.toFixed(1)}, mdy = mpy / ${MID.scale.toFixed(1)};
+            // (Exact: "The mid grain's samples are exact", above GROUND_TAPS.)
+            // (Where the near textures are, the samples feed the grazing grain over them; beyond,
+            // from the air, the far mid grain keeps its sharpening and reach as before.)
+            brMid = near > 0.0 ? 1.0 : 0.0;
             vec3 midA = groundAlbedo(lt, mxz, mdx, mdy);
             vec3 midB = midA;
             if (uGroundLite < 0.5) {
@@ -893,9 +923,9 @@ export function createTerrain(
             col *= mix(vec3(1.0), ratio, mid * ${MID.albedo.toFixed(2)} * (1.0 - snow) * (1.0 - ${MID.stony.toFixed(2)} * stony));
             // Recover local contrast from the filtered, coarser grain on paving.
             // Its coordinates stay fixed as the player walks or jumps.
-            float pavement = max(runway, clamp(w[5] + w[6], 0.0, 1.0));
-            midRatio = clamp(vec3(1.0) + (ratio - 1.0) * (1.0 + pavement), 0.45, 1.85);
+            midRatio = clamp(ratio, 0.45, 1.85);
             midStony = stony;
+            brMid = 0.0;
             // (No mid normal on rock: one tile at one scale shows as a weave on a bare slope;
             // the far-rock relief lights it instead.)
             midNormal = stony > 0.5 ? vec3(0.0, 0.0, 1.0) : groundNormal(lm, mxz, mdx, mdy);
@@ -1067,7 +1097,7 @@ export function createTerrain(
         nonPerturbedNormal = normal;`,
       );
   };
-  material.customProgramCacheKey = () => "br-terrain-v9";
+  material.customProgramCacheKey = () => "br-terrain-v10";
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "br-terrain-patches";
