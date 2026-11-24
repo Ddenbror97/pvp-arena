@@ -1,0 +1,127 @@
+import type * as THREE from "three";
+
+/**
+ * One decoded picture for every copy of the same image in the island's model files (cleanup
+ * 2026-11-23).
+ *
+ * A model file carries its own textures, and the buildings made from a kit (the Old Fortress,
+ * Forgotten Ruins, East Works, the military base, the coast towns, Blackwater) each carry
+ * their own copy of the kit's walls, roofs and floors: the fortress's stone is in 18 files,
+ * a works wall in 50. Of the 1,959 textures in the 2,735 files a match loads, 663 are a
+ * byte-for-byte copy of one already loaded. Each was decoded into a bitmap of its own (kept
+ * for the whole match: a lost graphics context is restored from them) and, once drawn, put on
+ * the GPU as a texture of its own: about 260 MB of bitmaps and up to 350 MB of video memory
+ * for pictures the game already had, most of it in exactly the places built last.
+ *
+ * Here every texture whose image bytes match an earlier one takes that one's `source`. three
+ * keeps one GPU texture per source and sampling state, so the copies' textures become one
+ * upload, and the copy's own bitmap is closed. The textures themselves stay separate objects:
+ * each material keeps its own wrap, filter, transform and colour space, and disposing one
+ * releases only its share. Nothing drawn changes: the pictures are identical.
+ *
+ * One share per island load (island-scene.ts): the kept sources go with the match.
+ */
+
+/** The parts of a parsed glTF this reads (GLTFLoader's parser). */
+type ParsedGltf = {
+  parser: {
+    json: {
+      textures?: Array<{ source?: number; extensions?: Record<string, { source?: number }> }>;
+      images?: Array<{ bufferView?: number }>;
+    };
+    /** GLTFLoader records every texture it creates here, clones included. */
+    associations: Map<unknown, { textures?: number } | undefined>;
+    getDependency(type: "bufferView", index: number): Promise<ArrayBuffer>;
+  };
+};
+
+export type TextureShare = {
+  /**
+   * Point every texture of a freshly parsed model whose image was loaded before at that
+   * image; register the rest. Call before anything of the model is drawn (and after its
+   * textures were resized for the tier). Never throws: on any failure the model keeps its
+   * own textures, as before.
+   */
+  share(gltf: ParsedGltf): Promise<void>;
+  /** Distinct images kept, and textures that took an earlier image instead of their own. */
+  stats(): { images: number; shared: number };
+  /** Forget the kept images (the island is going). */
+  clear(): void;
+};
+
+const HEX = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, "0"));
+
+export function createTextureShare(): TextureShare {
+  /** Image bytes' digest → the source every texture of that image uses. */
+  const sources = new Map<string, THREE.Texture["source"]>();
+  const kept = new Set<THREE.Texture["source"]>();
+  let shared = 0;
+  const subtle = typeof crypto === "undefined" ? undefined : crypto.subtle;
+
+  /** A key for an image's bytes: equal keys are the same file, bit for bit. */
+  async function keyOf(bytes: ArrayBuffer) {
+    const digest = new Uint8Array(await subtle!.digest("SHA-1", bytes));
+    let key = `${bytes.byteLength}:`;
+    for (const b of digest) key += HEX[b];
+    return key;
+  }
+
+  return {
+    async share(gltf) {
+      // (No SubtleCrypto: a page not served over https. The models keep their own textures.)
+      if (!subtle) return;
+      try {
+        const { json, associations } = gltf.parser;
+        // Each texture with the image it shows (its index in the file).
+        const textures: Array<[THREE.Texture, number]> = [];
+        for (const [object, reference] of associations) {
+          const texture = object as THREE.Texture;
+          if (!texture?.isTexture || reference?.textures === undefined) continue;
+          const def = json.textures?.[reference.textures];
+          if (!def) continue;
+          // (A WebP or other extension's picture stands in for the plain `source`.)
+          let image = def.source;
+          for (const extension of Object.values(def.extensions ?? {}))
+            if (typeof extension?.source === "number") image = extension.source;
+          if (image !== undefined && json.images?.[image]?.bufferView !== undefined)
+            textures.push([texture, image]);
+        }
+        if (!textures.length) return;
+        const keys = new Map<number, Promise<string>>();
+        for (const [, image] of textures)
+          if (!keys.has(image))
+            keys.set(
+              image,
+              gltf.parser.getDependency("bufferView", json.images![image]!.bufferView!).then(keyOf),
+            );
+        const resolved = new Map<number, string>();
+        for (const [image, key] of keys) resolved.set(image, await key);
+        // From here on nothing waits: two files finishing together cannot both keep a copy.
+        const dropped = new Set<THREE.Texture["source"]>();
+        for (const [texture, image] of textures) {
+          const key = resolved.get(image)!;
+          const first = sources.get(key);
+          if (!first) {
+            sources.set(key, texture.source);
+            kept.add(texture.source);
+          } else if (first !== texture.source) {
+            dropped.add(texture.source);
+            texture.source = first;
+            shared++;
+          }
+        }
+        // Every texture of the file that showed a dropped picture now shows the kept one
+        // (GLTFLoader's clones are in `associations` too): its bitmap can go at once.
+        for (const source of dropped)
+          if (!kept.has(source)) (source.data as { close?: () => void } | null)?.close?.();
+      } catch {
+        // The model draws with the textures it was parsed with.
+      }
+    },
+    stats: () => ({ images: sources.size, shared }),
+    clear() {
+      sources.clear();
+      kept.clear();
+    },
+  };
+}

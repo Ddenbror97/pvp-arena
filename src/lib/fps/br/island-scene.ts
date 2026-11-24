@@ -8,6 +8,7 @@ import { buildIsland, type Island } from "./island";
 import { pavedLots } from "./layout";
 import { decodeLandCover } from "./landcover";
 import { createProps, type ModelManifest } from "./props-renderer";
+import { createTextureShare } from "./shared-textures";
 import type { CollisionData } from "./static-world";
 import { createFloorPatches } from "./floor-patches";
 import { createPowerLines, createStructures } from "./structures-renderer";
@@ -114,6 +115,7 @@ export async function loadIslandScene(
   const island = buildIsland(hf, cover, meta, collision);
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
+  const textureShare = createTextureShare();
   // Fetch through the same cancellable/retrying path for buildings, weapons and gear.
   // Parsing stays on this configured GLTFLoader (Meshopt/plugins/resource resolution).
   loader.loadAsync = async (path) => {
@@ -122,6 +124,8 @@ export async function loadIslandScene(
     const gltf = await loader.parseAsync(data, THREE.LoaderUtils.extractUrlBase(path));
     // Low tier: half-size textures, swapped in before anything reaches the GPU.
     await shrinkModelTextures(gltf.scene);
+    // A picture another model file already brought is not kept twice (shared-textures.ts).
+    await textureShare.share(gltf);
     drawGlassOnce(gltf.scene);
     return gltf;
   };
@@ -378,6 +382,7 @@ export async function loadIslandScene(
       doorLook?.atlas.dispose();
       facades?.dispose(); // lent to the props, like the door atlas
       farFacades?.dispose();
+      textureShare.clear();
       root.removeFromParent();
     },
   };
