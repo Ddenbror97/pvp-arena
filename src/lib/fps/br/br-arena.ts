@@ -697,10 +697,12 @@ export function createBrArena(
   const sharpenScene = () =>
     sharpen?.apply(brResolutionScale(budget.scale) < 1 ? SHARPEN.scaledStrength : SHARPEN.strength);
   // The steadying pass (scene-target.ts STEADY): in the air, where a town, a forest and the
-  // ground are a pixel a piece and sparkle as you move. Not on the low tier (a fullscreen pass,
-  // as the sharpening). Eased in and out over a few frames, so the picture does not change at
-  // once as you jump or land.
-  const steadyOn = !!sceneTarget && tier.tier !== "low" && steadyWanted();
+  // ground are a pixel a piece and sparkle as you move. Eased in and out over a few frames, so
+  // the picture does not change at once as you jump or land. Also on the low tier since
+  // 2026-11-24: its 720p made the towns below the plane and the parachute blink like fairy
+  // lights on Intel UHD (owner), and in the air the GPU has room for the pass (the plane and
+  // the canopy drew in 9–12 ms there, against 15–22 ms on the ground).
+  const steadyOn = !!sceneTarget && steadyWanted();
   let steadyNow = 0;
   const steadyPresent = (aloft: boolean, dtMs: number) => {
     if (!steadyOn) return null;
