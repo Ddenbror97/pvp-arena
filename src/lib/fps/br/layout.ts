@@ -7675,8 +7675,28 @@ export function deadRoadEnds(meta: WorldMeta): Array<[number, number, number, nu
     for (let k = 0; k + 1 < r.points.length; k++)
       segs.push([r.points[k]![0], r.points[k]![1], r.points[k + 1]![0], r.points[k + 1]![1], ri]);
   });
+  // (The segments by 32 m square of their bounding boxes: an end is tested against those near
+  // it only, load-time audit 2026-11-24. Any one within reach decides, so order is free.)
+  const C = 32,
+    grid = new Map<number, number[]>();
+  const cellKey = (i: number, j: number) => (i + 2048) * 4096 + j + 2048;
+  segs.forEach(([ax, az, bx, bz], n) => {
+    for (let i = Math.floor(Math.min(ax, bx) / C); i <= Math.floor(Math.max(ax, bx) / C); i++)
+      for (let j = Math.floor(Math.min(az, bz) / C); j <= Math.floor(Math.max(az, bz) / C); j++) {
+        const list = grid.get(cellKey(i, j));
+        if (list) list.push(n);
+        else grid.set(cellKey(i, j), [n]);
+      }
+  });
+  const nearSegs = (x: number, z: number) => {
+    const found = new Set<number>();
+    for (let i = Math.floor((x - 7) / C); i <= Math.floor((x + 7) / C); i++)
+      for (let j = Math.floor((z - 7) / C); j <= Math.floor((z + 7) / C); j++)
+        for (const n of grid.get(cellKey(i, j)) ?? []) found.add(n);
+    return [...found].map((n) => segs[n]!);
+  };
   const near = (x: number, z: number, own: number) =>
-    segs.some(([ax, az, bx, bz, ri]) => {
+    nearSegs(x, z).some(([ax, az, bx, bz, ri]) => {
       if (ri === own) return false;
       if (Math.min(ax, bx) > x + 7 || Math.max(ax, bx) < x - 7) return false;
       if (Math.min(az, bz) > z + 7 || Math.max(az, bz) < z - 7) return false;
@@ -7760,6 +7780,41 @@ function roadEndSites(out: Placement[], ctx: Context) {
             flat,
           });
         }
+  }
+}
+
+/**
+ * Squares (centre x, z and half-size r) and whether a new one would overlap any of them
+ * (|dx| < r + r' and |dz| < r + r'), by a grid instead of a scan of the whole list (load-time
+ * audit 2026-11-24: farmLife's scan of every placement per candidate). Same answers.
+ */
+class SquareIndex {
+  private readonly cells = new Map<number, Array<readonly [number, number, number]>>();
+  private static readonly CELL = 64;
+  private static key(i: number, j: number) {
+    return (i + 2048) * 4096 + j + 2048;
+  }
+  push(sq: readonly [number, number, number]) {
+    const [x, z, r] = sq,
+      C = SquareIndex.CELL;
+    for (let i = Math.floor((x - r) / C); i <= Math.floor((x + r) / C); i++)
+      for (let j = Math.floor((z - r) / C); j <= Math.floor((z + r) / C); j++) {
+        const k = SquareIndex.key(i, j),
+          list = this.cells.get(k);
+        if (list) list.push(sq);
+        else this.cells.set(k, [sq]);
+      }
+  }
+  overlaps(x: number, z: number, r: number) {
+    const C = SquareIndex.CELL;
+    for (let i = Math.floor((x - r) / C); i <= Math.floor((x + r) / C); i++)
+      for (let j = Math.floor((z - r) / C); j <= Math.floor((z + r) / C); j++) {
+        const list = this.cells.get(SquareIndex.key(i, j));
+        if (list)
+          for (const [px, pz, pr] of list)
+            if (Math.abs(px - x) < r + pr && Math.abs(pz - z) < r + pr) return true;
+      }
+    return false;
   }
 }
 
@@ -8636,12 +8691,12 @@ function fieldDressing(out: Placement[], ctx: Context) {
  * timber barn. Each piece only where the ground is flat and nothing else stands.
  */
 function farmLife(out: Placement[], ctx: Context) {
-  const near: Array<[number, number, number]> = out.map((p) => {
+  const near = new SquareIndex();
+  for (const p of out) {
     const [w, d] = footAt(p.model, p.turn);
-    return [p.x, p.z, Math.max(w, d) / 2];
-  });
-  const clear = (x: number, z: number, r: number) =>
-    !near.some(([px, pz, pr]) => Math.abs(px - x) < r + pr && Math.abs(pz - z) < r + pr);
+    near.push([p.x, p.z, Math.max(w, d) / 2]);
+  }
+  const clear = (x: number, z: number, r: number) => !near.overlaps(x, z, r);
   const put = (model: string, x: number, z: number, turn: Placement["turn"], flat = 0.8) => {
     const [w, d] = footAt(model, turn);
     const r = Math.max(w, d) / 2;
@@ -10379,30 +10434,100 @@ function roadsThroughBuildings(out: Placement[], ctx: Context) {
     }
     return [x0, z0, x1, z1] as const;
   });
+  // The centreline, and the carriageway a metre inside either edge (2026-11-22: a corner
+  // standing 1–3 m into the asphalt, the road running on into the wall): each road's segments
+  // at the three offsets, worked out once, and a coarse grid of where they run. A building is
+  // tested only against the segments whose cells it touches, in their order along the road,
+  // so the sums are the very ones the full scan made (load-time audit 2026-11-24: the scan
+  // was 1.4 s of every island build, client and server).
+  const OFFSETS = [0, -2.5, 2.5] as const;
+  const CELL = 48;
+  const lanes = meta.roads.map((r) => {
+    const n = Math.max(0, r.points.length - 1);
+    const segs = OFFSETS.map(() => new Float64Array(n * 4));
+    const cells = new Map<number, number[]>();
+    for (let k = 1; k < r.points.length; k++) {
+      const [px, pz] = r.points[k - 1]!,
+        [qx, qz] = r.points[k]!;
+      const l = Math.hypot(qx - px, qz - pz) || 1;
+      let sx0 = Infinity,
+        sz0 = Infinity,
+        sx1 = -Infinity,
+        sz1 = -Infinity;
+      OFFSETS.forEach((off, o) => {
+        const ox = (-(qz - pz) / l) * off,
+          oz = ((qx - px) / l) * off;
+        const ax = px + ox,
+          az = pz + oz,
+          bx = qx + ox,
+          bz = qz + oz;
+        segs[o]!.set([ax, az, bx, bz], (k - 1) * 4);
+        sx0 = Math.min(sx0, ax, bx);
+        sx1 = Math.max(sx1, ax, bx);
+        sz0 = Math.min(sz0, az, bz);
+        sz1 = Math.max(sz1, az, bz);
+      });
+      for (let cx = Math.floor(sx0 / CELL); cx <= Math.floor(sx1 / CELL); cx++)
+        for (let cz = Math.floor(sz0 / CELL); cz <= Math.floor(sz1 / CELL); cz++) {
+          const key = (cx + 1024) * 2048 + cz + 1024;
+          const list = cells.get(key);
+          if (list) list.push(k - 1);
+          else cells.set(key, [k - 1]);
+        }
+    }
+    return { segs, cells };
+  });
+  // And which roads come near each 256 m square (by their bounding boxes): a building is
+  // tested against those alone. (Any road that qualifies makes the answer, so their order
+  // does not matter.)
+  const ROAD_CELL = 256;
+  const roadCells = new Map<number, number[]>();
+  boxes.forEach(([bx0, bz0, bx1, bz1], i) => {
+    for (let cx = Math.floor(bx0 / ROAD_CELL); cx <= Math.floor(bx1 / ROAD_CELL); cx++)
+      for (let cz = Math.floor(bz0 / ROAD_CELL); cz <= Math.floor(bz1 / ROAD_CELL); cz++) {
+        const key = (cx + 1024) * 2048 + cz + 1024;
+        const list = roadCells.get(key);
+        if (list) list.push(i);
+        else roadCells.set(key, [i]);
+      }
+  });
+  const candidates: number[] = [];
+  const nearRoads = new Set<number>();
   const through = (x: number, z: number, w: number, d: number) => {
     const x0 = x - w / 2 + 0.5,
       x1 = x + w / 2 - 0.5,
       z0 = z - d / 2 + 0.5,
       z1 = z + d / 2 - 0.5;
-    for (let i = 0; i < meta.roads.length; i++) {
+    nearRoads.clear();
+    for (let cx = Math.floor(x0 / ROAD_CELL); cx <= Math.floor(x1 / ROAD_CELL); cx++)
+      for (let cz = Math.floor(z0 / ROAD_CELL); cz <= Math.floor(z1 / ROAD_CELL); cz++) {
+        const list = roadCells.get((cx + 1024) * 2048 + cz + 1024);
+        if (list) for (const i of list) nearRoads.add(i);
+      }
+    for (const i of nearRoads) {
       const r = meta.roads[i]!,
         [bx0, bz0, bx1, bz1] = boxes[i]!;
       if (bx1 < x0 || bx0 > x1 || bz1 < z0 || bz0 > z1) continue;
-      // The centreline, and the carriageway a metre inside either edge (2026-11-22: a corner
-      // standing 1–3 m into the asphalt, the road running on into the wall).
+      // The segments near the building (any segment whose box meets the building's is among
+      // them), in order along the road.
+      const { segs, cells } = lanes[i]!;
+      candidates.length = 0;
+      for (let cx = Math.floor(x0 / CELL); cx <= Math.floor(x1 / CELL); cx++)
+        for (let cz = Math.floor(z0 / CELL); cz <= Math.floor(z1 / CELL); cz++) {
+          const list = cells.get((cx + 1024) * 2048 + cz + 1024);
+          if (list) for (const k of list) candidates.push(k);
+        }
+      candidates.sort((a, b) => a - b);
       let inside = 0;
-      for (const off of [0, -2.5, 2.5]) {
+      for (const seg of segs) {
         let along = 0;
-        for (let k = 1; k < r.points.length; k++) {
-          const [px, pz] = r.points[k - 1]!,
-            [qx, qz] = r.points[k]!;
-          const l = Math.hypot(qx - px, qz - pz) || 1;
-          const ox = (-(qz - pz) / l) * off,
-            oz = ((qx - px) / l) * off;
-          const ax = px + ox,
-            az = pz + oz,
-            bx = qx + ox,
-            bz = qz + oz;
+        for (let c = 0; c < candidates.length; c++) {
+          const k = candidates[c]!;
+          if (c > 0 && k === candidates[c - 1]) continue;
+          const ax = seg[k * 4]!,
+            az = seg[k * 4 + 1]!,
+            bx = seg[k * 4 + 2]!,
+            bz = seg[k * 4 + 3]!;
           if (Math.max(ax, bx) < x0 || Math.min(ax, bx) > x1) continue;
           if (Math.max(az, bz) < z0 || Math.min(az, bz) > z1) continue;
           along += clippedLength(ax, az, bx, bz, x0, z0, x1, z1);

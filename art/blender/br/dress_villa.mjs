@@ -24,7 +24,7 @@ import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { dequantize, join, meshopt, prune, unweld, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 import sharp from "sharp";
-import { modelFile } from "./model-files.mjs";
+import { editedManifests, modelFile } from "./model-files.mjs";
 
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO()
@@ -34,7 +34,7 @@ const dry = process.argv.includes("--dry");
 const ID = "pool-villa";
 const TAG = "dress-v1";
 const dir = "public/fps/br/models";
-const MANIFESTS = ["models.locations-v1.json", "models.json"];
+const MANIFESTS = editedManifests();
 const TEX = "art/br/blackwater/tex";
 
 // estates.py's numbers (model-local metres): floors 1.58 / 5.07, ceilings 4.55 / 7.9.
