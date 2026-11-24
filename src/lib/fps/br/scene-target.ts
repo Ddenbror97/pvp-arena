@@ -157,12 +157,47 @@ export type SceneTarget = {
 };
 
 /**
+ * The low tier's anti-aliasing (2026-11-24): the low tier draws without MSAA, and on Intel UHD
+ * edges, roof lines and the ground's detail crawled and blinked as the camera moved. A fast
+ * FXAA (Lottes' reduced variant, as three.js' FXAAShader): 4 corner taps for the edge's
+ * direction, then 2–4 taps along it; flat areas (contrast under 1/32, or 1/8 of the brightest
+ * tap) keep the centre pixel untouched. Needs `shown()` and `uTexel`.
+ */
+export const FXAA_LOW_GLSL = /* glsl */ `
+  float fxaaLuma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
+  vec3 fxaa(vec2 uv) {
+    vec3 rgbM = shown(uv);
+    vec3 rgbNW = shown(uv + vec2(-1.0, -1.0) * uTexel);
+    vec3 rgbNE = shown(uv + vec2(1.0, -1.0) * uTexel);
+    vec3 rgbSW = shown(uv + vec2(-1.0, 1.0) * uTexel);
+    vec3 rgbSE = shown(uv + vec2(1.0, 1.0) * uTexel);
+    float lM = fxaaLuma(rgbM);
+    float lNW = fxaaLuma(rgbNW), lNE = fxaaLuma(rgbNE), lSW = fxaaLuma(rgbSW), lSE = fxaaLuma(rgbSE);
+    float lMin = min(lM, min(min(lNW, lNE), min(lSW, lSE)));
+    float lMax = max(lM, max(max(lNW, lNE), max(lSW, lSE)));
+    if (lMax - lMin < max(0.0312, lMax * 0.125)) return rgbM;
+    vec2 dir = vec2(-((lNW + lNE) - (lSW + lSE)), (lNW + lSW) - (lNE + lSE));
+    float reduce = max((lNW + lNE + lSW + lSE) * 0.03125, 1.0 / 128.0);
+    float rcpMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + reduce);
+    dir = clamp(dir * rcpMin, vec2(-8.0), vec2(8.0)) * uTexel;
+    vec3 rgbA = 0.5 * (shown(uv + dir * (1.0 / 3.0 - 0.5)) + shown(uv + dir * (2.0 / 3.0 - 0.5)));
+    vec3 rgbB = rgbA * 0.5 + 0.25 * (shown(uv - dir * 0.5) + shown(uv + dir * 0.5));
+    float lB = fxaaLuma(rgbB);
+    return lB < lMin || lB > lMax ? rgbA : rgbB;
+  }
+`;
+
+/**
  * Bind an offscreen scene target to a renderer created with `reversedDepthBuffer: true`.
  * The target stays bound between frames, so shaders compiled anywhere (the precompile, the
  * context-loss recompile, the inventory portrait, which restores the previous target) get the
  * variant that renders into it, and no material recompiles on the first frame.
  */
-export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): SceneTarget {
+export function createSceneTarget(
+  renderer: THREE.WebGLRenderer,
+  samples = 4,
+  { fxaa = false }: { fxaa?: boolean } = {},
+): SceneTarget {
   const size = new THREE.Vector2();
   const depth = new THREE.DepthTexture(1, 1, THREE.FloatType);
   const target = new THREE.WebGLRenderTarget(1, 1, {
@@ -175,10 +210,15 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
   });
   target.texture.colorSpace = THREE.LinearSRGBColorSpace;
   target.texture.generateMipmaps = false;
-  target.texture.minFilter = target.texture.magFilter = THREE.NearestFilter;
+  // FXAA reads between pixels (its blend along an edge); at one texel per pixel the centre
+  // taps are the same with either filter.
+  target.texture.minFilter = target.texture.magFilter = fxaa
+    ? THREE.LinearFilter
+    : THREE.NearestFilter;
 
   const material = new THREE.ShaderMaterial({
     name: "br-present",
+    defines: fxaa ? { FXAA: "" } : {},
     uniforms: {
       tScene: { value: target.texture },
       uTexel: { value: new THREE.Vector2(1, 1) },
@@ -204,8 +244,17 @@ export function createSceneTarget(renderer: THREE.WebGLRenderer, samples = 4): S
         #endif
         return linearToOutputTexel(c).rgb;
       }
+      #ifdef FXAA
+      // FXAA_LOW_GLSL: the low tier has no MSAA; smooth its edges in this pass, which it runs
+      // anyway (no extra fullscreen pass).
+      ${FXAA_LOW_GLSL}
+      #endif
       void main() {
+        #ifdef FXAA
+        vec3 c = fxaa(vUv);
+        #else
         vec3 c = shown(vUv);
+        #endif
         if (uSharpen > 0.0) {
           vec3 n = shown(vUv + vec2(0.0, uTexel.y));
           vec3 s = shown(vUv - vec2(0.0, uTexel.y));

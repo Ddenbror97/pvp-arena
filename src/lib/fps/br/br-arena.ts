@@ -632,6 +632,22 @@ function drawMap(island: IslandScene) {
   return c.toDataURL("image/png");
 }
 
+/**
+ * The low tier's anti-aliasing (2026-11-24): without any, Intel UHD's picture crawled and
+ * blinked at edges, roof lines and the ground as the camera moved. "fxaa" (default): FXAA in
+ * the present pass (scene-target.ts FXAA_LOW_GLSL); "msaa2" / "msaa4": 2× / 4× MSAA; "off": none, as before.
+ * localStorage "br-low-aa" picks one (comparisons).
+ */
+function lowTierAa(): "fxaa" | "msaa2" | "msaa4" | "off" {
+  try {
+    const v = localStorage.getItem("br-low-aa");
+    if (v === "msaa2" || v === "msaa4" || v === "off") return v;
+  } catch {
+    // storage blocked: the default
+  }
+  return "fxaa";
+}
+
 export function createBrArena(
   host: HTMLElement,
   base: string,
@@ -659,8 +675,10 @@ export function createBrArena(
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   setTextureQuality(renderer, tier.tier);
+  // The low tier's anti-aliasing (lowTierAa): FXAA in the present pass by default.
+  const lowAa = tier.tier === "low" ? lowTierAa() : null;
   const sceneTarget = renderer.capabilities.reversedDepthBuffer
-    ? createSceneTarget(renderer, tier.tier === "low" ? 0 : 4)
+    ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa ? 0 : 4, { fxaa: lowAa === "fxaa" })
     : null;
   // Sharpening over the finished scene (sharpen.ts). Not on the low tier, where a fullscreen
   // pass is not free, and not with the offscreen scene target (its own present pass).
@@ -676,10 +694,12 @@ export function createBrArena(
   const sharpenScene = () =>
     sharpen?.apply(brResolutionScale(budget.scale) < 1 ? SHARPEN.scaledStrength : SHARPEN.strength);
   // The steadying pass (scene-target.ts STEADY): in the air, where a town, a forest and the
-  // ground are a pixel a piece and sparkle as you move. Not on the low tier (a fullscreen pass,
-  // as the sharpening). Eased in and out over a few frames, so the picture does not change at
-  // once as you jump or land.
-  const steadyOn = !!sceneTarget && tier.tier !== "low" && steadyWanted();
+  // ground are a pixel a piece and sparkle as you move. Eased in and out over a few frames, so
+  // the picture does not change at once as you jump or land. Also on the low tier since
+  // 2026-11-24: its 720p made the towns below the plane and the parachute blink like fairy
+  // lights on Intel UHD (owner), and in the air the GPU has room for the pass (the plane and
+  // the canopy drew in 9–12 ms there, against 15–22 ms on the ground).
+  const steadyOn = !!sceneTarget && steadyWanted();
   let steadyNow = 0;
   const steadyPresent = (aloft: boolean, dtMs: number) => {
     if (!steadyOn) return null;
@@ -959,6 +979,7 @@ export function createBrArena(
     island?.setGroundRange(budget.scale >= 0.8 ? view.ground : Math.min(80, view.ground));
     groundLite = tier.tier === "low" || (budget.scale < 1 && !aloft);
     island?.setGroundLite(groundLite);
+    island?.setGroundSoft(tier.tier === "low");
     // Ground grass (grass.ts): by the graphics tier only. It is part of the map: never cut
     // back when the frame budget steps down (owner, 2026-11-13).
     island?.setGrassRange(GRASS_RANGE[tier.tier]);

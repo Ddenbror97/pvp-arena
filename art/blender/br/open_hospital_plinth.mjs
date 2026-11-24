@@ -21,7 +21,7 @@ import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { dequantize, meshopt, prune, unweld, weld } from "@gltf-transform/functions";
 import { MeshoptDecoder, MeshoptEncoder } from "meshoptimizer";
 import plan from "../../../src/lib/fps/br/hospital-plan.json" with { type: "json" };
-import { modelFile } from "./model-files.mjs";
+import { editedManifests, modelFile } from "./model-files.mjs";
 
 await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
 const io = new NodeIO()
@@ -29,7 +29,7 @@ const io = new NodeIO()
   .registerDependencies({ "meshopt.decoder": MeshoptDecoder, "meshopt.encoder": MeshoptEncoder });
 const TAG = "plinth-v1";
 const dir = "public/fps/br/models";
-const MANIFESTS = ["models.locations-v1.json", "models.json"];
+const MANIFESTS = editedManifests();
 const PLINTH = [0.55, 0.57, 0.58]; // build_hospital.mjs K.plinth
 const TOP = 0.6,
   PROUD = 0.04,

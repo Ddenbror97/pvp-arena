@@ -112,6 +112,36 @@ const ROOF_MAX = 14;
 const HULL = PLAYER_RADIUS - 0.05;
 
 const caches = new WeakMap<CollisionData, Map<string, Spot[]>>();
+/** The flood's four steps: +x, −x, +z, −z. */
+const STEP_DI = [1, -1, 0, 0] as const,
+  STEP_DK = [0, 0, 1, -1] as const;
+
+/**
+ * The flood's visited nodes (column × 64 + level), iterated in the order first reached, as
+ * the Set it replaces was (load-time audit 2026-11-24: hashing a node id per step was a large
+ * part of finding every model's loot spots on each island build).
+ */
+class Visited {
+  readonly order: number[] = [];
+  private readonly bits: Uint32Array;
+  constructor(cells: number) {
+    this.bits = new Uint32Array(cells * 2 + 2);
+  }
+  has(id: number) {
+    const w = Math.floor(id / 64) * 2 + ((id % 64) >> 5);
+    return ((this.bits[w]! >>> (id % 32)) & 1) === 1;
+  }
+  add(id: number) {
+    const w = Math.floor(id / 64) * 2 + ((id % 64) >> 5),
+      m = 1 << (id % 32);
+    if (this.bits[w]! & m) return;
+    this.bits[w] = this.bits[w]! | m;
+    this.order.push(id);
+  }
+  [Symbol.iterator]() {
+    return this.order[Symbol.iterator]();
+  }
+}
 
 export function modelSpots(
   collision: CollisionData,
@@ -191,7 +221,7 @@ function find(
     return out;
   });
   // Flood fill from the open border at ground level.
-  const seen = new Set<number>();
+  const seen = new Visited(nx * nz);
   const node = (c: number, li: number) => c * 64 + li;
   const queue: Array<[number, number]> = [];
   for (let k = 0; k < nz; k++)
@@ -245,14 +275,9 @@ function find(
     const y = levels[c]![li]!;
     const i = c % nx,
       k = (c - i) / nx;
-    for (const [di, dk] of [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ] as const) {
-      const ni = i + di,
-        nk = k + dk;
+    for (let d = 0; d < 4; d++) {
+      const ni = i + STEP_DI[d]!,
+        nk = k + STEP_DK[d]!;
       if (ni < 0 || nk < 0 || ni >= nx || nk >= nz) continue;
       const n = nk * nx + ni;
       const ls = levels[n]!;
