@@ -25,6 +25,7 @@ import {
   type BrInput,
 } from "../../../src/lib/fps/br/match";
 import type { CollisionData } from "../../../src/lib/fps/br/static-world";
+import { spawnVehicles } from "../../../src/lib/fps/br/vehicles";
 import { WORLD_ASSETS, type WorldMeta } from "../../../src/lib/fps/br/world";
 import { ZIP_HEADING, ZIP_STAND, ZIPLINES, zipLanding } from "../../../src/lib/fps/br/zipline";
 import { climbPoint, ladders } from "../../../src/lib/fps/br/ladders";
@@ -168,6 +169,17 @@ declare global {
         y?: number,
         above?: number,
       ) => { x: number; y: number; z: number };
+      /** Performance lab (scripts/br/perf-lab): the match itself, to stand seats anywhere. */
+      internals?: () => {
+        state: ReturnType<typeof createBrMatch>;
+        world: ReturnType<typeof buildIsland>["solid"];
+        hf: { heightAt: (x: number, z: number) => number };
+        meta: WorldMeta;
+        island: ReturnType<typeof buildIsland>;
+        me: number;
+        other: number;
+        act: (a: BrAct) => void;
+      };
       /** Lift checks: the island's lifts (lifts.ts). */
       lifts?: () => unknown;
       status: () => {
@@ -204,6 +216,10 @@ const ready = (async () => {
   const loot = params.get("loot") ? rollLoot(seed, island.layout, collision, world, meta) : [];
   const state = createBrMatch(meta, seed, (x, z) => hf.heightAt(x, z), loot, {
     zoneTimeScale: scale > 0 && scale <= 1 ? scale : 1,
+    // ?vehicles=1: the match's vehicles where the room parks them (workers/fps/br.ts).
+    ...(params.get("vehicles")
+      ? { vehicles: spawnVehicles(meta, island.solid, seed, island.layout) }
+      : {}),
     open: (x, z) => !world.blocked(x, hf.heightAt(x, z) + 0.1, z, 1.8, 0.6),
   });
   const me = seatHuman(state, "local", "Me");
@@ -776,6 +792,12 @@ const ready = (async () => {
     b.vx = b.vy = b.vz = 0;
   };
   window.sim.lifts = () => lifts(hf);
+  window.sim.internals = () => {
+    // (A measurement places people itself: nobody mirrors the local player from here on.)
+    mirroring = false;
+    mirror = null;
+    return { state, world, hf, meta, island, me, other, act: (a: BrAct) => void actQueue.push(a) };
+  };
   window.sim.place = (x, z, y, above) => {
     const b = state.seats[me]!.body;
     mirroring = false;
