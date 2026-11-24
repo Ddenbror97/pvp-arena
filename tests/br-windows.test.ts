@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
@@ -44,6 +44,26 @@ const island = buildIsland(hf, cover, meta, collision);
 const all = listPanes(island.panes);
 const models = (windowPanes as unknown as { revision: string; models: Record<string, number[][]> })
   .models;
+/**
+ * The manifest of revision `rev`: its file while it is published (the live revision, or one
+ * being built), else the excerpt kept for these tests once a later revision replaced it
+ * (tests/fixtures/br-superseded-manifests.json: the models the panes were cut from).
+ */
+function manifestOf(rev: string): typeof manifest {
+  const file = `public/fps/br/models/models.${rev}.json`;
+  if (existsSync(file)) return JSON.parse(readFileSync(file, "utf8")) as typeof manifest;
+  const kept = (
+    JSON.parse(readFileSync("tests/fixtures/br-superseded-manifests.json", "utf8")) as Record<
+      string,
+      typeof manifest | undefined
+    >
+  )[rev];
+  if (!kept?.models)
+    throw new Error(
+      `models.${rev}.json is not published and has no excerpt in tests/fixtures/br-superseded-manifests.json`,
+    );
+  return kept;
+}
 
 /** The middle of a pane, its thin axis (0: x, 2: z), and a point `d` m off it either way. */
 function across(p: Pane, d: number) {
@@ -70,16 +90,12 @@ describe("the buildings' windows are breakable glass", () => {
     // base's, garrison-v2, 2026-11-23).
     const cuts = (windowPanes as { cuts?: Record<string, string> }).cuts ?? {};
     for (const rev of new Set(Object.values(cuts))) {
-      const then = JSON.parse(
-        readFileSync(`public/fps/br/models/models.${rev}.json`, "utf8"),
-      ) as typeof manifest;
+      const then = manifestOf(rev);
       for (const [id, r] of Object.entries(cuts))
         if (r === rev) expect(manifest.models[id]!.lods[0], id).toEqual(then.models[id]!.lods[0]);
     }
     if (cut !== WORLD_ASSETS.revision) {
-      const then = JSON.parse(
-        readFileSync(`public/fps/br/models/models.${cut}.json`, "utf8"),
-      ) as typeof manifest;
+      const then = manifestOf(cut);
       for (const id of Object.keys(models)) {
         if (cuts[id]) continue;
         const now = manifest.models[id]! as unknown as { lods: Array<{ farFacade?: boolean }> };

@@ -34,7 +34,9 @@ const io = new NodeIO()
 
 const dir = "public/fps/br/models";
 const manifestName =
-  process.argv.find((a) => a.endsWith(".json") && !a.startsWith("--")) ?? "models.jungle-v1.json";
+  process.argv.find((a) => a.endsWith(".json") && !a.startsWith("--")) ??
+  // The live revision (src/lib/fps/br/world.ts WORLD_ASSETS.models): the only one published.
+  path.basename(fs.readFileSync("src/lib/fps/br/world.ts", "utf8").match(/models: "([^"]+)"/)[1]);
 const manifest = JSON.parse(fs.readFileSync(path.join(dir, manifestName), "utf8"));
 const collisionName = manifestName.replace("models.", "collision.");
 const collision = fs.existsSync(path.join(dir, collisionName))

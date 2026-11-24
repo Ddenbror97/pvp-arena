@@ -52,7 +52,16 @@ await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.waitForFunction(() => window.elevation);
 const manifest = JSON.parse(
   fs.readFileSync(
-    path.join(ROOT, `public/fps/br/models/models.${rev ?? "windows-v1"}.json`),
+    path.join(
+      ROOT,
+      rev
+        ? `public/fps/br/models/models.${rev}.json`
+        : // The live revision (world.ts WORLD_ASSETS.models): the only one published.
+          "public" +
+            fs
+              .readFileSync(path.join(ROOT, "src/lib/fps/br/world.ts"), "utf8")
+              .match(/models: "([^"]+)"/)[1],
+    ),
     "utf8",
   ),
 );

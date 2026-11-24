@@ -29,8 +29,11 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 BR = ROOT / "public/fps/br"
-SRC_H, OUT_H = BR / "height.v5.hf", BR / "height.v6.hf"
-META = BR / "world.v4.json"
+# Superseded world files are kept out of the deploy, in art/br/world-base (cleanup 2026-11-23):
+# only the live height, land cover and meta (src/lib/fps/br/world.ts WORLD_ASSETS) are published.
+BASE = ROOT / "art/br/world-base"
+SRC_H, OUT_H = BASE / "height.v5.hf", BR / "height.v6.hf"
+META = BASE / "world.v4.json"
 HALF = 5000.0
 
 # The apron in the base's frame (x east, z south of the POI): from the wall's line to 20 m

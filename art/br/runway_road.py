@@ -31,8 +31,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from polish_roads import repaint  # noqa: E402
 
 BR = Path(__file__).resolve().parents[2] / "public/fps/br"
-SRC_M, OUT_M = BR / "world.v4.json", BR / "world.v5.json"
-SRC_C, OUT_C = BR / "landcover.v4.lc", BR / "landcover.v5.lc"
+# Superseded world files are kept out of the deploy, in art/br/world-base (cleanup 2026-11-23):
+# only the live height, land cover and meta (src/lib/fps/br/world.ts WORLD_ASSETS) are published.
+BASE = Path(__file__).resolve().parents[2] / "art/br/world-base"
+SRC_M, OUT_M = BASE / "world.v4.json", BR / "world.v5.json"
+SRC_C, OUT_C = BASE / "landcover.v4.lc", BR / "landcover.v5.lc"
 
 ROAD = 1095
 # The road's first point on the coast road and its point at the base's loop.
