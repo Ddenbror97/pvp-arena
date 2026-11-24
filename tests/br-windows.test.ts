@@ -102,8 +102,10 @@ describe("the buildings' windows are breakable glass", () => {
         const was = then.models[id]! as unknown as { lods: unknown[] };
         expect(now.lods.length, id).toBe(was.lods.length);
         // (Or one with its last overlapping faces lifted apart, 2026-11-24: the same triangles,
-        // a few moved 1.5 cm along their normal.)
-        const lifted = (l: unknown) => /\.zfix-v21\.lod\d\.glb$/.test((l as { file: string }).file);
+        // a few moved 1.5 cm along their normal. Or one with its window reveals lit as the wall,
+        // reveal-v1, 2026-11-24: the same triangles in the same places, new normals.)
+        const lifted = (l: unknown) =>
+          /\.(zfix-v21|reveal-v1)\.lod\d\.glb$/.test((l as { file: string }).file);
         for (const [i, l] of now.lods.entries())
           if (lifted(l))
             expect((l as { tris: number }).tris, id).toBe((was.lods[i] as { tris: number }).tris);
@@ -138,9 +140,10 @@ describe("the buildings' windows are breakable glass", () => {
     ])
       expect(ids).toContain(id);
     for (const id of ids) {
-      // (Or that file with its last overlapping faces lifted apart, zfix-v21.)
+      // (Or that file with its last overlapping faces lifted apart, zfix-v21, or with its window
+      // reveals lit as the wall, reveal-v1.)
       expect(manifest.models[id]!.lods[0]!.file).toMatch(
-        new RegExp(`\\.(${cuts[id] ?? cut}|zfix-v21)\\.lod0\\.`),
+        new RegExp(`\\.(${cuts[id] ?? cut}|zfix-v21|reveal-v1)\\.lod0\\.`),
       );
       for (const [x0, x1, z0, z1, y0, y1] of models[id]!) {
         // Upright slabs, thin one way.
