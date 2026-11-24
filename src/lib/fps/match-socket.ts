@@ -51,7 +51,22 @@ export type MatchSocketOptions<Ticket> = {
    * mode says so and offers `again`, which starts over.
    */
   unreachable?(again: () => void): void;
+  /**
+   * The room gave this seat to a newer connection of the same account (REPLACED_CLOSE).
+   * Reconnecting stops: two pages that each reconnected when replaced took the seat from each
+   * other every few seconds, for good (owner, 2026-11-24: "a really big lagg in the battle
+   * royale, seems like a server lag. character is hacking while walking/in parachute"). The
+   * mode says so and offers `again` (play here: this page takes the seat back, once). Without
+   * this hook the close goes to `closed` like any other.
+   */
+  replaced?(again: () => void): void;
 };
+
+/**
+ * The room closes a socket with this when the same account connected again (another tab, a
+ * forgotten window, another computer): the newer connection has the seat.
+ */
+export const REPLACED_CLOSE = 4001;
 
 /** Sockets refused in a row (closed before they opened) before the mode is told it is unreachable. */
 export const REFUSED_LIMIT = 4;
@@ -135,6 +150,11 @@ export function openMatchSocket<Ticket>(o: MatchSocketOptions<Ticket>) {
         stopped = true;
         o.closed(event, attempt, ticket);
         window.dispatchEvent(new Event(RESTRICTED_EVENT));
+        return;
+      }
+      if (event.code === REPLACED_CLOSE && o.replaced) {
+        stopped = true;
+        o.replaced(again);
         return;
       }
       const delay = o.closed(event, attempt, ticket);

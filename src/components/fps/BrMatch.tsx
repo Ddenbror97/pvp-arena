@@ -74,6 +74,7 @@ export function BrMatch() {
     [startupError, setStartupError] = useState<string | null>(null),
     /** Set when the server refused every connection: the loading screen's "Try again". */
     [retry, setRetry] = useState<(() => void) | null>(null),
+    [retryLabel, setRetryLabel] = useState<string | undefined>(undefined),
     [ready, setReady] = useState(false),
     [graphics, setGraphics] = useState<BrGraphics | null>(null),
     [locked, setLocked] = useState(false),
@@ -290,8 +291,27 @@ export function BrMatch() {
         setConnection("Waiting for the server");
         return Math.min(10_000, 1000 * attempt);
       },
+      replaced(again) {
+        // Open on this account somewhere else, which has the seat now: this page stops instead
+        // of taking it back every few seconds (match-socket.ts REPLACED_CLOSE).
+        failed.current = true;
+        if (document.pointerLockElement) document.exitPointerLock();
+        setConnection("Opened in another tab");
+        setError(
+          "Battle Royale is open on this account in another tab or window. Close it there, or play here instead.",
+        );
+        setRetryLabel("Play here");
+        setRetry(() => () => {
+          failed.current = false;
+          setError(null);
+          setRetry(null);
+          setRetryLabel(undefined);
+          again();
+        });
+      },
       unreachable(again) {
         failed.current = true;
+        setRetryLabel(undefined);
         setConnection("Server unreachable");
         setError("The Battle Royale server is temporarily unavailable. Try again in a moment.");
         setRetry(() => () => {
@@ -448,6 +468,7 @@ export function BrMatch() {
           label={ready ? connection : progress.label}
           error={error ?? startupError}
           onRetry={error && retry ? retry : undefined}
+          retryLabel={retryLabel}
           mapName="Project Island"
           modeName="Battle royale"
           image={BR_LOADING_IMAGE}
