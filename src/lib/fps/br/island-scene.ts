@@ -51,6 +51,8 @@ export type IslandScene = {
   setGroundRange(m: number): void;
   /** Lite ground shading (terrain.ts setGroundLite): the budget's first step on slow GPUs. */
   setGroundLite(on: boolean): void;
+  /** The ground at its exact mip level (terrain.ts setGroundSoft): the low tier. */
+  setGroundSoft(on: boolean): void;
   /**
    * View distance: trees drawn out to `trees` m (never under the shared cover range) and the
    * detail distances of buildings and far scenery scaled by `detail` (cover classes unchanged).
@@ -321,6 +323,9 @@ export async function loadIslandScene(
     },
     setGroundLite(on) {
       terrain.setGroundLite(on);
+    },
+    setGroundSoft(on) {
+      terrain.setGroundSoft(on);
     },
     setGroundRange(m) {
       groundRange = m;

@@ -40,6 +40,10 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
       "ANGLE (Intel, Intel(R) Iris(R) Plus Graphics 640 Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon(TM) R5 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon(TM) Vega 3 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      // Intel UHD without a model number (the owner's laptop's 0x46A3): low since 2026-11-24
+      // (the performance audit: balanced missed 30 fps there on the GPU alone).
+      "ANGLE (Intel, Intel(R) UHD Graphics (0x000046A3) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "ANGLE (Intel, Intel(R) UHD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (NVIDIA, NVIDIA GeForce 940MX Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (NVIDIA, NVIDIA GeForce GT 730 Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (NVIDIA, NVIDIA GeForce MX150 Direct3D11 vs_5_0 ps_5_0, D3D11)",
@@ -48,10 +52,8 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
       "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)",
     ])
       expect(tierFromGpuName(gpu), gpu).toBe("low");
-    // Integrated graphics of the last few years (the owner's laptop: UHD, 78 fps on low).
+    // Integrated graphics fast enough for anti-aliasing at 900p.
     for (const gpu of [
-      "ANGLE (Intel, Intel(R) UHD Graphics (0x000046A3) Direct3D11 vs_5_0 ps_5_0, D3D11)",
-      "ANGLE (Intel, Intel(R) UHD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon(TM) Vega 8 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
     ])
       expect(tierFromGpuName(gpu), gpu).toBe("balanced");
@@ -105,9 +107,15 @@ describe("BR hardware tier (2026-11-09: a 2015 laptop should play)", () => {
       "standard",
     );
     // A slow session only ever lowers the tier, one step at a time.
+    const vega = "AMD Radeon(TM) Vega 8 Graphics";
+    expect(chooseBrTier({ ...base, gpu: vega }).tier).toBe("balanced");
+    expect(chooseBrTier({ ...base, gpu: vega, learnt: { tier: "low", at: now } }).tier).toBe("low");
+    // Intel UHD (no model number) starts low; a learnt tier never raises it.
     const uhd = "Intel(R) UHD Graphics";
-    expect(chooseBrTier({ ...base, gpu: uhd }).tier).toBe("balanced");
-    expect(chooseBrTier({ ...base, gpu: uhd, learnt: { tier: "low", at: now } }).tier).toBe("low");
+    expect(chooseBrTier({ ...base, gpu: uhd })).toEqual({ tier: "low", reason: "gpu name" });
+    expect(chooseBrTier({ ...base, gpu: uhd, learnt: { tier: "balanced", at: now } }).tier).toBe(
+      "low",
+    );
     expect(chooseBrTier({ ...base, gpu: hd, learnt: { tier: "balanced", at: now } }).tier).toBe(
       "low",
     );
