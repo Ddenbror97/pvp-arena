@@ -87,7 +87,15 @@ export function reversedDepthSupported(): boolean {
  *    in, your canopy, another player) from leaving a trail or losing its edge: what stood
  *    behind it a frame ago is not its past;
  *  - the two are mixed, `strength` of the old, but only where this frame jumped away from the
- *    old one: a pixel that kept its colour is shown as it was drawn. (Mixed everywhere, as
+ *    frame before as it was drawn (each frame keeps its own picture beside the blended one):
+ *    a pixel that kept its colour is shown as it was drawn. (Measured against the blended
+ *    picture it locked in: a storey's bands a pixel or two apart came out as their mean,
+ *    every new frame's bands were a jump from that mean, so the mean was held, until close
+ *    enough that a pixel's neighbourhood no longer spanned both band colours. That came
+ *    first where the bands were widest, so flying in on Downtown the towers' windows
+ *    appeared at their tops and ran down to their feet like a waterfall: owner, 2026-11-24,
+ *    "a waterfall effect of the towns colors on the building that drops top to buttom … when
+ *    driving the airplane and getting closer to downtown".) (Mixed everywhere, as
  *    most games do it, the picture went soft: carried along frame after frame it lost a third
  *    of its fine contrast under the canopy and half from the plane. Games win that back with
  *    sub-pixel jitter and a second sharpening; this needs neither.)
@@ -103,10 +111,14 @@ export const STEADY = {
   /**
    * How far a pixel must be from where it was to count as a jump (the largest channel, of 1,
    * on a square-root scale, about what the screen shows): none of the blend under `from`,
-   * all of it over `to`.
+   * all of it over `to`. Measured against the frame before as drawn (not the blended one), a
+   * band of storeys swimming from frame to frame is a jump of a few hundredths; with 0.02/0.08
+   * a share of it slipped through (RTX 2050, flashes per 1000 px: 15.5 under the canopy over
+   * Downtown, 12.2 flying past in the plane, against 15.0 and 11.8 before), with 0.01/0.05 it
+   * is held better than ever (14.5 and 11.6; 17.3 and 13.1 with no pass).
    */
-  from: 0.02,
-  to: 0.08,
+  from: 0.01,
+  to: 0.05,
   /**
    * The previous frame counts only where it showed a surface about this far away (a share of
    * the distance): far apart, it was something else standing there.
@@ -285,6 +297,8 @@ export function createSceneTarget(
       tScene: { value: target.texture },
       tDepth: { value: depth },
       tHistory: { value: null as THREE.Texture | null },
+      // The previous frame as it was drawn (the history's second picture).
+      tDrawn: { value: null as THREE.Texture | null },
       uTexel: { value: new THREE.Vector2(1, 1) },
       // This frame's view space → the previous frame's clip space.
       uReproject: { value: new THREE.Matrix4() },
@@ -302,6 +316,10 @@ export function createSceneTarget(
       uniform sampler2D tScene;
       uniform sampler2D tDepth;
       uniform sampler2D tHistory;
+      uniform sampler2D tDrawn;
+      // The blended picture (its distances beside it), and this frame as it was drawn.
+      layout(location = 0) out highp vec4 steadyOut;
+      layout(location = 1) out highp vec4 drawnOut;
       uniform vec2 uTexel;
       uniform mat4 uReproject;
       uniform vec4 uLens;
@@ -319,7 +337,7 @@ export function createSceneTarget(
       vec3 now(vec2 offset) { return squash(max(texture2D(tScene, vUv + offset * uTexel).rgb, 0.0)); }
       // Catmull-Rom, five taps (the corners of the nine dropped): sharper than bilinear, which
       // blurs a little more with every frame a moving picture is carried.
-      vec3 before(vec2 uv) {
+      vec3 before(sampler2D past, vec2 uv) {
         vec2 at = uv / uTexel;
         vec2 base = floor(at - 0.5) + 0.5;
         vec2 f = at - base;
@@ -332,11 +350,11 @@ export function createSceneTarget(
         vec2 t3 = (base + 2.0) * uTexel;
         vec2 t12 = (base + w2 / w12) * uTexel;
         vec4 sum =
-          vec4(texture2D(tHistory, vec2(t12.x, t0.y)).rgb, 1.0) * (w12.x * w0.y) +
-          vec4(texture2D(tHistory, vec2(t0.x, t12.y)).rgb, 1.0) * (w0.x * w12.y) +
-          vec4(texture2D(tHistory, vec2(t12.x, t12.y)).rgb, 1.0) * (w12.x * w12.y) +
-          vec4(texture2D(tHistory, vec2(t3.x, t12.y)).rgb, 1.0) * (w3.x * w12.y) +
-          vec4(texture2D(tHistory, vec2(t12.x, t3.y)).rgb, 1.0) * (w12.x * w3.y);
+          vec4(texture2D(past, vec2(t12.x, t0.y)).rgb, 1.0) * (w12.x * w0.y) +
+          vec4(texture2D(past, vec2(t0.x, t12.y)).rgb, 1.0) * (w0.x * w12.y) +
+          vec4(texture2D(past, vec2(t12.x, t12.y)).rgb, 1.0) * (w12.x * w12.y) +
+          vec4(texture2D(past, vec2(t3.x, t12.y)).rgb, 1.0) * (w3.x * w12.y) +
+          vec4(texture2D(past, vec2(t12.x, t3.y)).rgb, 1.0) * (w12.x * w3.y);
         return max(sum.rgb / sum.a, 0.0);
       }
       void main() {
@@ -348,8 +366,9 @@ export function createSceneTarget(
           max(texture2D(tDepth, vUv + vec2(uTexel.x, 0.0)).r, texture2D(tDepth, vUv - vec2(uTexel.x, 0.0)).r),
           max(texture2D(tDepth, vUv + vec2(0.0, uTexel.y)).r, texture2D(tDepth, vUv - vec2(0.0, uTexel.y)).r)));
         float dist = uLens.z * uLens.w / (d * (uLens.w - uLens.z) + uLens.z);
+        drawnOut = vec4(c, 1.0);
         if (uStrength <= 0.0) {
-          gl_FragColor = vec4(swell(c), dist);
+          steadyOut = vec4(swell(c), dist);
           return;
         }
         // The colours round this pixel now: the box, tightened toward the cross.
@@ -374,17 +393,20 @@ export function createSceneTarget(
         // (Off the previous frame, or behind its camera: this frame alone, and no arithmetic
         // on what was read there.)
         if (valid > 0.5) {
-          vec3 h = clamp(squash(before(uv)), lo, hi);
+          vec3 h = clamp(squash(before(tHistory, uv)), lo, hi);
+          // (The last frame as drawn, read the same way: squashed already.)
+          vec3 was0 = before(tDrawn, uv);
           // Only where this frame disagrees with the last: a pixel that kept its colour is
           // shown as drawn (and remembered so), so a picture that is merely moving stays as
           // sharp as it was; one that jumped is held near where it was.
           // (Measured as the eye sees it: a step from dark green to black is a jump.)
-          vec3 gap = abs(sqrt(c) - sqrt(h));
+          vec3 gap = abs(sqrt(c) - sqrt(was0));
           float jump = smoothstep(STEADY_FROM, STEADY_TO, max(gap.r, max(gap.g, gap.b)));
           c = mix(c, h, uStrength * jump * smoothstep(STEADY_NEAR, STEADY_FAR, dist));
         }
-        gl_FragColor = vec4(swell(c), dist);
+        steadyOut = vec4(swell(c), dist);
       }`,
+    glslVersion: THREE.GLSL3,
     depthTest: false,
     depthWrite: false,
     toneMapped: false,
@@ -409,15 +431,19 @@ export function createSceneTarget(
     history = null;
     remembered = false;
   };
+  /** A history buffer: the blended picture (and distances), and the frame as it was drawn. */
   const historyTarget = (w: number, h: number) => {
     const t = new THREE.WebGLRenderTarget(w, h, {
       type: THREE.HalfFloatType,
       depthBuffer: false,
       stencilBuffer: false,
+      count: 2,
     });
-    t.texture.colorSpace = THREE.LinearSRGBColorSpace;
-    t.texture.generateMipmaps = false;
-    t.texture.minFilter = t.texture.magFilter = THREE.LinearFilter;
+    for (const tex of t.textures) {
+      tex.colorSpace = THREE.LinearSRGBColorSpace;
+      tex.generateMipmaps = false;
+      tex.minFilter = tex.magFilter = THREE.LinearFilter;
+    }
     return t;
   };
 
@@ -455,7 +481,8 @@ export function createSceneTarget(
         ];
         const to = 1 - held;
         const u = steadyMaterial.uniforms;
-        u["tHistory"]!.value = history[held]!.texture;
+        u["tHistory"]!.value = history[held]!.textures[0];
+        u["tDrawn"]!.value = history[held]!.textures[1];
         // previous clip ← world ← this frame's view space, worked out in doubles: the camera's
         // own place (kilometres from the origin) cancels before the GPU sees a number.
         reproject.multiplyMatrices(previous, camera.matrixWorld);
