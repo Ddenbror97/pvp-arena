@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { biasLogDepth, LOG_BIAS } from "./depth-bias";
+import { DEPTH_PULL, pullDepth } from "./depth-bias";
 import type { PaneSet } from "./panes";
 
 /** How often the buildings' windows are matched to their buildings' LODs (frames). */
@@ -55,17 +55,39 @@ export function createPaneRenderer(
     transparent: true,
     opacity: 0.42,
     depthWrite: false,
-    // Pulled toward the eye: the storeys' middle and far LODs (condo-floor's glass box) draw
-    // their own glass on the pane's plane, and from a few hundred metres the two took turns
-    // pixel by pixel, the tower's side flickering dark (owner, 2026-11-15: "Downtown
-    // apartments flicker on the side of the building … the glass").
-    polygonOffset: true,
-    polygonOffsetFactor: -2,
-    polygonOffsetUnits: -8,
   });
-  // Under the default logarithmic depth that offset does nothing (depth-bias.ts): this is the
-  // pull that takes effect there.
-  biasLogDepth(material, LOG_BIAS.pane);
+  // One sheet of glass: of each pane's box only the two faces across its thin axis are drawn
+  // (owner, 2026-11-24: "next flimmer/flicker. the edges of the windows … issue only happends
+  // while running/moving"). The box's four edge faces, 2–4 cm deep, are seen through the glass
+  // next to them (nothing hides a see-through pane), always nearly edge-on: a sliver a pixel
+  // wide or less along every joint, sill and head, in the glass's bright grazing reflection,
+  // which came and went as you moved. Measured on the RTX 2050 walking 13 m in front of a
+  // Northstar apartment: 503 pixels flashing round four of its windows, 125 with the sheet
+  // (101 with no glass drawn at all). The box (and every matrix) stays as it was: the edge
+  // faces are dropped in the vertex shader, by their normal against the instance's thinnest
+  // scale.
+  material.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader.replace(
+      "#include <project_vertex>",
+      `#include <project_vertex>
+      #ifdef USE_INSTANCING
+      {
+        vec3 paneScale = vec3(length(instanceMatrix[0].xyz), length(instanceMatrix[1].xyz), length(instanceMatrix[2].xyz));
+        vec3 paneThin = paneScale.x <= paneScale.y && paneScale.x <= paneScale.z ? vec3(1.0, 0.0, 0.0)
+          : paneScale.z <= paneScale.y ? vec3(0.0, 0.0, 1.0) : vec3(0.0, 1.0, 0.0);
+        if (abs(dot(normal, paneThin)) < 0.5) gl_Position = vec4(0.0, 0.0, 2.0, 1.0);
+      }
+      #endif`,
+    );
+  };
+  material.customProgramCacheKey = () => "br-pane-sheet-v1";
+  // Pulled toward the eye: the storeys' middle and far LODs (condo-floor's glass box) draw
+  // their own glass on the pane's plane, and from a few hundred metres the two took turns
+  // pixel by pixel, the tower's side flickering dark (owner, 2026-11-15: "Downtown apartments
+  // flicker on the side of the building … the glass"). Along the sight line, not by a polygon
+  // offset: the offset's slope term brought the panes' edge faces out over the jambs, sills
+  // and heads round every window while you moved (owner, 2026-11-24; depth-bias.ts).
+  pullDepth(material, DEPTH_PULL.pane);
   const box = new THREE.BoxGeometry(1, 1, 1);
   const glass = new THREE.InstancedMesh(box, material, Math.max(1, slots));
   glass.count = slots;

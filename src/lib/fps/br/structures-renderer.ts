@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { biasLogDepth, LOG_BIAS } from "./depth-bias";
+import { DEPTH_PULL, pullDepth } from "./depth-bias";
 import {
   BRIDGE,
   DAM,
@@ -760,9 +760,6 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
   const material = new THREE.MeshStandardMaterial({
     vertexColors: true,
     roughness: 0.95,
-    polygonOffset: true,
-    polygonOffsetFactor: -2,
-    polygonOffsetUnits: -2,
     side: THREE.DoubleSide,
   });
   // Asphalt grain near the camera (the terrain's ground texture, setGround): the dark surfaces
@@ -825,8 +822,8 @@ function runwayMesh(meta: WorldMeta, hf: Heightfield, lots: number[][] = []) {
       );
   };
   material.customProgramCacheKey = () => "br-roads-v10";
-  // (The polygon offset above only works under reversed-Z: depth-bias.ts.)
-  biasLogDepth(material, LOG_BIAS.road);
+  // Over the ground without drawing over the foot of what stands on it (depth-bias.ts).
+  pullDepth(material, DEPTH_PULL.paved);
   const mesh = new THREE.Mesh(g, material);
   mesh.name = "br-runways";
   return mesh;

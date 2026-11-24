@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { biasLogDepth, LOG_BIAS } from "./depth-bias";
+import { DEPTH_PULL, pullDepth } from "./depth-bias";
 import type { Heightfield } from "./heightfield";
 import { INTERIOR_STYLE } from "./interior-style";
 import type { Placement } from "./layout";
@@ -214,9 +214,6 @@ export function createFloorPatches(
   root.name = "br-floor-patches";
   const material = new THREE.MeshStandardMaterial({
     roughness: 0.85,
-    polygonOffset: true,
-    polygonOffsetFactor: -2,
-    polygonOffsetUnits: -2,
   });
   material.onBeforeCompile = (shader) => {
     shader.vertexShader = shader.vertexShader
@@ -239,7 +236,9 @@ export function createFloorPatches(
       );
   };
   material.customProgramCacheKey = () => "br-floor-patches-v1";
-  biasLogDepth(material, LOG_BIAS.road);
+  // Over the ground without drawing over the walls, doors and furniture standing on the
+  // floor (depth-bias.ts).
+  pullDepth(material, DEPTH_PULL.paved);
   // Tiles by the floors' centres.
   const tiles = new Map<string, BuriedFloor[]>();
   for (const f of floors) {
