@@ -167,6 +167,37 @@ export const STEADY = {
 };
 
 /**
+ * Cheaper ways to run the steadying pass (release audit 2026-11-24, for the low tier on Intel
+ * UHD). Measured there at 1280 × 720, most of the full pass was its writes (two half-float
+ * pictures, 16 bytes a pixel, and a clear of both before it, now gone), not its taps. Each
+ * drops part of its work:
+ *  - `slim`: the frame as drawn kept only as its brightness, in one half float, not four (10
+ *    bytes a pixel written, not 16), so a jump is a jump in brightness. What was drawn at the
+ *    old place is still checked for being the same surface, as in the full pass: a player
+ *    crossing the view is shown as drawn (a variant that kept no distances, one picture of 8
+ *    bytes, held 4–10 % of a crossing figure's edge pixels toward the background; this one
+ *    0.3–2 %, as the full pass);
+ *  - `cross`: the colours round the pixel from the four beside it, not the eight round it;
+ *  - `depth1`: the pixel's own depth, not the nearest of five (cheaper, but an edge against
+ *    the sky then changes its distance from frame to frame and is not held: measured, it
+ *    left twice the flicker on the Bauhaus facade);
+ *  - `fixed` (measuring only): every pixel leaves at the distance test, so what is left is the
+ *    pass's own cost (a fullscreen pass, its depth taps and its writes).
+ */
+export type SteadyVariant = {
+  slim?: boolean;
+  cross?: boolean;
+  depth1?: boolean;
+  fixed?: boolean;
+};
+/** The variant a `lite` steadying runs (SteadyArgs.lite). */
+export const STEADY_LITE: SteadyVariant = { slim: true, cross: true };
+/** Tools only (gpu-bench, the perf lab): every steadying runs this variant instead. */
+export const STEADY_LAB: { variant: SteadyVariant | null } = { variant: null };
+const variantKey = (v: SteadyVariant) =>
+  (["slim", "cross", "depth1", "fixed"] as const).filter((k) => v[k]).join(",");
+
+/**
  * The steadying pass's settings for a frame: the camera the scene was drawn with, the old
  * frame's share, and (on foot) where it applies and which jumps it holds.
  */
@@ -180,6 +211,8 @@ export type SteadyArgs = {
   /** What counts as a jump (STEADY.from / to unless given). */
   from?: number;
   to?: number;
+  /** The cheaper pass (STEADY_LITE). */
+  lite?: boolean;
 };
 
 /** The player's or tester's switch: localStorage "br-steady" = "off" (never throws). */
@@ -289,6 +322,7 @@ export function createSceneTarget(
       // the target differs from it the weapon pass drew too (its flash writes no depth).
       tUnder: { value: null as THREE.Texture | null },
       uOverlay: { value: 0 },
+      uUnderLuma: { value: 0 },
       uTexel: { value: new THREE.Vector2(1, 1) },
       uSharpen: { value: 0 },
     },
@@ -304,9 +338,16 @@ export function createSceneTarget(
       uniform sampler2D tOverlayDepth;
       uniform sampler2D tUnder;
       uniform float uOverlay;
+      // 1: tUnder holds the drawn frame's brightness alone (SteadyVariant.slim): the square
+      // root of the squashed light's.
+      uniform float uUnderLuma;
       bool overlaid(vec2 uv) {
         if (texture2D(tOverlayDepth, uv).r > 0.0) return true;
         vec3 p = max(texture2D(tOverlay, uv).rgb, 0.0);
+        if (uUnderLuma > 0.5) {
+          vec3 ps = p / (1.0 + max(p.r, max(p.g, p.b)));
+          return abs(sqrt(dot(ps, vec3(0.299, 0.587, 0.114))) - texture2D(tUnder, uv).r) > 0.01;
+        }
         vec3 q = texture2D(tUnder, uv).rgb;
         q = q / max(1e-4, 1.0 - max(q.r, max(q.g, q.b)));
         vec3 d = abs(p - q);
@@ -317,13 +358,23 @@ export function createSceneTarget(
       varying vec2 vUv;
       ${SHARPEN_WEIGHT_GLSL}
       // A pixel as the canvas shows it: tone-mapped and encoded (sharpen.ts works on that).
-      vec3 shown(vec2 uv) {
-        vec4 c = uOverlay > 0.5 && overlaid(uv) ? texture2D(tOverlay, uv) : texture2D(tScene, uv);
+      vec3 shownFrom(vec2 uv, bool over) {
+        vec4 c = over ? texture2D(tOverlay, uv) : texture2D(tScene, uv);
         #ifdef TONE_MAPPING
           c.rgb = toneMapping(c.rgb);
         #endif
         return linearToOutputTexel(c).rgb;
       }
+      #ifdef FXAA
+      // With FXAA (the low tier), whether the weapon is shown is decided once, at the pixel,
+      // for all of its taps (release audit 2026-11-24: decided per tap, the weapon's frames
+      // read three textures for each of FXAA's nine taps on Intel UHD). An edge of the weapon
+      // is still smoothed from its own side.
+      bool overHere;
+      vec3 shown(vec2 uv) { return shownFrom(uv, overHere); }
+      #else
+      vec3 shown(vec2 uv) { return shownFrom(uv, uOverlay > 0.5 && overlaid(uv)); }
+      #endif
       #ifdef FXAA
       // FXAA_LOW_GLSL: the low tier has no MSAA; smooth its edges in this pass, which it runs
       // anyway (no extra fullscreen pass).
@@ -331,6 +382,7 @@ export function createSceneTarget(
       #endif
       void main() {
         #ifdef FXAA
+        overHere = uOverlay > 0.5 && overlaid(vUv);
         vec3 c = fxaa(vUv);
         #else
         vec3 c = shown(vUv);
@@ -432,16 +484,28 @@ export function createSceneTarget(
         // The nearest surface of the five (reversed depth: the largest): an edge moves with
         // the thing in front. Its distance is kept beside the colour, for the next frame.
         float d = texture2D(tDepth, vUv).r;
+        #ifndef STEADY_DEPTH1
         d = max(d, max(
           max(texture2D(tDepth, vUv + vec2(uTexel.x, 0.0)).r, texture2D(tDepth, vUv - vec2(uTexel.x, 0.0)).r),
           max(texture2D(tDepth, vUv + vec2(0.0, uTexel.y)).r, texture2D(tDepth, vUv - vec2(0.0, uTexel.y)).r)));
+        #endif
         float dist = uLens.z * uLens.w / (d * (uLens.w - uLens.z) + uLens.z);
+        #ifdef STEADY_SLIM
+        // (The frame as drawn, kept as its brightness: what the next frame's jump is measured
+        // against, and what the present pass finds the weapon by.)
+        float lumaNow = sqrt(dot(c, vec3(0.299, 0.587, 0.114)));
+        drawnOut = vec4(lumaNow);
+        #else
         drawnOut = vec4(c, 1.0);
+        #endif
         // Nearer than the pass reaches (the ground at your feet, a wall beside you; the
         // aircraft and canopy aloft): kept as drawn, so the taps below are not read for it.
         // (The same picture as blending with a weight of 0; release audit 2026-11-24: about a
         // fifth of the pass on foot.)
         float reach = smoothstep(uRange.x, uRange.y, dist);
+        #ifdef STEADY_FIXED
+        reach = 0.0;
+        #endif
         if (uStrength <= 0.0 || reach <= 0.0) {
           steadyOut = vec4(swell(c), dist);
           return;
@@ -451,10 +515,12 @@ export function createSceneTarget(
         vec3 e = now(vec2(1.0, 0.0)), w = now(vec2(-1.0, 0.0));
         vec3 lo = min(c, min(min(n, s), min(e, w)));
         vec3 hi = max(c, max(max(n, s), max(e, w)));
+        #ifndef STEADY_CROSS
         vec3 ne = now(vec2(1.0, 1.0)), nw = now(vec2(-1.0, 1.0));
         vec3 se = now(vec2(1.0, -1.0)), sw = now(vec2(-1.0, -1.0));
         lo = 0.5 * (lo + min(lo, min(min(ne, nw), min(se, sw))));
         hi = 0.5 * (hi + max(hi, max(max(ne, nw), max(se, sw))));
+        #endif
         vec2 ndc = vUv * 2.0 - 1.0;
         vec4 was = uReproject * vec4(ndc * uLens.xy * dist, -dist, 1.0);
         vec2 uv = was.xy / was.w * 0.5 + 0.5;
@@ -469,6 +535,10 @@ export function createSceneTarget(
         // on what was read there.)
         if (valid > 0.5) {
           vec3 h = clamp(squash(before(tHistory, uv)), lo, hi);
+          #ifdef STEADY_SLIM
+          // (The last frame's brightness as drawn: one filtered tap.)
+          float g = abs(lumaNow - texture2D(tDrawn, uv).r);
+          #else
           // (The last frame as drawn, read the same way: squashed already.)
           vec3 was0 = before(tDrawn, uv);
           // Only where this frame disagrees with the last: a pixel that kept its colour is
@@ -477,6 +547,7 @@ export function createSceneTarget(
           // (Measured as the eye sees it: a step from dark green to black is a jump.)
           vec3 gap = abs(sqrt(c) - sqrt(was0));
           float g = max(gap.r, max(gap.g, gap.b));
+          #endif
           float jump = smoothstep(uJump.x, uJump.y, g);
           // (On foot: only the shimmer; a tracer, a flash, a player stepping out as drawn.)
           if (uRange.w > uRange.z) jump *= 1.0 - smoothstep(uRange.z, uRange.w, g);
@@ -510,6 +581,9 @@ export function createSceneTarget(
     remembered = false;
   };
   /** A history buffer: the blended picture (and distances), and the frame as it was drawn. */
+  /** The variant the shader is compiled for, and whether the history keeps brightness only. */
+  let variantNow = "",
+    slim = false;
   const historyTarget = (w: number, h: number) => {
     const t = new THREE.WebGLRenderTarget(w, h, {
       type: THREE.HalfFloatType,
@@ -522,6 +596,8 @@ export function createSceneTarget(
       tex.generateMipmaps = false;
       tex.minFilter = tex.magFilter = THREE.LinearFilter;
     }
+    // (Slim: the drawn frame's brightness alone, one half float.)
+    if (slim) t.textures[1]!.format = THREE.RedFormat;
     return t;
   };
 
@@ -557,6 +633,20 @@ export function createSceneTarget(
     lastBlend = false;
     if (want && depthHere) {
       const camera = steady!.camera;
+      const variant = STEADY_LAB.variant ?? (steady!.lite ? STEADY_LITE : {});
+      const key = variantKey(variant);
+      if (key !== variantNow) {
+        variantNow = key;
+        const defines: Record<string, string> = {};
+        for (const k of key ? key.split(",") : []) defines[`STEADY_${k.toUpperCase()}`] = "";
+        steadyMaterial.defines = defines;
+        steadyMaterial.needsUpdate = true;
+        // (Another history: nothing to carry over.)
+        if (!!variant.slim !== slim) {
+          freeHistory();
+          slim = !!variant.slim;
+        }
+      }
       history ??= [
         historyTarget(target.width, target.height),
         historyTarget(target.width, target.height),
@@ -582,7 +672,12 @@ export function createSceneTarget(
       );
       u["uJump"]!.value.set(steady!.from ?? STEADY.from, steady!.to ?? STEADY.to);
       renderer.setRenderTarget(history[to]!);
+      // (Every pixel is written: no clear first. Release audit 2026-11-24, Intel UHD at 720p:
+      // the clear of the two half-float pictures was a fifth of the pass.)
+      const autoClear = renderer.autoClear;
+      renderer.autoClear = false;
       renderer.render(steadyScene, presentCamera);
+      renderer.autoClear = autoClear;
       renderer.setRenderTarget(target);
       lastSteadied = remembered;
       held = to;
@@ -612,6 +707,7 @@ export function createSceneTarget(
       if (lastBlend) {
         material.uniforms["tScene"]!.value = history![held]!.texture;
         material.uniforms["tUnder"]!.value = history![held]!.textures[1];
+        material.uniforms["uUnderLuma"]!.value = slim ? 1 : 0;
         material.uniforms["uOverlay"]!.value = overlay ? 1 : 0;
       } else {
         material.uniforms["tScene"]!.value = target.texture;

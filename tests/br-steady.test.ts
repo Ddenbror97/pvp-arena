@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import * as THREE from "three";
-import { createSceneTarget, STEADY, steadyWanted } from "@/lib/fps/br/scene-target";
+import { createSceneTarget, STEADY, STEADY_LITE, steadyWanted } from "@/lib/fps/br/scene-target";
 
 /**
  * The steadying pass (2026-11-23; owner: "blinking/flicker … in the airplane/parachute", "the
@@ -337,6 +337,64 @@ describe("the steadying pass", () => {
     target.steady(foot);
     target.present(0.4, null, false);
     expect(drawn.at(-1)!.material.uniforms["uOverlay"]!.value).toBe(0);
+    target.dispose();
+  });
+  it("lite (the low tier): the drawn frame kept as its brightness, the cross, no clear", () => {
+    // Release audit 2026-11-24, Intel UHD at 720p: the full pass 1.3–1.6 ms (2.0–2.4 ms with
+    // the clear it had), most of it its writes; the lite one 0.8–1.1 ms, holding the
+    // buildings' flicker as well, and a player crossing the view as drawn.
+    const { renderer, drawn, bound } = fakeRenderer();
+    const clears: boolean[] = [];
+    const r = renderer as unknown as { autoClear: boolean; render: (s: THREE.Scene) => void };
+    r.autoClear = true;
+    const render = r.render;
+    r.render = (scene) => {
+      clears.push(r.autoClear);
+      render(scene);
+    };
+    const target = createSceneTarget(renderer, 0, { fxaa: true });
+    const scene = bound()!;
+    const foot = { camera: eye(0, 1.7, 0), strength: STEADY.strength, ...STEADY.foot, lite: true };
+    for (let f = 0; f < 3; f++) {
+      target.steady(foot);
+      target.present(0, null, true);
+    }
+    expect(STEADY_LITE).toEqual({ slim: true, cross: true });
+    const passes = drawn.filter((d) => d.material.name === "br-steady");
+    expect(passes).toHaveLength(3);
+    const pass = passes.at(-1)!.material;
+    expect(Object.keys(pass.defines ?? {}).sort()).toEqual(["STEADY_CROSS", "STEADY_SLIM"]);
+    // Two pictures still (the distances kept, the same surface checked), the second a single
+    // half float: the drawn frame's brightness.
+    const history = passes.at(-1)!.target!;
+    expect(history.textures).toHaveLength(2);
+    expect(history.textures[0]!.format).toBe(THREE.RGBAFormat);
+    expect(history.textures[1]!.format).toBe(THREE.RedFormat);
+    expect(history.texture.type).toBe(THREE.HalfFloatType);
+    expect(pass.fragmentShader).toContain("drawnOut = vec4(lumaNow);");
+    expect(pass.fragmentShader).toContain("float g = abs(lumaNow - texture2D(tDrawn, uv).r);");
+    expect(pass.fragmentShader).toContain("STEADY_DEPTH * was.w");
+    // The pass writes every pixel: no clear before it (the present pass is as before).
+    const steadyClears = drawn
+      .map((d, i) => [d.material.name, clears[i]] as const)
+      .filter(([n]) => n === "br-steady");
+    expect(steadyClears.every(([, c]) => c === false)).toBe(true);
+    expect(r.autoClear).toBe(true);
+    // The present pass finds the weapon by that brightness, decided once a pixel under FXAA.
+    const present = drawn.at(-1)!.material;
+    expect(present.uniforms["uUnderLuma"]!.value).toBe(1);
+    expect(present.uniforms["tUnder"]!.value).toBe(history.textures[1]);
+    expect(present.uniforms["tOverlay"]!.value).toBe(scene.texture);
+    expect(present.fragmentShader).toContain("overHere = uOverlay > 0.5 && overlaid(vUv);");
+    expect(target.steadied()).toBe(true);
+    // The full pass again (a tier never switches, but a tool may): two full pictures.
+    target.steady({ ...foot, lite: false });
+    target.steady({ ...foot, lite: false });
+    target.present(0, null, false);
+    const full = drawn.filter((d) => d.material.name === "br-steady").at(-1)!;
+    expect(full.target!.textures[1]!.format).toBe(THREE.RGBAFormat);
+    expect(Object.keys(full.material.defines ?? {})).toEqual([]);
+    expect(drawn.at(-1)!.material.uniforms["uUnderLuma"]!.value).toBe(0);
     target.dispose();
   });
 });

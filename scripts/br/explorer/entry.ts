@@ -23,7 +23,13 @@ import { DevOverlay, GpuTimer } from "../../../src/lib/fps/br/dev-overlay";
 import { watchContextLoss } from "../../../src/lib/fps/br/context-loss";
 import { createAtmosphere } from "../../../src/lib/fps/br/atmosphere";
 import { setTextureQuality } from "../../../src/lib/fps/br/texture-quality";
-import { createSceneTarget, STEADY, wantReversedDepth } from "../../../src/lib/fps/br/scene-target";
+import {
+  createSceneTarget,
+  STEADY,
+  STEADY_LAB,
+  type SteadyVariant,
+  wantReversedDepth,
+} from "../../../src/lib/fps/br/scene-target";
 import { detectBrTier, tierPixelRatio, type BrTier } from "../../../src/lib/fps/br/quality-tier";
 
 declare global {
@@ -205,10 +211,10 @@ function draw() {
     tier !== "low" && new URLSearchParams(location.search).get("sharpen") !== "off" ? 0.4 : 0,
     // ?steady=1: the air's steadying pass (scene-target.ts STEADY), as the game runs it aloft;
     // ?steady=foot: as it runs on foot (STEADY.foot).
-    steadyOn
-      ? steadyFoot
-        ? { camera, strength: STEADY.strength, ...STEADY.foot }
-        : { camera, strength: STEADY.strength }
+    steadyMode.on
+      ? steadyMode.foot
+        ? { camera, strength: STEADY.strength, ...STEADY.foot, lite: steadyMode.lite }
+        : { camera, strength: STEADY.strength, lite: steadyMode.lite }
       : null,
   );
   gpu.end();
@@ -246,8 +252,23 @@ addEventListener("mousemove", (e) => {
 });
 let interactive = new URLSearchParams(location.search).get("fly") === "1";
 const steadyParam = new URLSearchParams(location.search).get("steady");
-const steadyOn = steadyParam === "1" || steadyParam === "foot";
-const steadyFoot = steadyParam === "foot";
+// ?lite=1: the cheaper pass (STEADY_LITE); ?sv=depth1,cross,…: any SteadyVariant, for measuring.
+// (`window.brSteadyMode` changes all three without a reload.)
+const steadyMode = {
+  on: steadyParam === "1" || steadyParam === "foot",
+  foot: steadyParam === "foot",
+  lite: new URLSearchParams(location.search).get("lite") === "1",
+};
+(window as unknown as { brSteadyMode: unknown }).brSteadyMode = steadyMode;
+const steadyVariant = new URLSearchParams(location.search).get("sv");
+if (steadyVariant !== null)
+  STEADY_LAB.variant = Object.fromEntries(
+    steadyVariant
+      .split(",")
+      .filter(Boolean)
+      .map((k) => [k, true]),
+  ) as SteadyVariant;
+(window as unknown as { brSteadyLab: unknown }).brSteadyLab = STEADY_LAB;
 // ?buddy=1: a chequered box that rides with the camera, as the aircraft and your canopy do in
 // the game: what the steadying pass must leave alone (it has no motion vectors).
 if (new URLSearchParams(location.search).get("buddy") === "1") {
