@@ -18,8 +18,10 @@
  *  - "superseded": manifests, collision files, door and facade atlases of older revisions, and
  *    older world steps. Delete the first; move older heights, land covers and metas to
  *    art/br/world-base (the scripts that derive one from the other read them there).
- *  - "base only": named by the art tools' base manifest (models.json) alone. Move with
- *    `node art/blender/br/model-files.mjs`.
+ *  - "base only": named by the art tools' base manifest (models.json) or the art pipeline's
+ *    JSON records (art/**\/*.json) alone. Move to art/br/models-base (`node
+ *    art/blender/br/model-files.mjs` for models.json's; the tools read both through
+ *    model-files.mjs).
  *  - "unnamed": nothing names them. Delete.
  * A test that reads a superseded manifest keeps the entries it compares against in
  * tests/fixtures/br-superseded-manifests.json.
@@ -57,12 +59,24 @@ const base = strings(
 
 /** Source text of the game, the tests and the tools (world.ts without its history comments). */
 let text = "";
+/** Strings in the art pipeline's JSON records (art/**\/*.json). */
+const artData = new Set();
 function read(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, e.name);
     if (e.isDirectory()) {
-      if (!/^(node_modules|models-base|world-base|build|\.git)$/.test(e.name)) read(p);
-    } else if (/\.(ts|tsx|mjs|cjs|js|json|jsonc|py|css|html)$/.test(e.name))
+      // (tests/fixtures keeps superseded manifest entries as data for the tests to compare
+      // against: it names files the tests never read, and does not keep them published.)
+      if (
+        !/^(node_modules|models-base|world-base|build|\.git)$/.test(e.name) &&
+        p !== path.join(REPO, "tests", "fixtures")
+      )
+        read(p);
+    } else if (p.startsWith(path.join(REPO, "art") + path.sep) && /\.json$/.test(e.name))
+      // The art pipeline's own records (far-facades-v2.json: the near LOD each far view was
+      // rendered from) name sources the tools read through model-files.mjs: base, not published.
+      strings(JSON.parse(fs.readFileSync(p, "utf8")), artData);
+    else if (/\.(ts|tsx|mjs|cjs|js|json|jsonc|py|css|html)$/.test(e.name))
       text +=
         (p.endsWith(path.join("br", "world.ts"))
           ? worldTs.replace(/\/\/.*$/gm, "")
@@ -99,7 +113,7 @@ for (const published of tracked) {
   if (named.has("/" + file)) continue;
   if (SUPERSEDED.test(file)) kinds.superseded.push(file);
   else if (TEMPLATED.some((t) => t.test(file)) || inText(path.basename(file))) continue;
-  else if (base.has("/" + file)) kinds["base only"].push(file);
+  else if (base.has("/" + file) || artData.has("/" + file)) kinds["base only"].push(file);
   else kinds.unnamed.push(file);
 }
 let total = 0;

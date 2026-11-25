@@ -16,7 +16,7 @@ import { lotHeight } from "./layout";
 import { drawnGround, LOT_LIFT, pavedHeight, RUNWAY_LIFT } from "./paved";
 import { createRoadGrade, ROAD_GRADE } from "./road-grade";
 import { islandWalls } from "./walls";
-import { WORLD_HALF, type WorldMeta } from "./world";
+import type { WorldMeta } from "./world";
 
 /**
  * Built infrastructure drawn from world data (no downloads): both strait bridges in one draw

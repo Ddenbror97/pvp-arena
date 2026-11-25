@@ -34,8 +34,6 @@ export function scanGapOf(details: unknown, chainId: number): ScanGap | null {
   return { asset: d["asset"], from: BigInt(from), to: BigInt(to) };
 }
 
-/** Addresses asked about in one run (one request each, per asset). */
-export const ALCHEMY_MAX_TARGETS = 6;
 /** Pages read for one address in one run. */
 export const ALCHEMY_MAX_PAGES = 5;
 export const ALCHEMY_PAGE_SIZE = 1000;

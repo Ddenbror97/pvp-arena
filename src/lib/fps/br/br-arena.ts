@@ -680,7 +680,9 @@ export function createBrArena(
   // The low tier's anti-aliasing (lowTierAa): FXAA in the present pass by default.
   const lowAa = tier.tier === "low" ? lowTierAa() : null;
   const sceneTarget = renderer.capabilities.reversedDepthBuffer
-    ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa ? 0 : 4, { fxaa: lowAa === "fxaa" })
+    ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa && lowAa !== "msaa4" ? 0 : 4, {
+        fxaa: lowAa === "fxaa",
+      })
     : null;
   // Sharpening over the finished scene (sharpen.ts). Not on the low tier, where a fullscreen
   // pass is not free, and not with the offscreen scene target (its own present pass).
@@ -727,6 +729,7 @@ export function createBrArena(
   const budget = new BrRenderBudget({
     resolution: brResolutionScale,
     slowMs: tier.tier === "low" ? LOW_TIER_SLOW_MS : undefined,
+    probe: tier.tier === "low",
   });
   /** The drawing buffer's size, each frame (the ground's filter footprint: setGroundFootprint). */
   const drawSize = new THREE.Vector2();
@@ -4965,6 +4968,13 @@ export function createBrArena(
         programs: renderer.info.programs?.length ?? 0,
         tier: tier.tier,
         tierReason: tier.reason,
+        /** The adaptive resolution (render-budget.ts): its scale, why, and what it learnt. */
+        budget: {
+          scale: budget.scale,
+          reason: budget.reason,
+          pixelShare: budget.pixelShare,
+          lastRaise: budget.lastRaise,
+        },
         gpu: tier.gpu,
         visibleRemotes: presentedRows.size,
         fullActors: actors.filter((a) => a.seat >= 0 && a.actor.root.visible).length,

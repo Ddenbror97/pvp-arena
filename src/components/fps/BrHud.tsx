@@ -1813,9 +1813,7 @@ export function BrFlight({ hud }: { hud: BrHud }) {
           <dt>Fuel</dt>
           <dd>
             <Bar value={f.fuel} max={1} tone={f.fuel < 0.15 ? "#ff5a4e" : "#9fd27e"} />
-            <small>
-              {f.engine === "running" ? mmss(f.fuelS) : `${Math.round(f.fuel * 100)}%`}
-            </small>
+            <small>{f.engine === "running" ? mmss(f.fuelS) : `${Math.round(f.fuel * 100)}%`}</small>
           </dd>
           <dt>Airframe</dt>
           <dd>
@@ -1839,10 +1837,19 @@ export function BrFlight({ hud }: { hud: BrHud }) {
         <span className="br-flight-seat">{f.seat === 0 ? "Pilot" : "Passenger"}</span>
         {f.seat === 0 ? (
           <>
-            <span><kbd>W</kbd><kbd>S</kbd> Throttle</span>
-            <span><kbd>Left mouse</kbd> Hold + drag to steer and pitch</span>
+            <span>
+              <kbd>W</kbd>
+              <kbd>S</kbd> Throttle
+            </span>
+            <span>
+              <kbd>Left mouse</kbd> Hold + drag to steer and pitch
+            </span>
             {f.grounded && <span>Drag up at 55 KT to lift off</span>}
-            {f.grounded && <span><kbd>Space</kbd> Brake</span>}
+            {f.grounded && (
+              <span>
+                <kbd>Space</kbd> Brake
+              </span>
+            )}
           </>
         ) : (
           f.canTakeControls && (

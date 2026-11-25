@@ -159,6 +159,19 @@
 .duel-loading-retry:hover {
   background: rgba(255, 255, 255, 0.22);
 }
+.duel-loading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.duel-loading-actions .duel-loading-retry {
+  display: inline-block;
+}
+.duel-loading-leave {
+  text-decoration: none;
+  background: transparent;
+}
 @media (max-width: 640px) {
   .duel-loading-heading {
     flex-direction: column;

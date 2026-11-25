@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { AIRCRAFT, DAMAGE_STAGES, type Aircraft } from "./aircraft";
+import { DAMAGE_STAGES, type Aircraft } from "./aircraft";
 import type { SeatedPose } from "./vehicle-renderer";
 
 /**

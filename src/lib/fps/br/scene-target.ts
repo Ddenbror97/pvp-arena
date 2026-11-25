@@ -437,7 +437,12 @@ export function createSceneTarget(
           max(texture2D(tDepth, vUv + vec2(0.0, uTexel.y)).r, texture2D(tDepth, vUv - vec2(0.0, uTexel.y)).r)));
         float dist = uLens.z * uLens.w / (d * (uLens.w - uLens.z) + uLens.z);
         drawnOut = vec4(c, 1.0);
-        if (uStrength <= 0.0) {
+        // Nearer than the pass reaches (the ground at your feet, a wall beside you; the
+        // aircraft and canopy aloft): kept as drawn, so the taps below are not read for it.
+        // (The same picture as blending with a weight of 0; release audit 2026-11-24: about a
+        // fifth of the pass on foot.)
+        float reach = smoothstep(uRange.x, uRange.y, dist);
+        if (uStrength <= 0.0 || reach <= 0.0) {
           steadyOut = vec4(swell(c), dist);
           return;
         }
@@ -475,7 +480,7 @@ export function createSceneTarget(
           float jump = smoothstep(uJump.x, uJump.y, g);
           // (On foot: only the shimmer; a tracer, a flash, a player stepping out as drawn.)
           if (uRange.w > uRange.z) jump *= 1.0 - smoothstep(uRange.z, uRange.w, g);
-          c = mix(c, h, uStrength * jump * smoothstep(uRange.x, uRange.y, dist));
+          c = mix(c, h, uStrength * jump * reach);
         }
         steadyOut = vec4(swell(c), dist);
       }`,

@@ -13,6 +13,7 @@
  */
 import duelCss from "@/components/fps/duel.css";
 import brCss from "@/components/fps/br.css";
+import { BrRenderBudget } from "@/lib/fps/br/render-budget";
 
 type Frame = { t: number; cb: number; calls: number; tick: number; width: number };
 type G = typeof globalThis & {
@@ -24,6 +25,9 @@ type G = typeof globalThis & {
 const L = globalThis as G;
 L.__labT0 = performance.now();
 L.__brAssumeLock = true;
+// `__labFixed`: the adaptive resolution held at full scale, so a fixed-resolution run measures
+// the renderer and cannot be hidden by a lower resolution (release audit 2026-11-24).
+if ((L as { __labFixed?: boolean }).__labFixed) BrRenderBudget.prototype.update = () => false;
 // Every file of the load in the resource timeline (the browser keeps 250 by default).
 performance.setResourceTimingBufferSize(20000);
 

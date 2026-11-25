@@ -49,6 +49,14 @@ import { reloadIfStale } from "@/lib/build-freshness";
 import "./duel.css";
 import "./br.css";
 
+/** How long the first frame may take after the island is ready, per window (s × 1000). */
+const STARTUP_WINDOW_MS = 30_000;
+/**
+ * Windows without a first frame before the page stops waiting: 4 × 30 s. A room's cold start
+ * (the island built on the server, workers/fps/br.ts) takes seconds to tens of seconds.
+ */
+const STARTUP_STALLS = 4;
+
 let arenaModule: Promise<typeof import("@/lib/fps/br/br-arena")> | undefined;
 const loadArena = () =>
   (arenaModule ??= import("@/lib/fps/br/br-arena").catch(async (e) => {
@@ -144,7 +152,10 @@ export function BrMatch() {
     setError(null);
     setGraphics(null);
     setProgress({ value: 0, label: "Loading Project Island" });
-    void loadArena()
+    // A page from before a deploy reloads into the deployed build before it spends tens of
+    // seconds on the island (the admission checks again; a match server may have changed too).
+    void reloadIfStale()
+      .then((reloading) => (reloading ? new Promise<never>(() => {}) : loadArena()))
       .then(({ createBrArena }) => {
         if (stopped || !host.current) return;
         const a = createBrArena(host.current, location.origin + "/", (value, label) => {
@@ -184,6 +195,9 @@ export function BrMatch() {
         if (!stopped) {
           failed.current = true;
           setError("The island assets are unavailable. Please return to the lobby.");
+          // (Each file was already retried; a fresh page starts the island over.)
+          setRetryLabel(undefined);
+          setRetry(() => () => location.reload());
         }
       });
     return () => {
@@ -207,20 +221,43 @@ export function BrMatch() {
        * (workers/fps/seat-claim.ts), so nothing takes it back on its own.
        */
       takeover = true;
+    let stalls = 0;
     const watchStartup = () => {
       if (left || presented.current || failed.current) return;
+      // Bounded: after STARTUP_STALLS windows with no first frame the page stops and says so,
+      // with "Try again" (a new ticket) and the way back to the lobby, instead of an endless
+      // "Restoring match connection…".
+      if (++stalls >= STARTUP_STALLS) {
+        link.pause("Startup timed out");
+        failed.current = true;
+        setStartupError(null);
+        setConnection("Match did not start");
+        setRetryLabel(undefined);
+        setError("The match did not start. Try again, or return to the lobby.");
+        setRetry(() => () => {
+          failed.current = false;
+          stalls = 0;
+          setError(null);
+          setRetry(null);
+          link.again();
+          startupTimer.current = setTimeout(watchStartup, STARTUP_WINDOW_MS);
+        });
+        return;
+      }
       setStartupError(
         receivedSnapshot ? "Preparing the first frame…" : "Restoring match connection…",
       );
       // Keep the prepared island. A fresh connection resends the one-time route,
       // kit, door and loot baselines instead of abandoning a recoverable first frame.
       if (!receivedSnapshot) socket.current?.close(1000, "Retry startup");
-      startupTimer.current = setTimeout(watchStartup, 30_000);
+      startupTimer.current = setTimeout(watchStartup, STARTUP_WINDOW_MS);
     };
-    startupTimer.current = setTimeout(watchStartup, 30_000);
+    startupTimer.current = setTimeout(watchStartup, STARTUP_WINDOW_MS);
     /** A close or a frame after which this page cannot play on: said once, no reconnect. */
     const fail = (message: string) => {
       failed.current = true;
+      // (The loading screen comes back over the match: its buttons need the cursor.)
+      if (document.pointerLockElement) document.exitPointerLock();
       setError(message);
       return null;
     };
@@ -326,6 +363,7 @@ export function BrMatch() {
       },
       unreachable(again) {
         failed.current = true;
+        if (document.pointerLockElement) document.exitPointerLock();
         setRetryLabel(undefined);
         setConnection("Server unreachable");
         setError("The Battle Royale server is temporarily unavailable. Try again in a moment.");

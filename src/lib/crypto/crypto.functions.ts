@@ -148,36 +148,6 @@ async function loadEnabledAsset(chainId: number, assetKey: string): Promise<Enab
   return (data as EnabledAsset | null) ?? null;
 }
 
-export const getEthDisplayPrice = createServerFn({ method: "GET" }).handler(async () => {
-  const db = await admin();
-  const [{ data: settings }, { data: row }] = await Promise.all([
-    db.from("crypto_settings").select("price_max_age_seconds").single(),
-    db
-      .from("crypto_price_snapshots")
-      .select("price_micro_usd, observed_at, oracle_updated_at")
-      .eq("chain_id", 8453)
-      .eq("asset_key", "ETH")
-      .order("observed_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-  ]);
-  const priceRow = row as {
-    price_micro_usd?: number;
-    observed_at?: string;
-    oracle_updated_at?: string;
-  } | null;
-  const ageRow = settings as { price_max_age_seconds?: number } | null;
-  if (!priceRow?.observed_at || !priceRow.oracle_updated_at || !ageRow) return null;
-  const priceMicroUsd = usableDisplayPrice({
-    priceMicroUsd: Number(priceRow.price_micro_usd),
-    observedAtMs: new Date(priceRow.observed_at).getTime(),
-    oracleUpdatedAtMs: new Date(priceRow.oracle_updated_at).getTime(),
-    nowMs: Date.now(),
-    serverMaxAgeSeconds: Number(ageRow.price_max_age_seconds),
-  });
-  return priceMicroUsd ? { priceMicroUsd } : null;
-});
-
 export const getCryptoActivity = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth, requireLiveSession])
   .handler(async ({ context }) => {

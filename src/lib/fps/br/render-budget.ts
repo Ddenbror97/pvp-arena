@@ -71,7 +71,18 @@ export type BrBudgetOptions = {
   resolution: (scale: number) => number;
   /** A frame slower than this is late (ms; default SLOW_MS). */
   slowMs?: number | undefined;
+  /**
+   * Try a step back up now and then when the prediction rules it out (the low tier): where the
+   * GPU's time hardly follows the pixels the prediction holds a lowered resolution for good.
+   */
+  probe?: boolean | undefined;
 };
+
+/** Windows of frames that are not slow before a probe (30 s), doubling to 8 min on a failure. */
+const PROBE_WINDOWS = 20;
+const PROBE_MAX = 320;
+/** Windows after a probe in which a step back down counts as the probe failing. */
+const PROBE_JUDGE = 4;
 
 export class BrRenderBudget {
   scale = 1;
@@ -98,14 +109,39 @@ export class BrRenderBudget {
   private heldWindows = 0;
   /** GPU time measured at each scale, and the window it was measured in. */
   private readonly seen = new Map<number, { gpu: number; at: number }>();
-  /** A step down being judged: the scale it left and the frame time before it. */
-  private trial: { from: number; before: number; windows: number; sum: number } | null = null;
+  /**
+   * A step down being judged: the scale it left, the frame time before it, and the GPU's time
+   * before and during it (null without timer queries).
+   */
+  private trial: {
+    from: number;
+    before: number;
+    windows: number;
+    sum: number;
+    gpuBefore: number | null;
+    gpuSum: number;
+    gpuWindows: number;
+  } | null = null;
+  /**
+   * The share of the GPU's time that follows the pixels, as the last resolution step measured
+   * it (1 until one has: every pixel's). Intel UHD's is a fifth to a half; a step back up is
+   * predicted with it, so a resolution lowered in a heavy place comes back where it can.
+   */
+  pixelShare = 1;
+  /** The last step up weighed (diagnostics: the dev overlay, the perf lab). */
+  lastRaise: { predicted: number; fresh: boolean; gpu: number } | null = null;
   /** No step below `scale` before window `until` (a step that did not help). */
   private hold: { scale: number; until: number } | null = null;
   private holdWindows = HOLD_WINDOWS;
 
+  private readonly probeOn: boolean;
+  private probeEvery = PROBE_WINDOWS;
+  private probeWait = 0;
+  private probed: { scale: number; at: number } | null = null;
+
   constructor(options: BrBudgetOptions) {
     this.resolution = options.resolution;
+    this.probeOn = !!options.probe;
     this.slowMs = options.slowMs ?? SLOW_MS;
     this.raiseGpuMs = this.slowMs * (RAISE_GPU_MS / SLOW_MS);
   }
@@ -148,13 +184,29 @@ export class BrRenderBudget {
     this.sumGpu = this.gpuFrames = 0;
     const before = this.scale;
     if (gpu !== null) this.seen.set(before, { gpu, at: this.window });
+    // A probe that held: the next may come as soon as the first did.
+    if (this.probed && this.window - this.probed.at > PROBE_JUDGE) {
+      if (before >= this.probed.scale - 1e-6) this.probeEvery = PROBE_WINDOWS;
+      this.probed = null;
+    }
 
     // A step down being judged: undone if the frames did not get clearly faster.
     if (this.trial) {
       const t = this.trial;
       t.sum += meanMs;
+      if (gpu !== null) {
+        t.gpuSum += gpu;
+        t.gpuWindows++;
+      }
       if (++t.windows < TRIAL_WINDOWS) return false;
       this.trial = null;
+      // What the step took off the GPU's time: the share of it that is the pixels'.
+      const q = this.resolution(before) / Math.max(1e-6, this.resolution(t.from));
+      if (t.gpuBefore !== null && t.gpuWindows && q < 1 - 1e-6)
+        this.pixelShare = Math.min(
+          1,
+          Math.max(0.1, (1 - t.gpuSum / t.gpuWindows / t.gpuBefore) / (1 - q * q)),
+        );
       if (t.sum / t.windows > t.before * TRIAL_GAIN) {
         this.scale = t.from;
         this.hold = { scale: t.from, until: this.window + this.holdWindows };
@@ -178,10 +230,27 @@ export class BrRenderBudget {
         this.ceiling = Math.min(this.ceiling, before);
       }
       this.scale = round(Math.max(BUDGET_MIN, before - 0.1));
-      // (With the GPU's time measured the step is known to buy what it can; a trial is for
-      // browsers that cannot tell.)
-      if (gpu === null) this.trial = { from: before, before: meanMs, windows: 0, sum: 0 };
-      this.fastWindows = this.heldWindows = 0;
+      // A step that lowers the resolution is a trial: undone, and not tried again for a
+      // while, unless the frames got clearly faster. A GPU that is most of the frame need not
+      // be the pixels' doing (Intel UHD, low tier, a Downtown fight: 0.8 of the pixels took its
+      // GPU time from 17.7 to 16.5 ms and the game from 37 to 38.7 fps; release audit
+      // 2026-11-24). Without the GPU's time every step is one, as before.
+      if (gpu === null || this.resolution(this.scale) < this.resolution(before) - 1e-6)
+        this.trial = {
+          from: before,
+          before: meanMs,
+          windows: 0,
+          sum: 0,
+          gpuBefore: gpu,
+          gpuSum: 0,
+          gpuWindows: 0,
+        };
+      this.fastWindows = this.heldWindows = this.probeWait = 0;
+      // Back down soon after a probe: the next one waits twice as long.
+      if (this.probed && before >= this.probed.scale - 1e-6) {
+        this.probeEvery = Math.min(PROBE_MAX, this.probeEvery * 2);
+        this.probed = null;
+      }
       this.reason = gpu === null ? "slow frames" : "GPU-bound frames";
       return true;
     }
@@ -196,15 +265,30 @@ export class BrRenderBudget {
       const known = this.seen.get(next);
       const fresh = known && this.window - known.at <= SEEN_WINDOWS ? known.gpu : null;
       const r = this.resolution(next) / Math.max(1e-6, this.resolution(before));
-      const predicted = fresh ?? gpu * r * r * RAISE_MARGIN;
+      // (The margin on a measured step too: a scale left for slow frames came back at once
+      // when its own time was just under the line, and was left again, every few seconds.)
+      const predicted = (fresh ?? gpu * (1 + this.pixelShare * (r * r - 1))) * RAISE_MARGIN;
+      this.lastRaise = { predicted, fresh: fresh !== null, gpu };
       if (predicted < this.raiseGpuMs) {
+        this.probeWait = 0;
         if (++this.fastWindows >= RAISE_WINDOWS) {
           this.scale = next;
           this.fastWindows = 0;
           this.reason = "GPU headroom";
           return true;
         }
-      } else this.fastWindows = 0;
+        return false;
+      }
+      this.fastWindows = 0;
+      // (Intel UHD, low tier: lowered in the forest, the resolution stayed at 896 × 504
+      // through every Downtown fight after it, which ran at 37 fps at 720p.)
+      if (this.probeOn && !slowWindow && ++this.probeWait >= this.probeEvery) {
+        this.probeWait = 0;
+        this.scale = next;
+        this.probed = { scale: next, at: this.window };
+        this.reason = "probe";
+        return true;
+      }
       return false;
     }
     // Without the GPU's time: frames so fast that even the whole frame, grown by the next

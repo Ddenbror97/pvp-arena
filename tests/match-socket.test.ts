@@ -235,6 +235,42 @@ describe("match socket", () => {
     expect(again).not.toBeNull();
   });
 
+  it("pause stops reconnecting and drops the socket; again starts over with a new ticket", async () => {
+    const { link, ref } = connection();
+    await tick();
+    FakeSocket.all[0]!.open();
+    link.pause("Startup timed out");
+    expect(FakeSocket.all[0]!.closedWith).toEqual([1000, "Startup timed out"]);
+    expect(ref.current).toBeNull();
+    // A late close of the paused socket is not heard: no reconnect.
+    FakeSocket.all[0]!.drop(1006);
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(FakeSocket.all).toHaveLength(1);
+    link.again();
+    await tick();
+    expect(FakeSocket.all).toHaveLength(2);
+  });
+  it("a ticket that arrives after a pause opens no socket", async () => {
+    let release: (t: { url: string }) => void = () => {};
+    const { link } = connection({
+      admit: () => new Promise((r) => (release = r)),
+    });
+    await tick();
+    link.pause("Startup timed out");
+    release({ url: "wss://room.test/socket" });
+    await tick();
+    expect(FakeSocket.all).toHaveLength(0);
+  });
+  it("leaving after a pause cannot be undone by again", async () => {
+    const { link } = connection();
+    await tick();
+    link.pause("Startup timed out");
+    link.close("Left");
+    link.again();
+    await tick();
+    expect(FakeSocket.all).toHaveLength(1);
+  });
+
   it("names the page once per load, as the room expects it", () => {
     expect(PAGE_ID).toMatch(/^[A-Za-z0-9-]{8,64}$/);
   });

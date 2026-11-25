@@ -5,7 +5,6 @@ import {
   signatureMatches,
   shortAddress,
 } from "./message";
-import type { WalletErrorCode } from "./errors";
 
 type Rpc = (
   fn: string,
@@ -119,34 +118,4 @@ export async function verifyChallenge(
   if (!r.ok) return fail(r.code ?? "GENERIC", c.address);
   await log(rpc, "WALLET_VERIFIED", userId, { address: shortAddress(c.address) });
   return { ok: true, address: c.address };
-}
-
-export const CLIENT_EVENTS = [
-  "WALLET_CONNECTION_STARTED",
-  "WALLET_CONNECTED",
-  "WALLET_DISCONNECTED",
-  "WALLET_CONNECT_FAILED",
-] as const;
-
-export async function recordEvent(
-  userId: string,
-  event: (typeof CLIENT_EVENTS)[number],
-  address: string | null,
-  reason?: WalletErrorCode,
-) {
-  const rpc = await admin();
-  let safe: string | null = null;
-  if (address && /^0x[0-9a-fA-F]{40}$/.test(address)) {
-    safe = shortAddress(normalizeAddress(address).checksummed);
-    if (event === "WALLET_CONNECTED")
-      await rpc("wallet_touch", {
-        p_user: userId,
-        p_address: normalizeAddress(address).checksummed,
-      });
-  }
-  const details: Record<string, unknown> = { address: safe };
-  // Only our own safe error codes are stored, never provider text.
-  if (event === "WALLET_CONNECT_FAILED" && reason) details["reason"] = reason;
-  await log(rpc, event, userId, details);
-  return { ok: true };
 }
