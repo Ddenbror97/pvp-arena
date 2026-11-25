@@ -265,7 +265,7 @@ describe("BR authoritative projectile combat", () => {
       return s.advance(1800);
     };
     expect(run(false)).toEqual([]); // Falls below the victim's feet.
-    expect(run(true)).toMatchObject([{ type: "hit", victim: 1, zone: "chest", damage: 34 }]);
+    expect(run(true)).toMatchObject([{ type: "hit", victim: 1, zone: "chest", damage: 40 }]);
   });
   it("sweeps a moving target that crosses the path between server poses", () => {
     const s = setup();

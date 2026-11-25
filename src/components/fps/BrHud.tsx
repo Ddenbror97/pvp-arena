@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import type { BrAct } from "@/lib/fps/br/actions";
 import type { BrFeed, BrHud, BrKillWeapon, BrNearby, BrPrompt } from "@/lib/fps/br/br-arena";
 import { GunGlyph, WeaponIcon } from "./WeaponIcon";
+import { StrikeCrosshair } from "./GameSettings";
+import type { StrikeSettings } from "@/lib/fps/settings";
 import type { EquipSlot } from "@/lib/fps/br/inventory";
 import {
   INVENTORY,
@@ -254,9 +256,12 @@ export function BrStatus({ hud, tabletKey = "T" }: { hud: BrHud; tabletKey?: str
 export function BrCentre({
   hud,
   hit,
+  crosshair,
 }: {
   hud: BrHud;
   hit: { at: number; head: boolean; kill: boolean } | null;
+  /** The player's crosshair (Settings → Crosshair: style and colour), as in 1v1 and 5v5. */
+  crosshair: StrikeSettings;
 }) {
   const now = performance.now();
   const showHit = hit && now - hit.at < 220;
@@ -269,7 +274,7 @@ export function BrCentre({
   return (
     <>
       {!hud.scope && hud.onFoot && !hud.vehicle && !aimed && (
-        <div className="br-cross" aria-hidden />
+        <StrikeCrosshair settings={crosshair} />
       )}
       {showHit && (
         <div

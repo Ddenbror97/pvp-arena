@@ -1,4 +1,4 @@
-import { HIT_DAMAGE, type RecoilPattern } from "../combat";
+import type { RecoilPattern } from "../combat";
 import { GRENADE_NAMES, type GrenadeType } from "../grenades/rules";
 import { AWP } from "../primary";
 import { WEAPONS } from "../simulation";
@@ -151,8 +151,27 @@ export type ItemDef =
   | TabletDef;
 
 const rifle = WEAPONS.rifle;
-/** The modern 1v1/5v5 rifle table (head = chest: three hits to the head at full health). */
-const RIFLE_DAMAGE = { ...HIT_DAMAGE.rifle };
+/**
+ * Battle royale damage (owner, 2026-11-25: tiers A AK/M4/AWP, B SPAS/Hunting Rifle/MP5, C the
+ * Desert Eagle; "headshot with any weapon without helmet takes a lot of damage, close to
+ * death"; similar to PUBG and Warzone). Health is 100, as in PUBG.
+ *
+ * PUBG's shape: base damage on the chest, the head about 2.1–2.5 × (ARs 2.35, SMGs 2.1,
+ * snipers 2.5), the stomach about 0.9 ×, limbs lower; helmets cut a head hit by 30/40/55 %,
+ * vests a body hit by 30/40/55 % (here 20/28/35 % per vest and 5 % per plate, capped at 50 %).
+ * Base damage there: AKM 47, M416 41, MP5K 33, Desert Eagle 62, Kar98k 79, AWM 105, shotgun
+ * pellets 24–26 (9 a shell). Warzone keeps the same order (snipers kill on any headshot, ARs
+ * three to four body hits of 100 health, shotguns one close shell, pistols last).
+ *
+ * Here, without armour (polished 2026-11-25: AWP 250/105, Hunting Rifle chest 75, MP5 65/29,
+ * SPAS pellet 17/11):
+ *   head (no helmet): AK 92 · M4 88 · Deagle 80 · MP5 65 · SPAS 136 a whole shell
+ *                     · Hunting Rifle 150 and the AWP 250 kill;
+ *   body hits to kill: AWP 1 · Hunting Rifle 2 · AK, M4, Deagle 3 · MP5 4 · SPAS 2 shells.
+ * The 1v1/5v5 rifle table (head = chest, combat.ts HIT_DAMAGE) is not used here any more.
+ */
+const BR_AK = { head: 92, chest: 40, stomach: 36, legs: 26 };
+const BR_M4 = { head: 88, chest: 38, stomach: 34, legs: 25 };
 
 export const ITEMS = {
   ak47: {
@@ -171,7 +190,8 @@ export const ITEMS = {
     extMag: 10,
     reloadMs: rifle.reloadMs,
     intervalMs: 100,
-    damage: RIFLE_DAMAGE,
+    // A tier: the hardest-hitting rifle (PUBG AKM 47 against the M416's 41).
+    damage: BR_AK,
     armorPierce: 0,
     // Bullet drop (2026-11-09, ballistics.ts): ≈ 0.6 m at 200 m, 1.4 m at 300 m.
     muzzleVelocityMps: 620,
@@ -199,7 +219,8 @@ export const ITEMS = {
     extMag: 10,
     reloadMs: rifle.reloadMs,
     intervalMs: 100,
-    damage: RIFLE_DAMAGE,
+    // A tier: a little less per hit than the AK, flatter.
+    damage: BR_M4,
     armorPierce: 0,
     // Flatter than the AK: ≈ 0.5 m at 200 m, 1.1 m at 300 m.
     muzzleVelocityMps: 680,
@@ -230,7 +251,9 @@ export const ITEMS = {
     extMag: 5,
     reloadMs: AWP.reloadMs,
     intervalMs: AWP.cycleMs,
-    damage: { ...AWP.damage },
+    // A tier, BR only (2026-11-25 polish): 105 chest still kills an unarmoured player in one
+    // shot; 250 on the head is a kill through any helmet. (1v1/5v5 keep primary.ts AWP.)
+    damage: { head: 250, chest: 105, stomach: 95, legs: 75 },
     armorPierce: 0.5,
     // The flattest: ≈ 0.65 m at 300 m, 1.2 m at 400 m, 2.8 m at 600 m.
     muzzleVelocityMps: 850,
@@ -267,7 +290,9 @@ export const ITEMS = {
     extMag: 3,
     reloadMs: AWP.reloadMs,
     intervalMs: AWP.cycleMs,
-    damage: { head: 120, chest: 80, stomach: 85, legs: 55 },
+    // B tier (PUBG Kar98k: 79 base, × 2.5 on the head). Two body hits without a vest; a
+    // headshot kills through a level 1–2 helmet and leaves a level 3 helmet's wearer near death.
+    damage: { head: 150, chest: 75, stomach: 68, legs: 49 },
     armorPierce: 0.3,
     muzzleVelocityMps: 760,
     gravityMps2: 9.81,
@@ -302,7 +327,8 @@ export const ITEMS = {
     // CS:GO 3.13 s against the AK's 2.43 s, on this game's 1.8 s rifle reload.
     reloadMs: 2300,
     intervalMs: 80,
-    damage: { head: 26, chest: 26, stomach: 23, legs: 15 },
+    // B tier (PUBG MP5K 33): four body hits, fast; 65 on the head.
+    damage: { head: 65, chest: 29, stomach: 26, legs: 19 },
     armorPierce: 0,
     muzzleVelocityMps: 400,
     gravityMps2: 9.81,
@@ -332,8 +358,9 @@ export const ITEMS = {
     // CS:GO 2.17 s; here the length the overhand-rack clip is posed for.
     reloadMs: 1900,
     intervalMs: 225,
-    damage: { head: 50, chest: 50, stomach: 44, legs: 29 },
-    armorPierce: 0.25,
+    // C tier (owner, 2026-11-25: the weakest): three body hits at 267 rpm, no armour piercing.
+    damage: { head: 80, chest: 36, stomach: 32, legs: 22 },
+    armorPierce: 0,
     muzzleVelocityMps: 420,
     gravityMps2: 9.81,
     // ≈ 0.33 m at 100 m, 1.6 m at 200 m.
@@ -637,7 +664,9 @@ export const ITEMS = {
     reloadMs: 450 + 8 * 520 + 500,
     shells: { startMs: 450, insertMs: 520, endMs: 500, breakMs: 280 },
     intervalMs: 350,
-    damage: { head: 13, chest: 13, stomach: 11, legs: 8 },
+    // B tier: a pellet is 11 on the body, 17 on the head (PUBG shotguns: head × 1.5): a whole
+    // shell 88 on the chest, 136 on the head, so not every shell is a kill.
+    damage: { head: 17, chest: 11, stomach: 10, legs: 7 },
     pellets: { count: 8, spreadDeg: 2.2, fullM: 10, endM: 40, min: 0.35 },
     armorPierce: 0,
     // 00 buck leaves at about 400 m/s and sheds speed fast; nothing reaches past 70 m.
@@ -697,11 +726,10 @@ export const INVENTORY = {
  * armour at most doubles a rifle's body shots to kill (3 → 6) and nobody is close to
  * invulnerable. Every intact plate (up to three, vest or not since 2026-11-14) adds its share.
  *
- * Rifle (34 chest) body shots to kill: none 3 · vest 1/2/3 → 4/5/5 · vest 3 + two plates
- * → 6, and vest 3 + three plates reaches the cap exactly (still 6). Each intact plate adds 5 %;
- * the first plate takes the wear until it breaks (25 durability: about five rifle hits with
- * three fitted), then the next. Headshots: none 3 · helmet 1/2/3 → 5/6/7. The AWP (armour
- * pierce 0.5) kills on any headshot; a level 2–3 vest, or any vest with plates, lets a
- * full-health player survive one body shot.
+ * AK (40 chest) body shots to kill: none 3 · vest 1/2/3 → 4/4/4 · vest 3 + three plates (the
+ * cap) → 5. Each intact plate adds 5 %; the first plate takes the wear until it breaks (25
+ * durability), then the next. AK headshot (92): helmet 1/2/3 → 64/51/41. The AWP (armour pierce
+ * 0.5) kills on any headshot; a level 2–3 vest, or any vest with plates, lets a full-health
+ * player survive one body shot. Full table: claude/br-weapon-balance-2026-11-25.md.
  */
 export const ARMOR_RULES = { bodyCap: 0.5 } as const;
