@@ -103,6 +103,23 @@ describe("Skyline Residences", () => {
     }
   });
 
+  it("stands the garden wall on the ground, not at the pad's height (2026-11-25)", () => {
+    // Owner: "the mini wall around sky line residence is not on the ground correctly its in the
+    // air at some parts" (the north corners, past the pad's level circle: up to 1.1 m).
+    const walls = island.layout.filter((p) => p.poi === "skyline" && p.model === "stone-wall");
+    expect(walls.length).toBeGreaterThan(200);
+    for (const p of walls) {
+      const [ax, az] = p.turn % 2 ? [0, 1.15] : [1.15, 0];
+      const low = Math.min(
+        hf.heightAt(p.x, p.z),
+        hf.heightAt(p.x - ax, p.z - az),
+        hf.heightAt(p.x + ax, p.z + az),
+      );
+      expect(p.y - low, `${p.x},${p.z}`).toBeLessThanOrEqual(0.02);
+      expect(p.y, `${p.x},${p.z}`).toBeLessThanOrEqual(pad);
+    }
+  });
+
   it("fits doors where the plan says, and the lobby doors lead in", () => {
     for (const m of ["condo-lobby", "condo-floor", "condo-club", "condo-roof-a", "condo-roof-b"])
       expect(modelDoors(collision, m).length, m).toBeGreaterThan(0);

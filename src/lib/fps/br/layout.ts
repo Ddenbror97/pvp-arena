@@ -7689,7 +7689,7 @@ const LAYOUTS: Record<string, (poi: Poi, out: Placement[], ctx: Context) => void
   "island-village": islandVillage,
   "west-point": westPoint,
   "island-airfield": airfield,
-  skyline,
+  skyline: (poi, out, ctx) => skyline(poi, out, ctx),
   downtown,
   southgate,
   "east-yards": eastYards,
