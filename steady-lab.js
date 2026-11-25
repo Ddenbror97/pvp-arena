@@ -56,6 +56,8 @@
     fullc: { on: true, v: { single: true, compact: true } },
     fixedc: { on: true, v: { fixed: true, single: true, compact: true } },
     litecr: { on: true, v: { depth1: true, cross: true, single: true } },
+    slim: { on: true, v: { depth1: true, cross: true, slim: true } },
+    slimfull: { on: true, v: { slim: true } },
   };
   window.setVariant = (name) => { const c = VARIANTS[name]; brSteadyMode.on = c.on; brSteadyMode.foot = true; brSteadyMode.lite = false; brSteadyLab.variant = c.v ?? null; };
   window.__prof = {}; window.__osc = {}; window.__progress = "";
@@ -79,4 +81,62 @@
     __progress = "done";
   };
   window.table = (obj, f) => Object.entries(obj).map(([rk, o]) => rk.padEnd(10) + " " + Object.entries(o).map(([v, x]) => v + ":" + f(x)).join(" ")).join("\n");
+})();
+// Enemy visibility: a person-sized box crossing 20 m ahead while the camera strafes. Counted:
+// pixels of the box's silhouette (where it changes the picture with the steadying off) that a
+// variant shows more than 25 of 255 away from that picture.
+(() => {
+  let box = null;
+  const makeBox = (color) => {
+    let proto = null;
+    explorer.scene.traverse((o) => { if (!proto && o.isMesh && o.geometry?.attributes?.position && !o.isInstancedMesh && o.material && !Array.isArray(o.material) && o.material.isMeshStandardMaterial) proto = o; });
+    const G = proto.geometry.constructor, A = proto.geometry.attributes.position.constructor;
+    const hx = 0.25, hy = 0.9, hz = 0.2, p = [], n = [];
+    const face = (a, b, c, d, nn) => { for (const v of [a, b, c, a, c, d]) { p.push(...v); n.push(...nn); } };
+    const X = [-hx, hx], Y = [-hy, hy], Z = [-hz, hz];
+    face([X[0],Y[0],Z[1]],[X[1],Y[0],Z[1]],[X[1],Y[1],Z[1]],[X[0],Y[1],Z[1]],[0,0,1]);
+    face([X[1],Y[0],Z[0]],[X[0],Y[0],Z[0]],[X[0],Y[1],Z[0]],[X[1],Y[1],Z[0]],[0,0,-1]);
+    face([X[1],Y[0],Z[1]],[X[1],Y[0],Z[0]],[X[1],Y[1],Z[0]],[X[1],Y[1],Z[1]],[1,0,0]);
+    face([X[0],Y[0],Z[0]],[X[0],Y[0],Z[1]],[X[0],Y[1],Z[1]],[X[0],Y[1],Z[0]],[-1,0,0]);
+    face([X[0],Y[1],Z[1]],[X[1],Y[1],Z[1]],[X[1],Y[1],Z[0]],[X[0],Y[1],Z[0]],[0,1,0]);
+    const g = new G(); g.setAttribute("position", new A(new Float32Array(p), 3)); g.setAttribute("normal", new A(new Float32Array(n), 3));
+    const m = new proto.material.constructor({ color }); m.color.setHex(color);
+    const mesh = new proto.constructor(g, m); mesh.frustumCulled = false; return mesh;
+  };
+  const grab = () => { const cv = document.querySelector("canvas"); const k = window.__gk ??= document.createElement("canvas"); k.width = cv.width; k.height = cv.height; const c = k.getContext("2d", { willReadFrequently: true }); c.drawImage(cv, 0, 0); const d = c.getImageData(0, 0, k.width, k.height).data; const L = new Uint8Array(k.width * k.height); for (let i = 0; i < L.length; i++) L[i] = (0.299 * d[4 * i] + 0.587 * d[4 * i + 1] + 0.114 * d[4 * i + 2]) | 0; return L; };
+  const seq = async (rk, withBox, frames, speed) => {
+    const r = routes[rk], v = benchView(r);
+    const [x, z] = r.cam, [tx, tz] = r.aim, d = Math.hypot(x - tx, z - tz), fx = (tx - x) / d, fz = (tz - z) / d, sx = -fz, sz = fx;
+    const bx = x + fx * 20, bz = z + fz * 20, by = explorer.groundAt(bx, bz) + 0.9;
+    if (withBox) explorer.scene.add(box); else explorer.scene.remove(box);
+    brDraw(1280, 720);
+    const out = [];
+    for (let f = -6; f < frames; f++) {
+      const s = (f - frames / 2);
+      box.position.set(bx + sx * s * speed, by, bz + sz * s * speed);
+      box.updateMatrixWorld(true);
+      const cs = s * 0.03;
+      await explorer.view([v.pos[0] - sx * cs, v.pos[1], v.pos[2] - sz * cs], v.look.map((q, i) => i === 1 ? q : q - (i === 0 ? sx : sz) * cs));
+      if (f >= 0) out.push(grab());
+    }
+    explorer.scene.remove(box);
+    return out;
+  };
+  window.runGhost = async (rk, vars, { color = 0x404040, frames = 30, speed = 0.083 } = {}) => {
+    box = makeBox(color);
+    setVariant("off");
+    const ref = await seq(rk, true, frames, speed), bare = await seq(rk, false, frames, speed);
+    const res = {};
+    for (const vn of vars) {
+      setVariant(vn);
+      const got = await seq(rk, true, frames, speed);
+      let mask = 0, off = 0, worst = 0;
+      for (let f = 2; f < frames; f++) { let fo = 0, fm = 0; for (let i = 0; i < ref[f].length; i++) if (Math.abs(ref[f][i] - bare[f][i]) > 12) { fm++; if (Math.abs(got[f][i] - ref[f][i]) > 25) fo++; } mask += fm; off += fo; worst = Math.max(worst, fm ? fo / fm : 0); }
+      res[vn] = { silhouettePx: mask, alteredPx: off, pct: +(100 * off / Math.max(1, mask)).toFixed(2), worstFramePct: +(100 * worst).toFixed(1) };
+      __progress = "ghost " + rk + " " + vn;
+    }
+    (window.__ghost ??= {})[rk + "@" + color.toString(16)] = res;
+    __progress = "done";
+    return res;
+  };
 })();
