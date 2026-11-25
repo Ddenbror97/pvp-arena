@@ -79,6 +79,9 @@ const CANOPY = new Set([
 ]);
 
 describe("Project Island static world", () => {
+  it("keeps the island's collision coordinate payload within the BR Worker budget", () => {
+    expect(world.boxes.byteLength).toBeLessThan(26 * 1024 * 1024);
+  });
   it("places every layout model, each with collision data, on the flat building pads", () => {
     expect(layout.length).toBeGreaterThan(400);
     // Stacked on another placement (containers on the quay, wrecks at the salvage yard).

@@ -186,7 +186,7 @@ const perches = (meta.perches ?? []).map((p, n) => {
   let coverBoxes = 0;
   const b = world.boxes;
   world.forEachBox(p.x - 12, p.z - 12, p.x + 12, p.z + 12, (i) => {
-    if (b[i * 6 + 4]! - p.y > 0.9) coverBoxes++;
+    if (b.get(i * 6 + 4) - p.y > 0.9) coverBoxes++;
   });
   // Trees around the perch (trunks block sight and bullets).
   const trees = (r: number) => {

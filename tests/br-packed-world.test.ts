@@ -3,9 +3,19 @@ import { readFileSync } from "node:fs";
 import { decodeHeightfield } from "../src/lib/fps/br/heightfield";
 import { drawnGround } from "../src/lib/fps/br/paved";
 import { WORLD_ASSETS } from "../src/lib/fps/br/world";
+import { CollisionCoordinates } from "../src/lib/fps/br/collision-coordinates";
 import { packCollisionModels } from "../workers/fps/br";
 
 describe("BR server packed world", () => {
+  it("preserves float bits across narrow, wide, raw and partial pages", () => {
+    const raw = Float32Array.from({ length: 3 * 4096 + 19 }, (_, i) =>
+      i < 4096 ? (i % 3 === 0 ? -0 : i % 2) : i < 8192 ? i % 601 : i / 7,
+    );
+    const packed = new CollisionCoordinates(raw.length);
+    for (const coordinate of raw) packed.append(coordinate);
+    expect(packed.byteLength).toBeLessThan(raw.byteLength);
+    expect(Array.from(raw, (_, i) => packed.get(i))).toEqual(Array.from(raw));
+  });
   it("preserves terrain samples, slopes and road support exactly", async () => {
     const file = readFileSync("public" + WORLD_ASSETS.height);
     const bytes = file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);

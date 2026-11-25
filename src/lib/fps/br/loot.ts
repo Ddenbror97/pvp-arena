@@ -534,6 +534,24 @@ export function* warmLootSteps(
   }
 }
 
+/** After warmLootSteps has cached the spots for this immutable layout, only the
+ * companion-ammo room check consults model geometry on subsequent rolls. Use a new
+ * collision object so build-only WeakMap caches can be collected with the original. */
+export function warmedLootCollision(
+  layout: readonly Placement[],
+  collision: CollisionData,
+): CollisionData {
+  const models: CollisionData["models"] = {};
+  for (const p of layout) {
+    const info = MODEL_CLASS[p.model];
+    if (!info) continue;
+    if (!spotsOf.has(p)) throw new Error("Loot layout was not warmed");
+    if (info.mode === "indoor" || info.mode === "walled")
+      models[p.model] = collision.models[p.model]!;
+  }
+  return { voxel: collision.voxel, models };
+}
+
 export function rollLoot(
   seed: number,
   layout: readonly Placement[],

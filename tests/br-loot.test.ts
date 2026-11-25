@@ -19,7 +19,14 @@ import {
 import { ITEMS, ITEM_IDS } from "@/lib/fps/br/items";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import type { Placement } from "@/lib/fps/br/layout";
-import { LOOT, lootClassOf, lootSummary, rollLoot, type WorldItem } from "@/lib/fps/br/loot";
+import {
+  LOOT,
+  lootClassOf,
+  lootSummary,
+  rollLoot,
+  warmedLootCollision,
+  type WorldItem,
+} from "@/lib/fps/br/loot";
 import { modelSpots } from "@/lib/fps/br/loot-spots";
 import type { CollisionData, StaticWorld } from "@/lib/fps/br/static-world";
 import type { WorldMeta } from "@/lib/fps/br/world";
@@ -43,6 +50,11 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("loot placement", () => {
+  it("rolls identical seeded loot with only the server's warmed room geometry", () => {
+    const reduced = warmedLootCollision(layout, collision);
+    expect(Object.keys(reduced.models).length).toBeLessThan(Object.keys(collision.models).length);
+    expect(rollLoot(1234, layout, reduced, world, meta)).toEqual(a);
+  });
   it("keeps the Tactical Tablet rare in the open world", () => {
     expect(LOOT.caps.tablet).toBeLessThanOrEqual(2);
     const counts = [1234, 7, 99, 4242].map(
