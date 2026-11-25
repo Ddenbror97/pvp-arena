@@ -168,8 +168,8 @@ export const HUNTING = {
  *    reload and fires (CS: "pressing primary attack mid-reload interrupts it and fires");
  *  - movement 215 u/s, as the rifles; standing inaccuracy 0.007 and moving 0.036 move the whole
  *    pattern; recoil magnitude 80 (the AK's 30): the battle royale's "spas12" kick.
- * The rifles here do 34 a hit (340 a second on the chest): the SPAS-12 matches that at point
- * blank and loses to it past about 8 m.
+ * The rifles here do 36–38 a hit (CS:GO's, combat.ts RIFLES: 360–380 a second on the chest):
+ * the SPAS-12 matches that at point blank and loses to it past about 8 m.
  */
 export const SPAS12 = {
   name: "SPAS-12",

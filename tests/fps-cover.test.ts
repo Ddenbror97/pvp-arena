@@ -192,7 +192,8 @@ describe("shared tactical world", () => {
       Object.assign(s.players.B, { x: -8.3, z: -8.3, crouched });
       const pitch = Math.atan2(eyeHeight(s.players.B) - 1.6, 3.8);
       stepMatch(s, { A: { ...idle, fire: true, pitch } }, 3034, TICK_MS);
-      expect(s.players.B.hp).toBe(crouched ? 100 : 66);
+      // An exposed head: one rifle headshot kills (CS:GO ×4, 2026-11-25).
+      expect(s.players.B.hp).toBe(crouched ? 100 : 0);
     }
   });
   it("allows peeking from either side of the central stack", () => {
@@ -201,7 +202,7 @@ describe("shared tactical world", () => {
       Object.assign(s.players.A, { x, z: 2.9 });
       Object.assign(s.players.B, { x, z: -2.9 });
       stepMatch(s, { A: { ...idle, fire: true } }, 3034, TICK_MS);
-      expect(s.players.B.hp).toBe(66);
+      expect(s.players.B.hp).toBe(0);
     }
   });
   it("slides along a wall and clears its edge without getting stuck", () => {

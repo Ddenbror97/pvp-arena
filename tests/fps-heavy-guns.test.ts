@@ -10,7 +10,7 @@ import {
   vestDamage,
   weaponMoveScale,
 } from "../src/lib/fps/primary";
-import { HIT_DAMAGE, recoilPatternOf } from "../src/lib/fps/combat";
+import { RIFLES, recoilPatternOf } from "../src/lib/fps/combat";
 import { validateBuy } from "../src/lib/fps/buy";
 import {
   buyBombPrimary,
@@ -71,8 +71,9 @@ describe("damage (CS2 tables) against the game's other guns", () => {
   });
   it("shots to kill: the Hunting Rifle sits between the rifle and the AWP", () => {
     const toKill = (hit: number) => Math.ceil(100 / hit);
-    // Chest, no vest: rifle 3, Hunting Rifle 2, AWP 1. Head: rifle 3, both snipers 1.
-    expect(toKill(HIT_DAMAGE.rifle.chest)).toBe(3);
+    // Chest, no vest: rifles 3, Hunting Rifle 2, AWP 1. Head: all 1 (CS:GO ×4, no helmets).
+    expect(toKill(RIFLES.ak47.damage.chest)).toBe(3);
+    expect(toKill(RIFLES.m4a1s.damage.chest)).toBe(3);
     expect(toKill(HUNTING.damage.chest)).toBe(2);
     expect(toKill(AWP.damage.chest)).toBe(1);
     expect(toKill(HUNTING.damage.head)).toBe(1);
@@ -90,15 +91,15 @@ describe("damage (CS2 tables) against the game's other guns", () => {
     // × 0.7 every 12.7 m: 15 at 10 m, 9 at 25 m.
     expect(spas12PelletDamage(body(0), "chest", 10)).toBe(15);
     expect(spas12PelletDamage(body(0), "chest", 25)).toBe(9);
-    // A whole shell at point blank: 120 (a kill) against the rifle's 34 a round; the rifle
-    // out-damages it per second from about 8 m (six pellets on target at best).
+    // A whole shell at point blank: 120 (a kill) against the AK's 36 a round: per second a
+    // little under the rifle (343 against 360), and well under it from about 8 m (six pellets
+    // on target at best): B tier under the A-tier rifle.
     const perSecond = (hit: number, cycle: number) => (hit * 1000) / cycle;
-    expect(perSecond(6 * 20, SPAS12.cycleMs)).toBeCloseTo(
-      perSecond(HIT_DAMAGE.rifle.chest, 100),
-      -1,
-    );
+    const rifle = perSecond(RIFLES.ak47.damage.chest, 100);
+    expect(perSecond(6 * 20, SPAS12.cycleMs)).toBeLessThan(rifle);
+    expect(perSecond(6 * 20, SPAS12.cycleMs)).toBeGreaterThan(rifle * 0.9);
     expect(perSecond(6 * spas12PelletDamage(body(0), "chest", 8), SPAS12.cycleMs)).toBeLessThan(
-      perSecond(HIT_DAMAGE.rifle.chest, 100),
+      rifle * 0.8,
     );
     expect(SPAS12.cycleMs).toBeGreaterThan(MP5.cycleMs);
   });

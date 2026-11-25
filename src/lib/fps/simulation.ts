@@ -1,10 +1,11 @@
 import { footstepSurface } from "./footstep-surfaces";
 import { PLAYER_RADIUS, STEP_HEIGHT, EYE_HEIGHT, CROUCH_EYE_HEIGHT, eyeHeight } from "./map";
 import { DEFAULT_MAP, getMap, mapOf, type GameMap } from "./maps/registry";
-import { spawnSide, halftimeRound } from "./sides";
+import { characterSide, spawnSide, halftimeRound } from "./sides";
 import {
   COMBAT_VERSION,
-  HIT_DAMAGE,
+  RIFLES,
+  sideRifle,
   KNIFE,
   applyVestDamage,
   isBackstab,
@@ -534,6 +535,8 @@ function shoot(
   input: Input,
   historicalTarget?: Pose,
 ): void {
+  // The side's rifle (Police M4A1-S, Terrorist AK-47: combat.ts RIFLES).
+  const rifle = sideRifle(characterSide(state, seat));
   const p = state.players[seat],
     target = state.players[other(seat)],
     stats = WEAPONS.rifle;
@@ -703,8 +706,8 @@ function shoot(
               ? spas12PelletDamage(target, contact.zone, contact.distance)
               : modern
                 ? state.armorVersion === 1
-                  ? applyVestDamage(target, "rifle", contact.zone)
-                  : HIT_DAMAGE.rifle[contact.zone]
+                  ? applyVestDamage(target, rifle, contact.zone)
+                  : RIFLES[rifle].damage[contact.zone]
                 : stats.damage * (contact.zone === "head" ? stats.headshotMultiplier : 1);
   }
   if (!first) return;

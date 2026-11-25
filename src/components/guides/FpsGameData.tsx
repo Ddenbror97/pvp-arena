@@ -1,5 +1,5 @@
 import type { FpsSeoSnapshot } from "@/lib/fps/seo-snapshot";
-import { HIT_DAMAGE, applyVestDamage, recoveryProfile } from "@/lib/fps/combat";
+import { RIFLES, applyVestDamage, recoveryProfile, type SideRifleId } from "@/lib/fps/combat";
 import { duelMoney } from "@/lib/fps/quote";
 
 export function FpsGameData({ view }: { view: FpsSeoSnapshot | null }) {
@@ -99,14 +99,15 @@ export function FpsMechanicsData() {
         PvPStrike's actual rifle tuning
       </h2>
       <p className="mt-3 text-sm text-muted-foreground">
-        Generated from the current game's damage and recoil functions. These are PvPStrike values,
-        not Valve's CS2 weapon statistics. Assumes 100 health and a fresh vest; no damage through
-        cover.
+        Generated from the current game's damage and recoil functions. The rifles use CS:GO's
+        per-bullet damage (AK-47 36 with 77.5% armor penetration, M4A1-S 38 with 70%). Assumes 100
+        health and a fresh vest; there are no helmets, and no damage goes through cover.
       </p>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
             <tr>
+              <th className="p-2">Rifle</th>
               <th className="p-2">Hit area</th>
               <th className="p-2">Unarmored damage</th>
               <th className="p-2">Fresh-vest damage</th>
@@ -114,21 +115,24 @@ export function FpsMechanicsData() {
             </tr>
           </thead>
           <tbody>
-            {zones.map((zone) => {
-              const damage = applyVestDamage(
-                { armor: 100 } as Parameters<typeof applyVestDamage>[0],
-                "rifle",
-                zone,
-              );
-              return (
-                <tr key={zone} className="border-t border-border">
-                  <th className="p-2 capitalize">{zone}</th>
-                  <td className="p-2">{HIT_DAMAGE.rifle[zone]}</td>
-                  <td className="p-2">{damage}</td>
-                  <td className="p-2">{Math.ceil(100 / damage)}</td>
-                </tr>
-              );
-            })}
+            {(["ak47", "m4a1s"] as SideRifleId[]).flatMap((rifle) =>
+              zones.map((zone) => {
+                const damage = applyVestDamage(
+                  { armor: 100 } as Parameters<typeof applyVestDamage>[0],
+                  rifle,
+                  zone,
+                );
+                return (
+                  <tr key={`${rifle}-${zone}`} className="border-t border-border">
+                    <th className="p-2">{RIFLES[rifle].name}</th>
+                    <th className="p-2 capitalize">{zone}</th>
+                    <td className="p-2">{RIFLES[rifle].damage[zone]}</td>
+                    <td className="p-2">{damage}</td>
+                    <td className="p-2">{Math.ceil(100 / damage)}</td>
+                  </tr>
+                );
+              }),
+            )}
           </tbody>
         </table>
       </div>
@@ -136,7 +140,7 @@ export function FpsMechanicsData() {
         Recoil sequence reset after a three-shot burst: {Math.round(recoveryProfile(3).resetMs)} ms.
         After a long spray: {Math.round(recoveryProfile(15).resetMs)} ms. Releasing fire does not
         immediately erase recoil; both the Police M4A1-S and Terrorist AK-47 remain automatic when
-        held and use the same damage values.
+        held; the sides swap at halftime.
       </p>
       <p className="mt-2 text-xs text-muted-foreground">
         Mixed hit locations and depleted armor change the result. Use the winner recap to compare

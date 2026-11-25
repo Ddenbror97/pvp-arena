@@ -533,7 +533,7 @@ function shoot(
             ? vestDamage(victim, zone, HUNTING)
             : spas
               ? spas12PelletDamage(victim, zone, best.distance)
-              : applyVestDamage(victim, "rifle", zone);
+              : applyVestDamage(victim, team === "police" ? "m4a1s" : "ak47", zone);
     const dealt = Math.min(victim.hp, damage);
     victim.hp = Math.max(0, victim.hp - damage);
     (shooter.damageTo ??= {})[victim.slot] = (shooter.damageTo[victim.slot] ?? 0) + dealt;
