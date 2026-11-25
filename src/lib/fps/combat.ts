@@ -1,9 +1,35 @@
 import type { KnifeAttack, Player, Weapon } from "./protocol";
 export const COMBAT_VERSION = 2 as const;
 export type HitZone = "head" | "chest" | "stomach" | "legs";
-export const HIT_DAMAGE = {
-  rifle: { head: 34, chest: 34, stomach: 30, legs: 20 },
+/**
+ * The side rifles' damage, CS:GO's (2026-11-25, owner: "A tier: AK/M4/AWP - B tier: Shotgun/
+ * MP5/Hunt rifle - C tier Desert eagle. balanced damage should be like CS:GO … check with
+ * kevlar and no kevlar"). Weapon scripts (dmarket.com "Damage in CS2", community tables):
+ * AK-47 36 with 77.5 % armour penetration, M4A1-S 38 with 70 %; head ×4, stomach ×1.25, legs
+ * ×0.75 (truncated). There are no helmets here, so any rifle headshot kills, as in CS against a
+ * bare head; the vest covers chest and stomach. Both kill in 3 chest hits unarmoured and 4
+ * through kevlar (AK 27, M4 26 a hit); the AK hits harder through the vest, the M4 harder
+ * without one, and the halftime side swap gives each player both.
+ *
+ * (Until 2026-11-25 both fired one 34 / 34 / 30 / 20 table, head = chest: three headshots.)
+ */
+export const RIFLES = {
+  ak47: {
+    name: "AK-47",
+    damage: { head: 144, chest: 36, stomach: 45, legs: 27 },
+    base: 36,
+    armorPenetration: 0.775,
+  },
+  m4a1s: {
+    name: "M4A1-S",
+    damage: { head: 152, chest: 38, stomach: 47, legs: 28 },
+    base: 38,
+    armorPenetration: 0.7,
+  },
 } as const;
+export type SideRifleId = keyof typeof RIFLES;
+/** The rifle a side carries: Police (A) the M4A1-S, Terrorist (B) the AK-47. */
+export const sideRifle = (side: "A" | "B"): SideRifleId => (side === "A" ? "m4a1s" : "ak47");
 
 /**
  * Karambit (secondary slot; it replaced the pistol). Server-authoritative: the server alone
@@ -78,8 +104,8 @@ export function isBackstab(
 }
 /**
  * Side rifles: the Police side (A) carries the suppressed M4A1-S, the Terrorist side (B) the
- * AK-47 (sides swap at halftime; see sides.ts). Both use the
- * one `rifle` damage table, fire rate, magazine, recoil pattern and vest rule above.
+ * AK-47 (sides swap at halftime; see sides.ts). They share the fire rate, magazine, recoil
+ * pattern and vest rule; since 2026-11-25 each has CS:GO's own damage (RIFLES above).
  *
  * Balance (2026-11-01): in CS2 the AK-47 (36 dmg, 77.5% armour penetration, ×4 head, 30
  * rounds) and M4A1-S (38 dmg, 70% penetration, ×3.475 head, 20 rounds, more accurate, quieter)
@@ -87,19 +113,25 @@ export function isBackstab(
  * 100 / 125 / 150 HP); CS balances the rest through price, economy and map. A 1v1 duel has none
  * of those levers (halftime only splits the rounds evenly): porting CS's per-bullet ratios to this table (36/36/32/21 at
  * 70%) changes the hits-to-kill of 154 of 1,064 hit sequences, almost all in the M4's favour
- * (tests/fps-weapon-balance.test.ts). So the M4 is identical in damage, and only its
- * presentation (model, suppressed report, casings, reloads) differs.
+ * (tests/fps-weapon-balance.test.ts). So the M4 was identical in damage, and only its
+ * presentation (model, suppressed report, casings, reloads) differed. Superseded 2026-11-25 by
+ * the owner's request for CS:GO's numbers: the halftime swap evens the sides out.
  */
-export const SIDE_RIFLE = { A: "M4A1-S", B: "AK-47" } as const;
+export const SIDE_RIFLE = { A: RIFLES.m4a1s.name, B: RIFLES.ak47.name } as const;
 
-/** CS-style vest penetration, applied to this game's existing damage tuning.
- * Headshots take three hits at full health; legs bypass the vest. */
-export function applyVestDamage(target: Player, weapon: "rifle", zone: HitZone): number {
-  const base = HIT_DAMAGE[weapon][zone];
-  if (zone === "head" || zone === "legs" || !(target.armor! > 0)) return base;
-  const blocked = Math.min(base * (1 - 0.775), target.armor! * 2);
+/**
+ * A side rifle's hit through the target's vest, CS's rule: the vest takes the share the armour
+ * penetration leaves of the unrounded hit-group damage (chest and stomach; head and legs are
+ * not covered here), at most twice the armour left, and wears by half of what it stopped.
+ */
+export function applyVestDamage(target: Player, rifle: SideRifleId, zone: HitZone): number {
+  const gun = RIFLES[rifle];
+  const full = gun.damage[zone];
+  if (zone === "head" || zone === "legs" || !(target.armor! > 0)) return full;
+  const raw = gun.base * (zone === "stomach" ? 1.25 : 1);
+  const blocked = Math.min(raw * (1 - gun.armorPenetration), target.armor! * 2);
   target.armor = Math.max(0, target.armor! - blocked / 2);
-  return Math.floor(base - blocked);
+  return Math.floor(raw - blocked + 1e-9);
 }
 /** Original, learnable angular pattern: initial climb, then alternating lateral sweeps.
  * Inspired by CS:GO's tap/burst/spray distinction; these are this game's tuning values. */

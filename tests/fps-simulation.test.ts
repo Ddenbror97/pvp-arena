@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HIT_DAMAGE } from "../src/lib/fps/combat";
+import { RIFLES } from "../src/lib/fps/combat";
 import { ARENA, BOXES, EYE_HEIGHT, PLAYER_RADIUS, SPAWNS } from "../src/lib/fps/map";
 import {
   COUNTDOWN_MS,
@@ -62,7 +62,8 @@ describe("visible character combat envelope", () => {
       B: input({ seq: 1, crouch: crouched, yaw: Math.PI }),
     });
     expect(state.events.some((event) => event.type === "hit" && event.seat === "A")).toBe(true);
-    expect(state.players.B.hp).toBe(100 - HIT_DAMAGE.rifle.legs);
+    // Seat A starts Police: the M4A1-S (legs are not covered by the vest).
+    expect(state.players.B.hp).toBe(100 - RIFLES.m4a1s.damage.legs);
   });
   it("a crouched player's old standing head position is not a hit", () => {
     const state = live();
@@ -192,17 +193,8 @@ describe("combat", () => {
   it("hits heads from eye height and awards kills, score and headshots", () => {
     const state = live();
     lane(state);
+    // One rifle headshot kills (CS:GO ×4, no helmets: 2026-11-25).
     tick(state, { A: input({ fire: true }) });
-    expect(state.players.B.hp).toBe(66);
-    for (let seq = 1; seq <= 8; seq++)
-      tick(state, {
-        A: input({
-          seq,
-          fire: true,
-          pitch: -(state.players.A.recoilPitch ?? 0),
-          yaw: -(state.players.A.recoilYaw ?? 0),
-        }),
-      });
     expect(state.players.B.hp).toBe(0);
     expect(state.players.A.kills).toBe(1);
     expect(state.players.A.headshots).toBe(1);
@@ -225,7 +217,8 @@ describe("combat", () => {
     const state = live();
     lane(state);
     tick(state, { A: input({ fire: true, pitch: Math.atan2(-0.8, 6) }) });
-    expect(state.players.B.hp).toBe(77);
+    // The M4A1-S's stomach hit through kevlar: 47.5 less 30 % = 33.
+    expect(state.players.B.hp).toBe(67);
     expect(state.events.some((e) => e.type === "hit")).toBe(true);
     expect(state.players.A.headshots).toBe(0);
   });
@@ -382,36 +375,16 @@ describe("match lifecycle", () => {
   });
 });
 describe("round recap and automatic three-second break", () => {
-  it("counts actual fired bullets and all three head hits with damage capped at remaining health", () => {
+  it("counts the fired bullet and its head hit with damage capped at remaining health", () => {
     const state = live();
     lane(state);
     tick(state, { A: input({ fire: true }) });
-    expect(state.lastRound).toBeUndefined();
-    expect(state.server?.roundStats?.A).toMatchObject({
-      shots: 1,
-      hits: 1,
-      headHits: 1,
-      damage: 34,
-    });
-    const a = state.players.A;
-    stepMatch(
-      state,
-      { A: input({ seq: 1, fire: true, yaw: -(a.recoilYaw ?? 0), pitch: -(a.recoilPitch ?? 0) }) },
-      state.server!.lastStepAt + 140,
-      TICK_MS,
-    );
-    expect(state.lastRound).toBeUndefined();
-    stepMatch(
-      state,
-      { A: input({ seq: 2, fire: true, yaw: -(a.recoilYaw ?? 0), pitch: -(a.recoilPitch ?? 0) }) },
-      state.server!.lastStepAt + 140,
-      TICK_MS,
-    );
+    // One headshot (152) ends the round; the recap counts 100, the health it took.
     expect(state.lastRound).toMatchObject({
       round: 1,
       winner: "A",
       players: {
-        A: { shots: 3, hits: 3, headHits: 3, damage: 100, health: 100 },
+        A: { shots: 1, hits: 1, headHits: 1, damage: 100, health: 100 },
         B: { shots: 0, hits: 0, health: 0 },
       },
     });

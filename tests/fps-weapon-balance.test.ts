@@ -1,11 +1,28 @@
 import { describe, expect, it } from "vitest";
 import { createMatch, startMatch, stepMatch, TICK_MS } from "../src/lib/fps/simulation";
-import { HIT_DAMAGE, SIDE_RIFLE, type HitZone } from "../src/lib/fps/combat";
-import type { Input, Seat } from "../src/lib/fps/protocol";
+import {
+  RIFLES,
+  SIDE_RIFLE,
+  applyVestDamage,
+  type HitZone,
+  type SideRifleId,
+} from "../src/lib/fps/combat";
+import {
+  AWP,
+  HUNTING,
+  MP5,
+  SPAS12,
+  awpDamage,
+  spas12PelletDamage,
+  vestDamage,
+} from "../src/lib/fps/primary";
+import { DEAGLE } from "../src/lib/fps/sidearm";
+import type { Input, Player, Seat } from "../src/lib/fps/protocol";
 
 /**
- * Police M4A1-S vs Terrorist AK-47 balance. Both sides fire the same server `rifle`; these
- * tests pin that down and record why CS2's per-bullet M4A1-S numbers were not ported.
+ * 1v1/5v5 weapon balance (2026-11-25, owner: "A tier: AK/M4/AWP - B tier: Shotgun/MP5/Hunt
+ * rifle - C tier Desert eagle. balanced damage should be like CS:GO … check with kevlar and no
+ * kevlar"). Every gun uses CS:GO's per-bullet damage and armour penetration (no helmets here).
  */
 const fire = (seq: number, yaw: number, pitch: number): Input => ({
   v: 1,
@@ -42,12 +59,12 @@ function shot(shooter: Seat, height: number, armor: number) {
   return 100 - s.players[target].hp;
 }
 
-describe("Police M4A1-S and Terrorist AK-47 are balanced", () => {
+describe("Police M4A1-S and Terrorist AK-47 (CS:GO tables)", () => {
   it("names the side rifles", () => {
     expect(SIDE_RIFLE).toEqual({ A: "M4A1-S", B: "AK-47" });
   });
 
-  it("deals identical damage per hit zone from either seat, with and without a vest", () => {
+  it("fires each side's own CS:GO damage from either seat, with and without a vest", () => {
     for (const [zone, height] of [
       ["head", 1.62],
       ["chest", 1.2],
@@ -55,55 +72,99 @@ describe("Police M4A1-S and Terrorist AK-47 are balanced", () => {
       ["legs", 0.3],
     ] as const)
       for (const armor of [0, 100]) {
-        const police = shot("A", height, armor),
-          terrorist = shot("B", height, armor);
-        expect(police, `${zone} armor ${armor}`).toBeGreaterThan(0);
-        expect(police, `${zone} armor ${armor}`).toBe(terrorist);
+        // Round 1: seat A is Police (M4A1-S), seat B Terrorist (AK-47).
+        const expected = (rifle: SideRifleId) =>
+          Math.min(100, applyVestDamage({ armor } as Player, rifle, zone));
+        expect(shot("A", height, armor), `${zone} armor ${armor}`).toBe(expected("m4a1s"));
+        expect(shot("B", height, armor), `${zone} armor ${armor}`).toBe(expected("ak47"));
       }
   });
 
-  it("CS2's per-bullet M4A1-S ratios would break parity in this damage model", () => {
-    // Same vest rule as applyVestDamage, parameterised by armour penetration.
-    const vest = (t: Record<HitZone, number>, ap: number, armor: number, zone: HitZone) => {
-      const base = t[zone];
-      if (zone === "head" || zone === "legs" || armor <= 0) return [base, armor] as const;
-      const blocked = Math.min(base * (1 - ap), armor * 2);
-      return [Math.floor(base - blocked), Math.max(0, armor - blocked / 2)] as const;
-    };
-    const kills = (t: Record<HitZone, number>, ap: number, seq: HitZone[], armor0: number) => {
-      let hp = 100,
-        armor = armor0;
-      for (let i = 0; i < seq.length; i++) {
-        const [d, a] = vest(t, ap, armor, seq[i]!);
-        hp -= d;
-        armor = a;
-        if (hp <= 0) return i + 1;
-      }
-      return null;
-    };
-    const ak = HIT_DAMAGE.rifle;
-    // 38 / 36 damage at 70% penetration, as in CS2.
-    const ported = { head: 36, chest: 36, stomach: 32, legs: 21 };
-    const zones: HitZone[] = ["head", "chest", "stomach", "legs"];
-    let sequences = 0,
-      differ = 0,
-      m4Faster = 0;
-    const walk = (seq: HitZone[]) => {
-      for (const armor of [0, 100]) {
-        const a = kills(ak, 0.775, seq, armor),
-          m = kills(ported, 0.7, seq, armor);
-        if (seq.length > 1 && kills(ak, 0.775, seq.slice(0, -1), armor) !== null) continue;
-        sequences++;
-        if (a !== m) {
-          differ++;
-          if (m !== null && (a === null || m < a)) m4Faster++;
+  it("the two rifles kill in the same chest hits, with kevlar and without", () => {
+    for (const armor of [0, 100]) {
+      const toKill = (rifle: SideRifleId) => {
+        const t = { armor } as Player;
+        let hp = 100,
+          n = 0;
+        while (hp > 0) {
+          hp -= applyVestDamage(t, rifle, "chest");
+          n++;
         }
-      }
-      if (seq.length < 7) for (const z of zones) walk([...seq, z]);
-    };
-    for (const z of zones) walk([z]);
-    expect(sequences).toBe(1064);
-    expect(differ).toBe(154);
-    expect(m4Faster).toBeGreaterThan(differ / 2);
+        return n;
+      };
+      expect(toKill("ak47")).toBe(toKill("m4a1s"));
+      expect(toKill("ak47")).toBe(armor ? 4 : 3);
+    }
+    expect(RIFLES.ak47).toMatchObject({ base: 36, armorPenetration: 0.775 });
+    expect(RIFLES.m4a1s).toMatchObject({ base: 38, armorPenetration: 0.7 });
+  });
+});
+
+/** Hits to kill from full health with one hit zone, the vest wearing as it goes. */
+function toKill(hit: (t: Player, z: HitZone) => number, zone: HitZone, armor: number) {
+  const t = { armor } as Player;
+  let hp = 100,
+    n = 0;
+  while (hp > 0 && n < 20) {
+    hp -= hit(t, zone);
+    n++;
+  }
+  return n;
+}
+const GUNS = {
+  ak47: (t: Player, z: HitZone) => applyVestDamage(t, "ak47", z),
+  m4a1s: (t: Player, z: HitZone) => applyVestDamage(t, "m4a1s", z),
+  awp: awpDamage,
+  hunting: (t: Player, z: HitZone) => vestDamage(t, z, HUNTING),
+  mp5: (t: Player, z: HitZone) => vestDamage(t, z, MP5),
+  spas12: (t: Player, z: HitZone) => {
+    let d = 0;
+    for (let i = 0; i < SPAS12.pellets.count; i++) d += spas12PelletDamage(t, z, 2);
+    return d;
+  },
+  deagle: (t: Player, z: HitZone) => vestDamage(t, z, DEAGLE),
+};
+/** Time to kill on the chest (ms): (hits − 1) × the gun's cycle. */
+const CYCLE = {
+  ak47: 100,
+  m4a1s: 100,
+  awp: AWP.cycleMs,
+  hunting: HUNTING.cycleMs,
+  mp5: MP5.cycleMs,
+  spas12: SPAS12.cycleMs,
+  deagle: DEAGLE.cycleMs,
+};
+const ttk = (gun: keyof typeof GUNS, armor: number) =>
+  (toKill(GUNS[gun], "chest", armor) - 1) * CYCLE[gun];
+
+describe("tiers: A AK/M4/AWP, B SPAS-12/MP5/Hunting Rifle, C Desert Eagle", () => {
+  it("hits to kill, CS:GO, without and with kevlar (no helmets: every headshot kills)", () => {
+    const table = Object.fromEntries(
+      Object.entries(GUNS).map(([id, hit]) => [
+        id,
+        (["head", "chest", "stomach", "legs"] as HitZone[]).map(
+          (z) => `${toKill(hit, z, 0)}/${toKill(hit, z, 100)}`,
+        ),
+      ]),
+    );
+    expect(table).toEqual({
+      ak47: ["1/1", "3/4", "3/3", "4/4"],
+      m4a1s: ["1/1", "3/4", "3/4", "4/4"],
+      awp: ["1/1", "1/1", "1/1", "2/2"],
+      hunting: ["1/1", "2/2", "1/2", "2/2"],
+      mp5: ["1/1", "4/6", "3/5", "5/5"],
+      spas12: ["1/1", "1/2", "1/1", "2/2"],
+      deagle: ["1/1", "2/3", "2/2", "3/3"],
+    });
+  });
+  it("through kevlar the A-tier automatics kill faster than the B tier's and the Deagle", () => {
+    for (const a of ["ak47", "m4a1s"] as const) {
+      expect(ttk(a, 100)).toBeLessThan(ttk("mp5", 100));
+      expect(ttk(a, 100)).toBeLessThan(ttk("deagle", 100));
+      expect(ttk(a, 100)).toBeLessThan(ttk("hunting", 100));
+    }
+    // The AWP: one body shot through kevlar; the Hunting Rifle needs two.
+    expect(toKill(GUNS.awp, "chest", 100)).toBe(1);
+    expect(toKill(GUNS.hunting, "chest", 100)).toBe(2);
   });
 });

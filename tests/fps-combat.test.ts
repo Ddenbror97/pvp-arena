@@ -9,7 +9,7 @@ import {
   type MatchState,
 } from "../src/lib/fps/simulation";
 import {
-  HIT_DAMAGE,
+  RIFLES,
   applyVestDamage,
   recoveryProfile,
   sprayOffset,
@@ -65,22 +65,17 @@ function spray(compensate = false) {
   return { s, ys };
 }
 describe("PvPStrike authoritative combat v2", () => {
-  it.each(["rifle"] as const)("requires exactly three landed %s headshots", (weapon) => {
-    const s = live();
-    lane(s);
-    tick(s, 1, { fire: true, weapon });
-    expect(s.players.B.hp).toBe(66);
-    expect(s.score.A).toBe(0);
-    for (let n = 2; n <= 11; n++) tick(s, n, { weapon });
-    tick(s, 12, { fire: true, weapon });
-    expect(s.players.B.hp).toBe(32);
-    expect(s.score.A).toBe(0);
-    for (let n = 13; n <= 23; n++) tick(s, n, { weapon });
-    tick(s, 24, { fire: true, weapon });
-    expect(s.players.B.hp).toBe(0);
-    expect(s.score.A).toBe(1);
-    expect(s.players.A.headshots).toBe(1);
-  });
+  it.each(["rifle"] as const)(
+    "kills with one landed %s headshot (CS:GO ×4, no helmets)",
+    (weapon) => {
+      const s = live();
+      lane(s);
+      tick(s, 1, { fire: true, weapon });
+      expect(s.players.B.hp).toBe(0);
+      expect(s.score.A).toBe(1);
+      expect(s.players.A.headshots).toBe(1);
+    },
+  );
   for (const crouched of [false, true])
     for (const zone of ["head", "chest", "stomach", "legs"] as const)
       it(`uses the ${crouched ? "crouched" : "standing"} ${zone} damage zone`, () => {
@@ -89,8 +84,9 @@ describe("PvPStrike authoritative combat v2", () => {
         s.players.B.crouched = crouched;
         const target = combatVolumes(s.players.B)[zone];
         tick(s, 1, { fire: true, pitch: Math.atan2(target.center.y - 1.6, 6) });
-        const damage = applyVestDamage({ ...s.players.B, armor: 100 }, "rifle", zone);
-        expect(s.players.B.hp).toBe(100 - damage);
+        // Seat A starts on the Police side: the M4A1-S.
+        const damage = applyVestDamage({ ...s.players.B, armor: 100 }, "m4a1s", zone);
+        expect(s.players.B.hp).toBe(Math.max(0, 100 - damage));
         expect(s.events.find((e) => e.hit)?.hit).toMatchObject({
           zone,
           damage,
@@ -111,7 +107,7 @@ describe("PvPStrike authoritative combat v2", () => {
     lane(s);
     const volume = combatVolumes(s.players.B).chest;
     tick(s, 1, { fire: true, pitch: Math.atan2(volume.center.y - 1.6, 6) });
-    expect(s.players.B.hp).toBe(100 - HIT_DAMAGE.rifle.chest);
+    expect(s.players.B.hp).toBe(100 - RIFLES.m4a1s.damage.chest);
     const modern = live();
     modern.players.A.armor = 2;
     modern.phase = "round-end";
@@ -121,15 +117,21 @@ describe("PvPStrike authoritative combat v2", () => {
     expect(modern.players.B.armor).toBe(100);
   });
   it("reduces torso damage, consumes finite kevlar, and leaves head and legs unprotected", () => {
+    // CS:GO: AK-47 36 at 77.5 % penetration, M4A1-S 38 at 70 %; head ×4, stomach ×1.25.
+    const ak = live().players.B;
+    expect(applyVestDamage(ak, "ak47", "chest")).toBe(27);
+    expect(applyVestDamage(ak, "ak47", "stomach")).toBe(34);
+    expect(applyVestDamage(ak, "ak47", "head")).toBe(144);
+    expect(applyVestDamage(ak, "ak47", "legs")).toBe(27);
     const p = live().players.B;
-    expect(applyVestDamage(p, "rifle", "chest")).toBe(26);
-    expect(applyVestDamage(p, "rifle", "stomach")).toBe(23);
-    expect(applyVestDamage(p, "rifle", "head")).toBe(34);
-    expect(applyVestDamage(p, "rifle", "legs")).toBe(20);
+    expect(applyVestDamage(p, "m4a1s", "chest")).toBe(26);
+    expect(applyVestDamage(p, "m4a1s", "stomach")).toBe(33);
+    expect(applyVestDamage(p, "m4a1s", "head")).toBe(152);
+    expect(applyVestDamage(p, "m4a1s", "legs")).toBe(28);
     p.armor = 1;
-    expect(applyVestDamage(p, "rifle", "chest")).toBe(32);
+    expect(applyVestDamage(p, "m4a1s", "chest")).toBe(36);
     expect(p.armor).toBe(0);
-    expect(applyVestDamage(p, "rifle", "chest")).toBe(34);
+    expect(applyVestDamage(p, "m4a1s", "chest")).toBe(38);
   });
   it("sprays a learnable rising and alternating horizontal pattern", () => {
     const pattern = Array.from({ length: 30 }, (_, n) => sprayOffset("rifle", n + 1));

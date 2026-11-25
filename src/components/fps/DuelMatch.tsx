@@ -17,7 +17,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Volume2, VolumeX, Copy, Crosshair, Skull } from "lucide-react";
 import { createCombatAudio, type CombatAudio } from "@/lib/fps/audio";
-import { SIDE_RIFLE } from "@/lib/fps/combat";
+import { RIFLES, SIDE_RIFLE, applyVestDamage, sideRifle } from "@/lib/fps/combat";
 import { soundMuted, subscribeSound, toggleSoundMuted } from "@/lib/sound";
 import { useAuth } from "@/lib/auth";
 import { duelAdmission, duelAction } from "@/lib/fps/duel.functions";
@@ -1083,8 +1083,21 @@ export function DuelMatch({
               {frame && (frame.state.combatVersion ?? 1) !== 2
                 ? "Earlier combat rules retained for this match."
                 : frame?.state.armorVersion === 1
-                  ? `${SIDE_RIFLE[mySide]} · Full auto · Kevlar: Chest 26 · Stomach 23 · Head 34 · Legs 20`
-                  : `${SIDE_RIFLE[mySide]}: full auto · Head 34 · Chest 34 · Stomach 30 · Legs 20`}
+                  ? (() => {
+                      const rifle = sideRifle(mySide);
+                      const vest = (zone: "chest" | "stomach") =>
+                        applyVestDamage(
+                          { armor: 100 } as Parameters<typeof applyVestDamage>[0],
+                          rifle,
+                          zone,
+                        );
+                      const d = RIFLES[rifle].damage;
+                      return `${SIDE_RIFLE[mySide]} · Full auto · Kevlar: Chest ${vest("chest")} · Stomach ${vest("stomach")} · Head ${d.head} · Legs ${d.legs}`;
+                    })()
+                  : (() => {
+                      const d = RIFLES[sideRifle(mySide)].damage;
+                      return `${SIDE_RIFLE[mySide]}: full auto · Head ${d.head} · Chest ${d.chest} · Stomach ${d.stomach} · Legs ${d.legs}`;
+                    })()}
               <br />
               Tap or burst to reset; pull down, then counter the sideways spray.
             </p>
