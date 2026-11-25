@@ -704,22 +704,28 @@ export function createBrArena(
   // lights on Intel UHD (owner), and in the air the GPU has room for the pass (the plane and
   // the canopy drew in 9–12 ms there, against 15–22 ms on the ground).
   // On foot too (2026-11-24, owner: the airfield's apron from eye height "blurry and flicker"):
-  // from STEADY.foot.near metres on, only the shimmer, run before the weapon pass. Not on the
-  // low tier on foot, where the GPU has no room for it (15–22 ms on the ground).
+  // from STEADY.foot.near metres on, only the shimmer, run before the weapon pass.
+  // The low tier runs the cheaper pass (STEADY_LITE), on foot too since the release audit
+  // (2026-11-24, Intel UHD at 720p): the full pass cost 1.6–2.4 ms there, the lite one 0.5–0.8
+  // ms, and it held the buildings' flicker as well (Bauhaus facade −79 %, the ruins −89 %; the
+  // ground's FXAA picture as before). One variant in the air and on foot: no shader to compile
+  // as you land.
   const steadyOn = !!sceneTarget && steadyWanted();
+  const steadyLite = tier.tier === "low";
   let steadyNow = 0;
   const steadyArgs = (aloft: boolean, dtMs: number): SteadyArgs | null => {
     if (!steadyOn) return null;
-    const to = aloft || tier.tier !== "low" ? STEADY.strength : 0;
+    const to = STEADY.strength;
     steadyNow += (to - steadyNow) * Math.min(1, dtMs / 250);
     if (Math.abs(to - steadyNow) < 0.01) steadyNow = to;
     if (steadyNow <= 0) return null;
     return aloft
-      ? { camera, strength: steadyNow }
+      ? { camera, strength: steadyNow, lite: steadyLite }
       : {
           camera,
           strength: steadyNow,
           ...STEADY.foot,
+          lite: steadyLite,
         };
   };
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
