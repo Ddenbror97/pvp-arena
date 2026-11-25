@@ -2246,6 +2246,21 @@ export function createCharacter(
         bones.get("RightArm")!.rotation.z -= collapse * 0.08;
         root.updateWorldMatrix(true, true);
       }
+      // The whole-body clips above (ladder, rope, rappel, swim) move the chest after the guns
+      // on the back were placed on it: place them again on the chest as it now is (owner,
+      // 2026-11-25: the guns sat wrong on the back going down a wall on the rope).
+      if (
+        alive &&
+        motion.back &&
+        motion.death === undefined &&
+        ((climbing && ladderRig) ||
+          (roping && ropeRig) ||
+          (rappelling && rappelRig) ||
+          (swimming && swimRig))
+      ) {
+        root.updateWorldMatrix(true, true);
+        placeCarried(motion, empty || holdingKnife || holdingNade ? null : held, 0);
+      }
       headCenter.setFromMatrixPosition(bones.get("Head")!.matrixWorld);
       topCenter.setFromMatrixPosition(bones.get("HeadTop_End")!.matrixWorld);
       headCenter.lerp(topCenter, 0.5);

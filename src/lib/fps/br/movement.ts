@@ -260,6 +260,12 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
       if (left < ASSIST_STEP / 2) break;
       const lean = axis === "x" ? dz : dx;
       const sides = lean < 0 ? [-1, 1] : [1, -1];
+      // Sliding along a wall (the move slants into it): only the way the body already goes.
+      // The other side is backward along the wall, and taking it whenever the forward side was
+      // shut (a pilaster, a frame, a corner) made the body jerk back and forth against walls
+      // (owner, 2026-11-25: lag running close to walls and edges inside buildings). Met
+      // nearly head-on (a doorway off-centre) either side may still free the way.
+      const tries = Math.abs(lean) > Math.abs(delta) * 0.25 ? 1 : 2;
       const shifted = (o: number) =>
         axis === "x" ? ([p.x, clampEdge(p.z + o)] as const) : ([clampEdge(p.x + o), p.z] as const);
       const ahead = (x: number, z: number) =>
@@ -269,10 +275,10 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
       let done = false;
       for (
         let s = ASSIST_STEP;
-        s <= ASSIST + 1e-9 && !done && (open[0] || open[1]);
+        s <= ASSIST + 1e-9 && !done && (open[0] || (tries > 1 && open[1]));
         s += ASSIST_STEP
       )
-        for (let k = 0; k < 2; k++) {
+        for (let k = 0; k < tries; k++) {
           if (!open[k]) continue;
           const side = sides[k]!;
           const [sx, sz] = shifted(s * side);
