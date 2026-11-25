@@ -16,6 +16,10 @@ import type { SeatedPose } from "./vehicle-renderer";
  *   speed), the wheels roll with the ground speed and the nose wheel steers with the rudder.
  * - Damage: smoke from the cowling once damaged, thicker and with flames once critical; a wreck
  *   sits dark and burns for a while.
+ * - The engine's own smoke (owner, 2026-11-25: "add some smoke while driving the airplane at
+ *   the propeller"): a light exhaust haze from under the cowling and around the spinner while
+ *   the engine runs, blown back by the propeller wash and left in the air behind; more with
+ *   power, a darker cough as the starter catches, fainter at cruise speed.
  */
 const MODEL = "fps/br/models/plane-c172";
 /** Hinges and axles in the model's frame (art/br/plane-c172.json "parts"). */
@@ -151,6 +155,39 @@ export function createAircraftRenderer(scene: THREE.Scene, loader: GLTFLoader, b
   }
   let nextPuff = 0,
     emitAcc = 0;
+
+  // The engine's exhaust and propeller-wash haze: its own pool (pale, never flames).
+  type Haze = {
+    s: THREE.Sprite;
+    life: number;
+    age: number;
+    vel: THREE.Vector3;
+    size: number;
+    dark: number;
+  };
+  const haze: Haze[] = [];
+  for (let i = 0; i < 64; i++) {
+    const s = new THREE.Sprite(
+      new THREE.SpriteMaterial({
+        map: puffTex,
+        color: 0xc4c4bf,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+      }),
+    );
+    s.visible = false;
+    fx.add(s);
+    haze.push({ s, life: 1, age: 1, vel: new THREE.Vector3(), size: 1, dark: 0 });
+  }
+  let nextHaze = 0,
+    hazeAcc = 0,
+    hazeLast: THREE.Vector3 | null = null;
+  /** Where the haze leaves the cowling (model frame): the exhaust under it, the spinner's ring. */
+  const EXHAUST = [0.2, -0.42, -1.55] as const;
+  const SPINNER = [PIVOTS.prop[0], PIVOTS.prop[1], PIVOTS.prop[2] + 0.35] as const;
+  const hp = new THREE.Vector3(),
+    hb = new THREE.Vector3();
   const emit = (at: THREE.Vector3, fire: boolean, vx: number, vz: number) => {
     const p = puffs[nextPuff]!;
     nextPuff = (nextPuff + 1) % puffs.length;
@@ -185,6 +222,8 @@ export function createAircraftRenderer(scene: THREE.Scene, loader: GLTFLoader, b
       const dt = Math.min(0.1, dtMs / 1000);
       if (!a) {
         root.visible = false;
+        for (const h of haze) h.s.visible = false;
+        hazeLast = null;
         return;
       }
       root.position.set(a.x, a.y, a.z);
@@ -253,6 +292,82 @@ export function createAircraftRenderer(scene: THREE.Scene, loader: GLTFLoader, b
           emitAcc -= 1;
           emit(smokeAt, burning && Math.random() < 0.45, a.vx, a.vz);
         }
+      }
+      // The engine's haze: on while it runs (or catches), more with power, fainter when fast.
+      const engineOn = a.engine === "running" || a.engine === "starting";
+      if (engineOn && !a.destroyed && !a.wet && d < 700) {
+        q.set(a.qx, a.qy, a.qz, a.qw);
+        const catching = a.engine === "starting";
+        const power = catching ? 1 : Math.max(0, Math.min(1, (a.rpm - 0.2) / 0.8));
+        const speed = Math.hypot(a.vx, a.vy, a.vz);
+        const rate = catching ? 34 : 7 + 26 * power * (0.4 + 0.6 * a.throttle);
+        // Backward along the body (+z in the model), the propeller's wash speed.
+        hb.set(0, 0, 1).applyQuaternion(q);
+        const wash = 5 + 12 * power;
+        const here = hp
+          .set(SPINNER[0], SPINNER[1], SPINNER[2])
+          .applyQuaternion(q)
+          .add(root.position);
+        const from = hazeLast ?? here.clone();
+        hazeAcc += dt * rate;
+        const n = Math.floor(hazeAcc);
+        hazeAcc -= n;
+        for (let i = 0; i < n; i++) {
+          const h = haze[nextHaze]!;
+          nextHaze = (nextHaze + 1) % haze.length;
+          // Spread along this frame's path (an even trail at speed), from the exhaust under
+          // the cowling or a point on the ring around the spinner.
+          const f = (i + Math.random()) / n;
+          let ox: number, oy: number, oz: number;
+          if (Math.random() < 0.45) [ox, oy, oz] = EXHAUST;
+          else {
+            const ang = Math.random() * Math.PI * 2;
+            ox = SPINNER[0] + Math.cos(ang) * 0.42;
+            oy = SPINNER[1] + Math.sin(ang) * 0.36;
+            oz = SPINNER[2];
+          }
+          h.s.position
+            .set(ox, oy, oz)
+            .applyQuaternion(q)
+            .add(root.position)
+            .add(
+              v
+                .copy(from)
+                .sub(here)
+                .multiplyScalar(1 - f),
+            );
+          h.vel
+            .set(a.vx, a.vy, a.vz)
+            .addScaledVector(hb, wash * (0.7 + Math.random() * 0.6))
+            .add(v.set(Math.random() - 0.5, Math.random() * 0.5, Math.random() - 0.5));
+          h.life = catching ? 1.6 + Math.random() * 0.8 : 1.1 + Math.random() * 0.9;
+          h.age = 0;
+          h.size = (catching ? 1.4 : 1) * (0.9 + Math.random() * 0.4);
+          // Dense at the start and on the ground; a faint wisp at cruise.
+          h.dark = (catching ? 0.42 : 0.2 + 0.1 * power) * (1 - 0.55 * Math.min(1, speed / 45));
+          (h.s.material as THREE.SpriteMaterial).color.setHex(catching ? 0x8a8a86 : 0xc4c4bf);
+          h.s.visible = true;
+        }
+        hazeLast = (hazeLast ?? new THREE.Vector3()).copy(here);
+      } else hazeLast = null;
+      for (const h of haze) {
+        if (!h.s.visible) continue;
+        h.age += dt;
+        if (h.age >= h.life) {
+          h.s.visible = false;
+          continue;
+        }
+        const k = h.age / h.life;
+        // The air stops it quickly (it was carried with the aircraft): then it drifts up.
+        h.vel.multiplyScalar(Math.exp(-dt / 0.3));
+        h.vel.y += 0.6 * dt;
+        h.s.position.addScaledVector(h.vel, dt);
+        const size = h.size * (0.35 + k * 2.4);
+        h.s.scale.set(size, size, size);
+        // Thin out as it spreads; never a wall of grey in front of the chase camera.
+        const near = Math.max(0, Math.min(1, (h.s.position.distanceTo(camera) - 1.5) / 4));
+        (h.s.material as THREE.SpriteMaterial).opacity =
+          h.dark * Math.min(1, k * 8) * (1 - k) ** 1.3 * near;
       }
       for (const p of puffs) {
         if (!p.s.visible) continue;

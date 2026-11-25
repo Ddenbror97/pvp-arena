@@ -121,6 +121,43 @@ function spin(a: Aircraft, s: number) {
   a.qw /= n;
 }
 
+/**
+ * Between two ticks of one motion, `t` (0 … 1) of the way, with the rates continuous: each end
+ * carried toward the other by its own velocity and angular velocity, blended by smoothstep. At
+ * either tick the drawn motion leaves with that tick's rates, so the roll rate has no corner
+ * at every tick (a plain slerp turns at constant rate within a tick and steps at the next).
+ */
+function blendAircraft(a: Aircraft, b: Aircraft, t: number, into: Aircraft, tmp: Aircraft) {
+  const T = TICK / 1000;
+  Object.assign(into, a);
+  into.x += a.vx * T * t;
+  into.y += a.vy * T * t;
+  into.z += a.vz * T * t;
+  spin(into, T * t);
+  Object.assign(tmp, b);
+  tmp.x -= b.vx * T * (1 - t);
+  tmp.y -= b.vy * T * (1 - t);
+  tmp.z -= b.vz * T * (1 - t);
+  spin(tmp, -T * (1 - t));
+  const from = { ...into };
+  lerpAircraft(from, tmp, t * t * (3 - 2 * t), into);
+  // The rest (levers, rpm, rates) plainly between the two ticks.
+  const l = (x: number, y: number) => x + (y - x) * t;
+  into.vx = l(a.vx, b.vx);
+  into.vy = l(a.vy, b.vy);
+  into.vz = l(a.vz, b.vz);
+  into.wx = l(a.wx, b.wx);
+  into.wy = l(a.wy, b.wy);
+  into.wz = l(a.wz, b.wz);
+  into.rpm = l(a.rpm, b.rpm);
+  into.elev = l(a.elev, b.elev);
+  into.ail = l(a.ail, b.ail);
+  into.rud = l(a.rud, b.rud);
+  into.flap = l(a.flap, b.flap);
+  into.throttle = l(a.throttle, b.throttle);
+  return into;
+}
+
 export class AircraftClient {
   /** The server's latest aircraft (null: none in this match, or not heard of yet). */
   server: Aircraft | null = null;
@@ -134,8 +171,13 @@ export class AircraftClient {
   private samples: Sample[] = [];
   /** The pilot's levers and stick as the keys and mouse leave them. */
   readonly controls = { thr: 0, elev: 0, ail: 0, rud: 0, flaps: 0 as 0 | 1 | 2, stick: 0 };
+  /** The prediction one tick earlier: the view is drawn between it and `predicted`. */
+  private prev: Aircraft | null = null;
+  private readonly tmp = {} as Aircraft;
   /** The view's offset from the prediction's correction (fades out): position, metres. */
   private fix = { x: 0, y: 0, z: 0 };
+  /** The same for the orientation: a rotation (quaternion) applied over the drawn one. */
+  private qfix = { x: 0, y: 0, z: 0, w: 1 };
   camera = 0;
   /** Free look (Alt): the camera's yaw and pitch around the aircraft (radians). */
   look = { yaw: 0, pitch: 0, held: false };
@@ -147,6 +189,8 @@ export class AircraftClient {
   private pitchHeld = false;
   private pitchTarget = 0;
   private bankTarget = 0;
+  /** Where the mouse puts the bank; bankTarget follows it smoothly (no per-event steps). */
+  private bankAim = 0;
   private levelOnRelease = false;
 
   holdPitch(held: boolean) {
@@ -155,7 +199,7 @@ export class AircraftClient {
       this.levelOnRelease = false;
       const a = this.predicted ?? this.server;
       this.pitchTarget = a ? attitude(a).pitch : 0;
-      this.bankTarget = a ? clamp(attitude(a).bank, -Math.PI / 6, Math.PI / 6) : 0;
+      this.bankTarget = this.bankAim = a ? clamp(attitude(a).bank, -Math.PI / 6, Math.PI / 6) : 0;
     }
     if (!next && this.pitchHeld) {
       this.controls.stick = this.controls.elev = 0;
@@ -163,7 +207,7 @@ export class AircraftClient {
       this.pitchTarget = a ? clamp(attitude(a).pitch, Math.PI / 60, Math.PI / 36) : 0;
       this.levelOnRelease = true;
     }
-    if (!next) this.bankTarget = 0;
+    if (!next) this.bankAim = 0;
     this.pitchHeld = next;
   }
 
@@ -180,7 +224,7 @@ export class AircraftClient {
     if (this.seat === null) {
       this.holdPitch(false);
       this.levelOnRelease = false;
-      this.predicted = null;
+      this.predicted = this.prev = null;
       this.autoStarted = false;
     } else if (was !== this.seat && this.server) {
       this.holdPitch(false);
@@ -201,20 +245,48 @@ export class AircraftClient {
     pending: ReadonlyArray<{ input: Partial<FlightWire> & { jump?: boolean }; clock: number }>,
   ) {
     if (this.seat !== 0 || !this.server) {
-      this.predicted = null;
+      this.predicted = this.prev = null;
       return;
     }
-    const before = this.predicted ? { ...this.predicted } : null;
+    const before = this.predicted;
     const a: Aircraft = { ...this.server };
-    for (const p of pending) stepAircraft(world, meta, a, flightOf(p.input, a), p.clock, TICK);
+    const prev: Aircraft = { ...a };
+    for (const p of pending) {
+      Object.assign(prev, a);
+      stepAircraft(world, meta, a, flightOf(p.input, a), p.clock, TICK);
+    }
     if (before) {
-      // The view glides over the difference instead of jumping with it.
+      // The view glides over the difference instead of jumping with it: the position and
+      // the orientation (view = qfix ⊗ q, kept equal across the swap).
       this.fix.x += before.x - a.x;
       this.fix.y += before.y - a.y;
       this.fix.z += before.z - a.z;
       if (Math.hypot(this.fix.x, this.fix.y, this.fix.z) > 25)
         this.fix.x = this.fix.y = this.fix.z = 0;
+      // d = before ⊗ conj(a); qfix ← qfix ⊗ d.
+      const bx = before.qx,
+        by = before.qy,
+        bz = before.qz,
+        bw = before.qw;
+      const cx = -a.qx,
+        cy = -a.qy,
+        cz = -a.qz,
+        cw = a.qw;
+      const dw = bw * cw - bx * cx - by * cy - bz * cz;
+      const dx = bw * cx + bx * cw + by * cz - bz * cy;
+      const dy = bw * cy - bx * cz + by * cw + bz * cx;
+      const dz = bw * cz + bx * cy - by * cx + bz * cw;
+      const f = this.qfix;
+      const nw = f.w * dw - f.x * dx - f.y * dy - f.z * dz;
+      const nx = f.w * dx + f.x * dw + f.y * dz - f.z * dy;
+      const ny = f.w * dy - f.x * dz + f.y * dw + f.z * dx;
+      const nz = f.w * dz + f.x * dy - f.y * dx + f.z * dw;
+      const n = (nw < 0 ? -1 : 1) * (Math.hypot(nx, ny, nz, nw) || 1);
+      // More than ~30° off is a real jump (respawn, crash): take it.
+      if (Math.abs(nw / n) < 0.966) this.qfix = { x: 0, y: 0, z: 0, w: 1 };
+      else this.qfix = { x: nx / n, y: ny / n, z: nz / n, w: nw / n };
     }
+    this.prev = pending.length ? prev : { ...a };
     this.predicted = a;
   }
 
@@ -226,6 +298,8 @@ export class AircraftClient {
     clock: number,
   ) {
     if (this.seat !== 0 || !this.predicted) return;
+    if (this.prev) Object.assign(this.prev, this.predicted);
+    else this.prev = { ...this.predicted };
     stepAircraft(world, meta, this.predicted, flightOf(input, this.predicted), clock, TICK);
   }
 
@@ -241,6 +315,8 @@ export class AircraftClient {
     if (k.throttleUp) c.thr = Math.min(1, c.thr + 0.55 * dt);
     if (k.throttleDown) c.thr = Math.max(0, c.thr - 0.55 * dt);
     const roll = Number(k.rollRight) - Number(k.rollLeft);
+    // The mouse's bank arrives in steps (one per mouse event): ease the target over them.
+    this.bankTarget += (this.bankAim - this.bankTarget) * (1 - Math.exp(-dt / 0.16));
     // Mouse steering selects a modest bank. On release the wings ease back to level;
     // A/D remain a manual override. Taxiing uses the nose wheel instead of banking.
     const bankControl =
@@ -250,9 +326,12 @@ export class AircraftClient {
           : clamp((this.bankTarget - attitude(a).bank) * 2 + a.wz * 0.5, -0.65, 0.65)
         : 0;
     const ail = a?.grounded ? 0 : roll || bankControl;
-    c.ail = toward(c.ail, ail, (roll ? 3.2 : 2.2) * dt);
+    // Keys ramp the aileron at a fixed rate; the mouse's command is eased (first order, then
+    // the same rate limit) so the wings roll in and out without corners.
+    if (roll) c.ail = toward(c.ail, ail, 3.2 * dt);
+    else c.ail = toward(c.ail, c.ail + (ail - c.ail) * (1 - Math.exp(-dt / 0.09)), 2.2 * dt);
     if (roll && a && !a.grounded)
-      this.bankTarget = clamp(attitude(a).bank, -Math.PI / 6, Math.PI / 6);
+      this.bankTarget = this.bankAim = clamp(attitude(a).bank, -Math.PI / 6, Math.PI / 6);
     const yaw = Number(k.rudderRight) - Number(k.rudderLeft);
     const rud =
       yaw || (a?.grounded ? roll || clamp(this.bankTarget / (Math.PI / 6), -0.65, 0.65) : 0);
@@ -308,7 +387,7 @@ export class AircraftClient {
       // In particular, lowering the mouse a little should not abruptly request a dive.
       const a = this.predicted ?? this.server;
       const gain = dy > 0 ? 0.004 : a?.grounded ? 0.012 : 0.006;
-      this.bankTarget = clamp(this.bankTarget + dx * 0.004, -Math.PI / 6, Math.PI / 6);
+      this.bankAim = clamp(this.bankAim + dx * 0.004, -Math.PI / 6, Math.PI / 6);
       this.pitchTarget = clamp(this.pitchTarget - dy * gain, -Math.PI / 12, Math.PI / 15);
     } else {
       if (dy) this.levelOnRelease = false;
@@ -328,12 +407,12 @@ export class AircraftClient {
   sample(t: number, aheadMs: number, dtMs: number): Aircraft | null {
     const out = this.shown;
     if (this.predicted) {
-      Object.assign(out, this.predicted);
-      const s = aheadMs / 1000;
-      out.x += out.vx * s;
-      out.y += out.vy * s;
-      out.z += out.vz * s;
-      spin(out, s);
+      // Between the last two predicted ticks (one tick behind, but every frame on the same
+      // smooth path: extrapolating by the angular velocity met each new tick with a small
+      // step, a 30 Hz shimmer in the bank while steering).
+      if (this.prev)
+        blendAircraft(this.prev, this.predicted, clamp(aheadMs / TICK, 0, 1), out, this.tmp);
+      else Object.assign(out, this.predicted);
       const k = Math.exp(-dtMs / 140);
       this.fix.x *= k;
       this.fix.y *= k;
@@ -341,6 +420,24 @@ export class AircraftClient {
       out.x += this.fix.x;
       out.y += this.fix.y;
       out.z += this.fix.z;
+      // The orientation correction fades the same way (nlerp toward identity).
+      const f = this.qfix;
+      if (f.w < 0.999999) {
+        f.x *= k;
+        f.y *= k;
+        f.z *= k;
+        f.w = 1 - (1 - f.w) * k;
+        const n = Math.hypot(f.x, f.y, f.z, f.w) || 1;
+        f.x /= n;
+        f.y /= n;
+        f.z /= n;
+        f.w /= n;
+        const { qx, qy, qz, qw } = out;
+        out.qw = f.w * qw - f.x * qx - f.y * qy - f.z * qz;
+        out.qx = f.w * qx + f.x * qw + f.y * qz - f.z * qy;
+        out.qy = f.w * qy - f.x * qz + f.y * qw + f.z * qx;
+        out.qz = f.w * qz + f.x * qy - f.y * qx + f.z * qw;
+      }
       this.hasShown = true;
       return out;
     }

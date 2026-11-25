@@ -7,7 +7,7 @@ import {
   type Aircraft,
 } from "@/lib/fps/br/aircraft";
 import { AircraftClient, boardable, flightHud, flightOf } from "@/lib/fps/br/aircraft-client";
-import { testWorld, TICK } from "@/lib/fps/br/flight-harness";
+import { fly, takeoffPilot, testWorld, TICK } from "@/lib/fps/br/flight-harness";
 
 /**
  * The aircraft on the client (aircraft-client.ts): the pilot's prediction resumes exactly where
@@ -246,5 +246,83 @@ describe("BR aircraft on the client", () => {
     expect(c.steer({ ...keys, pitchDown: true }, 1 / 30).elev).toBeLessThan(0);
     c.apply(undefined, undefined, 4000);
     expect(c.steer(keys, 1 / 30).elev).toBe(0);
+  });
+
+  it("draws a mouse-steered bank without per-tick or per-event steps (owner, 2026-11-25)", () => {
+    // Airborne, LMB held, an uneven mouse (0–6 counts, not every frame) at an uneven ~144 Hz:
+    // the drawn bank's rate must change smoothly frame to frame (it stepped at every 30 Hz
+    // tick and with every mouse event: jerk rms ≈ 1.6, max ≈ 12 deg/s per frame).
+    const a = newAircraft(0, 0, 10, 0, 0);
+    a.pilot = 0;
+    fly(env, a, 45, takeoffPilot());
+    const c = new AircraftClient();
+    c.apply(aircraftRow(a), 0, 0);
+    c.predicted = { ...a };
+    c.holdPitch(true);
+    const keys = {
+      throttleUp: false,
+      throttleDown: false,
+      rollLeft: false,
+      rollRight: false,
+      rudderLeft: false,
+      rudderRight: false,
+      brake: false,
+    };
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const FR = [6.94, 6.94, 8.3, 6.94, 5.6, 6.94, 7.5];
+    let acc = 0,
+      clock = 100_000,
+      last = NaN,
+      lastRate = NaN;
+    const jerk: number[] = [];
+    let maxBank = 0;
+    for (let f = 0; f < 144 * 6; f++) {
+      const frame = FR[f % FR.length]!;
+      if (f >= 144 && f < 288 && rnd() < 0.8) c.mouse(Math.round(rnd() * 6), 0, 1);
+      if (f >= 432 && f < 640 && rnd() < 0.8) c.mouse(-Math.round(rnd() * 6), 0, 1);
+      const w = c.steer(keys, frame / 1000);
+      acc += frame;
+      while (acc >= TICK) {
+        acc -= TICK;
+        clock += TICK;
+        c.predict(env.world, env.meta, w, clock);
+      }
+      const bank = (attitude(c.sample(0, acc, frame)!).bank * 180) / Math.PI;
+      maxBank = Math.max(maxBank, bank);
+      const rate = ((bank - last) * 1000) / frame;
+      if (Number.isFinite(lastRate)) jerk.push(rate - lastRate);
+      last = bank;
+      lastRate = rate;
+    }
+    const rms = Math.sqrt(jerk.reduce((s, v) => s + v * v, 0) / jerk.length);
+    expect(maxBank).toBeGreaterThan(20); // it still banks as asked
+    expect(rms).toBeLessThan(0.5);
+    expect(Math.max(...jerk.map(Math.abs))).toBeLessThan(3);
+  });
+
+  it("glides over an orientation correction instead of snapping to it", () => {
+    const server = rolling();
+    const c = new AircraftClient();
+    c.apply(aircraftRow(server), 0, 1000);
+    c.reconcile(env.world, env.meta, []);
+    const before = { ...c.sample(0, 0, 16)! };
+    // The next row disagrees by 3° of heading.
+    const turned = { ...server };
+    const h = (3 * Math.PI) / 180 / 2;
+    const { qx, qy, qz, qw } = server;
+    turned.qw = Math.cos(h) * qw - Math.sin(h) * qy;
+    turned.qx = Math.cos(h) * qx - Math.sin(h) * qz;
+    turned.qy = Math.cos(h) * qy + Math.sin(h) * qw;
+    turned.qz = Math.cos(h) * qz + Math.sin(h) * qx;
+    c.apply(aircraftRow(turned), 0, 1033);
+    c.reconcile(env.world, env.meta, []);
+    const heading = (x: Aircraft) => attitude(x).heading;
+    const jump = Math.abs(heading(c.sample(0, 0, 16)!) - heading(before));
+    expect(jump).toBeLessThan((0.5 * Math.PI) / 180);
+    for (let i = 0; i < 90; i++) c.sample(0, 0, 16);
+    expect(Math.abs(heading(c.sample(0, 0, 16)!) - heading(turned))).toBeLessThan(
+      (0.05 * Math.PI) / 180,
+    );
   });
 });
