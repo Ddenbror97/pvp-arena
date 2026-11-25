@@ -20,7 +20,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
  * revision has left behind in public/.
  */
 export const WORLD_ASSETS = {
-  revision: "plinth-v2",
+  revision: "bwfix-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -237,8 +237,15 @@ export const WORLD_ASSETS = {
   // panel, and the coplanar lift now works in rounds (faces stacked on one plane were lifted the
   // same 1.5 cm and fought again): every model's faces that still overlapped are apart, among
   // them the roadside motel's and the warehouse's. Far LODs unchanged (far-facades-v2).
-  models: "/fps/br/models/models.plinth-v2.json",
-  collision: "/fps/br/models/collision.plinth-v2.json",
+  // bwfix-v1 (2026-11-25, from plinth-v2; owner's Blackwater Prison report): the cell houses'
+  // walls carried 12 cm into the ground (extend_footing.mjs footing-v1: the downloaded shell
+  // stopped 0.2 m above the yard, "a building looks like to stand abit in the air"); the
+  // chapel's door sill and the wood strip under its door lifted 1.5 cm off the yard's plane
+  // (groundlift-v1: they fought it, "a door that flickers"); the keep's and the watchtower's
+  // stair collision as ramps of 5 cm steps (stair_ramps.mjs + patch_collision.mjs: their 19 cm
+  // treads jolted the body a riser a tick, "lagg in tight space and corners").
+  models: "/fps/br/models/models.bwfix-v1.json",
+  collision: "/fps/br/models/collision.bwfix-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
