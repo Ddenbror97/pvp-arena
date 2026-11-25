@@ -762,10 +762,11 @@ export function PoolTable({
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       const left = screenBox.left - tableBox.left;
       const top = screenBox.top - tableBox.top;
-      cue.style.left = `${left}px`;
-      cue.style.top = `${top}px`;
+      cue.style.transform = `translate(${left}px, ${top}px)`;
+
       cue.style.width = `${screenBox.width}px`;
       cue.style.height = `${screenBox.height}px`;
+      cue.style.visibility = "visible";
       const bitmapW = Math.max(1, Math.round(screenBox.width * dpr));
       const bitmapH = Math.max(1, Math.round(screenBox.height * dpr));
       if (cue.width !== bitmapW || cue.height !== bitmapH) {
@@ -1412,7 +1413,14 @@ export function PoolTable({
 
   return (
     <>
-      <canvas ref={cueRef} className="pool-cue" aria-hidden />
+      <canvas
+        ref={cueRef}
+        className="pool-cue"
+        width={0}
+        height={0}
+        style={{ visibility: "hidden", left: 0, top: 0 }}
+        aria-hidden
+      />
       <canvas
         ref={ref}
         className="pool-canvas"

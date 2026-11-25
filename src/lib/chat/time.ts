@@ -15,7 +15,8 @@ export function chatDayKey(iso: string, local = true): string {
 
 export function chatClock(iso: string, local = true): string {
   if (!local) return new Date(iso).toISOString().slice(11, 16);
-  return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const date = new Date(iso);
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
 export function chatDayLabel(iso: string, now = new Date(), local = true): string {

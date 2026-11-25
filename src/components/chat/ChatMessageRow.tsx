@@ -18,6 +18,7 @@ export function ChatMessageRow({
   identity,
   continued = false,
   localTime = true,
+  priority = false,
 }: {
   m: ChatMessage;
   mine: boolean;
@@ -26,6 +27,7 @@ export function ChatMessageRow({
   continued?: boolean;
   /** UTC on the server and hydration render; browser-local after hydration. */
   localTime?: boolean;
+  priority?: boolean;
 }) {
   return (
     <li className={cn("flex items-start gap-2.5 px-3.5", continued ? "pb-1" : "pt-2 pb-1")}>
@@ -41,6 +43,7 @@ export function ChatMessageRow({
           tier={identity?.tier}
           size={CHAT_AVATAR}
           minHeadroom={CHAT_HEADROOM}
+          priority={priority}
         />
       )}
       <div className="min-w-0 flex-1">
@@ -55,7 +58,7 @@ export function ChatMessageRow({
               {m.display_name}
             </span>
             <time
-              className="shrink-0 text-[10px] leading-none text-muted-foreground tabular-nums"
+              className="w-[8ch] shrink-0 text-right text-[10px] leading-none text-muted-foreground tabular-nums"
               dateTime={m.created_at}
             >
               {chatClock(m.created_at, localTime)}

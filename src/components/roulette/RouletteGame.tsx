@@ -239,9 +239,16 @@ export function RouletteGame() {
           Previous rolls
         </span>
         <div className="flex h-6 min-w-0 flex-1 items-center gap-1.5 overflow-clip">
-          {(history.data ?? []).map((h) => (
-            <CoinImg key={h.id} c={h.winning_color!} size={22} className="shrink-0 rounded-full" />
-          ))}
+          {Array.from({ length: 48 }, (_, index) => {
+            const roll = history.data?.[index];
+            return (
+              <span key={index} className="h-[22px] w-[22px] shrink-0">
+                {roll ? (
+                  <CoinImg c={roll.winning_color!} size={22} className="rounded-full" />
+                ) : null}
+              </span>
+            );
+          })}
         </div>
         <ChevronRight className="h-4 w-4 shrink-0 text-foreground/70" aria-hidden />
       </div>

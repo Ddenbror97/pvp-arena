@@ -178,12 +178,24 @@ export function GameChat({
           </h2>
         </div>
         <span className="inline-flex h-4 w-32 shrink-0 items-center justify-end gap-2 text-xs text-foreground/85">
-          <span className="inline-block w-[6.5rem] truncate text-right">
-            {status === "offline"
-              ? "Reconnecting..."
-              : status === "live"
-                ? "Live"
-                : "Connecting..."}
+          <span className="relative inline-block h-4 w-[6.5rem] shrink-0 text-right">
+            {(["offline", "live", "connecting"] as const).map((value) => {
+              const active =
+                value === (status === "offline" || status === "live" ? status : "connecting");
+              return (
+                <span
+                  key={value}
+                  aria-hidden={!active}
+                  className={cn("absolute inset-0 truncate", active ? "opacity-100" : "opacity-0")}
+                >
+                  {value === "offline"
+                    ? "Reconnecting..."
+                    : value === "live"
+                      ? "Live"
+                      : "Connecting..."}
+                </span>
+              );
+            })}
           </span>
           <span
             className={cn(
@@ -248,16 +260,14 @@ export function GameChat({
                 {shown.map((m, index) => {
                   const prev = shown[index - 1];
                   const newDay =
-                    !prev ||
-                    chatDayKey(prev.created_at, clientMount) !==
-                      chatDayKey(m.created_at, clientMount);
+                    !prev || chatDayKey(prev.created_at, false) !== chatDayKey(m.created_at, false);
                   return (
                     <Fragment key={m.id}>
                       {newDay ? (
                         <li className="flex items-center gap-2 px-3.5 pt-2 pb-1">
                           <span className="h-px flex-1 bg-border" />
-                          <span className="text-[10px] tracking-widest text-muted-foreground uppercase">
-                            {chatDayLabel(m.created_at, undefined, clientMount)}
+                          <span className="w-24 shrink-0 text-center text-[10px] tracking-widest text-muted-foreground uppercase">
+                            {chatDayLabel(m.created_at, undefined, false)}
                           </span>
                           <span className="h-px flex-1 bg-border" />
                         </li>
@@ -267,7 +277,8 @@ export function GameChat({
                         mine={m.user_id === userId}
                         identity={identities.get(m.user_id)}
                         localTime={clientMount}
-                        continued={!newDay && continuesPlayerTurn(prev, m, clientMount)}
+                        priority={index >= shown.length - 8}
+                        continued={!newDay && continuesPlayerTurn(prev, m, false)}
                       />
                     </Fragment>
                   );
