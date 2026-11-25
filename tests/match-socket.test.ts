@@ -3,7 +3,7 @@ import {
   openMatchSocket,
   REFUSED_LIMIT,
   OCCUPIED_CLOSE,
-  PAGE_ID,
+  matchPageId,
   REPLACED_CLOSE,
   type MatchSocketOptions,
 } from "../src/lib/fps/match-socket";
@@ -272,6 +272,19 @@ describe("match socket", () => {
   });
 
   it("names the page once per load, as the room expects it", () => {
-    expect(PAGE_ID).toMatch(/^[A-Za-z0-9-]{8,64}$/);
+    expect(matchPageId()).toMatch(/^[A-Za-z0-9-]{8,64}$/);
   });
+});
+
+it("defers page identity generation until a socket needs it and reuses it on reconnect", async () => {
+  vi.resetModules();
+  const uuid = vi.spyOn(crypto, "randomUUID");
+  try {
+    const socket = await import("../src/lib/fps/match-socket");
+    expect(uuid).not.toHaveBeenCalled();
+    expect(socket.matchPageId()).toBe(socket.matchPageId());
+    expect(uuid).toHaveBeenCalledTimes(1);
+  } finally {
+    uuid.mockRestore();
+  }
 });

@@ -1,4 +1,4 @@
-import { openMatchSocket, PAGE_ID } from "@/lib/fps/match-socket";
+import { openMatchSocket, matchPageId } from "@/lib/fps/match-socket";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -286,7 +286,7 @@ export function BrMatch() {
         url.searchParams.set("rulesVersion", String(BR_RULESET_VERSION));
         // This page's name, and "Play here" (workers/fps/seat-claim.ts): another page of the
         // account that plays the seat keeps it unless the player takes it over here.
-        url.searchParams.set("page", PAGE_ID);
+        url.searchParams.set("page", matchPageId());
         if (takeover) url.searchParams.set("takeover", "1");
         return url;
       },
