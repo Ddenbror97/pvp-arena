@@ -149,7 +149,9 @@ describe("BrRenderBudget on the low tier (slowMs 30)", () => {
  */
 describe("BrRenderBudget on the low tier, on a 144 Hz panel (Intel UHD)", () => {
   const REFRESH = 1000 / 144;
-  const lowBudget = () => new BrRenderBudget({ resolution: brResolutionScale, slowMs: 30 });
+  // As br-arena.ts makes the low tier's.
+  const lowBudget = () =>
+    new BrRenderBudget({ resolution: brResolutionScale, slowMs: 30, probe: true });
   /**
    * `seconds` of frames: GPU time `gpuFull` at full resolution, `pixels` of it the pixels', and
    * `cpu` ms of the frame that the GPU's work does not overlap (as measured: 37 fps, 27.8 ms
@@ -193,12 +195,29 @@ describe("BrRenderBudget on the low tier, on a 144 Hz panel (Intel UHD)", () => 
         expect(r.changes, `gpuFull ${gpuFull}, pipelined ${pipelined}`).toBeLessThanOrEqual(12);
       }
   });
+  it("lowered in the forest, it comes back to 720p in a Downtown fight after it", () => {
+    const b = lowBudget();
+    // The forest: half of the GPU's time is the pixels', frames under 30 fps at 720p.
+    play(b, 30, 0.5, 90, 9, true);
+    expect(brResolutionScale(b.scale)).toBeLessThan(1);
+    // A fight: 17.7 ms of GPU at 720p, a fifth of it the pixels'.
+    const r = play(b, 17.7, 0.2, 300, 9, true);
+    const last = r.scales.slice(-Math.floor(r.scales.length / 3));
+    expect(last.filter((s) => brResolutionScale(s) === 1).length / last.length).toBeGreaterThan(
+      0.9,
+    );
+  });
   it("still lowers it, and keeps it lower, when the pixels are the cost and frames are under 30 fps", () => {
     const b = lowBudget();
-    const r = play(b, 40, 0.9, 120);
-    expect(brResolutionScale(r.final)).toBeLessThan(1);
-    const last = r.scales.slice(-Math.floor(r.scales.length / 3));
-    expect(new Set(last).size).toBe(1);
+    play(b, 40, 0.9, 60);
+    expect(brResolutionScale(b.scale)).toBeLessThan(1);
+    // Ten minutes on: lower all but the probes' few seconds, which come further and further apart.
+    const settled = b.scale;
+    const r = play(b, 40, 0.9, 600);
+    expect(r.scales.filter((s) => s <= settled + 1e-6).length / r.scales.length).toBeGreaterThan(
+      0.95,
+    );
+    expect(r.changes).toBeLessThanOrEqual(10);
   });
 });
 

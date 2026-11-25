@@ -729,6 +729,7 @@ export function createBrArena(
   const budget = new BrRenderBudget({
     resolution: brResolutionScale,
     slowMs: tier.tier === "low" ? LOW_TIER_SLOW_MS : undefined,
+    probe: tier.tier === "low",
   });
   /** The drawing buffer's size, each frame (the ground's filter footprint: setGroundFootprint). */
   const drawSize = new THREE.Vector2();
@@ -4967,6 +4968,13 @@ export function createBrArena(
         programs: renderer.info.programs?.length ?? 0,
         tier: tier.tier,
         tierReason: tier.reason,
+        /** The adaptive resolution (render-budget.ts): its scale, why, and what it learnt. */
+        budget: {
+          scale: budget.scale,
+          reason: budget.reason,
+          pixelShare: budget.pixelShare,
+          lastRaise: budget.lastRaise,
+        },
         gpu: tier.gpu,
         visibleRemotes: presentedRows.size,
         fullActors: actors.filter((a) => a.seat >= 0 && a.actor.root.visible).length,
