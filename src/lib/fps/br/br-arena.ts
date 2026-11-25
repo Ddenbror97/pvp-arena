@@ -886,7 +886,14 @@ export function createBrArena(
   const rappelCam = new THREE.Vector3();
   const rappelLook = new THREE.Vector3();
   const myRappel = rappelFigure();
-  const myRappelMotion = { rappel: myRappel.motion, primary: "none", weapon: "rifle" } as const;
+  const myRappelMotion = {
+    rappel: myRappel.motion,
+    primary: "none" as const,
+    weapon: "rifle" as const,
+    back: undefined as readonly [CarryGun | null, CarryGun | null] | undefined,
+    pack: 0,
+    vest: 0,
+  };
   const mySeen = {} as RappelSeen;
   let rappelRopes: ReturnType<typeof createRappelRopes> | null = null;
   let rappelHere: RappelSite | null = null;
@@ -1173,6 +1180,8 @@ export function createBrArena(
   // view, V); first person on foot and, by default, under the canopy.
   const me = createCharacter("A", plain, weaponKit, {
     worldRifle: true,
+    // Either rifle on your own back (an AK and an M4 can both be carried).
+    bothRifles: true,
     bareHead: true,
     quietHidden: true,
   });
@@ -1230,6 +1239,27 @@ export function createBrArena(
     fitCharacterGun(figureActor, attachmentParts, optic, muzzle);
     fitCharacterGear(figureActor, gear);
     figureActor.root.updateMatrixWorld(true);
+  }
+  /**
+   * Your own figure with its hands busy (a seat, the zip-line, a rope, the rappel): the guns
+   * worn on the back as everyone else sees them (carriedFor, from the kit instead of a row),
+   * and the backpack and vest they sit beside (owner, 2026-11-25: no weapons shown while
+   * driving the motorbike, rappelling or on the zip-line).
+   */
+  const myBackBuf: [CarryGun | null, CarryGun | null] = [null, null];
+  function myBackGear(k: BrKitView | null | undefined) {
+    if (!k || k.dead) return { back: undefined, pack: 0, vest: 0 };
+    const worn = (g: { item: string } | null | undefined): CarryGun | null =>
+      g && CARRY_GUNS.has(g.item) ? (g.item as CarryGun) : null;
+    myBackBuf[0] = k.active === 0 ? null : worn(k.guns[0]);
+    myBackBuf[1] = k.active === 1 ? null : worn(k.guns[1]);
+    const held = k.active === 0 || k.active === 1 ? worn(k.guns[k.active]) : null;
+    if (held) {
+      if (!myBackBuf[0]) myBackBuf[0] = held;
+      else if (!myBackBuf[1]) myBackBuf[1] = held;
+    }
+    const gear = figureState(k).gear;
+    return { back: myBackBuf, pack: (gear >> 4) & 3, vest: (gear >> 2) & 3 };
   }
   /** Pose the figure as the kit is: what is worn, and the gun in hand (or the Karambit). */
   function figureState(k: BrKitView) {
@@ -3583,7 +3613,12 @@ export function createBrArena(
       });
       me.swimSplashes(splash);
     } else if (mySeated) {
-      me.update(dtMs, now, 0, true, false, { seated: mySeated, primary: "none", weapon: "rifle" });
+      me.update(dtMs, now, 0, true, false, {
+        seated: mySeated,
+        primary: "none",
+        weapon: "rifle",
+        ...myBackGear(kit),
+      });
       if (kit) fitCharacterGear(me, figureState(kit).gear);
     } else if (zipShow && !airborne) {
       me.root.position.set(px, py, pz);
@@ -3605,6 +3640,7 @@ export function createBrArena(
           },
           primary: "none",
           weapon: "rifle",
+          ...myBackGear(kit),
         });
       }
       if (kit) fitCharacterGear(me, figureState(kit).gear);
@@ -3625,6 +3661,7 @@ export function createBrArena(
           island ? solid() : null,
         );
       } else me.root.position.set(px, py, pz);
+      Object.assign(myRappelMotion, myBackGear(kit));
       me.update(dtMs, now, 0, true, false, myRappelMotion);
       me.root.updateMatrixWorld(true);
       if (kit) fitCharacterGear(me, figureState(kit).gear);
@@ -3658,11 +3695,17 @@ export function createBrArena(
           },
           primary: "none",
           weapon: "rifle",
+          ...myBackGear(kit),
         });
       } else {
         // Let go of the rope: falling beside it while the view comes back to first person.
         me.root.quaternion.setFromEuler(zipEuler.set(0, yaw, 0, "YXZ"));
-        me.update(dtMs, now, 0, true, false, { airborne: true, primary: "none", weapon: "rifle" });
+        me.update(dtMs, now, 0, true, false, {
+          airborne: true,
+          primary: "none",
+          weapon: "rifle",
+          ...myBackGear(kit),
+        });
       }
       me.root.updateMatrixWorld(true);
       if (kit) fitCharacterGear(me, figureState(kit).gear);
