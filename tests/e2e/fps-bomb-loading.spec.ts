@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
 test("Bomb artwork preloads independently from the 1v1 rotation", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("link", { name: "Practice defuse the bomb" })).toBeVisible();
-  await page.getByRole("link", { name: "Practice defuse the bomb" }).hover();
+  const practice = page.getByRole("button", { name: "Play Now: Plant the Bomb practice" });
+  await expect(practice).toBeEnabled();
+  await practice.hover();
+  await expect(page.locator("link[data-bomb-loading]")).toHaveCount(2);
   const art = await page.evaluate(async () => {
     const { BOMB_LOADING_IMAGE, BOMB_LOADING_IMAGES, warmBombLoadingImage } = await import(
       "/src/lib/fps/bomb/loading.ts" as string

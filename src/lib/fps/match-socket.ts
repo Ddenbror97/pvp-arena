@@ -76,10 +76,13 @@ export const REPLACED_CLOSE = 4001;
 export const OCCUPIED_CLOSE = 4002;
 
 /** This page load's name for the rooms (kept across its reconnects; seat-claim.ts). */
-export const PAGE_ID =
-  typeof crypto !== "undefined" && "randomUUID" in crypto
-    ? crypto.randomUUID()
-    : `p-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
+let pageId: string | undefined;
+export function matchPageId(): string {
+  return (pageId ??=
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `p-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`);
+}
 
 /** Sockets refused in a row (closed before they opened) before the mode is told it is unreachable. */
 export const REFUSED_LIMIT = 4;
