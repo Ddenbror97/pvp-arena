@@ -174,6 +174,8 @@ import { gridRefAt, MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
 import { createCharacter, type CarryGun } from "../character";
 import { SWIM_EYE } from "../swim-stroke";
 import { createSwimSplash } from "./swim-splash";
+import { createImpactEffects } from "../impacts";
+import { pullDepth } from "./depth-bias";
 
 /** The guns worn on the back (the Desert Eagle has the thigh holster). */
 const CARRY_GUNS = new Set<string>(["ak47", "m4", "awp", "hunting", "mp5", "spas12"]);
@@ -974,6 +976,15 @@ export function createBrArena(
   const heldInput: DropInput = { forward: 0, strafe: 0, yaw: 0 };
   /** Eye height, eased (a crouch does not snap the camera 65 cm in one frame). */
   const swimSplash = createSwimSplash(scene);
+  // Bullets' marks on the world (impacts.ts): holes, debris, sparks, rings on the water. The
+  // server finds the water (combat.ts bulletMark); the holes are pulled toward the eye, which
+  // works in every depth mode here (depth-bias.ts).
+  const impacts = createImpactEffects(scene, {
+    marks: 160,
+    decalDepth: (m) => pullDepth(m, 2e-4),
+    waterAt: () => null,
+  });
+  const MARK_SURFACE = ["concrete", "wood", "ground", "water", "metal"] as const;
   const splash = (x: number, y: number, z: number, strength: number) =>
     swimSplash.add(x, y, z, strength);
   let eyeHeight = 1.6;
@@ -2225,6 +2236,17 @@ export function createBrArena(
         }
         continue;
       }
+      if (e.type === "mark") {
+        impacts.emit(
+          {
+            point: { x: e.p[0], y: e.p[1], z: e.p[2] },
+            normal: { x: e.n[0], y: e.n[1], z: e.n[2] },
+            surface: MARK_SURFACE[e.s] ?? "concrete",
+          },
+          performance.now(),
+        );
+        continue;
+      }
       if (e.type === "melee") {
         if (e.seat !== mySeat) {
           audio.knifeSwing(e.attack, e.origin, e.hearM);
@@ -3299,6 +3321,7 @@ export function createBrArena(
     stand.count = ground;
     stand.instanceMatrix.needsUpdate = true;
     swimSplash.update(dtMs);
+    impacts.update(dtMs, performance.now());
     // Camera: chase the plane, third person in the air, first person on the ground.
     // You, as drawn this frame: the predicted body plus the elapsed part of the next step.
     // (The same condition as the fixed step: before take-off only the warm-up walks.)
@@ -5024,6 +5047,7 @@ export function createBrArena(
       // (While the scene is whole: three's shared lookup texture, handed back at the end.)
       const lookup = litLookup(renderer, scene);
       mapBuild?.dispose();
+      impacts.dispose();
       if (mapBlobUrl) URL.revokeObjectURL(mapBlobUrl);
       removeEventListener("keydown", keyDown);
       removeEventListener("keyup", keyUp);

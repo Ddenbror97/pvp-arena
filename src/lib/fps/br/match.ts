@@ -901,6 +901,7 @@ export function stepBrMatch(
         id === AIRCRAFT_HIT
           ? hurtAircraft(state, world, damage, by as BrSeat | undefined)
           : hurtVehicle(state, world, id, damage, at),
+      (x, z, groundY) => waterSurface(meta, groundY, x, z),
     );
     for (const e of impacts)
       if (e.type === "elim") {
@@ -2710,6 +2711,9 @@ export function brFastEvents(events: readonly BrMatchState["combat"][number][]) 
   return bySeat;
 }
 
+/** How far from a player the bullets' marks on the world are sent (m). */
+export const MARK_SEND_M = 120;
+
 /** The parts of a player row that are not position or facing: a change is sent at once. */
 const ROW_STATE = [4, 6, 7, 8, 9, 10, 11, 12] as const;
 
@@ -2955,6 +2959,8 @@ export function brViewFor(
     if (e.type === "nade") return Math.hypot(e.o[0] - eye.x, e.o[2] - eye.z) <= BR_RULES.sightSendM;
     if (e.type === "boom" || e.type === "area")
       return Math.hypot(e.x - eye.x, e.z - eye.z) <= BR_RULES.sightSendM;
+    // Bullet marks: holes and rings are only seen up close.
+    if (e.type === "mark") return Math.hypot(e.p[0] - eye.x, e.p[2] - eye.z) <= MARK_SEND_M;
     return (
       e.seat === seat ||
       Math.hypot(e.origin[0] - eye.x, e.origin[2] - eye.z) <= e.hearM ||
