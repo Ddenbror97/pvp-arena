@@ -82,14 +82,14 @@ function sweepBox(
   dx: number,
   dy: number,
   dz: number,
-  b: Float32Array,
+  b: StaticWorld["boxes"],
   o: number,
 ) {
   let enter = -Infinity,
     exit = Infinity,
     axis = -1;
-  const lo = [b[o]! - R, b[o + 1]! - R, b[o + 2]! - R],
-    hi = [b[o + 3]! + R, b[o + 4]! + R, b[o + 5]! + R];
+  const lo = [b.get(o) - R, b.get(o + 1) - R, b.get(o + 2) - R],
+    hi = [b.get(o + 3) + R, b.get(o + 4) + R, b.get(o + 5) + R];
   const p = [px, py, pz],
     d = [dx, dy, dz];
   for (let k = 0; k < 3; k++) {

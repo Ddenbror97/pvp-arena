@@ -64,7 +64,14 @@ function survey(cx: number, cz: number, r: number) {
     out: Stand[] = [];
   for (let i = 0; i < b.length / 6; i++) {
     const o = i * 6;
-    const [x0, , z0, x1, y1, z1] = [b[o]!, 0, b[o + 2]!, b[o + 3]!, b[o + 4]!, b[o + 5]!];
+    const [x0, , z0, x1, y1, z1] = [
+      b.get(o),
+      0,
+      b.get(o + 2),
+      b.get(o + 3),
+      b.get(o + 4),
+      b.get(o + 5),
+    ];
     const mx = (x0 + x1) / 2,
       mz = (z0 + z1) / 2;
     if (x1 - x0 < 3 || z1 - z0 < 3 || Math.hypot(mx - cx, mz - cz) > r) continue;

@@ -40,5 +40,5 @@ for (const p of isl.layout) {
 const b = isl.solid.boxes;
 let n = 0;
 for (let i = 0; i < b.length; i += 6)
-  if (b[i]! - r < x && x < b[i + 3]! + r && b[i + 2]! - r < z && z < b[i + 5]! + r) n++;
+  if (b.get(i) - r < x && x < b.get(i + 3) + r && b.get(i + 2) - r < z && z < b.get(i + 5) + r) n++;
 console.log("boxes within r:", n);

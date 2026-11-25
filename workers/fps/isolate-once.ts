@@ -44,7 +44,8 @@ export function isolateOnce<T>(
       beatAt = now();
       try {
         const made = await make(() => {
-          if (build === mine) beatAt = now();
+          if (build !== mine) throw new Error("Island build superseded");
+          beatAt = now();
         });
         value ??= made;
         return value;
