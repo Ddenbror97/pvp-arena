@@ -60,42 +60,6 @@ const chipIdle =
 const chipOn =
   "border-primary bg-primary/15 text-primary-soft shadow-[0_0_0_1px_var(--color-primary)]";
 
-/** Fixed stake presets (one tap, no typing). */
-export function StakeChips({
-  stakes,
-  value,
-  onChange,
-  balance,
-}: {
-  stakes: readonly number[];
-  value: number;
-  onChange: (cents: number) => void;
-  balance?: number | null;
-}) {
-  return (
-    <div
-      className="mt-1.5 grid gap-1.5"
-      style={{ gridTemplateColumns: `repeat(${Math.min(stakes.length, 6)}, minmax(0, 1fr))` }}
-    >
-      {stakes.map((s) => (
-        <button
-          key={s}
-          type="button"
-          aria-pressed={s === value}
-          onClick={() => onChange(s)}
-          className={cn(
-            chip,
-            s === value ? chipOn : chipIdle,
-            balance != null && s > balance && "opacity-50",
-          )}
-        >
-          {short(s)}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 /** Free amount with ½ / 2× nudges and quick picks. */
 export function StakeInput({
   id,
@@ -190,58 +154,6 @@ export function StakeInput({
         </button>
       </div>
     </>
-  );
-}
-
-/** The reward line: what the player is playing for, as the visual focus. */
-export function WinPreview({
-  label = "You win",
-  cents,
-  detail,
-  accent,
-}: {
-  label?: string;
-  cents: number | null;
-  detail?: ReactNode;
-  accent?: ReactNode;
-}) {
-  return (
-    <div className="mt-3 rounded-xl border border-primary/25 bg-primary/[0.07] px-3 py-2.5">
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-          {label}
-        </span>
-        {accent}
-      </div>
-      <div className="tabular mt-0.5 font-display text-2xl leading-none text-primary-soft">
-        {cents == null ? "—" : formatUsd(cents)}
-      </div>
-      {detail ? (
-        <div className="tabular mt-1.5 text-[11px] text-muted-foreground">{detail}</div>
-      ) : null}
-    </div>
-  );
-}
-
-export function SlipStat({
-  label,
-  value,
-  sub,
-}: {
-  label: string;
-  value: ReactNode;
-  sub?: ReactNode;
-}) {
-  return (
-    <div className="min-w-0">
-      <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-        {label}
-      </div>
-      <div className="tabular mt-0.5 truncate text-base font-semibold leading-tight text-foreground">
-        {value}
-      </div>
-      {sub ? <div className="tabular truncate text-[11px] text-muted-foreground">{sub}</div> : null}
-    </div>
   );
 }
 
