@@ -206,7 +206,11 @@ function furnishPoolDeck(put: Put) {
 }
 
 /** The whole site: the towers, their furniture, the clubhouse, the grounds. */
-export function skyline(poi: Poi, out: Placement[]) {
+export function skyline(
+  poi: Poi,
+  out: Placement[],
+  ground?: { heightAt: (x: number, z: number) => number },
+) {
   const towers = skylineTowers(poi);
   out.push(...towers);
   const y0 = poi.padHeight ?? 0;
@@ -248,7 +252,25 @@ export function skyline(poi: Poi, out: Placement[]) {
       poi: poi.id,
     }),
   );
-  grounds(at);
+  // The grounds stand on the ground, not at the pad's height: the wall runs out to 110 m
+  // from the middle at the corners, past the pad's level 115 m circle only there, and stood up
+  // to 1.1 m in the air where the ground falls away north (owner, 2026-11-25: "the mini wall
+  // around sky line residence is not on the ground correctly its in the air at some parts").
+  // A piece is set at the lowest ground under it (a wall at both ends of its 2.3 m length):
+  // never above the pad, a few centimetres into the ground where it slopes along.
+  grounds((model, dx, dz, turn = 0, dy = 0) => {
+    if (!ground) return at(model, dx, dz, turn, dy);
+    const x = poi.x + dx,
+      z = poi.z + dz;
+    const half = model === "stone-wall" ? 1.16 : 0;
+    const [ax, az] = turn % 2 ? [0, half] : [half, 0];
+    const low = Math.min(
+      ground.heightAt(x, z),
+      ground.heightAt(x - ax, z - az),
+      ground.heightAt(x + ax, z + az),
+    );
+    return at(model, dx, dz, turn, dy + Math.min(0, low - y0 - 0.02));
+  });
 }
 
 /**

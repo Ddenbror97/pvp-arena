@@ -156,8 +156,12 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
         const was = before.models[id]!.lods[i]!;
         if (/\.(zfix-v21|plinth-v2|reveal-v1|groundlift-v1)\.lod\d\.glb$/.test(l.file))
           expect(l.tris, id).toBe(was.tris);
-        else if (/\.footing-v1\.lod\d\.glb$/.test(l.file))
+        else if (/\.(footing-v1|well-v1)\.lod\d\.glb$/.test(l.file))
           expect(l.tris, id).toBeGreaterThan(was.tris);
+        // The lift shaft cut out of the lobbies' floors and the pool decks (shaft-v1): the
+        // floors split round it, a few more triangles.
+        else if (/\.shaft-v1\.lod\d\.glb$/.test(l.file))
+          expect(Math.abs(l.tris - was.tris), id).toBeLessThan(80);
         else expect(l, id).toEqual(was);
       }
     }

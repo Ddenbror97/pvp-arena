@@ -857,9 +857,13 @@ export function createProps(
       // parachute than the foot), so the storeys' detailed colours ran down the tower like a
       // waterfall as the canopy came down (owner, 2026-11-24: "the downtown late color rending
       // is still to late, i tried parachute there and it do still waterfall with painting the
-      // apartments color"). On the ground each storey keeps its own distance (the storey you
-      // stand by is detailed, the ones 80 m above you need not be).
-      const n2 = airborne ? a2 : d2;
+      // apartments color"). On the ground too, since 2026-11-25 (owner, Skyline Residences:
+      // "sky line buildings still display the color of the outside and inside to late so when
+      // player getting close its like a water-effect falling down and paints"): walking in,
+      // the foot crossed the near ring first and the detail climbed the tower storey by storey
+      // over seconds. A tower now takes its near LOD whole, by its middle; standing at its foot
+      // that middle is within the ring anyway, so the storey you stand by stays detailed.
+      const n2 = anchor ? a2 : d2;
       let level = n2 <= r0 ? 0 : a2 <= r1 ? 1 : a2 <= r2 ? 2 : -1;
       if (level === 2 && state.cls === "undergrowth" && d2 > THIN.from ** 2) {
         const f = (Math.sqrt(d2) - THIN.from) / (state.ring[2] - THIN.from);
