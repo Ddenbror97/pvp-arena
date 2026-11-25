@@ -18,7 +18,7 @@ import { activeGun, finishReload, ammoFor, loadShell, perksOf, type Loadout } fr
 import { PERK_EFFECT, perkOn } from "./perks";
 import { ITEMS, magSize, type MuzzleDef, type WeaponDef, type WeaponId } from "./items";
 import type { DropBody } from "./drop";
-import type { StaticWorld } from "./static-world";
+import { hitNormal, type RayHit, type StaticWorld } from "./static-world";
 import { newFlight, sweepFlight, type Flight } from "./ballistics";
 import type { Vector } from "../collision";
 import { hash32, pelletDirections } from "../pellets";
@@ -182,6 +182,17 @@ export type ShotEvent =
       impact?: [number, number, number];
     }
   | {
+      /**
+       * Where a bullet struck the world (2026-11-25: holes in walls, rings on water): the
+       * point, the surface's outward normal (2 decimals) and what it is (BULLET_MARK).
+       */
+      type: "mark";
+      seat: number;
+      p: [number, number, number];
+      n: [number, number, number];
+      s: number;
+    }
+  | {
       type: "hit";
       seat: number;
       victim: number;
@@ -259,7 +270,15 @@ type BrBullet = {
   rewindMs: number;
   damageScale: number;
 };
-type BulletCollision = { target: Fighter; zone: HitZone } | { vehicle: number | undefined };
+type BulletCollision =
+  { target: Fighter; zone: HitZone } | { vehicle: number | undefined; wall: RayHit; dir: Vector };
+/** What a bullet's mark landed on (the "mark" event's `s`). */
+export const BULLET_MARK = { stone: 0, wood: 1, ground: 2, water: 3, metal: 4 } as const;
+/**
+ * Where a world hit became a mark: the water's surface over it (null: none), as the match
+ * knows it (drop.ts waterSurface).
+ */
+export type WaterAt = (x: number, z: number, groundY: number) => number | null;
 
 /** One pool per match; advance after recording server poses, clear on match end/reset. */
 export class BrProjectiles {
@@ -291,6 +310,7 @@ export class BrProjectiles {
       at?: { x: number; y: number; z: number },
       by?: Fighter,
     ) => void,
+    waterAt?: WaterAt,
   ): ShotEvent[] {
     if (!this.size || !Number.isFinite(now)) return [];
     const events: ShotEvent[] = [];
@@ -299,7 +319,9 @@ export class BrProjectiles {
     for (const b of this.bullets) {
       const seconds = Math.max(0, (now - b.firedAt) / 1000 - b.flight.age);
       if (seconds > 0)
-        events.push(...resolveBullet(b, seconds, index, world, history, onElim, onVehicle));
+        events.push(
+          ...resolveBullet(b, seconds, index, world, history, onElim, onVehicle, waterAt),
+        );
       if (b.flight.age < b.flight.lifetime) this.bullets[live++] = b;
     }
     this.bullets.length = live;
@@ -373,13 +395,14 @@ function resolveBullet(
     at?: { x: number; y: number; z: number },
     by?: Fighter,
   ) => void,
+  waterAt?: WaterAt,
 ): ShotEvent[] {
   const { flight, shooter, weapon } = b;
   const hit = sweepFlight<BulletCollision>(flight, seconds, (from, dir, length, start, end) => {
     const wall = world.raycast(from.x, from.y, from.z, dir.x, dir.y, dir.z, length);
     let distance = wall && wall.distance >= 0 && wall.distance <= length ? wall.distance : Infinity;
     let value: BulletCollision | null = Number.isFinite(distance)
-      ? { vehicle: (wall as { vehicle?: number }).vehicle }
+      ? { vehicle: (wall as { vehicle?: number }).vehicle, wall: wall!, dir }
       : null;
     for (const t of index.query(from, dir, length)) {
       if (t === shooter || t.dead) continue;
@@ -419,7 +442,8 @@ function resolveBullet(
   if (!("target" in hit.value)) {
     if (hit.value.vehicle !== undefined)
       onVehicle?.(hit.value.vehicle, weapon.damage.chest, hit.point, shooter);
-    return [];
+    const mark = bulletMark(world, hit.value, hit.point, shooter.seat, waterAt);
+    return mark ? [mark] : [];
   }
   const point: [number, number, number] = [r3(hit.point.x), r3(hit.point.y), r3(hit.point.z)];
   const { target: t, zone } = hit.value;
@@ -460,6 +484,51 @@ function resolveBullet(
     onElim(t, shooter);
   }
   return events;
+}
+
+const r2 = (v: number) => Math.round(v * 100) / 100;
+/**
+ * The mark a bullet leaves where it struck the world (2026-11-25, owner: "realistic holes into
+ * the wall or rings on the water"): a hole on a wall or a box, a splinter in a trunk, a puff in
+ * the ground, sparks off a vehicle; where the ground it struck lies under water, rings where it
+ * went into the water (the point the last stretch of its flight crossed the surface).
+ */
+function bulletMark(
+  world: StaticWorld,
+  v: { vehicle: number | undefined; wall: RayHit; dir: Vector },
+  at: Vector,
+  seat: number,
+  waterAt?: WaterAt,
+): ShotEvent | null {
+  const { wall, dir } = v;
+  if (waterAt && dir.y < -0.02) {
+    const level = waterAt(at.x, at.z, world.hf.heightAt(at.x, at.z));
+    if (level !== null && at.y < level) {
+      const back = (level - at.y) / -dir.y;
+      return {
+        type: "mark",
+        seat,
+        p: [r3(at.x - dir.x * back), r3(level), r3(at.z - dir.z * back)],
+        n: [0, 1, 0],
+        s: BULLET_MARK.water,
+      };
+    }
+  }
+  const n = hitNormal(world, wall, at.x, at.y, at.z);
+  return {
+    type: "mark",
+    seat,
+    p: [r3(at.x), r3(at.y), r3(at.z)],
+    n: [r2(n[0]), r2(n[1]), r2(n[2])],
+    s:
+      v.vehicle !== undefined
+        ? BULLET_MARK.metal
+        : wall.kind === "trunk"
+          ? BULLET_MARK.wood
+          : wall.kind === "ground"
+            ? BULLET_MARK.ground
+            : BULLET_MARK.stone,
+  };
 }
 
 /**

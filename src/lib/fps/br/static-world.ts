@@ -479,6 +479,42 @@ export class StaticWorld {
 }
 
 /**
+ * The outward normal of what `raycast` hit at (x, y, z): the box's face the point lies on, the
+ * ground's slope, a trunk's side (bullet impact marks, 2026-11-25).
+ */
+export function hitNormal(
+  world: StaticWorld,
+  hit: RayHit,
+  x: number,
+  y: number,
+  z: number,
+): [number, number, number] {
+  if (hit.kind === "box" && hit.box !== undefined && hit.box >= 0) {
+    const b = world.boxes,
+      o = hit.box * 6;
+    const faces: Array<[number, [number, number, number]]> = [
+      [Math.abs(x - b[o]!), [-1, 0, 0]],
+      [Math.abs(x - b[o + 3]!), [1, 0, 0]],
+      [Math.abs(y - b[o + 1]!), [0, -1, 0]],
+      [Math.abs(y - b[o + 4]!), [0, 1, 0]],
+      [Math.abs(z - b[o + 2]!), [0, 0, -1]],
+      [Math.abs(z - b[o + 5]!), [0, 0, 1]],
+    ];
+    let best = faces[0]!;
+    for (const f of faces) if (f[0] < best[0]) best = f;
+    return best[1];
+  }
+  if (hit.kind === "trunk" && hit.trunk) {
+    const nx = x - hit.trunk[0],
+      nz = z - hit.trunk[1],
+      l = Math.hypot(nx, nz) || 1;
+    return [nx / l, 0, nz / l];
+  }
+  const n = world.hf.normalAt(x, z);
+  return [n.x, n.y, n.z];
+}
+
+/**
  * Where the ray from (ox, oy, oz) along (dx, dy, dz) (unit) meets the blocker a ray met before
  * (`raycast`'s `box`, or `trunk`), or Infinity: the same test `raycast` makes for that blocker,
  * alone. A hit short of the ray's end is a hit for the whole ray (it is stopped there or
