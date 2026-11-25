@@ -58,6 +58,7 @@
     fixedc: { on: true, v: { fixed: true, single: true, compact: true } },
     litecr: { on: true, v: { depth1: true, cross: true, single: true } },
     slim: { on: true, v: { depth1: true, cross: true, slim: true } },
+    slim5: { on: true, v: { cross: true, slim: true } },
     slimfull: { on: true, v: { slim: true } },
   };
   window.setVariant = (name) => { const c = VARIANTS[name]; brSteadyMode.on = c.on; brSteadyMode.foot = true; brSteadyMode.lite = false; brSteadyLab.variant = c.v ?? null; };
