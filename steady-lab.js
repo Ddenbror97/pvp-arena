@@ -22,6 +22,7 @@
   // Per-pass GPU time: timer queries split at each framebuffer bind, labelled by the programs drawn.
   const cv = document.querySelector("canvas"), gl = cv.getContext("webgl2");
   const ext = gl.getExtension("EXT_disjoint_timer_query_webgl2");
+  if (window.__profPatched) return; window.__profPatched = true;
   const P = WebGL2RenderingContext.prototype;
   const ob = P.beginQuery, oe = P.endQuery, obf = P.bindFramebuffer, oup = P.useProgram;
   const kindOf = new Map(); let curProg = null, open = null, on = false, mine = false; const done = [];
@@ -90,7 +91,9 @@
   const makeBox = (color) => {
     let proto = null;
     explorer.scene.traverse((o) => { if (!proto && o.isMesh && o.geometry?.attributes?.position && !o.isInstancedMesh && o.material && !Array.isArray(o.material) && o.material.isMeshStandardMaterial) proto = o; });
-    const G = proto.geometry.constructor, A = proto.geometry.attributes.position.constructor;
+    // (Not the terrain's instanced geometry: a plain one, its parent class.)
+    let G = proto.geometry.constructor; if (proto.geometry.isInstancedBufferGeometry) G = Object.getPrototypeOf(G.prototype).constructor;
+    const A = proto.geometry.attributes.position.constructor;
     const hx = 0.25, hy = 0.9, hz = 0.2, p = [], n = [];
     const face = (a, b, c, d, nn) => { for (const v of [a, b, c, a, c, d]) { p.push(...v); n.push(...nn); } };
     const X = [-hx, hx], Y = [-hy, hy], Z = [-hz, hz];
