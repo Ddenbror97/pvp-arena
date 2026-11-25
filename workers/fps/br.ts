@@ -110,6 +110,30 @@ async function paced<T>(steps: Generator<void, T, void>, beat: () => void = () =
   }
 }
 type Loaded = { island: Island; meta: WorldMeta; collision: CollisionData };
+/** Keep model coordinates packed; temporary row arrays are used only by model-space queries. */
+export function packCollisionModels(collision: CollisionData) {
+  for (const [name, rows] of Object.entries(collision.models)) {
+    const coordinates = new Float64Array(rows.length * 6);
+    for (let i = 0; i < rows.length; i++) coordinates.set(rows[i]!, i * 6);
+    const length = rows.length;
+    collision.models[name] = new Proxy([] as number[][], {
+      get(target, key, receiver) {
+        if (key === "length") return length;
+        if (typeof key === "string" && /^(0|[1-9]\d*)$/.test(key)) {
+          const index = Number(key);
+          if (index >= length) return undefined;
+          return Array.from(coordinates.subarray(index * 6, index * 6 + 6));
+        }
+        return Reflect.get(target, key, receiver);
+      },
+      has(target, key) {
+        if (typeof key === "string" && /^(0|[1-9]\d*)$/.test(key)) return Number(key) < length;
+        return Reflect.has(target, key);
+      },
+    });
+  }
+}
+
 /**
  * The island, once per isolate (isolate-once.ts): every room in the isolate, and every retry
  * of a socket while it is being built, waits for the one build instead of starting its own.
@@ -136,11 +160,12 @@ export async function loadIsland(env: Env): Promise<Loaded> {
     ]);
     beat();
     assertIslandRevision(collision);
-    const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf), decodeLandCover(lcBuf)]);
+    const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf, true), decodeLandCover(lcBuf)]);
     // Built in steps with pauses (foundation audit 2026-11-10): about three seconds of work
     // that used to run in one piece and stall every other room in this isolate.
     const built = await paced(buildIslandSteps(hf, cover, meta, collision), beat);
     await paced(warmLootSteps(built.layout, collision, built.solid, meta), beat);
+    packCollisionModels(collision);
     return { island: built, meta, collision };
   });
 }

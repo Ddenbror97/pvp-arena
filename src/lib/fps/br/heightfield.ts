@@ -17,16 +17,24 @@ export class Heightfield {
   readonly data: Float32Array;
   readonly min: number;
   readonly max: number;
-  constructor(width: number, height: number, spacing: number, data: Float32Array) {
-    if (data.length !== width * height) throw new Error("Heightfield size mismatch");
+  constructor(
+    width: number,
+    height: number,
+    spacing: number,
+    data: Float32Array,
+    private readonly packed?: Uint16Array,
+    private readonly offset = 0,
+  ) {
+    if ((packed?.length ?? data.length) !== width * height)
+      throw new Error("Heightfield size mismatch");
     this.width = width;
     this.height = height;
     this.spacing = spacing;
     this.data = data;
     let min = Infinity,
       max = -Infinity;
-    for (let i = 0; i < data.length; i++) {
-      const v = data[i]!;
+    for (let i = 0; i < width * height; i++) {
+      const v = packed ? Math.fround(packed[i]! / 100 - offset) : data[i]!;
       if (v < min) min = v;
       if (v > max) max = v;
     }
@@ -38,7 +46,8 @@ export class Heightfield {
   sample(i: number, j: number): number {
     const x = i < 0 ? 0 : i >= this.width ? this.width - 1 : i;
     const z = j < 0 ? 0 : j >= this.height ? this.height - 1 : j;
-    return this.data[z * this.width + x]!;
+    const index = z * this.width + x;
+    return this.packed ? Math.fround(this.packed[index]! / 100 - this.offset) : this.data[index]!;
   }
 
   /**
@@ -154,7 +163,10 @@ export class Heightfield {
 }
 
 /** Decode a .hf file (see Heightfield) using the platform's DecompressionStream. */
-export async function decodeHeightfield(buffer: ArrayBuffer): Promise<Heightfield> {
+export async function decodeHeightfield(
+  buffer: ArrayBuffer,
+  compact = false,
+): Promise<Heightfield> {
   const view = new DataView(buffer);
   const magic = String.fromCharCode(
     view.getUint8(0),
@@ -172,7 +184,7 @@ export async function decodeHeightfield(buffer: ArrayBuffer): Promise<Heightfiel
   ).arrayBuffer();
   if (inflated.byteLength !== width * height * 2) throw new Error("Heightfield payload size");
   const residuals = new DataView(inflated);
-  const q = new Int32Array(width * height);
+  const q = new Uint16Array(inflated);
   for (let z = 0; z < height; z++)
     for (let x = 0; x < width; x++) {
       const i = z * width + x;
@@ -187,6 +199,7 @@ export async function decodeHeightfield(buffer: ArrayBuffer): Promise<Heightfiel
             : q[i - 1]! + q[i - width]! - q[i - width - 1]!;
       q[i] = (prediction + r) & 0xffff;
     }
+  if (compact) return new Heightfield(width, height, spacing, new Float32Array(0), q, offset);
   const data = new Float32Array(width * height);
   for (let i = 0; i < q.length; i++) data[i] = q[i]! / 100 - offset;
   return new Heightfield(width, height, spacing, data);
