@@ -22,7 +22,6 @@
   // Per-pass GPU time: timer queries split at each framebuffer bind, labelled by the programs drawn.
   const cv = document.querySelector("canvas"), gl = cv.getContext("webgl2");
   const ext = gl.getExtension("EXT_disjoint_timer_query_webgl2");
-  if (window.__profPatched) return; window.__profPatched = true;
   const P = WebGL2RenderingContext.prototype;
   const ob = P.beginQuery, oe = P.endQuery, obf = P.bindFramebuffer, oup = P.useProgram;
   const kindOf = new Map(); let curProg = null, open = null, on = false, mine = false; const done = [];
@@ -34,7 +33,7 @@
   P.bindFramebuffer = function (t, fb) { const r = obf.call(this, t, fb); if (this === gl && on && t !== gl.READ_FRAMEBUFFER) { const f = open?.fid; close(); start(f); } return r; };
   P.useProgram = function (p) { if (this === gl && on && open) open.kinds.add(pk(p)); curProg = p; return oup.call(this, p); };
   for (const m of ["drawElements", "drawArrays", "drawElementsInstanced", "drawArraysInstanced"]) { const o = P[m]; P[m] = function (...a) { if (this === gl && on && open) open.kinds.add(pk(curProg)); return o.apply(this, a); }; }
-  window.profFrames = async (n = 60, w = 1280, h = 720) => {
+  window.profFrames = async (n = 60, w = (window.LAB_SIZE ?? [1280, 720])[0], h = (window.LAB_SIZE ?? [1280, 720])[1]) => {
     done.length = 0; on = true;
     for (let i = 0; i < n; i++) { start(i); brDraw(w, h); close(); if (i % 10 === 9) await new Promise((r) => setTimeout(r, 0)); }
     on = false; gl.finish();
@@ -44,7 +43,7 @@
     const fr = Object.values(per).slice(10);
     const med = (k) => { const a = fr.map((f) => f[k] ?? 0).sort((x, y) => x - y); return +a[a.length >> 1].toFixed(3); };
     const tot = fr.map((f) => Object.values(f).reduce((a, b) => a + b, 0)).sort((x, y) => x - y);
-    return { disjoint, scene: med("scene"), steady: med("steady"), present: med("present"), total: +tot[tot.length >> 1].toFixed(3) };
+    return { disjoint, scene: med("scene"), steady: med("steady"), present: med("present"), idle: med("idle"), total: +tot[tot.length >> 1].toFixed(3) };
   };
   window.VARIANTS = {
     off: { on: false },
@@ -63,7 +62,7 @@
   };
   window.setVariant = (name) => { const c = VARIANTS[name]; brSteadyMode.on = c.on; brSteadyMode.foot = true; brSteadyMode.lite = false; brSteadyLab.variant = c.v ?? null; };
   window.__prof = {}; window.__osc = {}; window.__progress = "";
-  const goto = async (rk) => { const v = benchView(routes[rk]); brDraw(1280, 720); await explorer.view(v.pos, v.look); for (let i = 0; i < 5; i++) brDraw(1280, 720); };
+  const goto = async (rk) => { const v = benchView(routes[rk]); brDraw(...(window.LAB_SIZE ?? [1280, 720])); await explorer.view(v.pos, v.look); for (let i = 0; i < 5; i++) brDraw(...(window.LAB_SIZE ?? [1280, 720])); };
   window.runProf = async (vars, list = R, n = 40) => {
     for (const rk of list) for (const vn of vars) { setVariant(vn); await goto(rk); (__prof[rk] ??= {})[vn] = await profFrames(n); __progress = "prof " + rk + " " + vn; }
     __progress = "done";
@@ -113,7 +112,7 @@
     const [x, z] = r.cam, [tx, tz] = r.aim, d = Math.hypot(x - tx, z - tz), fx = (tx - x) / d, fz = (tz - z) / d, sx = -fz, sz = fx;
     const bx = x + fx * 20, bz = z + fz * 20, by = explorer.groundAt(bx, bz) + 0.9;
     if (withBox) explorer.scene.add(box); else explorer.scene.remove(box);
-    brDraw(1280, 720);
+    brDraw(...(window.LAB_SIZE ?? [1280, 720]));
     const out = [];
     for (let f = -6; f < frames; f++) {
       const s = (f - frames / 2);
