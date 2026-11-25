@@ -43,6 +43,7 @@ const FILES: Record<
   | "reload-deagle-empty"
   | "spas12Reload"
   | "bolt"
+  | "casing"
   | "boom"
   | "parachute"
   | "wind"
