@@ -50,11 +50,10 @@ export function drawnGround(hf: Heightfield) {
       j = Math.min(hf.height - 2, Math.max(0, Math.floor(gz)));
     const fx = gx - i,
       fz = gz - j;
-    const o = j * hf.width + i;
-    const h00 = hf.data[o]!,
-      h10 = hf.data[o + 1]!,
-      h01 = hf.data[o + hf.width]!,
-      h11 = hf.data[o + hf.width + 1]!;
+    const h00 = hf.sample(i, j),
+      h10 = hf.sample(i + 1, j),
+      h01 = hf.sample(i, j + 1),
+      h11 = hf.sample(i + 1, j + 1);
     return Math.max(
       fx + fz <= 1
         ? h00 + (h10 - h00) * fx + (h01 - h00) * fz
