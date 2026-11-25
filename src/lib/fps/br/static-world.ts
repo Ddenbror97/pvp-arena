@@ -493,12 +493,12 @@ export function hitNormal(
     const b = world.boxes,
       o = hit.box * 6;
     const faces: Array<[number, [number, number, number]]> = [
-      [Math.abs(x - b[o]!), [-1, 0, 0]],
-      [Math.abs(x - b[o + 3]!), [1, 0, 0]],
-      [Math.abs(y - b[o + 1]!), [0, -1, 0]],
-      [Math.abs(y - b[o + 4]!), [0, 1, 0]],
-      [Math.abs(z - b[o + 2]!), [0, 0, -1]],
-      [Math.abs(z - b[o + 5]!), [0, 0, 1]],
+      [Math.abs(x - b.get(o)), [-1, 0, 0]],
+      [Math.abs(x - b.get(o + 3)), [1, 0, 0]],
+      [Math.abs(y - b.get(o + 1)), [0, -1, 0]],
+      [Math.abs(y - b.get(o + 4)), [0, 1, 0]],
+      [Math.abs(z - b.get(o + 2)), [0, 0, -1]],
+      [Math.abs(z - b.get(o + 5)), [0, 0, 1]],
     ];
     let best = faces[0]!;
     for (const f of faces) if (f[0] < best[0]) best = f;
