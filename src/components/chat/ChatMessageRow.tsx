@@ -55,7 +55,7 @@ export function ChatMessageRow({
               {m.display_name}
             </span>
             <time
-              className="shrink-0 text-[10px] leading-none text-muted-foreground tabular-nums"
+              className="w-[8ch] shrink-0 text-right text-[10px] leading-none text-muted-foreground tabular-nums"
               dateTime={m.created_at}
             >
               {chatClock(m.created_at, localTime)}
