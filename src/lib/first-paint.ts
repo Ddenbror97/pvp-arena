@@ -123,11 +123,6 @@ type PaintSlot = { at: number; value: object };
 const paintSlots = new Map<string, PaintSlot>();
 const paintFlights = new Map<string, Promise<object>>();
 
-export function clearPaintCache() {
-  paintSlots.clear();
-  paintFlights.clear();
-}
-
 function readPaint<T extends object>(key: string, maxAge: number): T | undefined {
   const slot = paintSlots.get(key);
   if (!slot || Date.now() - slot.at > maxAge) return undefined;

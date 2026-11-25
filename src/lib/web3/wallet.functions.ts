@@ -2,8 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireLiveSession } from "@/integrations/supabase/live-session";
-import { WALLET_ERROR_CODES } from "./errors";
-import { CLIENT_EVENTS, issueChallenge, recordEvent, verifyChallenge } from "./wallet.server";
+import { issueChallenge, verifyChallenge } from "./wallet.server";
 
 export const requestWalletChallenge = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth, requireLiveSession])
@@ -28,21 +27,3 @@ export const verifyWalletSignature = createServerFn({ method: "POST" })
     }
     return result;
   });
-
-export const recordWalletEvent = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth, requireLiveSession])
-  .inputValidator((d) =>
-    z
-      .object({
-        event: z.enum(CLIENT_EVENTS),
-        address: z
-          .string()
-          .regex(/^0x[0-9a-fA-F]{40}$/)
-          .nullable(),
-        reason: z.enum(WALLET_ERROR_CODES).optional(),
-      })
-      .parse(d),
-  )
-  .handler(async ({ data, context }) =>
-    recordEvent(context.userId, data.event, data.address, data.reason),
-  );
