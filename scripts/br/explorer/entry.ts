@@ -89,12 +89,17 @@ setTextureQuality(renderer, tier);
 const aaParam = new URLSearchParams(location.search).get("aa");
 const lowAa =
   aaParam === "msaa2" || aaParam === "msaa4" || aaParam === "off" ? aaParam : ("fxaa" as const);
+// (Other tiers: 4× MSAA, or ?aa=msaa2 / fxaa / off for comparisons.)
+const otherAa =
+  aaParam === "msaa2" || aaParam === "fxaa" || aaParam === "off" ? aaParam : ("msaa4" as const);
 const sceneTarget = renderer.capabilities.reversedDepthBuffer
   ? tier === "low"
     ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa === "msaa4" ? 4 : 0, {
         fxaa: lowAa === "fxaa",
       })
-    : createSceneTarget(renderer, 4)
+    : createSceneTarget(renderer, otherAa === "msaa2" ? 2 : otherAa === "msaa4" ? 4 : 0, {
+        fxaa: otherAa === "fxaa",
+      })
   : null;
 // As the game (br-arena): sharpened unless ?sharpen=off, on the low tier, or with a scene target.
 const sharpen =
@@ -208,7 +213,12 @@ function draw() {
     triangles = renderer.info.render.triangles;
   sharpen?.apply();
   sceneTarget?.present(
-    tier !== "low" && new URLSearchParams(location.search).get("sharpen") !== "off" ? 0.4 : 0,
+    // (?sharpen=off, or ?sharpen=0.2 for another strength.)
+    tier !== "low" && sharpenParam !== "off"
+      ? Number.isFinite(Number(sharpenParam)) && sharpenParam
+        ? Number(sharpenParam)
+        : 0.4
+      : 0,
     // ?steady=1: the air's steadying pass (scene-target.ts STEADY), as the game runs it aloft;
     // ?steady=foot: as it runs on foot (STEADY.foot).
     steadyMode.on
@@ -252,6 +262,7 @@ addEventListener("mousemove", (e) => {
 });
 let interactive = new URLSearchParams(location.search).get("fly") === "1";
 const steadyParam = new URLSearchParams(location.search).get("steady");
+const sharpenParam = new URLSearchParams(location.search).get("sharpen");
 // ?lite=1: the cheaper pass (STEADY_LITE); ?sv=depth1,cross,…: any SteadyVariant, for measuring.
 // (`window.brSteadyMode` changes all three without a reload.)
 const steadyMode = {

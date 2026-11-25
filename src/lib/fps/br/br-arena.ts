@@ -639,10 +639,18 @@ function drawMap(island: IslandScene) {
  * blinked at edges, roof lines and the ground as the camera moved. "fxaa" (default): FXAA in
  * the present pass (scene-target.ts FXAA_LOW_GLSL); "msaa2" / "msaa4": 2× / 4× MSAA; "off": none, as before.
  * localStorage "br-low-aa" picks one (comparisons).
+ *
+ * The balanced tier too since the medium audit (2026-11-25), with the lite steadying pass:
+ * measured at its 1600 × 900, with 4× MSAA the ground and the trees crawled more (the
+ * sharpening pushes every sample apart, and alpha-tested leaves get no MSAA), the steadying
+ * pass needed a depth resolve of the four samples (3 ms on Intel UHD), and the frame cost
+ * 4–9 ms more on Intel; with FXAA the same views crawled about half as much and looked as
+ * sharp (claude/final-medium-graphics-render-performance-audit.md). localStorage "br-mid-aa"
+ * picks another for it.
  */
-function lowTierAa(): "fxaa" | "msaa2" | "msaa4" | "off" {
+function lowTierAa(key = "br-low-aa"): "fxaa" | "msaa2" | "msaa4" | "off" {
   try {
-    const v = localStorage.getItem("br-low-aa");
+    const v = localStorage.getItem(key);
     if (v === "msaa2" || v === "msaa4" || v === "off") return v;
   } catch {
     // storage blocked: the default
@@ -677,8 +685,9 @@ export function createBrArena(
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   setTextureQuality(renderer, tier.tier);
-  // The low tier's anti-aliasing (lowTierAa): FXAA in the present pass by default.
-  const lowAa = tier.tier === "low" ? lowTierAa() : null;
+  // The low and balanced tiers' anti-aliasing (lowTierAa): FXAA in the present pass by default.
+  const lowAa =
+    tier.tier === "low" ? lowTierAa() : tier.tier === "balanced" ? lowTierAa("br-mid-aa") : null;
   const sceneTarget = renderer.capabilities.reversedDepthBuffer
     ? createSceneTarget(renderer, lowAa === "msaa2" ? 2 : lowAa && lowAa !== "msaa4" ? 0 : 4, {
         fxaa: lowAa === "fxaa",
@@ -711,7 +720,8 @@ export function createBrArena(
   // ground's FXAA picture as before). One variant in the air and on foot: no shader to compile
   // as you land.
   const steadyOn = !!sceneTarget && steadyWanted();
-  const steadyLite = tier.tier === "low";
+  // (The balanced tier too: it draws with FXAA, and the lite pass needs no depth resolve.)
+  const steadyLite = tier.tier === "low" || tier.tier === "balanced";
   let steadyNow = 0;
   const steadyArgs = (aloft: boolean, dtMs: number): SteadyArgs | null => {
     if (!steadyOn) return null;
