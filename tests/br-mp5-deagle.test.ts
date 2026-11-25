@@ -30,28 +30,31 @@ const gun = (item: "ak47" | "m4" | "awp" | "mp5" | "deagle", extra = {}) => ({
 });
 
 describe("MP5 and Desert Eagle: balance", () => {
-  it("scales damage from the rifle by the CS:GO and PUBG ratios", () => {
+  it("scales body damage from the AK by PUBG's ratios, the Deagle last (tiers, 2026-11-25)", () => {
     const rifle = W("ak47").damage.chest;
-    // CS:GO MP5-SD 28 / AK 36 ≈ 0.78; PUBG MP5K 33 / AKM 47 ≈ 0.70 and / M416 40 ≈ 0.83.
-    expect(W("mp5").damage.chest / rifle).toBeGreaterThan(0.7);
-    expect(W("mp5").damage.chest / rifle).toBeLessThan(0.83);
-    // CS:GO Deagle 53 / AK 36 ≈ 1.47; PUBG Deagle 62 / AKM 47 ≈ 1.32 and / M416 1.55.
-    expect(W("deagle").damage.chest / rifle).toBeGreaterThan(1.3);
-    expect(W("deagle").damage.chest / rifle).toBeLessThan(1.55);
+    // PUBG MP5K 33 / AKM 47 ≈ 0.70.
+    expect(W("mp5").damage.chest / rifle).toBeCloseTo(0.7, 2);
+    // The Deagle is the lowest tier: less per hit than the AK, slower, no armour piercing.
+    expect(W("deagle").damage.chest).toBeLessThan(rifle);
+    expect(W("deagle").armorPierce).toBe(0);
+    // A headshot without a helmet leaves a full-health player close to death with any of them.
+    for (const id of ["ak47", "m4", "mp5", "deagle"] as const) {
+      expect(W(id).damage.head).toBeGreaterThanOrEqual(75);
+      expect(W(id).damage.head).toBeLessThan(100);
+    }
   });
-  it("kills in four MP5 hits (rifles three) a little slower, the Deagle in two", () => {
+  it("kills in four MP5 hits (rifles three) a little slower, the Deagle in three, slowest", () => {
     const toKill = (id: "ak47" | "mp5" | "deagle") => Math.ceil(100 / W(id).damage.chest);
     expect(toKill("ak47")).toBe(3);
     expect(toKill("mp5")).toBe(4);
-    expect(toKill("deagle")).toBe(2);
+    expect(toKill("deagle")).toBe(3);
     const ttk = (id: "ak47" | "mp5" | "deagle") => (toKill(id) - 1) * W(id).intervalMs;
-    // MP5 750 rpm (CS:GO): 240 ms against the rifle's 200 ms; Deagle 267 rpm: 225 ms.
+    // MP5 750 rpm: 240 ms against the rifle's 200 ms; Deagle 267 rpm: 450 ms.
     expect(ttk("mp5")).toBe(240);
     expect(ttk("ak47")).toBe(200);
-    expect(ttk("deagle")).toBe(225);
-    // The MP5's edge is its hip fire; the Deagle has the heavier armour penetration.
+    expect(ttk("deagle")).toBe(450);
+    // The MP5's edge is its hip fire.
     expect(W("mp5").hipSpreadDeg).toBeLessThan(W("ak47").hipSpreadDeg);
-    expect(W("deagle").armorPierce).toBeGreaterThan(0);
     expect(W("deagle").semiAuto).toBe(true);
     expect(W("mp5").semiAuto).toBe(false);
     expect([W("mp5").magazine, W("deagle").magazine]).toEqual([30, 7]);

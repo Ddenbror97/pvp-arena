@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import { BrCentre, BrInventory } from "../src/components/fps/BrHud";
 import type { BrKitView } from "../src/lib/fps/br/match";
 import type { BrHud } from "../src/lib/fps/br/br-arena";
+import { DEFAULT_STRIKE_SETTINGS } from "../src/lib/fps/settings";
+const crosshair = DEFAULT_STRIKE_SETTINGS;
 const hud = {
   scope: false,
   onFoot: true,
@@ -13,19 +15,56 @@ const hud = {
 } as unknown as BrHud;
 describe("BR action feedback", () => {
   it("keeps the crosshair without adding a reload countdown", () => {
-    const html = renderToStaticMarkup(<BrCentre hud={hud} hit={null} />);
-    expect(html).toContain("br-cross");
+    const html = renderToStaticMarkup(<BrCentre hud={hud} hit={null} crosshair={crosshair} />);
+    expect(html).toContain("duel-crosshair crosshair-0");
     expect(html).not.toContain("br-progress");
     expect(html).not.toContain("Reloading");
     expect(html).not.toContain("1.4");
   });
   it("retains healing progress while the player is using a medkit", () => {
     const html = renderToStaticMarkup(
-      <BrCentre hud={{ ...hud, heal: { item: "medkit", progress: 0.4, left: 4.2 } }} hit={null} />,
+      <BrCentre
+        hud={{ ...hud, heal: { item: "medkit", progress: 0.4, left: 4.2 } }}
+        hit={null}
+        crosshair={crosshair}
+      />,
     );
     expect(html).toContain("br-progress");
     expect(html).toContain("medkit");
     expect(html).toContain("4.2");
+  });
+});
+
+describe("BR crosshair", () => {
+  // The Settings → Crosshair choice (style and colour) was ignored in the battle royale: it
+  // drew its own white dot. It now draws the player's crosshair, as 1v1 and 5v5 do.
+  it("draws the chosen style and colour", () => {
+    for (let style = 0; style < 5; style++) {
+      const html = renderToStaticMarkup(
+        <BrCentre
+          hud={hud}
+          hit={null}
+          crosshair={{ ...crosshair, crosshair: style, color: "#ff3355" }}
+        />,
+      );
+      expect(html).toContain(`duel-crosshair crosshair-${style}`);
+      expect(html).toContain("--crosshair-color:#ff3355");
+      expect(html).not.toContain("br-cross");
+    }
+  });
+  it("hides it while scoped or aiming down sights", () => {
+    expect(
+      renderToStaticMarkup(<BrCentre hud={{ ...hud, aim: 1 }} hit={null} crosshair={crosshair} />),
+    ).not.toContain("duel-crosshair");
+    expect(
+      renderToStaticMarkup(
+        <BrCentre
+          hud={{ ...hud, scope: { zoom: 4, reticle: "awp" } } as BrHud}
+          hit={null}
+          crosshair={crosshair}
+        />,
+      ),
+    ).not.toContain("duel-crosshair");
   });
 });
 

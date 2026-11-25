@@ -325,8 +325,8 @@ describe("battle royale combat", () => {
       }
     }
     expect(elim).toBe(true);
-    // Chest 34 less the level-1 vest's 20 % = 27 per hit: 4 hits for 100 health.
-    expect(hits[0]).toBe(27);
+    // Chest 40 less the level-1 vest's 20 % = 32 per hit: 4 hits for 100 health.
+    expect(hits[0]).toBe(32);
     expect(hits.length).toBe(4);
     expect(shots).toBe(4);
     expect(me.kit.guns[0]!.mag).toBe(26);

@@ -536,7 +536,7 @@ export function BrMatch() {
       {hud && !showLoading && (
         <>
           <BrLobbyCard hud={hud} connection={connection} />
-          <BrCentre hud={hud} hit={feed.hit} />
+          <BrCentre hud={hud} hit={feed.hit} crosshair={settings} />
           <BrAirdropAlert hud={hud} />
           <BrStatus hud={hud} tabletKey={keyLabel(brSettings.binds.tablet)} />
           {tabletCoach && hasTablet && !tablet && (

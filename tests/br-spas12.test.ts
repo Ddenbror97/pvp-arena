@@ -99,11 +99,12 @@ describe("SPAS-12", () => {
     expect(LOOT.itemWeight.spas12).toBeGreaterThan(0);
   });
 
-  it("is balanced against the rifle: a shell is about three rifle rounds, only up close", () => {
+  it("is balanced against the rifle: a shell is two to three AK rounds, only up close", () => {
     const shell = P.count * SPAS.damage.chest;
     const rifle = ITEMS.ak47.damage.chest;
     expect(shell).toBeGreaterThanOrEqual(100); // one shell point blank, no armour
-    expect(shell / rifle).toBeGreaterThan(2.8);
+    // B tier under the AK (40 chest since 2026-11-25): 104 / 40 = 2.6.
+    expect(shell / rifle).toBeGreaterThan(2.4);
     expect(shell / rifle).toBeLessThan(3.5);
     // Behind full body armour (the cap halves it) it takes two.
     expect(Math.ceil(100 / (shell * 0.5))).toBe(2);
