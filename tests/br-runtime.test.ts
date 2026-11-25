@@ -334,7 +334,10 @@ describe("Battle royale runtime (Phase 2)", () => {
     await until(() => latest(again.frames), 10_000);
     // "Play here" on the other page takes the seat over.
     const here = await open(matchId, sub, "Me", "&page=page-bbbbbbbb&takeover=1");
-    await until(() => again.closed.code, 10_000);
+    // (The room closes the replaced socket at once; on a loaded single-core runner, as CI's,
+    // Miniflare delivered that close to this client only 30 s later, measured: the step failed
+    // CI four runs in a row, 2026-11-25, while the room had already closed it.)
+    await until(() => again.closed.code, 45_000);
     expect(again.closed.code).toBe(4001);
     await until(() => latest(here.frames), 10_000);
     expect(here.closed.code).toBeUndefined();
