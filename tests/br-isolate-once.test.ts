@@ -69,7 +69,7 @@ describe("isolateOnce", () => {
     now += 11;
     expect(await once.get(async () => "current")).toBe("current");
     resume();
-    await expect(slow).rejects.toThrow("superseded");
+    expect(await slow).toBe("current");
     expect(once.value).toBe("current");
   });
 

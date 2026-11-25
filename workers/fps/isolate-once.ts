@@ -37,21 +37,26 @@ export function isolateOnce<T>(
       return value;
     },
     async get(make) {
-      while (value === null && beatAt !== 0 && now() - beatAt < staleMs)
-        await new Promise((resolve) => setTimeout(resolve, pollMs));
-      if (value !== null) return value;
-      const mine = ++build;
-      beatAt = now();
-      try {
-        const made = await make(() => {
-          if (build !== mine) throw new Error("Island build superseded");
-          beatAt = now();
-        });
-        value ??= made;
-        return value;
-      } finally {
-        if (build === mine) beatAt = 0;
+      while (value === null) {
+        while (value === null && beatAt !== 0 && now() - beatAt < staleMs)
+          await new Promise((resolve) => setTimeout(resolve, pollMs));
+        if (value !== null) return value;
+        const mine = ++build;
+        beatAt = now();
+        try {
+          const made = await make(() => {
+            if (build !== mine) throw new Error("Island build superseded");
+            beatAt = now();
+          });
+          if (build === mine) value = made;
+        } catch (error) {
+          // The replacement owns the build. Wait for its result on this request's own timers.
+          if (build === mine) throw error;
+        } finally {
+          if (build === mine) beatAt = 0;
+        }
       }
+      return value;
     },
   };
 }
