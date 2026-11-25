@@ -4403,6 +4403,56 @@ function blackwater(poi: Poi, out: Placement[], ctx: Context) {
  * the warden's office). Lamps along the galleries, the courtyard's riot aftermath. And the
  * watchtower's rooms.
  */
+/**
+ * The keep's rounded ends (build_blackwater.mjs): half circles of six straight walls each, so
+ * a wall's face is nearest the centre at the middle of its segment (where the window is).
+ * OUT: the outer wall's room face; GAL: the gallery wall's room face, both as distances from
+ * the end's centre along a segment's normal. Hall-local (u outward, v across).
+ */
+const SEG_HALF = (15 * Math.PI) / 180;
+const COS_HALF = Math.cos(SEG_HALF),
+  SIN_HALF = Math.sin(SEG_HALF);
+const OUT = ((27.5 + BW.RW) / 2) * COS_HALF - (27.5 - BW.RW) / 2;
+const GAL = ((BW.RP + 18.7) / 2) * COS_HALF + (BW.RP - 18.7) / 2;
+const SEG_NORMALS = [-75, -45, -15, 15, 45, 75].map((d) => (d * Math.PI) / 180);
+/** How far past the outer wall's room face (u, v) is (negative: inside the hall). */
+const endOut = (u: number, v: number) =>
+  Math.max(...SEG_NORMALS.map((a) => u * Math.cos(a) + v * Math.sin(a))) - OUT;
+/** How far clear of the gallery wall (u, v) is, on its segment (positive: in the hall). */
+const endIn = (u: number, v: number) => {
+  const a = Math.atan2(v, u);
+  const n = SEG_NORMALS.reduce((b, x) => (Math.abs(x - a) < Math.abs(b - a) ? x : b));
+  return u * Math.cos(n) + v * Math.sin(n) - GAL;
+};
+/** The end halls' furniture footprints (models.json sizes: x, z at turn 0). */
+const END_FOOT: Record<string, [number, number]> = {
+  bookcase: [2.3, 1.12],
+  "laundry-machine": [1.04, 1.09],
+  "laundry-basket": [0.53, 0.56],
+  "bw-wash-sink": [0.29, 0.56],
+  "bw-mirror": [0.29, 0.36],
+  "hosp-bed": [2.15, 1.41],
+  "iv-drip": [0.52, 0.54],
+  "med-cabinet": [0.93, 1.07],
+  "bw-pew": [0.65, 3],
+  "weight-set": [2, 1.37],
+  "gym-rig": [1.5, 1.88],
+  treadmill: [2, 1.09],
+  "cafe-table": [3.82, 1.35],
+  "bw-vault": [3.99, 0.92],
+  "bw-gun-wall": [3, 0.09],
+  "bw-riot-shield": [0.25, 0.55],
+  "military-crate": [0.87, 1.6],
+  "desk-set": [2, 1.69],
+  "sofa-luxury": [2.6, 0.8],
+  rug: [2.6, 2.26],
+};
+/** Half extents [u, v] of a model at a quarter turn (end-hall furniture). */
+const endHalf = (model: string, turn: number): [number, number] => {
+  const [w, d] = END_FOOT[model] ?? [1, 1];
+  return ((turn % 4) + 4) % 2 ? [d / 2, w / 2] : [w / 2, d / 2];
+};
+
 function blackwaterKeep(out: Placement[], ctx: Context) {
   const poi = ctx.meta.pois.find((p) => p.id === "blackwater-prison");
   if (!poi || poi.padHeight === undefined) return;
@@ -4526,17 +4576,67 @@ function blackwaterKeep(out: Placement[], ctx: Context) {
         { length: n },
         (_, i) => end.half * (from + ((to - from) * i) / Math.max(1, n - 1)),
       );
+    /** Hall-local corners (u outward from the end's centre, v across) of a model at u, v. */
+    const corners = (model: string, turn: number, u: number, v: number) => {
+      const [hx, hz] = endHalf(model, turn);
+      return [
+        [u - hx, v - hz],
+        [u + hx, v - hz],
+        [u - hx, v + hz],
+        [u + hx, v + hz],
+      ] as Array<[number, number]>;
+    };
+    /**
+     * Free-standing furniture, its footprint kept inside the hall (owner, 2026-11-25: a
+     * bookcase stood in the library's window). The ends are polygons of straight walls
+     * (build_blackwater.mjs SEG), so a model at a fixed radius ran through the outer wall at
+     * every window, the middle of a segment, and a quarter turn left it skewed to the wall.
+     * The radius is pulled in (or out) until every corner clears the walls.
+     */
     const along = (model: string, rad: number, n: number, up = 0, turnFix = 0) => {
       for (const deg of span(n)) {
-        const [x, z] = polar(rad, deg);
-        put(model, x, y + up, z, inward(deg) + turnFix);
+        const turn = inward(deg) + turnFix;
+        let r = rad;
+        for (let i = 0; i < 80; i++) {
+          const a = (deg * Math.PI) / 180;
+          const cs = corners(model, turn, r * Math.cos(a), r * Math.sin(a));
+          if (cs.some(([u, v]) => endOut(u, v) > -0.06)) r -= 0.05;
+          else if (cs.some(([u, v]) => endIn(u, v) < 0.1)) r += 0.05;
+          else break;
+        }
+        const [x, z] = polar(r, deg);
+        put(model, x, y + up, z, turn);
       }
+    };
+    /**
+     * Furniture backed onto the straight wall across the end (θ = 0), in a row from the
+     * gallery wall outwards: the hall's only wall square to the quarter turns, and with no
+     * window. `turnFix` as above for models whose front is not +z.
+     */
+    const wallRun = (items: Array<[model: string, up?: number, turnFix?: number]>) => {
+      const turnOf = (fix = 0) => (end.half > 0 ? 0 : 2) + fix;
+      const width = items.map(([m, , f]) => 2 * endHalf(m, turnOf(f))[0]);
+      const depth = (m: string, f = 0) => endHalf(m, turnOf(f))[1];
+      const maxD = Math.max(...items.map(([m, , f]) => depth(m, f)));
+      // The row's span at the deepest item's front: inside the gallery and outer walls.
+      const vMax = 0.15 + 2 * maxD + 0.03;
+      const u0 = (GAL + 0.15 + vMax * SIN_HALF) / COS_HALF,
+        u1 = (OUT - 0.08 - vMax * SIN_HALF) / COS_HALF;
+      const total = width.reduce((a, b) => a + b, 0);
+      const gap = Math.max(0.02, (u1 - u0 - total) / (items.length + 1));
+      let u = u0 + gap;
+      items.forEach(([m, up = 0, fix = 0], i) => {
+        const v = end.half * (0.15 + depth(m, fix) + 0.03);
+        const cu = u + width[i]! / 2;
+        if (u + width[i]! <= u1 + 1e-6) put(m, end.e * (BW.HL + cu), y + up, v, turnOf(fix));
+        u += width[i]! + gap;
+      });
     };
     switch (r.kind) {
       case "mess":
         for (const [rad, n] of [
           [21.2, 5],
-          [24.2, 6],
+          [24.0, 6],
         ] as const)
           for (const deg of span(n)) {
             const [x, z] = polar(rad, deg);
@@ -4546,39 +4646,60 @@ function blackwaterKeep(out: Placement[], ctx: Context) {
           }
         break;
       case "laundry":
-        along("laundry-machine", 25.3, 7);
+        wallRun(Array.from({ length: 6 }, () => ["laundry-machine"] as [string]));
         along("laundry-basket", 21.0, 3);
         break;
       case "showers":
-        along("bw-wash-sink", 25.6, 6);
-        along("bw-mirror", 25.8, 6, 1.35);
+        wallRun(Array.from({ length: 6 }, () => ["bw-wash-sink"] as [string]));
+        wallRun(Array.from({ length: 6 }, () => ["bw-mirror", 1.35] as [string, number]));
         along("bw-bucket", 20.5, 2);
         break;
       case "infirmary":
-        along("hosp-bed", 24.4, 5);
-        along("iv-drip", 22.6, 3);
-        along("med-cabinet", 20.0, 2, 0, 2);
+        wallRun([["med-cabinet", 0, 2], ["med-cabinet", 0, 2], ["hosp-bed"]]);
+        along("hosp-bed", 23.2, 4);
+        along("iv-drip", 21.2, 3);
         break;
       case "chapel":
         along("bw-pew", 22.5, 4, 0, 1);
         break;
       case "gym":
-        along("weight-set", 24.0, 3);
+        along("weight-set", 23.6, 3);
         along("gym-rig", 21.0, 2);
-        along("treadmill", 24.6, 2);
+        wallRun([["treadmill"], ["treadmill"], ["treadmill"]]);
         break;
       case "library":
-        along("bookcase", 25.5, 6);
-        along("cafe-table", 21.5, 3);
+        wallRun([["bookcase"], ["bookcase"]]);
+        // Free-standing cases between the windows (the segments' joints, 30° and 60°).
+        for (const [deg, n] of [
+          [30, 1],
+          [60, 1],
+        ] as const)
+          for (let i = 0; i < n; i++) {
+            const turn = inward(end.half * deg);
+            let r = 23.3;
+            const a = (end.half * deg * Math.PI) / 180;
+            while (
+              corners("bookcase", turn, r * Math.cos(a), r * Math.sin(a)).some(
+                ([u, v]) => endOut(u, v) > -0.25,
+              )
+            )
+              r -= 0.05;
+            const [x, z] = polar(r, end.half * deg);
+            put("bookcase", x, y, z, turn);
+          }
+        along("cafe-table", 20.9, 3);
         break;
       case "armoury":
-        along("bw-vault", 25.3, 2);
-        along("bw-gun-wall", 25.6, 2, 0.3);
+        wallRun([
+          ["bw-gun-wall", 0.3],
+          ["bw-gun-wall", 0.3],
+        ]);
+        along("bw-vault", 23.4, 1);
         along("bw-riot-shield", 21.0, 5, 0, 2);
         along("military-crate", 22.4, 3);
         break;
       case "warden":
-        along("bookcase", 25.5, 3);
+        wallRun([["bookcase"], ["bookcase"]]);
         along("desk-set", 22.8, 1);
         along("sofa-luxury", 21.0, 1, 0, 2);
         along("rug", 23.0, 1);

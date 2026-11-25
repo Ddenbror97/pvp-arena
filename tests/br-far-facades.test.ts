@@ -149,11 +149,15 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
       // The LODs before it are the ones the game drew before, or those with their last
       // overlapping faces lifted apart (zfix-v21) or the military base's buildings with their
       // plinths proud of the walls (plinth-v2), or with their window reveals lit as the wall
-      // (reveal-v1), 2026-11-24: the same triangles.
+      // (reveal-v1), 2026-11-24: the same triangles. And (2026-11-25) the Blackwater fixes:
+      // the chapel's ground faces lifted (groundlift-v1, the same triangles) and the cell
+      // houses' walls carried into the ground (footing-v1, more triangles).
       for (const [i, l] of m.lods.slice(0, -1).entries()) {
         const was = before.models[id]!.lods[i]!;
-        if (/\.(zfix-v21|plinth-v2|reveal-v1)\.lod\d\.glb$/.test(l.file))
+        if (/\.(zfix-v21|plinth-v2|reveal-v1|groundlift-v1)\.lod\d\.glb$/.test(l.file))
           expect(l.tris, id).toBe(was.tris);
+        else if (/\.footing-v1\.lod\d\.glb$/.test(l.file))
+          expect(l.tris, id).toBeGreaterThan(was.tris);
         else expect(l, id).toEqual(was);
       }
     }
