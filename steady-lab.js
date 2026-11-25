@@ -64,12 +64,17 @@
     for (const rk of list) for (const vn of vars) { setVariant(vn); await goto(rk); (__prof[rk] ??= {})[vn] = await profFrames(n); __progress = "prof " + rk + " " + vn; }
     __progress = "done";
   };
+  window.sharp = () => { const c = __oscLast.img, W = c.width, H = c.height; const d = c.getContext("2d").getImageData(0, 0, W, H).data; const band = (y0, y1) => { let s = 0, n = 0; for (let y = y0; y < y1; y += 2) for (let x = 0; x < W - 1; x += 2) { const i = y * W + x; const L0 = 0.299 * d[4 * i] + 0.587 * d[4 * i + 1] + 0.114 * d[4 * i + 2], L1 = 0.299 * d[4 * i + 4] + 0.587 * d[4 * i + 5] + 0.114 * d[4 * i + 6], L2 = 0.299 * d[4 * (i + W)] + 0.587 * d[4 * (i + W) + 1] + 0.114 * d[4 * (i + W) + 2]; s += Math.abs(L1 - L0) + Math.abs(L2 - L0); n++; } return +(s / n).toFixed(2); }; return { smid: band((H / 3) | 0, ((2 * H) / 3) | 0), slow: band(((2 * H) / 3) | 0, H - 1) }; };
+  window.__err = null; window.__shots = {};
   window.runOsc = async (vars, list = R, extra = {}) => {
     for (const rk of list) for (const vn of vars) {
-      setVariant(vn); await goto(rk);
-      const o = await labOsc(oscOpts(routes[rk], extra));
-      (__osc[rk] ??= {})[vn] = { osc: o.osc, top: o.grid[0].reduce((a, b) => a + b, 0), mid: o.grid[1].reduce((a, b) => a + b, 0), low: o.grid[2].reduce((a, b) => a + b, 0) };
-      __progress = "osc " + rk + " " + vn;
+      try {
+        setVariant(vn); await goto(rk);
+        const o = await labOsc(oscOpts(routes[rk], extra));
+        (__osc[rk] ??= {})[vn] = { osc: o.osc, top: o.grid[0].reduce((a, b) => a + b, 0), mid: o.grid[1].reduce((a, b) => a + b, 0), low: o.grid[2].reduce((a, b) => a + b, 0), ...sharp() };
+        const k = document.createElement("canvas"); k.width = __oscLast.img.width; k.height = __oscLast.img.height; k.getContext("2d").drawImage(__oscLast.img, 0, 0); (__shots[rk] ??= {})[vn] = k;
+        __progress = "osc " + rk + " " + vn;
+      } catch (e) { __err = rk + " " + vn + " " + e; }
     }
     __progress = "done";
   };
