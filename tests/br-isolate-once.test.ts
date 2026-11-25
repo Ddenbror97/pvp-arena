@@ -55,6 +55,24 @@ describe("isolateOnce", () => {
     expect(Date.now() - t0).toBeGreaterThanOrEqual(35);
   });
 
+  it("stops a displaced builder if its stalled asset read eventually returns", async () => {
+    let now = 1;
+    const once = isolateOnce<string>({ staleMs: 10, now: () => now });
+    let resume!: () => void;
+    const slow = once.get(async (beat) => {
+      await new Promise<void>((resolve) => {
+        resume = resolve;
+      });
+      beat();
+      return "obsolete";
+    });
+    now += 11;
+    expect(await once.get(async () => "current")).toBe("current");
+    resume();
+    expect(await slow).toBe("current");
+    expect(once.value).toBe("current");
+  });
+
   it("a slow build that keeps beating is waited for, not duplicated", async () => {
     const once = isolateOnce<string>({ pollMs: 5, staleMs: 30 });
     let builds = 0;

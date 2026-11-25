@@ -1,3 +1,4 @@
+import { CollisionCoordinates } from "./collision-coordinates";
 import type { Heightfield } from "./heightfield";
 import type { Placement } from "./layout";
 import { forEachTrunkNear, type VegetationWorld } from "./vegetation";
@@ -24,6 +25,13 @@ export type CollisionData = {
 
 const CELL = 4;
 const COLS = Math.ceil((2 * WORLD_HALF) / CELL);
+
+/** Population count for one unsigned 32-bit occupancy word. */
+function bitCount(word: number) {
+  word -= (word >>> 1) & 0x55555555;
+  word = (word & 0x33333333) + ((word >>> 2) & 0x33333333);
+  return (((word + (word >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24;
+}
 
 /** Model-space box rotated by `turn` quarter turns about +y (three.js rotation.y = turn·π/2). */
 export function turnBox(
@@ -101,19 +109,11 @@ export class StaticWorld {
   roadTop: ((x: number, z: number) => number | null) | null = null;
   readonly vegetation: VegetationWorld | null;
   /** World boxes, 6 floats each: x0, y0, z0, x1, y1, z1. */
-  readonly boxes: Float32Array;
-  /**
-   * The 4 m grid, packed (foundation audit 2026-11-10: a Map of 100,000 number arrays held tens
-   * of megabytes of heap in a room limited to 128 MB): `slot` maps an occupied cell to its index,
-   * and that cell's boxes are `cellItems[cellStart[slot] … cellStart[slot + 1])`, in box order.
-   */
-  private readonly slot = new Map<number, number>();
-  /**
-   * One bit per cell: set where the cell holds a box. Most of the island's cells are empty, and
-   * a sight ray crosses hundreds of them: the bit answers those without a Map lookup (that
-   * lookup was 40 % of a ray's time, performance audit 2026-11-11). 780 kB.
-   */
-  private readonly occupied = new Uint8Array(Math.ceil((COLS * COLS) / 8));
+  readonly boxes: CollisionCoordinates;
+  /** Each occupied cell has one dense slot in geographical order. The prefix per word
+   * plus the count of occupied lower bits gives its slot without a per-cell Map entry. */
+  private readonly occupied = new Uint32Array(Math.ceil((COLS * COLS) / 32));
+  private readonly firstSlot = new Uint32Array(this.occupied.length);
   private readonly cellStart: Uint32Array;
   private readonly cellItems: Uint32Array;
   /**
@@ -165,17 +165,16 @@ export class StaticWorld {
     }
     const solidCount = (this.solidCount = count);
     for (const p of placements) count += (shotModels[p.model]?.length ?? 0) / 6;
-    const boxes = (this.boxes = new Float32Array(count * 6));
-    let at = 0;
+    const boxes = (this.boxes = new CollisionCoordinates(count * 6));
     const place = (p: Placement, list: number[][]) => {
       for (const b of list) {
         const [x0, y0, z0, x1, y1, z1] = turnBox(b, p.turn);
-        boxes[at++] = x0 + p.x;
-        boxes[at++] = y0 + p.y;
-        boxes[at++] = z0 + p.z;
-        boxes[at++] = x1 + p.x;
-        boxes[at++] = y1 + p.y;
-        boxes[at++] = z1 + p.z;
+        boxes.append(x0 + p.x);
+        boxes.append(y0 + p.y);
+        boxes.append(z0 + p.z);
+        boxes.append(x1 + p.x);
+        boxes.append(y1 + p.y);
+        boxes.append(z1 + p.z);
       }
     };
     const placeFlat = (p: Placement, flat: ArrayLike<number> | undefined) => {
@@ -187,45 +186,43 @@ export class StaticWorld {
     };
     for (const p of placements) place(p, collision.models[p.model]!);
     for (const p of placements) placeFlat(p, bodyModels[p.model]);
-    for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes[at++] = b[k]!;
+    for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes.append(b[k]!);
     for (const p of placements) placeFlat(p, shotModels[p.model]);
     this.scratch = { seen: new Uint16Array(count), stamp: 0 };
-    // Two passes over the boxes' cells: sizes, then contents.
-    const sizes: number[] = [];
-    const shotSizes: number[] = [];
     const eachCell = (visit: (key: number, box: number) => void) => {
       for (let i = 0; i < count; i++) {
         const o = i * 6;
-        const c0 = this.cellIndex(boxes[o]!),
-          c1 = this.cellIndex(boxes[o + 3]!),
-          r0 = this.cellIndex(boxes[o + 2]!),
-          r1 = this.cellIndex(boxes[o + 5]!);
+        const c0 = this.cellIndex(boxes.get(o)),
+          c1 = this.cellIndex(boxes.get(o + 3)),
+          r0 = this.cellIndex(boxes.get(o + 2)),
+          r1 = this.cellIndex(boxes.get(o + 5));
         for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) visit(r * COLS + c, i);
       }
     };
-    eachCell((key, box) => {
-      const shot = box >= solidCount ? 1 : 0;
-      const s = this.slot.get(key);
-      if (s === undefined) {
-        this.slot.set(key, sizes.length);
-        this.occupied[key >> 3]! |= 1 << (key & 7);
-        sizes.push(1 - shot);
-        shotSizes.push(shot);
-      } else if (shot) shotSizes[s]!++;
-      else sizes[s]!++;
+    eachCell((key) => {
+      this.occupied[key >>> 5]! |= 1 << (key & 31);
     });
-    const start = (this.cellStart = new Uint32Array(sizes.length + 1));
-    const shotStart = (this.shotStart = new Uint32Array(sizes.length + 1));
-    for (let s = 0; s < sizes.length; s++) {
-      start[s + 1] = start[s]! + sizes[s]!;
-      shotStart[s + 1] = shotStart[s]! + shotSizes[s]!;
+    let slots = 0;
+    for (let word = 0; word < this.occupied.length; word++) {
+      this.firstSlot[word] = slots;
+      slots += bitCount(this.occupied[word]!);
     }
-    const items = (this.cellItems = new Uint32Array(start[sizes.length]!));
-    const shotItems = (this.shotItems = new Uint32Array(shotStart[sizes.length]!));
-    const cursor = start.slice(0, sizes.length);
-    const shotCursor = shotStart.slice(0, sizes.length);
+    const start = (this.cellStart = new Uint32Array(slots + 1));
+    const shotStart = (this.shotStart = new Uint32Array(slots + 1));
     eachCell((key, box) => {
-      const s = this.slot.get(key)!;
+      const counts = box >= solidCount ? shotStart : start;
+      counts[this.slotOf(key)! + 1]!++;
+    });
+    for (let s = 0; s < slots; s++) {
+      start[s + 1]! += start[s]!;
+      shotStart[s + 1]! += shotStart[s]!;
+    }
+    const items = (this.cellItems = new Uint32Array(start[slots]!));
+    const shotItems = (this.shotItems = new Uint32Array(shotStart[slots]!));
+    const cursor = start.slice(0, slots);
+    const shotCursor = shotStart.slice(0, slots);
+    eachCell((key, box) => {
+      const s = this.slotOf(key)!;
       if (box >= solidCount) shotItems[shotCursor[s]!++] = box;
       else items[cursor[s]!++] = box;
     });
@@ -233,7 +230,10 @@ export class StaticWorld {
 
   /** The packed index of a cell's boxes, or undefined for an empty cell. */
   private slotOf(key: number) {
-    return this.occupied[key >> 3]! & (1 << (key & 7)) ? this.slot.get(key) : undefined;
+    const index = key >>> 5;
+    const word = this.occupied[index]!;
+    const bit = 1 << (key & 31);
+    return (word & bit) === 0 ? undefined : this.firstSlot[index]! + bitCount(word & (bit - 1));
   }
 
   private cellIndex(v: number) {
@@ -285,14 +285,14 @@ export class StaticWorld {
     this.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
       if (hit) return;
       const o = i * 6;
-      const t = b[o + 4]!;
+      const t = b.get(o + 4);
       if (
         t >= y0 &&
         t <= y1 &&
-        x + radius > b[o]! &&
-        x - radius < b[o + 3]! &&
-        z + radius > b[o + 2]! &&
-        z - radius < b[o + 5]!
+        x + radius > b.get(o) &&
+        x - radius < b.get(o + 3) &&
+        z + radius > b.get(o + 2) &&
+        z - radius < b.get(o + 5)
       )
         hit = true;
     });
@@ -310,12 +310,12 @@ export class StaticWorld {
       if (hit) return;
       const o = i * 6;
       if (
-        x + radius > b[o]! + 1e-7 &&
-        x - radius < b[o + 3]! - 1e-7 &&
-        z + radius > b[o + 2]! + 1e-7 &&
-        z - radius < b[o + 5]! - 1e-7 &&
-        y + height > b[o + 1]! + 1e-7 &&
-        y < b[o + 4]! - 1e-7
+        x + radius > b.get(o) + 1e-7 &&
+        x - radius < b.get(o + 3) - 1e-7 &&
+        z + radius > b.get(o + 2) + 1e-7 &&
+        z - radius < b.get(o + 5) - 1e-7 &&
+        y + height > b.get(o + 1) + 1e-7 &&
+        y < b.get(o + 4) - 1e-7
       )
         hit = true;
     });
@@ -337,14 +337,14 @@ export class StaticWorld {
     const b = this.boxes;
     this.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
       const o = i * 6;
-      const t = b[o + 4]!;
+      const t = b.get(o + 4);
       if (
         t > top &&
         t <= maxY + 1e-6 &&
-        x + radius > b[o]! &&
-        x - radius < b[o + 3]! &&
-        z + radius > b[o + 2]! &&
-        z - radius < b[o + 5]!
+        x + radius > b.get(o) &&
+        x - radius < b.get(o + 3) &&
+        z + radius > b.get(o + 2) &&
+        z - radius < b.get(o + 5)
       )
         top = t;
     });
@@ -422,12 +422,12 @@ export class StaticWorld {
             // stands in one, which it can, still sees, shoots and blasts out of it.
             if (
               k >= e0 &&
-              ox > b[o]! &&
-              ox < b[o + 3]! &&
-              oy > b[o + 1]! &&
-              oy < b[o + 4]! &&
-              oz > b[o + 2]! &&
-              oz < b[o + 5]!
+              ox > b.get(o) &&
+              ox < b.get(o + 3) &&
+              oy > b.get(o + 1) &&
+              oy < b.get(o + 4) &&
+              oz > b.get(o + 2) &&
+              oz < b.get(o + 5)
             )
               continue;
             const t = slab(
@@ -437,12 +437,12 @@ export class StaticWorld {
               dx,
               dy,
               dz,
-              b[o]!,
-              b[o + 1]!,
-              b[o + 2]!,
-              b[o + 3]!,
-              b[o + 4]!,
-              b[o + 5]!,
+              b.get(o),
+              b.get(o + 1),
+              b.get(o + 2),
+              b.get(o + 3),
+              b.get(o + 4),
+              b.get(o + 5),
             );
             if (t < nearest) {
               nearest = t;
@@ -479,6 +479,42 @@ export class StaticWorld {
 }
 
 /**
+ * The outward normal of what `raycast` hit at (x, y, z): the box's face the point lies on, the
+ * ground's slope, a trunk's side (bullet impact marks, 2026-11-25).
+ */
+export function hitNormal(
+  world: StaticWorld,
+  hit: RayHit,
+  x: number,
+  y: number,
+  z: number,
+): [number, number, number] {
+  if (hit.kind === "box" && hit.box !== undefined && hit.box >= 0) {
+    const b = world.boxes,
+      o = hit.box * 6;
+    const faces: Array<[number, [number, number, number]]> = [
+      [Math.abs(x - b.get(o)), [-1, 0, 0]],
+      [Math.abs(x - b.get(o + 3)), [1, 0, 0]],
+      [Math.abs(y - b.get(o + 1)), [0, -1, 0]],
+      [Math.abs(y - b.get(o + 4)), [0, 1, 0]],
+      [Math.abs(z - b.get(o + 2)), [0, 0, -1]],
+      [Math.abs(z - b.get(o + 5)), [0, 0, 1]],
+    ];
+    let best = faces[0]!;
+    for (const f of faces) if (f[0] < best[0]) best = f;
+    return best[1];
+  }
+  if (hit.kind === "trunk" && hit.trunk) {
+    const nx = x - hit.trunk[0],
+      nz = z - hit.trunk[1],
+      l = Math.hypot(nx, nz) || 1;
+    return [nx / l, 0, nz / l];
+  }
+  const n = world.hf.normalAt(x, z);
+  return [n.x, n.y, n.z];
+}
+
+/**
  * Where the ray from (ox, oy, oz) along (dx, dy, dz) (unit) meets the blocker a ray met before
  * (`raycast`'s `box`, or `trunk`), or Infinity: the same test `raycast` makes for that blocker,
  * alone. A hit short of the ray's end is a hit for the whole ray (it is stopped there or
@@ -505,12 +541,12 @@ export function blockerDistance(
       dx,
       dy,
       dz,
-      b[o]!,
-      b[o + 1]!,
-      b[o + 2]!,
-      b[o + 3]!,
-      b[o + 4]!,
-      b[o + 5]!,
+      b.get(o),
+      b.get(o + 1),
+      b.get(o + 2),
+      b.get(o + 3),
+      b.get(o + 4),
+      b.get(o + 5),
     );
   }
   if (trunk)

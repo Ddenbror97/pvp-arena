@@ -432,11 +432,11 @@ describe("vehicles", () => {
             bz = 0;
           world.forEachBox(v.x - 300, v.z - 300, v.x + 300, v.z + 300, (k) => {
             const o = k * 6;
-            const cx = (world.boxes[o]! + world.boxes[o + 3]!) / 2,
-              cz = (world.boxes[o + 2]! + world.boxes[o + 5]!) / 2;
-            const h = world.boxes[o + 4]! - world.boxes[o + 1]!;
+            const cx = (world.boxes.get(o) + world.boxes.get(o + 3)) / 2,
+              cz = (world.boxes.get(o + 2) + world.boxes.get(o + 5)) / 2;
+            const h = world.boxes.get(o + 4) - world.boxes.get(o + 1);
             const d = Math.hypot(cx - v.x, cz - v.z);
-            if (h > 2.5 && world.boxes[o + 1]! < v.y + 1 && d < best && d > 20) {
+            if (h > 2.5 && world.boxes.get(o + 1) < v.y + 1 && d < best && d > 20) {
               best = d;
               bx = cx;
               bz = cz;

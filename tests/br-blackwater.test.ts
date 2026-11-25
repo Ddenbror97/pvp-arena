@@ -287,4 +287,56 @@ describe("Blackwater Prison (the flagship)", () => {
     ])
       expect(placed(m), m).toBeGreaterThan(0);
   });
+
+  it("keeps the rounded ends' furniture inside the walls, out of the windows (2026-11-25)", () => {
+    // Owner: a bookcase stood in the library's window. The ends are six straight walls a half
+    // circle (build_blackwater.mjs), their room faces nearest the centre mid-segment.
+    const HL = 27.5,
+      c15 = Math.cos((15 * Math.PI) / 180);
+    const OUT = 26.8 * c15 - 0.7,
+      GAL = 18.9 * c15 + 0.2;
+    const normals = [-75, -45, -15, 15, 45, 75].map((d) => (d * Math.PI) / 180);
+    const models: Record<string, [number, number]> = {
+      bookcase: [2.3, 1.12],
+      "laundry-machine": [1.04, 1.09],
+      "hosp-bed": [2.15, 1.41],
+      "bw-vault": [3.99, 0.92],
+      "bw-gun-wall": [3, 0.09],
+      "bw-wash-sink": [0.29, 0.56],
+      "bw-table-round": [1.6, 1.6],
+      "bw-pew": [0.65, 3],
+      treadmill: [2, 1.09],
+      "weight-set": [2, 1.37],
+      "cafe-table": [3.82, 1.35],
+      "med-cabinet": [0.93, 1.07],
+      "desk-set": [2, 1.69],
+    };
+    const kx = poi.x - 45,
+      kz = poi.z - 5;
+    const bad: string[] = [];
+    let n = 0;
+    for (const p of layout) {
+      const f = models[p.model];
+      if (!f || p.poi !== "blackwater-moat") continue;
+      const lx = p.x - kx,
+        lz = p.z - kz;
+      if (Math.abs(lx) < HL + 0.5 || Math.abs(lz) > 27) continue; // not in an end hall
+      const e = Math.sign(lx);
+      const [hx, hz] = p.turn % 2 ? [f[1] / 2, f[0] / 2] : [f[0] / 2, f[1] / 2];
+      const u = e * lx - HL;
+      if (Math.hypot(u, lz) > 26.5 || Math.hypot(u, lz) < 18) continue; // the courtyard
+      n++;
+      for (const [cu, cv] of [
+        [u - hx, lz - hz],
+        [u + hx, lz - hz],
+        [u - hx, lz + hz],
+        [u + hx, lz + hz],
+      ] as const) {
+        const out = Math.max(...normals.map((a) => cu * Math.cos(a) + cv * Math.sin(a))) - OUT;
+        if (out > 0) bad.push(`${p.model} ${p.x},${p.y},${p.z} ${out.toFixed(2)} m into the wall`);
+      }
+    }
+    expect(n).toBeGreaterThan(80);
+    expect(bad).toEqual([]);
+  });
 });

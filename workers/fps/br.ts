@@ -8,7 +8,7 @@ import { AimWatch, logAimReport, type WatchPlayer } from "../../src/lib/fps/anti
 const AIM_WATCH_M = 150;
 import { validateBrAct, type BrAct } from "../../src/lib/fps/br/actions";
 import { decodeHeightfield } from "../../src/lib/fps/br/heightfield";
-import { rollLoot, warmLootSteps } from "../../src/lib/fps/br/loot";
+import { rollLoot, warmedLootCollision, warmLootSteps } from "../../src/lib/fps/br/loot";
 import { spawnVehicles } from "../../src/lib/fps/br/vehicles";
 import { buildIslandSteps, type Island } from "../../src/lib/fps/br/island";
 import { decodeLandCover } from "../../src/lib/fps/br/landcover";
@@ -161,12 +161,14 @@ export async function loadIsland(env: Env): Promise<Loaded> {
     beat();
     assertIslandRevision(collision);
     const [hf, cover] = await Promise.all([decodeHeightfield(hfBuf, true), decodeLandCover(lcBuf)]);
+    beat();
     // Built in steps with pauses (foundation audit 2026-11-10): about three seconds of work
     // that used to run in one piece and stall every other room in this isolate.
     const built = await paced(buildIslandSteps(hf, cover, meta, collision), beat);
     await paced(warmLootSteps(built.layout, collision, built.solid, meta), beat);
-    packCollisionModels(collision);
-    return { island: built, meta, collision };
+    const lootCollision = warmedLootCollision(built.layout, collision);
+    packCollisionModels(lootCollision);
+    return { island: built, meta, collision: lootCollision };
   });
 }
 

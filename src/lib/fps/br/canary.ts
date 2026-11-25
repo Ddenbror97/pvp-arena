@@ -427,12 +427,12 @@ export class BrCanaries {
     if (hit.kind === "box") {
       const o = hit.box! * 6,
         b = world.boxes;
-      const x0 = b[o]!,
-        y0 = b[o + 1]!,
-        z0 = b[o + 2]!,
-        x1 = b[o + 3]!,
-        y1 = b[o + 4]!,
-        z1 = b[o + 5]!;
+      const x0 = b.get(o),
+        y0 = b.get(o + 1),
+        z0 = b.get(o + 2),
+        x1 = b.get(o + 3),
+        y1 = b.get(o + 4),
+        z1 = b.get(o + 5);
       if (Math.min(x1 - x0, z1 - z0) < CANARY.coverThickM || y1 - y0 < CANARY.coverTallM)
         return false;
       // The face it entered by (the axis whose slab it entered last), and how far inside that

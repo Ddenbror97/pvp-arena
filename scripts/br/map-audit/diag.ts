@@ -48,15 +48,15 @@ for (const arg of process.argv.slice(3)) {
       const o = i * 6,
         b = world.boxes;
       if (
-        nx + PLAYER_RADIUS > b[o]! &&
-        nx - PLAYER_RADIUS < b[o + 3]! &&
-        nz + PLAYER_RADIUS > b[o + 2]! &&
-        nz - PLAYER_RADIUS < b[o + 5]! &&
-        sup + EYE_HEIGHT + 0.2 > b[o + 1]! &&
-        sup < b[o + 4]!
+        nx + PLAYER_RADIUS > b.get(o) &&
+        nx - PLAYER_RADIUS < b.get(o + 3) &&
+        nz + PLAYER_RADIUS > b.get(o + 2) &&
+        nz - PLAYER_RADIUS < b.get(o + 5) &&
+        sup + EYE_HEIGHT + 0.2 > b.get(o + 1) &&
+        sup < b.get(o + 4)
       )
         boxes.push(
-          `${owner[i] ?? "extra(bridge/dam)"} y ${b[o + 1]!.toFixed(1)}..${b[o + 4]!.toFixed(1)} x ${b[o]!.toFixed(1)}..${b[o + 3]!.toFixed(1)} z ${b[o + 2]!.toFixed(1)}..${b[o + 5]!.toFixed(1)}`,
+          `${owner[i] ?? "extra(bridge/dam)"} y ${b.get(o + 1).toFixed(1)}..${b.get(o + 4).toFixed(1)} x ${b.get(o).toFixed(1)}..${b.get(o + 3).toFixed(1)} z ${b.get(o + 2).toFixed(1)}..${b.get(o + 5).toFixed(1)}`,
         );
     });
     const trunks: string[] = [];

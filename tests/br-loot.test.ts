@@ -19,7 +19,14 @@ import {
 import { ITEMS, ITEM_IDS } from "@/lib/fps/br/items";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import type { Placement } from "@/lib/fps/br/layout";
-import { LOOT, lootClassOf, lootSummary, rollLoot, type WorldItem } from "@/lib/fps/br/loot";
+import {
+  LOOT,
+  lootClassOf,
+  lootSummary,
+  rollLoot,
+  warmedLootCollision,
+  type WorldItem,
+} from "@/lib/fps/br/loot";
 import { modelSpots } from "@/lib/fps/br/loot-spots";
 import type { CollisionData, StaticWorld } from "@/lib/fps/br/static-world";
 import type { WorldMeta } from "@/lib/fps/br/world";
@@ -43,6 +50,11 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("loot placement", () => {
+  it("rolls identical seeded loot with only the server's warmed room geometry", () => {
+    const reduced = warmedLootCollision(layout, collision);
+    expect(Object.keys(reduced.models).length).toBeLessThan(Object.keys(collision.models).length);
+    expect(rollLoot(1234, layout, reduced, world, meta)).toEqual(a);
+  });
   it("keeps the Tactical Tablet rare in the open world", () => {
     expect(LOOT.caps.tablet).toBeLessThanOrEqual(2);
     const counts = [1234, 7, 99, 4242].map(
@@ -174,13 +186,13 @@ describe("armour", () => {
     awp = ITEMS.awp;
   const naked = (): Armour => ({ helmet: null, vest: null, plates: [null, null, null] });
   it("does nothing when nothing is worn and never covers the legs", () => {
-    expect(applyBrDamage(naked(), ak, "chest").damage).toBe(34);
+    expect(applyBrDamage(naked(), ak, "chest").damage).toBe(40);
     const full: Armour = {
       helmet: { item: "helmet-3", durability: 230 },
       vest: { item: "vest-3", durability: 200 },
       plates: [{ item: "plate", durability: 25 }, null, null],
     };
-    expect(applyBrDamage(full, ak, "legs").damage).toBe(20);
+    expect(applyBrDamage(full, ak, "legs").damage).toBe(26);
   });
   it("adds 5 % per intact plate under the cap and wears the first plate only", () => {
     const arm: Armour = {
@@ -193,7 +205,7 @@ describe("armour", () => {
       ],
     };
     const r = applyBrDamage(arm, ak, "chest");
-    expect(r.damage).toBe(17); // 35 % + 3 × 5 % = the 50 % cap
+    expect(r.damage).toBe(20); // 35 % + 3 × 5 % = the 50 % cap
     expect(arm.plates[0]!.durability).toBeLessThan(25);
     expect(arm.plates[1]!.durability).toBe(25);
     expect(arm.plates[2]!.durability).toBe(25);
@@ -202,7 +214,7 @@ describe("armour", () => {
       vest: { item: "vest-1", durability: 100 },
       plates: [null, { item: "plate", durability: 25 }, null],
     };
-    expect(applyBrDamage(one, ak, "chest").damage).toBe(Math.round(34 * (1 - 0.2 - 0.05)));
+    expect(applyBrDamage(one, ak, "chest").damage).toBe(Math.round(40 * (1 - 0.2 - 0.05)));
   });
   it("uses plates up one by one, so spares from the bag matter", () => {
     const arm: Armour = {
@@ -231,10 +243,10 @@ describe("armour", () => {
       vest: null,
       plates: [{ item: "plate", durability: 25 }, null, null],
     };
-    expect(applyBrDamage(arm, ak, "chest").damage).toBeLessThan(34);
+    expect(applyBrDamage(arm, ak, "chest").damage).toBeLessThan(40);
     expect(arm.plates[0]!.durability).toBeLessThan(25);
   });
-  it("makes each armour level count: rifle shots to kill", () => {
+  it("makes each armour level count: AK shots to kill (2026-11-25 balance)", () => {
     const shots = (zone: "chest" | "head", arm: Armour) => {
       let hp = 100,
         n = 0;
@@ -248,12 +260,12 @@ describe("armour", () => {
       plates: [0, 1, 2].map((i) => (i < plates ? w("plate", 999) : null)) as Armour["plates"],
     });
     expect(shots("chest", naked())).toBe(3);
-    expect([1, 2, 3].map((lv) => shots("chest", vest(lv, 0)))).toEqual([4, 5, 5]);
-    expect([0, 1, 2, 3].map((n) => shots("chest", vest(1, n)))).toEqual([4, 4, 5, 5]);
-    expect([0, 1, 2, 3].map((n) => shots("chest", vest(3, n)))).toEqual([5, 5, 6, 6]);
+    expect([1, 2, 3].map((lv) => shots("chest", vest(lv, 0)))).toEqual([4, 4, 4]);
+    expect([0, 1, 2, 3].map((n) => shots("chest", vest(1, n)))).toEqual([4, 4, 4, 4]);
+    expect([0, 1, 2, 3].map((n) => shots("chest", vest(3, n)))).toEqual([4, 5, 5, 5]);
     const helmet = (lv: number) => ({ ...naked(), helmet: w(`helmet-${lv}`, 999) });
     expect([0, 1, 2, 3].map((lv) => shots("head", lv ? helmet(lv) : naked()))).toEqual([
-      3, 5, 6, 7,
+      2, 2, 2, 3,
     ]);
   });
   it("breaks pieces at zero and stops protecting", () => {
@@ -265,8 +277,8 @@ describe("armour", () => {
     const r = applyBrDamage(arm, ak, "head");
     expect(r.broke).toEqual(["helmet"]);
     expect(arm.helmet).toBeNull();
-    expect(r.damage).toBe(34 - 5);
-    expect(applyBrDamage(arm, ak, "head").damage).toBe(34);
+    expect(r.damage).toBe(92 - 5);
+    expect(applyBrDamage(arm, ak, "head").damage).toBe(92);
   });
   it("lets the AWP through half the armour", () => {
     const arm: Armour = {
@@ -274,7 +286,7 @@ describe("armour", () => {
       vest: { item: "vest-3", durability: 200 },
       plates: [null, null, null],
     };
-    expect(applyBrDamage(arm, awp, "chest").damage).toBe(Math.round(115 - 115 * 0.35 * 0.5));
+    expect(applyBrDamage(arm, awp, "chest").damage).toBe(Math.round(105 - 105 * 0.35 * 0.5));
   });
 });
 

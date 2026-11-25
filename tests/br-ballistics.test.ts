@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { newFlight, sweepFlight, flightPoint, BALLISTICS } from "@/lib/fps/br/ballistics";
 import {
+  BULLET_MARK,
   BrProjectiles,
   PoseHistory,
   brSpread,
@@ -205,10 +206,49 @@ describe("BR authoritative projectile combat", () => {
         s.b.body.y = -2;
       }
       s.shoot(world);
-      expect(s.advance(1200, world)).toEqual([]);
+      // Only the bullet's mark where it struck (2026-11-25: holes in walls), on the wall's
+      // face toward the shooter, or the ground.
+      const events = s.advance(1200, world);
+      expect(events.map((e) => e.type)).toEqual(["mark"]);
+      const mark = events[0] as Extract<(typeof events)[number], { type: "mark" }>;
+      expect(mark.s).toBe(world.boxCount ? BULLET_MARK.stone : BULLET_MARK.ground);
+      if (world.boxCount) expect(mark.n).toEqual([0, 0, 1]);
       expect(s.b.kit.hp).toBe(100);
       expect(s.pool.size).toBe(0);
     }
+  });
+  it("rings on the water where a bullet goes in, not a hole in the bed under it", () => {
+    const s = setup();
+    fire(
+      s.a,
+      { yaw: 0, pitch: -0.6, forward: 0, strafe: 0, playbackMs: 0 },
+      s.fighters,
+      emptyWorld(),
+      s.history,
+      1000,
+      1,
+      () => {},
+      undefined,
+      s.pool,
+    );
+    s.history.record(1400, s.fighters);
+    const events = s.pool.advance(
+      s.fighters,
+      emptyWorld(),
+      s.history,
+      1400,
+      () => {},
+      undefined,
+      () => 3,
+    );
+    expect(events).toHaveLength(1);
+    const mark = events[0] as Extract<(typeof events)[number], { type: "mark" }>;
+    expect(mark.s).toBe(BULLET_MARK.water);
+    expect(mark.p[1]).toBe(3);
+    expect(mark.n).toEqual([0, 1, 0]);
+    // Where the flight crossed the surface: short of where it struck the bed.
+    expect(mark.p[2]).toBeLessThan(0);
+    expect(mark.p[2]).toBeGreaterThan(-20);
   });
   it("respects cover introduced after firing and damages a blocking vehicle once", () => {
     const s = setup();
@@ -217,15 +257,17 @@ describe("BR authoritative projectile combat", () => {
     world.raycast = () => ({ distance: 0, kind: "box", vehicle: 7 });
     const damage: number[] = [];
     expect(
-      s.pool.advance(
-        s.fighters,
-        world,
-        s.history,
-        1200,
-        () => {},
-        (id, amount) => damage.push(id, amount),
-      ),
-    ).toEqual([]);
+      s.pool
+        .advance(
+          s.fighters,
+          world,
+          s.history,
+          1200,
+          () => {},
+          (id, amount) => damage.push(id, amount),
+        )
+        .map((e) => [e.type, (e as { s?: number }).s]),
+    ).toEqual([["mark", BULLET_MARK.metal]]);
     expect(damage).toEqual([7, ITEMS.ak47.damage.chest]);
     expect(s.pool.size).toBe(0);
     expect(s.b.kit.hp).toBe(100);
@@ -265,7 +307,7 @@ describe("BR authoritative projectile combat", () => {
       return s.advance(1800);
     };
     expect(run(false)).toEqual([]); // Falls below the victim's feet.
-    expect(run(true)).toMatchObject([{ type: "hit", victim: 1, zone: "chest", damage: 34 }]);
+    expect(run(true)).toMatchObject([{ type: "hit", victim: 1, zone: "chest", damage: 40 }]);
   });
   it("sweeps a moving target that crosses the path between server poses", () => {
     const s = setup();

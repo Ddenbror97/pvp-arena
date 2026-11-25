@@ -45,11 +45,11 @@ let roofs = 0,
 const b = world.boxes;
 for (let i = 0; i < b.length / 6; i++) {
   const o = i * 6;
-  const x0 = b[o]!,
-    y1 = b[o + 4]!,
-    z0 = b[o + 2]!,
-    x1 = b[o + 3]!,
-    z1 = b[o + 5]!;
+  const x0 = b.get(o),
+    y1 = b.get(o + 4),
+    z0 = b.get(o + 2),
+    x1 = b.get(o + 3),
+    z1 = b.get(o + 5);
   if (x1 - x0 < 3 || z1 - z0 < 3) continue;
   const cx = (x0 + x1) / 2,
     cz = (z0 + z1) / 2;
