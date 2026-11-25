@@ -2,6 +2,8 @@ import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
 import { GameFacts } from "@/components/seo/GameFacts";
 import { indexableHead } from "@/lib/seo/indexable-head";
 import { loadSlottPaint, useQuerySeed } from "@/lib/first-paint";
+import { SYMBOL_IMG } from "@/lib/slott/symbols";
+import { IDLE_GRID } from "@/components/slott/timing";
 import { SLOT_STAGE } from "@/lib/slott/stage";
 import { SlottLobby } from "@/components/slott/SlottLobby";
 
@@ -14,6 +16,12 @@ export const Route = createFileRoute("/slott")({
         "Duel another player on a 5×4 slot: equal stakes, 6 spins each, highest score takes the pot. Rare WILD bonuses boost the prize and every spin is provably fair.",
       crumb: "P2P Slott",
       extraLinks: [
+        ...Array.from(new Set(IDLE_GRID.map((id) => SYMBOL_IMG[id]!))).map((href) => ({
+          rel: "preload",
+          as: "image" as const,
+          type: "image/webp",
+          href,
+        })),
         {
           rel: "preload",
           as: "image",
