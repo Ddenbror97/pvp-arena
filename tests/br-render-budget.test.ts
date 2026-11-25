@@ -140,3 +140,86 @@ describe("BrRenderBudget on the low tier (slowMs 30)", () => {
     expect(b.scale).toBeLessThan(1);
   });
 });
+
+/**
+ * Intel UHD on the low tier as measured on the owner's laptop (release audit 2026-11-24): a
+ * 144 Hz panel shows frames in whole refreshes (6.9 ms), and the GPU's time hardly follows the
+ * pixels (a Downtown fight: 0.8 of the pixels, 17.7 → 16.5 ms). Before, the budget stepped
+ * 1280 → 1152 → 1024 and back every few seconds for 1–3 fps.
+ */
+describe("BrRenderBudget on the low tier, on a 144 Hz panel (Intel UHD)", () => {
+  const REFRESH = 1000 / 144;
+  const lowBudget = () => new BrRenderBudget({ resolution: brResolutionScale, slowMs: 30 });
+  /**
+   * `seconds` of frames: GPU time `gpuFull` at full resolution, `pixels` of it the pixels', and
+   * `cpu` ms of the frame that the GPU's work does not overlap (as measured: 37 fps, 27.8 ms
+   * frames, with 17.7 ms of GPU and 9–10 ms of script); every 9th frame 9 ms longer.
+   */
+  function play(
+    b: BrRenderBudget,
+    gpuFull: number,
+    pixels: number,
+    seconds: number,
+    cpu = 5,
+    pipelined = false,
+  ) {
+    let changes = 0,
+      n = 0;
+    const scales: number[] = [];
+    for (let t = 0; t < seconds * 1000; n++) {
+      const r = brResolutionScale(b.scale);
+      const gpu = gpuFull * (1 - pixels + pixels * r * r) + (n % 9 === 0 ? 9 : 0);
+      // (Pipelined: the script and the GPU overlap, the frame is the slower of the two.)
+      const ms = Math.ceil((pipelined ? Math.max(cpu, gpu) : cpu + gpu) / REFRESH) * REFRESH;
+      if (b.update(ms, gpu)) changes++;
+      scales.push(b.scale);
+      t += ms;
+    }
+    return { changes, scales, final: b.scale };
+  }
+  it("keeps 720p when a lower resolution buys next to nothing (a Downtown fight)", () => {
+    const b = lowBudget();
+    const r = play(b, 17.7, 0.2, 600);
+    const full = r.scales.filter((s) => brResolutionScale(s) === 1).length / r.scales.length;
+    expect(full).toBeGreaterThan(0.95);
+    expect(r.changes).toBeLessThanOrEqual(12);
+  });
+  it("does not see-saw where a step helps a little (the forest, the ruins)", () => {
+    for (const pipelined of [false, true])
+      for (const gpuFull of [19, 20.5, 22]) {
+        const b = lowBudget();
+        play(b, gpuFull, 0.5, 60, pipelined ? 9 : 5, pipelined);
+        const r = play(b, gpuFull, 0.5, 600, pipelined ? 9 : 5, pipelined);
+        expect(r.changes, `gpuFull ${gpuFull}, pipelined ${pipelined}`).toBeLessThanOrEqual(12);
+      }
+  });
+  it("still lowers it, and keeps it lower, when the pixels are the cost and frames are under 30 fps", () => {
+    const b = lowBudget();
+    const r = play(b, 40, 0.9, 120);
+    expect(brResolutionScale(r.final)).toBeLessThan(1);
+    const last = r.scales.slice(-Math.floor(r.scales.length / 3));
+    expect(new Set(last).size).toBe(1);
+  });
+});
+
+describe("BrRenderBudget learns how much of the GPU's time the pixels are", () => {
+  it("measures it on a resolution step, and comes back up by it where the GPU hardly follows the pixels", () => {
+    const b = new BrRenderBudget({ resolution: brResolutionScale, slowMs: 30 });
+    const frames = (seconds: number, ms: number, gpu: number) => {
+      for (let t = 0; t < seconds * 1000; t += ms) b.update(ms, gpu);
+    };
+    // Under 30 fps on the GPU: one step (no resolution), then a resolution step, judged.
+    frames(1.6, 36, 34);
+    frames(1.6, 36, 34);
+    expect(brResolutionScale(b.scale)).toBeCloseTo(0.9);
+    // At 0.9 of the size the GPU takes 32.4 ms: a quarter of its time is the pixels'.
+    frames(3.2, 30, 34 * (0.75 + 0.25 * 0.81));
+    expect(b.pixelShare).toBeGreaterThan(0.2);
+    expect(b.pixelShare).toBeLessThan(0.3);
+    expect(brResolutionScale(b.scale)).toBeCloseTo(0.9);
+    // A lighter place: 16 ms of GPU at 0.9. Every pixel's cost would predict 22.7 ms at full
+    // size (over the low tier's 21); a quarter, 19.5. Back to full within 30 s.
+    frames(30, 20, 16);
+    expect(brResolutionScale(b.scale)).toBe(1);
+  });
+});
