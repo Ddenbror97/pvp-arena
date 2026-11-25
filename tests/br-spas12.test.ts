@@ -102,12 +102,14 @@ describe("SPAS-12", () => {
   it("is balanced against the rifle: a shell is two to three AK rounds, only up close", () => {
     const shell = P.count * SPAS.damage.chest;
     const rifle = ITEMS.ak47.damage.chest;
-    expect(shell).toBeGreaterThanOrEqual(100); // one shell point blank, no armour
-    // B tier under the AK (40 chest since 2026-11-25): 104 / 40 = 2.6.
-    expect(shell / rifle).toBeGreaterThan(2.4);
+    // 88 point blank on an unarmoured chest (2026-11-25 polish): not every shell a kill.
+    expect(shell).toBe(88);
+    expect(P.count * SPAS.damage.head).toBe(136);
+    // B tier under the AK (40 chest since 2026-11-25): 88 / 40 = 2.2.
+    expect(shell / rifle).toBeGreaterThan(2);
     expect(shell / rifle).toBeLessThan(3.5);
-    // Behind full body armour (the cap halves it) it takes two.
-    expect(Math.ceil(100 / (shell * 0.5))).toBe(2);
+    // Behind full body armour (the cap halves it) it takes three.
+    expect(Math.ceil(100 / (shell * 0.5))).toBe(3);
     // Damage a second on the chest with every pellet on, against the AK's.
     const dps = (d: number, ms: number) => (d * 1000) / ms;
     expect(dps(shell, SPAS.intervalMs)).toBeLessThan(dps(rifle, ITEMS.ak47.intervalMs));
@@ -143,7 +145,7 @@ describe("SPAS-12", () => {
       expect(Number.isFinite(p.x + p.y + p.z)).toBe(true);
   });
 
-  it("one shell kills at arm's length; the pattern and the falloff take it apart with range", () => {
+  it("one shell nearly kills at arm's length; the pattern and the falloff take it apart with range", () => {
     const damageAt = (apart: number) => {
       const { state, yaw, pitch } = duel(apart);
       arm(state);
@@ -161,7 +163,8 @@ describe("SPAS-12", () => {
     };
     const close = damageAt(4);
     expect(close.pellets).toBe(P.count);
-    expect(close.damage).toBeGreaterThanOrEqual(90);
+    // All eight pellets on the body: 88 or more (2026-11-25 polish: not every shell a kill).
+    expect(close.damage).toBeGreaterThanOrEqual(80);
     const mid = damageAt(14);
     expect(mid.pellets).toBeLessThan(P.count);
     expect(mid.damage).toBeLessThan(close.damage * 0.75);

@@ -163,10 +163,11 @@ const rifle = WEAPONS.rifle;
  * pellets 24–26 (9 a shell). Warzone keeps the same order (snipers kill on any headshot, ARs
  * three to four body hits of 100 health, shotguns one close shell, pistols last).
  *
- * Here, without armour:
- *   head (no helmet): AK 92 · M4 88 · MP5 75 · Deagle 80 · SPAS pellet 20 (160 a whole shell)
- *                     · Hunting Rifle 150 and the AWP kill;
- *   body hits to kill: AWP 1 · Hunting Rifle 2 · AK, M4, Deagle 3 · MP5 4.
+ * Here, without armour (polished 2026-11-25: AWP 250/105, Hunting Rifle chest 75, MP5 65/29,
+ * SPAS pellet 17/11):
+ *   head (no helmet): AK 92 · M4 88 · Deagle 80 · MP5 65 · SPAS 136 a whole shell
+ *                     · Hunting Rifle 150 and the AWP 250 kill;
+ *   body hits to kill: AWP 1 · Hunting Rifle 2 · AK, M4, Deagle 3 · MP5 4 · SPAS 2 shells.
  * The 1v1/5v5 rifle table (head = chest, combat.ts HIT_DAMAGE) is not used here any more.
  */
 const BR_AK = { head: 92, chest: 40, stomach: 36, legs: 26 };
@@ -250,7 +251,9 @@ export const ITEMS = {
     extMag: 5,
     reloadMs: AWP.reloadMs,
     intervalMs: AWP.cycleMs,
-    damage: { ...AWP.damage },
+    // A tier, BR only (2026-11-25 polish): 105 chest still kills an unarmoured player in one
+    // shot; 250 on the head is a kill through any helmet. (1v1/5v5 keep primary.ts AWP.)
+    damage: { head: 250, chest: 105, stomach: 95, legs: 75 },
     armorPierce: 0.5,
     // The flattest: ≈ 0.65 m at 300 m, 1.2 m at 400 m, 2.8 m at 600 m.
     muzzleVelocityMps: 850,
@@ -289,7 +292,7 @@ export const ITEMS = {
     intervalMs: AWP.cycleMs,
     // B tier (PUBG Kar98k: 79 base, × 2.5 on the head). Two body hits without a vest; a
     // headshot kills through a level 1–2 helmet and leaves a level 3 helmet's wearer near death.
-    damage: { head: 150, chest: 80, stomach: 72, legs: 52 },
+    damage: { head: 150, chest: 75, stomach: 68, legs: 49 },
     armorPierce: 0.3,
     muzzleVelocityMps: 760,
     gravityMps2: 9.81,
@@ -324,8 +327,8 @@ export const ITEMS = {
     // CS:GO 3.13 s against the AK's 2.43 s, on this game's 1.8 s rifle reload.
     reloadMs: 2300,
     intervalMs: 80,
-    // B tier (PUBG MP5K 33, SMG head × 2.1): four body hits, fast.
-    damage: { head: 75, chest: 28, stomach: 25, legs: 18 },
+    // B tier (PUBG MP5K 33): four body hits, fast; 65 on the head.
+    damage: { head: 65, chest: 29, stomach: 26, legs: 19 },
     armorPierce: 0,
     muzzleVelocityMps: 400,
     gravityMps2: 9.81,
@@ -661,8 +664,9 @@ export const ITEMS = {
     reloadMs: 450 + 8 * 520 + 500,
     shells: { startMs: 450, insertMs: 520, endMs: 500, breakMs: 280 },
     intervalMs: 350,
-    // B tier: a pellet is 13 on the body, 20 on the head (PUBG shotguns: head × 1.5).
-    damage: { head: 20, chest: 13, stomach: 11, legs: 8 },
+    // B tier: a pellet is 11 on the body, 17 on the head (PUBG shotguns: head × 1.5): a whole
+    // shell 88 on the chest, 136 on the head, so not every shell is a kill.
+    damage: { head: 17, chest: 11, stomach: 10, legs: 7 },
     pellets: { count: 8, spreadDeg: 2.2, fullM: 10, endM: 40, min: 0.35 },
     armorPierce: 0,
     // 00 buck leaves at about 400 m/s and sheds speed fast; nothing reaches past 70 m.

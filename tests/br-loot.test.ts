@@ -274,7 +274,7 @@ describe("armour", () => {
       vest: { item: "vest-3", durability: 200 },
       plates: [null, null, null],
     };
-    expect(applyBrDamage(arm, awp, "chest").damage).toBe(Math.round(115 - 115 * 0.35 * 0.5));
+    expect(applyBrDamage(arm, awp, "chest").damage).toBe(Math.round(105 - 105 * 0.35 * 0.5));
   });
 });
 
