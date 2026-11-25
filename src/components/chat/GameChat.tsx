@@ -178,12 +178,24 @@ export function GameChat({
           </h2>
         </div>
         <span className="inline-flex h-4 w-32 shrink-0 items-center justify-end gap-2 text-xs text-foreground/85">
-          <span className="inline-block w-[6.5rem] truncate text-right">
-            {status === "offline"
-              ? "Reconnecting..."
-              : status === "live"
-                ? "Live"
-                : "Connecting..."}
+          <span className="relative inline-block h-4 w-[6.5rem] shrink-0 text-right">
+            {(["offline", "live", "connecting"] as const).map((value) => {
+              const active =
+                value === (status === "offline" || status === "live" ? status : "connecting");
+              return (
+                <span
+                  key={value}
+                  aria-hidden={!active}
+                  className={cn("absolute inset-0 truncate", active ? "opacity-100" : "opacity-0")}
+                >
+                  {value === "offline"
+                    ? "Reconnecting..."
+                    : value === "live"
+                      ? "Live"
+                      : "Connecting..."}
+                </span>
+              );
+            })}
           </span>
           <span
             className={cn(
@@ -265,6 +277,7 @@ export function GameChat({
                         mine={m.user_id === userId}
                         identity={identities.get(m.user_id)}
                         localTime={clientMount}
+                        priority={index >= shown.length - 8}
                         continued={!newDay && continuesPlayerTurn(prev, m, false)}
                       />
                     </Fragment>

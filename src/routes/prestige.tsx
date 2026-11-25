@@ -1,9 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { PrestigeSkeleton } from "@/components/prestige/PrestigeSkeleton";
 import { PrestigePage } from "@/components/prestige/PrestigePage";
 
 export const Route = createFileRoute("/prestige")({
   ssr: false,
+  pendingMs: 0,
+  pendingMinMs: 0,
+  pendingComponent: () => <PrestigeSkeleton signedIn />,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getSession();
     if (!data.session?.user) throw redirect({ to: "/auth" });
