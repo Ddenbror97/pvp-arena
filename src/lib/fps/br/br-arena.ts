@@ -1414,6 +1414,8 @@ export function createBrArena(
     mapBlobUrl: string | null = null;
   /** Facing per seat from the server; death times for the fall animation. */
   const deathAt = new Map<number, number>();
+  /** When the server said each seat was eliminated (the elim event), for deathAt below. */
+  const killedAt = new Map<number, number>();
   /**
    * Another rider's time into their ride: from where they are on the cable (the views carry
    * positions, not ride clocks), or, still on the deck taking hold, from when we first saw it
@@ -2379,7 +2381,7 @@ export function createBrArena(
         if (e.by === mySeat) feed({ kind: "hit", head: false, kill: true });
         if (e.seat === mySeat)
           feed({ kind: "eliminated", by: e.gun === "fall" ? "a fall" : (e.byName ?? "?") });
-        deathAt.set(e.seat, now);
+        killedAt.set(e.seat, now);
       }
     }
   }
@@ -3257,7 +3259,16 @@ export function createBrArena(
         }
         const gun = itemFromCode(o.gun);
         const dead = o.phase === "dead";
-        if (dead && !deathAt.has(o.seat)) deathAt.set(o.seat, now - 5000);
+        // The death animation from when the body is first drawn dead (owner, 2026-11-25: the
+        // 1v1/5v5 death animation was missing in the battle royale). The others are drawn a
+        // little behind the server, so the elim event comes before the row that shows them
+        // dead: it used to start the clock, the still-alive row then cleared it, and the dead
+        // row found none and took one 5 s old (already lying down). A body first seen dead
+        // long after its kill (coming into view) is still shown lying.
+        if (dead && !deathAt.has(o.seat)) {
+          const killed = killedAt.get(o.seat);
+          deathAt.set(o.seat, killed !== undefined && now - killed < 4000 ? now : now - 5000);
+        }
         if (!dead) deathAt.delete(o.seat);
         // Falling when killed, as in 1v1/5v5 (owner, 2026-11-09): the shared collapse (an
         // accelerating fall backwards that settles, a little roll) onto the floor under him.
