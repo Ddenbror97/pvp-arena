@@ -42,7 +42,7 @@ render(
   "sniper-bolt.mp3",
   1.465,
   0.75,
-  "atempo=1.35,highpass=f=100,afade=t=in:d=0.003,afade=t=out:st=0.49:d=0.065,volume=0.6,adelay=420,apad=whole_dur=1.463",
+  "atempo=1.35,highpass=f=100,afade=t=in:d=0.003,afade=t=out:st=0.49:d=0.065,volume=3,adelay=420,apad=whole_dur=1.463",
   "awp-bolt-v2.wav",
 );
 // Keep the magazine handling, replace the synthetic empty-reload bolt segment.
