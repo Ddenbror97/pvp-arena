@@ -101,10 +101,11 @@ const FILES: Record<
   "reload-m4": "m4-reload-tactical-v2.wav",
   // The AWP as in 1v1/5v5 (owner, 2026-11-10): the same reloads, bolt and zoom clicks.
   "reload-awp": "awp-reload-tactical-v4.wav",
-  "reload-awp-empty": "awp-reload-empty-v4.wav",
+  "reload-awp-empty": "awp-reload-empty-v5.wav",
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
-  bolt: "awp-bolt-v1.wav",
+  bolt: "awp-bolt-v2.wav",
+  casing: "casing-ground-v1.wav",
   // A car, bike or the aircraft blowing up: the owner's recording (2026-11-18,
   // "vichele_explode_sound.mp3", ATTRIBUTION.md). Grenades keep their own.
   boom: "br-vehicle-explode-v1.mp3",
@@ -270,6 +271,7 @@ export function createBrAudio(base: string) {
     loop = false,
     /** Play only this part of the file (s): a one-shot out of a set of them. */
     part?: { offset: number; duration: number },
+    delay = 0,
   ) {
     const c = context();
     const buf = buffers.get(key);
@@ -305,8 +307,8 @@ export function createBrAudio(base: string) {
       g.connect(p);
       p.connect(master);
     } else g.connect(master);
-    if (part) src.start(0, part.offset, part.duration);
-    else src.start(0, region ? region.pad : 0);
+    if (part) src.start(c.currentTime + delay, part.offset, part.duration);
+    else src.start(c.currentTime + delay, region ? region.pad : 0);
     return { src, gain: g };
   }
   function beep(freq: number, ms: number, gain: number, type: OscillatorType = "triangle") {
@@ -352,6 +354,16 @@ export function createBrAudio(base: string) {
       // The AWP: the report, then the bolt cycle on the same timeline (as in 1v1/5v5: own at
       // 0.75 of the shot, others' heard up close).
       if (gun === "awp" || gun === "hunting") play("bolt", at, 30, at ? 0.4 * 0.9 : 0.75 * 0.75);
+      if (!at)
+        play(
+          "casing",
+          null,
+          0,
+          0.045,
+          false,
+          undefined,
+          gun === "awp" || gun === "hunting" ? 1.05 : 0.35,
+        );
     },
     /** AWP zoom in / out click (own, quiet, centred; as in 1v1/5v5). */
     zoom(entering: boolean) {

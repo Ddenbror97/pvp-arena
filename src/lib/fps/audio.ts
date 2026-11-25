@@ -52,11 +52,12 @@ const SAMPLES = {
   knifeHit: "knife-hit-v1.wav",
   knifeWall: "knife-wall-v1.wav",
   ...STEP_RECORDINGS,
-  /** AWP: the owner-supplied shot; the rest procedural (scripts/fps/build-awp-audio.mjs). */
+  /** AWP: the owner-supplied shot; recorded bolt cycle; magazine handling from build-awp-audio.mjs. */
   awpShot: "awp-shot-v2.wav",
-  awpBolt: "awp-bolt-v1.wav",
+  awpBolt: "awp-bolt-v2.wav",
+  casing: "casing-ground-v1.wav",
   awpReload: "awp-reload-tactical-v4.wav",
-  awpReloadEmpty: "awp-reload-empty-v4.wav",
+  awpReloadEmpty: "awp-reload-empty-v5.wav",
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
   awpDraw: "awp-draw-v1.wav",
@@ -309,26 +310,6 @@ export function createCombatAudio(
     );
   }
   for (const [name, buffer] of grenadeSamples(context)) buffers.set(name, buffer);
-  {
-    // Brass casing landing: a short inharmonic tink (5.56 case on a hard floor).
-    const duration = 0.09,
-      buffer = context.createBuffer(
-        1,
-        Math.ceil(context.sampleRate * duration),
-        context.sampleRate,
-      ),
-      samples = buffer.getChannelData(0);
-    for (let i = 0; i < samples.length; i++) {
-      const t = i / context.sampleRate,
-        envelope = Math.min(1, t / 0.0005) * Math.exp(-t * 55);
-      samples[i] =
-        envelope *
-        (0.5 * Math.sin(2 * Math.PI * 3900 * t) +
-          0.3 * Math.sin(2 * Math.PI * 6150 * t) +
-          0.2 * Math.sin(2 * Math.PI * 8800 * t));
-    }
-    buffers.set("casing", buffer);
-  }
   let localSeat: Seat | null = null,
     sides: Sides | null = null;
   /** The Police side carries the suppressed M4A1 (sides swap at halftime); Terrorists the AK. */
@@ -406,6 +387,7 @@ export function createCombatAudio(
         bearing,
         distance,
       );
+      if (seat === localSeat) play("casing", 0.045, 0.35, false, 1, 0, 1.05);
       if (seat === localSeat || gain > 0.3)
         play(
           "awpBolt",
@@ -847,6 +829,7 @@ export function createCombatAudio(
           options.bearing,
           options.distance,
         );
+        if (options.own) play("casing", 0.045, 0.35, false, 1, 0, 1.05);
         if (options.own || gain > 0.6)
           play(
             "awpBolt",
@@ -887,6 +870,7 @@ export function createCombatAudio(
           options.bearing,
           options.distance,
         );
+        if (options.own) play("casing", 0.045, 0.35, false, 1, 0, 1.05);
         if (options.own || gain > 0.6)
           play(
             "awpBolt",
