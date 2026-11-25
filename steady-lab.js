@@ -1,0 +1,76 @@
+// Steadying investigation helpers (release audit 2026-11-24): routes, per-pass GPU timer, runners.
+(() => {
+  const g = (x, z) => explorer.groundAt(x, z);
+  window.routes = {
+    bauhaus: { cam: [1351.8, 357.6], aim: [1351.8, 397.6], up: 3 },
+    street: { cam: [1300, 420], aim: [1300, 380], tyAgl: 1.2 },
+    interior: { cam: [1229, 354], eye: 17.53 + 1.7, aim: [1229, 330], ty: 17.53 + 1.5 },
+    northstar: { cam: [-3534, -3462], aim: [-3548, -3509], up: 5 },
+    ruins: { cam: [2420, 1790], aim: [2420, 1718], up: 8 },
+    military: { cam: [1088, 1596], aim: [1049, 1596], up: 2 },
+    fortress: { cam: [-1080, 1800], aim: [-1080, 1734], up: 6 },
+    forest: { cam: [-4500, -300], aim: [-4470, -300], tyAgl: 1.5 },
+    field: { cam: [1700, -2700], aim: [1700, -2660], tyAgl: 1.2 },
+  };
+  window.R = Object.keys(routes);
+  const ty = (r) => r.ty ?? (r.tyAgl != null ? g(r.aim[0], r.aim[1]) + r.tyAgl : g(r.cam[0], r.cam[1]) + 1.7 + (r.up ?? 1.5));
+  window.benchView = (r) => ({ pos: [r.cam[0], r.eye ?? g(r.cam[0], r.cam[1]) + 1.7, r.cam[1]], look: [r.aim[0], ty(r), r.aim[1]] });
+  window.oscOpts = (r, extra = {}) => {
+    const [x, z] = r.cam, [tx, tz] = r.aim, d = Math.hypot(x - tx, z - tz);
+    return { cx: tx, cz: tz, dx: (x - tx) / d, dz: (z - tz) / d, dist: d, ty: ty(r), eye: r.eye, frames: 40, step: 0.03, ...extra };
+  };
+  // Per-pass GPU time: timer queries split at each framebuffer bind, labelled by the programs drawn.
+  const cv = document.querySelector("canvas"), gl = cv.getContext("webgl2");
+  const ext = gl.getExtension("EXT_disjoint_timer_query_webgl2");
+  const P = WebGL2RenderingContext.prototype;
+  const ob = P.beginQuery, oe = P.endQuery, obf = P.bindFramebuffer, oup = P.useProgram;
+  const kindOf = new Map(); let curProg = null, open = null, on = false, mine = false; const done = [];
+  const pk = (p) => { if (!p) return "x"; let k = kindOf.get(p); if (!k) { const fs = gl.getAttachedShaders(p).map((s) => gl.getShaderSource(s)).join("\n"); k = fs.includes("steadyOut") ? "steady" : fs.includes("tOverlayDepth") ? "present" : "scene"; kindOf.set(p, k); } return k; };
+  P.beginQuery = function (t, q) { if (this === gl && !mine) return; return ob.call(this, t, q); };
+  P.endQuery = function (t) { if (this === gl && !mine) return; return oe.call(this, t); };
+  const close = () => { if (!open) return; mine = true; oe.call(gl, ext.TIME_ELAPSED_EXT); mine = false; done.push(open); open = null; };
+  const start = (fid) => { const q = gl.createQuery(); mine = true; ob.call(gl, ext.TIME_ELAPSED_EXT, q); mine = false; open = { q, kinds: new Set(), fid }; };
+  P.bindFramebuffer = function (t, fb) { const r = obf.call(this, t, fb); if (this === gl && on && t !== gl.READ_FRAMEBUFFER) { const f = open?.fid; close(); start(f); } return r; };
+  P.useProgram = function (p) { if (this === gl && on && open) open.kinds.add(pk(p)); curProg = p; return oup.call(this, p); };
+  for (const m of ["drawElements", "drawArrays", "drawElementsInstanced", "drawArraysInstanced"]) { const o = P[m]; P[m] = function (...a) { if (this === gl && on && open) open.kinds.add(pk(curProg)); return o.apply(this, a); }; }
+  window.profFrames = async (n = 60, w = 1280, h = 720) => {
+    done.length = 0; on = true;
+    for (let i = 0; i < n; i++) { start(i); brDraw(w, h); close(); if (i % 10 === 9) await new Promise((r) => setTimeout(r, 0)); }
+    on = false; gl.finish();
+    for (let t = 0; t < 50; t++) { if (done.every((s) => gl.getQueryParameter(s.q, gl.QUERY_RESULT_AVAILABLE))) break; await new Promise((r) => setTimeout(r, 20)); }
+    const disjoint = gl.getParameter(ext.GPU_DISJOINT_EXT), per = {};
+    for (const s of done) { const ns = gl.getQueryParameter(s.q, gl.QUERY_RESULT) ?? 0; gl.deleteQuery(s.q); const k = s.kinds.has("steady") ? "steady" : s.kinds.has("present") ? "present" : s.kinds.size ? "scene" : "idle"; (per[s.fid] ??= {})[k] = (per[s.fid][k] ?? 0) + ns / 1e6; }
+    const fr = Object.values(per).slice(10);
+    const med = (k) => { const a = fr.map((f) => f[k] ?? 0).sort((x, y) => x - y); return +a[a.length >> 1].toFixed(3); };
+    const tot = fr.map((f) => Object.values(f).reduce((a, b) => a + b, 0)).sort((x, y) => x - y);
+    return { disjoint, scene: med("scene"), steady: med("steady"), present: med("present"), total: +tot[tot.length >> 1].toFixed(3) };
+  };
+  window.VARIANTS = {
+    off: { on: false },
+    full: { on: true, v: null },
+    fixed: { on: true, v: { fixed: true } },
+    single: { on: true, v: { single: true } },
+    lite3: { on: true, v: { depth1: true, cross: true, bilinear: true } },
+    lite: { on: true, v: { depth1: true, cross: true, bilinear: true, single: true } },
+    litec: { on: true, v: { depth1: true, cross: true, bilinear: true, single: true, compact: true } },
+    fullc: { on: true, v: { single: true, compact: true } },
+    fixedc: { on: true, v: { fixed: true, single: true, compact: true } },
+  };
+  window.setVariant = (name) => { const c = VARIANTS[name]; brSteadyMode.on = c.on; brSteadyMode.foot = true; brSteadyMode.lite = false; brSteadyLab.variant = c.v ?? null; };
+  window.__prof = {}; window.__osc = {}; window.__progress = "";
+  const goto = async (rk) => { const v = benchView(routes[rk]); brDraw(1280, 720); await explorer.view(v.pos, v.look); for (let i = 0; i < 5; i++) brDraw(1280, 720); };
+  window.runProf = async (vars, list = R, n = 40) => {
+    for (const rk of list) for (const vn of vars) { setVariant(vn); await goto(rk); (__prof[rk] ??= {})[vn] = await profFrames(n); __progress = "prof " + rk + " " + vn; }
+    __progress = "done";
+  };
+  window.runOsc = async (vars, list = R, extra = {}) => {
+    for (const rk of list) for (const vn of vars) {
+      setVariant(vn); await goto(rk);
+      const o = await labOsc(oscOpts(routes[rk], extra));
+      (__osc[rk] ??= {})[vn] = { osc: o.osc, top: o.grid[0].reduce((a, b) => a + b, 0), mid: o.grid[1].reduce((a, b) => a + b, 0), low: o.grid[2].reduce((a, b) => a + b, 0) };
+      __progress = "osc " + rk + " " + vn;
+    }
+    __progress = "done";
+  };
+  window.table = (obj, f) => Object.entries(obj).map(([rk, o]) => rk.padEnd(10) + " " + Object.entries(o).map(([v, x]) => v + ":" + f(x)).join(" ")).join("\n");
+})();
