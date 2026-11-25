@@ -351,7 +351,7 @@ export function createBrAudio(base: string) {
       const k = (base + (quiet ? "-s" : "")) as ShotKey;
       const gain = at ? 0.9 : gun === "deagle" || gun === "spas12" ? 0.85 : 0.75;
       // A silenced shot is quieter and carries less than half as far (as match.ts sends it).
-      play(k, at, quiet ? hearM * 0.4 : hearM, quiet ? gain * 0.8 : gain);
+      play(k, at, quiet ? hearM * 0.4 : hearM, (quiet ? gain * 0.8 : gain) * 0.85);
       // The AWP: the report, then the bolt cycle on the same timeline (as in 1v1/5v5: own at
       // 0.75 of the shot, others' heard up close).
       if (gun === "awp" || gun === "hunting") play("bolt", at, 30, at ? 0.4 * 0.9 : 0.75 * 0.75);
@@ -360,7 +360,7 @@ export function createBrAudio(base: string) {
           "casing",
           null,
           0,
-          0.045,
+          0.1125,
           false,
           undefined,
           gun === "awp" || gun === "hunting" ? 1.05 : 0.35,

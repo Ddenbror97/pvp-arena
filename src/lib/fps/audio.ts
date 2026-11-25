@@ -487,7 +487,17 @@ export function createCombatAudio(
       filter = context.createBiquadFilter();
     source.buffer = buffer;
     source.playbackRate.value = rate;
-    level.gain.value = Math.min(0.85, gain);
+    // Keep brass audible beneath reports across both duel shots and 5v5 effects.
+    const shotSample =
+      name === "rifleA" ||
+      name === "rifleM4" ||
+      name === "awpShot" ||
+      name === "huntingShot" ||
+      name === "mp5Shot" ||
+      name === "deagleShot" ||
+      name === "spas12Shot";
+    const mix = name === "casing" ? 2.5 : shotSample ? 0.85 : 1;
+    level.gain.value = Math.min(0.85, gain * mix);
     const view = presentation?.();
     panner.pan.value =
       bearing !== undefined && view
