@@ -47,6 +47,8 @@ export const OUTSIDE = {
   gain: 1.5,
   lowpass: { near: 20000, far: 1400, overM: 380 },
 } as const;
+/** All of the aircraft's sound, inside and out (owner, 2026-11-25: 15 % quieter, "a bit too loud"). */
+export const AIRCRAFT_VOLUME = 0.85;
 /** The outside level at `d` m (the panner's own sum), for tests and tuning. */
 export function outsideLevel(d: number) {
   const r = Math.max(d, OUTSIDE.refM);
@@ -67,6 +69,10 @@ export function createAircraftAudio(
   output: AudioNode,
   buffer: (key: Sample) => AudioBuffer | undefined,
 ) {
+  const master = context.createGain();
+  master.gain.value = AIRCRAFT_VOLUME;
+  master.connect(output);
+  output = master;
   // Inside: a gentle low-pass (the cabin). Outside: placed with a panner.
   const bus = context.createGain();
   const cabin = context.createBiquadFilter();
@@ -233,6 +239,7 @@ export function createAircraftAudio(
       bus.disconnect();
       cabin.disconnect();
       panner.disconnect();
+      master.disconnect();
     },
   };
 }
