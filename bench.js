@@ -5766,7 +5766,7 @@ void main() {
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
-`;function Qw(r){let e=n=>{let o=Math.sin(n*127.1+r*311.7)*43758.5453;return o-Math.floor(o)},t=(n,o)=>{let i=Math.floor(n),s=n-i,A=e((i%o+o)%o),c=e(((i+1)%o+o)%o);return A+(c-A)*s*s*(3-2*s)};return n=>{let o=0,i=1,s=9,A=0;for(let c=0;c<3;c++){let a=1-Math.abs(t(n*s,s)*2-1);o+=a*a*i,A+=i,i*=.5,s*=2}return o/A}}function Fw(r=Mi()){let e=new yt;e.name="br-atmosphere";let t=r.direction,n=Dl(D8),o=new ya(1,32,16),i=new Wt({uniforms:{...Pf(r),uHaze:{value:n}},vertexShader:v8,fragmentShader:x8,side:on,depthWrite:!1,fog:!1}),s=new nt(o,i);s.name="br-sky",s.frustumCulled=!1,s.renderOrder=1001,s.onBeforeRender=()=>{bh.value=performance.now()/1e3%7200};let A=960,c=[],a=[],f=[],h=[],l=[],u=Math.atan2(t.x,t.z),d=[{seed:7,peak:.13,low:.02,cover:.85,far:1},{seed:23,peak:.085,low:.008,cover:.7,far:0}],B=-.08;for(let b of d){let w=Qw(b.seed),v=Qw(b.seed+101),D=E=>{let x=Math.min(1,Math.max(0,(v(E*.35)-(1-b.cover))*3));return b.low+(b.peak-b.low)*Math.pow(w(E),1.3)*x},C=c.length/3;for(let E=0;E<=A;E++){let x=E/A,y=x*Math.PI*2,F=D(x),M=(D(x+6/A)-D(x-6/A))*(A/12),I=Math.sin(y-u),P=.55+Math.max(-.3,Math.min(.3,-M*I*3)),Q=Math.sin(y),S=Math.cos(y);for(let k of[B,F]){let H=Math.cos(k);c.push(Q*H,Math.sin(k),S*H),a.push(P),f.push(b.far),h.push(x)}if(E<A){let k=C+E*2;l.push(k,k+1,k+2,k+1,k+3,k+2)}}}let p=new ct;p.setAttribute("position",new tt(c,3)),p.setAttribute("aShade",new tt(a,1)),p.setAttribute("aLayer",new tt(f,1)),p.setAttribute("aAngle",new tt(h,1)),p.setIndex(l);let g=new Wt({uniforms:{uRock:{value:Dl(b8)},uRockShade:{value:Dl(C8)},uSnow:{value:Dl(E8)},uHaze:{value:n},uDip:{value:0}},vertexShader:y8,fragmentShader:P8,side:wt,depthWrite:!0,fog:!1}),m=new nt(p,g);return m.name="br-ranges",m.frustumCulled=!1,m.renderOrder=1e3,m.onBeforeRender=(b,w,v)=>{let D=w.fog,C=Math.min(D?.far??1/0,v.far??14e3),E=Math.max(0,v.matrixWorld.elements[13]);g.uniforms.uDip.value=Math.atan2(E,C)},e.add(s,m),e.updateMatrixWorld(!0),{root:e,haze:n,dispose(){o.dispose(),i.dispose(),p.dispose(),g.dispose()}}}function Iw(r){return r&&M8()}function M8(){try{let r=document.createElement("canvas").getContext("webgl2",{powerPreference:"high-performance"});if(!r)return!1;let e=!!r.getExtension("EXT_clip_control")&&(!!r.getExtension("EXT_color_buffer_float")||!!r.getExtension("EXT_color_buffer_half_float"));return r.getExtension("WEBGL_lose_context")?.loseContext(),e}catch{return!1}}var Hn={strength:.88,from:.01,to:.05,depth:.12,near:80,far:160,cap:1/0,foot:{near:6,far:14,from:0,to:.004,capFrom:.18,capTo:.3},idleFrames:600},Q8={depth1:!0,cross:!0,bilinear:!0,single:!0},bl={variant:null},F8=r=>["depth1","cross","bilinear","single","compact","fixed"].filter(e=>r[e]).join(",");var I8=`
+`;function Qw(r){let e=n=>{let o=Math.sin(n*127.1+r*311.7)*43758.5453;return o-Math.floor(o)},t=(n,o)=>{let i=Math.floor(n),s=n-i,A=e((i%o+o)%o),c=e(((i+1)%o+o)%o);return A+(c-A)*s*s*(3-2*s)};return n=>{let o=0,i=1,s=9,A=0;for(let c=0;c<3;c++){let a=1-Math.abs(t(n*s,s)*2-1);o+=a*a*i,A+=i,i*=.5,s*=2}return o/A}}function Fw(r=Mi()){let e=new yt;e.name="br-atmosphere";let t=r.direction,n=Dl(D8),o=new ya(1,32,16),i=new Wt({uniforms:{...Pf(r),uHaze:{value:n}},vertexShader:v8,fragmentShader:x8,side:on,depthWrite:!1,fog:!1}),s=new nt(o,i);s.name="br-sky",s.frustumCulled=!1,s.renderOrder=1001,s.onBeforeRender=()=>{bh.value=performance.now()/1e3%7200};let A=960,c=[],a=[],f=[],h=[],l=[],u=Math.atan2(t.x,t.z),d=[{seed:7,peak:.13,low:.02,cover:.85,far:1},{seed:23,peak:.085,low:.008,cover:.7,far:0}],B=-.08;for(let b of d){let w=Qw(b.seed),v=Qw(b.seed+101),D=E=>{let x=Math.min(1,Math.max(0,(v(E*.35)-(1-b.cover))*3));return b.low+(b.peak-b.low)*Math.pow(w(E),1.3)*x},C=c.length/3;for(let E=0;E<=A;E++){let x=E/A,y=x*Math.PI*2,F=D(x),M=(D(x+6/A)-D(x-6/A))*(A/12),I=Math.sin(y-u),P=.55+Math.max(-.3,Math.min(.3,-M*I*3)),Q=Math.sin(y),S=Math.cos(y);for(let k of[B,F]){let H=Math.cos(k);c.push(Q*H,Math.sin(k),S*H),a.push(P),f.push(b.far),h.push(x)}if(E<A){let k=C+E*2;l.push(k,k+1,k+2,k+1,k+3,k+2)}}}let p=new ct;p.setAttribute("position",new tt(c,3)),p.setAttribute("aShade",new tt(a,1)),p.setAttribute("aLayer",new tt(f,1)),p.setAttribute("aAngle",new tt(h,1)),p.setIndex(l);let g=new Wt({uniforms:{uRock:{value:Dl(b8)},uRockShade:{value:Dl(C8)},uSnow:{value:Dl(E8)},uHaze:{value:n},uDip:{value:0}},vertexShader:y8,fragmentShader:P8,side:wt,depthWrite:!0,fog:!1}),m=new nt(p,g);return m.name="br-ranges",m.frustumCulled=!1,m.renderOrder=1e3,m.onBeforeRender=(b,w,v)=>{let D=w.fog,C=Math.min(D?.far??1/0,v.far??14e3),E=Math.max(0,v.matrixWorld.elements[13]);g.uniforms.uDip.value=Math.atan2(E,C)},e.add(s,m),e.updateMatrixWorld(!0),{root:e,haze:n,dispose(){o.dispose(),i.dispose(),p.dispose(),g.dispose()}}}function Iw(r){return r&&M8()}function M8(){try{let r=document.createElement("canvas").getContext("webgl2",{powerPreference:"high-performance"});if(!r)return!1;let e=!!r.getExtension("EXT_clip_control")&&(!!r.getExtension("EXT_color_buffer_float")||!!r.getExtension("EXT_color_buffer_half_float"));return r.getExtension("WEBGL_lose_context")?.loseContext(),e}catch{return!1}}var Hn={strength:.88,from:.01,to:.05,depth:.12,near:80,far:160,cap:1/0,foot:{near:6,far:14,from:0,to:.004,capFrom:.18,capTo:.3},seatedLite:{near:16,far:24},idleFrames:600},Q8={depth1:!0,cross:!0,bilinear:!0,single:!0},bl={variant:null},F8=r=>["depth1","cross","bilinear","single","compact","fixed"].filter(e=>r[e]).join(",");var I8=`
   float fxaaLuma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
   vec3 fxaa(vec2 uv) {
     vec3 rgbM = shown(uv);
@@ -5903,9 +5903,9 @@ void main() {
       vec3 now(vec2 offset) { return squash(max(texture2D(tScene, vUv + offset * uTexel).rgb, 0.0)); }
       // Catmull-Rom, five taps (the corners of the nine dropped): sharper than bilinear, which
       // blurs a little more with every frame a moving picture is carried.
-      vec3 before(sampler2D past, vec2 uv) {
+      vec4 before4(sampler2D past, vec2 uv) {
         #ifdef STEADY_BILINEAR
-        return max(texture2D(past, uv).rgb, 0.0);
+        return texture2D(past, uv);
         #endif
         vec2 at = uv / uTexel;
         vec2 base = floor(at - 0.5) + 0.5;
@@ -5918,14 +5918,12 @@ void main() {
         vec2 t0 = (base - 1.0) * uTexel;
         vec2 t3 = (base + 2.0) * uTexel;
         vec2 t12 = (base + w2 / w12) * uTexel;
-        vec4 sum =
-          vec4(texture2D(past, vec2(t12.x, t0.y)).rgb, 1.0) * (w12.x * w0.y) +
-          vec4(texture2D(past, vec2(t0.x, t12.y)).rgb, 1.0) * (w0.x * w12.y) +
-          vec4(texture2D(past, vec2(t12.x, t12.y)).rgb, 1.0) * (w12.x * w12.y) +
-          vec4(texture2D(past, vec2(t3.x, t12.y)).rgb, 1.0) * (w3.x * w12.y) +
-          vec4(texture2D(past, vec2(t12.x, t3.y)).rgb, 1.0) * (w12.x * w3.y);
-        return max(sum.rgb / sum.a, 0.0);
+        float s0 = w12.x * w0.y, s1 = w0.x * w12.y, s2 = w12.x * w12.y, s3 = w3.x * w12.y, s4 = w12.x * w3.y;
+        return (texture2D(past, vec2(t12.x, t0.y)) * s0 + texture2D(past, vec2(t0.x, t12.y)) * s1 +
+          texture2D(past, vec2(t12.x, t12.y)) * s2 + texture2D(past, vec2(t3.x, t12.y)) * s3 +
+          texture2D(past, vec2(t12.x, t3.y)) * s4) / (s0 + s1 + s2 + s3 + s4);
       }
+      vec3 before(sampler2D past, vec2 uv) { return max(before4(past, uv).rgb, 0.0); }
       void main() {
         vec3 c = now(vec2(0.0));
         // The nearest surface of the five (reversed depth: the largest): an edge moves with
@@ -5985,8 +5983,8 @@ void main() {
         // on what was read there.)
         if (valid > 0.5) {
           #ifdef STEADY_SINGLE
-          // One filtered tap: the blended colour, and the drawn brightness beside it.
-          vec4 past = texture2D(tHistory, uv);
+          // The blended colour, and the drawn brightness beside it, read together.
+          vec4 past = before4(tHistory, uv);
           #ifdef STEADY_COMPACT
           vec3 h = clamp(past.rgb * past.rgb, lo, hi);
           #else

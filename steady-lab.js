@@ -55,6 +55,7 @@
     litec: { on: true, v: { depth1: true, cross: true, bilinear: true, single: true, compact: true } },
     fullc: { on: true, v: { single: true, compact: true } },
     fixedc: { on: true, v: { fixed: true, single: true, compact: true } },
+    litecr: { on: true, v: { depth1: true, cross: true, single: true } },
   };
   window.setVariant = (name) => { const c = VARIANTS[name]; brSteadyMode.on = c.on; brSteadyMode.foot = true; brSteadyMode.lite = false; brSteadyLab.variant = c.v ?? null; };
   window.__prof = {}; window.__osc = {}; window.__progress = "";
