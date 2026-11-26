@@ -33,7 +33,9 @@ The second purpose is pace. A blackjack table that deals 60 to 80 hands an hour 
 
 The third purpose is fairness between players. Shared tables mean shared rhythm: you act in turn, you do not touch someone else's chips or cards, and you do not coach a stranger unless they ask. None of this is written on the felt, which is why first-time visitors get it wrong. This guide sits in the [Casino knowledge topic](/guides/topics/casino-knowledge), alongside explainers on [casino chip values](/guides/casino-chip-values) and the [casino dress code](/guides/casino-dress-code).
 
-Gambling in a casino is for adults only, 18 or 21 depending on the country or state. Everything below assumes you are old enough and have already decided what you are willing to spend.`,
+Gambling in a casino is for adults only, 18 or 21 depending on the country or state. Everything below assumes you are old enough and have already decided what you are willing to spend.
+
+The Venetian's Pai Gow instructions explicitly invite guests to ask the dealer or supervisor for help setting a hand. Asking before acting is preferable to moving another player's cards.`,
     },
     {
       id: "buy-in",
@@ -124,23 +126,6 @@ The dealer does not choose the cards. Blaming them for a bad run, throwing cards
 
 Good etiquette includes leaving cleanly. Colour up, tip if you want to, and walk away at the limit you set before sitting down. If staying has started to feel like a way to win back losses, the [responsible gambling](/responsible-gambling) page lists tools and help lines.`,
     },
-    {
-      id: "live-and-pvp",
-      title: "Etiquette online and in PvP rounds",
-      body: `Online tables strip out most of the physical rules because there are no chips to touch and no cash to lay down. Live-studio games keep a lighter version: chat politely, do not ask the presenter for personal details, and do not flood the chat. The [live dealer casino](/guides/live-dealer-casino) guide covers how those streamed tables work.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and the same spirit carries over even though no dealer is involved. In [Roulette](/roulette), everyone shares one round on a 33-slot wheel: 16 Purple and 16 Silver slots pay 2x and one Green pays 14x. Betting closes before the spin, and that close is the digital version of "no more bets". The maths does not care about manners either way: Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
-
-In Coinflip, two players take opposite sides of a 50/50, and the winner takes the pot minus any fee shown before entry. In Jackpot, players add to one pot and each player's chance equals their share of it. Because results come from committed seeds, nobody can "past-post" a round, and any settled round can be checked on the [fairness](/fairness) page. That is the online answer to the camera over the table.
-
-A few habits still apply:
-
-- decide your stake before the round opens, not after watching others;
-- do not chase a loss by joining the next round at double size;
-- treat other players' pots and streaks as none of your business.
-
-PVPspinArena is for adults 18 and over. Etiquette is about the table, not the result: the polite player and the rude one face exactly the same odds.`,
-    },
   ],
   faqs: [
     {
@@ -169,8 +154,18 @@ PVPspinArena is for adults 18 and over. Etiquette is about the table, not the re
     },
   ],
   sources: [
-    { label: "Wikipedia: Croupier", url: "https://en.wikipedia.org/wiki/Croupier" },
-    { label: "Wikipedia: Gratuity", url: "https://en.wikipedia.org/wiki/Gratuity" },
+    {
+      label: "The Venetian: table-game rules and player assistance",
+      url: "https://www.venetianlasvegas.com/resort/casino/table-games/pai-gow-poker-basic-rules.html",
+    },
+    {
+      label: "Wikipedia: Croupier",
+      url: "https://en.wikipedia.org/wiki/Croupier",
+    },
+    {
+      label: "Wikipedia: Gratuity",
+      url: "https://en.wikipedia.org/wiki/Gratuity",
+    },
     {
       label: "Encyclopaedia Britannica: gambling",
       url: "https://www.britannica.com/topic/gambling",
@@ -184,5 +179,5 @@ PVPspinArena is for adults 18 and over. Etiquette is about the table, not the re
     "live-dealer-casino",
     "pit-boss",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

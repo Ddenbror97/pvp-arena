@@ -34,7 +34,7 @@ Write the variant name in dark ink at the top of the pad before anyone plays. If
 - Bergen: 2 or 3 for matching ends, plus a small award for ending the hand.
 - Trains or 42: use that game’s own page, then one scoring sentence from this one.
 
-The cluster of tile and dice games is the [Games of chance topic](/guides/topics/games-of-chance). PVPspinArena publishes these explainers. Who runs the site is on the [about](/about) page.`,
+The cluster of tile and dice games is the [Games of chance topic](/guides/topics/games-of-chance). Who runs the site is on the [about](/about) page.`,
     },
     {
       id: "block-draw",
@@ -158,11 +158,20 @@ A disputed tile goes back to the [dominoes rules](/guides/dominoes-rules) page f
     },
   ],
   sources: [
-    { label: "Wikipedia: Dominoes", url: "https://en.wikipedia.org/wiki/Dominoes" },
-    { label: "Pagat: Bergen", url: "https://www.pagat.com/domino/bergen.html" },
-    { label: "Pagat: domino game index", url: "https://www.pagat.com/domino/" },
+    {
+      label: "Wikipedia: Dominoes",
+      url: "https://en.wikipedia.org/wiki/Dominoes",
+    },
+    {
+      label: "Pagat: Bergen",
+      url: "https://www.pagat.com/domino/bergen.html",
+    },
+    {
+      label: "Pagat: domino game index",
+      url: "https://www.pagat.com/domino/",
+    },
   ],
   related: ["dominoes-rules", "mexican-train-rules", "chicken-foot-dominoes", "texas-42-dominoes"],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
   howTo: true,
 };

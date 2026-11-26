@@ -27,139 +27,37 @@ export const guide: Guide = {
     {
       id: "what-is",
       title: 'What does "instant withdrawal" mean?',
-      body: "Many crypto casinos advertise instant withdrawals. The phrase usually means the site does not make you wait hours or days for someone to approve your request. Your withdrawal is processed automatically and sent to the blockchain soon after you ask.\n\nIt does not mean the money appears in your wallet in zero seconds. Every crypto withdrawal involves:\n\n1. **Processing** by the site: checking your balance, holding the amount and signing a transaction.\n2. **Broadcasting** the transaction to the network.\n3. **Inclusion** in a block.\n4. **Confirmation**: waiting until the block is safe from being reversed.\n\nOn fast networks these steps can take under a minute. On slower or busy networks they can take much longer. And any responsible site will pause some withdrawals for review.\n\nSo when comparing sites, it is more useful to ask how long a typical withdrawal takes, which amounts are processed automatically and what happens to larger requests. This guide explains each part so you know what to expect. For deposits and the full money flow, see our [USDC casino guide](/guides/usdc-casino).\n\nOur [payment walkthrough](/how-it-works) separates a wallet transfer from credit to an in-game balance; use the current [wallet](/how-it-works#wallet) controls for your own account.",
+      body: "Many crypto casinos advertise instant withdrawals. The phrase usually means the site does not make you wait hours or days for someone to approve your request. Your withdrawal is processed automatically and sent to the blockchain soon after you ask.\n\nIt does not mean the money appears in your wallet in zero seconds. Every crypto withdrawal involves:\n\n1. **Processing** by the site: checking your balance, holding the amount and signing a transaction.\n2. **Broadcasting** the transaction to the network.\n3. **Inclusion** in a block.\n4. **Confirmation**: waiting until the block is safe from being reversed.\n\nOn fast networks these steps can take under a minute. On slower or busy networks they can take much longer. And any responsible site will pause some withdrawals for review.\n\nSo when comparing sites, it is more useful to ask how long a typical withdrawal takes, which amounts are processed automatically and what happens to larger requests. For deposits and the full money flow, see our [USDC casino guide](/guides/usdc-casino).\n\nOur [payment walkthrough](/how-it-works) separates a wallet transfer from credit to an in-game balance; use the current [wallet](/how-it-works#wallet) controls for your own account.",
     },
     {
       id: "network",
       title: "How the network affects speed",
-      body: `The blockchain you withdraw on sets the minimum time and the fee.
-
-### Base
-
-Base is an Ethereum layer-2 network. New blocks arrive about every two seconds, and fees are usually a fraction of a cent to a few cents. A USDC withdrawal on Base can reach your wallet in seconds once broadcast, with confidence growing over the following minutes as the block becomes safe.
-
-### Ethereum mainnet
-
-Ethereum blocks arrive about every 12 seconds, and fees can be much higher during busy periods. Withdrawals are reliable but slower and more expensive.
-
-### Bitcoin
-
-Bitcoin blocks arrive about every 10 minutes on average. Sites often wait for several confirmations, so withdrawals can take half an hour or more.
-
-### Why confirmations matter
-
-Right after a transaction is included, a block can occasionally be replaced during a chain reorganisation. Waiting for confirmations, or for a "safe" block on networks that report one, protects both you and the site from counting a payment that could disappear.
-
-PVPspinArena supports Base mainnet only, which is part of why routine withdrawals are fast. Our guide on [adding Base to MetaMask](/guides/add-base-network-metamask) shows how to receive funds there.`,
+      body: 'The blockchain you withdraw on sets the minimum time and the fee.\n\n### Base\n\nBase is an Ethereum layer-2 network. New blocks arrive about every two seconds, and fees are usually a fraction of a cent to a few cents. A USDC withdrawal on Base can reach your wallet in seconds once broadcast, with confidence growing over the following minutes as the block becomes safe.\n\n### Ethereum mainnet\n\nEthereum blocks arrive about every 12 seconds, and fees can be much higher during busy periods. Withdrawals are reliable but slower and more expensive.\n\n### Bitcoin\n\nBitcoin blocks arrive about every 10 minutes on average. Sites often wait for several confirmations, so withdrawals can take half an hour or more.\n\n### Why confirmations matter\n\nRight after a transaction is included, a block can occasionally be replaced during a chain reorganisation. Waiting for confirmations, or for a "safe" block on networks that report one, protects both you and the site from counting a payment that could disappear.\n\nPVPspinArena supports Base mainnet only, which is part of why routine withdrawals are fast. Our guide on [adding Base to MetaMask](/guides/add-base-network-metamask) shows how to receive funds there.',
     },
     {
       id: "checks",
       title: "Reviews, limits and why they exist",
-      body: `Even the fastest sites have some checks. They are not there to slow you down; they protect players and the site from fraud and mistakes.
-
-### Common checks
-
-- **Balance and hold.** The amount is moved into a hold so it cannot be spent twice.
-- **Address checks.** Some sites block sending to known malicious addresses or their own wallets.
-- **Limits.** Daily or per-withdrawal limits cap how much can leave an account quickly, which limits the damage if an account is compromised.
-- **Manual review.** Large or unusual withdrawals may be checked by a person.
-- **Identity checks.** Licensed sites may require identity verification before large withdrawals.
-
-### PVPspinArena's rules
-
-- A daily withdrawal limit of $250.
-- Requests over $25 wait for review before they are sent.
-- Smaller requests are processed automatically.
-- Funds stay safely held in your name while any review or network check is in progress.
-
-### A red flag
-
-Checks should be clearly explained before you deposit. Be cautious of sites that invent new requirements only after you ask to withdraw, such as sudden "unlock fees". A legitimate site never asks you to pay to release your own balance.`,
+      body: 'Even the fastest sites have some checks. They are not there to slow you down; they protect players and the site from fraud and mistakes.\n\n### Common checks\n\n- **Balance and hold.** The amount is moved into a hold so it cannot be spent twice.\n- **Address checks.** Some sites block sending to known malicious addresses or their own wallets.\n- **Limits.** Daily or per-withdrawal limits cap how much can leave an account quickly, which limits the damage if an account is compromised.\n- **Manual review.** Large or unusual withdrawals may be checked by a person.\n- **Identity checks.** Licensed sites may require identity verification before large withdrawals.\n\n### PVPspinArena\'s rules\n\n- A daily withdrawal limit of $250.\n- Requests over $25 wait for review before they are sent.\n- Smaller requests are processed automatically.\n- Funds stay safely held in your name while any review or network check is in progress.\n\n### A red flag\n\nChecks should be clearly explained before you deposit. Be cautious of sites that invent new requirements only after you ask to withdraw, such as sudden "unlock fees". A legitimate site never asks you to pay to release your own balance.',
     },
     {
       id: "lifecycle",
       title: "What happens behind the scenes",
-      body: `Here is the full journey of a withdrawal on PVPspinArena, so you know what each status means.
-
-1. **Requested.** You enter an amount and your verified wallet address. The amount moves from your available balance into a hold.
-2. **Review (if needed).** Requests over $25 wait for approval.
-3. **Signed.** The payout wallet signs a single transaction for your withdrawal. The signed transaction is stored before it is sent, so a restart or retry can never create a second, different payment.
-4. **Broadcast.** The transaction is sent to Base.
-5. **Included.** The transaction lands in a block.
-6. **Confirmed.** The site waits until the block is at or below the network's safe block, and checks that two independent blockchain data providers agree the payment succeeded.
-7. **Finished.** The hold is settled and the withdrawal shows as completed.
-
-### If the providers disagree
-
-If the two providers report different results, the withdrawal is not marked finished and the funds stay held while the issue is investigated. Nothing is released or refunded until both agree.
-
-### If the payment fails
-
-If a payment reverts, the site waits for the same safe-block agreement before returning the held amount to your balance. This design means one withdrawal can never be paid twice.`,
+      body: "Here is the full journey of a withdrawal on PVPspinArena, so you know what each status means.\n\n1. **Requested.** You enter an amount and your verified wallet address. The amount moves from your available balance into a hold.\n2. **Review (if needed).** Requests over $25 wait for approval.\n3. **Signed.** The payout wallet signs a single transaction for your withdrawal. The signed transaction is stored before it is sent, so a restart or retry can never create a second, different payment.\n4. **Broadcast.** The transaction is sent to Base.\n5. **Included.** The transaction lands in a block.\n6. **Confirmed.** The site waits until the block is at or below the network's safe block, and checks that two independent blockchain data providers agree the payment succeeded.\n7. **Finished.** The hold is settled and the withdrawal shows as completed.\n\n### If the providers disagree\n\nIf the two providers report different results, the withdrawal is not marked finished and the funds stay held while the issue is investigated. Nothing is released or refunded until both agree.\n\n### If the payment fails\n\nIf a payment reverts, the site waits for the same safe-block agreement before returning the held amount to your balance. This design means one withdrawal can never be paid twice.",
     },
     {
       id: "fees",
       title: "Withdrawal fees",
-      body: `Withdrawal costs come from two places.
-
-### Network fees
-
-Every blockchain transaction costs a network fee, paid in the network's native token. On Base that is ETH, and the fee is usually tiny. Some sites pay this fee for you; others deduct it from your withdrawal or charge a fixed amount to cover it.
-
-### Site fees
-
-Some casinos add their own withdrawal fee, either fixed or a percentage. Check this before you deposit, because it affects how worthwhile small withdrawals are.
-
-### Minimum withdrawals
-
-Many sites set a minimum withdrawal to avoid paying network fees on tiny amounts. Check the minimum before you play so you know when you can cash out.
-
-### Comparing sites
-
-- What is the network fee, and who pays it?
-- Is there a separate site fee?
-- What is the minimum withdrawal?
-- Is the fee the same for every network?
-
-Choosing a low-fee network like Base keeps costs small, which also makes it easier to withdraw regularly rather than letting a balance build up.`,
+      body: "Withdrawal costs come from two places.\n\n### Network fees\n\nEvery blockchain transaction costs a network fee, paid in the network's native token. On Base that is ETH, and the fee is usually tiny. Some sites pay this fee for you; others deduct it from your withdrawal or charge a fixed amount to cover it.\n\n### Site fees\n\nSome casinos add their own withdrawal fee, either fixed or a percentage. Check this before you deposit, because it affects how worthwhile small withdrawals are.\n\n### Minimum withdrawals\n\nMany sites set a minimum withdrawal to avoid paying network fees on tiny amounts. Check the minimum before you play so you know when you can cash out.\n\n### Comparing sites\n\n- What is the network fee, and who pays it?\n- Is there a separate site fee?\n- What is the minimum withdrawal?\n- Is the fee the same for every network?\n\nChoosing a low-fee network like Base keeps costs small, which also makes it easier to withdraw regularly rather than letting a balance build up.",
     },
     {
       id: "speed-tips",
       title: "How to get withdrawals as fast as possible",
-      body: `You can do a lot to avoid delays.
-
-- **Verify your wallet in advance.** On PVPspinArena, verifying your wallet on your profile before your first deposit means withdrawals go straight to a known address.
-- **Use the correct network.** Make sure your wallet can receive on the site's network. For PVPspinArena, that is Base.
-- **Stay inside automatic limits.** Smaller withdrawals are usually processed without review. Withdrawing regularly in smaller amounts can be faster than one large request.
-- **Keep your account details consistent.** Sudden changes to email or wallet just before a large withdrawal can trigger extra checks.
-- **Check the status page or history.** A status like "confirming" means the payment has been sent and is waiting for safe confirmation.
-- **Keep the transaction hash.** Once broadcast, you can track it yourself on a block explorer such as basescan.org.
-- **Add the token to your wallet.** If USDC does not appear in MetaMask, it may simply need importing.
-
-If a withdrawal seems stuck for longer than the site's stated times, contact support with the request details.`,
+      body: "You can do a lot to avoid delays.\n\n- **Verify your wallet in advance.** On PVPspinArena, verifying your wallet on your profile before your first deposit means withdrawals go straight to a known address.\n- **Use the correct network.** Make sure your wallet can receive on the site's network. For PVPspinArena, that is Base.\n- **Stay inside automatic limits.** Smaller withdrawals are usually processed without review. Withdrawing regularly in smaller amounts can be faster than one large request.\n- **Keep your account details consistent.** Sudden changes to email or wallet just before a large withdrawal can trigger extra checks.\n- **Check the status page or history.** A status like \"confirming\" means the payment has been sent and is waiting for safe confirmation.\n- **Keep the transaction hash.** Once broadcast, you can track it yourself on a block explorer such as basescan.org.\n- **Add the token to your wallet.** If USDC does not appear in MetaMask, it may simply need importing.\n\nIf a withdrawal seems stuck for longer than the site's stated times, contact support with the request details.",
     },
     {
       id: "choosing",
       title: "How to judge a site's withdrawal promises",
-      body: `Marketing claims are easy to make. These checks help you tell a fast, trustworthy site from one that simply says it is.
-
-### Good signs
-
-- Withdrawal limits, review thresholds and fees are published before you sign up.
-- Supported networks are clearly listed.
-- Every withdrawal has a transaction hash you can look up.
-- The site explains what each status means.
-- Support responds with specifics, not vague promises.
-
-### Warning signs
-
-- "Instant" claims with no mention of limits or reviews.
-- New conditions, taxes or fees that appear only after you request a withdrawal.
-- Requests for your recovery phrase or private key "to process" a payment.
-- Withdrawals that never show a transaction hash.
-- Pressure to deposit more before you can withdraw.
-
-A site's approach to fairness is also a useful signal. Sites that let you verify every game result, as explained in our [provably fair casino guide](/guides/provably-fair-casino), usually take transparency seriously elsewhere too.`,
+      body: 'Marketing claims are easy to make. These checks help you tell a fast, trustworthy site from one that simply says it is.\n\n### Good signs\n\n- Withdrawal limits, review thresholds and fees are published before you sign up.\n- Supported networks are clearly listed.\n- Every withdrawal has a transaction hash you can look up.\n- The site explains what each status means.\n- Support responds with specifics, not vague promises.\n\n### Warning signs\n\n- "Instant" claims with no mention of limits or reviews.\n- New conditions, taxes or fees that appear only after you request a withdrawal.\n- Requests for your recovery phrase or private key "to process" a payment.\n- Withdrawals that never show a transaction hash.\n- Pressure to deposit more before you can withdraw.\n\nA site\'s approach to fairness is also a useful signal. Sites that let you verify every game result, as explained in our [provably fair casino guide](/guides/provably-fair-casino), usually take transparency seriously elsewhere too.',
     },
     {
       id: "troubleshooting",
@@ -169,18 +67,12 @@ A site's approach to fairness is also a useful signal. Sites that let you verify
     {
       id: "plan",
       title: "Planning your withdrawals",
-      body: `A little planning makes withdrawals smoother. Decide in advance at what balance you will cash out, for example when a session doubles your starting budget, and withdraw promptly rather than leaving winnings to be played back. Keep each request within the automatic threshold where possible, and spread larger amounts over several days to stay inside the daily limit. Record the amount, date and transaction hash of every withdrawal alongside your deposits, so you always know your true net result. Treat any balance on a gaming site as money in transit, not savings: the safest place for funds you are not actively playing with is your own wallet, and for larger sums a hardware wallet. Finally, remember that in many countries crypto transactions can have tax consequences, so keep records that would let you explain every transfer if asked.`,
+      body: "A little planning makes withdrawals smoother. Decide in advance at what balance you will cash out, for example when a session doubles your starting budget, and withdraw promptly rather than leaving winnings to be played back. Keep each request within the automatic threshold where possible, and spread larger amounts over several days to stay inside the daily limit. Record the amount, date and transaction hash of every withdrawal alongside your deposits, so you always know your true net result. Treat any balance on a gaming site as money in transit, not savings: the safest place for funds you are not actively playing with is your own wallet, and for larger sums a hardware wallet. Finally, remember that in many countries crypto transactions can have tax consequences, so keep records that would let you explain every transfer if asked.",
     },
     {
       id: "summary",
       title: "Summary",
-      body: `An instant withdrawal crypto casino processes withdrawals automatically and quickly, but no blockchain payment is literally instant. Speed depends on the network, the site's checks and your own setup.
-
-On Base, routine withdrawals can arrive within minutes because blocks are fast and fees are low. Responsible sites still hold the amount, apply limits, review larger requests and wait for safe confirmation. PVPspinArena has a $250 daily limit, reviews requests over $25, and marks a withdrawal finished only once it is in a safe block and two independent providers agree.
-
-Verify your wallet early, use the right network, keep transaction hashes and be wary of sites that add fees or conditions only after you ask to withdraw.
-
-More crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).`,
+      body: "An instant withdrawal crypto casino processes withdrawals automatically and quickly, but no blockchain payment is literally instant. Speed depends on the network, the site's checks and your own setup.\n\nOn Base, routine withdrawals can arrive within minutes because blocks are fast and fees are low. Responsible sites still hold the amount, apply limits, review larger requests and wait for safe confirmation. PVPspinArena has a $250 daily limit, reviews requests over $25, and marks a withdrawal finished only once it is in a safe block and two independent providers agree.\n\nVerify your wallet early, use the right network, keep transaction hashes and be wary of sites that add fees or conditions only after you ask to withdraw.\n\nMore crypto payments reading lives in our [Crypto payments guides](/guides/topics/crypto-payments).",
     },
   ],
   faqs: [
@@ -230,5 +122,5 @@ More crypto payments reading lives in our [Crypto payments guides](/guides/topic
     "how-to-withdraw-from-metamask",
     "casino-withdrawal-pending",
   ],
-  updated: "2026-09-25",
+  updated: "2026-11-26",
 };

@@ -10,13 +10,12 @@ export const guide: Guide = {
     "Pachinko odds without invented parlour RTP: how Japanese halls differ from online clones, and how to price a digital board you can actually count.",
   h1: "Pachinko odds: parlour machines versus online clones",
   answer:
-    "Pachinko odds are not one number. In a Japanese parlour you buy balls, fire them at a mechanical field, and exchange prizes through a legally separate shop — the true keep is opaque and we will not invent an RTP for those halls. Online “pachinko” is usually a slot, a plinko-like peg board, or a branded RNG. Price those clones from a posted paytable, not from parlour folklore. PVPspinArena does not offer pachinko.",
+    "Pachinko odds are not one number. In a Japanese parlour you buy balls, fire them at a mechanical field, and exchange prizes through a legally separate shop — the true keep is opaque and we will not invent an RTP for those halls. Online “pachinko” is usually a slot, a plinko-like peg board, or a branded RNG. Price those clones from a posted paytable, not from parlour folklore.",
   facts: [
     "Japanese parlour pachinko is a physical ball machine plus a prize-exchange custom — not a published casino RTP sheet.",
     "This guide will not invent a single “Japanese parlour RTP.” Hall settings and exchange rates vary and are not a public lab figure.",
     "Online clones are typically slots or peg boards; those have countable or posted models.",
     "A peg-board cousin you can price is plinko: bin probabilities times posted multiples.",
-    "PVPspinArena does not offer pachinko; the live games are six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott.",
   ],
   sections: [
     {
@@ -51,7 +50,6 @@ Search results that pair “pachinko odds” with a single percent and a Japan f
 | Online slot with pachinko skin | Reel/bonus model | Only via the info-panel RTP | “It’s pachinko so it’s fairer” |
 | Peg board, bins posted | Paths or stated bin weights | Yes, if weights are real | Ignoring the house short-pay |
 | Plinko-style 16-row | Binomial-like bins | Yes, see plinko guides | Using slot RTP on the pegs |
-| PVPspinArena Roulette | 33 slots | Yes: 16/33 × 2 = 0.970 | Calling it pachinko |
 
 For a peg clone, the honest table looks like [plinko odds](/guides/plinko-odds): each bin has a probability and a multiple. Edge = 1 − Σ p_i r_i. [Crypto slots](/guides/crypto-slots) cover the skinned-slot case: believe the configured RTP, not the art.
 
@@ -84,23 +82,9 @@ A [plinko](/guides/plinko-gambling) board with published rows is the same invert
       title: "Why parlour RTP stays off this page",
       body: `Physical pachinko has tunables: nail positions, “tama” payout modes, fever probability, ball rental price versus prize value, and the exchange-shop rate. Those knobs are the business. They are adjusted. A tourist’s afternoon is not a lab sample.
 
-Publishing a single “Japan RTP” would be made-up precision. We will not do it. If you play in a parlour, treat ball rental as entertainment spend, not as a 96% slot night. Local law and customs decide what exchange is allowed. That is not a PVPspinArena product and not a recommendation.
+Publishing a single “Japan RTP” would be made-up precision. We will not do it. If you play in a parlour, treat ball rental as entertainment spend, not as a 96% slot night. Local law and customs decide what exchange is allowed.
 
 Online operators sometimes advertise “real pachinko RTP.” Ask whether they mean a slot certificate, a peg-board invert, or a marketing sentence. Certificates attach to a math model. They do not attach to a hall in Nagoya.`,
-    },
-    {
-      id: "not-here",
-      title: "PVPspinArena does not offer pachinko",
-      body: `There are no steel balls and no peg clone here. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.
-
-- [Jackpot](/) — pot share is chance.
-- [Coinflip](/coinflip) — 50/50, fee published.
-- [Roulette](/roulette) — 33 slots you can count without a nail diagram.
-- [online casino games](/guides/online-casino-games) — where a pachinko tile usually sits: slot or original.
-
-If you want a visible chance, use a pot or a 33-slot wheel. If you open an online pachinko tile, demand bin weights or a slot RTP instance. If you get neither, walk.
-
-A $1 peg clone at an honest 4% edge, 300 drops, is $300 wagered and about $12 expected cost — with plenty of paths to −$80 because the edge bins pay 10x and the centre pays 0.5x. That variance is [plinko](/guides/plinko-gambling), not a parlour rumour. A $1 unread “fever pachinko” slot at a configured 8% is $24 expected on the same 300 spins and a different bump pattern. The art can be identical. The panel is the game. If the panel is missing, you are not pricing pachinko odds. You are buying a thumbnail.`,
     },
     {
       id: "clone",
@@ -145,9 +129,9 @@ Do not “warm the nails” on a digital board. There are no nails. The next dro
       title: "Fever modes and knowing when to stop dropping balls",
       body: `Clones use fever animations the way slots use bonuses: long dead spins, then a noisy burst. If you are buying extra credit because a fever is “due,” you are in the same chase as any high-variance original.
 
-Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). The [responsible gambling](/responsible-gambling) page lists tools on this site.
+Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion).
 
-This site is 18+. Refusing to invent a parlour RTP is not a reason to grind a clone.
+Refusing to invent a parlour RTP is not a reason to grind a clone.
 
 If you play a peg clone, cap drops the way you would cap plinko balls. Two hundred $1 drops at a written 4% invert is $200 through 4%, about $8 expected, with enough 10x edges to fool a short sample. If you play a skinned slot, cap spins and believe the instance RTP, not the fever animation. If someone quotes a Japan hall percent in the chat, ignore it — including when the number sounds “conservative.” Made-up precision is still made up. Parlour nights, if you take them, are entertainment spend at an unknown keep. Online nights can be known. Demand the known number or do not drop the first ball. A missing panel is a walk, not a mystery to solve with more credits.
 
@@ -172,8 +156,8 @@ The slot-style cousin with skill-stop reels is [pachislot](/guides/pachislot).`,
       a: "Online, they can be close: both drop a token through pegs into bins. Plinko guides are the right maths when the board is actually a bin table.",
     },
     {
-      q: "Does PVPspinArena have pachinko?",
-      a: "No. PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. This guide separates parlour opacity from clone paytables.",
+      q: "Is a digital game called pachinko the same as a Japanese machine?",
+      a: "No. A software title may be a slot or a pegboard game with its own paytable. Its name does not supply a physical machine's probabilities.",
     },
     {
       q: "Why won’t you list a parlour house edge?",
@@ -181,9 +165,18 @@ The slot-style cousin with skill-stop reels is [pachislot](/guides/pachislot).`,
     },
   ],
   sources: [
-    { label: "Wikipedia: Pachinko", url: "https://en.wikipedia.org/wiki/Pachinko" },
-    { label: "Wikipedia: Return to player", url: "https://en.wikipedia.org/wiki/Return_to_player" },
-    { label: "Wizard of Odds: house edge", url: "https://wizardofodds.com/gambling/house-edge/" },
+    {
+      label: "Wikipedia: Pachinko",
+      url: "https://en.wikipedia.org/wiki/Pachinko",
+    },
+    {
+      label: "Wikipedia: Return to player",
+      url: "https://en.wikipedia.org/wiki/Return_to_player",
+    },
+    {
+      label: "Wizard of Odds: house edge",
+      url: "https://wizardofodds.com/gambling/house-edge/",
+    },
   ],
   related: [
     "plinko-odds",
@@ -193,5 +186,5 @@ The slot-style cousin with skill-stop reels is [pachislot](/guides/pachislot).`,
     "online-casino-games",
     "pachislot",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

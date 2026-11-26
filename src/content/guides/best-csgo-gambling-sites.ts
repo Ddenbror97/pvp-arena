@@ -83,7 +83,7 @@ Budget tips, limits and links to support are signs a site takes its players seri
     {
       id: "legit",
       title: "How to tell whether a CS:GO gambling site is legit",
-      body: `People search for "legit CS:GO gambling sites" because the skin era left a lot of distrust. Some well-known sites were caught being secretly promoted by their owners, and some players never got their items back.
+      body: `The skin era left documented reasons to scrutinise operator identity, custody and withdrawal terms. Some well-known sites were caught being secretly promoted by their owners, and some players never got their items back.
 
 A few quick signs of a legit site:
 
@@ -203,13 +203,22 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     },
   ],
   sources: [
-    { label: "Counter-Strike 2 — official site", url: "https://www.counter-strike.net/cs2" },
-    { label: "Circle — USDC overview", url: "https://www.circle.com/usdc" },
+    {
+      label: "Counter-Strike 2 — official site",
+      url: "https://www.counter-strike.net/cs2",
+    },
+    {
+      label: "Circle — USDC overview",
+      url: "https://www.circle.com/usdc",
+    },
     {
       label: "UK Gambling Commission — Skins gambling position paper",
       url: "https://www.gamblingcommission.gov.uk/",
     },
-    { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
+    {
+      label: "NCPG — Responsible gambling resources",
+      url: "https://www.ncpgambling.org/",
+    },
   ],
   related: [
     "pvp-gambling",
@@ -218,11 +227,17 @@ More cs:go heritage reading lives in our [CS:GO heritage guides](/guides/topics/
     "esports-betting",
     "cs2-betting",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
   cta: {
     title: "The CS:GO classics, with USDC",
     text: "Create a free account and play Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot with results you can verify.",
-    primary: { to: "/auth", label: "Sign in" },
-    secondary: { to: "/jackpot", label: "Jackpot" },
+    primary: {
+      to: "/auth",
+      label: "Sign in",
+    },
+    secondary: {
+      to: "/jackpot",
+      label: "Jackpot",
+    },
   },
 };

@@ -34,7 +34,7 @@ export const guide: Guide = {
 
 A baccarat squeeze is the manner of turning those cards face up. Someone peels a corner, bends the card, and lets the pips appear slowly. In a casino the person is often the dealer, or the player who bet the most on that side, under house rules about who may touch the cards. Online, the same idea is a camera close-up or an animation. The card was already the next card. Bending it does not swap it.
 
-[Baccarat rules](/guides/baccarat-rules) are the drawing rules and the three main bets. [Baccarat strategy](/guides/baccarat-strategy) is the conversation about which of those bets carries which price. This page is only about the reveal. If a site sells "squeeze" as a better shoe, it is selling pace and pictures.
+[Baccarat rules](/guides/baccarat-rules) are the drawing rules and the three main bets. [Baccarat strategy](/guides/baccarat-strategy) is the conversation about which of those bets carries which price. The squeeze changes the reveal. If a site sells "squeeze" as a better shoe, it is selling pace and pictures.
 
 The topic home is [Casino games](/guides/topics/casino-games). Adults 18+ only. A ritual that feels important is a good moment to reread the bet you actually made, not a reason to add a side bet you skipped on a fast table.
 
@@ -55,7 +55,7 @@ The result of the hand is the cards in the shoe order, scored by the tableau. Th
 
 House rules decide whether you may touch a card, how long you may hold it, and when the dealer takes it back. Those rules protect the shoe. Stalling past the limit gets the card pulled back.
 
-A squeeze can show a corner to the table a second before the full face. Everyone watching that legal reveal sees the same public card. Using a private mark, a bent edge prepared in advance, or a hidden glimpse of a card that is not yours to see is cheating. This guide does not explain how to do any of that, and a casino that catches it will end more than the hand.
+A squeeze can show a corner to the table a second before the full face. Everyone watching that legal reveal sees the same public card. Using a private mark, a bent edge prepared in advance, or a hidden glimpse of a card that is not yours to see is cheating. Card marking, concealment and collusion are distinct from a permitted squeeze and can trigger gaming-law penalties.
 
 [Crypto baccarat](/guides/crypto-baccarat) tables sometimes animate the peel on a phone. The animation is still a reveal of a dealt result. Pinching the screen is the ritual in software form.`,
     },
@@ -129,7 +129,7 @@ Baccarat's settlement is the cards in order, scored by the tableau, paid by the 
 
 Side bets on pairs, players' bonuses, and "perfect" totals keep their own prices through a squeeze. They are often the expensive part of a pretty table. If the help file will not state the multiple, skip the circle. Theater is a bad reason to buy an unpriced bet.
 
-This site deals Roulette, Coinflip, and Jackpot. It does not deal baccarat. A guide to a reveal ritual is not a coupon for those games and not a claim that a slow spin changes a roulette pocket. Adults 18+ only.
+It does not deal baccarat. A guide to a reveal ritual is not a coupon for those games and not a claim that a slow spin changes a roulette pocket. Adults 18+ only.
 
 If the ritual is the reason you stay past a loss limit, the ritual is doing the expensive work. Stop while the next hand is still unbet. The shoe will squeeze for someone else.`,
     },
@@ -146,9 +146,9 @@ Write who may touch cards and how long the house allows. Write your unit and you
 
 Then watch one hand without betting, if the room allows a spectator view, and see whether the pace makes you impatient. Impatience is how a slow table becomes a large-bet table. The math you came to read is the commission column. The fingers on the card are the show.
 
-Cheating by marks or hidden looks is outside this page on purpose. A fair peel shows a card to the table under the house rules. Anything that tries to know a card you are not entitled to see is not a strategy and not a ritual. Leave it alone.
+A permitted reveal must follow the table's rules. A fair peel shows a card to the table under the house rules. Anything that tries to know a card you are not entitled to see is not a strategy and not a ritual. Leave it alone.
 
-This page is about the bend. The drawing rules and the bet prices live on the rules and strategy pages. The bend is not a third product with its own edge.`,
+The squeeze concerns presentation. The drawing rules and the bet prices live on the rules and strategy pages. The bend is not a third product with its own edge.`,
     },
   ],
   faqs: [
@@ -169,18 +169,24 @@ This page is about the bend. The drawing rules and the bet prices live on the ru
       a: "Per hour, a flat bet wagered fewer times costs less in theory. Per resolved bet, the edge is unchanged. Raising the stake can wipe out the slower pace.",
     },
     {
-      q: "Does PVPspinArena deal squeeze baccarat?",
-      a: "No. This site offers Six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. Reveal timing does not change a settled roulette result either. Adults 18+ only.",
+      q: "Does squeezing change the baccarat drawing rules?",
+      a: "No. It changes how a card is revealed. The third-card rules and the wager's payout still govern the result.",
     },
   ],
   sources: [
-    { label: "Wizard of Odds: Baccarat", url: "https://wizardofodds.com/games/baccarat/" },
+    {
+      label: "Wizard of Odds: Baccarat",
+      url: "https://wizardofodds.com/games/baccarat/",
+    },
     {
       label: "Wizard of Odds: Baccarat FAQ",
       url: "https://wizardofodds.com/ask-the-wizard/baccarat",
     },
-    { label: "Wikipedia: Baccarat", url: "https://en.wikipedia.org/wiki/Baccarat_(card_game)" },
+    {
+      label: "Wikipedia: Baccarat",
+      url: "https://en.wikipedia.org/wiki/Baccarat_(card_game)",
+    },
   ],
   related: ["baccarat-rules", "baccarat-strategy", "illusion-of-control", "crypto-baccarat"],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

@@ -79,17 +79,15 @@ The house keeps the edge inside the payoff. You do not see a separate commission
 
 A winning even-money total returns the stake plus the same amount. A winning 2 on either schedule returns two units of profit plus the stake. Only the 12 changes between A and B.
 
-Peer games publish a different kind of price. Jackpot and Coinflip take 5% of the pot.
+Peer games publish a different kind of price.
 
 That 5% is not 5.56% and it is not 2.78%. It is a cut of a pot between players, taken when the round is settled.
 
-How the peer pot compares: open [coinflip](/coinflip) for the two-person game and [fairness](/fairness) to check a settled result. The live block, where a game page has one, tracks settled results. This article does not paste a recent roll or a recent coin.
+The live block, where a game page has one, tracks settled results. This article does not paste a recent roll or a recent coin.
 
 Balances are US dollars, funded with Bitcoin, or with USDC or ETH on Base. No treasury address is printed in this guide.
 
-| Item | Field, Schedule A or B | House-banked casino | PVPspinArena |
 | --- | --- | --- | --- |
-| Price | 2/36 or 1/36, as labeled | not published if the payoff differs | 5% of a Jackpot or Coinflip pot |
 | Who you face | the payoff schedule | the house | other players |
 | When you are paid | not published as a cashier time | not published | when the round settles |
 | Promo code | we do not list a promo code | not published | we do not list a promo code |`,
@@ -97,7 +95,7 @@ Balances are US dollars, funded with Bitcoin, or with USDC or ETH on Base. No tr
     {
       id: "examples",
       title: "A $36 chip on Schedule A, an $18 chip on Schedule B",
-      body: `The dice examples use the fractions above. The peer examples use our fee. They are labeled so they are not one blended percentage.
+      body: `The dice examples use the fractions above. They are labeled so they are not one blended percentage.
 
 Schedule A dollars. You bet $36 on a field where 2 and 12 both pay 2 to 1.
 
@@ -121,7 +119,7 @@ The edge is 1/36. One thirty-sixth of $18 is $0.50 of average loss.
 
 A 12 on this schedule pays 3 to 1, profit $54 on the $18. That fatter 12 is why the average loss is smaller than Schedule A, and it is still a loss on average.
 
-Coin comparison at $18 a side. The Coinflip pot is $36.
+Coin comparison at $18 a side.
 
 Five percent is $1.80. The winner receives $34.20. The craps field bet payout never enters that coin.`,
     },
@@ -176,7 +174,7 @@ Schedule B, with 12 at 3 to 1 and 2 at 2 to 1, keeps 1/36, about 2.78%. Other pa
 
 The pass line is a different chip with a different article. Do not borrow this edge for that chip, and do not borrow the pass edge for the field.
 
-When you want a fee written in dollars before the outcome, use a Jackpot or a Coinflip and take 5% of the pot as the price. Leave the dice when the one-roll budget is spent. The layout will still be there tomorrow, on whatever schedule that casino printed.
+Leave the dice when the one-roll budget is spent. The layout will still be there tomorrow, on whatever schedule that casino printed.
 
 The field is one roll. [The variant where craps numbers become points](/guides/crapless-craps) changes the come-out instead.`,
     },
@@ -203,8 +201,8 @@ The field is one roll. [The variant where craps numbers become points](/guides/c
       a: "No. If 2 or 12 pays something other than the two schedules above, the edge is not published here. Read the layout and do not average Schedule A with Schedule B.",
     },
     {
-      q: "Is the field the same price as a Coinflip pot?",
-      a: "No. Coinflip takes 5% of the pot between two players, while the field keeps about 5.56% or about 2.78% of the stake, depending on the labeled schedule, and the bases are different.",
+      q: "Can the field have a different edge at another table?",
+      a: "Yes. The payouts on 2 and 12 matter. Recalculate from the actual schedule instead of borrowing a percentage from a different layout.",
     },
   ],
   sources: [
@@ -214,5 +212,5 @@ The field is one roll. [The variant where craps numbers become points](/guides/c
     },
   ],
   related: ["craps-odds", "online-craps", "house-edge", "sic-bo-online", "crapless-craps"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

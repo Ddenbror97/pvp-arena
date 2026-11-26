@@ -16,36 +16,22 @@ export const guide: Guide = {
     "Best of three means two sets win the match. Best of five means three. The event chooses.",
     "A walkover is a match that does not start. A retirement is a player stopping after play has begun. Settlement of either is a market rule.",
     "A set handicap is not the match winner. You can win the match and lose the handicap.",
-    "PVPspinArena does not book tennis.",
   ],
   sections: [
     {
       id: "score",
       title: "Games, sets, and the two match lengths",
-      body: `Points make games. Games make sets. The 2026 Rules of Tennis say the first player to win six games wins the set if they lead by two, and that at six games all a tie-break game is played, first to seven points by two. They also say a match can be the best of three sets or the best of five. Grand slams and other events pick one. A coupon that does not say which format you are pricing has skipped the first fact.
-
-A final set can be a match tie-break instead of a full set. That is a competition choice the rules allow events to make. It changes what "one more set" means. Read the event, not a generic memory of Wimbledon.`,
+      body: 'Points make games. Games make sets. The 2026 Rules of Tennis say the first player to win six games wins the set if they lead by two, and that at six games all a tie-break game is played, first to seven points by two. They also say a match can be the best of three sets or the best of five. Grand slams and other events pick one. A coupon that does not say which format you are pricing has skipped the first fact.\n\nA final set can be a match tie-break instead of a full set. That is a competition choice the rules allow events to make. It changes what "one more set" means. Read the event, not a generic memory of Wimbledon.',
     },
     {
       id: "markets",
       title: "Match winner is not a game spread",
-      body: `The match price is who wins the required number of sets. A game handicap, often mislabeled a point spread, adds a head start in games. A player can win a best-of-three match 6-0, 0-6, 6-4 and lose a large game handicap. A set handicap is a third bet. Total games is a fourth. Each one has its own price and its own hold.
-
-[Prop bets explained](/guides/prop-bets-explained) is the family for handicaps and totals. [Vig betting](/guides/vig-betting) is the margin inside a two-way price. [What sports betting is](/guides/what-is-sports-betting) is the contract in general. Tennis is two-way in the match market because a completed match has a winner. That fact does not survive a retirement until the slip says so.`,
+      body: "The match price is who wins the required number of sets. A game handicap, often mislabeled a point spread, adds a head start in games. A player can win a best-of-three match 6-0, 0-6, 6-4 and lose a large game handicap. A set handicap is a third bet. Total games is a fourth. Each one has its own price and its own hold.\n\n[Prop bets explained](/guides/prop-bets-explained) is the family for handicaps and totals. [Vig betting](/guides/vig-betting) is the margin inside a two-way price. [What sports betting is](/guides/what-is-sports-betting) is the contract in general. Tennis is two-way in the match market because a completed match has a winner. That fact does not survive a retirement until the slip says so.",
     },
     {
       id: "stop",
       title: "Walkover, retirement, and the blank rule",
-      body: `If a player does not appear, the opponent is advanced by walkover. If a player starts and then stops, the match is a retirement, and the score stands where it stopped. Those are descriptions of the event. They are not a universal betting grade.
-
-Some markets void if a retirement happens before a stated number of sets. Some pay the player who is ahead. Some pay the opponent only if one set is complete. Those three sentences are three different books, and this page will not pick one for them. Open the market rules and find the retirement paragraph before you bet a player who is taped up. If the paragraph is missing, skip the bet.
-
-A walkover that happens before the first serve is even less like a played match. Do not assume it pays the same as a retirement at 6-6 in the third.`,
-    },
-    {
-      id: "no-card",
-      title: "No tennis market on this site",
-      body: `PVPspinArena does not offer tennis betting. Adults only. [Responsible gambling](/responsible-gambling) applies to a day session that can become a long night match without a fixed clock. The hub is [sports betting](/guides/topics/sports-betting). The [terms](/terms) are not a tennis rulebook.`,
+      body: "If a player does not appear, the opponent is advanced by walkover. If a player starts and then stops, the match is a retirement, and the score stands where it stopped. Those are descriptions of the event. They are not a universal betting grade.\n\nSome markets void if a retirement happens before a stated number of sets. Some pay the player who is ahead. Some pay the opponent only if one set is complete. Those are different settlement rules. Apply only the retirement rule attached to the accepted wager. Open the market rules and find the retirement paragraph before you bet a player who is taped up. If the paragraph is missing, skip the bet.\n\nA walkover that happens before the first serve is even less like a played match. Do not assume it pays the same as a retirement at 6-6 in the third.\n\nExplore the [sports betting topic](/guides/topics/sports-betting) for related rules and examples.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.",
     },
   ],
   faqs: [
@@ -66,8 +52,8 @@ A walkover that happens before the first serve is even less like a played match.
       a: "Yes, if you bet a game or set handicap and the winner's margin is smaller than the handicap.",
     },
     {
-      q: "Does this site book tennis?",
-      a: "No.",
+      q: "Is a retirement the same as a walkover?",
+      a: "No. A retirement occurs after play begins; a walkover occurs before the match starts. Market validity and refunds depend on the operator’s tennis rules.",
     },
   ],
   sources: [
@@ -82,5 +68,5 @@ A walkover that happens before the first serve is even less like a played match.
     "what-is-sports-betting",
     "moneyline-betting-explained",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

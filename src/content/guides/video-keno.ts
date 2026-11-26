@@ -12,12 +12,10 @@ export const guide: Guide = {
   answer:
     "Video keno is a screen card. You mark spots and a draw hits or misses them. South Dakota uses a grid no bigger than 1 to 80, a pick of 2 to 10, and at least 10 drawn. Montana's 2026 file draws at least 20 and requires an 80 percent return. An unopened casino paytable stays unpublished.",
   facts: [
-    "Last tested 20 October 2026 on South Dakota rule 48:02:08:07 and Montana device file version 2.6, dated 19 March 2026.",
     "The South Dakota video keno rule took effect 18 August 1989. It prints no paytable and no return percent.",
     "Montana section 4.10 requires a 1-to-80 card, 2 to 10 spots, at least 20 drawn, an 80 percent minimum return, an $800 award cap, and a $2 maximum bet.",
     "Pennsylvania Undersea Keno uses 1 through 80, a pick of 3 to 10, and 20 drawn after three bonus spots.",
     "A casino catch price was not on a page we opened. That cell stays not published.",
-    "This site does not offer the screen game. Purple and Silver are about a 7.88 percent edge after the 5 percent fee.",
   ],
   sections: [
     {
@@ -101,34 +99,9 @@ Neither state file prints seconds per game. The Pennsylvania sheet has turbo and
 The count-by-fours note is [the button game](/guides/fan-tan-game). The two-side card deal is [the joker-card game](/guides/andar-bahar).`,
     },
     {
-      id: "pots",
-      title: "A screen card beside a house game and a player pot",
-      body: `Three products get mixed because each can show numbers. Only this site's player games have a fee you can recompute from rules printed here.
-
-Do not paste a video keno percent onto the wheel. The 80 percent line is a Montana submission floor. The Pennsylvania odds row is a lottery sheet.
-
-| | Fee or edge | Who you play against | Payout speed | Provably fair | Minimum bet |
-| --- | --- | --- | --- | --- | --- |
-| This screen game | not published for a casino glass; Montana submissions at least 80 percent return | a paytable | not published | not published | not published |
-| House-banked casino | inside that house's paytable; no percent is fixed here | the house | not published | not published | not published |
-| PVPspinArena | Slott takes 10 percent of a winning pot. Purple and Silver are about a 7.88 percent edge after the 5 percent win fee | other players | balance updates when the round settles | yes, seed committed before the round | shown on the bet control |
-
-How PvP compares: a screen card prices a ticket against a paytable. [Roulette](/roulette) prices a stake against other players on a 33-pocket wheel, with 16 Purple, 16 Silver, and 1 Green.
-
-Purple and Silver pay 2x, then 5 percent comes off that winning payout, so a hit keeps 1.90 times the stake. Sixteen divided by 33, times 1.90, minus 1, is about −0.0788.
-
-That figure is the 7.88 percent edge. Green pays 14x, and this page does not quote a Green edge.
-
-A settled round can be recomputed on the [fairness page](/fairness). The check matches this site's commit. It does not audit a lottery or a casino screen.
-
-Balances are US dollars, funded with Bitcoin or with USDC or ETH on Base. Cash-out minimum is $20 in BTC, USDC, or ETH. We did not time a cash-out.
-
-Coinflip minimum is $1. This site does not host the number screen.`,
-    },
-    {
       id: "examples",
       title: "Three labeled pictures, none of them a promise",
-      body: `None of these pictures is a cabinet we played. The first two use a page we opened. The third uses a fee from this site.
+      body: `None of these pictures is a cabinet we played. The first two use a page we opened.
 
 Example 1 — Montana caps. The file caps the bet at $2 and the award at $800, bonus included. On a $2 stake the arithmetic lid is $800.
 
@@ -138,27 +111,16 @@ Example 2 — lottery price. Undersea Keno lists $1 among its purchase prices. T
 
 A prize above $600 on that sheet locks the card. That is a claim rule, not a forecast.
 
-Example 3 — Purple payout. A $25 Purple stake that wins pays 2x, which is $50. Five percent of that payout is $2.50, so the player receives $47.50.
+Five percent of that payout is $2.50, so the player receives $47.50.
 
-One win does not reveal the 7.88 percent edge. Most Purple stakes lose.`,
+One win does not reveal the 7.88 percent edge.`,
     },
     {
       id: "checks",
       title: "Checks before a number screen is treated as a rule you read",
       body: `Use the glass you are pressing. A familiar 1-to-80 grid does not prove the South Dakota draw, the Montana caps, or the Pennsylvania prize cells.
 
-- [ ] Confirm you are 18, or older if local law sets a higher age.
-- [ ] Read the paytable on the machine, not a rule from another state.
-- [ ] Accept a 1-to-80 grid only if that glass prints it.
-- [ ] Accept a 2-to-10 pick only if that glass prints it.
-- [ ] Accept the draw count only if that glass prints it. At least 10 and at least 20 are different rules.
-- [ ] Leave the catch prices unpublished when the glass does not show them.
-- [ ] Do not treat Montana's 80 percent floor as the return of a different cabinet.
-- [ ] Do not treat the Pennsylvania PDF as a casino paytable.
-- [ ] Do not treat a turbo button as a change in the price. Pace spends the stake faster.
-- [ ] Set a loss stop before the first paid play.
-- [ ] If the session becomes a chase, call 1-800-GAMBLER.
-- [ ] Recompute a PVPspinArena round on the fairness page, and do not ask it to audit a lottery.`,
+- [ ] Confirm you are 18, or older if local law sets a higher age. - [ ] Read the paytable on the machine, not a rule from another state. - [ ] Accept a 1-to-80 grid only if that glass prints it. - [ ] Accept a 2-to-10 pick only if that glass prints it. - [ ] Accept the draw count only if that glass prints it. At least 10 and at least 20 are different rules. - [ ] Leave the catch prices unpublished when the glass does not show them. - [ ] Do not treat Montana's 80 percent floor as the return of a different cabinet. - [ ] Do not treat the Pennsylvania PDF as a casino paytable. - [ ] Do not treat a turbo button as a change in the price. Pace spends the stake faster. - [ ] Set a loss stop before the first paid play. - [ ] If the session becomes a chase, call 1-800-GAMBLER.`,
     },
     {
       id: "limits",
@@ -171,7 +133,7 @@ Do not play to get even. A quiet run is not a debt the next draw owes you.
 
 [Why a cold run is not a credit](/guides/gamblers-fallacy) is the general point. This page is an editorial note, not a statute and not a coupon.
 
-This site does not offer the title. If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
+If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
     },
   ],
   faqs: [
@@ -196,8 +158,8 @@ This site does not offer the title. If play stops being a bounded spend, call 1-
       a: "The Undersea PDF prints prices from $0.10 to $30, a draw of 20, three bonus spots, turbo, and auto play of 5, 10, 15, or 20. Ten free games follow when all three bonus numbers are drawn. A prize over $600 locks the card for a retailer claim. That sheet is a lottery product. It does not price a casino screen.",
     },
     {
-      q: "Does this site offer the screen game?",
-      a: "No. This site does not host the title. The comparison here is roulette, a 33-pocket wheel with a 5 percent fee on a winning payout. Purple and Silver keep 1.90 times the stake on a win, and the long-run edge on those two is about 7.88 percent. A fairness check recomputes this site's commit. It does not audit a state rule or a lottery PDF.",
+      q: "Does a regulator's minimum return identify a machine's paytable?",
+      a: "No. A regulatory floor is not the return or award schedule of every approved cabinet. Read the actual game version and catch table.",
     },
   ],
   sources: [
@@ -224,5 +186,5 @@ This site does not offer the title. If play stops being a bounded spend, call 1-
     "gamblers-fallacy",
     "french-roulette",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

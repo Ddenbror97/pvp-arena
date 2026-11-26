@@ -33,7 +33,7 @@ Best means “loses the least on average”, not “wins”. Hitting hard 16 ver
 
 ### What this page is not
 
-This page does not reprint a 300-cell studio poster. That dump is copyrighted artwork and it is the wrong object: you need the grid that names your decks, soft-17 rule, DAS and surrender. The long explainer of what the chart changes and cannot change is [blackjack basic strategy](/guides/blackjack-basic-strategy). Use that page when you want the limits spelled out. Use this page when you need to know how to read any labelled grid.
+A chart must match the table’s deck count, dealer rules and surrender conditions. That dump is copyrighted artwork and it is the wrong object: you need the grid that names your decks, soft-17 rule, DAS and surrender. The long explainer of what the chart changes and cannot change is [blackjack basic strategy](/guides/blackjack-basic-strategy). Use that page when you want the limits spelled out. Use this page when you need to know how to read any labelled grid.
 
 ### Cluster
 
@@ -198,7 +198,10 @@ If blackjack or any other game is becoming hard to put down, use [how to stop ga
       label: "Wizard of Odds: blackjack house edge calculator",
       url: "https://wizardofodds.com/games/blackjack/calculator/",
     },
-    { label: "Wikipedia: Blackjack", url: "https://en.wikipedia.org/wiki/Blackjack" },
+    {
+      label: "Wikipedia: Blackjack",
+      url: "https://en.wikipedia.org/wiki/Blackjack",
+    },
   ],
   related: [
     "blackjack-basic-strategy",
@@ -208,5 +211,5 @@ If blackjack or any other game is becoming hard to put down, use [how to stop ga
     "card-counting",
     "expected-value-gambling",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

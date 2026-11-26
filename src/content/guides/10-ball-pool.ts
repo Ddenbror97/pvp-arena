@@ -30,9 +30,7 @@ That single limit is why players who like 9-ball sometimes hate 10-ball, and why
       title: "Called shots beside the rotation games",
       body: `10-ball is a called rotation game. This site does not run it for money. The 8-ball cashier is [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other rule cards are [the 9-ball push](/guides/9-ball-rules), [a called bank](/guides/bank-pool), and [8-ball calls](/guides/8-ball-pool-rules). The group is the [games of chance guides](/guides/topics/games-of-chance).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other rule cards are [the 9-ball push](/guides/9-ball-rules), [a called bank](/guides/bank-pool), and [8-ball calls](/guides/8-ball-pool-rules). The group is the [games of chance guides](/guides/topics/games-of-chance).`,
     },
     {
       id: "triangle-push",
@@ -65,7 +63,9 @@ The 10 follows a stricter bookkeeping rule than the lower balls. It is spotted u
       title: "Why this cashier has no 10-ball button",
       body: `This site does not run 10-ball for money. The rules above are WPA paraphrase so a reader can tell 10-ball from 9-ball and from this site's 8-ball. The stake lobby sells 8-ball: call a pocket only for the 8, a 5% fee, winner 95%, stakes from $1 to $50. It does not sell a called 10. It also does not sell 9-ball, straight pool, one-pocket, bank, cutthroat, or killer.
 
-That is enough curiosity to deserve a straight answer, and not a reason to pretend a button exists. If you want three fouls to lose a 10-ball rack, play that game where it is offered. Three consecutive fouls do lose the rack in the WPA chapter. They do not create a match on this website. Read the called pocket before you celebrate a fallen 10.`,
+That is enough curiosity to deserve a straight answer, and not a reason to pretend a button exists. If you want three fouls to lose a 10-ball rack, play that game where it is offered. Three consecutive fouls do lose the rack in the WPA chapter. They do not create a match on this website. Read the called pocket before you celebrate a fallen 10.
+
+For money games, set [spending limits](/responsible-gambling) before dealing.`,
     },
   ],
   faqs: [
@@ -99,8 +99,11 @@ That is enough curiosity to deserve a straight answer, and not a reason to prete
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "9-ball-rules", "bank-pool"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

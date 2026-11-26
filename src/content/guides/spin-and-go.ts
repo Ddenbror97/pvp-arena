@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Spin and go poker draws a multiplier, then deals a short table. How fees, prize math, and push-fold decisions fit on one three-handed sheet.",
   h1: "Spin and go poker: multipliers, rake, and strategy",
   answer:
-    "Spin and go poker is a three-handed sit and go that draws a prize multiplier before the cards, then plays a fast blind structure until the places are paid. The common low multiplier often pays the winner a small multiple of one buy-in. Rare high multipliers pay much more. The gap between money collected and prizes returned is the cost of the format, whether the client shows it as rake or hides it in the table. Read that table. This page does not copy a live frequency list.",
+    "Spin and go poker is a three-handed sit and go that draws a prize multiplier before the cards, then plays a fast blind structure until the places are paid. The common low multiplier often pays the winner a small multiple of one buy-in. Rare high multipliers pay much more. The gap between money collected and prizes returned is the cost of the format, whether the client shows it as rake or hides it in the table. Read that table. Use the room’s current multiplier frequencies for the exact buy-in and variant.",
   facts: [
     "A spin format draws the prize first, then deals. You cannot choose the multiplier after you see your cards.",
     "Three players is the usual field. When one busts, the rest is heads-up.",
@@ -32,11 +32,13 @@ export const guide: Guide = {
 
 You learn the prize before you play a hand, or as the first animation finishes, and you cannot redraw it because your cards were bad. The poker is real: blinds, position, and folds. The lottery is also real: most results cluster on the small multipliers, and the screenshot people post is the rare one.
 
-This [poker](/guides/topics/poker) article is for adults 18 or older. Format neighbors are [sit and go poker](/guides/sit-and-go-poker), [cash game poker](/guides/cash-game-poker), and [poker staking](/guides/poker-staking). It is not legal advice. Rooms offer this format under their own terms. This guide will not say where it is legal, and it will not print today's odds from a named client. Open the multiplier table in the software you use. If a line on that table disagrees with a sentence here, the table wins.
+This [poker](/guides/topics/poker) article is for adults 18 or older. Format neighbors are [sit and go poker](/guides/sit-and-go-poker), [cash game poker](/guides/cash-game-poker), and [poker staking](/guides/poker-staking). It is not legal advice. Rooms offer this format under their own terms. Check local eligibility and the selected client’s current prize-frequency table before entering. Open the multiplier table in the software you use. If a line on that table disagrees with a sentence here, the table wins.
 
 [Texas Hold'em strategy](/guides/texas-holdem-strategy) is the grammar of the streets. Spin formats compress it. You may see twenty hands, not two hundred. Push-or-fold decisions show up early because the blinds climb while the stacks stay small. Studying an hour-long cash session and then sitting a spin is how people call off too light "to see a flop" that costs the tournament.
 
-The format is still player versus player. You are not spinning a slot that deals no cards. You are playing two opponents for a prize the draw already set.`,
+The format is still player versus player. You are not spinning a slot that deals no cards. You are playing two opponents for a prize the draw already set.
+
+PokerStars describes its standard Spin & Go as a three-player hyper-turbo with a randomly selected prize pool. Other branded variants have different structures.`,
     },
     {
       id: "multipliers",
@@ -130,7 +132,7 @@ If the table of multipliers is not on your screen, you are not ready to pay. Wai
     },
     {
       q: "Where is the rake in a spin and go?",
-      a: "Either as a printed fee, or inside the gap between entries collected and prizes paid across the multiplier table. This page will not quote a room's current percent. Use the lobby.",
+      a: "Either as a printed fee, or inside the gap between entries collected and prizes paid across the multiplier table. Read the current fee and multiplier schedule in the tournament lobby. Use the lobby.",
     },
     {
       q: "What strategy fits three-handed spins?",
@@ -146,8 +148,15 @@ If the table of multipliers is not on your screen, you are not ready to pay. Wai
       label: "Wikipedia — Poker tournament",
       url: "https://en.wikipedia.org/wiki/Poker_tournament",
     },
-    { label: "Wikipedia — Poker", url: "https://en.wikipedia.org/wiki/Poker" },
+    {
+      label: "Wikipedia — Poker",
+      url: "https://en.wikipedia.org/wiki/Poker",
+    },
+    {
+      label: "PokerStars: tournament types, Spin & Go",
+      url: "https://www.pokerstars.com/poker/tournaments/types/",
+    },
   ],
   related: ["sit-and-go-poker", "cash-game-poker", "poker-staking", "heads-up-poker-strategy"],
-  updated: "2026-10-07",
+  updated: "2026-11-26",
 };

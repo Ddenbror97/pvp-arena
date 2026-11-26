@@ -59,7 +59,9 @@ Ten tiles appear only once. They pair by total rather than by identical faces:
 | Chop Ng (fives) | 1-4, 2-3 | 5 |
 | Gee Joon | 1-2, 2-4 | 3 and 6 |
 
-Tile names are Cantonese-derived and spellings vary between casinos and books, but the pips are universal. If you know Western dominoes, the [dominoes rules guide](/guides/dominoes-rules) covers the double-six set, which works very differently.`,
+Tile names are Cantonese-derived and spellings vary between casinos and books, but the pips are universal. If you know Western dominoes, the [dominoes rules guide](/guides/dominoes-rules) covers the double-six set, which works very differently.
+
+The Massachusetts rules library separates Pai Gow tiles from Pai Gow Poker. The names do not make their equipment or hand-ranking systems interchangeable.`,
     },
     {
       id: "scoring",
@@ -174,17 +176,6 @@ Pai gow tiles travelled with Chinese immigrants to North America in the 19th cen
 
 Pai gow tiles is related to other tile games only by equipment. Mahjong uses a different set and entirely different rules; see [mahjong tiles](/guides/mahjong-tiles). The wider collection of table games is in the [casino games topic hub](/guides/topics/casino-games). Real-money play is for adults only, 18+ or your local legal age.`,
     },
-    {
-      id: "pvp",
-      title: "Scores, pushes and edge on a hashed PvP round",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, for adults 18+ only. None involves tiles, but the edge arithmetic is the same kind of counting.
-
-On [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and 1 Green slot pays 14x on a 33-slot wheel. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee, with no pushes. [Coinflip](/coinflip) is a 50/50 between two players, and in [Jackpot](/) your win chance equals your share of the pot; in both, the winner takes the pot minus any fee shown before entry.
-
-Where pai gow relies on a banker's fixed house way, PvP rounds rely on committed seeds. The result is fixed before play, and you can verify any settled round on the [fairness page](/fairness). If you want to keep sessions short, set limits on the [responsible gambling](/responsible-gambling) page first.
-
-In the same cluster, see also [teen patti](/guides/teen-patti), [craps strategy](/guides/craps-strategy), and [baccarat strategy](/guides/baccarat-strategy).`,
-    },
   ],
   faqs: [
     {
@@ -209,8 +200,18 @@ In the same cluster, see also [teen patti](/guides/teen-patti), [craps strategy]
     },
   ],
   sources: [
-    { label: "Wikipedia: Pai gow", url: "https://en.wikipedia.org/wiki/Pai_gow" },
-    { label: "Wikipedia: Chinese dominoes", url: "https://en.wikipedia.org/wiki/Chinese_dominoes" },
+    {
+      label: "Massachusetts Gaming Commission: approved Pai Gow tile rules",
+      url: "https://massgaming.com/regulations/table-games-rules/",
+    },
+    {
+      label: "Wikipedia: Pai gow",
+      url: "https://en.wikipedia.org/wiki/Pai_gow",
+    },
+    {
+      label: "Wikipedia: Chinese dominoes",
+      url: "https://en.wikipedia.org/wiki/Chinese_dominoes",
+    },
   ],
   related: [
     "pai-gow-poker",
@@ -222,5 +223,5 @@ In the same cluster, see also [teen patti](/guides/teen-patti), [craps strategy]
     "craps-strategy",
     "baccarat-strategy",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

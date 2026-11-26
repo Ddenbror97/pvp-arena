@@ -27,7 +27,7 @@ export const guide: Guide = {
     {
       id: "not-advice",
       title: "Read this as a map, not a prescription",
-      body: `People search gambling addiction treatment when they want a plan that sounds official. The honest version is simpler: get human help, make betting harder, and do not wait for a perfect programme name.
+      body: `If gambling has begun to cause harm, ask a qualified professional for help and put barriers between yourself and betting. You do not need to wait for a perfect programme.
 
 This page is for adults 18+. It will not diagnose you, will not claim a cure rate, and will not publish a directory of facilities. Directories go stale and a casino-adjacent site is the wrong place to shop for care. If you need a local referral, call **1-800-GAMBLER** or use [ncpgambling.org](https://www.ncpgambling.org/help-treatment/).
 

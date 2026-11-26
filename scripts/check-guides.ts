@@ -475,13 +475,8 @@ for (const g of GUIDES) {
   for (const l of topicLinks)
     if (!publishedTopicsSet.has(l.slice("/guides/topics/".length))) err(`unknown topic link ${l}`);
   for (const l of siteLinks) if (!STATIC.has(l)) err(`unknown site link ${l}`);
-  const sectionGuideLinks = g.sections.flatMap((s) =>
-    [...s.body.matchAll(/\]\((\/guides\/(?!topics\/)[^)\s#?]*)/g)].map((m) => m[1]),
-  );
-  if (new Set(sectionGuideLinks).size < 3)
-    err(`only ${new Set(sectionGuideLinks).size} guide links`);
-  if (!g.sections.some((s) => s.body.includes("/guides/topics/"))) err("no topic hub link");
-  if (!g.sections.some((s) => /\]\((\/(?!guides\/)[^)]*)\)/.test(s.body))) err("no site links");
+  // The rendered breadcrumb, topic hub and related panel provide family navigation.
+  // Prose links are checked above, without quotas that encourage unrelated promotions.
   for (const r of g.related) if (!getGuide(r)) err(`unknown related ${r}`);
   for (const problem of criticalQualityFailures(body)) err(problem);
   const stuffing = keywordStuffingFailure(g.keyword, body);

@@ -27,7 +27,9 @@ export const guide: Guide = {
 
 A casino wheel has 37 pockets, numbered 1 to 36 plus a single zero, or 38 pockets when a double zero is added. That one sentence is the whole pocket-count point on this page. What those extra pockets do to the price of each bet is the [roulette odds chart](/guides/roulette-odds-chart). This walkthrough stays on the rules: what you may bet, what a win pays, and how to behave at the table.
 
-You must be 18+ or the age required where you play. Roulette is a negative-expectation game under standard rules. A rules page will not change that. If you want a stop written down, use [responsible gambling](/responsible-gambling). The pictures of the felt, the columns and the wheel order are on [roulette table layout](/guides/roulette-table-layout). The cluster for this maths is [Games and odds](/guides/topics/games-and-odds).`,
+You must be 18+ or the age required where you play. Roulette is a negative-expectation game under standard rules. A rules page will not change that. If you want a stop written down, use [responsible gambling](/responsible-gambling). The pictures of the felt, the columns and the wheel order are on [roulette table layout](/guides/roulette-table-layout). The cluster for this maths is [Games and odds](/guides/topics/games-and-odds).
+
+Massachusetts equipment rules specify 37 compartments for single-zero and 38 for double-zero roulette. Those standard wheels differ from this site’s 33-slot colour game.`,
     },
     {
       id: "inside",
@@ -137,10 +139,17 @@ That split keeps a first visit short. Learn the loop, the two tables and the zer
     },
   ],
   sources: [
-    { label: "Roulette", url: "https://en.wikipedia.org/wiki/Roulette" },
+    {
+      label: "Roulette",
+      url: "https://en.wikipedia.org/wiki/Roulette",
+    },
     {
       label: "Roulette betting layout",
       url: "https://en.wikipedia.org/wiki/Roulette#Betting_layout_and_house_edge",
+    },
+    {
+      label: "Massachusetts Gaming Commission: roulette equipment rules",
+      url: "https://www.mass.gov/doc/205-cmr-146-gaming-equipment/download",
     },
   ],
   related: [
@@ -149,5 +158,5 @@ That split keeps a first visit short. Learn the loop, the two tables and the zer
     "roulette-simulator",
     "how-to-win-at-roulette",
   ],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

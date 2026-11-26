@@ -22,7 +22,7 @@ export const guide: Guide = {
     {
       id: "what-the-lobby-sells",
       title: "What the Players Lounge lobby actually sells",
-      body: `Players Lounge sells a place to attach money to a video-game result. You fund an account, you post or accept a head-to-head match, you play on your own console or PC, and both sides report what happened. The site also lists tournaments and challenges built around a performance target, and it lets someone stake another person’s attempt. The company site styles the brand as Players’ Lounge. People search the words Players Lounge, and that is the phrase this review uses.
+      body: `Players Lounge sells a place to attach money to a video-game result. You fund an account, you post or accept a head-to-head match, you play on your own console or PC, and both sides report what happened. The site also lists tournaments and challenges built around a performance target, and it lets someone stake another person’s attempt. The company site styles the brand as Players’ Lounge. The company styles its name Players’ Lounge.
 
 That is a skill-wager shape. [Skill-based gambling](/guides/skill-based-gambling) is the wider idea: play has to move the long-run result, or the word skill is a label on a priced contest. A sports-game match can be a real contest of play. One match is still a small sample. A single win does not crown the better player, and a single loss does not prove the lobby cheated.
 

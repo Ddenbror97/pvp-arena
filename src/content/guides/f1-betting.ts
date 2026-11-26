@@ -16,38 +16,22 @@ export const guide: Guide = {
     "Cars below 90% of the winner's lap count, rounded down to a whole lap, are not classified. That is a classification rule, not automatically a betting grade.",
     "A podium is the first three classified finishers. It is not the same bet as the winner.",
     "An outright is the championship, not Sunday's race. Qualifying is a separate session with its own classification.",
-    "PVPspinArena does not book motor racing.",
   ],
   sections: [
     {
       id: "race",
       title: "Distance, time, and who finished",
-      body: `Article B2.5 of the FIA 2026 Formula 1 sporting regulations sets the race distance at the smallest number of complete laps over 305 km, with Monaco at 260 km. If two hours pass before that distance is done, the leader is shown the end signal on the lap after the two hours, without exceeding the scheduled laps. A suspension can add time, up to a total of three hours.
-
-Classification is in B2.5.5. First is the car that did the scheduled distance fastest, or that led across the control line when the time limit ended the race. Everyone else is ordered by completed laps, and by the order they crossed the line if the lap count matches. A car that did less than 90% of the winner's laps, rounded down, is not classified. A retirement can still be classified if it cleared that line. A retirement that did not is absent from the result, which is a different fact from "still running at the flag."
-
-The regulations are dated and reissued. The citation here is Issue 9, 1 October 2026. A later issue can move a sentence. The FIA text in force that weekend is the sporting rule.`,
+      body: 'Article B2.5 of the FIA 2026 Formula 1 sporting regulations sets the race distance at the smallest number of complete laps over 305 km, with Monaco at 260 km. If two hours pass before that distance is done, the leader is shown the end signal on the lap after the two hours, without exceeding the scheduled laps. A suspension can add time, up to a total of three hours.\n\nClassification is in B2.5.5. First is the car that did the scheduled distance fastest, or that led across the control line when the time limit ended the race. Everyone else is ordered by completed laps, and by the order they crossed the line if the lap count matches. A car that did less than 90% of the winner\'s laps, rounded down, is not classified. A retirement can still be classified if it cleared that line. A retirement that did not is absent from the result, which is a different fact from "still running at the flag."\n\nThe regulations are dated and reissued. The citation here is Issue 9, 1 October 2026. A later issue can move a sentence. The FIA text in force that weekend is the sporting rule.',
     },
     {
       id: "markets",
       title: "Winner, podium, and outright",
-      body: `A race-winner market usually asks who is first in the classification the book accepts. A podium market pays if the driver is first, second, or third in that classification. Winning the race wins a podium bet. Finishing second wins the podium and loses the winner. An outright, or drivers' championship, market is the season. It is not settled on Sunday, and a driver who fails to be classified in one race is not out of the championship because of that sentence alone.
-
-Qualifying is its own session. A pole bet is not a race bet. A fastest-lap bet is not a podium. [Prop bets explained](/guides/prop-bets-explained) is the right drawer for those. [What sports betting is](/guides/what-is-sports-betting) is the general contract. [Vig betting](/guides/vig-betting) is the margin in a price with a long list of drivers, where the hold is easy to underestimate because each price looks large.
-
-A point spread is not a natural F1 market. If a book sells a "winning margin" or a head-to-head between two drivers, that market's own rule says whether a non-classification voids the ticket.`,
+      body: "A race-winner market usually asks who is first in the classification the book accepts. A podium market pays if the driver is first, second, or third in that classification. Winning the race wins a podium bet. Finishing second wins the podium and loses the winner. An outright, or drivers' championship, market is the season. It is not settled on Sunday, and a driver who fails to be classified in one race is not out of the championship because of that sentence alone.\n\nQualifying is its own session. A pole bet is not a race bet. A fastest-lap bet is not a podium. [Prop bets explained](/guides/prop-bets-explained) is the right drawer for those. [What sports betting is](/guides/what-is-sports-betting) is the general contract. [Vig betting](/guides/vig-betting) is the margin in a price with a long list of drivers, where the hold is easy to underestimate because each price looks large.\n\nA point spread is not a natural F1 market. If a book sells a \"winning margin\" or a head-to-head between two drivers, that market's own rule says whether a non-classification voids the ticket.",
     },
     {
       id: "voids",
       title: "Do not treat 90% as the betting rule",
-      body: `The 90% line decides the official classification. A sportsbook can still void a bet if the race distance is shortened below a threshold of its own, or if a driver does not take the start, or if the session is red-flagged and not resumed. Those sentences live on the slip. The FIA article explains what the officials published. It does not grade your ticket.
-
-Head-to-head markets are the ones people misread. If one driver is not classified and the other is, some books pay the classified driver and some void. Find the sentence. A missing sentence is a reason not to bet the pair.`,
-    },
-    {
-      id: "no-race",
-      title: "No race book on this site",
-      body: `PVPspinArena does not offer F1 betting. Adults only. [Responsible gambling](/responsible-gambling) applies to a Sunday that also sells qualifying, sprint, and a dozen specials. The hub is [sports betting](/guides/topics/sports-betting). The [terms](/terms) do not list a starting grid.`,
+      body: "The 90% line decides the official classification. A sportsbook can still void a bet if the race distance is shortened below a threshold of its own, or if a driver does not take the start, or if the session is red-flagged and not resumed. Those sentences live on the slip. The FIA article explains what the officials published. It does not grade your ticket.\n\nHead-to-head markets are the ones people misread. If one driver is not classified and the other is, some books pay the classified driver and some void. Find the sentence. A missing sentence is a reason not to bet the pair.\n\nExplore the [sports betting topic](/guides/topics/sports-betting) for related rules and examples.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.",
     },
   ],
   faqs: [
@@ -68,8 +52,8 @@ Head-to-head markets are the ones people misread. If one driver is not classifie
       a: "No. An outright is the season. One unclassified race is not the championship result.",
     },
     {
-      q: "Does this site book Formula 1?",
-      a: "No.",
+      q: "Does a classified finish always win a podium bet?",
+      a: "No. Classification, final placing and a market’s settlement requirement are different. A classified car can finish outside the top three; read the podium market’s official-result and penalty rules.",
     },
   ],
   sources: [
@@ -84,5 +68,5 @@ Head-to-head markets are the ones people misread. If one driver is not classifie
     "vig-betting",
     "moneyline-betting-explained",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

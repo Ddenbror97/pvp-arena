@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Heads-up, the small blind is the button and acts first preflop.",
     "The big blind acts last preflop and first after the flop, if both players remain.",
     "At a full table the button is last after the flop and does not post the small blind. Mixing the two models is how people open from the wrong seat.",
-    "Wider ranges follow from two players, not from a printed frequency. This page does not assign percents to hands.",
+    "Wider ranges follow from two players, not from a printed frequency. A frequency needs the actual ranges, stacks and bet sizes.",
     "Rake and fees change the price of seeing a flop. Read the table's rule. A hand that ends before the flop is often cheaper.",
   ],
   sections: [
@@ -45,7 +45,7 @@ A strategy that ignores the fee will call too often in small pots. The fee is no
     {
       id: "practice",
       title: "What to practise instead of a system",
-      body: `Deal two players. Say out loud who acts. Button first before the flop, big blind first after it. Then price one decision with the pot and the bet, including the fee if a flop is out. Stop there. A system that promises a win rate from a position chart is not a strategy. It is a forecast this page will not make.
+      body: `Deal two players. Say out loud who acts. Button first before the flop, big blind first after it. Then price one decision with the pot and the bet, including the fee if a flop is out. Stop there. A system that promises a win rate from a position chart is not a strategy. That forecast requires evidence about the specific opponent and game.
 
 The cluster lives under [poker](/guides/topics/poker). The site's [terms](/terms) point at the same fee rule. [How it works](/how-it-works) is the product around the table, not a heads-up lesson.`,
     },
@@ -61,7 +61,7 @@ The cluster lives under [poker](/guides/topics/poker). The site's [terms](/terms
     },
     {
       q: "Should I raise most hands on the button?",
-      a: "Ranges are wider than full-ring ranges because only two players are dealt. A specific percent depends on stacks and price. This page does not assign one.",
+      a: "Ranges are wider than full-ring ranges because only two players are dealt. A specific percent depends on stacks and price. There is no universal frequency independent of ranges and stack depth.",
     },
     {
       q: "Does heads-up remove the rake?",
@@ -77,8 +77,11 @@ The cluster lives under [poker](/guides/topics/poker). The site's [terms](/terms
       label: "Poker TDA rules, including the heads-up button",
       url: "https://www.pokertda.com/view-poker-tda-rules/",
     },
-    { label: "PVPspinArena terms", url: "https://pvpspinarena.com/terms" },
+    {
+      label: "PVPspinArena terms",
+      url: "https://pvpspinarena.com/terms",
+    },
   ],
   related: ["texas-holdem-rules", "poker-for-beginners", "poker-pot-odds", "gto-poker-strategy"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

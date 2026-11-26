@@ -104,7 +104,7 @@ StatTrak Case Hardened is a separate row. A StatTrak playskin is not a gem. A St
 
 If you pay $180 for copy A because the title said “blue gem,” you bought a word. If you pay copy C’s ask because a YouTube thumbnail said “$1 million AK,” you bought a listing.
 
-Record context — what outlets have claimed about 661 and other trophies — lives on [most expensive CS2 skins](/guides/most-expensive-cs2-skins). This page will not reprint a price ladder that pretends to be live.`,
+Record context — what outlets have claimed about 661 and other trophies — lives on [most expensive CS2 skins](/guides/most-expensive-cs2-skins). Compare dated completed sales for the exact pattern and wear; a static price ladder cannot establish a live quote.`,
     },
     {
       id: "cash",
@@ -167,10 +167,19 @@ Community databases help, and they also freeze old ranks. A seed that was T2 in 
     },
   ],
   sources: [
-    { label: "Counter-Strike 2 official site", url: "https://www.counter-strike.net/" },
-    { label: "Steam Community Market", url: "https://steamcommunity.com/market/" },
-    { label: "Counter-Strike blog", url: "https://blog.counter-strike.net/" },
+    {
+      label: "Counter-Strike 2 official site",
+      url: "https://www.counter-strike.net/",
+    },
+    {
+      label: "Steam Community Market",
+      url: "https://steamcommunity.com/market/",
+    },
+    {
+      label: "Counter-Strike blog",
+      url: "https://blog.counter-strike.net/",
+    },
   ],
   related: ["pvp-gambling", "cs2-agents", "cs2-charms", "cs2-sticker-crafts", "cs2-float-checker"],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

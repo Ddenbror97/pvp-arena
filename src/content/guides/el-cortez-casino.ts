@@ -12,12 +12,10 @@ export const guide: Guide = {
   answer:
     "El Cortez casino is the downtown property at 600 East Fremont Street, on pages opened 20 October 2026. The timeline starts in 1941. It records a 1945 sale, a 1963 purchase by Jackie Gaughan, and a register date of 22 February 2013. A star rating, a menu price, and a current room total are not printed.",
   facts: [
-    "Last tested 20 October 2026 on elcortezhotelcasino.com/about-us and the timeline at /about-us/timeline.",
     "The about page calls El Cortez casino the longest continuously running hotel and casino in Las Vegas, and it dates the register listing to 22 February 2013.",
     "The 1941 entry says Houssels, with architects JC Grayson and Marion Hicks, opened downtown's first luxury hotel-casino.",
     "The Cabana Suites line prints a room count of 364. Later remodel lines do not print a replacement total.",
     "A star rating is not published. A restaurant price is not published. A table minimum is not published.",
-    "This site does not run the property. Purple and Silver are about a 7.88 percent edge after the 5 percent fee.",
   ],
   sections: [
     {
@@ -98,33 +96,6 @@ A felt limit is not published, and a comp formula is not published. [What a club
 | Siegel's 1941 | named as a restaurant | a menu price |`,
     },
     {
-      id: "pots",
-      title: "A downtown floor beside a house game and a player wheel",
-      body: `The timeline tells you when the building changed hands. It does not price a bet.
-
-A house game on that floor uses whatever plaque is on the felt tonight. This site's wheel has a fee in the rules here.
-
-Do not paste a 1946 construction dollar onto the wheel. The $250,000 is an expansion the timeline says was announced, not a bankroll.
-
-| | Fee or edge | Who you play against | Payout speed | Provably fair | Minimum bet |
-| --- | --- | --- | --- | --- | --- |
-| This downtown property | not published | the house, if you sit | not published | not published | not published |
-| House-banked casino | inside that house's list; no percent is fixed here | the house | not published | not published | not published |
-| PVPspinArena | Purple and Silver are about a 7.88 percent edge after the 5 percent win fee | other players | balance updates when the round settles | yes, seed committed before the round | shown on the bet control |
-
-How PvP compares: the property is a building with a timeline. [Roulette](/roulette) is a 33-pocket wheel, 16 Purple, 16 Silver, and 1 Green, played against other players' stakes.
-
-Purple and Silver pay 2x, then 5 percent comes off that winning payout, so a hit keeps 1.90 times the stake. Sixteen divided by 33, times 1.90, minus 1, is about −0.0788.
-
-That is the 7.88 percent edge on those two pockets. Green pays 14x. This page does not quote a Green edge.
-
-A settled round can be checked on the [fairness page](/fairness). The check matches this site's commit. It does not audit a downtown shoe, a cage, or a register listing.
-
-Balances are US dollars, funded with Bitcoin or with USDC or ETH on Base. Cash-out minimum is $20 in BTC, USDC, or ETH.
-
-We did not time a cash-out. The tier-credit note is [the help-page minimums](/guides/caesars-rewards-tiers).`,
-    },
-    {
       id: "examples",
       title: "A menu price refused, then two amounts that are printed",
       body: `Example 1 — a steak price. Siegel's 1941 is named on the timeline, and no menu price sits next to it.
@@ -135,27 +106,16 @@ Example 2 — the 1946 announcement. The timeline says a $250,000 expansion was 
 
 That figure is a construction line. It is not a bet, not a room rate, and not a comp.
 
-Example 3 — Purple payout. A $20 Purple stake that wins pays 2x, which is $40. Five percent of that payout is $2, so the player receives $38.
+Five percent of that payout is $2, so the player receives $38.
 
-The $38 is this site's wheel after the fee. It is not a chip on Fremont and not a cage slip. One win does not reveal the 7.88 percent edge.`,
+It is not a chip on Fremont and not a cage slip. One win does not reveal the 7.88 percent edge.`,
     },
     {
       id: "checks",
       title: "Checks before a downtown visit is treated as this timeline",
       body: `The building can change a plaque without editing its history page. Read the felt you are standing at.
 
-- [ ] You have the address from the about page, 600 East Fremont Street.
-- [ ] You are not using a star rating. None is printed here.
-- [ ] You are not using a menu price. None is printed here.
-- [ ] The 364 rooms stay on the Cabana Suites line, not as a new total.
-- [ ] The tower's 200 rooms are not given a year the timeline omitted.
-- [ ] Tonight's felt limit was read on the felt, or you did not sit.
-- [ ] A club offer was heard from the desk, or you skipped it.
-- [ ] The $250,000 line stayed a 1946 announcement, not a bankroll.
-- [ ] The $38 Purple net stayed on this site's wheel.
-- [ ] A loss number is set before any stake.
-- [ ] You are 18 or older, or you meet a stricter door.
-- [ ] If the session becomes a chase, call 1-800-GAMBLER.`,
+- [ ] You have the address from the about page, 600 East Fremont Street. - [ ] You are not using a star rating. None is printed here. - [ ] You are not using a menu price. None is printed here. - [ ] The 364 rooms stay on the Cabana Suites line, not as a new total. - [ ] The tower's 200 rooms are not given a year the timeline omitted. - [ ] Tonight's felt limit was read on the felt, or you did not sit. - [ ] A club offer was heard from the desk, or you skipped it. - [ ] The $250,000 line stayed a 1946 announcement, not a bankroll. - [ ] A loss number is set before any stake. - [ ] You are 18 or older, or you meet a stricter door. - [ ] If the session becomes a chase, call 1-800-GAMBLER.`,
     },
     {
       id: "limits",
@@ -166,7 +126,7 @@ Do not gamble if you are under 18. The pages we opened do not print a minimum ag
 
 Do not play to get even. [Why a cold run is not a credit](/guides/gamblers-fallacy) is the general point. This page is an editorial note, not a listing, and not legal advice.
 
-This site does not operate the property. If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
+If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
     },
   ],
   faqs: [
@@ -191,8 +151,8 @@ This site does not operate the property. If play stops being a bounded spend, ca
       a: "The about page says that on 22 February 2013 the building became the only existing casino on the National Register of Historic Places. The timeline's 2013 entry says it was the first hotel and casino placed on the register, and it mentions the Spanish ranch facade and the neon. Those are the page's words. They are not a quality score and not a table minimum.",
     },
     {
-      q: "Will a fairness seed audit a shoe at the property?",
-      a: "No. The fairness page checks whether this site's committed seed and the pocket agree. It does not audit a downtown shoe, a cage, or a historic listing. The comparison wheel is 33 pockets, and Purple or Silver keeps 1.90 times the stake on a win after the 5 percent fee. The long-run edge on those two is about 7.88 percent. That arithmetic is ours, not a Fremont hold.",
+      q: "Does a historic listing establish game quality?",
+      a: "No. Historic status concerns the property's significance. Read current game rules and visit conditions separately.",
     },
   ],
   sources: [
@@ -213,5 +173,5 @@ This site does not operate the property. If play stops being a bounded spend, ca
     "casino-comps",
     "las-vegas-history",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

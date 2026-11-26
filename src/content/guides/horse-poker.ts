@@ -31,7 +31,7 @@ export const guide: Guide = {
 
 The featured games are limit Hold'em, Omaha hi-lo eight or better, Razz, seven-card stud, and seven-card stud hi-lo eight or better. Those five names are the whole rotation on that page.
 
-The same note is about card games in a poker room. It is not a race card, and this article does not link a track.
+The same note is about card games in a poker room. The acronym names poker variants rather than a horse race.
 
 The [poker topic](/guides/topics/poker) is the hub for the pieces. [The two-card limit round](/guides/texas-holdem-rules) is only the first letter.
 
@@ -42,7 +42,7 @@ A buy-in of $1,500 is what that news page prints for the 2025 event. It is an en
       title: "The five names, and what each one asks you to hold",
       body: `The first letter of horse poker is Hold'em: two hole cards and five community cards. In this rotation the betting is limit, so you cannot move all-in for an arbitrary size.
 
-Omaha eight-or-better deals four hole cards, and the high-low name on the WSOP list includes the eight-or-better low. [The must-use-two rule](/guides/omaha-poker-rules) is the reading problem. This page does not restate a full Omaha chart.
+Omaha eight-or-better deals four hole cards, and the high-low name on the WSOP list includes the eight-or-better low. [The must-use-two rule](/guides/omaha-poker-rules) is the reading problem. Use the Omaha rules for the two-hole-card and three-board-card requirement.
 
 Razz is seven-card stud played for the low. The news page names it and does not print a bring-in or an ante, so those amounts stay not published.
 
@@ -125,7 +125,7 @@ Dollar example 3 is this site. Suppose a pot reaches $40 and has seen a flop. Fi
 
 That hand is No-Limit Hold'em with two hole cards. It will not become Razz on the next deal. The $2 is not a mixed-game rake.
 
-The 2024 result named on the same news page is someone else's prize. It is not a forecast for the next field, and this article does not treat it as one.`,
+The 2024 result named on the same news page is someone else's prize. A past field size is a historical result, not a forecast of the next event.`,
     },
     {
       id: "checks",
@@ -146,7 +146,7 @@ The 2024 result named on the same news page is someone else's prize. It is not a
     {
       id: "limits",
       title: "Who should not enter the five-game line",
-      body: `Do not play for money if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent, savings, or money with a due date.
+      body: `Cash play requires the local minimum age, lawful access and an affordable budget.
 
 Do not sit a horse poker game because the name sounded like a different sport. The 2025 page is a card rotation. If you wanted a race, you are in the wrong article, and this site does not book one.
 
@@ -164,7 +164,7 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     },
     {
       q: "Is this the same thing as a race?",
-      a: "No. The name is five poker games played in order. The WSOP page we opened is a card-room schedule, and this article does not describe an animal sport or link a track. If a search result shows odds on a race, it is a different product. This site does not book that product either. Stay with the five card games or leave the page.",
+      a: "No. The name is five poker games played in order. The WSOP listing concerns the mixed poker format, not horse racing. If a search result shows odds on a race, it is a different product. This site does not book that product either. Stay with the five card games or leave the page.",
     },
     {
       q: "How many hands are dealt before the game changes?",
@@ -201,5 +201,5 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     "icm-poker",
     "how-to-play-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

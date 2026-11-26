@@ -33,7 +33,7 @@ The name is a habit, not a law. If you called preflop, your flop bet is not this
 
 The [poker topic](/guides/topics/poker) is the hub. [The order of the streets](/guides/how-to-play-poker) is the longer start if the flop itself is new.
 
-This page will not print a frequency. A solver chart you did not open is not a source.`,
+A useful frequency needs the board, positions, ranges and bet size. A solver chart you did not open is not a source.`,
     },
     {
       id: "dry",
@@ -46,7 +46,7 @@ A blank is a later card that does not seem to change the standings. The glossary
 
 On a dry flop, a bet from the raiser represents a made hand more cleanly, because fewer draws can call with a strong plan. The glossary defines representing as playing as if you hold a certain hand.
 
-That is a description, not a percent. The page does not say how often the bet should happen. Anyone who quotes a rate is adding a number this article refuses.
+That is a description, not a percent. The page does not say how often the bet should happen. A rate without those inputs is not a strategy for the actual hand.
 
 [A weak-hand bet](/guides/bluffing-in-poker) is the cousin when you want a fold and have little else. A continuation can be that, or it can be value. The board does not tell you which.`,
     },
@@ -157,7 +157,7 @@ Cash-out minimum here is $20 in BTC, USDC, or ETH. We did not time a cash-out. N
     {
       id: "limits",
       title: "Who should not treat the bet as income",
-      body: `Do not play for money if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent, savings, or money with a due date.
+      body: `Cash play requires the local minimum age, lawful access and an affordable budget.
 
 Do not bet every flop because a paragraph said dry boards have fewer draws. Fewer draws is not the same as a fold, and a fold is not the same as profit over a month.
 
@@ -189,7 +189,7 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     },
     {
       q: "Will this bet make money over time?",
-      a: "This page does not say that. No opened source prints a win rate for betting the flop. A single pot can be won or lost, and a month of them can finish behind. Semi-bluffs are not free rolls. Do not stake money you need, and do not treat a dry board as income. If a clip quotes a percent without inputs, leave that percent unpublished.",
+      a: "A continuation bet can be checked instead; the right choice depends on the board and ranges. No opened source prints a win rate for betting the flop. A single pot can be won or lost, and a month of them can finish behind. Semi-bluffs are not free rolls. Do not stake money you need, and do not treat a dry board as income. If a clip quotes a percent without inputs, leave that percent unpublished.",
     },
     {
       q: "Does this site charge extra because you bet the flop?",
@@ -214,5 +214,5 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     "icm-poker",
     "gto-poker-strategy",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

@@ -22,124 +22,37 @@ export const guide: Guide = {
     {
       id: "what",
       title: "What GameFi is, without the conference slide",
-      body: `GameFi is a marketing word that stuck because it describes a real design choice. A blockchain game treats items, currencies or land as tokens you can move to a wallet you control. That is different from a Steam inventory you can only trade inside one company's rules.
-
-Once an item is a token, someone will price it, lend it, fractionalise it or build a guild around it. "Finance" in the name is that secondary market, not a promise that you will get paid. Plenty of GameFi coins went to zero while the Discord still said "play to earn".
-
-This explainer lives under [foundations](/guides/topics/foundations) next to [play to earn games](/guides/play-to-earn-games) and [what a crypto casino is](/guides/what-is-a-crypto-casino). Read those if you want the reward-loop maths or the casino definitions in isolation. Here the job is the category: tokens, guilds, where casinos sneak in, and where they should stay out.
-
-PVPspinArena does not issue a land NFT or a studio token. Its independent browser FPS is an entry-funded competition rather than a token-emission economy. For the narrower ownership question, read [NFT shooter games](/guides/nft-shooter-games); [best crypto games](/guides/best-crypto-games) compares selection criteria, and the [Off The Grid guide](/guides/off-the-grid-game) examines a named project's access and asset model. Keep those product decisions separate from this category definition.`,
+      body: 'GameFi is a marketing word that stuck because it describes a real design choice. A blockchain game treats items, currencies or land as tokens you can move to a wallet you control. That is different from a Steam inventory you can only trade inside one company\'s rules.\n\nOnce an item is a token, someone will price it, lend it, fractionalise it or build a guild around it. "Finance" in the name is that secondary market, not a promise that you will get paid. Plenty of GameFi coins went to zero while the Discord still said "play to earn".\n\nThis explainer lives under [foundations](/guides/topics/foundations) next to [play to earn games](/guides/play-to-earn-games) and [what a crypto casino is](/guides/what-is-a-crypto-casino). Read those if you want the reward-loop maths or the casino definitions in isolation. Here the job is the category: tokens, guilds, where casinos sneak in, and where they should stay out.\n\nPVPspinArena does not issue a land NFT or a studio token. Its independent browser FPS is an entry-funded competition rather than a token-emission economy. For the narrower ownership question, read [NFT shooter games](/guides/nft-shooter-games); [best crypto games](/guides/best-crypto-games) compares selection criteria, and the [Off The Grid guide](/guides/off-the-grid-game) examines a named project\'s access and asset model. Keep those product decisions separate from this category definition.',
     },
     {
       id: "tokens",
       title: "Tokens, NFTs and the usual two-token setup",
-      body: `Most GameFi economies use at least two assets.
-
-- **A governance or studio token.** Marketed as the "gamefi coin". Used for votes, staking pitches and treasury headlines.
-- **A reward or energy token.** Minted by play, spent on crafts or breeding, sold by grinders.
-- **NFTs.** Characters, plots, tools. The thing you actually click.
-
-The two-token setup exists so the team can tell a story about scarce governance while still printing a wage token. Holders of the first asset want the second asset to stay desirable. Players of the second asset want it to stay expensive in dollars. Those wishes fight.
-
-Read emissions, unlocks and team allocations. A vesting chart is more useful than a trailer. If the marketplace is only the team's dex pair, you are taking venue risk on top of game risk. ethereum.org's NFT docs are a plain description of what an NFT is; they are not an endorsement of any floor price.
-
-### Why the two tokens fight
-
-Governance holders want the reward token scarce. Players want it expensive in dollars today. The studio wants both charts up while still printing a wage token. Those wishes cannot stay true once growth flattens. If the patch notes talk more about "tokenomics rebalance" than combat, the finance layer is already the product.`,
+      body: 'Most GameFi economies use at least two assets.\n\n- **A governance or studio token.** Marketed as the "gamefi coin". Used for votes, staking pitches and treasury headlines.\n- **A reward or energy token.** Minted by play, spent on crafts or breeding, sold by grinders.\n- **NFTs.** Characters, plots, tools. The thing you actually click.\n\nThe two-token setup exists so the team can tell a story about scarce governance while still printing a wage token. Holders of the first asset want the second asset to stay desirable. Players of the second asset want it to stay expensive in dollars. Those wishes fight.\n\nRead emissions, unlocks and team allocations. A vesting chart is more useful than a trailer. If the marketplace is only the team\'s dex pair, you are taking venue risk on top of game risk. ethereum.org\'s NFT docs are a plain description of what an NFT is; they are not an endorsement of any floor price.\n\n### Why the two tokens fight\n\nGovernance holders want the reward token scarce. Players want it expensive in dollars today. The studio wants both charts up while still printing a wage token. Those wishes cannot stay true once growth flattens. If the patch notes talk more about "tokenomics rebalance" than combat, the finance layer is already the product.',
     },
     {
       id: "loops",
       title: "Play-to-earn loops and guilds",
-      body: `The default GameFi loop is play-to-earn: activity mints a token, sinks are supposed to eat it, and a market translates leftovers into cash. Guilds form when the NFT buy-in is high. Managers own the assets, scholars play, both take a cut of the mint.
-
-That structure can be disclosed and still be a bad bet. It can also be fun as a game if you ignore the finance. The failure mode is calling the mint a salary. When new users slow down, reward tokens inflate and NFT floors drop. Scholarships then look like unpaid internships with extra phishing.
-
-### Questions that cut through the lore
-
-- What must be true for the reward token not to fall 80%?
-- Who can pause the marketplace?
-- What do scholars owe if the NFT is stolen from a shared login?
-- Is there gameplay you would still do at a zero token price?
-
-If the only honest answer to the last question is no, you do not have a game with a market. You have a market with a game skin.
-
-### A worked two-token week
-
-Monday: reward token $0.20, studio token $2.00, entry NFT $300. Scholars mint and sell the reward token to new players who need it for crafts.  
-Friday: a large studio-token unlock hits. The studio coin drops to $1.20. New players pause. Reward-token bids thin. By Sunday the reward token is $0.09 and the NFT bid is $140. Nobody changed the combat. The week was a market week wearing a game client.
-
-Write the three prices in a notebook for a month before you call the title "GameFi you can live on". If you would not hold the studio coin with the game closed, do not hold it because a quest says you earned it.`,
+      body: 'The default GameFi loop is play-to-earn: activity mints a token, sinks are supposed to eat it, and a market translates leftovers into cash. Guilds form when the NFT buy-in is high. Managers own the assets, scholars play, both take a cut of the mint.\n\nThat structure can be disclosed and still be a bad bet. It can also be fun as a game if you ignore the finance. The failure mode is calling the mint a salary. When new users slow down, reward tokens inflate and NFT floors drop. Scholarships then look like unpaid internships with extra phishing.\n\n### Questions that cut through the lore\n\n- What must be true for the reward token not to fall 80%?\n- Who can pause the marketplace?\n- What do scholars owe if the NFT is stolen from a shared login?\n- Is there gameplay you would still do at a zero token price?\n\nIf the only honest answer to the last question is no, you do not have a game with a market. You have a market with a game skin.\n\n### A worked two-token week\n\nMonday: reward token $0.20, studio token $2.00, entry NFT $300. Scholars mint and sell the reward token to new players who need it for crafts.\nFriday: a large studio-token unlock hits. The studio coin drops to $1.20. New players pause. Reward-token bids thin. By Sunday the reward token is $0.09 and the NFT bid is $140. Nobody changed the combat. The week was a market week wearing a game client.\n\nWrite the three prices in a notebook for a month before you call the title "GameFi you can live on". If you would not hold the studio coin with the game closed, do not hold it because a quest says you earned it.',
     },
     {
       id: "overlap",
       title: "Where GameFi overlaps with casinos",
-      body: `The overlap is real and worth naming.
-
-Some blockchain games add house-banked minigames, player-versus-player wagers, or loot boxes that are just cases with a wallet connect. Some casinos add "quests", "XP" and a site token that looks like GameFi. Both groups will use the words web3, play and earn in the same sentence.
-
-### Overlap that is still gambling
-
-- Wagering an NFT on a coinflip inside a game client. That is a chance bet, not a quest.
-- Opening a paid crate whose contents have a market price.
-- Staking a studio token for "house edge sharing" that is really a revenue-share IOU.
-
-Those are chance products. They need the same adult rule, budget and honesty as a roulette spin. Dressing them as lore does not change the expected value.
-
-### Overlap that is not a casino
-
-- Trading a sword NFT because you like the pixel art.
-- Completing a quest that pays a token you might sell.
-- Providing liquidity on a pair, which is market-making risk, not a wheel.
-
-A [web3 casino](/guides/web3-casino) should tell you the stake, the odds and how to check the result. A GameFi studio should tell you the mint. If one page is doing both jobs, read it twice.`,
+      body: 'The overlap is real and worth naming.\n\nSome blockchain games add house-banked minigames, player-versus-player wagers, or loot boxes that are just cases with a wallet connect. Some casinos add "quests", "XP" and a site token that looks like GameFi. Both groups will use the words web3, play and earn in the same sentence.\n\n### Overlap that is still gambling\n\n- Wagering an NFT on a coinflip inside a game client. That is a chance bet, not a quest.\n- Opening a paid crate whose contents have a market price.\n- Staking a studio token for "house edge sharing" that is really a revenue-share IOU.\n\nThose are chance products. They need the same adult rule, budget and honesty as a roulette spin. Dressing them as lore does not change the expected value.\n\n### Overlap that is not a casino\n\n- Trading a sword NFT because you like the pixel art.\n- Completing a quest that pays a token you might sell.\n- Providing liquidity on a pair, which is market-making risk, not a wheel.\n\nA [web3 casino](/guides/web3-casino) should tell you the stake, the odds and how to check the result. A GameFi studio should tell you the mint. If one page is doing both jobs, read it twice.',
     },
     {
       id: "vs-casino",
       title: "How a crypto casino differs from a GameFi loop",
-      body: `A casino takes a balance you already own and exposes it to a stated chance. It should not need a new user to buy your quest rewards for the product to make sense.
-
-| | GameFi title | Crypto casino |
-| --- | --- | --- |
-| Primary loop | Play, mint, sell | Deposit, stake, settle |
-| Asset you hope stays bid | Reward token and NFT floor | Usually none if you use a stablecoin |
-| Who pays you if you "win"? | A market, maybe | The pot or the house table |
-| Proof | Sometimes a block explorer | Provably fair or a lab RNG |
-
-PVPspinArena is the second column. [Jackpot](/) and [Coinflip](/coinflip) are player versus player with a 5% pot fee. [Roulette](/roulette) is a published wheel. There is no guild, no scholarship and no "gamefi crypto" to farm. Our [PvP gambling guide](/guides/pvp-gambling) is the mechanics page.
-
-If you want yield, a casino is the wrong building. If you want a short, checkable bet in dollars, a GameFi map is the wrong building. Using one product to cosplay the other is how people end up with an empty wallet and a character they cannot sell.`,
+      body: 'A casino takes a balance you already own and exposes it to a stated chance. It should not need a new user to buy your quest rewards for the product to make sense.\n\n| | GameFi title | Crypto casino |\n| --- | --- | --- |\n| Primary loop | Play, mint, sell | Deposit, stake, settle |\n| Asset you hope stays bid | Reward token and NFT floor | Usually none if you use a stablecoin |\n| Who pays you if you "win"? | A market, maybe | The pot or the house table |\n| Proof | Sometimes a block explorer | Provably fair or a lab RNG |\n\nPVPspinArena is the second column. [Jackpot](/) and [Coinflip](/coinflip) are player versus player with a 5% pot fee. [Roulette](/roulette) is a published wheel. There is no guild, no scholarship and no "gamefi crypto" to farm. Our [PvP gambling guide](/guides/pvp-gambling) is the mechanics page.\n\nIf you want yield, a casino is the wrong building. If you want a short, checkable bet in dollars, a GameFi map is the wrong building. Using one product to cosplay the other is how people end up with an empty wallet and a character they cannot sell.',
     },
     {
       id: "risks",
       title: "Risks that are specific to the category",
-      body: `Besides ordinary "I lost a bet" risk:
-
-- **Emissions.** Unlock calendars can dump on the chart you are grinding.
-- **Admin keys.** A pause, a mint or a migrated contract can strand assets.
-- **Guild custody.** Shared logins and "safe" bots.
-- **Fake marketplaces.** Clone sites that drain the wallet you connected to "list an NFT".
-- **Regulatory headlines.** Tokens described as investments attract different rules than a cosmetic.
-
-The FTC's consumer pages on crypto and NFT income pitches are dry and useful. A trailer is not diligence.
-
-None of this means blockchain games are forbidden. It means you should separate the fun budget from the speculation budget, and neither budget from rent. If a stranger in a guild Discord needs your seed phrase to "whitelist you", that is not GameFi. That is theft.`,
+      body: 'Besides ordinary "I lost a bet" risk:\n\n- **Emissions.** Unlock calendars can dump on the chart you are grinding.\n- **Admin keys.** A pause, a mint or a migrated contract can strand assets.\n- **Guild custody.** Shared logins and "safe" bots.\n- **Fake marketplaces.** Clone sites that drain the wallet you connected to "list an NFT".\n- **Regulatory headlines.** Tokens described as investments attract different rules than a cosmetic.\n\nThe FTC\'s consumer pages on crypto and NFT income pitches are dry and useful. A trailer is not diligence.\n\nNone of this means blockchain games are forbidden. It means you should separate the fun budget from the speculation budget, and neither budget from rent. If a stranger in a guild Discord needs your seed phrase to "whitelist you", that is not GameFi. That is theft.',
     },
     {
       id: "choose",
       title: "Picking a lane as an adult",
-      body: `You can play a blockchain game for the combat and ignore the token. You can trade NFTs and ignore the game. You can gamble on a site that publishes odds. Doing all three with the same wallet in the same evening is how the categories blur until you cannot explain what you lost.
-
-A practical split:
-
-1. Game client on one device profile.
-2. Speculation size you would be fine marking to zero.
-3. Casino balance in a stable unit, on a site you can audit, with a hard stop.
-
-PVPspinArena will only ever be lane 3: USDC or ETH on Base, email account, adult users, results you can verify. We will not launch a land sale to keep the lights on. If a GameFi pitch needs you to believe that, you are not looking at a casino and you should not use casino words to justify the deposit.
-
-Keep the vocabulary honest for a week and most pitches sort themselves. “APY” on a game token is not a savings account. “Scholarship” is a split of an inflationary mint. “Land GDP” is a hope that later players will pay a fee. “Casino district” is gambling inside the loop. None of those sentences become safer because the art is good.
-
-If you still want a wallet session that you can explain to another adult, prefer a product that names the stake, the fee and the draw. That is a casino. It can still harm you. It will not also ask you to recruit scholars so last season’s minters can exit. You must be 18 or older. A cartoon fox does not change that.`,
+      body: "You can play a blockchain game for the combat and ignore the token. You can trade NFTs and ignore the game. You can gamble on a site that publishes odds. Doing all three with the same wallet in the same evening is how the categories blur until you cannot explain what you lost.\n\nA practical split:\n\n1. Game client on one device profile.\n2. Speculation size you would be fine marking to zero.\n3. Casino balance in a stable unit, on a site you can audit, with a hard stop.\n\nPVPspinArena will only ever be lane 3: USDC or ETH on Base, email account, adult users, results you can verify. If a GameFi pitch needs you to believe that, you are not looking at a casino and you should not use casino words to justify the deposit.\n\nKeep the vocabulary honest for a week and most pitches sort themselves. “APY” on a game token is not a savings account. “Scholarship” is a split of an inflationary mint. “Land GDP” is a hope that later players will pay a fee. “Casino district” is gambling inside the loop. None of those sentences become safer because the art is good.\n\nIf you still want a wallet session that you can explain to another adult, prefer a product that names the stake, the fee and the draw. That is a casino. It can still harm you. It will not also ask you to recruit scholars so last season’s minters can exit. You must be 18 or older. A cartoon fox does not change that.",
     },
     {
       id: "worked",
@@ -190,5 +103,5 @@ If you still want a wallet session that you can explain to another adult, prefer
     "are-online-casinos-rigged",
     "crypto-fps-game",
   ],
-  updated: "2026-10-31",
+  updated: "2026-11-26",
 };

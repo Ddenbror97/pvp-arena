@@ -247,7 +247,7 @@ Check ties, pushes, max profit, and whether pay includes stake. Compare E to pub
 
 PVPspinArena Roulette is countable on 33 slots; PvP Coinflip has no house curve on the flip itself. Use this worksheet anywhere else a paytable or cash-out curve is shown — and refuse strategy claims that skip the sum.
 
-Practice once per week on a new product: copy the pay row from the info panel, estimate p from rules or binomial counts, finish E in five minutes. When streamers skip that step, you keep your wallet — how to calculate house edge is ultimately how to decline marketing that cannot show arithmetic.
+Practice once per week on a new product: copy the pay row from the info panel, estimate p from rules or binomial counts, finish E in five minutes. When streamers skip that step, you keep your wallet — the calculation gives you a way to check the advertised payout against the probability.
 
 Mines teaching row: five mines, two safes, pay 1.35x → P ≈ 0.633, E ≈ 0.855, edge ≈ 14.5%. Same five-step recipe every time.
 
@@ -281,7 +281,10 @@ Once you have the percentage, the [law of large numbers](/guides/law-of-large-nu
     },
   ],
   sources: [
-    { label: "Wikipedia: Expected value", url: "https://en.wikipedia.org/wiki/Expected_value" },
+    {
+      label: "Wikipedia: Expected value",
+      url: "https://en.wikipedia.org/wiki/Expected_value",
+    },
     {
       label: "Wizard of Odds: house edge of casino games",
       url: "https://wizardofodds.com/gambling/house-edge/",
@@ -295,5 +298,5 @@ Once you have the percentage, the [law of large numbers](/guides/law-of-large-nu
     "law-of-large-numbers-gambling",
     "crash-vs-plinko",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

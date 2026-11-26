@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Chip dumping is deliberately losing pots to move chips to another player. Rooms ban it. See why it is fraud and what to do if you suspect it.",
   h1: "Chip dumping: what it is and why rooms ban it",
   answer:
-    "Chip dumping is deliberately losing pots to move chips to another player. The chips are not won in a real contest. They are handed over. Rooms ban it as fraud because the other seats paid to play a game that was decided off the table. If you suspect it, stop, report what the client already recorded, and leave. This page does not explain how to do it. Adults 18+.",
+    "Chip dumping is deliberately losing pots to move chips to another player. The chips are not won in a real contest. They are handed over. Rooms ban it as fraud because the other seats paid to play a game that was decided off the table. If you suspect it, stop, report what the client already recorded, and leave. It violates fair-play rules and can lead to investigation or account action. Adults 18+.",
   facts: [
     "Chip dumping is an intentional transfer, not a bad beat and not a failed bluff.",
     "The harm falls on players who thought every seat was trying to win.",
@@ -25,7 +25,7 @@ export const guide: Guide = {
       title: "A transfer disguised as a pot",
       body: `Chip dumping is deliberately losing pots to move chips to another player. Read that as a definition, not as a prompt. The person giving the chips up is not trying to win the hand. The person receiving them is not earning them under the ordinary rules. The pot is a costume for a transfer.
 
-That is different from every normal way chips change seats. A bluff that gets called and loses was an attempt to win. A call that was too loose was an attempt to win that failed. A bad beat is cards, not a plan. Dumping is the plan. The intent is the whole offense, which is also why this article will not show you what the plan looks like in bets.
+That is different from every normal way chips change seats. A bluff that gets called and loses was an attempt to win. A call that was too loose was an attempt to win that failed. A bad beat is cards, not a plan. Dumping is the plan. Intentional transfer of chips is distinct from an ordinary bad decision; reports need evidence of coordination.
 
 Players who were not part of the transfer still funded the pot. That is the damage. A room that lets it continue is selling a contest it did not deliver, and the honest seats are the ones who pay for the gap.
 
@@ -40,7 +40,7 @@ The rest of the [poker topic](/guides/topics/poker) is about trying to win your 
 
 The false description matters even if you never see a message between them. The harm is the result: chips arrive at a chosen seat because someone intended the loss. Calling it "just poker" ignores the other seats, who cannot fold their way out of a deal they were not told about. They are the victims, whether or not they can prove the messages.
 
-Rooms are victims in a second sense when the transfer abuses the reason the site exists. A published reward for real play is not a coupon for moving balances. [Rakeback explained](/guides/rakeback-explained) is a fee rebate tied to genuine volume. Manufacturing pots so chips change owners is not genuine volume. It is one reason operators treat the conduct as abuse instead of as action they should thank you for. This page will not describe how a pot would be built to chase a rebate. Knowing the motive is enough to see why the ban exists.
+Rooms are victims in a second sense when the transfer abuses the reason the site exists. A published reward for real play is not a coupon for moving balances. [Rakeback explained](/guides/rakeback-explained) is a fee rebate tied to genuine volume. Manufacturing pots so chips change owners is not genuine volume. It is one reason operators treat the conduct as abuse instead of as action they should thank you for. Rebate rules do not permit coordinated chip transfers or abuse of promotional terms. Knowing the motive is enough to see why the ban exists.
 
 No figure here claims how often dumping occurs. Frequency is not the point. One intentional transfer is already outside the game you agreed to play. The other seats did not agree to fund a private gift. Their money was in the pot under ordinary rules.`,
     },
@@ -166,5 +166,5 @@ PVPspinArena deals six-max poker and will not referee a hand from another site. 
     "how-to-play-poker",
     "poker-bankroll-management",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

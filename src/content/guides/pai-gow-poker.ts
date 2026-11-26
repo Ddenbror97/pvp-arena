@@ -26,7 +26,9 @@ export const guide: Guide = {
 
 You place the two-card hand in front. If it outranks the five-card hand, you have fouled, and the usual penalty is that the hand is lost or reset by the house rule. Check which.
 
-The deal itself is seven piles of seven, with four cards unused. A dice roll or a random number picks which pile starts. None of that changes the ranking. [How to play poker](/guides/how-to-play-poker) is the ranking language. Pai gow is not hold'em.`,
+The deal itself is seven piles of seven, with four cards unused. A dice roll or a random number picks which pile starts. None of that changes the ranking. [How to play poker](/guides/how-to-play-poker) is the ranking language. Pai gow is not hold'em.
+
+The Venetian's Face Up rules illustrate why commission-free variants need separate treatment: dealer ace-high hands trigger a main-bet push.`,
     },
     {
       id: "joker",
@@ -42,16 +44,16 @@ When you are unsure how a joker plays in a straight, set the five-card hand firs
 
 That copy rule is the structural edge. It is small per hand and it is real. Casino-banked games also make the dealer set cards by a printed house way, so the dealer is not playing a hidden strategy against you. If you bank, you may set as you like. If you co-bank with the house, you usually must use the house way too.
 
-Commission is separate from the copy rule. Wikipedia's summary of casino practice says many casinos take 5% of winnings, and many California card rooms charge a flat fee whether you win or lose. Those are different prices. An online table can be different again. Copy the number off the rules you are playing. Do not import 5% into a game that posts something else.
+Commission is separate from the copy rule. Traditional commission tables often deduct a percentage of winnings; cardroom collection schedules can instead impose a fixed charge. The Venetian publishes a separate Face Up version with no win commission and an ace-high dealer push rule. Those are different prices. An online table can be different again. Copy the number off the rules you are playing. Do not import 5% into a game that posts something else.
 
-[House edge](/guides/house-edge) is the general idea. This page does not print a single edge for every pai gow room, because the commission and the house way change it.`,
+[House edge](/guides/house-edge) is the general idea. Commission, the house way and banking rules change the edge, so an analysis must specify those inputs.`,
     },
     {
       id: "online",
       title: "What to read before you click deal",
       body: `Joker rule, wheel ranking, commission or flat fee, whether you can bank, and what a foul costs. Side bets, including fortune-style bets on a seven-card rank, are a second game with their own paytable. Ignore them until the main bet makes sense.
 
-PVPspinArena does not deal pai gow. [Responsible gambling](/responsible-gambling) still applies if you play it somewhere else. The [casino games](/guides/topics/casino-games) topic collects the other tables. [Baccarat rules](/guides/baccarat-rules) are the nearest cousin only in the sense that both are banker-versus-player comparisons. The hands are not alike. [Expected value](/guides/expected-value-gambling) is how to price a commission once you have the actual percent.`,
+[Responsible gambling](/responsible-gambling) still applies if you play it somewhere else. The [casino games](/guides/topics/casino-games) topic collects the other tables. [Baccarat rules](/guides/baccarat-rules) are the nearest cousin only in the sense that both are banker-versus-player comparisons. The hands are not alike. [Expected value](/guides/expected-value-gambling) is how to price a commission once you have the actual percent.`,
     },
   ],
   faqs: [
@@ -77,8 +79,15 @@ PVPspinArena does not deal pai gow. [Responsible gambling](/responsible-gambling
     },
   ],
   sources: [
-    { label: "Wikipedia: Pai gow poker", url: "https://en.wikipedia.org/wiki/Pai_gow_poker" },
+    {
+      label: "The Venetian: Face Up Pai Gow rules",
+      url: "https://www.venetianlasvegas.com/resort/casino/table-games/pai-gow-poker-basic-rules.html",
+    },
+    {
+      label: "Wikipedia: Pai gow poker",
+      url: "https://en.wikipedia.org/wiki/Pai_gow_poker",
+    },
   ],
   related: ["house-edge", "baccarat-rules", "how-to-play-poker", "expected-value-gambling"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

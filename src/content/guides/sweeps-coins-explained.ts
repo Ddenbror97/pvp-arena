@@ -15,13 +15,12 @@ export const guide: Guide = {
     "What Sweeps Coins are, how people receive them, what playthrough and redeem floors do, and why they are not the same as USDC on a PvP site.",
   h1: "Sweeps Coins explained: the promotional chip that might cash out",
   answer:
-    "Sweeps Coins are the promotional balance on a sweepstakes casino. You do not buy them as a wager. You receive them with Gold Coin packs, dailies, codes, or a mail-in entry. After playthrough and checks, leftover Sweeps Coins may redeem for cash or a gift card. They are not USDC. PVPspinArena does not issue Sweeps Coins.",
+    "Sweeps Coins are the promotional balance on a sweepstakes casino. You do not buy them as a wager. You receive them with Gold Coin packs, dailies, codes, or a mail-in entry. After playthrough and checks, leftover Sweeps Coins may redeem for cash or a gift card. They are not USDC.",
   facts: [
     "Sweeps Coins are a promotional entry chip, not a deposit you own the way you own a wallet balance.",
     "Gold Coin purchases often include a Sweeps Coin allotment; the allotment carries the redeem rules.",
     "Playthrough, game weighting, and a minimum SC balance sit between a win and a payout.",
     "Some sites offer a no-purchase mail-in path. It is slow by design and still sits inside official rules.",
-    "PVPspinArena balances are USDC or ETH on Base. There is no Sweeps Coin meter on this site.",
   ],
   sections: [
     {
@@ -29,7 +28,7 @@ export const guide: Guide = {
       title: "What Sweeps Coins are",
       body: `Sweeps Coins are the chip a [sweepstakes casino](/guides/sweepstakes-casino) treats as a sweepstakes entry. The lobby shows them next to Gold Coins. Marketing calls them “SC,” “rewards,” or a house brand name. The function is the same: they are the only balance that might leave the site as cash or a card.
 
-This [sweepstakes](/guides/topics/sweepstakes) guide is for adults aged 18 or over. It does not list live SC drop amounts. Those change by brand and week. If a streamer shouts a number, treat it as their promo, not as a fact on this page.
+In the [sweepstakes](/guides/topics/sweepstakes) model, entry amounts depend on the operator and promotion. Confirm the eligibility age and the amount in the current official rules, rather than relying on a streamer's promotion.
 
 Sweeps Coins are not a dollar in your pocket until a redemption clears. Before that they are a terms object: they can expire, they can fail playthrough, and they can be unsusable in your state. [Gold Coins versus Sweeps Coins](/guides/gold-coins-vs-sweeps-coins) is the companion if you need the pair in one table.`,
     },
@@ -86,7 +85,7 @@ Think of SC as a coupon with extra steps, not as a stablecoin with a skin. A cou
 
 People also ask whether SC “stack” across brands. They do not. Brand A’s 40 SC are useless at Brand B. There is no common clearing house. A merge or a white-label reskin can even rename the chip and reset a pile under new official rules. Read the email that says “we’ve upgraded.” Upgrades sometimes zero promotional balances.
 
-PVPspinArena shows dollars because deposits are USDC or ETH on Base. The [Jackpot](/) pot is not an SC prize pool. If someone in chat says “sweeps on Base,” they are mixing two products. This site does not mix them.`,
+The [Jackpot](/) pot is not an SC prize pool. If someone in chat says “sweeps on Base,” they are mixing two products.`,
     },
     {
       id: "example",
@@ -97,7 +96,6 @@ PVPspinArena shows dollars because deposits are USDC or ETH on Base. The [Jackpo
 | --- | --- | --- | --- | --- |
 | A | 20 SC | 1× playthrough, 10 SC redeem floor | Stake 20 SC; hold at least 10 SC after play | Variance can drop you under 10 SC |
 | B | 20 SC | 40× playthrough, 50 SC redeem floor | 800 SC of weighted play; then reach 50 SC | The meter usually consumes the pile |
-| C | 20 USDC on this site | No SC meter | Play a posted pot or wheel | Outcome risk only, no promotional multiple |
 
 Path A looks kind. Path B is why people buy a second bundle “just to finish.” Path C is a different product: [house edge](/guides/house-edge) or a PvP fee, not a bonus clause.
 
@@ -127,12 +125,14 @@ Support scripts will sometimes say “your SC are worth dollars.” Ask them to 
 
 Those files will not force a payout. They give you something to attach to a consumer complaint if the operator cites a rule that was not in the document you saved. They also stop you from arguing from memory about a multiple you never wrote down.
 
-This site does not run that paperwork loop. A USDC withdrawal on Base is a transaction you can look up. That is a different kind of record, and it is one reason PVPspinArena is not a Sweeps Coin cashier. If you want a chain txid, you are in the crypto column. If you want a promotional ticket, you are in the sweepstakes column. Do not expect one record set to satisfy the other desk.`,
+A USDC withdrawal on Base is a transaction you can look up. If you want a chain txid, you are in the crypto column. If you want a promotional ticket, you are in the sweepstakes column. Do not expect one record set to satisfy the other desk.`,
     },
     {
       id: "summary",
       title: "Summary and when to stop",
-      body: "Sweeps Coins are the promotional chip on a sweepstakes casino. They arrive with packs, dailies or mail-in rules. They redeem only after playthrough, floors, identity checks, and a state filter. They are not USDC. This site does not issue them.\n\nYou must be 18 or over. If you are buying bundles to finish an SC meter you no longer enjoy, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A promotional chip is a poor reason to chase.",
+      body: `Sweeps Coins are the promotional chip on a sweepstakes casino. They arrive with packs, dailies or mail-in rules. They redeem only after playthrough, floors, identity checks, and a state filter. They are not USDC.
+
+You must be 18 or over. If you are buying bundles to finish an SC meter you no longer enjoy, stop. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A promotional chip is a poor reason to chase.`,
     },
   ],
   faqs: [
@@ -149,16 +149,12 @@ This site does not run that paperwork loop. A USDC withdrawal on Base is a trans
       a: "They can. Official rules may set inactivity clocks, promotion windows, or account-closure rules that zero SC. Read the expiry line before you grind a meter for a week. An expired chip is not a debt the operator owes you. Screenshot the date if you plan to redeem close to the deadline.",
     },
     {
-      q: "Are Sweeps Coins the same as USDC?",
-      a: "No. USDC is a stablecoin you can hold in a wallet. Sweeps Coins are a site ledger. PVPspinArena uses USDC and ETH on Base and does not issue Sweeps Coins. You cannot bridge SC onto Base, and a Base txid will not move an SC redeem ticket.",
+      q: "What happens to unused promotional coins?",
+      a: "Expiration, inactivity, account closure and promotion restrictions depend on the official rules. Save the applicable version and distinguish unused entries from approved prizes.",
     },
     {
       q: "What playthrough do Sweeps Coins usually need?",
-      a: "It varies by brand and by how the coins were issued. Some allotments are 1×. Purchase-linked piles can be much higher. This page will not invent a live multiple. Find the number in the official rules, then multiply it by the SC you received before you call the pile “cash.”",
-    },
-    {
-      q: "Does PVPspinArena give Sweeps Coins?",
-      a: "No. There is no SC balance, no Gold Coin shop, and no redeem desk for promotional chips. Games are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. If you arrived looking for a two-token sweepstakes cashier, this is the wrong product. Watch a live pot instead of hunting a daily SC drop.",
+      a: "It varies by brand and by how the coins were issued. Some allotments are 1×. Purchase-linked piles can be much higher. The applicable playthrough multiple is an offer-specific term. Find the number in the official rules, then multiply it by the SC you received before you call the pile “cash.”",
     },
   ],
   sources: [
@@ -166,8 +162,14 @@ This site does not run that paperwork loop. A USDC withdrawal on Base is a trans
       label: "FTC — Prize, sweepstakes and lottery scams",
       url: "https://www.ftc.gov/consumer-advice/money-credit/scams/prize-sweepstakes-lotteries",
     },
-    { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
-    { label: "Circle — USDC overview", url: "https://www.circle.com/usdc" },
+    {
+      label: "NCPG — Responsible gambling resources",
+      url: "https://www.ncpgambling.org/",
+    },
+    {
+      label: "Circle — USDC overview",
+      url: "https://www.circle.com/usdc",
+    },
   ],
   related: [
     "sweepstakes-casino",
@@ -177,5 +179,5 @@ This site does not run that paperwork loop. A USDC withdrawal on Base is a trans
     "house-edge",
     "how-do-sweepstakes-casinos-make-money",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

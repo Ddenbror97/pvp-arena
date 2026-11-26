@@ -42,7 +42,7 @@ This pillar exists so the cluster has one calm map. It will not retell the full 
     {
       id: "vs-heavy-play",
       title: "How it differs from heavy play",
-      body: `Heavy play means a lot of time or money inside a plan you can still keep. Addiction, in the everyday sense people search for, means the plan keeps breaking and the cost is spreading.
+      body: `Heavy play means a lot of time or money inside a plan you can still keep. Gambling disorder involves persistent loss of control and harm; a clinician can assess it.
 
 ### Patterns that usually stay in “heavy”
 

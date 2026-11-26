@@ -35,7 +35,7 @@ If you want methods for reading a quote, use [CS2 skin prices](/guides/cs2-skin-
 
 People borrow words from finance because the screenshots look like a ticker. There is no earnings season. There is no prospectus. Valve can change drop tables, inspect lighting, trade rules and the Market fee UI without calling your broker. A “portfolio” of cases is a pile of loot boxes you have not opened yet. A “portfolio” of knives is a pile of fashion items with a bid-ask spread.
 
-If a YouTube title says “I turned $100 into $4,000 with skins,” you are watching a survivor clip. The same week, other people bought the same case and sold after a 15 percent cut into a falling bid. This page will not give you a ticker of what to buy. It will keep naming liquidity, fees and locks until those three feel more real than a thumbnail.`,
+If a YouTube title says “I turned $100 into $4,000 with skins,” you are watching a survivor clip. The same week, other people bought the same case and sold after a 15 percent cut into a falling bid. Evaluate liquidity, transaction costs and the possibility of losing the purchase price before treating a skin as an investment. It will keep naming liquidity, fees and locks until those three feel more real than a thumbnail.`,
     },
     {
       id: "liquidity",
@@ -186,7 +186,10 @@ Keep a loadout you like. Do not build a second life as a skin fund manager. This
       label: "Steam Support — Permanent Bans",
       url: "https://help.steampowered.com/en/faqs/view/668A-E672-832D-7D04",
     },
-    { label: "Steam Community Market", url: "https://steamcommunity.com/market/" },
+    {
+      label: "Steam Community Market",
+      url: "https://steamcommunity.com/market/",
+    },
   ],
   related: [
     "cs2-skin-prices",
@@ -195,5 +198,5 @@ Keep a loadout you like. Do not build a second life as a skin fund manager. This
     "cheapest-covert-skins-cs2",
     "skin-gambling-vs-crypto",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

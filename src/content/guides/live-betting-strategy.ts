@@ -8,9 +8,9 @@ export const guide: Guide = {
   title: "Live Betting Strategy: Limits, Latency, and Price",
   h1: "Live Betting Strategy: Limits, Latency, and Price",
   description:
-    "A live betting strategy for in-play sports has to account for moving prices, feed latency, and tighter limits. No system here guarantees a profit.",
+    "Assess live betting prices, broadcast delay, suspended markets, changing limits and acceptance risk, with practical checks for total session exposure.",
   answer:
-    "A live betting strategy is a plan for sports after the event has started. The score is moving, the clock is moving, and the sportsbook is moving the price. You are not locking a number the way you might have before the opening whistle. You are asking the book to accept a ticket at a price it can withdraw while your finger is still on the button. Limits, latency, and that moving price are the whole problem. There is no guaranteed system underneath them.\n\nThis page is about in-play sports: football, basketball, baseball, soccer, and the rest of the traditional card. In-play esports, with pauses and stream delay of its own, is [live esports betting](/guides/live-esports-betting). How a pre-match price becomes a payout is [how does sports betting work](/guides/how-does-sports-betting-work). Use those pages for their topics. Stay here for the live sports window.\n\nThis page is for adults 18 or older, or the age required where you live. A live ticket can lose as soon as the next play. If betting stops being entertainment, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer a sportsbook. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.",
+    "A live betting strategy must account for changing odds, broadcast delay, market suspensions and acceptance risk. An event on the screen may already be reflected in the operator’s price. Read the accepted odds and market period, treat each new position as a separate risk decision and set a total session limit before the game.",
   facts: [],
   sections: [
     {
@@ -36,7 +36,12 @@ export const guide: Guide = {
     {
       id: "no-sequence-of-stakes-makes-this-sure",
       title: "No sequence of stakes makes this sure",
-      body: "Systems travel into live betting because the game feels readable. Bet the underdog after they fall behind. Double after a loss. Always take the team with possession. Always fade the public side on the next score. Each of these is a habit of pressing the button. None of them removes the book’s price, the delay, or the cap.\n\nDoubling after a loss is particularly mismatched to live limits. The next stake you want may be above the max, and the next price may be worse than the one you just lost. The sequence breaks at the exact moment the system needed a larger bet. What remains is a loss at the largest size you were allowed to reach. That is not a system that almost worked. That is the limit doing what limits do.\n\nA readable game is still priced. If you can see that a team is likely to score, the moneyline has usually moved to say the same thing. You are buying a belief the book is already selling back to you at a new number. The skill, when there is any, is a disagreement with that number after costs, after rejected tickets, and after the stake you can actually get down. Most sessions do not contain that disagreement. They contain a wish that the last play will be followed by a convenient one.\n\nKeep records in USD if you bet live at all: price you wanted, price you got, stake, result. A week of those rows will show how often the modal changed the bet. That record is more honest than a thread of winning screenshots. It will not reveal a guaranteed pattern. It will show you the friction this page describes.\n\nPVPspinArena is not a place to run a live sports strategy. Jackpot, coinflip, and roulette in USD do not take a point spread and do not move a line during a match. If you want those games, play them as themselves. If you want in-play sports, take the price, the delay, and the limit as the strategy. Everything else is a slogan on top of those three.\n\nAdults 18 or older, or the age required where you live should leave a live board when the game becomes a way to get even. The next price is not a refund of the last ticket. It is a new risk, often at a lower maximum, often on a picture that is already late.\n\nThe rest of this subject is on the [Sports betting guides](/guides/topics/sports-betting). See [live esports betting](/guides/live-esports-betting), [how does sports betting work](/guides/how-does-sports-betting-work). In US dollars, PVPspinArena settles six-max poker, jackpot, coinflip, roulette, and P2P Slott. Read [responsible gambling](/responsible-gambling) before you play.\n\nAlso read [sports betting legal states](/guides/sports-betting-legal-states).",
+      body: "Systems travel into live betting because the game feels readable. Bet the underdog after they fall behind. Double after a loss. Always take the team with possession. Always fade the public side on the next score. Each of these is a habit of pressing the button. None of them removes the book’s price, the delay, or the cap.\n\nDoubling after a loss is particularly mismatched to live limits. The next stake you want may be above the max, and the next price may be worse than the one you just lost. The sequence breaks at the exact moment the system needed a larger bet. What remains is a loss at the largest size you were allowed to reach. That is not a system that almost worked. That is the limit doing what limits do.\n\nA readable game is still priced. If you can see that a team is likely to score, the moneyline has usually moved to say the same thing. You are buying a belief the book is already selling back to you at a new number. The skill, when there is any, is a disagreement with that number after costs, after rejected tickets, and after the stake you can actually get down. Most sessions do not contain that disagreement. They contain a wish that the last play will be followed by a convenient one.\n\nKeep records in USD if you bet live at all: price you wanted, price you got, stake, result. A week of those rows will show how often the modal changed the bet. That record is more honest than a thread of winning screenshots. It will not reveal a guaranteed pattern. It will show you the friction this page describes.\n\nAdults 18 or older, or the age required where you live should leave a live board when the game becomes a way to get even. The next price is not a refund of the last ticket. It is a new risk, often at a lower maximum, often on a picture that is already late.\n\nAlso read [sports betting legal states](/guides/sports-betting-legal-states).",
+    },
+    {
+      id: "accepted-price",
+      title: "A displayed in-play quote can change before acceptance",
+      body: "FanDuel’s rules cover in-play wagering, acceptance and market suspension. The relevant receipt is the accepted wager, not a broadcast graphic or the price first clicked. Read the price-change preference and check the accepted amount and odds after submission. A goal, point or review can suspend the market while the screen is behind the event; a pending cash-out is not a guaranteed exit.\n\nExplore the [sports betting topic](/guides/topics/sports-betting) for related rules and examples.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.",
     },
   ],
   faqs: [
@@ -62,12 +67,11 @@ export const guide: Guide = {
     },
   ],
   sources: [
-    { label: "Wikipedia: Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
     {
-      label: "Wikipedia: Mathematics of bookmaking",
-      url: "https://en.wikipedia.org/wiki/Mathematics_of_bookmaking",
+      label: "FanDuel Iowa: sportsbook rules, including sport-specific settlement",
+      url: "https://policies.fanduel.com/SB/IA/2026-10-29T12-02-28.html",
     },
   ],
   related: ["live-esports-betting", "how-does-sports-betting-work"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

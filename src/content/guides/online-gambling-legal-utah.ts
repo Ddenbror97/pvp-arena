@@ -22,40 +22,22 @@ export const guide: Guide = {
     {
       id: "glance",
       title: "Utah at a glance",
-      body: `| Product | Legal in Utah? |
-| --- | --- |
-| Casinos | **No** |
-| Lottery | **No** |
-| Sports betting | **No** |
-| Online casino or poker | **No** |
-
-[Where sports betting is legal](/guides/sports-betting-legal-states) compares states, and [is online casino legal](/guides/is-online-casino-legal) lists the states that license online casinos.`,
+      body: "| Product | Legal in Utah? |\n| --- | --- |\n| Casinos | **No** |\n| Lottery | **No** |\n| Sports betting | **No** |\n| Online casino or poker | **No** |\n\n",
     },
     {
       id: "law",
       title: "What the law says",
-      body: `[Article VI, Section 27 of the Utah Constitution](https://le.utah.gov/xcode/ArticleVI/Article_VI,_Section_27.html) provides that the legislature "shall not authorize any game of chance, lottery or gift enterprise under any pretense or for any purpose". That puts gambling beyond ordinary legislation: allowing a casino or a lottery would need a constitutional amendment. The criminal provisions are in [Utah Code title 76, chapter 10, part 11](https://le.utah.gov/xcode/Title76/Chapter10/76-10-S1102.html). Utah residents often travel to Nevada, where casinos are legal; [online gambling in Nevada](/guides/online-gambling-legal-nevada) explains what is allowed there.`,
+      body: '[Article VI, Section 27 of the Utah Constitution](https://le.utah.gov/xcode/ArticleVI/Article_VI,_Section_27.html) provides that the legislature "shall not authorize any game of chance, lottery or gift enterprise under any pretense or for any purpose". That puts gambling beyond ordinary legislation: allowing a casino or a lottery would need a constitutional amendment. The criminal provisions are in [Utah Code title 76, chapter 9, part 14](https://le.utah.gov/xcode/Title76/Chapter9/76-9-P14.html?v=C76-9-P14_2025050720250507). Utah residents often travel to Nevada, where casinos are legal; [online gambling in Nevada](/guides/online-gambling-legal-nevada) explains what is allowed there.',
     },
     {
       id: "offshore",
-      title: "Offshore and sweepstakes sites",
-      body: `A real-money site that is not licensed in Utah offers no state protection if it withholds a withdrawal. Sweepstakes casinos rely on a promotional model; see [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states).
-
-### How to check an app is licensed
-
-1. Find the operator's name and licence number on its site.
-2. Look it up on the regulator's own list of licensees.
-3. Confirm the app checks your location: licensed apps only accept bets placed inside the state.
-4. Treat "licensed offshore" (Curaçao, Anjouan) as not licensed by the state; see [crypto casino licenses](/guides/crypto-casino-license).
-
-More in the [crypto casino basics topic](/guides/topics/foundations).`,
+      title: "Check the authority for this activity",
+      body: "Utah does not offer a state online-casino register to choose from. Its current [gambling provisions](https://le.utah.gov/xcode/Title76/Chapter9/76-9-P14.html?v=C76-9-P14_2025050720250507) are in Title 76, Chapter 9, Part 14, after the 2025 renumbering. Sections 1402 and 1404 address participation and online promotion.\n\nAn offshore [casino licence](/guides/crypto-casino-license) cannot be verified as Utah permission. A technical ability to open an app does not settle the statutory question. The [Foundations guides](/guides/topics/foundations) explain payment and licensing distinctions.",
     },
     {
       id: "tax",
       title: "Taxes and limits",
-      body: `Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).
-
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Utah. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).\n\nA 21+ label does not make gambling authorized in Utah. Avoid interpreting age verification as permission to place a bet. If attempts to recover money are causing further spending, use [responsible gambling](/responsible-gambling) and retain the account records.",
     },
   ],
   faqs: [
@@ -76,18 +58,21 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
   ],
   sources: [
     {
-      label: "Utah Constitution, Article VI, Section 27",
-      url: "https://le.utah.gov/xcode/ArticleVI/Article_VI,_Section_27.html",
+      label: "Utah Legislature — current gambling provisions, Title 76 Chapter 9 Part 14",
+      url: "https://le.utah.gov/xcode/Title76/Chapter9/76-9-P14.html?v=C76-9-P14_2025050720250507",
     },
     {
-      label: "Utah Code §76-10-1102",
-      url: "https://le.utah.gov/xcode/Title76/Chapter10/76-10-S1102.html",
+      label: "Utah Constitution, Article VI, Section 27",
+      url: "https://le.utah.gov/xcode/ArticleVI/Article_VI,_Section_27.html",
     },
     {
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
   ],
   related: [
     "gambling-legal-hawaii",
@@ -96,5 +81,5 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     "is-crypto-gambling-legal",
     "sports-betting-legal-states",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

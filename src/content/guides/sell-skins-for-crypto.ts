@@ -90,14 +90,27 @@ If a buyer needs your seed phrase, API key, or Steam password, stop. Real market
     {
       id: "tax",
       title: "Tax treatment basics",
-      body: `In many places, converting skins to crypto is a disposal event. Cost basis, proceeds and gains can matter even when you “only” moved value between hobbies. Rules differ by country and change. This page will not compute your return.
+      body: `In many places, converting skins to crypto is a disposal event. Cost basis, proceeds and gains can matter even when you “only” moved value between hobbies. Rules differ by country and change. Calculate proceeds from the actual sale price, seller fee, conversion spread and withdrawal charge.
 
 Keep records: trade IDs, screenshots of bids, wallet tx hashes, and dates. If you later deposit to a casino, that is a separate activity with its own reporting questions. When unsure, ask a qualified tax professional in your jurisdiction—not a Discord mod.`,
     },
     {
       id: "example",
       title: "Worked example on a $200 inventory",
-      body: "Suppose your inventory shows about $200 on a third-party price site.\n\n1. Instant desk bids $174 (13% under).\n2. After their 2% withdrawal fee you request USDC on Base and receive about $170 before gas.\n3. Gas on Base is usually cents to low dollars when the network is calm; it moves, so check a live explorer estimate.\n4. Net: roughly mid-$160s to around $170 depending on the day’s quote.\n\nA peer bid at $188 with a three-day site hold might net more if you can wait. If you cannot wait, you are buying speed.\n\nAfter USDC arrives, you can verify a wallet and deposit on PVPspinArena’s [wallet](/how-it-works#wallet) page with a normal transfer—not a token approval. Or you can stop and keep the coins. Selling was the cash-out. Gambling is optional.\n\nSession tip: decide the sell and the stake as two decisions. People who “just convert to play” often skip the fee math and the stop-loss.\n\nAlign the cashout network with the spend network. Base USDC for Base play beats a scenic route through unrelated chains.",
+      body: `Suppose your inventory shows about $200 on a third-party price site.
+
+1. Instant desk bids $174 (13% under).
+2. After their 2% withdrawal fee you request USDC on Base and receive about $170 before gas.
+3. Gas on Base is usually cents to low dollars when the network is calm; it moves, so check a live explorer estimate.
+4. Net: roughly mid-$160s to around $170 depending on the day’s quote.
+
+A peer bid at $188 with a three-day site hold might net more if you can wait. If you cannot wait, you are buying speed.
+
+After USDC arrives, you can verify a wallet and deposit on PVPspinArena’s [wallet](/how-it-works#wallet) page with a normal transfer—not a token approval. Or you can stop and keep the coins. Selling was the cash-out. Gambling is optional.
+
+Session tip: decide the sell and the stake as two decisions. People who “just convert to play” often skip the fee math and the stop-loss.
+
+Align the cashout network with the spend network. Base USDC for Base play beats a scenic route through unrelated chains.`,
     },
   ],
   faqs: [
@@ -138,5 +151,5 @@ Keep records: trade IDs, screenshots of bids, wallet tx hashes, and dates. If yo
     "steam-market-fees",
     "steam-trade-hold",
   ],
-  updated: "2026-11-05",
+  updated: "2026-11-26",
 };

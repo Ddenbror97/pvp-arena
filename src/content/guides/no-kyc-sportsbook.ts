@@ -27,44 +27,22 @@ export const guide: Guide = {
     {
       id: "what",
       title: "What no KYC actually means",
-      body: `**KYC** (know your customer) is the set of checks a regulated business runs on who you are: name, date of birth, address, and for larger amounts where the money came from. Gambling operators run them for three reasons: to keep out minors, to meet [anti-money-laundering rules](/guides/aml-gambling), and to stop fraud and duplicate accounts.
-
-A **no KYC sportsbook** advertises that you can sign up with an email or a crypto wallet and bet without uploading ID. Read the next lines of its terms. Almost every such site states that it may request verification at any time, and that withdrawals can be held until it does. "No KYC" usually means "no KYC until we decide we need it". The same pattern on casinos is covered in [no KYC casinos](/guides/no-kyc-casino) and [anonymous casinos](/guides/anonymous-casino).`,
+      body: '**KYC** (know your customer) is the set of checks a regulated business runs on who you are: name, date of birth, address, and for larger amounts where the money came from. Gambling operators run them for three reasons: to keep out minors, to meet [anti-money-laundering rules](/guides/aml-gambling), and to stop fraud and duplicate accounts.\n\nA **no KYC sportsbook** advertises that you can sign up with an email or a crypto wallet and bet without uploading ID. Read the next lines of its terms. Almost every such site states that it may request verification at any time, and that withdrawals can be held until it does. "No KYC" usually means "no KYC until we decide we need it". The same pattern on casinos is covered in [no KYC casinos](/guides/no-kyc-casino) and [anonymous casinos](/guides/anonymous-casino).',
     },
     {
       id: "licensed",
       title: "Why licensed sportsbooks must verify you",
-      body: `A licensed sportsbook cannot offer no-KYC betting. In Great Britain, the Gambling Commission has required since 7 May 2019 that online operators [verify a customer's age and identity before they can gamble](https://www.gamblingcommission.gov.uk/news/article/new-age-and-identity-verification-rules-changes-to-the-lccp-from-tuesday-7). US states that license sportsbooks require identity and age checks (21 in most states) and location checks to confirm you are inside the state. More checks follow larger deposits and withdrawals.
-
-That is why a site that genuinely skips KYC is, almost by definition, not licensed where you live. See [where sports betting is legal](/guides/sports-betting-legal-states) for the US map and [how casino account verification works](/guides/casino-account-verification) for what a normal check asks for.`,
+      body: "A licensed sportsbook cannot offer no-KYC betting. In Great Britain, the Gambling Commission has required since 7 May 2019 that online operators [verify a customer's age and identity before they can gamble](https://www.gamblingcommission.gov.uk/news/article/new-age-and-identity-verification-rules-changes-to-the-lccp-from-tuesday-7). US states that license sportsbooks require identity and age checks (21 in most states) and location checks to confirm you are inside the state. More checks follow larger deposits and withdrawals.\n\nThat is why a site that genuinely skips KYC is, almost by definition, not licensed where you live. See [where sports betting is legal](/guides/sports-betting-legal-states) for the US map and [how casino account verification works](/guides/casino-account-verification) for what a normal check asks for.",
     },
     {
       id: "when",
       title: "When a no KYC site asks for ID anyway",
-      body: `Common triggers written into offshore terms:
-
-- **A withdrawal**, especially the first one or a large one.
-- **A big win** relative to deposits.
-- **Payment flags:** deposits from many wallets, card chargebacks, or patterns the risk system links to fraud or bonus abuse.
-- **Location doubts:** logging in from a country the site excludes. Using a VPN to get around a block can itself breach the terms; see [VPN casino](/guides/vpn-casino).
-- **Regulatory pressure** on the operator from its own licensing authority.
-
-The practical effect is that the check arrives when you have the most money on the site. If you are not willing to verify, do not deposit more than you are willing to lose to a frozen balance. [Crypto casino withdrawals](/guides/crypto-casino-withdrawals) explains how holds and pending states work.`,
+      body: "Common triggers written into offshore terms:\n\n- **A withdrawal**, especially the first one or a large one.\n- **A big win** relative to deposits.\n- **Payment flags:** deposits from many wallets, card chargebacks, or patterns the risk system links to fraud or bonus abuse.\n- **Location doubts:** logging in from a country the site excludes. Using a VPN to get around a block can itself breach the terms; see [VPN casino](/guides/vpn-casino).\n- **Regulatory pressure** on the operator from its own licensing authority.\n\nThe practical effect is that the check arrives when you have the most money on the site. If you are not willing to verify, do not deposit more than you are willing to lose to a frozen balance. [Crypto casino withdrawals](/guides/crypto-casino-withdrawals) explains how holds and pending states work.",
     },
     {
       id: "risks",
       title: "The real risks",
-      body: `- **No regulator.** If an unlicensed book refuses to pay, there may be no authority that will take your complaint. A Curaçao or Anjouan seal is not the same as a state licence; see [crypto casino licenses](/guides/crypto-casino-license).
-- **One-sided terms.** "Irregular betting", "bonus abuse" and "multiple accounts" clauses can void winnings, and the operator interprets them.
-- **Underage and problem gambling.** Without age checks, minors can deposit; without affordability checks, nothing slows a losing run. That is why the checks exist.
-- **Privacy is not anonymity.** Crypto deposits are recorded on a public blockchain, and exchanges that sold you the crypto already hold your identity.
-
-More in the [sports betting topic](/guides/topics/sports-betting).`,
-    },
-    {
-      id: "site",
-      title: "How PVPspinArena handles accounts",
-      body: `PVPspinArena does not take sports bets. Its account, wallet verification and withdrawal steps are on [how it works](/how-it-works#wallet), and the conditions are in the [terms](/terms). Adults only, 18 or the higher age your law sets. This page is not legal advice. If betting stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: '- **No regulator.** If an unlicensed book refuses to pay, there may be no authority that will take your complaint. A Curaçao or Anjouan seal is not the same as a state licence; see [crypto casino licenses](/guides/crypto-casino-license).\n- **One-sided terms.** "Irregular betting", "bonus abuse" and "multiple accounts" clauses can void winnings, and the operator interprets them.\n- **Underage and problem gambling.** Without age checks, minors can deposit; without affordability checks, nothing slows a losing run. That is why the checks exist.\n- **Privacy is not anonymity.** Crypto deposits are recorded on a public blockchain, and exchanges that sold you the crypto already hold your identity.\n\nMore in the [sports betting topic](/guides/topics/sports-betting).\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.',
     },
   ],
   faqs: [
@@ -98,7 +76,10 @@ More in the [sports betting topic](/guides/topics/sports-betting).`,
       label: "FATF: virtual assets",
       url: "https://www.fatf-gafi.org/en/topics/virtual-assets.html",
     },
-    { label: "GambleAware", url: "https://www.gambleaware.org/" },
+    {
+      label: "GambleAware",
+      url: "https://www.gambleaware.org/",
+    },
   ],
   related: [
     "no-kyc-casino",
@@ -107,11 +88,17 @@ More in the [sports betting topic](/guides/topics/sports-betting).`,
     "casino-account-verification",
     "sports-betting-legal-states",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
   cta: {
     title: "Know the rules before you deposit",
     text: "PVPspinArena publishes its wallet verification and withdrawal steps. Read them before you play.",
-    primary: { to: "/how-it-works#wallet", label: "How deposits work" },
-    secondary: { to: "/terms", label: "Terms" },
+    primary: {
+      to: "/how-it-works#wallet",
+      label: "How deposits work",
+    },
+    secondary: {
+      to: "/terms",
+      label: "Terms",
+    },
   },
 };

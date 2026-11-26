@@ -44,7 +44,9 @@ export const guide: Guide = {
 
 ### Straddles, strings and splashes
 
-A **straddle** is a voluntary blind, usually twice the big blind, posted before cards are dealt; it buys the last preflop action. A **string bet** is an illegal bet made in more than one motion without announcing the amount. **Splashing the pot** means throwing chips into the middle rather than stacking them in front of you, which dealers discourage because the amount becomes unclear. **Angle shooting** is using ambiguous actions to mislead, such as acting as if you will fold to induce a bet; it is legal in some narrow senses and always frowned on.`,
+A **straddle** is a voluntary blind, usually twice the big blind, posted before cards are dealt; it buys the last preflop action. A **string bet** is an illegal bet made in more than one motion without announcing the amount. **Splashing the pot** means throwing chips into the middle rather than stacking them in front of you, which dealers discourage because the amount becomes unclear. **Angle shooting** is using ambiguous actions to mislead, such as acting as if you will fold to induce a bet; it is legal in some narrow senses and always frowned on.
+
+PokerStars’ glossary supplies a room-published reference for terms such as rake, range and bluff-catcher. Local slang does not override a room’s rules.`,
     },
     {
       id: "hands",
@@ -206,10 +208,17 @@ What replaces "was the dealer honest?" is a check you can do yourself: each roun
       label: "Wikipedia: Glossary of poker terms",
       url: "https://en.wikipedia.org/wiki/Glossary_of_poker_terms",
     },
-    { label: "Wikipedia: Dead man's hand", url: "https://en.wikipedia.org/wiki/Dead_man%27s_hand" },
+    {
+      label: "Wikipedia: Dead man's hand",
+      url: "https://en.wikipedia.org/wiki/Dead_man%27s_hand",
+    },
     {
       label: "Encyclopaedia Britannica: poker",
       url: "https://www.britannica.com/topic/poker-card-game",
+    },
+    {
+      label: "PokerStars: poker terms and glossary",
+      url: "https://www.pokerstars.com/poker/learn/strategies/poker-terms-glossary/",
     },
   ],
   related: [
@@ -219,5 +228,5 @@ What replaces "was the dealer honest?" is a check you can do yourself: each roun
     "texas-holdem-rules",
     "casino-terminology",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

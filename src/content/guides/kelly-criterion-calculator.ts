@@ -89,7 +89,7 @@ f* = (1 * 16/33 - 17/33) / 1 = -1/33
 
 -1/33 is about -3.03%. The calculator’s growth stake is zero. You do not bet Purple to grow a bankroll. A smaller positive stake is a different decision: entertainment inside a budget. It is not a “gentle Kelly.” The formula has already refused the growth job.
 
-Silver uses that same p and that same b, so it prints the same negative fraction and the same zero stake. Record zero for Silver as well. The same wheel pays Silver at 2x on 16 slots, so the Silver fraction is the same negative number. Green pays 14x, which is a different b, and this page does not invent a Green row. If you size Green, compute b from the net profit, use p = 1/33, and expect the sign to stay a warning unless your p is higher than the price implies. [Flat betting](/guides/flat-betting) is the constant-stake alternative once you have decided the bet is a cost.
+Silver uses that same p and that same b, so it prints the same negative fraction and the same zero stake. Record zero for Silver as well. The same wheel pays Silver at 2x on 16 slots, so the Silver fraction is the same negative number. Green’s 14x gross multiplier needs its own net-odds calculation after the winning-payout fee. If you size Green, compute b from the net profit, use p = 1/33, and expect the sign to stay a warning unless your p is higher than the price implies. [Flat betting](/guides/flat-betting) is the constant-stake alternative once you have decided the bet is a cost.
 
 ### What zero means on this wheel
 
@@ -170,12 +170,15 @@ Scale a positive percent only, and always leave every negative row at a stake of
     },
   ],
   sources: [
-    { label: "Wikipedia: Kelly criterion", url: "https://en.wikipedia.org/wiki/Kelly_criterion" },
+    {
+      label: "Wikipedia: Kelly criterion",
+      url: "https://en.wikipedia.org/wiki/Kelly_criterion",
+    },
     {
       label: "J. L. Kelly, Jr., A New Interpretation of Information Rate (1956)",
       url: "https://www.princeton.edu/~wbialek/rome/refs/kelly_56.pdf",
     },
   ],
   related: ["kelly-criterion", "expected-value-gambling", "bankroll-calculator", "flat-betting"],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

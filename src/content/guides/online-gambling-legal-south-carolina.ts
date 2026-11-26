@@ -53,7 +53,7 @@ The [foundations topic](/guides/topics/foundations) groups the legal explainers.
   faqs: [
     {
       q: "Is sports betting legal in South Carolina?",
-      a: "There is no authorized online sportsbook market under the state law reviewed for this guide. The cited S.444 proposal is not an enacted authorization.",
+      a: "The cited S.444 proposal is not an enacted authorization.",
     },
     {
       q: "Are online casinos licensed by South Carolina?",
@@ -84,5 +84,5 @@ The [foundations topic](/guides/topics/foundations) groups the legal explainers.
     "nfl-betting",
     "sweepstakes-casino-legal-states",
   ],
-  updated: "2026-11-05",
+  updated: "2026-11-26",
 };

@@ -26,7 +26,9 @@ export const guide: Guide = {
 
 That is the entire game. There is no skill in the fall itself. The only decision is where along the top edge to release the chip, and even that has a smaller effect than most players expect.
 
-The same device has older names. Victorian scientist Francis Galton built a pegboard he called a quincunx, now usually called a **Galton board** or bean machine, to demonstrate how many small random events add up to a bell-shaped pattern. Japanese pachinko machines use a similar peg field with steel balls, covered in [pachinko odds](/guides/pachinko-odds). This page is about the physical board: the TV game, the physics and home builds. For the online casino version with multipliers and risk levels, see [Plinko gambling](/guides/plinko-gambling). The wider family of chance devices lives in the [Games of chance topic](/guides/topics/games-of-chance).`,
+The same device has older names. Victorian scientist Francis Galton built a pegboard he called a quincunx, now usually called a **Galton board** or bean machine, to demonstrate how many small random events add up to a bell-shaped pattern. Japanese pachinko machines use a similar peg field with steel balls, covered in [pachinko odds](/guides/pachinko-odds). This page is about the physical board: the TV game, the physics and home builds. For the online casino version with multipliers and risk levels, see [Plinko gambling](/guides/plinko-gambling). The wider family of chance devices lives in the [Games of chance topic](/guides/topics/games-of-chance).
+
+The Price Is Right describes earning chips through pricing and dropping them into money slots. That physical television game is distinct from software using the same name.`,
     },
     {
       id: "price-is-right",
@@ -140,15 +142,6 @@ For a charity stall, put small prizes in the common middle-outer bins and one he
 
 Those setups deserve the same scrutiny as other [carnival games](/guides/carnival-games). The operator chooses peg layout, bin widths, and which bins carry prizes, and can tune a board so the headline prize bin is narrow or near the edge. Arcade machines with payout settings work similarly to the ones described in [claw machine tricks](/guides/claw-machine-tricks). None of this is necessarily dishonest; it is how prize games cover their costs. But it means a physical board you did not build is not guaranteed to follow the neat curve above.`,
     },
-    {
-      id: "pvp",
-      title: "From peg physics to hashed rounds",
-      body: `A physical board gets its randomness from friction, spin and tiny build flaws, which makes it fun to watch and very hard to audit. Digital games replace the pegs with a random number generator, which can be audited but cannot be seen.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott — Jackpot on [the home page](/), [Coinflip](/coinflip) and [Roulette](/roulette) — settled in US dollars, with results drawn from committed seeds that anyone can verify for a settled round on [fairness](/fairness). Roulette is the closest in spirit to a prize board: a 33-slot wheel with 16 Purple and 16 Silver slots paying 2x and 1 Green slot paying 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Coinflip is a straight 50/50 between two players, and a Jackpot win chance equals your share of the pot.
-
-The shared lesson is the one Galton demonstrated: individual outcomes are unpredictable, averages are not. Real-money play is 18+, and the [responsible gambling](/responsible-gambling) page has tools for setting limits.`,
-    },
   ],
   faqs: [
     {
@@ -174,10 +167,17 @@ The shared lesson is the one Galton demonstrated: individual outcomes are unpred
   ],
   sources: [
     {
+      label: "The Price Is Right: official Plinko description",
+      url: "https://priceisright.com/game/plinko/",
+    },
+    {
       label: "Wikipedia: List of The Price Is Right pricing games",
       url: "https://en.wikipedia.org/wiki/List_of_The_Price_Is_Right_pricing_games",
     },
-    { label: "Wikipedia: Galton board", url: "https://en.wikipedia.org/wiki/Galton_board" },
+    {
+      label: "Wikipedia: Galton board",
+      url: "https://en.wikipedia.org/wiki/Galton_board",
+    },
     {
       label: "Wikipedia: Binomial distribution",
       url: "https://en.wikipedia.org/wiki/Binomial_distribution",
@@ -191,5 +191,5 @@ The shared lesson is the one Galton demonstrated: individual outcomes are unpred
     "pachinko-odds",
     "casino-party-ideas",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

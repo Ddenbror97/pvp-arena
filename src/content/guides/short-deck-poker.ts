@@ -67,7 +67,7 @@ Straights change shape. Ace can still play high or low.
 
 The low straight is ace-6-7-8-9, because 2 through 5 are not in the deck. Ace-king-queen-jack-ten is still the high straight.
 
-Trips and straights are more common than in a 52-card game. This page does not claim that trips outrank a straight.
+Trips and straights are more common than in a 52-card game. Some short-deck variants change that ordering; confirm the room’s ranking table.
 
 Many cards keep the straight ahead of trips. Confirm that line too.
 
@@ -158,7 +158,7 @@ Blind structure is a third risk. Some games use a button blind and antes.
 
 Some use ordinary blinds. Copying the wrong structure changes every open size.
 
-This page will not assign a dollar ante as if every room shared it.
+Read the table’s ante and button-blind amounts before joining.
 
 Stack depth feels shorter when pots swell with made hands. A "standard" call from full-deck memory can commit you.
 
@@ -184,7 +184,7 @@ We do not list a promo code. Any short-deck app's rake stays on that app's fee c
 
 [Fairness](/fairness) is the committed-seed check for hands played there. If that page has a live block, the block updates from settled play.
 
-This guide does not reprint a recent short-deck result.
+An illustrative hand is not a report of a recent live result.
 
 Big O, razz, 2-7, and open-face Chinese are absent too. Say so before someone hunts the lobby for a variant list.
 
@@ -242,7 +242,10 @@ Then decide whether you still want the game.`,
       label: "Wikipedia: Six-plus hold 'em",
       url: "https://en.wikipedia.org/wiki/Six-plus_hold_%27em",
     },
-    { label: "World Series of Poker", url: "https://www.wsop.com/" },
+    {
+      label: "World Series of Poker",
+      url: "https://www.wsop.com/",
+    },
   ],
   related: [
     "texas-holdem-rules",
@@ -251,5 +254,5 @@ Then decide whether you still want the game.`,
     "crypto-poker",
     "big-o-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

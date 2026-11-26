@@ -68,7 +68,7 @@ The royal line is why max coins show up in every serious discussion. On many mac
 
 A pair of tens or lower is not in this group. It pays nothing by itself. It is an unfinished hand that might become two pair, trips, or a full house, and it might also become nothing. Treating a pair of sixes as if it were already a jack is how a short-pay feeling gets worse. The glass is blunt: below jacks, a lone pair is a loss.
 
-Two pair, three of a kind, and the pat hands above them are made pays as well. They sit in the "already on the schedule" family, stronger than a single high pair. You do not break them casually. A four-card royal is unfinished, yet on a full-pay sheet it is famous because the royal’s pay is large enough that players are taught to respect it even next to some hands that already pay. This page will not rank every exception. A 30-line chart belongs to the people who published it. The group lesson is enough to stop the worst habit: throwing away jacks or better to chase a random low card.
+Two pair, three of a kind, and the pat hands above them are made pays as well. They sit in the "already on the schedule" family, stronger than a single high pair. You do not break them casually. A four-card royal is unfinished, yet on a full-pay sheet it is famous because the royal’s pay is large enough that players are taught to respect it even next to some hands that already pay. Close exceptions require analysis of the exact paytable and cards remaining. A 30-line chart belongs to the people who published it. The group lesson is enough to stop the worst habit: throwing away jacks or better to chase a random low card.
 
 If the full house or the flush on your glass is not 9 and 6, the value of these groups shifts. A chart drawn for 9/6 is a different strategy. When the glass changes, the holds change with it.`,
     },
@@ -171,5 +171,5 @@ PVPspinArena does not install these machines. The [poker topic](/guides/topics/p
     },
   ],
   related: ["video-poker-paytables", "deuces-wild", "rtp-explained", "house-edge"],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

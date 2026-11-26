@@ -119,7 +119,7 @@ When you teach a new player, teach only the seven steps in the round section. Va
       title: "A shout, a coin, and a checked result",
       body: `Tenzi settles a winner by a shout at a kitchen table. A hashed player-versus-player round settles a winner by a procedure both people can recompute. They scratch different itches. One is a race you can see. The other is a draw you can audit.
 
-PVPspinArena runs five games settled in US dollars, including six-max poker with a 5% fee only after a flop. P2P Slott is a 1v1 duel with a 10% fee on the players' pot. [Coinflip](/coinflip) is two players and a 50/50, the smallest head-to-head stake on the site. Roulette uses a 33-slot wheel where 16 purple and 16 silver pay 2x and 1 green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot gives a win chance equal to your share of the pot, and the winner takes the pot minus any fee shown before entry. Settled rounds can be checked from the committed seeds on the [fairness](/fairness) page.
+Jackpot gives a win chance equal to your share of the pot, and the winner takes the pot minus any fee shown before entry. Settled rounds can be checked from the committed seeds on the [fairness](/fairness) page.
 
 None of those games asks you to shout, and none of them uses 10 physical dice. The link is only this: if you want a contest whose result is a public rule rather than the fastest hand, the coin is the simple one. If you want the fastest hand, stay with Tenzi and keep the stakes at zero, or keep them adult and small.
 
@@ -151,9 +151,18 @@ See also [horse race dice](/guides/horse-race-dice-game).`,
     },
   ],
   sources: [
-    { label: "BoardGameGeek: Tenzi", url: "https://boardgamegeek.com/boardgame/113819/tenzi" },
-    { label: "Wikipedia: Dice", url: "https://en.wikipedia.org/wiki/Dice" },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
+    {
+      label: "BoardGameGeek: Tenzi",
+      url: "https://boardgamegeek.com/boardgame/113819/tenzi",
+    },
+    {
+      label: "Wikipedia: Dice",
+      url: "https://en.wikipedia.org/wiki/Dice",
+    },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
   ],
   related: [
     "yahtzee-rules",
@@ -162,5 +171,5 @@ See also [horse race dice](/guides/horse-race-dice-game).`,
     "farkle-rules",
     "dice-roll-probability",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

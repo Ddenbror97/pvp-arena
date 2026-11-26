@@ -127,7 +127,7 @@ The fee is 5% of $16, so $0.80. The winner receives $15.20.
 
 A hand that ends before the flop pays $0. Do not add a $4 straddle to that example.
 
-[Pot odds](/guides/poker-pot-odds) is where the callers' price belongs. This page does not rebuild the fraction.`,
+[Pot odds](/guides/poker-pot-odds) is where the callers' price belongs. Use the enlarged pot and the actual amount to call.`,
     },
     {
       id: "checklist",
@@ -189,7 +189,7 @@ Our six-max tables do not list a straddle as a required rule. Practise ordinary 
 
 [Fairness](/fairness) is the seed check after a hand. A live block, when one is present, updates from settled play.
 
-This page does not quote a recent straddle pot from anywhere.
+The amounts are teaching examples rather than recent table results.
 
 You can practise Hold'em concepts in that lobby: position, bet size, and folding a weak hand. You cannot demand a straddle, and the site does not deal Big O, short deck, razz, 2-7, or open-face Chinese.
 
@@ -243,8 +243,14 @@ Tips here are about whether you should post at all. Do not post and then invent 
     },
   ],
   sources: [
-    { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
-    { label: "World Series of Poker", url: "https://www.wsop.com/" },
+    {
+      label: "Pagat — public card-game rules",
+      url: "https://www.pagat.com/",
+    },
+    {
+      label: "World Series of Poker",
+      url: "https://www.wsop.com/",
+    },
   ],
   related: [
     "cash-game-poker",
@@ -253,5 +259,5 @@ Tips here are about whether you should post at all. Do not post and then invent 
     "poker-bankroll-management",
     "poker-equity-calculator",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

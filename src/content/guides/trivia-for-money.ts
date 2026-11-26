@@ -28,7 +28,9 @@ This guide stays with the race. You put up a stake. Someone else puts up a stake
 
 HQ Trivia, the old live phone show, was a broadcast with prizes, not a 1v1 stake you negotiated. It is a historical contrast, not a price list for today’s apps.
 
-Adults 18+ only. Eligibility is the app’s job to enforce and yours to obey. This page is not legal advice and does not list states.`,
+Adults 18+ only. Eligibility is the app’s job to enforce and yours to obey. This page is not legal advice and does not list states.
+
+Skillz supplies an operator example of score-based multiplayer tournaments. It does not verify a named trivia app, its question accuracy or its advertised payout; those need the app’s own rules.`,
     },
     {
       id: "what-pay-means",
@@ -149,9 +151,19 @@ The standard worth keeping is plain. Trivia for money pays you when you beat oth
     },
   ],
   sources: [
-    { label: "Trivia (Wikipedia)", url: "https://en.wikipedia.org/wiki/Trivia" },
-    { label: "HQ Trivia (Wikipedia)", url: "https://en.wikipedia.org/wiki/HQ_Trivia" },
+    {
+      label: "Trivia (Wikipedia)",
+      url: "https://en.wikipedia.org/wiki/Trivia",
+    },
+    {
+      label: "HQ Trivia (Wikipedia)",
+      url: "https://en.wikipedia.org/wiki/HQ_Trivia",
+    },
+    {
+      label: "Skillz: tournament platform and cash competition model",
+      url: "https://support.skillz.com/hc/en-us/articles/203748889-What-is-Skillz",
+    },
   ],
   related: ["solitaire-for-money", "spades-for-money", "backgammon-for-money", "skillz-review"],
-  updated: "2026-10-07",
+  updated: "2026-11-26",
 };

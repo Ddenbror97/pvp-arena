@@ -72,7 +72,7 @@ We did not sit a Clubs New Zealand event. The PDF is the text, and a host who ig
 
 That means a current on or off switch for that room is not published in this note. Do not treat a forum memory as the cashier's rule.
 
-An archived tools policy is a different page, and it is not a runout setting. This article does not borrow it.
+An archived tools policy is a different page, and it is not a runout setting. That draw rule belongs to its own variant, not to revealing an unused board card.
 
 | Sheet we could read | Runout rule | Dollar fine |
 | --- | --- | --- |
@@ -144,7 +144,7 @@ The helpline page we opened prints 1-800-MY-RESET and says that line is not a cr
     {
       id: "stop",
       title: "Who should leave the table alone",
-      body: `Do not play if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent or money with a due date.
+      body: `Cash play requires the local minimum age, lawful access and an affordable budget.
 
 A folded pot is finished. Watching the stub to feel less wrong is how a small loss becomes the next buy-in. The two sheets we opened call the look unfair, slow, or simply not allowed.
 
@@ -201,5 +201,5 @@ Cash-out minimum on this site is $20 in BTC, USDC, or ETH. If the session stops 
     "badugi-poker",
     "bluffing-in-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

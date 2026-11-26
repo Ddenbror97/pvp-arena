@@ -28,7 +28,9 @@ This is not the same as betting with friends on a Sunday game you are both watch
 
 [Peer-to-peer gambling](/guides/peer-to-peer-gambling) describes player-funded pots in casino games. A wager app uses the same funding shape for a match you play. The result is skill, cheating, and disconnects instead of a seed. Do not import casino odds into a shooter lobby, and do not import your kill/death ratio into a coin.
 
-Adults 18+ only. Some regions allow skill wagers, some ban them, and the game publisher may ban accounts that play for outside money. This page is not legal advice and not a ranking of apps that will make you money. There is no best wager app in the sense of a guaranteed profit. There are apps with readable rules and apps without them.`,
+Adults 18+ only. Some regions allow skill wagers, some ban them, and the game publisher may ban accounts that play for outside money. This page is not legal advice and not a ranking of apps that will make you money. There is no best wager app in the sense of a guaranteed profit. There are apps with readable rules and apps without them.
+
+Skillz’s own explanation separates cash tournaments from virtual-currency play. The existence of a cash mode does not establish your eligibility or another app’s terms.`,
     },
     {
       id: "match-and-escrow",
@@ -107,7 +109,17 @@ If you are playing a friend through the app only to have a referee, agree the ga
     {
       id: "trust-without-a-trophy",
       title: "Trust is the rulebook, not the trophy case",
-      body: "Screenshots of big payouts are cheap. A rulebook that states the fee, the lock, the forfeit, and the withdrawal is rarer and more useful. Read it once while you are calm. If it is only a popup of slogans, assume the missing pages will be written after your dispute, by them.\n\nLook for a company name you can search, a region it admits it serves, and a cashier that does not change addresses. Look for a way to close an account and remove a payment method. An app that makes deposits one tap and withdrawals a scavenger hunt has told you the business.\n\nYour side of trust is smaller: one account, no borrowed name, no request that a friend “hold” a match for you, no stake you cannot show on a bank screen without flinching. Wager apps keep records. So should you. Date, stake, fee, opponent type, result, payout. After a month the sheet will be ruder than your memory and more accurate.\n\nStop when the sheet says the fee is winning. That is not bad luck to push through. That is the price list you already had in the table, finally visible in your own numbers. Play the video game for free if the price list is the part you dislike. The app does not deserve a second career as your opponent.\n\nOne more pass before you call an app trusted: withdraw a small test amount you deposited yourself, before you ever win a large pot. A cashier that can take money and cannot return a tiny test is not holding escrow. It is holding a lead. Do that test with an amount you can forget, on a day you are not angry, and keep the transaction id next to the rules screenshot. Trust is a completed round trip, not a badge on the lobby.\n\nFor a shooter-specific entry decision, compare the [FPS cash-match guide](/guides/fps-for-money-hub) and [crypto shooter payments](/guides/crypto-fps-game). These describe a player-funded duel, not a reward app or a bet on a professional team.",
+      body: `Screenshots of big payouts are cheap. A rulebook that states the fee, the lock, the forfeit, and the withdrawal is rarer and more useful. Read it once while you are calm. If it is only a popup of slogans, assume the missing pages will be written after your dispute, by them.
+
+Look for a company name you can search, a region it admits it serves, and a cashier that does not change addresses. Look for a way to close an account and remove a payment method. An app that makes deposits one tap and withdrawals a scavenger hunt has told you the business.
+
+Your side of trust is smaller: one account, no borrowed name, no request that a friend “hold” a match for you, no stake you cannot show on a bank screen without flinching. Wager apps keep records. So should you. Date, stake, fee, opponent type, result, payout. After a month the sheet will be ruder than your memory and more accurate.
+
+Stop when the sheet says the fee is winning. That is not bad luck to push through. That is the price list you already had in the table, finally visible in your own numbers. Play the video game for free if the price list is the part you dislike. The app does not deserve a second career as your opponent.
+
+One more pass before you call an app trusted: withdraw a small test amount you deposited yourself, before you ever win a large pot. A cashier that can take money and cannot return a tiny test is not holding escrow. It is holding a lead. Do that test with an amount you can forget, on a day you are not angry, and keep the transaction id next to the rules screenshot. Trust is a completed round trip, not a badge on the lobby.
+
+For a shooter-specific entry decision, compare the [FPS cash-match guide](/guides/fps-for-money-hub) and [crypto shooter payments](/guides/crypto-fps-game). These describe a player-funded duel, not a reward app or a bet on a professional team.`,
     },
   ],
   faqs: [
@@ -133,8 +145,18 @@ If you are playing a friend through the app only to have a referee, agree the ga
     },
   ],
   sources: [
-    { label: "Wikipedia: Wager", url: "https://en.wikipedia.org/wiki/Gambling" },
-    { label: "Wikipedia: Escrow", url: "https://en.wikipedia.org/wiki/Escrow" },
+    {
+      label: "Wikipedia: Wager",
+      url: "https://en.wikipedia.org/wiki/Gambling",
+    },
+    {
+      label: "Wikipedia: Escrow",
+      url: "https://en.wikipedia.org/wiki/Escrow",
+    },
+    {
+      label: "Skillz: cash competitions and eligibility",
+      url: "https://support.skillz.com/hc/en-us/articles/50571215655700-How-does-Skillz-work-Can-I-actually-win-real-money",
+    },
   ],
   related: [
     "bet-with-friends-online",
@@ -144,5 +166,5 @@ If you are playing a friend through the app only to have a referee, agree the ga
     "fps-for-money-hub",
     "crypto-fps-game",
   ],
-  updated: "2026-10-31",
+  updated: "2026-11-26",
 };

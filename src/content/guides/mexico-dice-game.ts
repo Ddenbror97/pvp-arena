@@ -31,7 +31,9 @@ export const guide: Guide = {
 
 Mexico is the open-roll member of a family of two-dice games that share the same scoring idea. Its best-known relative is Mia (in Germany, Mäxchen), where rolls are hidden under the cup and players can lie about what they rolled. Mexico has no bluffing: everyone sees every roll, so the decisions are about when to stop rolling. If you want the bluffing version, [liar's dice](/guides/liars-dice) covers the five-dice cousin in depth.
 
-The game sits in the [Games of chance topic](/guides/topics/games-of-chance) with other small-group dice games such as [cee lo](/guides/cee-lo-rules) and [ship captain crew](/guides/ship-captain-crew).`,
+The game sits in the [Games of chance topic](/guides/topics/games-of-chance) with other small-group dice games such as [cee lo](/guides/cee-lo-rules) and [ship captain crew](/guides/ship-captain-crew).
+
+Dice Toys publishes a one-roll Mexico implementation with 21 above doubles. The multi-roll elimination game below is a different variant; agree the roll cap and tie procedure before starting.`,
     },
     {
       id: "scoring",
@@ -145,15 +147,6 @@ Instead of lives, some groups play a fixed number of rounds and give the lowest 
 
 Two formats are common. In the first, everyone antes once and the survivor takes the whole pot. In the second, each lost life costs a fixed chip into the pot. With equal players and fair dice, both formats have zero expected value for everyone: your share of the pot matches your chance of taking it. Keep the ante small, agree the rules in advance, and stop at the time you set rather than when you are down.`,
     },
-    {
-      id: "pvp",
-      title: "From a dice cup to a hashed PvP round",
-      body: `Mexico is a player-vs-player game with no house: everyone antes, and the survivor takes the pot. Over many games between equal players, nobody has an edge, and the leader's stopping decision is the only skill.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with the same no-dealer spirit. In [Coinflip](/coinflip), two players take opposite sides of a 50/50, and the winner takes the pot minus any fee shown before entry. In Jackpot, everyone adds to one pot, and your chance of winning equals your share of it. Roulette is the one house-style game: a 33-slot wheel where Purple and Silver pay 2x and Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the win fee.
-
-A dice cup lets everyone see the roll. Online, every result comes from seeds committed before the round, and anyone can recompute a settled round on the [fairness](/fairness) page. That proves the result was not changed afterwards; it does not make any strategy a winner. Set your stake and your stopping point before the first round, and use the [responsible gambling](/responsible-gambling) tools if a party game turns into chasing losses.`,
-    },
   ],
   faqs: [
     {
@@ -182,12 +175,22 @@ A dice cup lets everyone see the roll. Online, every result comes from seeds com
     },
   ],
   sources: [
-    { label: "Wikipedia: Mia (game)", url: "https://en.wikipedia.org/wiki/Mia_(game)" },
+    {
+      label: "Dice Toys: implemented Mexico rules",
+      url: "https://dice.toys/toy/mexico/",
+    },
+    {
+      label: "Wikipedia: Mia (game)",
+      url: "https://en.wikipedia.org/wiki/Mia_(game)",
+    },
     {
       label: "Wikipedia: List of dice games",
       url: "https://en.wikipedia.org/wiki/List_of_dice_games",
     },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
   ],
   related: [
     "liars-dice",
@@ -197,5 +200,5 @@ A dice cup lets everyone see the roll. Online, every result comes from seeds com
     "left-right-center-rules",
     "dice-roll-probability",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

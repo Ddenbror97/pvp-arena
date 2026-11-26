@@ -47,7 +47,9 @@ Competitor cells stay blank on purpose. This page does not guess another company
     {
       id: "where",
       title: "Where the rest of the cluster sits",
-      body: "For the pieces of this table, read [crypto 8 ball](/guides/crypto-8-ball-pool), [pool betting](/guides/pool-betting), [the rules split](/guides/8-ball-pool-rules), and [why chat is not a cashier](/guides/8-ball-pool-discord). The group is the [skill wagers guides](/guides/topics/skill-wagers).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
+      body: `For the pieces of this table, read [crypto 8 ball](/guides/crypto-8-ball-pool), [pool betting](/guides/pool-betting), [the rules split](/guides/8-ball-pool-rules), and [why chat is not a cashier](/guides/8-ball-pool-discord). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "two-pots",
@@ -122,7 +124,10 @@ See also: [pool hustling](/guides/pool-hustling).`,
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: [
     "8-ball-pool-for-money",
@@ -132,5 +137,5 @@ See also: [pool hustling](/guides/pool-hustling).`,
     "8-ball-pool-rules",
     "8-ball-pool-discord",
   ],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

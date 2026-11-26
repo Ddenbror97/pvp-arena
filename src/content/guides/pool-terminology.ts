@@ -32,7 +32,7 @@ A scratch is the cue ball pocketed. It is a foul. It is also, on the 8, a loss i
 
 The technique next to this is [the shots those words name](/guides/pool-shots), [called pockets and fouls](/guides/8-ball-pool-rules), and [where 9-ball uses different words](/guides/9-ball-rules). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "inning-words",
@@ -91,7 +91,7 @@ Call-pocket, here, applies to the 8 only. The WPA book effective 21 October 2026
     },
     {
       q: "Are hustler nicknames defined here?",
-      a: "No. This page will not invent a slang glossary. If a word is not in the list above, it is not needed to stake a match. English, masse, kick, bank, and carom are the shot words that are.",
+      a: "No. Local slang can differ; agree the actual rule rather than relying on the nickname. If a word is not in the list above, it is not needed to stake a match. English, masse, kick, bank, and carom are the shot words that are.",
     },
   ],
   sources: [
@@ -99,8 +99,11 @@ Call-pocket, here, applies to the 8 only. The WPA book effective 21 October 2026
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "pool-shots", "9-ball-rules"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

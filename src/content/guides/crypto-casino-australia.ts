@@ -10,114 +10,70 @@ export const guide: Guide = {
     "bitcoin casino australia",
     "offshore casino australia",
   ],
-  title: "Crypto Casinos in Australia: IGA Rules | PvP Spin Arena",
+  title: "Crypto Casinos in Australia: ACMA Service Restrictions",
   description:
-    "Australia's Interactive Gambling Act blocks most online casino play. What is prohibited, what remains legal, and how payment blocking works.",
+    "ACMA identifies online casino services as prohibited for Australian customers. Check the provider restrictions, website blocking and complaint evidence.",
   h1: "Crypto Casinos in Australia: The IGA and What It Blocks",
   answer:
-    "Crypto casino Australia questions sit under the Interactive Gambling Act framework and related enforcement themes: offshore interactive casino-style services face tight restrictions for Australian customers, and crypto does not create a loophole. This page is high-level public context for adults 18+, not legal advice, and not a guide to evade blocks. PVPspinArena does not claim an Australian online casino licence.",
+    "Crypto casino Australia access is subject to the Interactive Gambling Act's provider restrictions. ACMA identifies online casino-style services, including poker, blackjack and roulette, as prohibited services for Australian customers. Paying with crypto does not establish permission to offer them. The provider prohibition should not be confused with a blanket statement about an individual player's criminal liability.",
   facts: [
-    "Australia regulates interactive gambling through Commonwealth legislation commonly discussed as the Interactive Gambling Act framework.",
-    "Casino-style interactive services offered to Australians from offshore are a frequent enforcement and compliance topic.",
-    "Using crypto does not authorize an offshore casino that is otherwise prohibited from offering services to Australians.",
-    "Licensed Australian wagering products (for example sports) are a different category from offshore casino lobbies.",
-    "PVPspinArena does not present itself as a licensed Australian interactive casino.",
+    "ACMA administers the federal interactive-gambling framework.",
+    "Online casino-style services are among the prohibited offerings to Australian customers.",
+    "ACMA can seek website blocking to disrupt illegal services.",
+    "An unblocked site is not proof that its service is authorized.",
   ],
   sections: [
     {
-      id: "disclaimer",
-      title: "Disclaimer and age",
-      body: `This article summarises public themes about crypto casino Australia access. It is not legal advice, not a VPN tutorial and not an invitation to break geo or licensing rules. Confirm current ACMA and Australian Government materials before you act.
-
-Adults 18+ only. This sits in [Foundations](/guides/topics/foundations). Product primer: [what is a crypto casino](/guides/what-is-a-crypto-casino).
-
-PVPspinArena offers six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, funded with USDC or ETH on Base. We will not claim Australian interactive casino licensing. If a site is blocked, stop. A blocked page is the end of the visit, not a prompt to route around it.
-
-Help: [responsible gambling](/responsible-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion).
-`,
+      id: "services",
+      title: "What ACMA identifies as prohibited",
+      body: "ACMA's [consumer guidance](https://www.acma.gov.au/protect-yourself-illegal-gambling-operators) identifies prohibited online casino-style games. Its [Interactive Gambling Act overview](https://www.acma.gov.au/about-interactive-gambling-act) describes restrictions on providers offering services to people in Australia.\n\nThis is distinct from assuming that every type of wagering has the same rules or that a foreign casino licence supplies Australian permission.",
     },
     {
-      id: "iga",
-      title: "Interactive gambling themes in plain language",
-      body: `Commonwealth rules restrict certain interactive gambling services to Australian customers. Online casino-style products offered from offshore are the category most players mean when they search crypto casino Australia. Licensed Australian operators focus more on permitted wagering products under their own regimes.
-
-You do not need a law degree to take the practical point: a blog that says “USDT makes it fine” is not an Act of Parliament. Payment rails do not rewrite service prohibitions.
-
-For primary reading, use Australian Communications and Media Authority (ACMA) consumer and enforcement pages on illegal online gambling, and the legislation resources they point to.
-`,
+      id: "blocking",
+      title: "A missing block is not an approval",
+      body: "ACMA's [website-blocking guidance](https://www.acma.gov.au/blocked-gambling-websites) explains disruption of illegal gambling services. An accessible site can still be unauthorized; a block is not a withdrawal guarantee or a statement that every other domain is permitted.\n\n[Fake casino checks](/guides/fake-casino-sites) help preserve evidence of copied identities and domains.",
     },
     {
-      id: "offshore",
-      title: "Offshore crypto casinos and advertising",
-      body: `Offshore brands still appear in search ads, social clips and affiliate articles aimed at Australians. They may flash foreign seals. Review [crypto casino license](/guides/crypto-casino-license) and [curacao gambling license](/guides/curacao-gambling-license) so you know what those seals are not.
-
-ACMA publishes enforcement outcomes against illegal interactive gambling services and related advertising. That public record is a better signal than a Telegram tip.
-
-[Fake casino sites](/guides/fake-casino-sites) also target AU traffic with lookalike domains. Type addresses yourself.
-`,
+      id: "evidence",
+      title: "Record the actual operator and product",
+      body: "Keep the URL, legal name, advertised licence and the game offered. Use ACMA's own complaint route when reporting a suspected prohibited service.\n\n[Crypto casino licences](/guides/crypto-casino-license) concerns verification of an issuer's claim. [What is a crypto casino](/guides/what-is-a-crypto-casino) describes payment technology, which does not override the Australian service restriction.",
     },
     {
-      id: "checklist",
-      title: "If you are comparing any crypto lobby",
-      body: `Legality first. If you are not meant to access a casino-style interactive service, do not treat our cashier checklist as permission.
-
-Where you are evaluating a lawful product elsewhere, the usual quality bar still applies: [best crypto gambling sites](/guides/best-crypto-gambling-sites), [provably fair casino](/guides/provably-fair-casino), tiny withdrawal tests. On this site see [Fairness](/fairness) and [how it works](/how-it-works).
-
-We will not provide bypass instructions for blocks, DNS tricks or identity masking.
-`,
-    },
-    {
-      id: "tax",
-      title: "Tax is a separate conversation",
-      body: `Australian tax treatment of gambling and crypto belongs with ATO guidance and a professional — see our gambling tax Australia companion themes when you need that cluster. Do not invent deductions from forum posts.
-
-Keep records if you have reportable crypto disposals. That is not advice to chase casino play for tax theatre.
-`,
-    },
-    {
-      id: "harm",
-      title: "Harm tools matter more than loopholes",
-      body: `If the energy in your search is “how do I get around the ban,” pause. That search usually leads to scams and unlicensed cashiers. Use Australian help resources via [responsible gambling](/responsible-gambling) pathways and local services.
-
-Product pages like [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), and [Coinflip](/coinflip) are irrelevant when access is not lawful for you.
-`,
-    },
-    {
-      id: "bottom",
-      title: "Bottom line",
-      body: `Crypto casino Australia is framed by interactive gambling rules and enforcement practice, not by token choice. Check ACMA and official sources, ignore evasion blogs, and do not read this as a licence claim for PVPspinArena. Adults 18+. Not legal advice.`,
+      id: "limits",
+      title: "Balances and spending controls",
+      body: "PVPspinArena does not claim an Australian online casino licence. If money is disputed, preserve payment records and seek the relevant complaint or professional-advice route before transferring more.\n\n[Responsible gambling](/responsible-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion) cover personal controls. More operator checks appear in [Foundations](/guides/topics/foundations).",
     },
   ],
   faqs: [
     {
-      q: "Are crypto casinos legal in Australia?",
-      a: "Offshore interactive casino-style services face significant restrictions when offered to Australians. Crypto does not remove those rules. Check ACMA and current official guidance.",
+      q: "Does ACMA identify online casinos as prohibited services?",
+      a: "Yes. Its guidance identifies online casino-style games among prohibited offerings to Australian customers.",
     },
     {
-      q: "Does using Bitcoin change the Interactive Gambling Act analysis?",
-      a: "Payment method is not a magic exemption. Focus on whether the service may be offered to you.",
+      q: "Does an unblocked website prove legality?",
+      a: "No. Website blocking is an enforcement measure, not a complete list of everything unauthorized.",
     },
     {
-      q: "Is PVPspinArena licensed in Australia?",
-      a: "We do not claim an Australian interactive casino licence.",
+      q: "Does crypto change the provider restriction?",
+      a: "A crypto payment option does not establish permission to offer the service.",
     },
     {
-      q: "Can you explain how to bypass geo-blocks?",
-      a: "No. If a service is blocked or prohibited for you, do not use it.",
-    },
-    {
-      q: "Is this legal advice?",
-      a: "No. Confirm with official Australian sources or a qualified lawyer.",
+      q: "Does the provider prohibition alone determine my personal liability?",
+      a: "No. Individual legal questions need the actual facts and applicable advice; do not equate different legal duties.",
     },
   ],
   sources: [
     {
-      label: "ACMA — Illegal online gambling",
-      url: "https://www.acma.gov.au/illegal-online-gambling",
+      label: "ACMA — protecting yourself from illegal operators",
+      url: "https://www.acma.gov.au/protect-yourself-illegal-gambling-operators",
     },
     {
-      label: "Federal Register of Legislation — Interactive Gambling Act 2001",
-      url: "https://www.legislation.gov.au/Details/C2021C00535",
+      label: "ACMA — Interactive Gambling Act overview",
+      url: "https://www.acma.gov.au/about-interactive-gambling-act",
+    },
+    {
+      label: "ACMA — blocked gambling websites",
+      url: "https://www.acma.gov.au/blocked-gambling-websites",
     },
   ],
   related: [
@@ -126,5 +82,5 @@ Product pages like [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/
     "fake-casino-sites",
     "best-crypto-gambling-sites",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

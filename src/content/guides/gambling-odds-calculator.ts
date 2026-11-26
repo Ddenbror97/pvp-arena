@@ -43,7 +43,9 @@ Deeper format notes live on the [odds converter](/guides/odds-converter) guide; 
 
 ### Why people open a betting odds calculator
 
-Forums mix 5/2, +250 and 3.50 in one thread. Without a converter you compare stickers instead of contracts. With a converter you still need a second step: is the implied chance close to the true chance? Skipping that step is how a payout calculator becomes a permission slip.`,
+Forums mix 5/2, +250 and 3.50 in one thread. Without a converter you compare stickers instead of contracts. With a converter you still need a second step: is the implied chance close to the true chance? Skipping that step is how a payout calculator becomes a permission slip.
+
+Betfair’s published Exchange terms illustrate why commission must be applied to the correct base: net market winnings rather than every stake. Use the terms applying to your region.`,
     },
     {
       id: "formats",
@@ -280,10 +282,17 @@ After every conversion, multiply stake × decimal on paper once. If the screen a
     },
   ],
   sources: [
-    { label: "Wikipedia: Odds", url: "https://en.wikipedia.org/wiki/Odds" },
+    {
+      label: "Wikipedia: Odds",
+      url: "https://en.wikipedia.org/wiki/Odds",
+    },
     {
       label: "Wikipedia: Fixed-odds betting",
       url: "https://en.wikipedia.org/wiki/Fixed-odds_betting",
+    },
+    {
+      label: "Betfair: Exchange charges",
+      url: "https://support.betfair.com/app/answers/detail/betfair-charges/",
     },
   ],
   related: [
@@ -293,5 +302,5 @@ After every conversion, multiply stake × decimal on paper once. If the screen a
     "expected-value-gambling",
     "house-edge",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

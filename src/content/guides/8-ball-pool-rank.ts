@@ -5,95 +5,79 @@ export const guide: Guide = {
   cluster: "Skill wagers",
   keyword: "8 ball pool rank",
   secondary: ["8 ball pool levels", "8 ball pool legendary cue"],
-  title: "8 Ball Pool Rank Does Not Set the Cash Stake",
+  title: "8 Ball Pool Rank: Levels, Cues and Cash Stakes",
   description:
-    "8 ball pool rank on a free client is levels, cues, and a pass. Reward lists are not known here. Ranks do not set the stake. The cash match is equal money.",
-  h1: "8 ball pool rank, as progression that stays in the free game",
+    "Separate 8 Ball Pool levels, cue attributes and pass rewards from cash-match stakes. Learn which progression benefits stay inside the original game.",
+  h1: "8 ball pool rank: progression is different from a cash stake",
   answer:
-    "8 ball pool rank, in the free clients people mean, is a progression of levels, cues, and a pass. This page does not know the rewards attached to those level names. Ranks do not set the stake on this site. Equal cash is the match, and a legendary cue does not change it.",
+    "8 ball pool rank can refer to a game’s level progression, league standing or another rating system. Check the label in the client before comparing players. Miniclip cue upgrades can improve in-game attributes; those benefits belong to that game. A level, pass or cue purchased there does not change PVPspinArena’s equal dollar stakes or 5% pot fee.",
   facts: [
-    "Miniclip-style ranks, legendary cues, and a pass are free-game progression.",
-    "The reward for each level name is not known to this page, so it is not listed.",
-    "A cue upgrade in that client is cosmetic coins, and the coin price is not published here.",
-    "On this table, rank does not pick the stake. Both players post the same cash.",
+    "An account level, league position and performance rating are different measures.",
+    "Miniclip documents cue attributes including Force, Aim, Spin and Time.",
+    "A season pass has its own reward track and purchase terms.",
+    "Another game’s rank or cue cannot fund or discount a PVPspinArena stake.",
   ],
   sections: [
     {
       id: "progression",
-      title: "A ladder the free game owns",
-      body: "8 ball pool rank is how a free client keeps you in the client. You win coins, you climb, a cue changes colour, a pass offers a season of extra cosmetics. The straight answer is that those rewards are the free game's, and this page does not know the level names' payouts.\n\nMiniclip-style is a description of the genre, not a claim that every client uses one identical ladder. If your client calls the top step something else, the something else is still not stored here. Printing a guessed list of level names would be a glossary of the same kind this site refused for hustler slang. Unknown stays unlabeled.\n\nA rank should be read alongside [pool rules](/guides/8-ball-pool-rules) and [how pool betting works](/guides/pool-betting), rather than treated as a cash value. Related formats are in the [skill wagers guides](/guides/topics/skill-wagers).",
+      title: "Identify which number you are comparing",
+      body: `Read whether the client displays experience level, a weekly league result or a skill rating. A number earned through progression does not automatically measure the same thing as a rating based on match results.
+
+A league leaderboard can also use a limited scoring window. Check that window and the current reward track before treating position as a permanent rank. Compare [FargoRate](/guides/fargo-rate), [pool formats](/guides/best-pool-games) and the [skill wagers topic](/guides/topics/skill-wagers).`,
     },
     {
       id: "cosmetics",
-      title: "Legendary cues spend coins",
-      body: `A legendary cue, in that progression, is a picture you paid for with cosmetic coins. The coin price is not published on this page. It is not cash, and it does not withdraw as cash from this site, because this site did not sell it. Cue upgrades are not a product beside our stake. Shop talk about 18 to 21 ounces and a 12 to 13 mm tip is a different conversation, labeled as shop talk on the cue page, and it is not a WPA specification either.
+      title: "Cue upgrades can affect the original game",
+      body: `Miniclip’s Victory Cues documentation says upgrades increase cue attributes and award XP. Its legendary-cue documentation also describes conditional coin-entry payback. These are game-specific mechanics, not a withdrawable cash value or a transferable equipment advantage.
 
-The physics id stored with that rack does not receive the cosmetic. There is no random miss that a legendary cue is allowed to cancel. Ghost-ball aim is still a teaching picture without a measured make percentage. If the free client draws an aim line as a reward for a rank, that line is their teaching layer. It does not travel.`,
+Check the owned cue panel and current event terms for an exact benefit. A coin purchase price, reward balance and cash resale promise are different things; do not derive a cash exchange rate from a cue’s displayed attributes.`,
     },
     {
       id: "checklist",
-      title: "Before you carry a rank into a pot",
-      body: `### Separate the ladder from the stake
+      title: "Passes and paid progression",
+      body: `Read the reward track, duration and purchase conditions before buying a pass. An unlocked cue or cosmetic stays subject to the game’s account and product rules. A private seller claiming to transfer a rank introduces a separate account-security and payment risk.
 
-- Do not expect this page to list level rewards. It does not know them.
-- Treat legendary cues as cosmetics, not as a cash edge.
-- Remember a pass in a free game is not a buy-in here.
-- Post the same stake as the other player.
-- Ignore a rank that claims to lower the 5% fee.
-- Do not buy a rank from a chat seller.`,
+Use the developer’s official purchase route if choosing to buy. Never share a password or wallet seed phrase with a rank seller.`,
     },
     {
       id: "where",
-      title: "Ranks beside cues and the three kinds of game",
-      body: "A free-game rank does not set the stake. Both players post the same cash, as [8 ball pool online](/guides/8-ball-pool-hub) describes.\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
-    },
-    {
-      id: "equal",
-      title: "Equal cash is the only ladder on the cashier",
-      body: `Ranks do not set the stake. The stake is a choice you and the other player make from the same list. Equal cash is the match. A fair money match is usually equal stakes, not a secret handicap, and a rank would be exactly that secret if we let it shrink one side. We do not. No FargoRate is applied. No APA skill level is stored. A pass does not buy a shorter race.
+      title: "What carries into a different cash table",
+      body: `On [PVPspinArena’s pool table](/8-ball-pool), the players fund equal dollar stakes. External ranks and cue upgrades do not alter the stored shot parameters or fee. Two $5 stakes form a $10 pot; after the 5% fee the winner receives $9.50.
 
-The fee stays 5% of the pot. The winner is credited 95%. You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches. Three timeouts forfeit. The surface is 2.54 m by 1.27 m. You cannot share an account so that one rank plays both seats. Settlement is the replay. A high level who misses the 8 loses the rack the same way a new account does.`,
-    },
-    {
-      id: "not-for-sale",
-      title: "Do not buy a rank from a person",
-      body: `Chat sellers offer levels, cues, and passes for crypto sent to a personal address. That offer has two problems. The goods are a free game's database, which this site does not control and will not promise to deliver. The payment is off-site, which is how people get cheated whether the goods exist or not. There is no [official Discord table](/guides/8-ball-pool-discord) or Telegram table here to make the seller legitimate. A seed phrase is never the trade.
-
-If you want the free game's progression, use that game's own store and accept that this page does not know the prices. If you want a money match, use the cashier and accept that your rank will not be on the scoreboard, because there is no rank scoreboard. The best-games page keeps the free client and the pot in separate columns so this confusion has somewhere systematic to go.`,
+Learn the house [8-ball rules](/guides/8-ball-pool-rules) rather than transferring another app’s break and foul rules. Cash play requires eligible adult status and lawful access; limits are on [responsible gambling](/responsible-gambling).`,
     },
   ],
   faqs: [
     {
-      q: "What are the 8 ball pool ranks?",
-      a: "Free clients use a ladder of level names, often with cues and a pass attached. This page does not know those names' rewards, so it will not print a table of prizes it might have misremembered. The ladder is that client's.",
+      q: "Are level and rank the same?",
+      a: "Not necessarily. Experience, league position and a performance rating can be separate measures. Read the client’s label and scoring rules.",
     },
     {
-      q: "Does rank change the stake here?",
-      a: "No. Ranks do not set the stake. Equal cash is the match. A high level in a free game and a new account post the same $1, $2, $5, $10, $25, or $50 if they choose the same button.",
+      q: "Are legendary cues just cosmetic?",
+      a: "Not in every game. Miniclip documents attributes and conditional coin payback for its cues. Those features remain inside that game.",
     },
     {
-      q: "What is a legendary cue worth?",
-      a: "Inside the free client it is a cosmetic, bought with coins. The coin price is not published here. On this site it is worth nothing in the pot, because cue upgrades are not sold and physics does not read the artwork.",
+      q: "Does a rank change the cash stake here?",
+      a: "No. PVPspinArena uses equal dollar stakes and does not import another app’s progression benefits.",
     },
     {
-      q: "Is the season pass a gambling buy-in?",
-      a: "A pass in a free game is that game's progression product. This page does not know its price. It is not a stake on this table and it does not discount the 5% fee. Do not confuse a pass with a pot.",
+      q: "Can I withdraw the value of a cue here?",
+      a: "No. An external cue or coin balance is not part of this service’s dollar balance.",
     },
     {
-      q: "Can I bet my rank against someone?",
-      a: "Not here. There is no market in levels. There is a match for money at equal stakes, settled by the replay. Selling a rank in Discord is the off-site payment problem, not a feature.",
-    },
-    {
-      q: "Does FargoRate equal a free-game rank?",
-      a: "No. FargoRate is a rating from games won and lost, described on its own page, and it is not applied here either. A Miniclip-style level is a third number. None of the three changes the button labels.",
+      q: "Is a pass a tournament buy-in?",
+      a: "A progression pass and entry to a cash tournament have different terms. Check which product the purchase actually buys.",
     },
   ],
   sources: [
     {
-      label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
-      url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
+      label: "Miniclip: cue upgrades and attributes",
+      url: "https://support.miniclip.com/hc/en-us/articles/115015644088-Victory-Cues-8-Ball-Pool",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "Miniclip: legendary cues and payback",
+      url: "https://support.miniclip.com/hc/en-us/articles/115015707447-Legendary-Cues-and-Payback",
+    },
   ],
   related: [
     "8-ball-pool-for-money",
@@ -102,5 +86,5 @@ If you want the free game's progression, use that game's own store and accept th
     "best-pool-cue",
     "8-ball-pool-discord",
   ],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

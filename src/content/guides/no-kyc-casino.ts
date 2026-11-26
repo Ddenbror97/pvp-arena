@@ -27,104 +27,27 @@ export const guide: Guide = {
     {
       id: "what-it-checks",
       title: "What a no KYC casino actually checks",
-      body: `“No KYC” is a marketing phrase. Read it as **no government ID at the cashier today**, not as **no records**.
-
-A typical [crypto casino](/guides/what-is-a-crypto-casino) in this category still collects some of the following, even when the landing page says no verification:
-
-- An email or a session cookie.
-- A wallet address you connected or verified.
-- Deposit and withdrawal hashes.
-- IP, device and anti-abuse signals.
-- Game logs tied to the account.
-
-PVPspinArena uses email sign-in plus a signed wallet message. That message proves control of an address. It is not a passport. It is also not anonymity. The same address will show every Base transfer on an explorer.
-
-If a site says no KYC and then emails you for a selfie after a $50 win, the phrase was a funnel, not a policy. Ask when ID is triggered before you deposit.
-
-This sits with other [foundations](/guides/topics/foundations) topics: what the product is, not how to hide from the law.
-
-A no KYC casino can still freeze an account for fraud, bonus abuse or legal process. Skipping a selfie at signup is not a promise that the operator will never look at you again. It is a promise about the default cashier, until the policy page says otherwise.
-
-Write down what you actually submitted: email, wallet, maybe a username. That list is the identity this site has, even without a passport number.`,
+      body: "“No KYC” is a marketing phrase. Read it as **no government ID at the cashier today**, not as **no records**.\n\nA typical [crypto casino](/guides/what-is-a-crypto-casino) in this category still collects some of the following, even when the landing page says no verification:\n\n- An email or a session cookie.\n- A wallet address you connected or verified.\n- Deposit and withdrawal hashes.\n- IP, device and anti-abuse signals.\n- Game logs tied to the account.\n\nPVPspinArena uses email sign-in plus a signed wallet message. That message proves control of an address. It is not a passport. It is also not anonymity. The same address will show every Base transfer on an explorer.\n\nIf a site says no KYC and then emails you for a selfie after a $50 win, the phrase was a funnel, not a policy. Ask when ID is triggered before you deposit.\n\nThis sits with other [foundations](/guides/topics/foundations) topics: what the product is, not how to hide from the law.\n\nA no KYC casino can still freeze an account for fraud, bonus abuse or legal process. Skipping a selfie at signup is not a promise that the operator will never look at you again. It is a promise about the default cashier, until the policy page says otherwise.\n\nWrite down what you actually submitted: email, wallet, maybe a username. That list is the identity this site has, even without a passport number.",
     },
     {
       id: "wallet-only",
       title: "Wallet-only signup versus email plus wallet",
-      body: `Two designs get sold as no verification casino.
-
-### Wallet as the account
-
-You sign a message and that address is the login. Lose the wallet, lose the account. Convenient, brutal.
-
-### Email account, wallet as payment identity
-
-You recover with email. The wallet is linked so deposits match. PVPspinArena uses this shape. Someone who steals your email still should not be able to drain a wallet they do not control, because payouts go to an address you specify and deposits must come from the verified sender.
-
-Neither design needs your [seed phrase](/guides/seed-phrase). A page that asks for the words to “skip KYC” is a drain site. See [fake casino sites](/guides/fake-casino-sites).
-
-You must be 18 or older. Skipping ID is not skipping the age rule. If you cannot legally gamble where you live, a wallet-only form does not fix that.
-
-Email-plus-wallet is easier to recover if you lose a phone and still have the phrase and the inbox. Wallet-only is easier to lose entirely. Choose the recovery story you can actually live with. Neither story should include typing the phrase into the casino.
-
-If you use a throwaway email, you still need to read withdrawal notices. A no KYC cashier that emails “review needed” is useless if you never open the inbox.`,
+      body: "Two designs get sold as no verification casino.\n\n### Wallet as the account\n\nYou sign a message and that address is the login. Lose the wallet, lose the account. Convenient, brutal.\n\n### Email account, wallet as payment identity\n\nYou recover with email. The wallet is linked so deposits match. PVPspinArena uses this shape. Someone who steals your email still should not be able to drain a wallet they do not control, because payouts go to an address you specify and deposits must come from the verified sender.\n\nNeither design needs your [seed phrase](/guides/seed-phrase). A page that asks for the words to “skip KYC” is a drain site. See [fake casino sites](/guides/fake-casino-sites).\n\nYou must be 18 or older. Skipping ID is not skipping the age rule. If you cannot legally gamble where you live, a wallet-only form does not fix that.\n\nEmail-plus-wallet is easier to recover if you lose a phone and still have the phrase and the inbox. Wallet-only is easier to lose entirely. Choose the recovery story you can actually live with. Neither story should include typing the phrase into the casino.\n\nIf you use a throwaway email, you still need to read withdrawal notices. A no KYC cashier that emails “review needed” is useless if you never open the inbox.",
     },
     {
       id: "limits",
       title: "Withdrawal limits are the real KYC substitute",
-      body: `Sites that skip ID often cap cash-out instead. That is the tradeoff you are buying.
-
-| Control | Why it exists | PVPspinArena today |
-| --- | --- | --- |
-| Daily withdrawal cap | Limit stolen-session damage and hot-wallet drain | $250 per day |
-| Review above a threshold | Human look at destination and pattern | Over $25 |
-| One wallet per address | Stop people linking the treasury to a player | Enforced |
-| Network allow-list | Only watch one chain | Base USDC and ETH |
-
-Read [crypto casino withdrawals](/guides/crypto-casino-withdrawals) for timing. A no KYC badge does not mean instant unlimited USDC.
-
-If you need to move more than the daily cap, you wait. Opening a second account to dodge the cap is an abuse pattern, not a privacy feature.
-
-Limits also protect other players in a PvP pot. A stolen account that can empty an unlimited cashier becomes everyone else’s problem when the operator’s hot wallet is thin. A $250 daily cap is small on purpose.
-
-Reviews over $25 are not a hidden passport demand by default. They are a pause. If a review ever turns into an ID request, that is a policy change you should read before you send more money. Do not upload documents to a Telegram admin who claims to be speeding the ticket.`,
+      body: "Sites that skip ID often cap cash-out instead. That is the tradeoff you are buying.\n\n| Control | Why it exists | PVPspinArena today |\n| --- | --- | --- |\n| Daily withdrawal cap | Limit stolen-session damage and hot-wallet drain | $250 per day |\n| Review above a threshold | Human look at destination and pattern | Over $25 |\n| One wallet per address | Stop people linking the treasury to a player | Enforced |\n| Network allow-list | Only watch one chain | Base USDC and ETH |\n\nRead [crypto casino withdrawals](/guides/crypto-casino-withdrawals) for timing. A no KYC badge does not mean instant unlimited USDC.\n\nIf you need to move more than the daily cap, you wait. Opening a second account to dodge the cap is an abuse pattern, not a privacy feature.\n\nLimits also protect other players in a PvP pot. A stolen account that can empty an unlimited cashier becomes everyone else’s problem when the operator’s hot wallet is thin. A $250 daily cap is small on purpose.\n\nReviews over $25 are not a hidden passport demand by default. They are a pause. If a review ever turns into an ID request, that is a policy change you should read before you send more money. Do not upload documents to a Telegram admin who claims to be speeding the ticket.",
     },
     {
       id: "travel-rule",
       title: "Travel-rule pressure and the ramps around the casino",
-      body: `Even when the casino skips ID, the world around it may not. FATF travel-rule guidance pushes virtual asset service providers to share sender and receiver information above thresholds. Exchanges, some hosted wallets and fiat ramps already collect KYC.
-
-So you can have a no KYC casino and a fully identified Coinbase buy on the same afternoon. The chain link between the exchange withdrawal and the casino deposit is often easy to follow. The casino not storing a passport photo does not delete the exchange file.
-
-Expect more pressure over time, not less, if a site grows or touches fiat. A small PvP Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot site that only talks to Base still sits in that wider market.
-
-Do not take legal advice from a guide. If you need to know what you must report, ask a professional where you live.
-
-On-ramps are the usual leak. Card buys, bank rails and hosted wallets collect names because they touch fiat. You can use a no KYC casino every night and still have a complete identity file at the place you bought USDC. That is normal finance, not a betrayal of the casino slogan.
-
-If a site boasts that it “beats the travel rule,” be sceptical. Operators do not get to rewrite international guidance for marketing. They can choose not to be the regulated intermediary. The exchange you used might still be one.`,
+      body: "Even when the casino skips ID, the world around it may not. FATF travel-rule guidance pushes virtual asset service providers to share sender and receiver information above thresholds. Exchanges, some hosted wallets and fiat ramps already collect KYC.\n\nSo you can have a no KYC casino and a fully identified Coinbase buy on the same afternoon. The chain link between the exchange withdrawal and the casino deposit is often easy to follow. The casino not storing a passport photo does not delete the exchange file.\n\nExpect more pressure over time, not less, if a site grows or touches fiat. A small PvP Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot site that only talks to Base still sits in that wider market.\n\nDo not take legal advice from a guide. If you need to know what you must report, ask a professional where you live.\n\nOn-ramps are the usual leak. Card buys, bank rails and hosted wallets collect names because they touch fiat. You can use a no KYC casino every night and still have a complete identity file at the place you bought USDC. That is normal finance, not a betrayal of the casino slogan.\n\nIf a site boasts that it “beats the travel rule,” be sceptical. Operators do not get to rewrite international guidance for marketing. They can choose not to be the regulated intermediary. The exchange you used might still be one.",
     },
     {
       id: "privacy-you-lack",
       title: "The privacy you do not get on-chain",
-      body: `A public ledger is a public ledger.
-
-- Anyone can see the verified address receive a deposit and later receive a payout.
-- Cluster analysis can tie that address to an exchange you KYC’d.
-- IP logs on the site can tie a session to a home connection if they are stored or disclosed.
-- Reusing one wallet for savings, NFTs and gambling makes the graph denser.
-
-If your goal is an [anonymous casino](/guides/anonymous-casino), no KYC is only one layer, and a weak one by itself. Mixing, chain-hopping and “privacy coins” introduce their own scams and are outside what PVPspinArena supports. The site wants USDC or ETH on Base from a verified wallet.
-
-Practical privacy that does not require folklore:
-
-- Use a dedicated gaming wallet with a budget you can lose.
-- Do not post your deposit address on social media.
-- Bookmark the real site so you are not logging into a clone that harvests extra data.
-- Read the [privacy](/privacy) page for what this site says it stores.
-
-Reusing one address for NFT marketplaces, payroll and gambling is how casual observers, not only companies, connect dots. A dedicated gaming wallet is hygiene. It is not a mixer and it is not a guarantee.
-
-Do not send funds through a stranger “to break the trail” on the way to this site. That is how people lose the whole stack to a middleman. PVPspinArena wants a send from your verified wallet on Base, nothing more creative.`,
+      body: "A public ledger is a public ledger.\n\n- Anyone can see the verified address receive a deposit and later receive a payout.\n- Cluster analysis can tie that address to an exchange you KYC’d.\n- IP logs on the site can tie a session to a home connection if they are stored or disclosed.\n- Reusing one wallet for savings, NFTs and gambling makes the graph denser.\n\nIf your goal is an [anonymous casino](/guides/anonymous-casino), no KYC is only one layer, and a weak one by itself. Mixing, chain-hopping and “privacy coins” introduce their own scams and are outside what PVPspinArena supports. The site wants USDC or ETH on Base from a verified wallet.\n\nPractical privacy that does not require folklore:\n\n- Use a dedicated gaming wallet with a budget you can lose.\n- Do not post your deposit address on social media.\n- Bookmark the real site so you are not logging into a clone that harvests extra data.\n- Read the [privacy](/privacy) page for what this site says it stores.\n\nReusing one address for NFT marketplaces, payroll and gambling is how casual observers, not only companies, connect dots. A dedicated gaming wallet is hygiene. It is not a mixer and it is not a guarantee.\n\nDo not send funds through a stranger “to break the trail” on the way to this site. That is how people lose the whole stack to a middleman. PVPspinArena wants a send from your verified wallet on Base, nothing more creative.",
     },
     {
       id: "when-it-breaks",
@@ -134,7 +57,7 @@ Do not send funds through a stranger “to break the trail” on the way to this
     {
       id: "summary",
       title: "Summary",
-      body: "A no KYC casino skips the passport upload for ordinary play. When a cashier does ask for the ID, the documents and the waits are [casino account verification](/guides/casino-account-verification). It does not skip chain analysis, IPs, limits or the law where you live. PVPspinArena is wallet-verified, Base-only and capped on the way out. Treat “no verification” as a cashier style only, then read the published withdrawal rules and the privacy you actually have.\n\nIf you came here from an [anonymous casino](/guides/anonymous-casino) search, keep going there next. The two phrases are sold as synonyms and they are not. This page is about the ID skip. That page is about what remains visible anyway.\n\nFor day-to-day play, behave as if the cashier is paperless and the ledger is public. Verify the wallet, send a test on Base, keep hashes and respect the $250 daily cap. That is the whole no KYC bargain on PVPspinArena: less paperwork at signup, not fewer rules on the way out, and not a private room at all on Base.\n\nThe same pitch shows up on sports tickets. A [no KYC sportsbook](/guides/no-kyc-sportsbook) can skip documents at signup and still freeze the withdrawal. The coin does not remove the question.",
+      body: "A no KYC casino skips the passport upload for ordinary play. When a cashier does ask for the ID, the documents and the waits are [casino account verification](/guides/casino-account-verification). It does not skip chain analysis, IPs, limits or the law where you live. PVPspinArena is wallet-verified, Base-only and capped on the way out. Treat “no verification” as a cashier style only, then read the published withdrawal rules and the privacy you actually have.\n\nIf you came here from an [anonymous casino](/guides/anonymous-casino) search, keep going there next. The two phrases are sold as synonyms and they are not. A separate privacy check covers the account and payment data that remains visible.\n\nFor day-to-day play, behave as if the cashier is paperless and the ledger is public. Verify the wallet, send a test on Base, keep hashes and respect the $250 daily cap. That is the whole no KYC bargain on PVPspinArena: less paperwork at signup, not fewer rules on the way out, and not a private room at all on Base.\n\nThe same pitch shows up on sports tickets. A [no KYC sportsbook](/guides/no-kyc-sportsbook) can skip documents at signup and still freeze the withdrawal. The coin does not remove the question.",
     },
   ],
   faqs: [
@@ -180,5 +103,5 @@ Do not send funds through a stranger “to break the trail” on the way to this
     "vpn-casino",
     "aml-gambling",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

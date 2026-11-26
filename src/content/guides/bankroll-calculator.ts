@@ -38,7 +38,9 @@ It is not a tip sheet. It will not tell you which colour is “due.” It will t
 - Turning a progression into a growth engine.
 - Replacing a written [gambling budget](/guides/gambling-budget).
 
-More odds and sizing pieces live in the [Games and odds topic](/guides/topics/games-and-odds). Adults only.`,
+More odds and sizing pieces live in the [Games and odds topic](/guides/topics/games-and-odds). Adults only.
+
+MIT’s gambler’s-ruin model assumes fixed win and loss steps and specified stopping boundaries. Variable stakes need a different model.`,
     },
     {
       id: "inputs",
@@ -263,8 +265,18 @@ The calculator sizes a roll; [risk of ruin](/guides/risk-of-ruin) is the formula
     },
   ],
   sources: [
-    { label: "Wikipedia: Risk of ruin", url: "https://en.wikipedia.org/wiki/Risk_of_ruin" },
-    { label: "Wikipedia: Kelly criterion", url: "https://en.wikipedia.org/wiki/Kelly_criterion" },
+    {
+      label: "Wikipedia: Risk of ruin",
+      url: "https://en.wikipedia.org/wiki/Risk_of_ruin",
+    },
+    {
+      label: "Wikipedia: Kelly criterion",
+      url: "https://en.wikipedia.org/wiki/Kelly_criterion",
+    },
+    {
+      label: "MIT: Mathematics for Computer Science, gambler’s ruin",
+      url: "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/mit6_042js15_textbook.pdf",
+    },
   ],
   related: [
     "gambling-budget",
@@ -274,5 +286,5 @@ The calculator sizes a roll; [risk of ruin](/guides/risk-of-ruin) is the formula
     "house-edge",
     "risk-of-ruin",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

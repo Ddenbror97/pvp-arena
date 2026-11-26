@@ -42,7 +42,9 @@ Two rules trip up new players. First, combinations only count when they appear i
 
 Most groups play to 10,000 points. When someone passes the target, every other player gets one last turn to beat them. Many tables also make each player's first bank reach a minimum, usually 500. Until you get on the board, small safe banks don't count.
 
-Farkle is one of the kitchen-table games in the [games of chance hub](/guides/topics/games-of-chance). Its maths is the same dice arithmetic behind [dice roll probability](/guides/dice-roll-probability). The difference is that you choose when to stop.`,
+Farkle is one of the kitchen-table games in the [games of chance hub](/guides/topics/games-of-chance). Its maths is the same dice arithmetic behind [dice roll probability](/guides/dice-roll-probability). The difference is that you choose when to stop.
+
+PlayMonster publishes the scoring and turn rules for its Farkle edition. Use the scoring sheet supplied with the chosen edition when a combination has competing house values.`,
     },
     {
       id: "scoring",
@@ -146,19 +148,6 @@ These choices change the odds. If three pairs don't score, six-dice farkles rise
 
 Among adults, Farkle is sometimes played for a small stake per game, or per 1,000 points of margin. Where money is involved, gambling is for adults only (18+, or the legal age where you live). Agree the stake in advance, and keep it to an amount everyone at the table can lose without it hurting. Farkle is mostly luck with a thin layer of decision-making. Better stopping rules help a little over many games, but they won't save a bad night of rolls.`,
     },
-    {
-      id: "pvp",
-      title: "Farkle maths and a hashed PvP round",
-      body: `The farkle table is just a list of probabilities, and the same kind of arithmetic prices every dice-style bet. Read it next to [crypto dice](/guides/crypto-dice-game) or a two-player [dice duel](/guides/dice-duel-game) and you'll see the same pattern. You count outcomes, divide by the total, then compare that probability with what you're paid.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, all settled in US dollars. [Coinflip](/coinflip) is a straight 50/50 between two players. Roulette uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot gives you a win chance equal to your share of the pot. There's no push-your-luck choice in these games, so the maths is even simpler than Farkle's. Every round comes from committed seeds, and you can check any settled round on the [fairness page](/fairness).
-
-One Farkle habit carries over well: decide your stopping rule before emotion starts making it for you. The [responsible gambling](/responsible-gambling) page has limits and tools. Play is 18+ only.
-
-In the same cluster, see also [yahtzee rules](/guides/yahtzee-rules), [liars dice](/guides/liars-dice), and [poker dice](/guides/poker-dice).
-
-See also [pig](/guides/pig-dice-game).`,
-    },
   ],
   faqs: [
     {
@@ -183,9 +172,22 @@ See also [pig](/guides/pig-dice-game).`,
     },
   ],
   sources: [
-    { label: "Wikipedia: Farkle", url: "https://en.wikipedia.org/wiki/Farkle" },
-    { label: "Wikipedia: Dice", url: "https://en.wikipedia.org/wiki/Dice" },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
+    {
+      label: "PlayMonster: Farkle rules",
+      url: "https://playmonster.com/wp-content/uploads/2018/06/Farkle-Rules.pdf",
+    },
+    {
+      label: "Wikipedia: Farkle",
+      url: "https://en.wikipedia.org/wiki/Farkle",
+    },
+    {
+      label: "Wikipedia: Dice",
+      url: "https://en.wikipedia.org/wiki/Dice",
+    },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
   ],
   related: [
     "yahtzee-rules",
@@ -197,5 +199,5 @@ See also [pig](/guides/pig-dice-game).`,
     "poker-dice",
     "pig-dice-game",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

@@ -32,7 +32,9 @@ export const guide: Guide = {
 
 The caller does not choose numbers and cannot influence them. Their skill is pace, clarity and trust. A caller who rushes, mumbles or checks sloppily ruins a game even though the maths is the same.
 
-What counts as a win is covered in [bingo patterns](/guides/bingo-patterns). Online bingo with crypto is covered in [crypto bingo](/guides/crypto-bingo). Both belong to the [Games of chance topic](/guides/topics/games-of-chance).`,
+What counts as a win is covered in [bingo patterns](/guides/bingo-patterns). Online bingo with crypto is covered in [crypto bingo](/guides/crypto-bingo). Both belong to the [Games of chance topic](/guides/topics/games-of-chance).
+
+The British bingo display-of-rules condition requires rules for each offered variant. A caller's pattern announcement should agree with that published game.`,
     },
     {
       id: "equipment",
@@ -170,15 +172,6 @@ Selling cards for cash prizes is gambling in most places, even at a small fundra
 
 Numbers carry superstition in any draw. Players will tell you 7 is lucky and 13 is not, but the cage does not know. The [lucky number](/guides/lucky-numbers-gambling) guide covers why beliefs about numbers do not change the odds.`,
     },
-    {
-      id: "pvp",
-      title: "From the caller's cage to a hashed round",
-      body: `A good caller earns trust by making the draw visible: the balls are counted, each one is shown, and the masterboard lets anyone check a claim. Bingo relies on people watching.
-
-PVPspinArena replaces the watching with cryptography. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Before each round, the result is fixed by committed seeds (a commit-reveal scheme). After it settles, anyone can check the round on the [fairness](/fairness) page, the same way a checker reads a card against the masterboard. In Jackpot your chance equals your share of the pot, much like your share of the cards in a bingo hall.
-
-No caller, cage or seed changes the odds in anyone's favour after the fact. If money on games of chance stops being a fun night out, the [responsible gambling](/responsible-gambling) page has limits and support links.`,
-    },
   ],
   faqs: [
     {
@@ -204,6 +197,10 @@ No caller, cage or seed changes the odds in anyone's favour after the fact. If m
   ],
   sources: [
     {
+      label: "UK Gambling Commission: display of bingo rules",
+      url: "https://www.gamblingcommission.gov.uk/licensees-and-businesses/lccp/condition/4-2-2-bingo",
+    },
+    {
       label: "Wikipedia: List of British bingo nicknames",
       url: "https://en.wikipedia.org/wiki/List_of_British_bingo_nicknames",
     },
@@ -213,5 +210,5 @@ No caller, cage or seed changes the odds in anyone's favour after the fact. If m
     },
   ],
   related: ["bingo-patterns", "crypto-bingo", "lucky-numbers-gambling", "pull-tabs", "bingo-odds"],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

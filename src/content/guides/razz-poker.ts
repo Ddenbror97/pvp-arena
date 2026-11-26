@@ -85,26 +85,10 @@ The [poker topic](/guides/topics/poker) collects the stud page and the Hold'em p
     },
     {
       id: "fees",
-      title: "A stud-low game we do not deal, beside a Hold'em fee",
-      body: `Card-room razz has a rake or a time charge on that room's sheet. The number is not published here.
+      title: "Read the stud structure and fee",
+      body: `A razz room must specify antes, bring-in, limits, raise caps and rake. Those terms affect cost independently of the low-hand ranking.
 
-A house-banked casino might offer a different low game against the house. Any edge on that product is not published here.
-
-We do not list a promo code, and we are not an affiliate of a stud site.
-
-PVPspinArena does not deal razz poker. The poker you can open is six-max No-Limit Hold'em.
-
-Hold'em on this site is charged 5% only when the flop arrives. Antes and bring-ins from razz do not transfer onto that table.
-
-| | Razz | House-banked casino | PVPspinArena |
-| --- | --- | --- | --- |
-| Game | seven-card stud, ace-to-five low | not published | six-max No-Limit Hold'em |
-| Forced bets | ante and bring-in, amounts not published as universal | not published | blinds in Hold'em, no razz bring-in |
-| Fee | not published | not published | 5% of the pot only after a flop |
-| Promo code | not published | not published | we do not list a promo code |
-| Funding | not published | not published | US dollars from Bitcoin, or USDC or ETH on Base |
-
-[Crypto poker](/guides/crypto-poker) is the Hold'em fee discussion for this site. It will not deal you a door card.`,
+PVPspinArena does not deal razz; its [poker table](/poker) is six-max No-Limit Hold’em. The 5% fee after a flop belongs to that separate game.`,
     },
     {
       id: "dollars",
@@ -177,35 +161,15 @@ Your live cards are the decision. High cards paired with other high cards do not
     },
     {
       id: "legal",
-      title: "Adults, a lowball stud night, and a lobby without it",
-      body: `Razz for money is for adults. If the local age is higher than 18, follow the higher age.
+      title: "Eligibility and a defined limit structure",
+      body: `Razz cash play requires the applicable minimum age and lawful access. Agree antes, bring-in, betting limits and fees before dealing; a social game and a public cardroom can have different legal requirements.
 
-This is not legal advice. Antes do not change whether a public game is allowed where you live.
-
-Read the regulator. No statute number is printed here.
-
-This page will not help you run a stud business, set a hidden rake, or fill a table with strangers. A kitchen ante you all agreed to is the limit of the dollar example above.
-
-PVPspinArena does not deal razz. Anyone looking for a door-card game should be told that plainly, then pointed at Hold'em if they still want to play here.
-
-Read the [responsible gambling](/responsible-gambling) notes before a fixed-limit structure tempts you to call every street because each bet looks small. Small bets across five streets are still a buy-in. Set the stop before third street of the first hand.`,
+Set limits before third street. [Responsible gambling](/responsible-gambling) provides spending and access controls.`,
     },
     {
       id: "closer",
-      title: "Leave the wheel on the stud page and open Hold'em here",
-      body: `How PvP compares: razz is ace-to-five stud low, with antes and a bring-in whose sizes you must read from the room. [Poker](/poker) is six-max No-Limit Hold'em.
-
-[Fairness](/fairness) explains the committed seed for hands that site deals. If a live block is showing, it updates from settled play.
-
-This article does not list recent razz results or recent Hold'em pots.
-
-Big O, short deck, 2-7, and open-face Chinese are not in that lobby either. The stud high cousin remains [seven-card stud](/guides/seven-card-stud) for anyone who wants the upcards without the low.
-
-Chase A-2-3-4-5. Ignore flushes.
-
-Refuse any limit structure this page did not attribute to a specific kitchen card. Then play Hold'em, if you want our table, under a 5% fee that applies only after the flop.
-
-Ace-to-five stud low is not draw. [Deuce-to-seven draw](/guides/2-7-triple-draw) uses a different best hand and three draws.`,
+      title: "Keep the lowball rankings separate",
+      body: "Razz uses ace-to-five low rankings: straights and flushes do not count against the hand. Compare [seven-card stud](/guides/seven-card-stud) for high-hand stud and [2-7 triple draw](/guides/2-7-triple-draw) for a lowball game where straights and flushes do matter. A draw chart cannot be transferred unchanged to razz.",
     },
   ],
   faqs: [
@@ -255,7 +219,10 @@ Fold rough doors when you are drawing live into a board that already stole your 
       label: "Robert's Rules of Poker (Pagat copy)",
       url: "https://www.pagat.com/docs/RobsPkrRules11.pdf",
     },
-    { label: "World Series of Poker", url: "https://www.wsop.com/" },
+    {
+      label: "World Series of Poker",
+      url: "https://www.wsop.com/",
+    },
   ],
   related: [
     "seven-card-stud",
@@ -264,5 +231,5 @@ Fold rough doors when you are drawing live into a board that already stole your 
     "poker-bankroll-management",
     "2-7-triple-draw",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

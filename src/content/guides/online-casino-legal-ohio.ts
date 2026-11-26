@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Is online casino play legal in Ohio? No: sports betting has been legal online since 1 January 2023, but online casino bills have stalled until 2027.",
   h1: "Online casino legal Ohio: sports betting yes, online casinos not yet",
   answer:
-    "Online casino legal Ohio? No. Ohio has licensed online sports betting since 1 January 2023 under the Ohio Casino Control Commission, and it has land-based casinos and racinos. Online casino games for real money are not authorized: bills to legalize them stalled in 2025 and 2026, and their sponsor now points to 2027.",
+    "Online casino legal Ohio? Ohio authorizes online sports gaming through licensed operators, but that sports permission does not authorize online casino slots, roulette or poker. Sports gaming launched on 1 January 2023 under the Ohio Casino Control Commission. Verify the licensed activity rather than relying on legislative forecasts or a casino brand's presence in another state.",
   facts: [
     "Online sports betting: legal since 1 January 2023, 21+.",
     "Regulator: the Ohio Casino Control Commission.",
@@ -27,47 +27,28 @@ export const guide: Guide = {
     {
       id: "glance",
       title: "Ohio at a glance",
-      body: `| Product | Legal online in Ohio? |
-| --- | --- |
-| Sports betting | Yes, since 1 January 2023 (21+) |
-| Online casino (slots, table games) | **No** |
-| Online poker | **No** |
-| Lottery | Ohio Lottery products |
-| In-person casino games | Four casinos and seven racinos |
-
-[Where sports betting is legal](/guides/sports-betting-legal-states) compares states, and [is online casino legal](/guides/is-online-casino-legal) lists the states that license online casinos.`,
+      body: "| Product | Legal online in Ohio? |\n| --- | --- |\n| Sports betting | Yes, since 1 January 2023 (21+) |\n| Online casino (slots, table games) | **No** |\n| Online poker | **No** |\n| Lottery | Ohio Lottery products |\n| In-person casino games | Four casinos and seven racinos |\n\n",
     },
     {
       id: "law",
       title: "What the law says",
-      body: `Ohio legalized sports betting in December 2021, and retail and online sportsbooks launched on 1 January 2023 under the [Ohio Casino Control Commission](https://casinocontrol.ohio.gov/). Online casino legislation has been introduced but has not advanced; after the 2026 session, the bill's sponsor said the next opening would be 2027, as [SBC Americas reported in September 2026](https://sbcamericas.com/2026/09/30/ohio-igaming-sponsor-2027-opening/). Until a law passes, real-money online casino games are not legal in Ohio. Ohio also banned player-specific prop bets on college athletes in 2024; see [prop bets explained](/guides/prop-bets-explained).`,
+      body: "Ohio's [sports-gaming framework](https://casinocontrol.ohio.gov/licensing-renewal/02-sports-gaming/welcome) covers licensed online sportsbooks, retail facilities and lottery sports-gaming terminals. Chapter 3775 governs that sports activity.\n\n[Section 3775.04](https://codes.ohio.gov/ohio-revised-code/section-3775.04) specifies that a Type A licence authorizes online sports pools. A proposal to expand gaming and a prediction about its passage do not establish a live online casino permission. Compare [prop bet rules](/guides/prop-bets-explained) separately from the casino question.",
     },
     {
       id: "offshore",
-      title: "Offshore and sweepstakes sites",
-      body: `A real-money site that is not licensed in Ohio offers no state protection if it withholds a withdrawal. Sweepstakes casinos rely on a promotional model; see [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states).
-
-### How to check an app is licensed
-
-1. Find the operator's name and licence number on its site.
-2. Look it up on the regulator's own list of licensees.
-3. Confirm the app checks your location: licensed apps only accept bets placed inside the state.
-4. Treat "licensed offshore" (Curaçao, Anjouan) as not licensed by the state; see [crypto casino licenses](/guides/crypto-casino-license).
-
-More in the [crypto casino basics topic](/guides/topics/foundations).`,
+      title: "Check the authority for this activity",
+      body: "Ohio's sports framework distinguishes Type A online sports pools, Type B facilities and Type C lottery sports gaming. The [Commission's sports-gaming page](https://casinocontrol.ohio.gov/licensing-renewal/02-sports-gaming/welcome) explains these routes. [Revised Code 3775.04](https://codes.ohio.gov/ohio-revised-code/section-3775.04) identifies the online authority of a Type A licence.\n\nThat sports permission is different from operating online slots or roulette. Verify the product covered by a licence rather than using a sportsbook approval as casino evidence. See [crypto casino licences](/guides/crypto-casino-license) and [Foundations](/guides/topics/foundations) for related distinctions.",
     },
     {
       id: "tax",
       title: "Taxes and limits",
-      body: `Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).
-
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Ohio. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).\n\nOhio sports gaming requires its own eligibility and permitted-wager checks. A bet available in another state may be unavailable in Ohio. Use [responsible gambling](/responsible-gambling) for loss and time limits rather than treating an app's availability as a recommendation.",
     },
   ],
   faqs: [
     {
       q: "Are online casinos legal in Ohio?",
-      a: "No. Online casino bills have stalled, and their sponsor now looks to 2027.",
+      a: "Ohio's sports-gaming licences authorize the specified sports activity. They do not establish an authorized online casino market.",
     },
     {
       q: "Is online sports betting legal in Ohio?",
@@ -81,19 +62,32 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
       q: "Can I bet on college player props in Ohio?",
       a: "No. Ohio banned player-specific prop bets on college athletes in 2024.",
     },
-    { q: "Is online poker legal in Ohio?", a: "No. Real-money online poker is not authorized." },
+    {
+      q: "Is online poker legal in Ohio?",
+      a: "No. Real-money online poker is not authorized.",
+    },
   ],
   sources: [
-    { label: "Ohio Casino Control Commission", url: "https://casinocontrol.ohio.gov/" },
     {
-      label: "SBC Americas: Ohio iGaming sponsor sees 2027 opening",
-      url: "https://sbcamericas.com/2026/09/30/ohio-igaming-sponsor-2027-opening/",
+      label: "Ohio Casino Control Commission — sports gaming and licence categories",
+      url: "https://casinocontrol.ohio.gov/licensing-renewal/02-sports-gaming/welcome",
+    },
+    {
+      label: "Ohio Casino Control Commission",
+      url: "https://casinocontrol.ohio.gov/",
     },
     {
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
+    {
+      label: "Section 3775.04",
+      url: "https://codes.ohio.gov/ohio-revised-code/section-3775.04",
+    },
   ],
   related: [
     "is-online-casino-legal",
@@ -102,5 +96,5 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     "sweepstakes-casino-legal-states",
     "sports-betting-legal-states",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

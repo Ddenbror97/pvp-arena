@@ -41,7 +41,9 @@ Independence matters: prior rounds do not push probability around like a deck un
 
 If the game is [a provably fair calculator](/guides/provably-fair-calculator), you verify after the round with seeds and hashes. Verification proves the operator did not change the crash after seeing bets. It does not reveal the crash before you cash out. See also [crash gambling](/guides/crash-gambling) for the format, and [Fairness](/fairness) for how commit–reveal works on this site’s games.
 
-Adults 18+. If a page promises tomorrow’s multiplier, close it. No betting system that only retimes cashouts can beat a built-in edge. Save the chart energy for verifying seeds after the round instead.`,
+Adults 18+. If a page promises tomorrow’s multiplier, close it. No betting system that only retimes cashouts can beat a built-in edge. Save the chart energy for verifying seeds after the round instead.
+
+Stake’s published game-event mapping is an implementation reference, not a forecast of the next round. A calculator must match the actual game’s multiplier distribution.`,
     },
     {
       id: "instead",
@@ -272,7 +274,14 @@ Foundations refresher: [Foundations topic](/guides/topics/foundations). Help: [r
       label: "Wikipedia: Martingale (betting system) — why progressions fail",
       url: "https://en.wikipedia.org/wiki/Martingale_(betting_system)",
     },
-    { label: "Wikipedia: Expected value", url: "https://en.wikipedia.org/wiki/Expected_value" },
+    {
+      label: "Wikipedia: Expected value",
+      url: "https://en.wikipedia.org/wiki/Expected_value",
+    },
+    {
+      label: "Stake: published game-event implementation",
+      url: "https://stake.com/provably-fair/game-events",
+    },
   ],
   related: [
     "crash-gambling",
@@ -281,5 +290,5 @@ Foundations refresher: [Foundations topic](/guides/topics/foundations). Help: [r
     "provably-fair-calculator",
     "martingale-strategy",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

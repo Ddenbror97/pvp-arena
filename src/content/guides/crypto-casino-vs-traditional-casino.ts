@@ -27,84 +27,42 @@ export const guide: Guide = {
     {
       id: "frame",
       title: "Same entertainment cost, different rails",
-      body: `The crypto casino vs traditional casino debate gets loud because marketing frames crypto as “fairer” or “anonymous.” Strip the slogans. You are still staking money on chance or short contests against other players. [House edge](/guides/house-edge) or a PvP fee still prices the session.
-
-Read [what is a crypto casino](/guides/what-is-a-crypto-casino) for the payment definition, then [online casino real money](/guides/online-casino-real-money) for the cash-play frame.
-
-This [Foundations](/guides/topics/foundations) page is for adults 18+. It is not legal advice and not a ranking. PVPspinArena takes USDC and ETH on Base for Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. That makes us a crypto example, not a licensed US or UK card casino.
-`,
+      body: "The crypto casino vs traditional casino debate gets loud because marketing frames crypto as “fairer” or “anonymous.” Strip the slogans. You are still staking money on chance or short contests against other players. [House edge](/guides/house-edge) or a PvP fee still prices the session.\n\nRead [what is a crypto casino](/guides/what-is-a-crypto-casino) for the payment definition, then [online casino real money](/guides/online-casino-real-money) for the cash-play frame.\n\nThis [Foundations](/guides/topics/foundations) page is for adults 18+. It is not legal advice and not a ranking. PVPspinArena takes USDC and ETH on Base for Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. That makes us a crypto example, not a licensed US or UK card casino.",
     },
     {
       id: "payments",
       title: "Payments: finality, speed and mistakes",
-      body: `Traditional online casinos move money through cards, bank transfers and e-wallets. Those rails can be slow, blocked by banks that dislike gambling merchants, and reversible through chargebacks. Crypto casinos credit after blockchain confirmations. Transfers are usually final. Send to the wrong network and the funds are often gone.
-
-### Practical trade
-
-| Topic | Traditional online | Crypto casino |
-| --- | --- | --- |
-| Funding | Card / bank / e-wallet | Wallet transfer |
-| Reversal | Chargebacks sometimes | Rare after confirmations |
-| Speed | Hours to days common | Minutes common after confirms |
-| User error | Card typos, 3-D Secure fails | Wrong chain / address |
-
-Speed is convenience, not a licence. Finality protects the operator from chargeback fraud and raises the cost of your own mistake. Test with small amounts. See [how it works](/how-it-works) for how this site credits deposits.
-`,
+      body: "Traditional online casinos move money through cards, bank transfers and e-wallets. Those rails can be slow, blocked by banks that dislike gambling merchants, and reversible through chargebacks. Crypto casinos credit after blockchain confirmations. Transfers are usually final. Send to the wrong network and the funds are often gone.\n\n### Practical trade\n\n| Topic | Traditional online | Crypto casino |\n| --- | --- | --- |\n| Funding | Card / bank / e-wallet | Wallet transfer |\n| Reversal | Chargebacks sometimes | Rare after confirmations |\n| Speed | Hours to days common | Minutes common after confirms |\n| User error | Card typos, 3-D Secure fails | Wrong chain / address |\n\nSpeed is convenience, not a licence. Finality protects the operator from chargeback fraud and raises the cost of your own mistake. Test with small amounts. See [how it works](/how-it-works) for how this site credits deposits.",
     },
     {
       id: "fairness",
       title: "Fairness models: certificates vs commit-reveal",
-      body: `Traditional online casinos usually rely on RNG testing labs and regulator oversight where licensed. You rarely recompute a spin yourself. Many crypto casinos add commit-reveal schemes so you can hash a revealed seed and match the outcome. That is the heart of [provably fair casino](/guides/provably-fair-casino) design.
-
-Provably fair proves the draw matched a pre-committed seed. It does not remove the edge. It does not prove the operator will pay tomorrow. Pair it with custody sense and [proof of reserves](/guides/proof-of-reserves) literacy where relevant.
-
-PVPspinArena publishes verification on [Fairness](/fairness). Land-based tables are a third model entirely: physical procedures, cameras and regulators — not the subject of this page.
-`,
+      body: "Traditional online casinos usually rely on RNG testing labs and regulator oversight where licensed. You rarely recompute a spin yourself. Many crypto casinos add commit-reveal schemes so you can hash a revealed seed and match the outcome. That is the heart of [provably fair casino](/guides/provably-fair-casino) design.\n\nProvably fair proves the draw matched a pre-committed seed. It does not remove the edge. It does not prove the operator will pay tomorrow. Pair it with custody sense and [proof of reserves](/guides/proof-of-reserves) literacy where relevant.\n\nPVPspinArena publishes verification on [Fairness](/fairness).",
     },
     {
       id: "identity",
       title: "Identity, KYC and recourse",
-      body: `Card casinos inherit banking rules: identity checks, source-of-funds questions, withdrawal holds. Crypto casinos range from heavy KYC to marketing that celebrates [no KYC casino](/guides/no-kyc-casino) flows. Lighter checks can mean thinner complaint paths.
-
-Neither model makes play lawful where it is banned. A VPN tip is not part of this guide. If a site is geo-blocked, treat that as a compliance signal.
-
-When something goes wrong, a licensed traditional operator may have a named regulator complaint process. An offshore crypto brand may not. Buy the recourse level you are willing to live with before you size the deposit.
-`,
+      body: "Card casinos inherit banking rules: identity checks, source-of-funds questions, withdrawal holds. Crypto casinos range from heavy KYC to marketing that celebrates [no KYC casino](/guides/no-kyc-casino) flows. Lighter checks can mean thinner complaint paths.\n\nNeither model makes play lawful where it is banned. If a site is geo-blocked, treat that as a compliance signal.\n\nWhen something goes wrong, a licensed traditional operator may have a named regulator complaint process. An offshore crypto brand may not. Buy the recourse level you are willing to live with before you size the deposit.",
     },
     {
       id: "games",
       title: "Games and product shape",
-      body: `Traditional lobbies centre on studio slots, live dealers and tables. Crypto lobbies often add originals — crash, plinko, dice — plus wallet login. Some are PvP pots. PVPspinArena focuses on [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), and [Jackpot](/).
-
-If you want live blackjack with a human dealer, a traditional live-dealer lobby may fit better. If you want a hash you can recompute on a coinflip, a crypto original may fit better. Product fit beats ideology.
-
-Bonus structures also differ. Classic welcome packages lean on [casino wagering requirements](/guides/casino-wagering-requirements). Crypto sites copy the same math under new names. Read the weighting table either way.
-`,
+      body: "Traditional lobbies centre on studio slots, live dealers and tables. Crypto lobbies often add originals — crash, plinko, dice — plus wallet login. Some are PvP pots. PVPspinArena focuses on [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), and [Jackpot](/).\n\nIf you want live blackjack with a human dealer, a traditional live-dealer lobby may fit better. If you want a hash you can recompute on a coinflip, a crypto original may fit better. Product fit beats ideology.\n\nBonus structures also differ. Classic welcome packages lean on [casino wagering requirements](/guides/casino-wagering-requirements). Crypto sites copy the same math under new names. Read the weighting table either way.",
     },
     {
       id: "risk",
       title: "Which risks grow, which stay the same",
-      body: `Same risks: losing the bankroll, addictive loops, unclear terms. Crypto-amplified risks: irreversible sends, phishing clone sites ([fake casino sites](/guides/fake-casino-sites)), malicious token approvals, price swings if you play in volatile coins.
-
-Traditional-amplified risks: bank declines, slow withdrawals, chargeback wars that freeze accounts. Neither column is “safe gambling.” Safer process is a budget, a verify step and a willingness to leave.
-
-Tax treatment can differ by country and by whether crypto property rules stack on gambling income — see [crypto gambling taxes](/guides/crypto-gambling-taxes). That is education, not a filing kit.`,
+      body: "Same risks: losing the bankroll, addictive loops, unclear terms. Crypto-amplified risks: irreversible sends, phishing clone sites ([fake casino sites](/guides/fake-casino-sites)), malicious token approvals, price swings if you play in volatile coins.\n\nTraditional-amplified risks: bank declines, slow withdrawals, chargeback wars that freeze accounts. Neither column is “safe gambling.” Safer process is a budget, a verify step and a willingness to leave.\n\nTax treatment can differ by country and by whether crypto property rules stack on gambling income — see [crypto gambling taxes](/guides/crypto-gambling-taxes). That is education, not a filing kit.",
     },
     {
       id: "choose",
       title: "How to choose without tribal loyalty",
-      body: `1. Confirm you are allowed to play where you live.
-2. Decide whether you need player-checkable fairness.
-3. Pick the payment rail you can operate without errors.
-4. Run a tiny deposit–play–withdraw loop.
-5. Stop if the loop already feels compulsive.
-
-Use [best crypto gambling sites](/guides/best-crypto-gambling-sites) as a checklist if you stay on crypto rails. Use local licensed options if your jurisdiction requires them for the product you want. PVPspinArena will not claim to be both.`,
+      body: "1. Confirm you are allowed to play where you live.\n2. Decide whether you need player-checkable fairness.\n3. Pick the payment rail you can operate without errors.\n4. Run a tiny deposit–play–withdraw loop.\n5. Stop if the loop already feels compulsive.\n\nUse [best crypto gambling sites](/guides/best-crypto-gambling-sites) as a checklist if you stay on crypto rails. Use local licensed options if your jurisdiction requires them for the product you want. PVPspinArena will not claim to be both.",
     },
     {
       id: "bottom",
       title: "Bottom line",
-      body: `Crypto casino vs traditional casino changes rails, finality, identity norms and sometimes fairness proofs. It does not cancel house edge, legal geography or self-control. Adults 18+. Not legal advice. Help: [responsible gambling](/responsible-gambling).`,
+      body: "Crypto casino vs traditional casino changes rails, finality, identity norms and sometimes fairness proofs. It does not cancel house edge, legal geography or self-control. Adults 18+. Not legal advice. Help: [responsible gambling](/responsible-gambling).",
     },
   ],
   faqs: [
@@ -145,5 +103,5 @@ Use [best crypto gambling sites](/guides/best-crypto-gambling-sites) as a checkl
     "provably-fair-casino",
     "best-crypto-gambling-sites",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

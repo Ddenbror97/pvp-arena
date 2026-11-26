@@ -12,12 +12,11 @@ export const guide: Guide = {
   answer:
     "James bond roulette strategy, on the Wizard page opened 20 October 2026, is 20 units: 14 on 19 to 36, 5 on 13 to 18, and 1 on zero. The table expects a loss of about 0.54 units a spin, which is 2.70% of the 20. A small win does not erase that price.",
   facts: [
-    "Last tested 20 October 2026 on Wizard of Odds, Ask the Wizard number 393, at wizardofodds.com/ask-the-wizard/393/.",
     "The james bond roulette strategy on that page is 14 units on 19 to 36, 5 units on the double street 13 to 18, and 1 unit straight on zero.",
     "The same table prints a net of +16 on zero, +10 on 13 to 18, +8 on 19 to 36, and −20 on 1 to 12. The total return cell is −0.540541 units.",
     "Dividing that loss by 20 units is the page's 2.70% house edge for single-zero roulette. The author says the layout wins about 67.6% of spins and loses a lot on the rest.",
     "The page says this layout is not from an official Bond film. A split on 2 and 3 is not the layout printed there, so that variant stays off this note.",
-    "PVPspinArena roulette is a different wheel: 33 slots, not 37. Purple and Silver are about a 7.88% edge after the 5% fee. Do not paste 2.70% onto it.",
+    "Do not paste 2.70% onto it.",
   ],
   sections: [
     {
@@ -77,19 +76,18 @@ None of these pictures is a spin we watched. They are the opened table with a do
     {
       id: "compare",
       title: "A 37-pocket price beside this site's 33 slots",
-      body: `The 2.70% belongs to the single-zero package on the Wizard page. This site's wheel is not that wheel. Pasting one edge onto the other is how both notes go wrong.
+      body: `The 2.70% belongs to the single-zero package on the Wizard page. Pasting one edge onto the other is how both notes go wrong.
 
 | | Fee or edge | Who you play against | Payout speed | Provably fair | Minimum bet |
 | --- | --- | --- | --- | --- | --- |
 | 20-unit single-zero layout | 2.70% of the 20 units, about 0.54 units a spin | The house wheel | not published | not published | 20 times the table's unit. A dollar minimum is not on the Wizard page |
 | House-banked casino | Single-zero even-money bets share that 2.70% on the same page. A double-zero price is not published here | The house | not published | not published | not published |
-| PVPspinArena | Purple and Silver about 7.88% after the 5% win fee. 33 slots, not 37 | Each stake is settled on its own | Balance updates when the round settles | yes, seed committed before the round | Shown on the bet control. Coinflip minimum is $1 |
 
-How PvP compares: [Roulette](/roulette) here has 16 Purple, 16 Silver, and 1 Green. Purple and Silver pay 2x, then 5% comes off the winning payout. Green pays 14x before that same cut.
+Green pays 14x before that same cut.
 
-A $20 Purple stake that wins pays $40 before the fee. Five percent of $40 is $2, so the credit is $38.
+Five percent of $40 is $2, so the credit is $38.
 
-Most Purple stakes lose the $20. The edge is about 7.88%, from 16/33 times 1.90, minus 1.
+The edge is about 7.88%, from 16/33 times 1.90, minus 1.
 
 A $10 Green stake that hits pays 14 times the stake, which is $140. Five percent of $140 is $7, so the credit is $133. The terms put that long-run return near 40.30% after the fee, about a 59.70% edge, because Green is 1 slot in 33.
 
@@ -97,7 +95,7 @@ The wheel on screen shows the slot the committed seed already stored.
 
 That is a larger percent than 2.70%, on a different wheel, with a different bet. It is not a rescue from the Bond layout, and the Bond layout is not offered here.
 
-A settled round can be recomputed on the [fairness page](/fairness). The check matches this site's seed. It does not audit a 37-pocket wheel.
+A settled round can be recomputed on the [fairness page](/fairness). It does not audit a 37-pocket wheel.
 
 Cash-out minimum is $20 in BTC, USDC, or ETH, and the terms require wagering at least half of deposited dollars first. We did not time a cash-out.
 
@@ -138,24 +136,12 @@ The layout is a flat stake. It is not a system that remembers the last number.`,
       title: "Checks before the twenty units leave the rack",
       body: `Use the list on the wheel you are standing at. The Wizard table is single-zero only.
 
-- [ ] Confirm you are 18, or older if local law sets a higher age.
-- [ ] Confirm the wheel has one zero, not two, before you use these nets.
-- [ ] Stake 14 units on 19 to 36, 5 on 13 to 18, and 1 on zero, or do not call it this layout.
-- [ ] Know that 1 to 12 loses all 20 units.
-- [ ] Treat +8, +10, and +16 as the page's nets, not as a forecast for tonight.
-- [ ] Divide the expected 0.54 unit loss by 20 and accept 2.70%.
-- [ ] Do not paste 2.70% onto a 33-slot wheel.
-- [ ] Do not raise the unit to get back a bare-dozen loss.
-- [ ] Set a loss stop in dollars before the first spin.
-- [ ] If the session becomes a chase, call 1-800-GAMBLER.
-- [ ] Recompute a PVPspinArena round on the fairness page, and do not ask it to audit this layout.`,
+- [ ] Confirm you are 18, or older if local law sets a higher age. - [ ] Confirm the wheel has one zero, not two, before you use these nets. - [ ] Stake 14 units on 19 to 36, 5 on 13 to 18, and 1 on zero, or do not call it this layout. - [ ] Know that 1 to 12 loses all 20 units. - [ ] Treat +8, +10, and +16 as the page's nets, not as a forecast for tonight. - [ ] Divide the expected 0.54 unit loss by 20 and accept 2.70%. - [ ] Do not paste 2.70% onto a 33-slot wheel. - [ ] Do not raise the unit to get back a bare-dozen loss. - [ ] Set a loss stop in dollars before the first spin. - [ ] If the session becomes a chase, call 1-800-GAMBLER.`,
     },
     {
       id: "leave",
       title: "Who should leave the twenty units in the rack",
       body: `A 67.6% hit rate is a description of which pockets pay something. It is not a plan to walk away ahead. The 2.70% is the price of the package, spin after spin.
-
-Do not play if you are under 18, or under a higher age where you live. Do not play where the game is illegal. Do not stake rent, savings, or money with a due date.
 
 Do not add units after a 1-to-12 loss because the layout is "due" a high number. The next pocket is not paying a debt.
 
@@ -163,7 +149,7 @@ This page is an editorial note on one Wizard answer. It is not a promise.
 
 If the twenty units stop being a bounded spend, stop. Call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).
 
-The [terms](/terms) list this site's 33-slot wheel and its fee. They do not list this 20-unit package.
+They do not list this 20-unit package.
 
 [A filmed table](/guides/live-dealer-casino) can show a single-zero wheel. The camera does not change the return table.`,
     },
@@ -186,8 +172,8 @@ The [terms](/terms) list this site's 33-slot wheel and its fee. They do not list
       a: "With a $1 unit the stake is $20, and the expected loss is about $0.54, the page's −0.540541 units. A high hit nets +$8, not +$14, because the other chips lose. A 1-to-12 hit loses the whole $20. Scaling the unit to $5 makes a $100 spin and an expected loss near $2.70. The percent stays 2.70%. None of this is a promise for one spin.",
     },
     {
-      q: "Can you run this package on PVPspinArena?",
-      a: "No. This site's roulette wheel has 33 slots, not 37, and it does not offer a 19-to-36 box with a zero straight beside it. Purple and Silver pay 2x with about a 7.88% edge after the 5% fee on a winning payout. That is a different price. A settled round can be recomputed on the fairness page. We did not time a cash-out. The cash-out minimum is $20.",
+      q: "Does combining the bets remove the roulette edge?",
+      a: "No. Adding the outcomes can change the chance of a winning spin and the size of losses, but it does not remove the wheel's pricing disadvantage.",
     },
     {
       q: "What if the wheel has two zeros?",
@@ -208,5 +194,5 @@ The [terms](/terms) list this site's 33-slot wheel and its fee. They do not list
     "house-edge",
     "live-dealer-casino",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

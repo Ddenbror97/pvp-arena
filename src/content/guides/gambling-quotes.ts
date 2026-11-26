@@ -33,7 +33,9 @@ export const guide: Guide = {
 2. **Fiction versus memoir.** Runyon’s Broadway narrators are characters. Dostoevsky’s Alexei is a novel. Treat them as literature that understands the itch, not as bankroll advice.
 3. **Maths versus mood.** “The house always wins” is a sloppy English for a real idea — a positive house edge on volume — and a bad description of a single session. See [expected value](/guides/expected-value-gambling) when a proverb starts pretending to be a formula.
 
-[Gambling movies](/guides/gambling-movies) mint still more lines (“a dollar won is twice as sweet…”) that belong to screenplays. This page stays with words you can file. Play is 18+.`,
+[Gambling movies](/guides/gambling-movies) mint still more lines (“a dollar won is twice as sweet…”) that belong to screenplays. This page stays with words you can file. Play is 18+.
+
+Twain's Pudd'nhead Wilson includes its calendar aphorisms in the original text. Check the exact chapter and edition before attributing a circulating paraphrase to Twain.`,
     },
     {
       id: "sourced",
@@ -109,15 +111,6 @@ If a quote is being used to justify a raise after a loss, it has been turned int
 
 A fourth, quieter use: quotes as culture. Runyon’s Broadway and Dostoevsky’s spa towns are part of why gambling has a literature. They are not operating manuals for [Roulette](/roulette).`,
     },
-    {
-      id: "pvp",
-      title: "A hashed round does not need a proverb",
-      body: `PVPspinArena’s five games already have a price in numbers rather than in epigrams. [Coinflip](/coinflip) is 50/50 with a 5% pot fee. A [Jackpot](/) ticket wins in proportion to your share of the pot, minus 5%. Roulette is 16 Purple, 16 Silver, 1 Green on a 33-slot wheel; Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Poker](/poker) takes 5% of a pot only after a flop. Committed seeds mean you can check a settled result on [fairness](/fairness) instead of quoting a dead physicist.
-
-That is the adult version of “the house always wins”: not a curse, a percentage, and only on the games that carry one. A fair coin does not owe you a Runyon 6-to-5. A posted Purple or Silver edge does.
-
-If you like the literature, read *The Gambler* or *A Nice Price*. If you like the lyric, credit Schlitz. If you like a number you can verify, skip the quote board and open the round. Gambling is 18+.`,
-    },
   ],
   faqs: [
     {
@@ -146,7 +139,14 @@ If you like the literature, read *The Gambler* or *A Nice Price*. If you like th
     },
   ],
   sources: [
-    { label: "Wikipedia: Damon Runyon", url: "https://en.wikipedia.org/wiki/Damon_Runyon" },
+    {
+      label: "Mark Twain: Pudd'nhead Wilson, original text",
+      url: "https://www.gutenberg.org/files/102/102-h/102-h.htm",
+    },
+    {
+      label: "Wikipedia: Damon Runyon",
+      url: "https://en.wikipedia.org/wiki/Damon_Runyon",
+    },
     {
       label: "Wikipedia: The Gambler (song)",
       url: "https://en.wikipedia.org/wiki/The_Gambler_(song)",
@@ -168,5 +168,5 @@ If you like the literature, read *The Gambler* or *A Nice Price*. If you like th
     "gamblers-fallacy",
     "expected-value-gambling",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

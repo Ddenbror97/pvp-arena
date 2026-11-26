@@ -162,11 +162,11 @@ Jackpot on this site is a player pot. It is not Gargantoon, and it is not a stud
       title: "Who should leave the alien grid alone",
       body: `A Reactoonz session can finish below the stake you brought. There is no printed return on the studio card, so this page cannot tell you the long-run centre of the build in a lobby. The chain of up to five features is not a plan, and it is not a cap on the whole game.
 
-Do not play if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent, savings, or money that has a due date.
+Adults only where legal. Set a loss limit before play.
 
 Do not play to get even. The card does not owe the next cluster a wild. This page is an editorial note, not a statute, and not a coupon.
 
-PVPspinArena does not offer this title. If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
+This game is not offered here. [Help with gambling](/responsible-gambling) is available.`,
     },
   ],
   faqs: [

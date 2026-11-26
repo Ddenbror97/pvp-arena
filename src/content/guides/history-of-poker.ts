@@ -33,7 +33,9 @@ French settlers brought poque to Louisiana, and the name "poker" is usually trac
 
 ### The first written accounts
 
-The English actor Joe Cowell wrote about a game on a Mississippi steamboat in 1829 in which four players each got five cards from a 20-card deck (aces through tens) and bet on who held the best hand. There was no draw and no straights, and with 20 cards dealt to four players every card was in play. Jonathan H. Green’s 1840s exposé of riverboat gambling called poker "the cheating game", a sign of how often it was used to fleece travellers. The [famous gamblers](/guides/famous-gamblers) guide covers the card sharps who followed.`,
+The English actor Joe Cowell wrote about a game on a Mississippi steamboat in 1829 in which four players each got five cards from a 20-card deck (aces through tens) and bet on who held the best hand. There was no draw and no straights, and with 20 cards dealt to four players every card was in play. Jonathan H. Green’s 1840s exposé of riverboat gambling called poker "the cheating game", a sign of how often it was used to fleece travellers. The [famous gamblers](/guides/famous-gamblers) guide covers the card sharps who followed.
+
+WSOP's own history dates its first Las Vegas gathering to 1970 at Binion's Horseshoe. That is a documented tournament milestone, not a resolution of poker's disputed earlier origins.`,
     },
     {
       id: "deck-variants",
@@ -118,25 +120,6 @@ Poker became a research problem for computer science because it involves hidden 
 
 Commercial solvers let human players study near-equilibrium strategies, which is why modern poker talk is full of ranges, frequencies and bet sizes. See [GTO poker strategy](/guides/gto-poker-strategy) for what "game theory optimal" means in practice.`,
     },
-    {
-      id: "lessons",
-      title: "What poker history says about skill, rake and PvP play",
-      body: `Poker has always been player vs player. The house does not play a hand. It earns money from the rake, a small cut of each pot, or from tournament fees. That is the key difference from roulette or slots, where you bet against the house’s edge. In poker a strong player can win over time, but only if their edge over the table is bigger than the rake. The [how to win at poker](/guides/how-to-win-at-poker) guide covers win rates and rake, and [crypto poker](/guides/crypto-poker) covers poker played for crypto.
-
-Three things repeat through two centuries of poker:
-
-1. **Cheating came first and fairness came later.** The riverboat "cheating game" became a regulated game with shuffled, audited decks and, online, certified random number generators.
-2. **Media drives the booms.** Talk shows in the 1970s, hole-card TV in 1999–2003 and streaming since then brought in new players.
-3. **Law shapes the map.** Stud bans in California, UIGEA and Black Friday all moved where and how people played.
-
-More history sits in the [Casino knowledge topic](/guides/topics/casino-knowledge), alongside the broader [history of gambling](/guides/history-of-gambling).
-
-### PvP on PVPspinArena
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. They are pure chance, not poker. In [Coinflip](/coinflip) two players take a 50/50, and in [Jackpot](/) your win chance equals your share of the pot. In both, the winner takes the pot minus any fee shown before entry, which is the same idea as a poker room’s rake. Results come from committed seeds you can check on [fairness](/fairness). Play is 18+ only.
-
-In the same cluster, see also [las vegas history](/guides/las-vegas-history) and [stardust casino](/guides/stardust-casino).`,
-    },
   ],
   faqs: [
     {
@@ -161,7 +144,14 @@ In the same cluster, see also [las vegas history](/guides/las-vegas-history) and
     },
   ],
   sources: [
-    { label: "Wikipedia: History of poker", url: "https://en.wikipedia.org/wiki/History_of_poker" },
+    {
+      label: "WSOP: official history",
+      url: "https://www.wsop.com/about/world-series-of-poker/",
+    },
+    {
+      label: "Wikipedia: History of poker",
+      url: "https://en.wikipedia.org/wiki/History_of_poker",
+    },
     {
       label: "Wikipedia: World Series of Poker",
       url: "https://en.wikipedia.org/wiki/World_Series_of_Poker",
@@ -180,5 +170,5 @@ In the same cluster, see also [las vegas history](/guides/las-vegas-history) and
     "las-vegas-history",
     "stardust-casino",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

@@ -33,7 +33,7 @@ This page explains the public description. It does not pretend to be the rating 
 
 The technique next to this is [APA skill levels](/guides/apa-pool-league), [the Cup note that uses FargoRate](/guides/mosconi-cup), and [equal stakes, not a price](/guides/pool-betting). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "gaps",
@@ -57,7 +57,7 @@ There is no top and no bottom. The scale is not a percentage from 0 to 100. Pros
     {
       id: "tables",
       title: "Which games go into the number",
-      body: `FargoRate says it rates 8-ball, 9-ball, and 10-ball played on 7-foot or 9-foot tables. A global optimization runs daily at 6am GMT. That is the update rhythm on the homepage, not a live tick inside this match. Our playing surface is 2.54 m by 1.27 m, which is a 9-foot playing surface, and the game is 8-ball only. Games here are not described by FargoRate as an input, and this page will not claim they move anyone's rating.
+      body: `FargoRate says it rates 8-ball, 9-ball, and 10-ball played on 7-foot or 9-foot tables. A global optimization runs daily at 6am GMT. That is the update rhythm on the homepage, not a live tick inside this match. Our playing surface is 2.54 m by 1.27 m, which is a 9-foot playing surface, and the game is 8-ball only. PVPspinArena matches are not established as FargoRate inputs and should not be expected to change that rating.
 
 The physics id stored with that rack replays shots. It does not look up a rating before the break. The rack seed shuffles colours. The better player, if there is one, has to aim. No random miss narrows the gap that FargoRate would have described as 2:1 or 8:1. The cloth is the same size for both seats, 2.54 m by 1.27 m, on every rack you post.`,
     },
@@ -72,7 +72,7 @@ Stakes remain $1, $2, $5, $10, $25, and $50. Three timeouts forfeit. You call a 
   faqs: [
     {
       q: "What is a fargo rate?",
-      a: "It is FargoRate's rating of a player from games won and lost. Two players with the same rating are treated as even. The homepage describes the system. This page does not add a private formula on top of that description.",
+      a: "It is FargoRate's rating of a player from games won and lost. Two players with the same rating are treated as even. The homepage describes the system. Use FargoRate’s own description for how the rating is calculated.",
     },
     {
       q: "How big is a 100-point gap?",
@@ -96,9 +96,15 @@ Stakes remain $1, $2, $5, $10, $25, and $50. Three timeouts forfeit. You call a 
     },
   ],
   sources: [
-    { label: "FargoRate", url: "https://fargorate.com/" },
-    { label: "APA Equalizer", url: "https://poolplayers.com/equalizer/" },
+    {
+      label: "FargoRate",
+      url: "https://fargorate.com/",
+    },
+    {
+      label: "APA Equalizer",
+      url: "https://poolplayers.com/equalizer/",
+    },
   ],
   related: ["8-ball-pool-hub", "apa-pool-league", "mosconi-cup"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

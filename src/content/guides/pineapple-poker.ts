@@ -88,7 +88,7 @@ If nobody qualifies for low, the high wins the whole pot. The page says that hap
       title: "A rules page with no commission on it",
       body: `The Pagat section does not print a rake, a cap, a jackpot drop, or a time charge. Any of those, if a room uses them, stay not published until that room's card is the page you opened.
 
-This article will not borrow a percent from a different variant. Three hole cards are not a fee.
+Equity must match the variant’s discard timing and the cards retained. Three hole cards are not a fee.
 
 A home game can choose zero rake. That choice should be said out loud before the first deal, and it is still not a number from Pagat.
 
@@ -152,7 +152,7 @@ That $2 is the posted fee on a two-card game, not a pineapple poker commission f
     {
       id: "limits",
       title: "Who should skip the extra card",
-      body: `Do not play for money if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent, savings, or money with a due date.
+      body: `Cash play requires the local minimum age, lawful access and an affordable budget.
 
 Three cards make more pretty flops in the Crazy form, and pretty is not the same as best. You can still lose the pot after a correct discard.
 
@@ -203,5 +203,5 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     "c-bet-poker",
     "bluffing-in-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

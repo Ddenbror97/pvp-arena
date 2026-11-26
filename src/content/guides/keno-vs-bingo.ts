@@ -31,7 +31,9 @@ In keno you buy a ticket and choose how many spots to mark on a field that is cl
 
 In bingo you buy a card whose numbers are already printed. You do not build the card spot by spot, unless a house is selling a player-selected variant it advertised as such. Someone calls numbers until at least one card completes the pattern for that session. The prize is a share of what the room paid for cards, after the hall or the charity takes its cut. You are betting against the other cards, inside a pool.
 
-This comparison lives in the [casino games topic](/guides/topics/casino-games). It does not pick a winner for you. It separates the draw, the pace, and the price so you can see which bill you are paying. Adults only. Set a limit before you buy the first ticket or the first card, and treat money you cannot lose as already spent on something else.`,
+This comparison lives in the [casino games topic](/guides/topics/casino-games). It does not pick a winner for you. It separates the draw, the pace, and the price so you can see which bill you are paying. Adults only. Set a limit before you buy the first ticket or the first card, and treat money you cannot lose as already spent on something else.
+
+Massachusetts Lottery Keno publishes spot-specific odds and prizes. Compare a keno paytable with a bingo game's announced pattern and prize terms, rather than assuming that both settle alike.`,
     },
     {
       id: "draw",
@@ -127,14 +129,24 @@ A local room is a third product. [What to ask at a bingo hall door](/guides/bing
     },
   ],
   sources: [
-    { label: "Wikipedia: Keno", url: "https://en.wikipedia.org/wiki/Keno" },
+    {
+      label: "Massachusetts Lottery: Keno game and prize rules",
+      url: "https://www.masslottery.com/games/draw-and-instants/keno",
+    },
+    {
+      label: "Wikipedia: Keno",
+      url: "https://en.wikipedia.org/wiki/Keno",
+    },
     {
       label: "Wikipedia: Bingo (American version)",
       url: "https://en.wikipedia.org/wiki/Bingo_(American_version)",
     },
-    { label: "Wikipedia: Bingo", url: "https://en.wikipedia.org/wiki/Bingo" },
+    {
+      label: "Wikipedia: Bingo",
+      url: "https://en.wikipedia.org/wiki/Bingo",
+    },
   ],
   related: ["keno-odds", "keno-strategy", "bingo-patterns", "crypto-bingo", "bingo-halls-near-me"],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
   howTo: false,
 };

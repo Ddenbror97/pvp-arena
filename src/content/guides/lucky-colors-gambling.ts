@@ -16,7 +16,6 @@ export const guide: Guide = {
     "White is a funeral colour in much of East Asia; in many Western weddings it is the opposite.",
     "On a European roulette wheel, red and black each have 18 pockets; green is the zero that creates the edge.",
     "A $1 red bet and a $1 bet on a 'lucky' single number have the same 2.70% edge on a single-zero wheel, different variance.",
-    "Wearing a colour does not change 16/33 on Purple or 1/33 on Green.",
   ],
   sections: [
     {
@@ -26,7 +25,7 @@ export const guide: Guide = {
 
 A lucky colour is harmless when it only picks which chip you put down. It becomes expensive when it picks how many chips, or when "my colour is due" after a drought. That second move is the [gambler's fallacy](/guides/gamblers-fallacy) in a different costume.
 
-This page is about the colours themselves. [Lucky numbers](/guides/lucky-numbers-gambling) covers 7, 8 and 4. [Horseshoe luck](/guides/horseshoe-luck) covers the iron charm. Wheel layout and payouts live on [roulette colors](/guides/roulette-colors); this page will not rebuild that chart. All of them sit in the [Games of chance topic](/guides/topics/games-of-chance).`,
+This page is about the colours themselves. [Lucky numbers](/guides/lucky-numbers-gambling) covers 7, 8 and 4. [Horseshoe luck](/guides/horseshoe-luck) covers the iron charm. Wheel layout and payouts live on [roulette colors](/guides/roulette-colors); that chart separates cultural associations from actual wheel bets. All of them sit in the [Games of chance topic](/guides/topics/games-of-chance).`,
     },
     {
       id: "cultures",
@@ -67,7 +66,7 @@ On a European wheel, red is 18 pockets, black is 18, green is 0. A red bet pays 
 
 An American wheel adds a second green (00). Red becomes 18/38, return 0.947, edge 5.26%. Two greens made the house richer, not luckier.
 
-PVPspinArena's wheel uses Purple and Silver instead of red and black: 7 + 7 + 1 Green on 33 slots, 2x / 2x / 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Full layout is on the [roulette colors](/guides/roulette-colors) page.
+Full layout is on the [roulette colors](/guides/roulette-colors) page.
 
 ### Slots and tables
 
@@ -94,7 +93,7 @@ A team colour is a preference. The [point spread](/guides/point-spread-explained
 
 A and C hit often and win $5 net on a hit (the 1:1 colour pay minus nothing else). B hits less often and nets +$31 on a hit (35-to-1 on one chip, four chips lost). Expected loss for all three is 0.027 × $500 ≈ $13.50. The shirt never enters the sum.
 
-On Purple at 16/33, a $5 colour-style bet returns 2x when it hits. Expected value: (16/33)×10 = $4.85, a $0.15 leak per spin, about 3.03% of $5 before the win fee. Dye the chip gold; the fraction stays 16/33.
+Expected value: (16/33)×10 = $4.85, a $0.15 leak per spin, about 3.03% of $5 before the win fee. Dye the chip gold; the fraction stays 16/33.
 
 ### Sharing and fashion
 
@@ -136,34 +135,6 @@ Total expected leak: about **$0.81 per spin**, 2.70% of $30, same as betting $30
 3. Do not add a second colour because the first one "missed." That is two independent minus-EV bets, not a hedge.
 4. If a venue is paying a posted colour bonus (red-envelope week, green-jersey night), read the extra as a coupon with rules, then check whether the base game is still short.`,
     },
-    {
-      id: "pvp",
-      title: "Lucky colours and a hashed PvP round",
-      body: `Pick a colour because you like it. Do not pick a stake because the colour felt hot.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Roulette](/roulette) is the colour game: 16 Purple, 16 Silver, 1 Green. Purple and Silver pay 2x; Green pays 14x; Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 with no colour contract. [Jackpot](/) sets chance equal to your share of the pot. Seeds are committed before the round; any settled result can be checked on [fairness](/fairness).
-
-If a colour ritual is already choosing the size of the next bet, that is chase. Use [responsible gambling](/responsible-gambling). Play is 18+ only.
-
-### Colour as a bet versus colour as a charm
-
-On PVPspinArena Roulette, Purple, Silver and Green are contracts. Purple is 16/33, Silver is 16/33, Green is 1/33. The names are labels on those sets. A red shirt does not add a slot. A gold phone case does not move Green from 14x to 15x.
-
-A land roulette layout does the same job with different paint. Red is 18 pockets, black is 18, green is zero (and double zero on an American wheel). Players who “only play red because red is lucky” are making an even-money bet that already has a published edge. They are not stacking a cultural bonus on top of 18/37.
-
-### Worked comparison
-
-Two players each put $100 through even-money colour bets.
-
-- A always bets red because a relative said red is lucky.
-- B always bets black because the last five spins were red, which is the [gambler's fallacy](/guides/gamblers-fallacy).
-
-On a European wheel both have p = 18/37 and a 2.70% edge. After $100 of turnover the expected cost is about $2.70 for each. The stories are different; the price is not. If A switches to a 0-adjacent “lucky” street because gold felt right, the price jumps. Superstition becomes expensive the moment it changes the bet, not the moment it changes the shirt.
-
-### Tablecloths, chips and carpets
-
-Casinos use colour on purpose: gold for high-limit, red felt for photography, busy carpets so stains disappear. That is interior design and [casino carpet](/guides/casino-carpet) psychology, not a paytable. If a room feels lucky, you are reacting to lighting and noise, which is closer to the [illusion of control](/guides/illusion-of-control) than to an extra pocket.`,
-    },
   ],
   faqs: [
     {
@@ -188,8 +159,14 @@ Casinos use colour on purpose: gold for high-limit, red felt for photography, bu
     },
   ],
   sources: [
-    { label: "Internet Encyclopedia of Philosophy: Wuxing", url: "https://iep.utm.edu/wuxing/" },
-    { label: "Wikipedia: Roulette", url: "https://en.wikipedia.org/wiki/Roulette" },
+    {
+      label: "Internet Encyclopedia of Philosophy: Wuxing",
+      url: "https://iep.utm.edu/wuxing/",
+    },
+    {
+      label: "Wikipedia: Roulette",
+      url: "https://en.wikipedia.org/wiki/Roulette",
+    },
     {
       label: "Encyclopaedia Britannica: Chinese New Year",
       url: "https://www.britannica.com/topic/Chinese-New-Year",
@@ -207,5 +184,5 @@ Casinos use colour on purpose: gold for high-limit, red felt for photography, bu
     "illusion-of-control",
     "pull-tabs",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

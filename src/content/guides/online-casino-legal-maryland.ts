@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Is online casino play legal in Maryland? No: online sports betting has been legal since November 2022, but 2026's online casino bill failed.",
   h1: "Online casino legal Maryland: sports betting yes, online casinos no",
   answer:
-    "Online casino legal Maryland? No. Maryland has licensed online sports betting since November 2022 and runs six land-based casinos, all regulated by Maryland Lottery and Gaming. Online casino games for real money are not authorized: a 2026 bill to legalize them did not pass, so Maryland still has no licensed online casino market.",
+    "Online casino legal Maryland? Maryland Lottery and Gaming says licensed sports wagering and registered fantasy competitions are the only legal real-money online gaming options currently operating in the state. Online casino games and online poker are not authorized. Check the agency's operator lists rather than a site's availability or a claim that a bill will pass.",
   facts: [
     "Online sports betting: legal since November 2022, 21+.",
     "Regulator: Maryland Lottery and Gaming Control Agency.",
@@ -27,41 +27,22 @@ export const guide: Guide = {
     {
       id: "glance",
       title: "Maryland at a glance",
-      body: `| Product | Legal online in Maryland? |
-| --- | --- |
-| Sports betting | Yes, since November 2022 (21+) |
-| Online casino (slots, table games) | **No** |
-| Online poker | **No** |
-| Lottery | Maryland Lottery products |
-| In-person casino games | Six licensed casinos |
-
-[Where sports betting is legal](/guides/sports-betting-legal-states) compares states, and [is online casino legal](/guides/is-online-casino-legal) lists the states that license online casinos.`,
+      body: "| Product | Legal online in Maryland? |\n| --- | --- |\n| Sports betting | Yes, since November 2022 (21+) |\n| Online casino (slots, table games) | **No** |\n| Online poker | **No** |\n| Lottery | Maryland Lottery products |\n| In-person casino games | Six licensed casinos |\n\n",
     },
     {
       id: "law",
       title: "What the law says",
-      body: `Maryland voters approved sports betting in 2020, and online sportsbooks launched in November 2022 under [Maryland Lottery and Gaming](https://www.mdgaming.com/), which also licenses the state's casinos. Lawmakers have proposed online casinos several times. In the 2026 session the online casino bill stalled, as [SBC Americas reported in March 2026](https://sbcamericas.com/2026/03/24/maryland-igaming-online-sweepstakes/), and a separate bill to ban sweepstakes casinos also failed when the session ended. Until a law passes and operators are licensed, online casino games are not legal in Maryland.`,
+      body: "The [Maryland Lottery and Gaming FAQ](https://www.mdgaming.com/welcome/faqs/) explicitly distinguishes operating sports and fantasy markets from online casinos. It explains that expanding commercial gambling requires legislative approval to place a question before voters and approval in a statewide referendum.\n\nA proposed bill or committee action is therefore insufficient evidence of an authorized casino launch. Check the actual agency guidance and approved activity.",
     },
     {
       id: "offshore",
-      title: "Offshore and sweepstakes sites",
-      body: `A real-money site that is not licensed in Maryland offers no state protection if it withholds a withdrawal. Sweepstakes casinos rely on a promotional model; see [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states).
-
-### How to check an app is licensed
-
-1. Find the operator's name and licence number on its site.
-2. Look it up on the regulator's own list of licensees.
-3. Confirm the app checks your location: licensed apps only accept bets placed inside the state.
-4. Treat "licensed offshore" (Curaçao, Anjouan) as not licensed by the state; see [crypto casino licenses](/guides/crypto-casino-license).
-
-More in the [crypto casino basics topic](/guides/topics/foundations).`,
+      title: "Check the authority for this activity",
+      body: "Maryland Lottery and Gaming publishes a [legal-versus-illegal online gaming page](https://www.mdgaming.com/legal-vs-illegal-online-gaming/) with authorized operators and enforcement notices. Check the licensed or registered lists, rather than assuming that absence from its cease-and-desist list means approval: the agency expressly says that list is incomplete.\n\nIts [FAQ](https://www.mdgaming.com/welcome/faqs/) identifies licensed sports wagering and registered fantasy competitions as the available legal real-money online options. An offshore [casino licence](/guides/crypto-casino-license) is not Maryland authorization. More product distinctions are in [Foundations](/guides/topics/foundations).",
     },
     {
       id: "tax",
       title: "Taxes and limits",
-      body: `Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).
-
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Maryland. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).\n\nA mobile sportsbook account does not authorize online slots or poker. Read the licensed product's age and location rules and use [responsible gambling](/responsible-gambling) to set limits before placing a wager.",
     },
   ],
   faqs: [
@@ -79,7 +60,7 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     },
     {
       q: "Are sweepstakes casinos banned in Maryland?",
-      a: "A 2026 bill to ban them did not pass by the end of the session. Check for later changes.",
+      a: "Do not treat a promotional label as permission. Maryland's legal-versus-illegal gaming page identifies authorized activities and enforcement notices; its enforcement list is not exhaustive.",
     },
     {
       q: "Is online poker legal in Maryland?",
@@ -87,16 +68,26 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     },
   ],
   sources: [
-    { label: "Maryland Lottery and Gaming", url: "https://www.mdgaming.com/" },
     {
-      label: "SBC Americas: Maryland online casino hopes evaporate (March 2026)",
-      url: "https://sbcamericas.com/2026/03/24/maryland-igaming-online-sweepstakes/",
+      label: "Maryland Lottery and Gaming — Legal vs. Illegal Online Gaming",
+      url: "https://www.mdgaming.com/legal-vs-illegal-online-gaming/",
+    },
+    {
+      label: "Maryland Lottery and Gaming",
+      url: "https://www.mdgaming.com/",
     },
     {
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
+    {
+      label: "Maryland Lottery and Gaming FAQ",
+      url: "https://www.mdgaming.com/welcome/faqs/",
+    },
   ],
   related: [
     "is-online-casino-legal",
@@ -105,5 +96,5 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     "sports-betting-legal-states",
     "sweepstakes-casino-legal-states",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

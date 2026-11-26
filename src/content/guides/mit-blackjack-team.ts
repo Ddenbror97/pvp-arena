@@ -33,7 +33,9 @@ The early group had more enthusiasm than structure. That changed in 1980 when th
 
 J.P. Massar, one of the original students, is usually named alongside Kaplan as a founding figure. Over the following decade the personnel changed constantly. Several distinct teams and partnerships used the "MIT" label, and some members were never MIT students at all.
 
-This page is part of the [famous gamblers](/guides/famous-gamblers) series in the [Casino knowledge topic](/guides/topics/casino-knowledge). The counting method itself is explained on the [card counting](/guides/card-counting) page; the focus here is how a team turned it into a business.`,
+This page is part of the [famous gamblers](/guides/famous-gamblers) series in the [Casino knowledge topic](/guides/topics/casino-knowledge). The counting method itself is explained on the [card counting](/guides/card-counting) page; the focus here is how a team turned it into a business.
+
+MIT describes 21 as fiction loosely based on the team and explicitly identifies the professor played by Kevin Spacey as fictional.`,
     },
     {
       id: "business",
@@ -139,17 +141,6 @@ Card counting is legal in most places, but casinos can refuse to deal to you. Th
 
 Team play depends on a shoe dealt without replacement. On any game where each round is independent, a spotter has nothing to spot.`,
     },
-    {
-      id: "pvp",
-      title: "Team maths versus independent PvP rounds",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. None of them has a shoe. Every round is generated from fresh committed seeds, so no previous result tells you anything about the next one, and there is nothing for a spotter to count.
-
-- [Roulette](/roulette) uses a 33-slot wheel: 16 Purple and 16 Silver pay 2x, 1 Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee, whatever happened on earlier spins.
-- [Coinflip](/coinflip) is a 50/50 between two players, with the winner taking the pot minus any fee shown before entry.
-- In Jackpot, your chance of winning equals your share of the pot.
-
-What does carry over from the team's playbook is record keeping and a fixed budget. Any settled round can be checked on the [fairness](/fairness) page. Play is 18+ only, and limits are on the [responsible gambling](/responsible-gambling) page.`,
-    },
   ],
   faqs: [
     {
@@ -175,6 +166,10 @@ What does carry over from the team's playbook is record keeping and a fixed budg
   ],
   sources: [
     {
+      label: "MIT: 21 is loosely based on its blackjack team",
+      url: "https://news.mit.edu/2008/twenty-one-0328",
+    },
+    {
       label: "Wikipedia: MIT Blackjack Team",
       url: "https://en.wikipedia.org/wiki/MIT_Blackjack_Team",
     },
@@ -182,7 +177,10 @@ What does carry over from the team's playbook is record keeping and a fixed budg
       label: "Wikipedia: Bringing Down the House (book)",
       url: "https://en.wikipedia.org/wiki/Bringing_Down_the_House_(book)",
     },
-    { label: "Wikipedia: 21 (2008 film)", url: "https://en.wikipedia.org/wiki/21_(2008_film)" },
+    {
+      label: "Wikipedia: 21 (2008 film)",
+      url: "https://en.wikipedia.org/wiki/21_(2008_film)",
+    },
   ],
   related: [
     "famous-gamblers",
@@ -192,5 +190,5 @@ What does carry over from the team's playbook is record keeping and a fixed budg
     "is-card-counting-illegal",
     "don-johnson-blackjack",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

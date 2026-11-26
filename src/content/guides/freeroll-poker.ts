@@ -35,7 +35,9 @@ That is a situation inside a hand. It is not a tournament listing.
 
 This note is about the tournament. It sits in the [poker topic](/guides/topics/poker).
 
-The street order, if you need it before you sit, is [the order of the streets](/guides/texas-holdem-rules). Adults 18+ only.`,
+The street order, if you need it before you sit, is [the order of the streets](/guides/texas-holdem-rules). Adults 18+ only.
+
+PokerStars’ freeroll help distinguishes free entry from eligibility requirements. Check the lobby for tickets, passwords or other entry conditions; free entry does not mean every account qualifies.`,
     },
     {
       id: "donation",
@@ -207,6 +209,10 @@ The [terms](/terms) on this site list cash-table fees. They do not list a freero
       label: "Wikipedia: Poker tournament",
       url: "https://en.wikipedia.org/wiki/Poker_tournament",
     },
+    {
+      label: "PokerStars: freeroll tournament eligibility",
+      url: "https://www.pokerstars.com/help/articles/finding-freerolls-fr/163660/",
+    },
   ],
   related: [
     "three-bet-poker",
@@ -216,5 +222,5 @@ The [terms](/terms) on this site list cash-table fees. They do not list a freero
     "cash-game-poker",
     "poker-bankroll-management",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

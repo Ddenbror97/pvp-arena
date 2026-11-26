@@ -32,11 +32,11 @@ export const guide: Guide = {
 
 ### Why the extra card exists
 
-The fifth card is not a community card and not a draw from a deck you can chase. It is a choice. Dropping the wrong card can turn a straight into junk or break a flush to keep a pair. The dealer does not freestyle that choice. The house way is a printed setting, in the same family of ideas as the setting rules on [pai gow poker](/guides/pai-gow-poker). This guide does not reprint that discard chart. The felt or the rule card does.
+The fifth card is not a community card and not a draw from a deck you can chase. It is a choice. Dropping the wrong card can turn a straight into junk or break a flush to keep a pair. The dealer does not freestyle that choice. The house way is a printed setting, in the same family of ideas as the setting rules on [pai gow poker](/guides/pai-gow-poker). The four-card ranking and the best four cards out of five determine which card to discard.
 
 [Poker hand rankings](/guides/poker-hand-rankings) describe five-card order. Importing that order here will mis-rank the hand, because three of a kind outranks a straight and a flush when only four cards play. [Three Card Poker strategy](/guides/three-card-poker-strategy) is another short-deck house game with its own qualify rule and its own bets. [Let It Ride poker](/guides/let-it-ride-poker) is the paytable game where you can pull bets back. Do not carry either habit across.
 
-This page sits in [Casino games](/guides/topics/casino-games). Adults 18+ only. If the discard starts to feel like a rescue for a lost ante, stop on [responsible gambling](/responsible-gambling).
+Related banked poker formats are in [Casino games](/guides/topics/casino-games). Adults 18+ only. If the discard starts to feel like a rescue for a lost ante, stop on [responsible gambling](/responsible-gambling).
 
 One 52-card deck is the usual shoe. Your discard and the dealer's discard are out of both hands. The four cards that remain are the only hand the bets can see.`,
     },
@@ -53,7 +53,7 @@ You see five cards, discard one, and then choose:
 - Play for 1x the ante. This is the ordinary continue.
 - Play for up to 3x the ante when your four-card hand is a pair of aces or better.
 
-You cannot raise 3x with a pair of kings, and you cannot raise a random amount between the steps the layout allows. The menu is fold, one unit, or the aces-or-better raise. A published basic strategy says when a made hand is worth the one-unit play and when it should fold. That list is paytable-specific. This guide does not copy it. Guessing "king high always plays" is how the ante leaks.
+You cannot raise 3x with a pair of kings, and you cannot raise a random amount between the steps the layout allows. The menu is fold, one unit, or the aces-or-better raise. A published basic strategy says when a made hand is worth the one-unit play and when it should fold. That list is paytable-specific. Use an analysis for the offered rules. Guessing "king high always plays" is how the ante leaks.
 
 The play bet pays even money when you beat a qualifying dealer. It also pays even money, on the common sheet, when the dealer does not qualify. The ante is the bet that cares about qualification.
 
@@ -90,7 +90,7 @@ If a room prints a different qualify hand, believe the room. The commonly discus
 
 ### The usual cases
 
-A straight or better in your four-card hand is paid from the super bonus column even if the dealer beats you. The original bonus stake is handled the way that column says, often left in place while the odds are paid. The exact multiples, from a straight at the bottom of the bonus up through four aces, belong on the felt. This page does not reprint them.
+A straight or better in your four-card hand is paid from the super bonus column even if the dealer beats you. The original bonus stake is handled the way that column says, often left in place while the odds are paid. The exact multiples, from a straight at the bottom of the bonus up through four aces, belong on the felt. Read those payouts before placing the Super Bonus.
 
 Below a straight, the common published rule is pickier. If you beat or tie the dealer, or if the dealer does not qualify, the super bonus pushes. If a qualifying dealer beats your hand, the super bonus loses. If your rule card words the non-qualifier differently, follow the card.
 
@@ -128,7 +128,7 @@ The house way will sometimes discard a card you would have kept. That is the rul
 
 Adults 18+ only. This is an explanation, not a license where the game is illegal for you, and not a tax opinion. If you cannot discard and fold without negotiating with yourself, the 3x button will get the chips the chart wanted to save.
 
-PVPspinArena does not deal Crazy 4 Poker. Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games, settled in US dollars. A four-card pit game is not one of those tables with a new name.`,
+A four-card pit game is not one of those tables with a new name.`,
     },
     {
       id: "keep",
@@ -164,8 +164,8 @@ Then write a stop in ante units, and remember each ante drags a bonus chip with 
       a: "About 3.4% of the ante for one standard layout with a known basic strategy, counting ante, play, and the required super bonus together. Queens Up is a separate schedule. The felt controls the columns.",
     },
     {
-      q: "Does PVPspinArena offer Crazy 4 Poker?",
-      a: "No. This site offers P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette. The guide is for adults 18+ reading a house poker table dealt elsewhere.",
+      q: "Is Crazy 4 Poker the same as Four Card Poker?",
+      a: "No. They are separate games with different betting and settlement rules. Use the document naming the actual game.",
     },
   ],
   sources: [
@@ -188,5 +188,5 @@ Then write a stop in ante units, and remember each ante drags a bonus chip with 
     "pai-gow-poker",
     "poker-hand-rankings",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

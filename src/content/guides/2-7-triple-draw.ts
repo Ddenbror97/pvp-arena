@@ -48,7 +48,7 @@ A smooth draw dumps the brick and keeps the tiny cards. A rough draw keeps a sev
 
 Fixed-limit play may sell the next card for a small known price. Pot-limit play can charge the size of the pot for the same card.
 
-Your card sets that price. This page does not.
+Your card sets that price. Use deuce-to-seven rankings for this draw game.
 
 Opponents see how many cards you drew, not which ranks you threw. Drawing three announces a mess.
 
@@ -75,7 +75,7 @@ Razz uses an ace-to-five low. Its best hand is ace-2-3-4-5.
 
 Straights and flushes do not hurt a razz hand. Razz is also seven-card stud, with upcards, antes, and a bring-in, not a draw.
 
-This page will not teach that street order. The one line you need is that the games want opposite aces.
+Stud uses a different sequence of exposed and hidden cards. The one line you need is that the games want opposite aces.
 
 | Idea | 2-7 triple draw | Razz | Hold'em |
 | --- | --- | --- | --- |
@@ -186,7 +186,7 @@ This is not legal advice. A home lowball game is still subject to local rules.
 
 Read the regulator rather than a draw chart.
 
-This article will not help you open a public draw room, rake strangers, or advertise a seat. Friends, a written betting form, and a stop time are the whole product.
+A social game and operating a public cardroom can have different legal requirements. Friends, a written betting form, and a stop time are the whole product.
 
 PVPspinArena does not deal 2-7 triple draw. Tell that to anyone who searches the lobby for deuce-to-seven. Send them to Hold'em if they want a table that exists.
 
@@ -225,7 +225,7 @@ Any pair loses to any non-pair low. You receive five cards and may draw three ti
       q: "Is the betting always fixed limit?",
       a: `No. Fixed limit is common in some tournaments, and pot-limit 2-7 is a real form too.
 
-The dollar size is whatever the table wrote down. This page does not publish one structure as universal.`,
+The dollar size is whatever the table wrote down. The host or room must specify the limit structure, blinds and raise cap.`,
     },
     {
       q: "Does PVPspinArena deal triple draw?",
@@ -253,7 +253,10 @@ Draw when one card can break a pair or a straight. Keep the betting form on the 
       label: "Robert's Rules of Poker (Pagat copy)",
       url: "https://www.pagat.com/docs/RobsPkrRules11.pdf",
     },
-    { label: "World Series of Poker", url: "https://www.wsop.com/" },
+    {
+      label: "World Series of Poker",
+      url: "https://www.wsop.com/",
+    },
   ],
   related: [
     "seven-card-stud",
@@ -262,5 +265,5 @@ Draw when one card can break a pair or a straight. Keep the betting form on the 
     "poker-bankroll-management",
     "razz-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

@@ -23,78 +23,37 @@ export const guide: Guide = {
     {
       id: "what-a-hedge-is",
       title: "What hedge betting is",
-      body: `Hedge betting means you already have a bet, and you place another bet that wins when the first one loses. The point is the pair. You are not picking a new side from a blank page. You are choosing a net number across two tickets. If the original wins, you collect its profit and lose the hedge stake. If the hedge wins, you collect the hedge profit and lose the original stake. The calculator asks what hedge stake makes those two nets match.
-
-The original price does not improve because you hedged. You accepted it earlier. The hedge is filled at today's price, which can be worse than the price you would have wanted. [Implied probability](/guides/implied-probability) is how to read that new price as a percentage before you decide the certainty is worth it. A hedge is not a void and not a push. Both bets can still lose if you hedge the wrong market, such as a different spread from the one on the ticket.
-
-[Sports betting guides](/guides/topics/sports-betting) separate this from products that only look similar. A [parlay](/guides/parlay-betting-explained) is one stake that needs several legs. Hedging the last leg is a second stake. [Cash out](/guides/cash-out-betting) is the book buying your ticket back at a number it chooses. You can compare that offer with the hedge stake. They are not the same button.`,
+      body: "Hedge betting means you already have a bet, and you place another bet that wins when the first one loses. The point is the pair. You are not picking a new side from a blank page. You are choosing a net number across two tickets. If the original wins, you collect its profit and lose the hedge stake. If the hedge wins, you collect the hedge profit and lose the original stake. The calculator asks what hedge stake makes those two nets match.\n\nThe original price does not improve because you hedged. You accepted it earlier. The hedge is filled at today's price, which can be worse than the price you would have wanted. [Implied probability](/guides/implied-probability) is how to read that new price as a percentage before you decide the certainty is worth it. A hedge is not a void and not a push. Both bets can still lose if you hedge the wrong market, such as a different spread from the one on the ticket.\n\n[Sports betting guides](/guides/topics/sports-betting) separate this from products that only look similar. A [parlay](/guides/parlay-betting-explained) is one stake that needs several legs. Hedging the last leg is a second stake. [Cash out](/guides/cash-out-betting) is the book buying your ticket back at a number it chooses. You can compare that offer with the hedge stake. They are not the same button.",
     },
     {
       id: "calculator",
       title: "A hedge calculator that locks a profit",
-      body: `Use one equation. Let P be the profit if the original ticket wins, not counting the hedge. Let S0 be the original stake you lose if the hedge wins. Let f be the hedge's net odds: for a minus American price, f = 100 / |price|, and for a plus price, f = price / 100. The hedge stake S that matches both outcomes is (P + S0) / (1 + f). The locked profit is P − S. If that number is below zero, you are locking a loss.
-
-Worked profit lock. Original ticket: $100 at +300, so P = $300 and S0 = $100. The other side is now −150, so f = 100/150 = 2/3. S = (300 + 100) / (1 + 2/3) = 400 / (5/3) = $240. Stake $240 at −150. That hedge wins $160 if it hits, because 240 × 2/3 = 160.
-
-| Outcome | Original ticket | Hedge of $240 at −150 | Net |
-| --- | --- | --- | --- |
-| Original wins | +$300 | −$240 | +$60 |
-| Hedge wins | −$100 | +$160 | +$60 |
-
-The locked profit is $60 either way, before any extra fee the book actually charges. You gave up $240 of the $300 upside to remove the chance of losing the original $100. That trade is the whole calculator. It is not a finding that +300 was a good bet, and it is not an instruction to hedge live games. Prices on the other side move. If −150 becomes −180 before the hedge is accepted, recompute f. Do not reuse $240.`,
+      body: "Use one equation. Let P be the profit if the original ticket wins, not counting the hedge. Let S0 be the original stake you lose if the hedge wins. Let f be the hedge's net odds: for a minus American price, f = 100 / |price|, and for a plus price, f = price / 100. The hedge stake S that matches both outcomes is (P + S0) / (1 + f). The locked profit is P − S. If that number is below zero, you are locking a loss.\n\nWorked profit lock. Original ticket: $100 at +300, so P = $300 and S0 = $100. The other side is now −150, so f = 100/150 = 2/3. S = (300 + 100) / (1 + 2/3) = 400 / (5/3) = $240. Stake $240 at −150. That hedge wins $160 if it hits, because 240 × 2/3 = 160.\n\n| Outcome | Original ticket | Hedge of $240 at −150 | Net |\n| --- | --- | --- | --- |\n| Original wins | +$300 | −$240 | +$60 |\n| Hedge wins | −$100 | +$160 | +$60 |\n\nThe locked profit is $60 either way, before any extra fee the book actually charges. You gave up $240 of the $300 upside to remove the chance of losing the original $100. That trade is the whole calculator. It is not a finding that +300 was a good bet, and it is not an instruction to hedge live games. Prices on the other side move. If −150 becomes −180 before the hedge is accepted, recompute f. Do not reuse $240.",
     },
     {
       id: "locks-a-loss",
       title: "When the same math locks a loss",
-      body: `Second worked case. You bet $110 at −110, so a win profits $100 and a loss costs $110. The other side is also −110, which is the ordinary two-way price. Hedge $110 on that side. If the original wins, you make $100 and lose the $110 hedge, net −$10. If the hedge wins, you make $100 and lose the original $110, net −$10. The calculator did not malfunction. (P + S0) / (1 + f) = (100 + 110) / (1 + 100/110) = 210 / (210/110) = $110. Locked result = 100 − 110 = −$10.
-
-| Outcome | Original −110 stake | Hedge of $110 at −110 | Net |
-| --- | --- | --- | --- |
-| Original wins | +$100 | −$110 | −$10 |
-| Hedge wins | −$110 | +$100 | −$10 |
-
-You locked the juice. Both prices were short of even money, and holding both is a paid-up loss. This is the case people still hedge because the game became uncomfortable. Comfort has a price. Here it is $10 on a $110 decision, and the $10 does not swing with the score. Hedging two standard spreads against each other does not create a clever position. It closes the position by paying the book twice.
-
-If the locked number is a loss you would not accept as a single bet, do not accept it as a pair. Recalculate when the hedge price is plus money. A plus price raises f, which lowers the stake required and can turn a lock positive. The sign of the result is the decision. The story about nerves is not.`,
+      body: "Second worked case. You bet $110 at −110, so a win profits $100 and a loss costs $110. The other side is also −110, which is the ordinary two-way price. Hedge $110 on that side. If the original wins, you make $100 and lose the $110 hedge, net −$10. If the hedge wins, you make $100 and lose the original $110, net −$10. The calculator did not malfunction. (P + S0) / (1 + f) = (100 + 110) / (1 + 100/110) = 210 / (210/110) = $110. Locked result = 100 − 110 = −$10.\n\n| Outcome | Original −110 stake | Hedge of $110 at −110 | Net |\n| --- | --- | --- | --- |\n| Original wins | +$100 | −$110 | −$10 |\n| Hedge wins | −$110 | +$100 | −$10 |\n\nYou locked the juice. Both prices were short of even money, and holding both is a paid-up loss. This is the case people still hedge because the game became uncomfortable. Comfort has a price. Here it is $10 on a $110 decision, and the $10 does not swing with the score. Hedging two standard spreads against each other does not create a clever position. It closes the position by paying the book twice.\n\nIf the locked number is a loss you would not accept as a single bet, do not accept it as a pair. Recalculate when the hedge price is plus money. A plus price raises f, which lowers the stake required and can turn a lock positive. The sign of the result is the decision. The story about nerves is not.",
     },
     {
       id: "parlays-and-futures",
       title: "Parlays, futures, and the last leg",
-      body: `A parlay hedge is usually the last leg. You have two legs already won, and one game left, and the parlay will pay a known profit if that game hits. Plug that profit in as P and the original parlay stake as S0. Then price the opposite side of the remaining game, not a different spread and not a player prop that can win while your leg loses. If you hedge before the last leg, you can win the hedge and still lose the parlay to an earlier game, or win the parlay and lose a hedge you did not need. That is two risks, not a lock.
-
-A futures hedge has the same equation and a harsher scale. A small longshot stake can require a large hedge once the team is close, because P is large and the opponent's price is short. A long-priced [moneyline](/guides/moneyline-betting-explained) is the same shape of ticket when the market is a single game rather than a title. Bring the equation to it. Do not hedge a futures price with a regular-season side that does not settle the title. The markets have to be opposites of the same outcome, or the "lock" has a hole where both lose.
-
-Partial hedges are allowed by the arithmetic. Stake half of S and you keep more upside and more downside. The table will not show one number. It will show two nets, and you pick the pair you can stand. There is no correct fraction. There is only a pair of nets you computed before the game, instead of during it.`,
+      body: 'A parlay hedge is usually the last leg. You have two legs already won, and one game left, and the parlay will pay a known profit if that game hits. Plug that profit in as P and the original parlay stake as S0. Then price the opposite side of the remaining game, not a different spread and not a player prop that can win while your leg loses. If you hedge before the last leg, you can win the hedge and still lose the parlay to an earlier game, or win the parlay and lose a hedge you did not need. That is two risks, not a lock.\n\nA futures hedge has the same equation and a harsher scale. A small longshot stake can require a large hedge once the team is close, because P is large and the opponent\'s price is short. A long-priced [moneyline](/guides/moneyline-betting-explained) is the same shape of ticket when the market is a single game rather than a title. Bring the equation to it. Do not hedge a futures price with a regular-season side that does not settle the title. The markets have to be opposites of the same outcome, or the "lock" has a hole where both lose.\n\nPartial hedges are allowed by the arithmetic. Stake half of S and you keep more upside and more downside. The table will not show one number. It will show two nets, and you pick the pair you can stand. There is no correct fraction. There is only a pair of nets you computed before the game, instead of during it.',
     },
     {
       id: "when-it-costs",
       title: "When a hedge is smart and when it costs you",
-      body: `A hedge is the rational description of a preference only when the locked number is a profit you actually want more than the original upside, and the hedge market truly opposes the ticket. The +300 example locks +$60. Someone who needs the $60 more than the chance at $300 can say that in a sentence. Someone who hedges every ticket by habit is paying for a feeling. The −110 example is the feeling priced at a guaranteed −$10.
-
-It costs you in three ordinary ways. The locked number is negative. The hedge price moves after you looked, and you fill a worse f without redoing the division. The hedge is the wrong market, so both bets lose when the score lands between them. A fourth cost is tying up the hedge stake. The $240 in the first table has to sit in the account. If that cash was the bankroll for other bets, the lock spent it.
-
-None of this beats the vig. You are paying the hedge price's juice on the way out of a ticket that already had juice on the way in. Shopping the hedge across books can improve f. It cannot make (P − S) larger than P. Adults 18+. This is not betting advice, and a positive lock on a hypothetical ticket is not a claim you should have bet the original.`,
+      body: "A hedge is the rational description of a preference only when the locked number is a profit you actually want more than the original upside, and the hedge market truly opposes the ticket. The +300 example locks +$60. Someone who needs the $60 more than the chance at $300 can say that in a sentence. Someone who hedges every ticket by habit is paying for a feeling. The −110 example is the feeling priced at a guaranteed −$10.\n\nIt costs you in three ordinary ways. The locked number is negative. The hedge price moves after you looked, and you fill a worse f without redoing the division. The hedge is the wrong market, so both bets lose when the score lands between them. A fourth cost is tying up the hedge stake. The $240 in the first table has to sit in the account. If that cash was the bankroll for other bets, the lock spent it.\n\nNone of this beats the vig. You are paying the hedge price's juice on the way out of a ticket that already had juice on the way in. Shopping the hedge across books can improve f. It cannot make (P − S) larger than P. Adults 18+. This is not betting advice, and a positive lock on a hypothetical ticket is not a claim you should have bet the original.",
     },
     {
       id: "checklist",
       title: "A checklist before you bet the other side",
-      body: `Compute the net, then decide. The order matters.
-
-- Write P, the profit if the original wins, and S0, the original stake.
-- Write the hedge price and convert it to f, the profit per dollar staked.
-- Divide (P + S0) by (1 + f) and call that S.
-- Subtract S from P. If the result is negative, the hedge locks a loss.
-- Confirm the hedge market loses when the original wins, with no score that loses both.
-- Stop if you are hedging to chase a feeling. Adults 18+. This is not betting advice.
-
-If the arithmetic and the mood disagree, keep the mood off the slip. The [responsible gambling](/responsible-gambling) page is the right tab when hedging has become a way to stay in action after you meant to be done.`,
+      body: "Compute the net, then decide. The order matters.\n\n- Write P, the profit if the original wins, and S0, the original stake.\n- Write the hedge price and convert it to f, the profit per dollar staked.\n- Divide (P + S0) by (1 + f) and call that S.\n- Subtract S from P. If the result is negative, the hedge locks a loss.\n- Confirm the hedge market loses when the original wins, with no score that loses both.\n- Stop if you are hedging to chase a feeling. Adults 18+. This is not betting advice.\n\nIf the arithmetic and the mood disagree, keep the mood off the slip. The [responsible gambling](/responsible-gambling) page is the right tab when hedging has become a way to stay in action after you meant to be done.",
     },
     {
       id: "pvp-contrast",
       title: "Juice on both tickets, and a pot that is shared",
-      body: `Sportsbooks charge vig on the original price and again on the hedge. A locked profit is what remains after both charges, when anything remains. A locked loss is both charges with nothing left. The book does not refund the juice because you were "responsible" and took the other side. Middle outcomes, where the number lands between two different spreads, can even make both bets win, and those are a different bet, not the hedge in the table.
-
-A PvP pot is shared among the players in the pot. You are not laying a second price against a book to exit a first price. [Fairness](/fairness) explains how this site's rounds can be checked. [Jackpot](/) is the pot, not a hedge ticket. This page invents no player counts, no rake, and no jackpot size. Adults 18+. Nothing here is betting advice.`,
+      body: 'Sportsbooks charge vig on the original price and again on the hedge. A locked profit is what remains after both charges, when anything remains. A locked loss is both charges with nothing left. The book does not refund the juice because you were "responsible" and took the other side. Middle outcomes, where the number lands between two different spreads, can even make both bets win, and those are a different bet, not the hedge in the table.',
     },
   ],
   faqs: [
@@ -120,7 +79,10 @@ A PvP pot is shared among the players in the pot. You are not laying a second pr
     },
   ],
   sources: [
-    { label: "Sports betting", url: "https://en.wikipedia.org/wiki/Sports_betting" },
+    {
+      label: "Sports betting",
+      url: "https://en.wikipedia.org/wiki/Sports_betting",
+    },
     {
       label: "National Council on Problem Gambling — help and treatment",
       url: "https://www.ncpgambling.org/help-treatment/",
@@ -133,5 +95,5 @@ A PvP pot is shared among the players in the pot. You are not laying a second pr
     "moneyline-betting-explained",
   ],
   widget: "hedge",
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

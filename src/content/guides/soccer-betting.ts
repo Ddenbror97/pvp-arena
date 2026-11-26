@@ -16,36 +16,22 @@ export const guide: Guide = {
     "A draw is a completed result. 1X2 has three ways. A two-way handicap is a different bet.",
     "Extra time and penalties exist only when the competition rules require a winner after a draw.",
     "A goal after the 90th minute of play can still be inside the match, because of added time. A goal in extra time is outside a 90-minute market.",
-    "PVPspinArena does not book soccer.",
   ],
   sections: [
     {
       id: "clock",
       title: "Stoppage time is still the match",
-      body: `Law 7 says a match lasts two equal halves of 45 minutes, and that the referee allows for time lost to substitutions, injuries, time-wasting, sanctions, and the other causes the law lists. The fourth official shows a minimum. The referee can add more. A goal in the third minute of added time is a goal in the match.
-
-That is the usual subject of a 1X2 coupon labeled 90 minutes. It is not a bet on who goes through in a cup tie. [What sports betting is](/guides/what-is-sports-betting) is the general idea of a graded result. Soccer is the sport where the draw has its own column.`,
+      body: "Law 7 says a match lasts two equal halves of 45 minutes, and that the referee allows for time lost to substitutions, injuries, time-wasting, sanctions, and the other causes the law lists. The fourth official shows a minimum. The referee can add more. A goal in the third minute of added time is a goal in the match.\n\nThat is the usual subject of a 1X2 coupon labeled 90 minutes. It is not a bet on who goes through in a cup tie. [What sports betting is](/guides/what-is-sports-betting) is the general idea of a graded result. Soccer is the sport where the draw has its own column.",
     },
     {
       id: "three-ways",
       title: "1X2 is not a point spread",
-      body: `Home, draw, away. The prices add to more than 100% of fair chances because of the hold. [Vig betting](/guides/vig-betting) is that gap, and it is wider to see when there are three numbers instead of two. [Moneyline betting explained](/guides/moneyline-betting-explained) is the two-way version used in sports that do not draw.
-
-A point spread, sometimes sold as a handicap, removes the draw by giving one team a head start in goals. A 0-0 game can win a handicap for the underdog and lose a 1X2 home bet at the same time. Asian handicaps that can void on a push are another contract. Read the words on the coupon. "Spread" copied from a football page is how people mis-grade a draw.
-
-[Prop bets explained](/guides/prop-bets-explained) covers corners, cards, and scorers. Those settle on the statistic's own clock, which is often the same 90 minutes and sometimes is not.`,
+      body: 'Home, draw, away. The prices add to more than 100% of fair chances because of the hold. [Vig betting](/guides/vig-betting) is that gap, and it is wider to see when there are three numbers instead of two. [Moneyline betting explained](/guides/moneyline-betting-explained) is the two-way version used in sports that do not draw.\n\nA point spread, sometimes sold as a handicap, removes the draw by giving one team a head start in goals. A 0-0 game can win a handicap for the underdog and lose a 1X2 home bet at the same time. Asian handicaps that can void on a push are another contract. Read the words on the coupon. "Spread" copied from a football page is how people mis-grade a draw.\n\n[Prop bets explained](/guides/prop-bets-explained) covers corners, cards, and scorers. Those settle on the statistic\'s own clock, which is often the same 90 minutes and sometimes is not.',
     },
     {
       id: "extra",
       title: "Extra time is a different match segment",
-      body: `Law 10 says that when a competition requires a winner after a draw, the permitted procedures are the away-goals rule, two equal periods of extra time not exceeding 15 minutes each, and a penalty shoot-out, in the combination the competition chooses. Extra time is not added to every match. A league game that ends 1-1 is over.
-
-A bet "to qualify" includes whatever the competition uses to break the tie. A bet "90 minutes" does not. Penalties are not goals in the match unless the market says they count. If the slip is silent, do not guess. Silence is a reason to skip the bet.`,
-    },
-    {
-      id: "no-book",
-      title: "No soccer coupon here",
-      body: `PVPspinArena does not offer soccer betting. Adults only. [Responsible gambling](/responsible-gambling) applies to a Saturday list that can run to dozens of matches. The hub is [sports betting](/guides/topics/sports-betting). The [terms](/terms) describe this site's games, not a 1X2 board.`,
+      body: 'Law 10 says that when a competition requires a winner after a draw, the permitted procedures are the away-goals rule, two equal periods of extra time not exceeding 15 minutes each, and a penalty shoot-out, in the combination the competition chooses. Extra time is not added to every match. A league game that ends 1-1 is over.\n\nA bet "to qualify" includes whatever the competition uses to break the tie. A bet "90 minutes" does not. Penalties are not goals in the match unless the market says they count. If the slip is silent, do not guess. Silence is a reason to skip the bet.\n\nExplore the [sports betting topic](/guides/topics/sports-betting) for related rules and examples.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.',
     },
   ],
   faqs: [
@@ -86,5 +72,5 @@ A bet "to qualify" includes whatever the competition uses to break the tie. A be
     "moneyline-betting-explained",
     "prop-bets-explained",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

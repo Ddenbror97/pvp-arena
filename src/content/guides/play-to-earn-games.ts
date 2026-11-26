@@ -22,98 +22,32 @@ export const guide: Guide = {
     {
       id: "what",
       title: "What play to earn games are trying to be",
-      body: `Play to earn games, often shortened to P2E, sit at the intersection of a video game and a token economy. You complete quests, win matches or walk a certain number of steps, and the software credits you a token or an NFT. If a market exists, you can sell that reward for another cryptoasset or for cash.
-
-The pitch from 2020–2022 was straightforward: play is work, work should pay, and a blockchain makes the paycheck portable. Axie Infinity's scholarship era was the famous example: managers lent creatures to players, often in lower-income countries, and split the SLP income. Move-to-earn apps copied the structure with sneakers and step counts.
-
-This page is part of our [foundations cluster](/guides/topics/foundations). The neighbouring [GameFi guide](/guides/gamefi) covers the wider category. Here the job is narrower: how the reward loop works, why it so often inflates, and why a [crypto casino](/guides/what-is-a-crypto-casino) balance is a different product even when both use a wallet.
-
-For the actual payout trail rather than the emission model, use [earn crypto playing games](/guides/earn-crypto-playing-games). The [crypto-game selection guide](/guides/best-crypto-games) separates reward tokens, asset trading and entry-funded competitions before comparing products.
-
-PVPspinArena does not pay you for grinding. It does not have a guild, a scholarship or a governance token. If you deposit USDC, you have a dollar balance you can stake on [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette). That is entertainment with a cost, not a job.`,
+      body: "Play to earn games, often shortened to P2E, sit at the intersection of a video game and a token economy. You complete quests, win matches or walk a certain number of steps, and the software credits you a token or an NFT. If a market exists, you can sell that reward for another cryptoasset or for cash.\n\nThe pitch from 2020–2022 was straightforward: play is work, work should pay, and a blockchain makes the paycheck portable. Axie Infinity's scholarship era was the famous example: managers lent creatures to players, often in lower-income countries, and split the SLP income. Move-to-earn apps copied the structure with sneakers and step counts.\n\nSee [foundations cluster](/guides/topics/foundations). The neighbouring [GameFi guide](/guides/gamefi) covers the wider category. Here the job is narrower: how the reward loop works, why it so often inflates, and why a [crypto casino](/guides/what-is-a-crypto-casino) balance is a different product even when both use a wallet.\n\nFor the actual payout trail rather than the emission model, use [earn crypto playing games](/guides/earn-crypto-playing-games). The [crypto-game selection guide](/guides/best-crypto-games) separates reward tokens, asset trading and entry-funded competitions before comparing products.\n\nPVPspinArena does not pay you for grinding. It does not have a guild, a scholarship or a governance token. If you deposit USDC, you have a dollar balance you can stake on [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette). That is entertainment with a cost, not a job.",
     },
     {
       id: "tokens",
       title: "Token rewards and why inflation shows up",
-      body: `A P2E token is usually a utility or reward asset minted when players do the thing the designer wants: breed, win, walk, craft. Sinks are supposed to remove tokens: breeding fees, repairs, upgrades, burns. If minting outruns sinks, circulating supply rises. If demand does not rise with it, price falls.
-
-### The loop in one paragraph
-
-Early players buy NFTs, play, earn tokens, and sell to later players who need those tokens to enter or to upgrade. While the user chart is up and the story is loud, sellers find buyers. When growth slows, the same daily mint meets fewer bids. Dollar earnings collapse even if your in-game "pay" in tokens stays flat.
-
-That is not a mystery bug. It is what happens when the wage is a newly issued coin. Labour markets paid in a national currency do not print that currency every time someone finishes a quest. P2E often does.
-
-Designers try to slow the faucet: energy caps, repair costs, season resets. Those are brakes, not a guarantee. Read the emission schedule, the sink list and who owns the remaining supply before you treat a whitepaper APR as a salary.
-
-### Energy caps are not a wage floor
-
-An energy cap only limits how fast you can mint. If 50,000 players each mint a capped amount, the daily print can still swamp the bid. Unlock calendars compete with your quest: a team cliff is when many of those buyers become sellers.`,
+      body: 'A P2E token is usually a utility or reward asset minted when players do the thing the designer wants: breed, win, walk, craft. Sinks are supposed to remove tokens: breeding fees, repairs, upgrades, burns. If minting outruns sinks, circulating supply rises. If demand does not rise with it, price falls.\n\n### The loop in one paragraph\n\nEarly players buy NFTs, play, earn tokens, and sell to later players who need those tokens to enter or to upgrade. While the user chart is up and the story is loud, sellers find buyers. When growth slows, the same daily mint meets fewer bids. Dollar earnings collapse even if your in-game "pay" in tokens stays flat.\n\nThat is not a mystery bug. It is what happens when the wage is a newly issued coin. Labour markets paid in a national currency do not print that currency every time someone finishes a quest. P2E often does.\n\nDesigners try to slow the faucet: energy caps, repair costs, season resets. Those are brakes, not a guarantee. Read the emission schedule, the sink list and who owns the remaining supply before you treat a whitepaper APR as a salary.\n\n### Energy caps are not a wage floor\n\nAn energy cap only limits how fast you can mint. If 50,000 players each mint a capped amount, the daily print can still swamp the bid. Unlock calendars compete with your quest: a team cliff is when many of those buyers become sellers.',
     },
     {
       id: "scholarships",
       title: "Scholarships, guilds and who actually gets paid",
-      body: `Scholarships appeared because entry NFTs were expensive. A manager holds the assets, a player uses them, and they split token output on a posted ratio. Guilds pooled capital and ran this at scale.
-
-### What the split hides
-
-- The manager's capital can go to zero if the NFT floor collapses.
-- The player's "wage" is in a token whose dollar value the manager does not control.
-- Both sides depend on someone else buying the token or the next scholarship slot.
-- Account access, multi-factor codes and "manager wallets" create custody fights that no labour board will hear.
-
-If a pitch leads with how many scholars you can recruit, you are looking at a distribution scheme that needs new players, not a game that needs fun. That can still be disclosed and adult. It is not a job with a payslip.
-
-Guild tokens and "gamefi coins" add a second flywheel: people buy the guild token because the guild will onboard more scholars. When onboarding stops, both tokens can fall together. Treat stacked tokens as stacked risk, not as diversification.`,
+      body: 'Scholarships appeared because entry NFTs were expensive. A manager holds the assets, a player uses them, and they split token output on a posted ratio. Guilds pooled capital and ran this at scale.\n\n### What the split hides\n\n- The manager\'s capital can go to zero if the NFT floor collapses.\n- The player\'s "wage" is in a token whose dollar value the manager does not control.\n- Both sides depend on someone else buying the token or the next scholarship slot.\n- Account access, multi-factor codes and "manager wallets" create custody fights that no labour board will hear.\n\nIf a pitch leads with how many scholars you can recruit, you are looking at a distribution scheme that needs new players, not a game that needs fun. That can still be disclosed and adult. It is not a job with a payslip.\n\nGuild tokens and "gamefi coins" add a second flywheel: people buy the guild token because the guild will onboard more scholars. When onboarding stops, both tokens can fall together. Treat stacked tokens as stacked risk, not as diversification.',
     },
     {
       id: "example",
       title: "A worked inflation example",
-      body: `Numbers below are simplified. They show the shape, not a live quote.
-
-A game mints 1,000,000 reward tokens a day. Sinks burn 200,000. Net new supply is 800,000 a day. The token trades at $0.10, so the economy is paying about $80,000 a day to players, funded by whoever is buying.
-
-If daily buy demand is $80,000, the price can hold. If demand drops to $40,000 and minting does not, inventory builds and the price slides. At $0.05, the same 800,000 net tokens are only $40,000 of wages. Players who joined for "$20 a day" now make $10 before they even play worse because the meta got crowded.
-
-Meanwhile the entry NFT that cost $400 at the peak may now bid at $80. The scholar still has to split. The manager is underwater on the asset. Nobody cheated in this story. The faucet kept running.
-
-When a dashboard shows "earn 50 tokens a day" and hides the dollar chart, it is showing you the mint, not the living. Always convert rewards to a currency you pay rent in, at today's bid, after fees.
-
-### Same mint, three months later
-
-Month 1: 800,000 net tokens, $0.10 bid, $80,000 of apparent wages, NFT floor $400.  
-Month 3: still 800,000 net tokens, bid $0.03, $24,000 of wages, NFT floor $60. A scholar on a 50/50 split who "made $20 a day" now clears about $3 before fees. Write tokens per day and dollars per day, or you are reading a scoreboard.`,
+      body: 'Numbers below are simplified. They show the shape, not a live quote.\n\nA game mints 1,000,000 reward tokens a day. Sinks burn 200,000. Net new supply is 800,000 a day. The token trades at $0.10, so the economy is paying about $80,000 a day to players, funded by whoever is buying.\n\nIf daily buy demand is $80,000, the price can hold. If demand drops to $40,000 and minting does not, inventory builds and the price slides. At $0.05, the same 800,000 net tokens are only $40,000 of wages. Players who joined for "$20 a day" now make $10 before they even play worse because the meta got crowded.\n\nMeanwhile the entry NFT that cost $400 at the peak may now bid at $80. The scholar still has to split. The manager is underwater on the asset. Nobody cheated in this story. The faucet kept running.\n\nWhen a dashboard shows "earn 50 tokens a day" and hides the dollar chart, it is showing you the mint, not the living. Always convert rewards to a currency you pay rent in, at today\'s bid, after fees.\n\n### Same mint, three months later\n\nMonth 1: 800,000 net tokens, $0.10 bid, $80,000 of apparent wages, NFT floor $400.\nMonth 3: still 800,000 net tokens, bid $0.03, $24,000 of wages, NFT floor $60. A scholar on a 50/50 split who "made $20 a day" now clears about $3 before fees. Write tokens per day and dollars per day, or you are reading a scoreboard.',
     },
     {
       id: "risks",
       title: "Typical risks beyond a boring losing streak",
-      body: `P2E risk is not only "the game was not fun".
-
-- **Token inflation** as above.
-- **NFT floor risk.** Your character is an asset someone has to want.
-- **Smart-contract and admin-key risk.** A mint function or a paused market can strand you.
-- **Phishing.** Fake inventory sites and "support" Discord servers steal wallets.
-- **Regulatory and access risk.** An app store, a bank or a local rule can cut the off-ramp.
-- **Time cost.** Hours are real even when the token is not.
-
-The US Federal Trade Commission has warned consumers about crypto and NFT pitches that promise income. That warning applies here. A whitepaper is marketing. A scholarship Discord is not a human-resources department.
-
-If you still want to try a title, cap the money and the hours as you would any speculative hobby. Our [gambling budget guide](/guides/gambling-budget) is written for stakes, but the same rule — only discretionary money, written down first — is the right frame for an entry NFT you might not resell.`,
+      body: 'P2E risk is not only "the game was not fun".\n\n- **Token inflation** as above.\n- **NFT floor risk.** Your character is an asset someone has to want.\n- **Smart-contract and admin-key risk.** A mint function or a paused market can strand you.\n- **Phishing.** Fake inventory sites and "support" Discord servers steal wallets.\n- **Regulatory and access risk.** An app store, a bank or a local rule can cut the off-ramp.\n- **Time cost.** Hours are real even when the token is not.\n\nThe US Federal Trade Commission has warned consumers about crypto and NFT pitches that promise income. That warning applies here. A whitepaper is marketing. A scholarship Discord is not a human-resources department.\n\nIf you still want to try a title, cap the money and the hours as you would any speculative hobby. Our [gambling budget guide](/guides/gambling-budget) is written for stakes, but the same rule — only discretionary money, written down first — is the right frame for an entry NFT you might not resell.',
     },
     {
       id: "vs-casino",
       title: "Why a casino balance is not a P2E paycheck",
-      body: `People lump "crypto games" together because both use a wallet. The products do not share a balance sheet.
-
-| | Play to earn | Crypto casino balance |
-| --- | --- | --- |
-| Why you receive tokens | A mint or reward schedule | You deposited them |
-| What you hope happens | Someone buys your rewards | A round pays you |
-| Hidden extra bet | Inflation and floor price | Usually none, if the unit is a stablecoin |
-| Can you "work" your way out? | The pitch says yes | No. More play is more exposure |
-
-A casino does not owe you a yield. On PVPspinArena you send USDC or ETH on Base, the site credits dollars, and you stake on [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), or [six-max poker](/poker). You can lose. You cannot grind a governance token to offset the loss. That honesty is the feature.
-
-A [web3 casino](/guides/web3-casino) may still use a wallet and a chain. It should not need you to recruit scholars. If a "casino" is paying you to play in its own coin, ask whether you are the liquidity for someone else's exit. That is P2E wearing a felt table.`,
+      body: 'People lump "crypto games" together because both use a wallet. The products do not share a balance sheet.\n\n| | Play to earn | Crypto casino balance |\n| --- | --- | --- |\n| Why you receive tokens | A mint or reward schedule | You deposited them |\n| What you hope happens | Someone buys your rewards | A round pays you |\n| Hidden extra bet | Inflation and floor price | Usually none, if the unit is a stablecoin |\n| Can you "work" your way out? | The pitch says yes | No. More play is more exposure |\n\nA casino does not owe you a yield. On PVPspinArena you send USDC or ETH on Base, the site credits dollars, and you stake on [Jackpot](/), [Coinflip](/coinflip), [Roulette](/roulette), [P2P Slott](/slott), or [six-max poker](/poker). You can lose. You cannot grind a governance token to offset the loss. That honesty is the feature.\n\nA [web3 casino](/guides/web3-casino) may still use a wallet and a chain. It should not need you to recruit scholars. If a "casino" is paying you to play in its own coin, ask whether you are the liquidity for someone else\'s exit. That is P2E wearing a felt table.',
     },
     {
       id: "choose",
@@ -123,7 +57,7 @@ A [web3 casino](/guides/web3-casino) may still use a wallet and a chain. It shou
     {
       id: "adult",
       title: "Age, law and what this site will not do",
-      body: "Play to earn games marketed at teenagers with “make money after school” thumbnails are a red flag even when the token is real. This article assumes adults 18 or older. A scholarship Discord that onboards minors is not a cute growth hack. Leave it.\n\nLaw is local. Some countries treat certain reward tokens, paid loot boxes or wagering modules as gambling or as securities. This page is not legal advice and not a list of which titles are allowed on your street. If you cannot legally buy the token or stake it where you live, do not.\n\nPVPspinArena will not run a P2E season, will not lend you an NFT, and will not pay you for watching [Roulette](/roulette). Jackpot and Coinflip are other players’ money in a pot. The unit is USDC or ETH on Base. The result is a chance game you can check. That is a different product from a faucet that needs a buyer tomorrow.\n\nIf a friend forwards a “new Axie” with a higher advertised daily dollar, run the same five questions. New art does not reset inflation. New guilds do not reset custody risk. A new casino skin on the same wallet does not turn a grind into a salary.\n\nCompare token rewards with the [crypto shooter payment model](/guides/crypto-fps-game). An opponent-funded cash duel has a possible entry loss and a fee, not passive reward issuance.",
+      body: "Play to earn games marketed at teenagers with “make money after school” thumbnails are a red flag even when the token is real. A scholarship Discord that onboards minors is not a cute growth hack. Leave it.\n\nLaw is local. Some countries treat certain reward tokens, paid loot boxes or wagering modules as gambling or as securities. If you cannot legally buy the token or stake it where you live, do not.\n\nPVPspinArena will not run a P2E season, will not lend you an NFT, and will not pay you for watching [Roulette](/roulette). Jackpot and Coinflip are other players’ money in a pot. The unit is USDC or ETH on Base. The result is a chance game you can check. That is a different product from a faucet that needs a buyer tomorrow.\n\nIf a friend forwards a “new Axie” with a higher advertised daily dollar, run the same five questions. New art does not reset inflation. New guilds do not reset custody risk. A new casino skin on the same wallet does not turn a grind into a salary.\n\nCompare token rewards with the [crypto shooter payment model](/guides/crypto-fps-game). An opponent-funded cash duel has a possible entry loss and a fee, not passive reward issuance.",
     },
   ],
   faqs: [
@@ -169,5 +103,5 @@ A [web3 casino](/guides/web3-casino) may still use a wallet and a chain. It shou
     "are-online-casinos-rigged",
     "crypto-fps-game",
   ],
-  updated: "2026-10-31",
+  updated: "2026-11-26",
 };

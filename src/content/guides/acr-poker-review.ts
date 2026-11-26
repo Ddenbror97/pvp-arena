@@ -50,7 +50,7 @@ Do this once before you deposit, and again on a day you would actually play:
 - Note the hour and the day. Write the count down.
 - Come back at a different hour. If the second count collapses, your first visit was the traffic, not the room's average.
 
-This article will not print a player total. Any total I typed would be false by the time you read it, and the site's own hero numbers are not a substitute for the lobby. Reviews that rank rooms by a single traffic figure are ranking a screenshot.
+Check the current lobby for tables at the stake and time you intend to play. Any total I typed would be false by the time you read it, and the site's own hero numbers are not a substitute for the lobby. Reviews that rank rooms by a single traffic figure are ranking a screenshot.
 
 Empty tables change the product. You cannot realize a skill edge against opponents who are not seated. You also should not move up in stakes only because the lower stake is empty. The field upstairs may be tougher, and the posted fees may take more dollars per pot. [Poker bankroll management](/guides/poker-bankroll-management) is the constraint: the stake has to fit the money you set aside, not the only table that happens to be running.
 
@@ -155,7 +155,7 @@ Play only if those three documents are acceptable on the day you deposit. If one
     },
     {
       q: "Is ACR Poker legal in my country?",
-      a: "This page does not answer that. Read ACR's terms and your local law. A crypto cashier does not replace either one. This is not legal advice.",
+      a: "That requires the room’s current eligibility and cashier terms for your account. Read ACR's terms and your local law. A crypto cashier does not replace either one. This is not legal advice.",
     },
     {
       q: "Does PVPspinArena run ACR tables?",
@@ -163,9 +163,15 @@ Play only if those three documents are acceptable on the day you deposit. If one
     },
   ],
   sources: [
-    { label: "ACR Poker — official site", url: "https://www.acrpoker.eu/" },
-    { label: "Wikipedia — Online poker", url: "https://en.wikipedia.org/wiki/Online_poker" },
+    {
+      label: "ACR Poker — official site",
+      url: "https://www.acrpoker.eu/",
+    },
+    {
+      label: "Wikipedia — Online poker",
+      url: "https://en.wikipedia.org/wiki/Online_poker",
+    },
   ],
   related: ["real-money-poker-apps", "crypto-poker"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

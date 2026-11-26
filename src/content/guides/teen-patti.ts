@@ -44,7 +44,9 @@ A hand ends in one of two ways:
 1. Every player except one folds (packs), and the remaining player takes the pot without showing.
 2. Two players remain and one of them asks for a **show**. Both hands are turned up and the higher one wins.
 
-That simple structure hides a surprising amount of strategy, because the game has two kinds of player at the table at the same time: those who have looked at their cards and those who have not. The game belongs to the wider family of house and social card games in the [casino games topic hub](/guides/topics/casino-games).`,
+That simple structure hides a surprising amount of strategy, because the game has two kinds of player at the table at the same time: those who have looked at their cards and those who have not. The game belongs to the wider family of house and social card games in the [casino games topic hub](/guides/topics/casino-games).
+
+OneTouch publishes a dealer-banked Teen Patti game sheet. Its casino implementation is a separate ruleset from the social blind-and-seen betting game described above.`,
     },
     {
       id: "blind-seen",
@@ -178,19 +180,6 @@ Some online live casinos offer a house-banked teen patti in which you play again
 
 The legal status of playing teen patti for money depends on where you are. In India, gambling law is largely set at state level, and courts have long debated where card games sit between skill and chance. Other countries apply their general gambling rules. A summary of the Indian position for online play is in the [crypto casino India guide](/guides/crypto-casino-india). Always check local law, and keep stakes to amounts you are comfortable losing.`,
     },
-    {
-      id: "pvp",
-      title: "Pot share and odds on a hashed PvP round",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, for adults 18+ only. Like teen patti, they are games between players rather than games against a dealer's hand, but there is no hidden information to bet on.
-
-- In [Jackpot](/), players add wagers to one pot and your win chance equals your share. Put 2 into a 10-unit pot and your chance is exactly 20%. The winner takes the pot minus any fee shown before entry.
-- [Coinflip](/coinflip) is a straight 50/50 between two players.
-- On [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and 1 Green slot pays 14x on a 33-slot wheel. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
-
-There is no blind or seen choice and no bluffing: each result comes from committed seeds, and anyone can verify a settled round on the [fairness page](/fairness). Set limits before you start using the [responsible gambling](/responsible-gambling) tools.
-
-In the same cluster, see also [pai gow tiles](/guides/pai-gow-tiles), [craps strategy](/guides/craps-strategy), and [baccarat strategy](/guides/baccarat-strategy).`,
-    },
   ],
   faqs: [
     {
@@ -215,8 +204,18 @@ In the same cluster, see also [pai gow tiles](/guides/pai-gow-tiles), [craps str
     },
   ],
   sources: [
-    { label: "Wikipedia: Teen patti", url: "https://en.wikipedia.org/wiki/Teen_patti" },
-    { label: "Wikipedia: Three card brag", url: "https://en.wikipedia.org/wiki/Three_card_brag" },
+    {
+      label: "OneTouch: Teen Patti game sheet",
+      url: "https://www.onetouch.io/wp-content/uploads/2021/10/TeenPatti2020_GameSheet.pdf",
+    },
+    {
+      label: "Wikipedia: Teen patti",
+      url: "https://en.wikipedia.org/wiki/Teen_patti",
+    },
+    {
+      label: "Wikipedia: Three card brag",
+      url: "https://en.wikipedia.org/wiki/Three_card_brag",
+    },
   ],
   related: [
     "dragon-tiger",
@@ -228,5 +227,5 @@ In the same cluster, see also [pai gow tiles](/guides/pai-gow-tiles), [craps str
     "craps-strategy",
     "baccarat-strategy",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

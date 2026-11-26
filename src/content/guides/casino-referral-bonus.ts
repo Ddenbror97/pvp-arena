@@ -16,42 +16,28 @@ export const guide: Guide = {
     "A code or a link is the tracking method. It is not itself the payment.",
     "The release condition is usually a deposit, a wagering total, or both, inside a time limit.",
     "Self-referral, duplicate accounts, and brand-bidding are common reasons a program voids the credit.",
-    "No rate on this page is a live offer. Copy the figure from the program you actually joined.",
+    "Confirm the written commission terms is a live offer. Copy the figure from the program you actually joined.",
   ],
   sections: [
     {
       id: "two-sides",
       title: "Separate the two sides of the deal",
-      body: `Write two lines. Line one is what the new player receives, and what they must deposit or wager. Line two is what you receive, and what they must do before you receive it. Programs mix these into one banner. They are different contracts.
-
-A match for the friend is a [deposit match bonus](/guides/deposit-match-bonus) with an extra tracking code. Your reward might be a flat amount after their first deposit, or a small share of their net losses, which is an affiliate deal wearing a friendlier name. [Crypto casino affiliate program](/guides/crypto-casino-affiliate-program) is that second shape. Do not assume a "friend bonus" is the flat kind.
-
-The page sits in [Foundations](/guides/topics/foundations). It does not rank programs.`,
+      body: 'Write two lines. Line one is what the new player receives, and what they must deposit or wager. Line two is what you receive, and what they must do before you receive it. Programs mix these into one banner. They are different contracts.\n\nA match for the friend is a [deposit match bonus](/guides/deposit-match-bonus) with an extra tracking code. Your reward might be a flat amount after their first deposit, or a small share of their net losses, which is an affiliate deal wearing a friendlier name. [Crypto casino affiliate program](/guides/crypto-casino-affiliate-program) is that second shape. Do not assume a "friend bonus" is the flat kind.\n\nThe page sits in [Foundations](/guides/topics/foundations). It does not rank programs.',
     },
     {
       id: "conditions",
       title: "Conditions that void the credit",
-      body: `Minimum deposit, minimum odds or minimum stake, excluded games, a deadline, and a country list. Miss one and the credit does not leave "pending."
-
-Self-referral is the clause people test. A second account in your own name, or a household the terms treat as one person, is a reason the program states for taking the credit back. Duplicate-account rules are the operator's, and they are allowed to be strict. Read them before you send the link to someone you live with.
-
-Wagering on your reward, if the reward is bonus chips rather than withdrawable cash, follows [casino wagering requirements](/guides/casino-wagering-requirements). Pending cash and bonus chips are not the same balance.`,
+      body: 'Minimum deposit, minimum odds or minimum stake, excluded games, a deadline, and a country list. Miss one and the credit does not leave "pending."\n\nSelf-referral is the clause people test. A second account in your own name, or a household the terms treat as one person, is a reason the program states for taking the credit back. Duplicate-account rules are the operator\'s, and they are allowed to be strict. Read them before you send the link to someone you live with.\n\nWagering on your reward, if the reward is bonus chips rather than withdrawable cash, follows [casino wagering requirements](/guides/casino-wagering-requirements). Pending cash and bonus chips are not the same balance.',
     },
     {
       id: "not-income",
       title: "It is not a job, and it is not risk-free",
-      body: `A referral credit depends on another adult choosing to gamble. You do not control their session, their chargeback, or a later void. Chasing referrals by staking your own money to "qualify" the account is how a side deal becomes the gambling.
-
-If the friend does not understand the wagering, do not send the link. Adults only, and [responsible gambling](/responsible-gambling) applies to both of you.
-
-Tax treatment of a referral credit is not settled by this page. A US reader should look at [reporting gambling winnings](/guides/report-gambling-winnings). A UK reader should look at [gambling tax UK](/guides/gambling-tax-uk), and still ask an adviser if the activity has become a trade.`,
+      body: 'A referral credit depends on another adult choosing to gamble. You do not control their session, their chargeback, or a later void. Chasing referrals by staking your own money to "qualify" the account is how a side deal becomes the gambling.\n\nIf the friend does not understand the wagering, do not send the link. Adults only, and [responsible gambling](/responsible-gambling) applies to both of you.\n\nA US reader should look at [reporting gambling winnings](/guides/report-gambling-winnings). A UK reader should look at [gambling tax UK](/guides/gambling-tax-uk), and still ask an adviser if the activity has become a trade.',
     },
     {
       id: "here",
       title: "What this site will not pay you for",
-      body: `The [terms](/terms) describe game fees and the cashier. They do not quote a referral rate. Do not invent one from a forum. If a partner page exists for a specific code, the rate on that page that day is the rate, and this guide is not it.
-
-[What a crypto casino is](/guides/what-is-a-crypto-casino) explains the product people are actually funding. A referral does not change the price of the game.`,
+      body: "The [terms](/terms) describe game fees and the cashier. They do not quote a referral rate. Do not invent one from a forum. If a partner page exists for a specific code, the rate on that page that day is the rate.\n\n[What a crypto casino is](/guides/what-is-a-crypto-casino) explains the product people are actually funding. A referral does not change the price of the game.",
     },
   ],
   faqs: [
@@ -89,5 +75,5 @@ Tax treatment of a referral credit is not settled by this page. A US reader shou
     "casino-wagering-requirements",
     "gambling-tax-uk",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

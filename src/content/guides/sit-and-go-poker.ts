@@ -36,7 +36,9 @@ This [poker](/guides/topics/poker) guide is for adults 18 or older. Format neigh
 
 [Texas Hold'em rules](/guides/texas-holdem-rules) still run the hand: two cards, blinds, flop, turn, river, and the same hand rankings. The sit and go adds a layer around the hand. Stacks are tournament chips. They are not cash you can stand up and redeem mid-event. The only cash is the prize for the places that pay.
 
-If the lobby says rebuy or add-on, it is not a classic freezeout. Those words change the strategy and the price. Believe the lobby. This article's examples assume a freezeout unless they say otherwise.`,
+If the lobby says rebuy or add-on, it is not a classic freezeout. Those words change the strategy and the price. Believe the lobby. This article's examples assume a freezeout unless they say otherwise.
+
+PokerStars defines Sit & Go tournaments by their start when seats fill, rather than a scheduled start time. Structure and payouts still depend on the event.`,
     },
     {
       id: "clock",
@@ -151,12 +153,19 @@ Read the table. Then register, or do not. The seats will fill without you if the
     },
   ],
   sources: [
-    { label: "Wikipedia — Sit and go", url: "https://en.wikipedia.org/wiki/Sit_and_go" },
+    {
+      label: "Wikipedia — Sit and go",
+      url: "https://en.wikipedia.org/wiki/Sit_and_go",
+    },
     {
       label: "Wikipedia — Poker tournament",
       url: "https://en.wikipedia.org/wiki/Poker_tournament",
     },
+    {
+      label: "PokerStars: tournament types, Sit & Go",
+      url: "https://www.pokerstars.com/poker/tournaments/types/",
+    },
   ],
   related: ["spin-and-go", "cash-game-poker", "poker-staking", "texas-holdem-rules"],
-  updated: "2026-10-07",
+  updated: "2026-11-26",
 };

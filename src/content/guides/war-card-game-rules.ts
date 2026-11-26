@@ -109,17 +109,6 @@ Adult stakes, if any, are gambling, and gambling is for adults only (18+, or the
 
 [Yahtzee](/guides/yahtzee-rules) is the next kitchen game if the table wants a real choice after each roll. War will not grow a strategy layer because you stared at it.`,
     },
-    {
-      id: "stakes",
-      title: "A split deck and a hashed coin",
-      body: `After the shuffle, home War is a recording of the deck order. The higher card wins, the tie spills extra cards, and the packet moves. Counting cards is possible in theory and useless in practice for the people who actually play it. The fair way to end the night is the time limit plus a count, not a claim that someone played better.
-
-If you want a two-player flip that finishes in one result, use a coin rather than 26 battles. PVPspinArena runs that as [Coinflip](/coinflip): two players, 50/50, USDC or ETH on Base, adults 18+ only. The same account can play Jackpot, which pays a shared pot by share, or Roulette, a 33-slot wheel that returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee, a 7.88 percent on Purple or Silver after the win fee edge. Seeds are committed before the round. Check a settled round on the [fairness](/fairness) page.
-
-None of those rounds has a three-card war or a suit. The [responsible gambling](/responsible-gambling) page is there when a flip stops being a game. Home War can wait until tomorrow. The deck will still be 52 cards.
-
-See also [slapjack](/guides/slapjack-rules), [go fish](/guides/go-fish-rules) and [old maid](/guides/old-maid-card-game).`,
-    },
   ],
   faqs: [
     {
@@ -144,8 +133,14 @@ See also [slapjack](/guides/slapjack-rules), [go fish](/guides/go-fish-rules) an
     },
   ],
   sources: [
-    { label: "Wikipedia: War (card game)", url: "https://en.wikipedia.org/wiki/War_(card_game)" },
-    { label: "Pagat: War", url: "https://www.pagat.com/war/war.html" },
+    {
+      label: "Wikipedia: War (card game)",
+      url: "https://en.wikipedia.org/wiki/War_(card_game)",
+    },
+    {
+      label: "Pagat: War",
+      url: "https://www.pagat.com/war/war.html",
+    },
   ],
   related: [
     "casino-war-game",
@@ -155,5 +150,5 @@ See also [slapjack](/guides/slapjack-rules), [go fish](/guides/go-fish-rules) an
     "52-card-deck",
   ],
   howTo: true,
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

@@ -12,12 +12,11 @@ export const guide: Guide = {
   answer:
     "Mini baccarat is the small-table version of the same two-hand game. Maryland's rules, opened 20 October 2026, seat at most nine players and bar them from touching the cards. Washington allows a banker commission of up to 5 percent. A dollar minimum is not printed. No sheet promises a win.",
   facts: [
-    "Last tested 20 October 2026 on the Washington State Gambling Commission mini-baccarat rules and the Maryland Lottery mini baccarat standard rules.",
     "A mini baccarat table in the Maryland text has numbered seats for no more than nine players, with the dealer on the opposite side.",
     "Maryland says players may not touch, handle, remove, or alter the cards. The dealer turns the hands. A timed squeeze length is not published.",
     "On an ordinary Maryland table, a winning banker bet pays 1 to 1 and the house takes vigorish equal to 5 percent of the amount won. EZ, Fortune 7, and no-commission tables are exceptions.",
     "Washington's overview says winning banker bets may be charged a commission of up to 5 percent, and tie bets pay at least 8 to 1. A table minimum in dollars is not on either sheet.",
-    "The house-edge percent is not printed on those two rule texts. PVPspinArena does not offer this game.",
+    "The house-edge percent is not printed on those two rule texts.",
   ],
   sections: [
     {
@@ -105,9 +104,9 @@ Example 2 — a $12 win. Five percent is $0.60, and the next 25-cent step is $0.
 
 The sheet does not print the long-run effect of the extra $0.15. That percent stays not published.
 
-Example 3 — a different product. A $10 Purple win pays $20 before the fee, the fee is $1, and the credit is $19.
+Example 3 — a different product.
 
-Most Purple stakes lose the $10. That is roulette, not a banker bet.
+That is roulette, not a banker bet.
 
 A tie price of "at least 8 to 1" does not tell you the edge of the tie. Washington did not print that edge. Leave it not published.
 
@@ -122,13 +121,12 @@ The mini baccarat chip in example 1 is the $20 banker win, not a promise the ban
 | --- | --- | --- | --- | --- | --- |
 | Ordinary Maryland banker bet | 5% vigorish on the amount won. Long-run edge not published | The house | not published | not published | not published |
 | House-banked casino | Washington allows up to 5% commission. A named pit's sign may differ | The house | not published | not published | not published |
-| PVPspinArena | Purple and Silver about 7.88% after the 5% win fee. This game is not offered | Each roulette stake settles on its own | Balance updates when the round settles | yes, seed committed before the round | Shown on the bet control. Coinflip minimum is $1 |
 
-How PvP compares: there is no banker box here. [Roulette](/roulette) uses 33 slots, 16 Purple, 16 Silver, and 1 Green. Purple and Silver pay 2x, then 5% comes off the winning payout.
+How PvP compares: there is no banker box here.
 
 The 7.88% edge is 16/33 times 1.90, minus 1. It is not a baccarat commission, and it does not fill the unpublished house-edge cell on the rule sheets.
 
-A settled round can be recomputed on the [fairness page](/fairness). The check matches this site's seed. It does not audit a shoe.
+A settled round can be recomputed on the [fairness page](/fairness). It does not audit a shoe.
 
 Cash-out minimum is $20 in BTC, USDC, or ETH, after wagering at least half of deposited dollars. We did not time a cash-out.
 
@@ -139,24 +137,12 @@ Cash-out minimum is $20 in BTC, USDC, or ETH, after wagering at least half of de
       title: "Checks before you sit at the small layout",
       body: `Use the sign on the table in front of you. A familiar nine-seat shape does not prove the commission.
 
-- [ ] Confirm you are 18, or older if local law sets a higher age.
-- [ ] Read whether the sign says 5 percent, up to 5 percent, or no commission.
-- [ ] If the sign is silent, leave the commission not published.
-- [ ] Confirm players do not touch the cards unless that house posts a different rule.
-- [ ] Accept the Washington draw only if the table's rules match it.
-- [ ] Leave the long-run house edge unpublished when the sheet has no percent.
-- [ ] Leave the table minimum unpublished when the sign has no dollar.
-- [ ] Do not treat a tie at "at least 8 to 1" as a cheap hedge.
-- [ ] Set a loss stop in dollars before the first hand.
-- [ ] If the session becomes a chase, call 1-800-GAMBLER.
-- [ ] Do not ask this site's fairness page to audit the shoe.`,
+- [ ] Confirm you are 18, or older if local law sets a higher age. - [ ] Read whether the sign says 5 percent, up to 5 percent, or no commission. - [ ] If the sign is silent, leave the commission not published. - [ ] Confirm players do not touch the cards unless that house posts a different rule. - [ ] Accept the Washington draw only if the table's rules match it. - [ ] Leave the long-run house edge unpublished when the sheet has no percent. - [ ] Leave the table minimum unpublished when the sign has no dollar. - [ ] Do not treat a tie at "at least 8 to 1" as a cheap hedge. - [ ] Set a loss stop in dollars before the first hand. - [ ] If the session becomes a chase, call 1-800-GAMBLER.`,
     },
     {
       id: "leave",
       title: "Who should leave the nine seats alone",
       body: `A fast dealer reveal fits more hands into an hour. A mini baccarat commission you have not priced is how a small table spends a bankroll. The sheets do not owe you a banker run.
-
-Do not play if you are under 18, or under a higher age where you live. Do not play where the game is illegal. Do not stake rent, savings, or money with a due date.
 
 Do not raise the banker chip because the last five hands went the other way. Nothing in the Washington draw stores that debt.
 
@@ -164,7 +150,7 @@ This page is an editorial note on two public rule texts. It is not a forecast.
 
 If the shoe stops being a bounded spend, stop. Call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).
 
-The [terms](/terms) list this site's wheel and its fee. They do not list a mini table.`,
+They do not list a mini table.`,
     },
   ],
   faqs: [
@@ -189,8 +175,8 @@ The [terms](/terms) list this site's wheel and its fee. They do not list a mini 
       a: "Not on the ordinary Maryland table. A $20 win at 1 to 1 owes 5 percent of the amount won, which is $1, so the profit kept is $19 and the stake comes back. A $12 win is 60 cents before rounding, and the sheet allows a round up to 75 cents. Those pictures assume the table is not marked no-commission. They are not a promise the banker wins.",
     },
     {
-      q: "Does PVPspinArena deal this game?",
-      a: "No. The site does not offer a banker bet or a nine-seat shoe. Roulette uses 33 slots, and Purple or Silver carries about a 7.88% edge after the 5% fee on a winning payout. That percent is not a baccarat commission. A settled round can be recomputed on the fairness page. We did not time a cash-out. The cash-out minimum in the terms is $20.",
+      q: "Does mini baccarat change the card-drawing rules?",
+      a: "The smaller table and dealer handling do not by themselves change standard punto banco drawing rules. Check whether a named variant changes payouts or commission.",
     },
   ],
   sources: [
@@ -211,5 +197,5 @@ The [terms](/terms) list this site's wheel and its fee. They do not list a mini 
     "baccarat-strategy",
     "house-edge",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

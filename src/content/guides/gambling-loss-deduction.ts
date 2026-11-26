@@ -27,84 +27,37 @@ export const guide: Guide = {
     {
       id: "scope",
       title: "Scope and disclaimer",
-      body: `This guide covers general US federal themes for a gambling loss deduction. State returns differ. Professional gambler status is a different analysis we will not apply to you. Not legal advice, not tax advice.
-
-Adults 18+ only. Pair with [crypto gambling taxes](/guides/crypto-gambling-taxes) if your play is on-chain. This sits in [Foundations](/guides/topics/foundations).
-
-If you are chasing losses to “manufacture” a deduction, stop. Deductions do not make losing a strategy. Use [responsible gambling](/responsible-gambling) when harm shows up.
-
-PVPspinArena can show dollar ledgers for Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. We cannot choose your Form 1040 lines.
-`,
+      body: "State returns differ. Not legal advice, not tax advice.\n\nAdults 18+ only. Pair with [crypto gambling taxes](/guides/crypto-gambling-taxes) if your play is on-chain. This sits in [Foundations](/guides/topics/foundations).\n\nIf you are chasing losses to “manufacture” a deduction, stop. Deductions do not make losing a strategy. Use [responsible gambling](/responsible-gambling) when harm shows up.\n\nPVPspinArena can show dollar ledgers for Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. We cannot choose your Form 1040 lines.",
     },
     {
       id: "income-first",
       title: "Winnings first, losses second",
-      body: `IRS Topic 419 tells casual gamblers to report gambling winnings as income. You do not wait for a W-2G. A crypto casino may never issue one.
-
-Only after you understand reported winnings does a gambling loss deduction conversation start for itemizers. You generally cannot deduct losses above the winnings you report. “I lost overall, so I report nothing” is not how Topic 419 describes casual-gambler winnings.
-
-Keep a wins diary even when you hope to deduct losses — still education, not a prepared return.
-`,
+      body: "IRS Topic 419 tells casual gamblers to report gambling winnings as income. You do not wait for a W-2G. A crypto casino may never issue one.\n\nOnly after you understand reported winnings does a gambling loss deduction conversation start for itemizers. You generally cannot deduct losses above the winnings you report. “I lost overall, so I report nothing” is not how Topic 419 describes casual-gambler winnings.\n\nKeep a wins diary even when you hope to deduct losses — still education, not a prepared return.",
     },
     {
       id: "itemize",
       title: "Itemizing and Schedule A",
-      body: `Loss deductions for casual gamblers typically live on Schedule A as itemized deductions, subject to the rules in Publication 529 and the year’s instructions. If you take the standard deduction, you may not get a separate gambling-loss write-off even with perfect records — confirm with a professional for your year.
-
-Publication 505 (2026) states that beginning in 2026 the Schedule A gambling-loss deduction is limited to the lesser of 90% of gambling losses or your gambling winnings. Legislation can change; re-read the year’s pubs before you file.
-
-That 90% idea can leave taxable income even when cash gambling felt flat. It is not a reason to invent diary entries.
-`,
+      body: "Loss deductions for casual gamblers typically live on Schedule A as itemized deductions, subject to the rules in Publication 529 and the year’s instructions. If you take the standard deduction, you may not get a separate gambling-loss write-off even with perfect records — confirm with a professional for your year.\n\nPublication 505 (2026) states that beginning in 2026 the Schedule A gambling-loss deduction is limited to the lesser of 90% of gambling losses or your gambling winnings. Legislation can change; re-read the year’s pubs before you file.\n\nThat 90% idea can leave taxable income even when cash gambling felt flat. It is not a reason to invent diary entries.",
     },
     {
       id: "records",
       title: "Records the IRS talks about",
-      body: `Publication 529 discusses diaries and supporting documents: dates, types of wager, amounts, wins and losses, and statements. For crypto, add:
-
-- Token, network and txid for deposits and withdrawals.
-- USD fair market value when tokens were credited or received.
-- Site ledger exports or screenshots.
-
-### Worked sketch (not a filing position)
-
-You deposit 200 USDC ($200), leave with 140 USDC ($140) after [Roulette](/roulette). The gambling story is closer to a $60 loss for that session if those were the only movements — not “$140 withdrawn.” A forgotten second deposit falsifies the line.
-
-Keep explorer links next to the site CSV. Ask a preparer how facts map to forms.
-`,
+      body: "Publication 529 discusses diaries and supporting documents: dates, types of wager, amounts, wins and losses, and statements. For crypto, add:\n\n- Token, network and txid for deposits and withdrawals.\n- USD fair market value when tokens were credited or received.\n- Site ledger exports or screenshots.\n\n### Worked sketch (not a filing position)\n\nYou deposit 200 USDC ($200), leave with 140 USDC ($140) after [Roulette](/roulette). The gambling story is closer to a $60 loss for that session if those were the only movements — not “$140 withdrawn.” A forgotten second deposit falsifies the line.\n\nKeep explorer links next to the site CSV. Ask a preparer how facts map to forms.",
     },
     {
       id: "crypto",
       title: "Crypto property layers",
-      body: `Convertible virtual currency is treated as property for federal tax purposes in IRS guidance. Moving tokens can create separate reporting events from the gambling result. Stablecoins reduce price noise while you play on a [what is a crypto casino](/guides/what-is-a-crypto-casino) balance, but they do not delete diaries.
-
-Do not net “ETH went up” into “casino loss” without professional mapping. Two clocks can exist in one week: the gambling clock and the property clock.
-`,
+      body: "Convertible virtual currency is treated as property for federal tax purposes in IRS guidance. Moving tokens can create separate reporting events from the gambling result. Stablecoins reduce price noise while you play on a [what is a crypto casino](/guides/what-is-a-crypto-casino) balance, but they do not delete diaries.\n\nDo not net “ETH went up” into “casino loss” without professional mapping. Two clocks can exist in one week: the gambling clock and the property clock.",
     },
     {
       id: "mistakes",
       title: "Common deduction mistakes",
-      body: `- Claiming losses without reporting winnings.
-- Treating deposits as deductible losses.
-- Skipping itemizing rules.
-- Using a vibe instead of a diary.
-- Ignoring the 2026 90% language in Publication 505.
-- Copying streamer spreadsheets that collapse token price into gambling P&L.
-
-[House edge](/guides/house-edge) explains why long-run play loses without needing a tax angle. Shrink the hobby if the worksheet hurts.
-
-See [online casino real money](/guides/online-casino-real-money) for product literacy — entertainment money only.
-`,
+      body: "- Claiming losses without reporting winnings.\n- Treating deposits as deductible losses.\n- Skipping itemizing rules.\n- Using a vibe instead of a diary.\n- Ignoring the 2026 90% language in Publication 505.\n- Copying streamer spreadsheets that collapse token price into gambling P&L.\n\n[House edge](/guides/house-edge) explains why long-run play loses without needing a tax angle. Shrink the hobby if the worksheet hurts.\n\nSee [online casino real money](/guides/online-casino-real-money) for product literacy — entertainment money only.",
     },
     {
       id: "next",
       title: "What to do next",
-      body: `Export ledgers. Value tokens when they move. Separate deposits from results. Take the folder to a qualified tax professional with the current IRS publications open.
-
-Play on [Jackpot](/) or [Coinflip](/coinflip) only inside a budget you can afford to lose and document. If records already show harm, stop before you optimize Schedule A — use [gambling self-exclusion](/guides/gambling-self-exclusion).
-
-Primary sources beat blogs: Topic 419, Publication 529, Publication 505.
-
-A worksheet that is not this deduction is the [gambling tax calculator](/guides/gambling-tax-calculator).`,
+      body: "Export ledgers. Value tokens when they move. Separate deposits from results. Take the folder to a qualified tax professional with the current IRS publications open.\n\nPlay on [Jackpot](/) or [Coinflip](/coinflip) only inside a budget you can afford to lose and document. If records already show harm, stop before you optimize Schedule A — use [gambling self-exclusion](/guides/gambling-self-exclusion).\n\nPrimary sources beat blogs: Topic 419, Publication 529, Publication 505.\n\nA worksheet that is not this deduction is the [gambling tax calculator](/guides/gambling-tax-calculator).",
     },
   ],
   faqs: [
@@ -146,5 +99,5 @@ A worksheet that is not this deduction is the [gambling tax calculator](/guides/
     "online-casino-real-money",
     "house-edge",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

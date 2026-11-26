@@ -24,7 +24,9 @@ export const guide: Guide = {
       title: "One roll, then the bet is over",
       body: `You place chips on named boxes. The dice are shaken. Every bet on that roll wins or loses immediately. Nothing carries to the next shake. That is the difference from craps, where some bets need a sequence of rolls. [History of dice](/guides/history-of-dice) is background, not a paytable.
 
-The totals run from 3 to 18. Small and Big skip the triples inside their ranges, so three 2s is not a Small winner even though 6 is between 4 and 10. The same is true of three 5s and Big. Odd and Even, where offered, also lose on triples in the published rules.`,
+The totals run from 3 to 18. Small and Big skip the triples inside their ranges, so three 2s is not a Small winner even though 6 is between 4 and 10. The same is true of three 5s and Big. Odd and Even, where offered, also lose on triples in the published rules.
+
+The Massachusetts Gaming Commission publishes a dedicated Sic Bo rules sheet, rather than treating the dice layout as interchangeable with craps.`,
     },
     {
       id: "edges",
@@ -44,21 +46,21 @@ Use the table as a map of the published comparison, then throw it out if your ru
     {
       id: "choosing-bets",
       title: "Compare bets before choosing a system",
-      body: "For a bet-by-bet comparison, read [Sic Bo strategy and house edges](/guides/sic-bo-strategy). Compare the payoff printed on your screen with the probability of that outcome. A staking progression cannot remove the house edge, and a lower-edge bet can still lose. The rules and price of each box matter more than a system's name.",
+      body: `For a bet-by-bet comparison, read [Sic Bo strategy and house edges](/guides/sic-bo-strategy). Compare the payoff printed on your screen with the probability of that outcome. A staking progression cannot remove the house edge, and a lower-edge bet can still lose. The rules and price of each box matter more than a system's name.`,
     },
     {
       id: "online",
       title: "What changes when the dice are on a screen",
       body: `The mathematics of three fair dice do not change because the shake is animated. The contract can. An online game can delete Small, change a triple payoff, or add a side bet that was never on a Macau felt. The rules page of that game is the paytable. A pretty dice cup is not.
 
-If the game does not show the payoff for a box, do not bet that box. This page will not fill the blank. A "lower edge" claim is only true for the bets whose price you have checked. Big and Small earn that description on the published 1 to 1 tables above. They do not earn it by the name alone.`,
+If the game does not show the payoff for a box, do not bet that box. An undisclosed payout prevents an expected-value calculation. A "lower edge" claim is only true for the bets whose price you have checked. Big and Small earn that description on the published 1 to 1 tables above. They do not earn it by the name alone.`,
     },
     {
       id: "stop",
       title: "A fast game is still a priced game",
       body: `Sic bo settles every few seconds. That is a lot of edges in an hour if you keep every box lit. The lower-edge bets are still negative. They are only lower than the triple boxes beside them.
 
-Adults only. [Responsible gambling](/responsible-gambling) is the limit that matters when the shake button is the whole interface. PVPspinArena does not offer sic bo. Its dice, where it has them, are other games, described in the [terms](/terms). More tables live under [casino games](/guides/topics/casino-games). [Casino war](/guides/casino-war-game) is a card game with a different tie rule. Do not mix the two paytables.`,
+Adults only. [Responsible gambling](/responsible-gambling) is the limit that matters when the shake button is the whole interface. Its dice, where it has them, are other games, described in the [terms](/terms). More tables live under [casino games](/guides/topics/casino-games). [Casino war](/guides/casino-war-game) is a card game with a different tie rule. Do not mix the two paytables.`,
     },
   ],
   faqs: [
@@ -79,11 +81,20 @@ Adults only. [Responsible gambling](/responsible-gambling) is the limit that mat
       a: "Only if the paytable matches. Jurisdictions already disagree on triple odds. An online game can disagree again.",
     },
     {
-      q: "Does PVPspinArena run sic bo?",
-      a: "No.",
+      q: "Do all sic bo screens use the same paytable?",
+      a: "No. Compare the award for each box and the rules for triples. A visually familiar layout can still price a bet differently.",
     },
   ],
-  sources: [{ label: "Wikipedia: Sic bo", url: "https://en.wikipedia.org/wiki/Sic_bo" }],
+  sources: [
+    {
+      label: "Massachusetts Gaming Commission: approved Sic Bo rules",
+      url: "https://massgaming.com/regulations/table-games-rules/",
+    },
+    {
+      label: "Wikipedia: Sic bo",
+      url: "https://en.wikipedia.org/wiki/Sic_bo",
+    },
+  ],
   related: ["house-edge", "expected-value-gambling", "casino-war-game", "history-of-dice"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

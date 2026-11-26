@@ -53,7 +53,9 @@ Roll 3: 5, 4, 3, 5. Bank a 5 and a 4. Cargo is 3+5 = 8. No rolls left to improve
 
 Each player takes one turn. Highest cargo wins the pot. Ties either split or carry the pot to the next round, house choice. A first-roll crew with high cargo (especially 12, "midnight") is what later players have to beat; some tables then cap later players at the same number of rolls the leader used. That catch-up rule is a variant. Say it out loud.
 
-Money play is for adults, 18+ or the local legal age. The game sits in the [Games of chance topic](/guides/topics/games-of-chance) next to [Mexico dice](/guides/mexico-dice-game) and [cee-lo](/guides/cee-lo-rules), the other short-order bar dice games.`,
+Money play is for adults, 18+ or the local legal age. The game sits in the [Games of chance topic](/guides/topics/games-of-chance) next to [Mexico dice](/guides/mexico-dice-game) and [cee-lo](/guides/cee-lo-rules), the other short-order bar dice games.
+
+Bicycle's version uses up to three rolls, banks 6 then 5 then 4, and lets a qualified player reroll both cargo dice with a remaining roll.`,
     },
     {
       id: "qualify",
@@ -144,25 +146,6 @@ Ten turns at ~54% to score is about 5 or 6 cargos. Chance of scoring on all ten 
 
 [Farkle](/guides/farkle-rules) is the cousin that lets you stop. Ship captain crew never lets you stop before you crew; the stop is only on cargo.`,
     },
-    {
-      id: "pvp",
-      title: "Qualifying odds and a hashed PvP round",
-      body: `Ship captain crew is a sequence filter. Most of the drama is binary: did you crew, or did you score zero? The cargo is a small two-dice game glued on the end.
-
-PVPspinArena makes the filter visible. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Coinflip](/coinflip) is a 50/50, no sequence to complete. [Roulette](/roulette) is 33 slots, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. [Jackpot](/) sets win chance equal to your share of the pot, the same idea as a share of a glass on the bar. Seeds are committed; check a settled round on [fairness](/fairness).
-
-If the next "one more glass" is already a chase, use [responsible gambling](/responsible-gambling). Play is 18+ only.
-
-### Worked three-roll path
-
-Five dice. First roll: 6, 6, 2, 3, 1. Bank one 6 (the ship). Four dice remain. Second roll: 5, 5, 4, 2. Bank a 5 (captain) and a 4 (crew). Two dice left as cargo on the last roll: you may reroll them if the house allows a cargo reroll, or keep 5+2=7. Many tables freeze cargo once the crew is complete; write that down. If the second roll had been 5, 3, 2, 1 with no 4, you would still need a 4 on the last roll of the leftover dice. Miss it and the 6 and 5 you banked score nothing.
-
-That all-or-nothing shape is why the game feels swingy. About 46% of three-roll turns score zero even though most rolls “look busy.” Compare [liars dice](/guides/liars-dice), where a bad cup still leaves you with four dice and a bid.
-
-### Bar stakes
-
-A common adult stake is a drink per zero, or a pound-per-pip of cargo against last place. With four players and 54% qualification, expect roughly two zeros a round. Cap the number of rounds before the first glass, the same way you would cap a [Coinflip](/coinflip) session. Uncapped “until someone crews a 12” is how a pub game becomes a chase.`,
-    },
   ],
   faqs: [
     {
@@ -188,11 +171,21 @@ A common adult stake is a drink per zero, or a pound-per-pip of cargo against la
   ],
   sources: [
     {
+      label: "Bicycle: Ship, Captain, and Crew rules",
+      url: "https://bicyclecards.com/how-to-play/ship-captain-and-crew",
+    },
+    {
       label: "Wikipedia: Ship, captain, and crew",
       url: "https://en.wikipedia.org/wiki/Ship,_captain,_and_crew",
     },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
-    { label: "Wikipedia: Dice", url: "https://en.wikipedia.org/wiki/Dice" },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
+    {
+      label: "Wikipedia: Dice",
+      url: "https://en.wikipedia.org/wiki/Dice",
+    },
   ],
   related: [
     "mexico-dice-game",
@@ -202,5 +195,5 @@ A common adult stake is a drink per zero, or a pound-per-pip of cargo against la
     "dice-roll-probability",
     "left-right-center-rules",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

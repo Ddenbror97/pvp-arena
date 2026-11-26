@@ -44,7 +44,7 @@ If you are arguing with the definition so you can keep a favourite site, that ar
       title: "Addiction, disorder, problem gambling — the names",
       body: `Search language and clinic language do not always match.
 
-- **Gambling addiction** is what most people type. It emphasises loss of control and harm.
+- **Gambling addiction** is a common term for persistent loss of control and harm.
 - **Gambling disorder** is the name you will see in diagnostic manuals used by clinicians. Criteria involve persistence, tolerance, withdrawal-like restlessness, chase, lies, risked relationships, and borrowing, among other features. We will not reprint a scoring sheet.
 - **Problem gambling** is a broader public-health phrase. It includes people who are harmed but may not meet every formal criterion.
 

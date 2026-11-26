@@ -21,7 +21,7 @@ export const guide: Guide = {
     "The best-known origin story involves St Dunstan, a 10th-century Archbishop of Canterbury, and the Devil. It is a legend, not history.",
     "Iron was widely believed to repel fairies, witches and spirits, which made a free, sturdy piece of iron an obvious charm.",
     "Binion's Horseshoe in Las Vegas, opened in 1951, hosted the World Series of Poker from 1970.",
-    "A charm does not change a probability. A 16/33 Purple hit is 16/33 with or without a horseshoe.",
+    "A charm does not change a probability.",
   ],
   sections: [
     {
@@ -35,7 +35,9 @@ Three details show up again and again in the folklore:
 - **Iron matters.** Aluminium racing plates and plastic novelty shoes are, strictly, missing the point. The older belief is about iron.
 - **Nails count.** Traditional shoes were often made with seven nail holes, and seven is a lucky number in many cultures, which folklore writers like to connect. See [lucky numbers](/guides/lucky-numbers-gambling) for why seven carries so much weight.
 
-The horseshoe is one of the most widespread luck charms in Europe and the Americas, alongside the four-leaf clover and the rabbit's foot. It sits in the same family as the other beliefs in the [Games of chance topic](/guides/topics/games-of-chance): human ways of feeling some grip on outcomes that are, by design, out of anyone's control.`,
+The horseshoe is one of the most widespread luck charms in Europe and the Americas, alongside the four-leaf clover and the rabbit's foot. It sits in the same family as the other beliefs in the [Games of chance topic](/guides/topics/games-of-chance): human ways of feeling some grip on outcomes that are, by design, out of anyone's control.
+
+Johnson's collected New England folklore records a horseshoe over the door as a luck belief. It documents a tradition, not an effect on random outcomes.`,
     },
     {
       id: "history",
@@ -132,15 +134,6 @@ Suppose you play 20 even-money bets at p = 0.5 on two nights, one with a horsesh
 Some psychology experiments have reported that holding a lucky charm can modestly improve performance on skill tasks, apparently through confidence; replication attempts have been mixed. Even if the effect is real, it applies to putting a golf ball, not to a shuffled deck or a hashed seed.`,
     },
     {
-      id: "pvp",
-      title: "Horseshoes, hashes and a PvP round",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott: Jackpot at [the home page](/), [Coinflip](/coinflip) and [Roulette](/roulette), settled in US dollars. Each result comes from committed seeds, so the outcome is fixed before anyone clicks, and every settled round can be checked on [fairness](/fairness).
-
-That setup is a clean test of the charm question. On Roulette, 16 Purple and 16 Silver slots pay 2x and 1 Green slot pays 14x on a 33-slot wheel. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Coinflip is a 50/50 between two players. In Jackpot, your win chance equals your share of the pot. A horseshoe on your desk changes none of those numbers, and because the seed is committed in advance, nothing you do at the moment of the spin can influence it either.
-
-If a charm makes a session more fun, fine. Pair it with a written budget, not a hunch. Gambling is 18+, and the [responsible gambling](/responsible-gambling) page has limits and help links if luck rituals start driving bigger stakes.`,
-    },
-    {
       id: "care",
       title: "Hanging and keeping a horseshoe",
       body: `If you want to keep the custom for its own sake, a few practical points make it last:
@@ -150,7 +143,7 @@ If a charm makes a session more fun, fine. Pair it with a written budget, not a 
 - **Fix it properly.** Use screws into a stud or masonry plugs; a steel shoe is heavier than it looks.
 - **Pick the direction on purpose.** Up or down, choose one and explain it. The story is the charm.
 
-Horseshoes are also popular wedding gifts in Britain and Ireland, sometimes stitched onto a bride's dress or carried as a small silver token, and they turn up in gardens as planters and wind chimes. As decor, they carry a bit of history about iron, smiths and horses that is worth knowing even if you never place a bet.
+As decor, they carry a bit of history about iron, smiths and horses that is worth knowing even if you never place a bet.
 
 In the same cluster, see also [quick pick](/guides/quick-pick-lottery) and [bingo patterns](/guides/bingo-patterns).`,
     },
@@ -178,8 +171,18 @@ In the same cluster, see also [quick pick](/guides/quick-pick-lottery) and [bing
     },
   ],
   sources: [
-    { label: "Wikipedia: Horseshoe", url: "https://en.wikipedia.org/wiki/Horseshoe" },
-    { label: "Wikipedia: Dunstan", url: "https://en.wikipedia.org/wiki/Dunstan" },
+    {
+      label: "Clifton Johnson: What They Say in New England, historical folklore",
+      url: "https://tile.loc.gov/storage-services/public/gdcmassbookdig/whattheysayinnew01john/whattheysayinnew01john.pdf",
+    },
+    {
+      label: "Wikipedia: Horseshoe",
+      url: "https://en.wikipedia.org/wiki/Horseshoe",
+    },
+    {
+      label: "Wikipedia: Dunstan",
+      url: "https://en.wikipedia.org/wiki/Dunstan",
+    },
     {
       label: "Wikipedia: Binion's Gambling Hall and Hotel",
       url: "https://en.wikipedia.org/wiki/Binion%27s_Gambling_Hall_and_Hotel",
@@ -193,5 +196,5 @@ In the same cluster, see also [quick pick](/guides/quick-pick-lottery) and [bing
     "gamblers-fallacy",
     "bingo-patterns",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

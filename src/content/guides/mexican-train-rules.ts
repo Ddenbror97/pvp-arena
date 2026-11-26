@@ -50,7 +50,9 @@ Published rule sets vary by a tile or two, so treat this as a default and agree 
 
 ### The engine
 
-In round one, the double-12 goes in the centre as the **engine**. Each round after that uses the next double down: double-11, double-10 and so on, to the double-blank in round 13. Some groups decide the engine differently, for example by having players draw until someone finds the right double, but setting it aside before the deal is simplest.`,
+In round one, the double-12 goes in the centre as the **engine**. Each round after that uses the next double down: double-11, double-10 and so on, to the double-blank in round 13. Some groups decide the engine differently, for example by having players draw until someone finds the right double, but setting it aside before the deal is simplest.
+
+University Games' booklet describes the shared Mexican Train and train markers. A marker changes which train is open; it does not change the number of pips on a tile.`,
     },
     {
       id: "trains",
@@ -171,15 +173,6 @@ Four players, 15 tiles each, round one. With the double-12 set aside as the engi
 
 The [expected value](/guides/expected-value-gambling) guide shows how to weigh holding a strong double against the risk of being stuck with it.`,
     },
-    {
-      id: "stakes",
-      title: "Playing for stakes and the PvP connection",
-      body: `Mexican Train is usually a family or club game, but some groups add a small stake per point or per game. If you do, keep it among adults 18+ (or the local legal age), agree the stake and all house rules in writing, and set a maximum. Because points accumulate over 13 rounds, a per-point stake can grow faster than expected: a bad night of 400 points at even a small amount per point adds up.
-
-Luck plays a large part: the deal decides whether you can start your train, and a single uncovered double can bury you. Skill in chaining, dumping and timing doubles shows over many games, not one evening. The [variance in gambling](/guides/variance-in-gambling) guide explains why short samples mislead.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, and all three are pure chance. A [Coinflip](/coinflip) is a fair 50/50 between two players; in Jackpot your win chance equals your share of the pot; Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on average. Every result comes from committed seeds that can be checked on [fairness](/fairness). Related tile games, including [chicken foot dominoes](/guides/chicken-foot-dominoes), sit in the [Games of chance topic](/guides/topics/games-of-chance). If a regular game night starts to cost more than you planned, the tools at [responsible gambling](/responsible-gambling) can help.`,
-    },
   ],
   faqs: [
     {
@@ -204,8 +197,18 @@ PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settle
     },
   ],
   sources: [
-    { label: "Wikipedia: Mexican Train", url: "https://en.wikipedia.org/wiki/Mexican_Train" },
-    { label: "Wikipedia: Dominoes", url: "https://en.wikipedia.org/wiki/Dominoes" },
+    {
+      label: "University Games: Mexican Train and domino rules",
+      url: "https://www.universitygames.com/_files/ugd/05f72c_230047a18d1c4372a9ec2dd61b1de8f0.pdf",
+    },
+    {
+      label: "Wikipedia: Mexican Train",
+      url: "https://en.wikipedia.org/wiki/Mexican_Train",
+    },
+    {
+      label: "Wikipedia: Dominoes",
+      url: "https://en.wikipedia.org/wiki/Dominoes",
+    },
   ],
   related: [
     "dominoes-rules",
@@ -214,5 +217,5 @@ PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settle
     "mahjong-tiles",
     "pai-gow-tiles",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

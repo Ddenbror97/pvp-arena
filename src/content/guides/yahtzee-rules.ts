@@ -44,7 +44,9 @@ You roll 6, 6, 4, 2, 1. Keep both 6s and reroll the rest: 6, 3, 5. You now have 
 
 A different first roll, 1, 2, 3, 5, 6, is an inside four-run plus extras. Keep 2, 3, 5, 6 (open-ended) rather than 1, 2, 3, 5 (needs a 4 only). After two more rolls you finish a large straight about 56% of the time from the open end, versus about 31% if you keep the inside gap. Same “almost a straight” look; very different finish rates.
 
-Yahtzee sits alongside [Farkle](/guides/farkle-rules) in the [games of chance hub](/guides/topics/games-of-chance). Both are push-your-luck dice games. Farkle asks when to stop rolling. Yahtzee asks what to aim for, and where to put the result.`,
+Yahtzee sits alongside [Farkle](/guides/farkle-rules) in the [games of chance hub](/guides/topics/games-of-chance). Both are push-your-luck dice games. Farkle asks when to stop rolling. Yahtzee asks what to aim for, and where to put the result.
+
+Hasbro's instructions specify thirteen scoring turns and up to three rolls per turn. A category is filled once, so a missed target can force a zero.`,
     },
     {
       id: "scorecard",
@@ -174,17 +176,6 @@ Four adults play a 13-turn game for $1 per 10 points of margin against last plac
 
 About 4.6% of turns produce a Yahtzee with competent keeping. Over 13 turns the chance of at least one is 1 − (1 − 0.046)^13 ≈ 46%. Two Yahtzees in one game is about 12%. That is why a $5 Yahtzee bounty feels common and still is not a strategy. You are pricing a coin that lands roughly every other game, not a skill edge.`,
     },
-    {
-      id: "pvp",
-      title: "Yahtzee odds and a hashed PvP round",
-      body: `Yahtzee teaches the counting skill that every dice bet rests on. List the outcomes, count the ones you want, then divide. It is the same method behind [dice roll probability](/guides/dice-roll-probability) and [poker dice](/guides/poker-dice). It is also the core of [expected value](/guides/expected-value-gambling). There, you multiply each outcome by its payout and add them up.
-
-PVPspinArena applies that arithmetic to Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. A [Coinflip](/coinflip) is an even 50/50 between two players. On Roulette's 33-slot wheel, Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. In Jackpot, your chance to win equals your share of the pot. Results come from committed seeds, and anyone can recheck a settled round on the [fairness page](/fairness).
-
-Yahtzee's lesson on long runs applies too. Short sessions are noisy, and averages only show up over many games. Play is 18+, and limits live on the [responsible gambling](/responsible-gambling) page.
-
-See also [tenzi](/guides/tenzi-rules).`,
-    },
   ],
   faqs: [
     {
@@ -209,9 +200,22 @@ See also [tenzi](/guides/tenzi-rules).`,
     },
   ],
   sources: [
-    { label: "Wikipedia: Yahtzee", url: "https://en.wikipedia.org/wiki/Yahtzee" },
-    { label: "Wikipedia: Dice", url: "https://en.wikipedia.org/wiki/Dice" },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
+    {
+      label: "Hasbro: Yahtzee instructions",
+      url: "https://instructions.hasbro.com/en-us/instruction/yahtzee",
+    },
+    {
+      label: "Wikipedia: Yahtzee",
+      url: "https://en.wikipedia.org/wiki/Yahtzee",
+    },
+    {
+      label: "Wikipedia: Dice",
+      url: "https://en.wikipedia.org/wiki/Dice",
+    },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
   ],
   related: [
     "farkle-rules",
@@ -222,5 +226,5 @@ See also [tenzi](/guides/tenzi-rules).`,
     "expected-value-gambling",
     "tenzi-rules",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

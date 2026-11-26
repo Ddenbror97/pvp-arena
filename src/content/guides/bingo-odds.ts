@@ -32,7 +32,9 @@ export const guide: Guide = {
 
 Worked example 1. The game sells 100 cards. You buy 4. Your share is 4/100 = 4%. Buy 1 card and the share is about 1%. Buy 10 and it is about 10%. A same-call tie splits the prize among the cards that hit together, so the expectation of a fair split is still your share of the prize. You did not need a hot colour or a lucky corner to get that result. You needed a fraction.
 
-The fraction is not a return. If those 100 cards sold for $1 and the prize is $70, the room kept $30 before anyone won. Your expected payout on 4 cards is about 0.04 × $70 = $2.80, against $4 spent. More cards multiply the $2.80 and the $4 in the same direction. [Variance in gambling](/guides/variance-in-gambling) is why one night can still pay you the whole $70. The mean stays the prize ratio. You must be 18+. [Responsible gambling](/responsible-gambling) is the spend limit. More odds guides sit under [Games and odds](/guides/topics/games-and-odds).`,
+The fraction is not a return. If those 100 cards sold for $1 and the prize is $70, the room kept $30 before anyone won. Your expected payout on 4 cards is about 0.04 × $70 = $2.80, against $4 spent. More cards multiply the $2.80 and the $4 in the same direction. [Variance in gambling](/guides/variance-in-gambling) is why one night can still pay you the whole $70. The mean stays the prize ratio. You must be 18+. [Responsible gambling](/responsible-gambling) is the spend limit. More odds guides sit under [Games and odds](/guides/topics/games-and-odds).
+
+The fixed-pattern calculation uses sampling without replacement, as defined in OpenStax’s hypergeometric model. It is not automatically the probability of beating all other cards.`,
     },
     {
       id: "players",
@@ -158,7 +160,11 @@ If you cannot fill the second and third lines, you are buying a story. Stories a
       label: "Hypergeometric distribution",
       url: "https://en.wikipedia.org/wiki/Hypergeometric_distribution",
     },
+    {
+      label: "OpenStax: hypergeometric distribution",
+      url: "https://openstax.org/books/introductory-statistics-2e/pages/4-5-hypergeometric-distribution",
+    },
   ],
   related: ["bingo-patterns", "crypto-bingo", "keno-vs-bingo", "variance-in-gambling"],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

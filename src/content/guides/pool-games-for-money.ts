@@ -17,7 +17,7 @@ export const guide: Guide = {
     "Play pool for money can mean a skill-cash app or a 1v1 pot. This site charges 5% of the pot. No tournament is published here. Other apps' fees are not known.",
   h1: "Play pool for money without mixing an app entry and a pot",
   answer:
-    "To play pool for money on this site, both players post cash on 1v1 8-ball and the winner receives 95% of the pot. A skill-cash app is a different cashier, and this page does not know its fee.",
+    "To play pool for money on this site, both players post cash on 1v1 8-ball and the winner receives 95% of the pot. A skill-cash app has separate entry, prize and withdrawal terms.",
   facts: [
     "This site's money game is 1v1 8-ball. Both players post the same stake, and the fee is 5% of the pot.",
     "No weekly tournament is published on this site. No bracket will be invented to fill that search.",
@@ -29,14 +29,18 @@ export const guide: Guide = {
       title: "Two cashiers that share a verb",
       body: `Play pool for money is a verb with two cashiers behind it. One is a skill-cash app: you pay an entry, a prize is assigned, and the operator's cut is entries minus prizes when both numbers are on the screen. The other is a head-to-head pot: two players post the same cash, a written rule names the winner, and a posted percent comes off. This site is only the second cashier, and only for 1v1 8-ball.
 
-This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. Inventing their rake is not allowed. Real money pool games and real money pool app are phrases people use for the whole shelf. No volume for those two phrases is printed in this brief, so none is invented.
+Read the specific app’s entry and prize screen to establish its fee. Inventing their rake is not allowed. Real money pool games and real money pool app are phrases people use for the whole shelf. No volume for those two phrases is printed in this brief, so none is invented.
 
 The pot that is known is simple. Stakes are $1, $2, $5, $10, $25, or $50. The fee is 5% of the pot. A $5 stake against $5 is a $10 pot, a $0.50 fee, and $9.50 to the winner. A $25 stake against $25 is a $50 pot, a $2.50 fee, and $47.50 to the winner.`,
     },
     {
       id: "where",
       title: "Other doors into a money match",
-      body: "Play pool for money can mean an entry-fee app or two equal stakes. This site is the second. The payment grid is on [8 ball pool online](/guides/8-ball-pool-hub).\n\nThe neighbouring money pages are [a house table versus a player pot](/guides/8-ball-pool-casino), [whether pool counts as skill](/guides/skill-games-for-money-pool), and [when the dollar balance is credited](/guides/8-ball-pool-for-money). The group is the [skill wagers guides](/guides/topics/skill-wagers).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
+      body: `Play pool for money can mean an entry-fee app or two equal stakes. This site is the second. The payment grid is on [8 ball pool online](/guides/8-ball-pool-hub).
+
+The neighbouring money pages are [a house table versus a player pot](/guides/8-ball-pool-casino), [whether pool counts as skill](/guides/skill-games-for-money-pool), and [when the dollar balance is credited](/guides/8-ball-pool-for-money). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "demand-without-a-bracket",
@@ -71,7 +75,7 @@ Open table lasts until a legal pocket assigns solids or stripes. A foul is ball 
     {
       id: "no-published-bracket",
       title: "A pot with no published bracket",
-      body: `People searching pool tournaments for money want a field, a buy-in, and a prize list. This site has not published that field. Until it does, the only money game to describe is the 1v1 pot. Treating a future bracket as if it already had a prize pool would invent prize money, which this page will not do.
+      body: `People searching pool tournaments for money want a field, a buy-in, and a prize list. This site has not published that field. Until it does, the only money game to describe is the 1v1 pot. An unannounced bracket has no established prize pool to include in a payout comparison.
 
 The 8-ball that settles the pot is also not the WPA call-shot book. That split is written out on [8 ball pool rules](/guides/8-ball-pool-rules). Rules effective 21 October 2026 call the ball and the pocket, and a legal 8 on the break is spotted or rebroken. Here a legal 8 on the break wins unless the cue ball scratches, and that scratch loses. Early 8, wrong pocket, and a scratch while pocketing the 8 all lose.
 
@@ -87,7 +91,7 @@ See also: [pool hustling](/guides/pool-hustling).`,
     },
     {
       q: "How is a skill-cash app different from this pot?",
-      a: "A skill-cash app usually charges an entry and lists a prize. When both sums are visible, the take is entries minus prizes. This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. This pot prints 5% before the break.",
+      a: "A skill-cash app usually charges an entry and lists a prize. When both sums are visible, the take is entries minus prizes. Read the specific app’s entry and prize screen to establish its fee. This pot prints 5% before the break.",
     },
     {
       q: "Is a pool tournament for money offered here?",
@@ -111,7 +115,10 @@ See also: [pool hustling](/guides/pool-hustling).`,
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: [
     "8-ball-pool-for-money",
@@ -119,5 +126,5 @@ See also: [pool hustling](/guides/pool-hustling).`,
     "best-pool-games",
     "pool-hustling",
   ],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

@@ -97,7 +97,7 @@ A rolls three dice. In expectation:
 
 B and D are already ahead of A, and C has not been taxed. After B's turn the wave moves, but A has still taken one extra "tax turn" that D has not taken. In a long game everyone rolls many times and the gap shrinks in **relative** terms, yet the extra tax never fully disappears. More players means a longer wait until the last seat acts, so the first-seat disadvantage grows.
 
-### Why this page does not print a fake seat table
+### Why seating odds require a stated model
 
 A published table of exact win rates by seat for every player count would need a defined house rule set and a full Markov model. Blog percentages without a method are not a source. The direction is solid: later seats are a little better; first seat is a little worse; the gap is small next to ordinary dice variance. If you want fairness, randomise the start each game, or play a number of games equal to the number of seats and rotate the first roll.
 
@@ -141,15 +141,6 @@ If the centre pot is cash, LCR is gambling. Adults only, 18+ or the local legal 
 
 If you want a party game with real choices, play [shut the box](/guides/shut-the-box) or [ship captain crew](/guides/ship-captain-crew). LCR is the game you hand to a table that should not have to remember a chart.`,
     },
-    {
-      id: "pvp",
-      title: "Chip passing and a hashed PvP round",
-      body: `LCR is a teaching tool for independence: each face is a separate order, the pot only grows on C, and seat order is a small tax. It is a poor teaching tool for skill, because there is none.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Coinflip](/coinflip) is a 50/50, closer to a single LCR die than it looks: one binary result, two players, pot in the middle. [Roulette](/roulette) is a 33-slot wheel, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee (about a 7.88% Purple or Silver edge after the win fee). [Jackpot](/) sets your chance equal to your share of the pot. Seeds are committed; verify a settled round on [fairness](/fairness).
-
-If passing chips has become passing more cash than you meant, stop. Tools sit on [responsible gambling](/responsible-gambling). Play is 18+ only.`,
-    },
   ],
   faqs: [
     {
@@ -182,8 +173,14 @@ If passing chips has become passing more cash than you meant, stop. Tools sit on
       label: "George Co. v. Imagination Entertainment (4th Cir. 2009)",
       url: "https://caselaw.findlaw.com/court/us-4th-circuit/1258735.html",
     },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
-    { label: "Wikipedia: Dice", url: "https://en.wikipedia.org/wiki/Dice" },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
+    {
+      label: "Wikipedia: Dice",
+      url: "https://en.wikipedia.org/wiki/Dice",
+    },
   ],
   related: [
     "bunco-rules",
@@ -193,5 +190,5 @@ If passing chips has become passing more cash than you meant, stop. Tools sit on
     "dice-roll-probability",
     "illusion-of-control",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

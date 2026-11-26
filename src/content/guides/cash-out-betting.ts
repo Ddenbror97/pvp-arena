@@ -22,54 +22,27 @@ export const guide: Guide = {
     {
       id: "what",
       title: "What cash out betting is",
-      body: `Cash out betting is an offer from the sportsbook to close your bet early. If you accept, the bet is settled at that amount and the result of the event no longer matters to you. Most US and UK sportsbooks show a cash-out button on open bets in eligible markets; FanDuel's [cash out page](https://www.fanduel.com/sportsbook-cash-out) is a typical description of the feature. Not every market or bet type is eligible, and the button can disappear temporarily while the price is moving.
-
-Cash out is the bookmaker's version of a [hedge bet](/guides/hedge-betting): instead of placing an opposite bet yourself, the book offers to buy your position back. On a betting exchange you can do the same by laying your selection; see [betting exchanges explained](/guides/betting-exchange-explained).`,
+      body: "Cash out betting is an offer from the sportsbook to close your bet early. If you accept, the bet is settled at that amount and the result of the event no longer matters to you. Most US and UK sportsbooks show a cash-out button on open bets in eligible markets; FanDuel's [cash out page](https://www.fanduel.com/sportsbook-cash-out) is a typical description of the feature. Not every market or bet type is eligible, and the button can disappear temporarily while the price is moving.\n\nCash out is the bookmaker's version of a [hedge bet](/guides/hedge-betting): instead of placing an opposite bet yourself, the book offers to buy your position back. On a betting exchange you can do the same by laying your selection; see [betting exchanges explained](/guides/betting-exchange-explained).",
     },
     {
       id: "pricing",
       title: "How the cash-out amount is priced",
-      body: `A simple model reproduces most offers. Your bet's **potential return** is stake × odds. If the same selection is now priced at new odds, the fair value of your ticket is:
-
-**Fair cash out ≈ stake × your odds ÷ current odds**
-
-**Worked example.** You bet $10 on a team at 3.00 before kick-off. Potential return: $30. At half time they lead and their price has shortened to 1.50.
-
-- Fair value = 10 × 3.00 ÷ 1.50 = **$20.00**.
-- A sportsbook might offer, say, $18.50. The $1.50 gap is the book's margin on the cash-out trade; the exact figure depends on the book.
-
-If the price had drifted to 6.00 instead, fair value would be 10 × 3 ÷ 6 = $5, and the offer would be below that.
-
-The current odds already include the bookmaker's [vig](/guides/vig-betting), and the cash-out offer usually adds another deduction. That is why, on average, taking cash out returns less than letting bets run. [Implied probability](/guides/implied-probability) converts the live price into the chance the market gives your selection.`,
+      body: "A simple model reproduces most offers. Your bet's **potential return** is stake × odds. If the same selection is now priced at new odds, the fair value of your ticket is:\n\n**Fair cash out ≈ stake × your odds ÷ current odds**\n\n**Worked example.** You bet $10 on a team at 3.00 before kick-off. Potential return: $30. At half time they lead and their price has shortened to 1.50.\n\n- Fair value = 10 × 3.00 ÷ 1.50 = **$20.00**.\n- A sportsbook might offer, say, $18.50. The $1.50 gap is the book's margin on the cash-out trade; the exact figure depends on the book.\n\nIf the price had drifted to 6.00 instead, fair value would be 10 × 3 ÷ 6 = $5, and the offer would be below that.\n\nThe current odds already include the bookmaker's [vig](/guides/vig-betting), and the cash-out offer usually adds another deduction. That is why, on average, taking cash out returns less than letting bets run. [Implied probability](/guides/implied-probability) converts the live price into the chance the market gives your selection.",
     },
     {
       id: "partial",
       title: "Partial cash out",
-      body: `Many books let you cash out part of a bet. Using the example above, cashing out half of the $10 stake at an offer of $18.50 for the whole bet gives you $9.25 now and leaves $5 at 3.00 running (a $15 potential return). The two halves are independent: the cashed part is settled, the rest wins or loses normally.
-
-Some books also offer **auto cash out**: you set a value and the bet is cashed out automatically if an offer reaches it. Auto cash out is still subject to suspension. If the market is suspended when your trigger is hit, the cash out may not happen.`,
+      body: "Many books let you cash out part of a bet. Using the example above, cashing out half of the $10 stake at an offer of $18.50 for the whole bet gives you $9.25 now and leaves $5 at 3.00 running (a $15 potential return). The two halves are independent: the cashed part is settled, the rest wins or loses normally.\n\nSome books also offer **auto cash out**: you set a value and the bet is cashed out automatically if an offer reaches it. Auto cash out is still subject to suspension. If the market is suspended when your trigger is hit, the cash out may not happen.",
     },
     {
       id: "when",
       title: "When cashing out makes sense",
-      body: `Cash out does not change the probability of the result. It changes how much risk you carry. Reasonable reasons to take it:
-
-- **The stake has grown too large for your budget.** A parlay with one leg left can be worth more than you are comfortable losing. Locking part of it in is a budget decision; see [parlay betting explained](/guides/parlay-betting-explained).
-- **New information.** If an injury or lineup change makes your bet worse and the price has not adjusted yet, an offer can be worth taking. Often the price adjusts first.
-
-Poor reasons: panic during normal swings in a game, or cashing out every winning bet early. Over many bets, systematic early cash outs mean paying the margin repeatedly. Track it: the [bet tracker](/guides/bet-tracker) helps you compare what cash outs cost against letting bets settle.
-
-More sports betting basics are in the [sports betting topic](/guides/topics/sports-betting).`,
+      body: "Cash out does not change the probability of the result. It changes how much risk you carry. Reasonable reasons to take it:\n\n- **The stake has grown too large for your budget.** A parlay with one leg left can be worth more than you are comfortable losing. Locking part of it in is a budget decision; see [parlay betting explained](/guides/parlay-betting-explained).\n- **New information.** If an injury or lineup change makes your bet worse and the price has not adjusted yet, an offer can be worth taking. Often the price adjusts first.\n\nPoor reasons: panic during normal swings in a game, or cashing out every winning bet early. Over many bets, systematic early cash outs mean paying the margin repeatedly. Track it: the [bet tracker](/guides/bet-tracker) helps you compare what cash outs cost against letting bets settle.\n\nMore sports betting basics are in the [sports betting topic](/guides/topics/sports-betting).",
     },
     {
       id: "rules",
       title: "Rules to read first",
-      body: `- **Eligibility.** Free bets, some promotions and some markets are excluded.
-- **Suspension.** Cash out is unavailable while the market is suspended and can be withdrawn without notice.
-- **Settlement.** Once accepted, the cash out is final, even if your selection then wins.
-- **Errors.** Books reserve the right to void an offer made at an obvious wrong price; the terms define this.
-
-Adults only, 18 or the higher age your law sets (21 in most US states with legal sportsbooks). This page explains how the offer is priced; it is not a tip or legal advice. PVPspinArena does not run a sportsbook; its PvP games settle when the round ends, as described on [how it works](/how-it-works). If betting stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "- **Eligibility.** Free bets, some promotions and some markets are excluded.\n- **Suspension.** Cash out is unavailable while the market is suspended and can be withdrawn without notice.\n- **Settlement.** Once accepted, the cash out is final, even if your selection then wins.\n- **Errors.** Books reserve the right to void an offer made at an obvious wrong price; the terms define this.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.",
     },
   ],
   faqs: [
@@ -95,12 +68,18 @@ Adults only, 18 or the higher age your law sets (21 in most US states with legal
     },
   ],
   sources: [
-    { label: "FanDuel Sportsbook: cash out", url: "https://www.fanduel.com/sportsbook-cash-out" },
+    {
+      label: "FanDuel Sportsbook: cash out",
+      url: "https://www.fanduel.com/sportsbook-cash-out",
+    },
     {
       label: "BetVictor help: cash out FAQs",
       url: "https://betvictorhelp.zendesk.com/hc/en-gb/articles/360005044457-Cash-Out-FAQs",
     },
-    { label: "GambleAware", url: "https://www.gambleaware.org/" },
+    {
+      label: "GambleAware",
+      url: "https://www.gambleaware.org/",
+    },
   ],
   related: [
     "hedge-betting",
@@ -109,11 +88,5 @@ Adults only, 18 or the higher age your law sets (21 in most US states with legal
     "implied-probability",
     "vig-betting",
   ],
-  updated: "2026-11-18",
-  cta: {
-    title: "A round that settles itself",
-    text: "PVPspinArena's PvP games have no cash-out button: a round ends when its result is drawn, and you can verify that result.",
-    primary: { to: "/fairness", label: "Check a result" },
-    secondary: { to: "/guides/hedge-betting", label: "Hedge betting" },
-  },
+  updated: "2026-11-26",
 };

@@ -26,7 +26,9 @@ export const guide: Guide = {
 
 The commonly told origin of the name is the Chinese "sì wǔ liù", meaning four-five-six, the best roll in the game. Japan has a close relative called chinchirorin, played by rolling three dice into a rice bowl. Rules drift from group to group, so treat the version below as the most common core and agree on the details before any money moves.
 
-Money play is for adults only: 18+ or your local legal age. Cee lo sits in the [Games of chance topic](/guides/topics/games-of-chance) alongside other small-group dice games such as [Mexico](/guides/mexico-dice-game) and [poker dice](/guides/poker-dice).`,
+Money play is for adults only: 18+ or your local legal age. Cee lo sits in the [Games of chance topic](/guides/topics/games-of-chance) alongside other small-group dice games such as [Mexico](/guides/mexico-dice-game) and [poker dice](/guides/poker-dice).
+
+AlGoGames' Cee-Lo implementation explicitly has the dealer roll first and distinguishes automatic wins, losses and point-setting throws. The treatment of ties must be checked separately for each version.`,
     },
     {
       id: "rolls",
@@ -143,15 +145,6 @@ The more players, the stronger a result must be to take the pot. With six oppone
 
 The mathematical edge in cee lo is small. The practical edge from cheating is not. Card-table hustles work the same way; [three card monte](/guides/three-card-monte) is the classic example of a game that looks like chance but is not.`,
     },
-    {
-      id: "pvp",
-      title: "Cee lo and PvP dice online",
-      body: `The banker structure is the interesting part of cee lo: one player takes a small built-in edge, and rotating the bank shares it out. Head-to-head online games make the same idea explicit. [Dice duel](/guides/dice-duel-game) compares player-vs-player dice formats if that is the side of cee lo you enjoy.
-
-PVPspinArena runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott). Coinflip is the purest version of a fair street bet: two players, 50/50, and the winner takes the pot minus any fee shown before entry. Roulette has a fixed edge that is much higher on Green than on Purple or Silver on a 33-slot wheel, so it is closer to always betting against the bank. Instead of watching someone's wrist, you verify: every settled round comes from committed seeds that you can recompute on the [fairness](/fairness) page.
-
-Keep stakes to money you are happy to lose, set a stopping point before you start, and use the [responsible gambling](/responsible-gambling) tools if a dice circle turns into chasing losses.`,
-    },
   ],
   faqs: [
     {
@@ -176,8 +169,18 @@ Keep stakes to money you are happy to lose, set a stopping point before you star
     },
   ],
   sources: [
-    { label: "Wikipedia: Cee-lo", url: "https://en.wikipedia.org/wiki/Cee-lo" },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
+    {
+      label: "AlGoGames: Cee-Lo, developer's rules",
+      url: "https://www.kongregate.com/en/games/algogames/cee-lo",
+    },
+    {
+      label: "Wikipedia: Cee-lo",
+      url: "https://en.wikipedia.org/wiki/Cee-lo",
+    },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
   ],
   related: [
     "dice-duel-game",
@@ -187,5 +190,5 @@ Keep stakes to money you are happy to lose, set a stopping point before you star
     "dice-roll-probability",
     "house-edge",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

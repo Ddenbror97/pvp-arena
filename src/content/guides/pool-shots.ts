@@ -14,7 +14,7 @@ export const guide: Guide = {
   facts: [
     "A bank sends the object ball to a rail before the pocket. A kick sends the cue ball to a rail first.",
     "Jump shots are often illegal in bar rules and are not a button here.",
-    "This page does not publish make percentages for banks, kicks, or masse shots.",
+    "Banks, kicks and masse shots have no measured make percentages in this comparison.",
   ],
   sections: [
     {
@@ -22,7 +22,7 @@ export const guide: Guide = {
       title: "A short family of real shots",
       body: `Pool shots, in a money rack, are a small vocabulary. A straight shot is cue ball to object ball to pocket. A bank is object ball to rail to pocket. A kick is cue ball to rail to object ball. A carom uses a third ball as a rail you did not plan for until you needed it. A safety may pocket nothing. A masse curves the cue ball with elevation. Learn the names so you can choose. The choice is the strategy.
 
-The figures are large because the words are common: about 720 searches for pool shots, about 390 for bank shot pool, about 480 for masse, at the difficulties noted above. Common is not the same as high percentage. This page will not attach a make rate to any of them. The ghost ball still helps you find contact. It still is not a statistic.`,
+The figures are large because the words are common: about 720 searches for pool shots, about 390 for bank shot pool, about 480 for masse, at the difficulties noted above. Common is not the same as high percentage. Use the technique as geometry, not a measured success rate. The ghost ball still helps you find contact. It still is not a statistic.`,
     },
     {
       id: "where",
@@ -31,7 +31,7 @@ The figures are large because the words are common: about 720 searches for pool 
 
 The technique next to this is [ghost-ball aim](/guides/8-ball-pool-aim), [names for these shots](/guides/pool-terminology), and [when a safety is the pattern](/guides/how-to-win-8-ball-pool). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "banks",
@@ -98,8 +98,11 @@ Jump shots are a separate idea: the cue ball leaves the cloth and comes down pas
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "8-ball-pool-aim", "pool-terminology"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

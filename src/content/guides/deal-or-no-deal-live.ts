@@ -12,12 +12,10 @@ export const guide: Guide = {
   answer:
     "Deal or no deal live is Evolution's game-show cabinet, on the studio page opened 20 October 2026. You qualify on a wheel, then a presenter works 16 briefcases and a banker makes four offers. Each qualifying spin sets the biggest briefcase from 75x to 500x the bet. The page does not print a return percent or one max-win figure.",
   facts: [
-    "Last tested 20 October 2026 on Evolution's Spanish studio page and the 4 February 2019 press release.",
     "The deal or no deal live page says you choose among 16 sealed briefcases, with banker offers on top.",
     "A qualifying spin sets the biggest briefcase from 75x to 500x the bet. Instant qualification multiplies the bet amount by 18.",
     "Easy and Very Easy stake multiples are not printed. A return percent is not printed. One max-win figure is not printed.",
     "The 2019 release calls the build the most complex studio Evolution had made to that date, and it names an RNG mix.",
-    "This site does not run the show. Purple and Silver are about a 7.88 percent edge after the 5 percent fee.",
   ],
   sections: [
     {
@@ -80,7 +78,7 @@ The 75x to 500x band is what one qualifying spin writes into the biggest briefca
 
 A minimum bet is not printed as one number. The selected bet is whatever the screen is set to, and Instant multiplies that amount by 18.
 
-Payout speed is not printed. Nothing on the page is a provably fair seed for this site to recompute.
+Payout speed is not printed.
 
 | Phase | What the studio page prints | What it leaves blank |
 | --- | --- | --- |
@@ -94,32 +92,9 @@ Payout speed is not printed. Nothing on the page is a provably fair seed for thi
 | Return | not printed | the whole percent |`,
     },
     {
-      id: "pots",
-      title: "A briefcase show beside a house game and a player wheel",
-      body: `The show prices a qualification and a later choice against a board the page does not fully number. A house can install another maths set. This site's wheel has a fee in the rules here.
-
-Do not paste a 75x line onto the wheel. That band belongs to the qualifying spin on the studio page.
-
-| | Fee or edge | Who you play against | Payout speed | Provably fair | Minimum bet |
-| --- | --- | --- | --- | --- | --- |
-| This game show | not published | the board and the banker offer | not published | not published | not published |
-| House-banked casino | inside that house's list; no percent is fixed here | the house | not published | not published | not published |
-| PVPspinArena | Purple and Silver are about a 7.88 percent edge after the 5 percent win fee | other players | balance updates when the round settles | yes, seed committed before the round | shown on the bet control |
-
-How PvP compares: the show asks you to qualify, then to take or leave a banker's sum. [Roulette](/roulette) asks which pocket a 33-slot wheel hits, with 16 Purple, 16 Silver, and 1 Green.
-
-Purple and Silver pay 2x, then 5 percent comes off that winning payout, so a hit keeps 1.90 times the stake. Sixteen divided by 33, times 1.90, minus 1, is about −0.0788.
-
-That is the 7.88 percent edge on those two pockets. Green pays 14x. This page does not quote a Green edge.
-
-A settled round can be checked on the [fairness page](/fairness). The check matches this site's commit. It does not audit a game-show board.
-
-Balances are US dollars, funded with Bitcoin or with USDC or ETH on Base. Cash-out minimum is $20 in BTC, USDC, or ETH. We did not time a cash-out.`,
-    },
-    {
       id: "examples",
       title: "Three labeled pictures, none of them a banker offer",
-      body: `None of these is a round we played. The first two use figures the studio page prints. The third uses a fee from this site.
+      body: `None of these is a round we played. The first two use figures the studio page prints.
 
 Example 1 — one qualifying spin at $2. The biggest briefcase is set between 75x and 500x, so between $150 and $1,000.
 
@@ -129,27 +104,16 @@ Example 2 — Instant on a $1 bet. The page says Instant increases the bet amoun
 
 The Easy and Very Easy multiples are not in this picture, because the page does not print them.
 
-Example 3 — Purple payout. A $20 Purple stake that wins pays 2x, which is $40. Five percent of that payout is $2, so the player receives $38.
+Five percent of that payout is $2, so the player receives $38.
 
-One win does not reveal the 7.88 percent edge. Most Purple stakes lose.`,
+One win does not reveal the 7.88 percent edge.`,
     },
     {
       id: "checks",
       title: "Checks before a briefcase board is treated as this page",
       body: `A familiar case graphic does not prove the Spanish studio page. Read the rules on the cabinet you opened.
 
-- [ ] Confirm you are 18, or older if the site sets a higher age.
-- [ ] Count 16 briefcases only if that board prints 16.
-- [ ] Treat 75x to 500x as the top case on a qualifying spin, not as a max win.
-- [ ] Accept the 18-times Instant cost only if the rules print it.
-- [ ] Leave the Easy and Very Easy multiples unpublished when they are missing.
-- [ ] Leave the return percent unpublished. This page did not find one.
-- [ ] Leave a single max-win figure unpublished.
-- [ ] Expect four offers only if the rules you opened say four.
-- [ ] The switch, when two cases remain, is a choice, not an edge.
-- [ ] Set a loss stop before the first qualifying spin.
-- [ ] If the offers become a chase, call 1-800-GAMBLER.
-- [ ] Recompute a round on this site's fairness page, and do not ask it to audit the show.`,
+- [ ] Confirm you are 18, or older if the site sets a higher age. - [ ] Count 16 briefcases only if that board prints 16. - [ ] Treat 75x to 500x as the top case on a qualifying spin, not as a max win. - [ ] Accept the 18-times Instant cost only if the rules print it. - [ ] Leave the Easy and Very Easy multiples unpublished when they are missing. - [ ] Leave the return percent unpublished. This page did not find one. - [ ] Leave a single max-win figure unpublished. - [ ] Expect four offers only if the rules you opened say four. - [ ] The switch, when two cases remain, is a choice, not an edge. - [ ] Set a loss stop before the first qualifying spin. - [ ] If the offers become a chase, call 1-800-GAMBLER.`,
     },
     {
       id: "limits",
@@ -160,7 +124,7 @@ Do not play if you are under 18, or under a higher age on the site you opened. D
 
 Do not play to get even. A run of missed qualifications is not a debt the next spin owes you. [Why a cold run is not a credit](/guides/gamblers-fallacy) is the general point.
 
-This page is an editorial note, not a statute, and not a coupon. This site does not host the show.
+This page is an editorial note, not a statute, and not a coupon.
 
 If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
     },
@@ -187,8 +151,8 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
       a: "Four. After each batch of opened briefcases the banker offers a sum and you can take it. When two cases remain you may switch them before the last ones open. If you never take a deal, the final case is the amount you keep. The page does not print the formula behind an offer. A missed decision window is not described as a printed edge.",
     },
     {
-      q: "Does this site run the briefcase show?",
-      a: "No. The comparison here is roulette, a 33-pocket wheel with a 5 percent fee on a winning payout. Purple and Silver keep 1.90 times the stake on a win, and the long-run edge on those two is about 7.88 percent. The fairness page recomputes this site's commit. It does not audit a presenter, a banker, or a briefcase board.",
+      q: "Is the largest briefcase amount the game's RTP?",
+      a: "No. RTP requires the probabilities and payouts across the complete game, including qualification and other charged phases.",
     },
   ],
   sources: [
@@ -209,5 +173,5 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     "baccarat-rules",
     "craps-odds",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

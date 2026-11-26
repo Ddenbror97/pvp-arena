@@ -23,67 +23,37 @@ export const guide: Guide = {
     {
       id: "two-ways",
       title: "Two ways to get funds onto Base",
-      body: `**Route A — Direct withdrawal to Base.** If Coinbase lists Base for your asset, withdraw USDC or ETH on Base to your MetaMask (or other) address.
-
-**Route B — Withdraw on mainnet (or another chain), then bridge.** Use only when Base withdrawal is unavailable.
-
-This guide sits in [crypto payments](/guides/topics/crypto-payments). Adults 18+. Related reads: [coinbase to MetaMask transfer](/guides/coinbase-to-metamask-transfer), [coinbase wallet casino](/guides/coinbase-wallet-casino), [base network](/guides/base-network).`,
+      body: "**Route A — Direct withdrawal to Base.** If Coinbase lists Base for your asset, withdraw USDC or ETH on Base to your MetaMask (or other) address.\n\n**Route B — Withdraw on mainnet (or another chain), then bridge.** Use only when Base withdrawal is unavailable.\n\nSee [crypto payments](/guides/topics/crypto-payments). Adults 18+. Related reads: [coinbase to MetaMask transfer](/guides/coinbase-to-metamask-transfer), [coinbase wallet casino](/guides/coinbase-wallet-casino), [base network](/guides/base-network).",
     },
     {
       id: "direct",
       title: "Direct withdrawal to Base",
-      body: `1. In Coinbase, choose Send / Withdraw.
-2. Select the asset (USDC or ETH for PVPspinArena play).
-3. Paste your self-custody address.
-4. Explicitly select **Base** as the network.
-5. Send a tiny test first.
-6. Confirm receipt on Base in your wallet and an explorer.
-7. Then send the rest.
-
-Fees are whatever Coinbase shows that day—they move. Compare to bridging costs before you choose Route B out of habit.`,
+      body: "1. In Coinbase, choose Send / Withdraw.\n2. Select the asset (USDC or ETH for PVPspinArena play).\n3. Paste your self-custody address.\n4. Explicitly select **Base** as the network.\n5. Send a tiny test first.\n6. Confirm receipt on Base in your wallet and an explorer.\n7. Then send the rest.\n\nFees are whatever Coinbase shows that day—they move. Compare to bridging costs before you choose Route B out of habit.",
     },
     {
       id: "bridge-path",
       title: "Bridging from mainnet",
-      body: `If you already withdrew to Ethereum mainnet, use an official Base bridge flow with a bookmarked URL. Pay mainnet gas, wait, confirm on Base. Conceptual background: [crypto bridge](/guides/crypto-bridge).
-
-Never “validate” a phrase to speed a bridge. Hardware wallets should show destination details you recognise.`,
+      body: "If you already withdrew to Ethereum mainnet, use an official Base bridge flow with a bookmarked URL. Pay mainnet gas, wait, confirm on Base. Conceptual background: [crypto bridge](/guides/crypto-bridge).\n\nNever “validate” a phrase to speed a bridge. Hardware wallets should show destination details you recognise.",
     },
     {
       id: "dropdown",
       title: "Picking the right network in the dropdown",
-      body: `The dropdown is the whole game. Base, Ethereum, Arbitrum and others can share address formats. Sending USDC on Ethereum to an address you only monitor on Base will not credit a Base cashier.
-
-Read the network name aloud before you confirm. If Coinbase warns about compatibility, believe the warning.`,
+      body: "The dropdown is the whole game. Base, Ethereum, Arbitrum and others can share address formats. Sending USDC on Ethereum to an address you only monitor on Base will not credit a Base cashier.\n\nRead the network name aloud before you confirm. If Coinbase warns about compatibility, believe the warning.",
     },
     {
       id: "fees",
       title: "Fees compared",
-      body: `Direct Base withdrawal: Coinbase withdrawal fee (if any) + negligible Base receive side.
-
-Mainnet withdrawal + bridge: Coinbase fee + mainnet gas + bridge time + later Base gas.
-
-When both exist, direct Base usually wins on complexity even if fees look similar. Live quotes beat this paragraph.`,
+      body: "Direct Base withdrawal: Coinbase withdrawal fee (if any) + negligible Base receive side.\n\nMainnet withdrawal + bridge: Coinbase fee + mainnet gas + bridge time + later Base gas.\n\nWhen both exist, direct Base usually wins on complexity even if fees look similar. Live quotes beat this paragraph.",
     },
     {
       id: "wrong-network",
       title: "What to do if you pick the wrong network",
-      body: `1. Stop sending more.
-2. Note tx hash, asset, source network and destination address.
-3. Check whether the destination chain received the funds in an explorer.
-4. Contact Coinbase support with the hash if the mistake was on their withdrawal UI.
-5. Do not pay “recovery” freelancers who need your seed.
-
-Some wrong-network sends are unrecoverable. Prevention is the real fix.`,
+      body: "1. Stop sending more.\n2. Note tx hash, asset, source network and destination address.\n3. Check whether the destination chain received the funds in an explorer.\n4. Contact Coinbase support with the hash if the mistake was on their withdrawal UI.\n5. Do not pay “recovery” freelancers who need your seed.\n\nSome wrong-network sends are unrecoverable. Prevention is the real fix.",
     },
     {
       id: "confirm",
       title: "Confirming the deposit",
-      body: `On Base, verify balance. For PVPspinArena: sign in, verify wallet with a message signature, send a normal USDC or ETH transfer to the address on the real [wallet](/how-it-works#wallet) page. No token approval required.
-
-Then play only what you budgeted on [Coinflip](/coinflip) or other listed games. Arrival success ≠ edge-free games.
-
-The network dropdown is the transaction. Same address bytes on the wrong chain will not credit a Base cashier.`,
+      body: "On Base, verify balance. For PVPspinArena: sign in, verify wallet with a message signature, send a normal USDC or ETH transfer to the address on the real [wallet](/how-it-works#wallet) page. No token approval required.\n\nThen play only what you budgeted on [Coinflip](/coinflip) or other listed games. Arrival success ≠ edge-free games.\n\nThe network dropdown is the transaction. Same address bytes on the wrong chain will not credit a Base cashier.",
     },
   ],
   faqs: [
@@ -121,5 +91,5 @@ The network dropdown is the transaction. Same address bytes on the wrong chain w
     "base-network",
     "crypto-bridge",
   ],
-  updated: "2026-11-05",
+  updated: "2026-11-26",
 };

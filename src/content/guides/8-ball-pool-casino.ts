@@ -32,7 +32,7 @@ Small is useful. A page can say the distinction without fighting a head term. Pl
 
 The neighbouring money pages are [the two-player stake](/guides/8-ball-pool-1v1) and [a bet that is not a ticket](/guides/pool-betting). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "fee",
@@ -91,7 +91,7 @@ No skill level is stored, so the casino does not comp you a shorter race. No Far
     },
     {
       q: "Can I play the house for a bonus?",
-      a: "There is no house opponent and no promo code printed on this page. Promo credit and partner credit already on the account can fund a stake. Deposited money is used first. If a page offers a code for a different 8-ball casino, this guide does not know that code and will not invent one.",
+      a: "There is no house opponent and no promo code printed on this page. Promo credit and partner credit already on the account can fund a stake. Deposited money is used first. A code for a different operator has separate eligibility, expiry and bonus terms; verify it with that operator.",
     },
   ],
   sources: [
@@ -99,7 +99,10 @@ No skill level is stored, so the casino does not comp you a shorter race. No Far
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: [
     "8-ball-pool-for-money",
@@ -107,5 +110,5 @@ No skill level is stored, so the casino does not comp you a shorter race. No Far
     "pool-betting",
     "8-ball-pool-1v1",
   ],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

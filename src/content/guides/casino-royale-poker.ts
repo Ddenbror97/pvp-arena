@@ -42,7 +42,9 @@ In real poker terms this is a hybrid. The winner-take-all structure and rebuy re
 
 ### Why hold'em, not baccarat
 
-The film was released three years after an amateur, Chris Moneymaker, won the 2003 World Series of Poker Main Event after qualifying online, which helped trigger a worldwide poker boom; see [Chris Moneymaker](/guides/chris-moneymaker). No-limit hold'em was the game audiences were watching on television. Its betting rounds create tension and bluffing, which baccarat's near-automatic drawing rules cannot. This guide sits in the [Casino knowledge topic](/guides/topics/casino-knowledge).`,
+The film was released three years after an amateur, Chris Moneymaker, won the 2003 World Series of Poker Main Event after qualifying online, which helped trigger a worldwide poker boom; see [Chris Moneymaker](/guides/chris-moneymaker). No-limit hold'em was the game audiences were watching on television. Its betting rounds create tension and bluffing, which baccarat's near-automatic drawing rules cannot. This guide sits in the [Casino knowledge topic](/guides/topics/casino-knowledge).
+
+EON's official synopsis confirms that the poker game is a plot device in Casino Royale (2006). It does not provide a statistical model of the final deal.`,
     },
     {
       id: "hands",
@@ -133,25 +135,6 @@ Baccarat was the prestige game of European casinos in Fleming's era, played by w
 
 Poker gave the 2006 film something baccarat could not: decisions, bluffs and reads that a modern audience could follow and argue about. The [history of poker](/guides/history-of-poker) guide covers how hold'em became that game.`,
     },
-    {
-      id: "pvp",
-      title: "Player-vs-player games and the PvP connection",
-      body: `The most realistic thing about Casino Royale's poker is that Bond is playing against people, not against the house. That player-vs-player structure is the one PVPspinArena uses.
-
-### How PVPspinArena works
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. In [Coinflip](/coinflip), two players take opposite sides of a 50/50 flip, and the winner takes the pot minus any fee shown before entry. In [Jackpot](/), each player's win chance equals their share of the pot. Roulette runs shared rounds on a 33-slot wheel where Purple and Silver pay 2x and Green pays 14x, about a 7.88% house edge on Purple or Silver after the 5% win fee.
-
-### No tells, no faked tells
-
-Unlike the film, nothing on PVPspinArena involves reading an opponent. Results come from committed seeds that are revealed after the round, and anyone can check a settled round on the [fairness](/fairness) page. A coin flip has no skill edge to find, so the right way to approach it is as entertainment with a fixed budget.
-
-### A note on film gambling
-
-Films show winners because winning makes a better ending. The [gambling movies](/guides/gambling-movies) guide looks at what other films get right and wrong about odds. In real play, stakes should be money you can afford to lose. Play is 18+, and limits and support links are on the [responsible gambling](/responsible-gambling) page.
-
-In the same cluster, see also [is gambling a sin](/guides/is-gambling-a-sin), [gambling in islam](/guides/gambling-in-islam), and [biggest casino wins](/guides/biggest-casino-wins).`,
-    },
   ],
   faqs: [
     {
@@ -177,6 +160,10 @@ In the same cluster, see also [is gambling a sin](/guides/is-gambling-a-sin), [g
   ],
   sources: [
     {
+      label: "EON: Casino Royale synopsis and production record",
+      url: "https://www.007.com/the-films/casino-royale",
+    },
+    {
       label: "Wikipedia: Casino Royale (2006 film)",
       url: "https://en.wikipedia.org/wiki/Casino_Royale_(2006_film)",
     },
@@ -198,5 +185,5 @@ In the same cluster, see also [is gambling a sin](/guides/is-gambling-a-sin), [g
     "is-gambling-a-sin",
     "gambling-in-islam",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

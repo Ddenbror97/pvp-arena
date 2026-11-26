@@ -37,7 +37,9 @@ Nevada then banned most gambling, effective 1910, and Las Vegas was incorporated
 
 ### Why Nevada legalised gambling
 
-The Great Depression hit Nevada’s mining and ranching economy hard. In March 1931 the legislature passed Assembly Bill 98, which legalised wide-open casino gambling, and the same year it cut the residency requirement for divorce to six weeks. Both laws were meant to bring money in from out of state. Construction also began on Hoover Dam (then called Boulder Dam) in 1931. The federal government built Boulder City for dam workers and banned gambling there, so workers drove to Las Vegas to spend their pay. Downtown clubs such as the Northern Club received some of the first licences.`,
+The Great Depression hit Nevada’s mining and ranching economy hard. In March 1931 the legislature passed Assembly Bill 98, which legalised wide-open casino gambling, and the same year it cut the residency requirement for divorce to six weeks. Both laws were meant to bring money in from out of state. Construction also began on Hoover Dam (then called Boulder Dam) in 1931. The federal government built Boulder City for dam workers and banned gambling there, so workers drove to Las Vegas to spend their pay. Downtown clubs such as the Northern Club received some of the first licences.
+
+The city timeline records the 1905 railroad land auction, incorporation in 1911 and Clark County's first gaming license in 1931.`,
     },
     {
       id: "strip-mob",
@@ -57,7 +59,7 @@ The US Senate’s Kefauver Committee held hearings on organised crime in 1950–
     {
       id: "hughes-corporate",
       title: "Howard Hughes and the corporate turn",
-      body: `In November 1966 Howard Hughes moved into the top floors of the Desert Inn. The commonly told story is that when the hotel wanted his rooms back for high rollers, he simply bought it, which he did in 1967. Over the next few years he bought the Sands, Frontier, Castaways, Silver Slipper and Landmark, becoming the largest casino owner in Nevada. Hughes had no known mob ties, and his purchases gave the state a clean buyer for resorts with shady histories.
+      body: `In November 1966 Howard Hughes moved into the top floors of the Desert Inn. The commonly told story is that when the hotel wanted his rooms back for high rollers, he simply bought it, which he did in 1967. Hughes had no known mob ties, and his purchases gave the state a clean buyer for resorts with shady histories.
 
 The bigger change was legal. Nevada’s Corporate Gaming Acts of 1967 and 1969 let publicly traded companies own casinos without licensing every shareholder. Hotel chains and investors could now raise money on Wall Street. Kirk Kerkorian opened the International (later the Las Vegas Hilton) in 1969, where Elvis Presley began a long residency, and Jay Sarno opened Caesars Palace (1966) and Circus Circus (1968).
 
@@ -114,21 +116,6 @@ The mob skim worked because the edge was so reliable: bosses knew roughly what t
 
 The city’s famous free drinks, rooms and shows are paid for by expected loss. Casinos estimate a player’s theoretical loss (average bet × hours × decisions per hour × edge) and hand back part of it as comps. The [casino host](/guides/casino-host) guide explains how that calculation drives VIP treatment.`,
     },
-    {
-      id: "pvp",
-      title: "From the Strip to a hashed PvP round",
-      body: `Las Vegas history is part of a much longer story told in [history of gambling](/guides/history-of-gambling), and the [oldest casino](/guides/oldest-casino) guide covers the European houses that came first. Browse more in the [Casino knowledge topic](/guides/topics/casino-knowledge).
-
-PVPspinArena is a small online example of the same maths, with a different trust model. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars:
-
-- [Roulette](/roulette) is a 33-slot wheel with 16 Purple and 16 Silver slots paying 2x and 1 Green slot paying 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee, and the law of large numbers enforces it the same way it does on a Strip table.
-- [Coinflip](/coinflip) pits two players against each other on a 50/50, with the winner taking the pot minus any fee shown before entry.
-- [Jackpot](/) gives each player a win chance equal to their share of the pot.
-
-Where Vegas relied on regulators and auditors in the count room, each PVPspinArena round is settled from committed seeds that any player can check on [fairness](/fairness). Play is 18+ only, and limits and support are on [responsible gambling](/responsible-gambling).
-
-See also [the Riviera](/guides/riviera-casino) and [the Black Book](/guides/casino-black-book).`,
-    },
   ],
   faqs: [
     {
@@ -154,6 +141,10 @@ See also [the Riviera](/guides/riviera-casino) and [the Black Book](/guides/casi
   ],
   sources: [
     {
+      label: "City of Las Vegas: historical timeline",
+      url: "https://www.lasvegasnevada.gov/Residents/History/Timeline",
+    },
+    {
       label: "Wikipedia: History of Las Vegas",
       url: "https://en.wikipedia.org/wiki/History_of_Las_Vegas",
     },
@@ -161,7 +152,10 @@ See also [the Riviera](/guides/riviera-casino) and [the Black Book](/guides/casi
       label: "Encyclopaedia Britannica: Las Vegas",
       url: "https://www.britannica.com/place/Las-Vegas-Nevada",
     },
-    { label: "Wikipedia: Las Vegas Strip", url: "https://en.wikipedia.org/wiki/Las_Vegas_Strip" },
+    {
+      label: "Wikipedia: Las Vegas Strip",
+      url: "https://en.wikipedia.org/wiki/Las_Vegas_Strip",
+    },
   ],
   related: [
     "stardust-casino",
@@ -173,5 +167,5 @@ See also [the Riviera](/guides/riviera-casino) and [the Black Book](/guides/casi
     "riviera-casino",
     "fontainebleau-las-vegas-casino",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

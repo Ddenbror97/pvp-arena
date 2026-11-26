@@ -30,97 +30,37 @@ export const guide: Guide = {
     {
       id: "pool",
       title: "A race bet is a share of a pool",
-      body: `How to bet on horse racing starts one step before the horse you like. At a US thoroughbred track the money on each pool is shared by the people who bet that pool. The track and the state take a published cut called the takeout. What remains is divided by the winning tickets. That is pari-mutuel betting. The number on the board is a live estimate of the split. It is not a bookmaker's fixed price that you freeze by betting early.
-
-When the pools close, the official payoff uses the final dollars, then breakage rounds the price down. Two minutes of late money can move a horse from 5-1 to 4-1. The [horse racing odds explained](/guides/horse-racing-odds-explained) page converts those fractions into dollars. This page is the order of operations: read the race, name the bet, pay for every combination, and collect only if the finish matches the rule on the ticket.
-
-You must be 18+ or the age required where the wager is legal. A sensible ticket still loses when the horse does. Set a loss limit before the first race, and keep [responsible gambling](/responsible-gambling) next to that limit. Cartoon races paid by a random draw are a different product, covered under [crypto horse racing betting](/guides/crypto-horse-racing-betting). Thoroughbred pool bets live with the [Horse racing guides](/guides/topics/horse-racing).`,
+      body: "How to bet on horse racing starts one step before the horse you like. At a US thoroughbred track the money on each pool is shared by the people who bet that pool. The track and the state take a published cut called the takeout. What remains is divided by the winning tickets. That is pari-mutuel betting. The number on the board is a live estimate of the split. It is not a bookmaker's fixed price that you freeze by betting early.\n\nWhen the pools close, the official payoff uses the final dollars, then breakage rounds the price down. Two minutes of late money can move a horse from 5-1 to 4-1. The [horse racing odds explained](/guides/horse-racing-odds-explained) page converts those fractions into dollars. This page is the order of operations: read the race, name the bet, pay for every combination, and collect only if the finish matches the rule on the ticket.\n\nYou must be 18+ or the age required where the wager is legal. A sensible ticket still loses when the horse does. Set a loss limit before the first race, and keep [responsible gambling](/responsible-gambling) next to that limit. Cartoon races paid by a random draw are a different product, covered under [crypto horse racing betting](/guides/crypto-horse-racing-betting). Thoroughbred pool bets live with the [Horse racing guides](/guides/topics/horse-racing).",
     },
     {
       id: "program",
       title: "Read the program before you name a horse",
-      body: `The program (and the past-performance sheet inside it) is the public card. Each runner has a betting number, a post position, a jockey, a trainer, a weight and a morning-line odds guess. The betting number is what you say at the window. It is printed on the saddle cloth. It is not always the same idea as "the inside horse," because a scratch renumbers nothing on the tote: the remaining horses keep their program numbers, and the gaps stay gaps.
-
-A scratch is a horse pulled out before the race. If your only ticket was that horse, straight bets are refunded. Exotic tickets that still have a live combination are recalculated under the track's scratch rule, which is posted and worth reading before you build a big box. Coupled entries, when two horses run as one betting interest, are less common than they once were; if you see a letter after the number, ask what it means before you bet.
-
-The morning line is one handicapper's morning forecast. It is useful as a map of expected prices. It does not pay. Form — speed, class, pace and recent runs — is a separate craft in [handicapping horses](/guides/handicapping-horses). You can bet without a figure, but you should still know the distance, the surface and whether the race is a maiden, a claimer, an allowance or a stakes. Those words tell you who is in the field.`,
+      body: "The program (and the past-performance sheet inside it) is the public card. Each runner has a betting number, a post position, a jockey, a trainer, a weight and a morning-line odds guess. The betting number is what you say at the window. It is printed on the saddle cloth. It is not always the same idea as \"the inside horse,\" because a scratch renumbers nothing on the tote: the remaining horses keep their program numbers, and the gaps stay gaps.\n\nA scratch is a horse pulled out before the race. If your only ticket was that horse, straight bets are refunded. Exotic tickets that still have a live combination are recalculated under the track's scratch rule, which is posted and worth reading before you build a big box. Coupled entries, when two horses run as one betting interest, are less common than they once were; if you see a letter after the number, ask what it means before you bet.\n\nThe morning line is one handicapper's morning forecast. It is useful as a map of expected prices. It does not pay. Form — speed, class, pace and recent runs — is a separate craft in [handicapping horses](/guides/handicapping-horses). You can bet without a figure, but you should still know the distance, the surface and whether the race is a maiden, a claimer, an allowance or a stakes. Those words tell you who is in the field.",
     },
     {
       id: "menu",
       title: "Straight bets, exotics and what each ticket demands",
-      body: `Name the pool out loud before you hand over the money. Straight bets are one horse. Exotics are an order of finish. Mixing those words up is the usual beginner loss, and it is avoidable.
-
-| Bet | What must happen | Combinations in a simple ticket |
-| --- | --- | --- |
-| Win | Your horse finishes 1st | 1 |
-| Place | Your horse finishes 1st or 2nd | 1 |
-| Show | Your horse finishes 1st, 2nd or 3rd | 1 |
-| Exacta | You name 1st and 2nd in order | 1 if straight |
-| Trifecta | You name 1st, 2nd and 3rd in order | 1 if straight |
-| Superfecta | You name the first four in order | 1 if straight |
-
-Win, place and show prices come from three different pools. A place ticket can cash when your horse runs second. The price is whatever that place pool produces, which [win place show betting](/guides/win-place-show-betting) works through with numbers. An exacta cashes only in the order you wrote, unless you bought a box or a key that already includes the other orders. Those structures, and the n × (n − 1) cost, are on the [exacta bet](/guides/exacta-bet) page. Trifecta and superfecta pages in this cluster do the same job for three and four horses.
-
-Across the board means the same stake on win, place and show. A $2 across-the-board ticket costs $6. It is three bets, not a discount.
-
-A single-race menu is not six winners. [The six-race ticket](/guides/pick-6-horse-racing) is usually a carryover pool, not a fixed multiple.`,
+      body: "Name the pool out loud before you hand over the money. Straight bets are one horse. Exotics are an order of finish. Mixing those words up is the usual beginner loss, and it is avoidable.\n\n| Bet | What must happen | Combinations in a simple ticket |\n| --- | --- | --- |\n| Win | Your horse finishes 1st | 1 |\n| Place | Your horse finishes 1st or 2nd | 1 |\n| Show | Your horse finishes 1st, 2nd or 3rd | 1 |\n| Exacta | You name 1st and 2nd in order | 1 if straight |\n| Trifecta | You name 1st, 2nd and 3rd in order | 1 if straight |\n| Superfecta | You name the first four in order | 1 if straight |\n\nWin, place and show prices come from three different pools. A place ticket can cash when your horse runs second. The price is whatever that place pool produces, which [win place show betting](/guides/win-place-show-betting) works through with numbers. An exacta cashes only in the order you wrote, unless you bought a box or a key that already includes the other orders. Those structures, and the n × (n − 1) cost, are on the [exacta bet](/guides/exacta-bet) page. Trifecta and superfecta pages in this cluster do the same job for three and four horses.\n\nAcross the board means the same stake on win, place and show. A $2 across-the-board ticket costs $6. It is three bets, not a discount.\n\nA single-race menu is not six winners. [The six-race ticket](/guides/pick-6-horse-racing) is usually a carryover pool, not a fixed multiple.",
     },
     {
       id: "payout-math",
       title: "Two worked prices: a 5-1 win and a boxed exacta",
-      body: `Worked example 1. A horse closes at 5-1 in the win pool. A $2 win bet pays $12 including the stake. The 5 is profit per $1, so profit on $2 is 5 × $2 = $10. The window returns that profit and the $2 stake. Quote the $12 as the ticket value, not as profit. If someone says "it pays $12" at a US track, they almost always mean the gross return on a $2 base. A $10 win bet at the same 5-1 price pays $60, because $10 is five times a $2 unit and $12 × 5 = $60.
-
-Worked example 2. An exacta box on n horses costs n × (n − 1) × the base. Four horses at $1: 4 × 3 × $1 = $12. That $12 buys 12 ordered pairs. Any of the four can finish first, and any of the other three can finish second. A three-horse box at $2 costs 3 × 2 × $2 = $12 and covers 6 orders. Boxing "a few I like" without multiplying is how a $1 idea becomes a $40 ticket.
-
-| Odds on a $2 win | Profit | Ticket value, stake included |
-| --- | --- | --- |
-| 5-2 | $5 | $7 |
-| 3-1 | $6 | $8 |
-| 4-1 | $8 | $10 |
-| 5-1 | $10 | $12 |
-| 10-1 | $20 | $22 |
-
-The odds column is the win pool after takeout and breakage. Place and show will print different numbers beside the same horse. Do not halve the win price and call it place.`,
+      body: 'Worked example 1. A horse closes at 5-1 in the win pool. A $2 win bet pays $12 including the stake. The 5 is profit per $1, so profit on $2 is 5 × $2 = $10. The window returns that profit and the $2 stake. Quote the $12 as the ticket value, not as profit. If someone says "it pays $12" at a US track, they almost always mean the gross return on a $2 base. A $10 win bet at the same 5-1 price pays $60, because $10 is five times a $2 unit and $12 × 5 = $60.\n\nWorked example 2. An exacta box on n horses costs n × (n − 1) × the base. Four horses at $1: 4 × 3 × $1 = $12. That $12 buys 12 ordered pairs. Any of the four can finish first, and any of the other three can finish second. A three-horse box at $2 costs 3 × 2 × $2 = $12 and covers 6 orders. Boxing "a few I like" without multiplying is how a $1 idea becomes a $40 ticket.\n\n| Odds on a $2 win | Profit | Ticket value, stake included |\n| --- | --- | --- |\n| 5-2 | $5 | $7 |\n| 3-1 | $6 | $8 |\n| 4-1 | $8 | $10 |\n| 5-1 | $10 | $12 |\n| 10-1 | $20 | $22 |\n\nThe odds column is the win pool after takeout and breakage. Place and show will print different numbers beside the same horse. Do not halve the win price and call it place.',
     },
     {
       id: "place",
       title: "How to place the wager at the track or online",
-      body: `At the window, use one sentence with four facts: track, race, amount and bet, then the numbers. "Churchill, race 6, $2 win on the 4." For an exacta: "Churchill, race 6, $1 exacta box 2, 5 and 7." Wait for the clerk to repeat it. Check the ticket before you leave the window. The ticket should show the pool, the amount, the race and the numbers. A mis-mark is easiest to fix before the race goes off.
-
-Online, a licensed advance-deposit account is the same bet with a digital ticket. You choose the track card, the race, the pool and the stake. The interface will show a combination count before you confirm. Read that count. A box or a wheel can multiply a tap you thought was one horse. Deposit only what you already decided to risk, from a state where that account is allowed to take your wager. Age checks are part of the signup because racing is 18+ or older in many places.
-
-The tote closes at the official off time. Money that misses the close is not in the pool. The odds you saw with one minute to go are an estimate. The payoff posted after the race is the one that cashes. Self-service machines follow the same rules as the clerk: pool, base, numbers, then confirm.`,
+      body: 'At the window, use one sentence with four facts: track, race, amount and bet, then the numbers. "Churchill, race 6, $2 win on the 4." For an exacta: "Churchill, race 6, $1 exacta box 2, 5 and 7." Wait for the clerk to repeat it. Check the ticket before you leave the window. The ticket should show the pool, the amount, the race and the numbers. A mis-mark is easiest to fix before the race goes off.\n\nOnline, a licensed advance-deposit account is the same bet with a digital ticket. You choose the track card, the race, the pool and the stake. The interface will show a combination count before you confirm. Read that count. A box or a wheel can multiply a tap you thought was one horse. Deposit only what you already decided to risk, from a state where that account is allowed to take your wager. Age checks are part of the signup because racing is 18+ or older in many places.\n\nThe tote closes at the official off time. Money that misses the close is not in the pool. The odds you saw with one minute to go are an estimate. The payoff posted after the race is the one that cashes. Self-service machines follow the same rules as the clerk: pool, base, numbers, then confirm.',
     },
     {
       id: "bankroll",
       title: "A beginner checklist for the day's bankroll",
-      body: `Treat the card as a session with a hard stop, not as a puzzle you must solve by the last race. Pick the number you can lose and still leave, and write it down before race 1. Straight bets are the cleanest way to learn the pools. Add an exotic only after you have priced the combinations on paper.
-
-Use this checklist every time you bet:
-
-- Confirm you are 18+ and the wager is legal where you are.
-- Name the track, the race number and the program number.
-- Name the pool, and say whether the ticket is straight, boxed or keyed.
-- Multiply combinations by the base stake before you confirm.
-- Set a loss limit for the card and a quit point if you hit it.
-- Skip the next race rather than raising the stake to "get it back."
-
-A flat stake, the same unit on each opinion, keeps one excited horse from eating the card. If your unit is $2, a four-horse $1 exacta box is six units, not one. Count it that way. [Handicapping horses](/guides/handicapping-horses) can change which number you like. It does not change the takeout, and it does not turn a 20% chance into a debt the pool owes you.
-
-If the limit is gone, the remaining races are someone else's card. That is the whole bankroll rule.`,
+      body: 'Treat the card as a session with a hard stop, not as a puzzle you must solve by the last race. Pick the number you can lose and still leave, and write it down before race 1. Straight bets are the cleanest way to learn the pools. Add an exotic only after you have priced the combinations on paper.\n\nUse this checklist every time you bet:\n\n- Confirm you are 18+ and the wager is legal where you are.\n- Name the track, the race number and the program number.\n- Name the pool, and say whether the ticket is straight, boxed or keyed.\n- Multiply combinations by the base stake before you confirm.\n- Set a loss limit for the card and a quit point if you hit it.\n- Skip the next race rather than raising the stake to "get it back."\n\nA flat stake, the same unit on each opinion, keeps one excited horse from eating the card. If your unit is $2, a four-horse $1 exacta box is six units, not one. Count it that way. [Handicapping horses](/guides/handicapping-horses) can change which number you like. It does not change the takeout, and it does not turn a 20% chance into a debt the pool owes you.\n\nIf the limit is gone, the remaining races are someone else\'s card. That is the whole bankroll rule.',
     },
     {
       id: "mistakes",
       title: "Mistakes that cost beginners more than a bad pick",
-      body: `The expensive errors are structural. Betting the morning line as if it were a contract. Buying a boxed trifecta because the screen called it "one bet" while the cost was 24 times the base. Assuming place pays half of win. Forgetting that show still loses if your horse runs fourth. Chasing a scratched horse with a bigger ticket in the next race.
-
-Another quiet leak is the base amount. Many exacta pools take $1. Many trifecta and superfecta pools take $0.50 or $0.10. The payoff printed on the board is often "for $2" or "for $1." A 10-cent ticket is worth one-twentieth of a $2 payoff. Read the header on the price before you celebrate a number. The [trifecta bet](/guides/trifecta-bet) and [superfecta bet](/guides/superfecta-bet) pages put those bases in tables so the multiplication is visible.
-
-Watch the field size. A five-horse race and a twelve-horse race are different products. Short fields make exotics cheaper to cover and less likely to pay a life-changing number. Large fields do the opposite. The Kentucky Derby is the famous large field; its own page is about that twenty-horse gate, not about a system.
-
-Leave with the tickets you cashed and the ones you did not. The uncashed ones are the tuition. The pool will be there tomorrow, still minus takeout, still indifferent to the story you told about the horse.
-
-The 2026 horsemen guide and the Keeneland wagering menu were opened. [Those championship notes](/guides/breeders-cup-betting) leave a fixed win payoff unpublished until the pools close.`,
+      body: 'The expensive errors are structural. Betting the morning line as if it were a contract. Buying a boxed trifecta because the screen called it "one bet" while the cost was 24 times the base. Assuming place pays half of win. Forgetting that show still loses if your horse runs fourth. Chasing a scratched horse with a bigger ticket in the next race.\n\nAnother quiet leak is the base amount. Many exacta pools take $1. Many trifecta and superfecta pools take $0.50 or $0.10. The payoff printed on the board is often "for $2" or "for $1." A 10-cent ticket is worth one-twentieth of a $2 payoff. Read the header on the price before you celebrate a number. The [trifecta bet](/guides/trifecta-bet) and [superfecta bet](/guides/superfecta-bet) pages put those bases in tables so the multiplication is visible.\n\nWatch the field size. A five-horse race and a twelve-horse race are different products. Short fields make exotics cheaper to cover and less likely to pay a life-changing number. Large fields do the opposite. The Kentucky Derby is the famous large field; its own page is about that twenty-horse gate, not about a system.\n\nLeave with the tickets you cashed and the ones you did not. The uncashed ones are the tuition. The pool will be there tomorrow, still minus takeout, still indifferent to the story you told about the horse.\n\nThe 2026 horsemen guide and the Keeneland wagering menu were opened. [Those championship notes](/guides/breeders-cup-betting) leave a fixed win payoff unpublished until the pools close.',
     },
   ],
   faqs: [
@@ -146,12 +86,18 @@ The 2026 horsemen guide and the Keeneland wagering menu were opened. [Those cham
     },
   ],
   sources: [
-    { label: "Parimutuel betting", url: "https://en.wikipedia.org/wiki/Parimutuel_betting" },
+    {
+      label: "Parimutuel betting",
+      url: "https://en.wikipedia.org/wiki/Parimutuel_betting",
+    },
     {
       label: "Glossary of North American horse racing",
       url: "https://en.wikipedia.org/wiki/Glossary_of_North_American_horse_racing",
     },
-    { label: "Equibase", url: "https://www.equibase.com/" },
+    {
+      label: "Equibase",
+      url: "https://www.equibase.com/",
+    },
   ],
   related: [
     "win-place-show-betting",
@@ -160,5 +106,5 @@ The 2026 horsemen guide and the Keeneland wagering menu were opened. [Those cham
     "handicapping-horses",
     "pick-6-horse-racing",
   ],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

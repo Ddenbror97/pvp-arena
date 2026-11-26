@@ -39,7 +39,9 @@ The trio eventually took their action to Las Vegas. In the usual version of the 
 
 ### The nickname
 
-"Texas Dolly" came from a mispronunciation. The usual account credits the oddsmaker Jimmy "the Greek" Snyder with calling him "Dolly", and the name stuck for the rest of his life. For the wider cast of characters from this era, see the [famous gamblers overview](/guides/famous-gamblers) and the [casino knowledge topic hub](/guides/topics/casino-knowledge).`,
+"Texas Dolly" came from a mispronunciation. The usual account credits the oddsmaker Jimmy "the Greek" Snyder with calling him "Dolly", and the name stuck for the rest of his life. For the wider cast of characters from this era, see the [famous gamblers overview](/guides/famous-gamblers) and the [casino knowledge topic hub](/guides/topics/casino-knowledge).
+
+WSOP records ten bracelets for Brunson and his 1988 Hall of Fame induction. Tournament records do not include every cash-game result.`,
     },
     {
       id: "wsop",
@@ -131,23 +133,6 @@ Brunson survived a serious cancer diagnosis in the early 1960s, a recovery he of
 
 Very few professionals of any era last sixty years. Brunson went broke and rebuilt more than once in his early career, as most road gamblers did. What set him apart was that he kept adjusting as the game changed: from private Texas games to Binion's, to televised tournaments, to high-stakes mixed games against younger players who had studied with computers. That habit is the part of his career most relevant to anyone studying [how to win at poker](/guides/how-to-win-at-poker).`,
     },
-    {
-      id: "lessons",
-      title: "What Brunson's career teaches, and the PvP link",
-      body: `Three lessons come out of the Brunson story cleanly.
-
-1. **Poker profit comes from opponents.** A professional wins because other players make worse decisions, and the house takes a rake from every pot. There is no edge against a game whose odds are fixed.
-2. **Bankroll outlasts brilliance.** Brunson and his road partners went broke despite being among the best players alive. Skill decides the long-run average; bankroll decides whether you survive the short run. See [poker bankroll management](/guides/poker-bankroll-management).
-3. **The famous hand is noise.** Winning twice with ten-deuce is a great story and a terrible strategy. Two results are a sample of two.
-
-### How this maps to PVPspinArena
-
-PVPspinArena runs six-max poker, Jackpot, Coinflip, house-banked Roulette, and P2P Slott. In [Coinflip](/coinflip) two players take a fair 50/50, and the winner takes the pot minus any fee shown before entry. In Jackpot your win chance equals your share of the pot. [Roulette](/roulette) uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Reading an opponent does not change any of those numbers, because the result comes from committed seeds rather than decisions at a table. Any settled round can be checked on the [fairness page](/fairness).
-
-That is the useful contrast: Brunson's edge was real because poker has decisions. A hashed PvP round has none after you enter, so the only choices that matter are how much you stake and when you stop. For more on where the line between skill and chance sits, see [skill based gambling](/guides/skill-based-gambling). Gambling is 18+, and limits are available on the [responsible gambling](/responsible-gambling) page.
-
-A later Hall of Fame note lists another player whose bracelet lines do not agree with each other. [That 2014 class page](/guides/daniel-negreanu) is not this biography.`,
-    },
   ],
   faqs: [
     {
@@ -172,7 +157,14 @@ A later Hall of Fame note lists another player whose bracelet lines do not agree
     },
   ],
   sources: [
-    { label: "Wikipedia: Doyle Brunson", url: "https://en.wikipedia.org/wiki/Doyle_Brunson" },
+    {
+      label: "WSOP: Doyle Brunson player record",
+      url: "https://www.wsop.com/players/561537212/doyle-brunson/",
+    },
+    {
+      label: "Wikipedia: Doyle Brunson",
+      url: "https://en.wikipedia.org/wiki/Doyle_Brunson",
+    },
     {
       label: "Wikipedia: World Series of Poker",
       url: "https://en.wikipedia.org/wiki/World_Series_of_Poker",
@@ -190,5 +182,5 @@ A later Hall of Fame note lists another player whose bracelet lines do not agree
     "poker-pot-odds",
     "history-of-poker",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

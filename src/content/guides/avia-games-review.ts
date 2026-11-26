@@ -22,7 +22,7 @@ export const guide: Guide = {
     {
       id: "what-the-catalog-sells",
       title: "What the Avia Games catalog actually sells",
-      body: `The search phrase Avia Games usually means a pile of phone titles that look like free puzzles and also offer cash entries. Solitaire Clash is a Klondike-style race. Bingo Tour is a fast daubing contest with power-ups. Other titles in the same family cover pool, bubbles, and short card or puzzle rounds. A press total of prizes awarded is a company sentence. It is not your expected value.
+      body: `Avia Games publishes several phone titles with free play and optional cash contests. Solitaire Clash is a Klondike-style race. Bingo Tour is a fast daubing contest with power-ups. Other titles in the same family cover pool, bubbles, and short card or puzzle rounds. A press total of prizes awarded is a company sentence. It is not your expected value.
 
 What you buy in a cash match is a comparison of scores. Everyone who counts toward that comparison paid, or is using a balance that stands for a payment, and the winner’s credit is carved out of that money. Practice modes and bonus credits can sit beside that cash. A balance that cannot be withdrawn is a ticket to play, which is a poor definition of profit.
 

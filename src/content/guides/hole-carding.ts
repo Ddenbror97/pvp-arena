@@ -99,7 +99,7 @@ If one player always seems to know the dealer total before it is shown, treat th
       title: "A result with no down card to see",
       body: `Hole carding is a problem created by a hidden physical card and a human dealer. A hashed round has neither. Both players see the rule before the stake, and either player can recompute the result after it.
 
-PVPspinArena runs five games, settled in US dollars. P2P Slott is a 1v1 duel with a 10% fee on the players' pot. [Coinflip](/coinflip) is two players and a 50/50. Roulette is a shared 33-slot wheel: 16 purple and 16 silver pay 2x, and 1 green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Jackpot assigns a win chance equal to your share of the pot, and the winner takes the pot minus a 5% fee. [Poker](/poker) is six-max Hold'em. Your hole cards are visible only to you. There is no face-down dealer card to glimpse and no pitch to read. The [fairness](/fairness) page is where a settled round's seeds are checked.
+Jackpot assigns a win chance equal to your share of the pot, and the winner takes the pot minus a 5% fee. [Poker](/poker) is six-max Hold'em. Your hole cards are visible only to you. There is no face-down dealer card to glimpse and no pitch to read. The [fairness](/fairness) page is where a settled round's seeds are checked.
 
 The edge on the wheel is a price you pay on purpose. If you want blackjack, play it in a licensed room, under the posted hole-card rule, and without a device. Limits and contacts are on the [responsible gambling](/responsible-gambling) page. Adults only.
 
@@ -133,8 +133,14 @@ See also [marked cards](/guides/marked-cards) and [past posting](/guides/past-po
       label: "Nevada Revised Statutes, Chapter 465",
       url: "https://www.leg.state.nv.us/Division/Legal/LaWLibrary/NRS/NRS-465.html",
     },
-    { label: "Wikipedia: Card counting", url: "https://en.wikipedia.org/wiki/Card_counting" },
-    { label: "Wikipedia: Blackjack", url: "https://en.wikipedia.org/wiki/Blackjack" },
+    {
+      label: "Wikipedia: Card counting",
+      url: "https://en.wikipedia.org/wiki/Card_counting",
+    },
+    {
+      label: "Wikipedia: Blackjack",
+      url: "https://en.wikipedia.org/wiki/Blackjack",
+    },
   ],
   related: [
     "card-counting",
@@ -143,5 +149,5 @@ See also [marked cards](/guides/marked-cards) and [past posting](/guides/past-po
     "past-posting",
     "casino-surveillance",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

@@ -30,9 +30,7 @@ A safety is not a back door into those points. Balls pocketed on a safety are sp
       title: "Other called games with a different score",
       body: `Straight pool scores points until the race ends. It is not the 8-ball pot. That pot is [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other rule cards are [a race to eight](/guides/one-pocket-pool), [rotation instead of points](/guides/9-ball-rules), and [names for the shots](/guides/pool-shots). The group is the [games of chance guides](/guides/topics/games-of-chance).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other rule cards are [a race to eight](/guides/one-pocket-pool), [rotation instead of points](/guides/9-ball-rules), and [names for the shots](/guides/pool-shots). The group is the [games of chance guides](/guides/topics/games-of-chance).`,
     },
     {
       id: "minus-two",
@@ -65,7 +63,9 @@ WPA's winning line, in the facts used here, is simple: the first player to the r
       title: "A race to a score, with no record printed here",
       body: `People ask for the greatest run because straight pool is a game of long strings of called balls. The answer on this page is that the run is not the rule. The rule is the point, the foul, the rerack, and the agreed total. A minus-two opening foul, a spotted safety ball, and a score that can sink below zero are enough bookkeeping without a museum number beside them.
 
-This site does not run straight pool for money. There is no point-race in the lobby, and no entry fee dressed up as a called-ball game. The cash cue game is 8-ball. The honest original on that question is the scoring chapter above, plus the refusal to invent a record. The required score belongs to the players who agreed it.`,
+This site does not run straight pool for money. There is no point-race in the lobby, and no entry fee dressed up as a called-ball game. The cash cue game is 8-ball. The honest original on that question is the scoring chapter above, plus the refusal to invent a record. The required score belongs to the players who agreed it.
+
+For money games, set [spending limits](/responsible-gambling) before dealing.`,
     },
   ],
   faqs: [
@@ -99,8 +99,11 @@ This site does not run straight pool for money. There is no point-race in the lo
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "one-pocket-pool", "pool-shots"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

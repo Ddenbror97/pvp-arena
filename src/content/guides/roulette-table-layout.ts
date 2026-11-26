@@ -32,7 +32,9 @@ export const guide: Guide = {
 
 The felt is what people mean by the table layout. At the top, nearest the wheel, sits zero. Below it, the numbers run in three columns. The first row is 1, 2, 3. The next is 4, 5, 6. The last is 34, 35, 36. Along one side are the dozen boxes. Along the bottom, or the near end, are the even-money boxes: red, black, odd, even, low and high. The rules for what those boxes pay are on [how to play roulette](/guides/how-to-play-roulette). This page is where the boxes sit and which numbers they own.
 
-You must be 18+. The felt does not become kinder because you can name every zone. [Responsible gambling](/responsible-gambling) is the stop. Colour probabilities are a different article, [roulette colors](/guides/roulette-colors). The price of each zone is the [roulette odds chart](/guides/roulette-odds-chart). Guides in this family sit under [Games and odds](/guides/topics/games-and-odds).`,
+You must be 18+. The felt does not become kinder because you can name every zone. [Responsible gambling](/responsible-gambling) is the stop. Colour probabilities are a different article, [roulette colors](/guides/roulette-colors). The price of each zone is the [roulette odds chart](/guides/roulette-odds-chart). Guides in this family sit under [Games and odds](/guides/topics/games-and-odds).
+
+The Massachusetts equipment rules specify wheel compartments, number order and layout areas. A felt arrangement and the wheel’s circular order are separate representations.`,
     },
     {
       id: "wheel-order",
@@ -141,12 +143,19 @@ When the drill is easy, look at a printed felt and place an imaginary chip on a 
     },
   ],
   sources: [
-    { label: "Roulette", url: "https://en.wikipedia.org/wiki/Roulette" },
+    {
+      label: "Roulette",
+      url: "https://en.wikipedia.org/wiki/Roulette",
+    },
     {
       label: "Roulette wheel",
       url: "https://en.wikipedia.org/wiki/Roulette#Roulette_wheel_number_sequence",
     },
+    {
+      label: "Massachusetts Gaming Commission: roulette equipment rules",
+      url: "https://www.mass.gov/doc/205-cmr-146-gaming-equipment/download",
+    },
   ],
   related: ["how-to-play-roulette", "roulette-colors", "french-roulette", "roulette-odds-chart"],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

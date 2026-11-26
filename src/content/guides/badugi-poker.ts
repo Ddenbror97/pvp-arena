@@ -156,7 +156,7 @@ The helpline page prints 1-800-MY-RESET and says that line is not a crisis servi
     {
       id: "stop",
       title: "Who should leave the lowball table",
-      body: `Do not play if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent or money with a due date.
+      body: `Cash play requires the local minimum age, lawful access and an affordable budget.
 
 Three draws feel like three chances to fix a hand. They are three chances to put more money in a pot you can still lose. The sheets do not store a debt the next card must repay.
 
@@ -213,5 +213,5 @@ Cash-out minimum on this site is $20 in BTC, USDC, or ETH. If the session stops 
     "how-to-play-poker",
     "rabbit-hunting-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

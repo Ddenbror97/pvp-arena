@@ -23,7 +23,7 @@ export const guide: Guide = {
     "Foundations build ace to king in one suit. Tableau builds down, red on black and black on red.",
     "Only a king, or a face-up sequence headed by a king, may fill an empty column.",
     "Turn-three digital games often allow three passes through the stock. Many home games allow unlimited redeals.",
-    "Freecell and Spider are different solitaires. This page does not teach their layouts.",
+    "Freecell and Spider are different solitaires. Their layouts and legal moves differ from Klondike.",
   ],
   sections: [
     {
@@ -39,7 +39,9 @@ Deal seven columns from left to right:
 
 That is 28 cards. The remaining 24 go face down as the stock, usually at the upper left. Leave space to the right of the stock for the waste, and space at the upper right for four foundations. The foundations start empty. Nothing is dealt to them.
 
-The face-down cards are the puzzle. You cannot look at them. You turn a face-down card up only when you have played the face-up card that covered it. Klondike sits with the other kitchen-table games in the [games of chance hub](/guides/topics/games-of-chance). It is a one-player packer, not a trick game like [Spades](/guides/how-to-play-spades).`,
+The face-down cards are the puzzle. You cannot look at them. You turn a face-down card up only when you have played the face-up card that covered it. Klondike sits with the other kitchen-table games in the [games of chance hub](/guides/topics/games-of-chance). It is a one-player packer, not a trick game like [Spades](/guides/how-to-play-spades).
+
+Bicycle publishes a standard-deck Solitaire layout. Draw count, stock recycling and permitted moves should match the selected Klondike variant.`,
     },
     {
       id: "building",
@@ -99,7 +101,7 @@ Empty column 1 only after you have a plan for the king that must refill it. If t
     {
       id: "other-games",
       title: "Freecell, Spider, and what to agree",
-      body: `Two other solitaires get called "solitaire" in apps. They are not Klondike, and this page does not give their full rules.
+      body: `Two other solitaires get called "solitaire" in apps. They are not Klondike, and use separate rules.
 
 Freecell deals the whole deck face up, usually into eight columns, and gives you four empty cells as parking spots. There is no stock. Spider uses two decks. You build down in suit, and a complete king-to-ace run in one suit leaves the table. If a rules sheet starts talking about free cells or about removing a suited run, you have left Klondike.
 
@@ -107,25 +109,12 @@ Settle these Klondike choices out loud:
 
 - Turn one or turn three.
 - How many passes before the stock locks.
-- Whether a sequence may move only when every card in it is the same suit (a strict old rule) or whenever the colors already alternate (the usual modern rule). This page uses the modern rule.
+- Whether a sequence may move only when every card in it is the same suit (a strict old rule) or whenever the colors already alternate (the usual modern rule). The Klondike rules below use alternating-color sequences.
 - Whether you may take a card back off a foundation. The usual answer is yes.
 
 Published win rates are bounds, not a promise. Mathematician Persi Diaconis has called the exact chance of winning ordinary Klondike one of the open embarrassments of applied probability. A fully visible variant called Thoughtful Klondike, draw three, has been estimated near 82 percent winnable. Hidden-card turn-three is harder. Computer searches have posted lower bounds from the high teens into the mid-30s, depending on the program, and one skilled human sample won 189 of 442 games, about 43 percent. Turn one is easier than turn three because you see every stock card in order. None of those figures is a strategy you can force on a single deal.
 
 Some casinos have offered a paid one-pass Klondike, sometimes called Las Vegas solitaire, that pays a fixed amount per card you get onto the foundations. That is a banking game with a price, not the kitchen-table puzzle. Playing other people for a stake is [solitaire for money](/guides/solitaire-for-money), which is a different page from these rules and from any one brand. Gambling is for adults only (18+, or the legal age where you live). Agree any stake before you deal, and keep it small enough that a lost game is the end of the story.`,
-    },
-    {
-      id: "chance",
-      title: "What the shuffle decides, and a hashed coin",
-      body: `Once the deck is shuffled, Klondike is a puzzle with hidden information, not a bet you can talk up. You will lose some deals no matter the order of your moves. You will also lose winnable deals by burying the wrong king or by filling a foundation too soon. The skill is the order of moves. The chance is the shuffle. If you want a number you can check, write down the turn rule and the redeal limit first. A turn-three, three-pass loss and a turn-one unlimited win are not the same experiment.
-
-The same split shows up in dice games. [Farkle](/guides/farkle-rules) lets you choose when to bank. [Yahtzee](/guides/yahtzee-rules) lets you choose which box to fill. Klondike lets you choose which legal move to make, and then the face-down cards answer. None of the three removes the shuffle or the dice.
-
-PVPspinArena is a different kind of chance. It runs [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), and [Roulette](/roulette) settled in US dollars, for adults 18+ only. A Coinflip is a 50/50 between two players. Roulette is a 33-slot wheel. Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Jackpot pays from a shared pot, with a win chance equal to your share. Seeds are committed before the round. Any settled round can be checked on the [fairness](/fairness) page. There is no tableau to solve and no redeal to argue about.
-
-If a session stops being a game and starts being a chase, stop. The [responsible gambling](/responsible-gambling) page has limits and tools. A second deal of Klondike will not repair a loss on a coin.
-
-See also [double solitaire](/guides/double-solitaire), [nertz](/guides/nertz-rules) and [kings in the corner](/guides/kings-corner-rules).`,
     },
   ],
   faqs: [
@@ -143,7 +132,7 @@ See also [double solitaire](/guides/double-solitaire), [nertz](/guides/nertz-rul
     },
     {
       q: "Is Freecell the same as Klondike?",
-      a: "No. Freecell deals every card face up and uses empty cells as parking spots. Spider uses two decks and removes suited king-to-ace runs. This page teaches Klondike only.",
+      a: "No. Freecell deals every card face up and uses empty cells as parking spots. Spider uses two decks and removes suited king-to-ace runs. The deal described here is Klondike.",
     },
     {
       q: "What is the difference between turn one and turn three?",
@@ -152,10 +141,17 @@ See also [double solitaire](/guides/double-solitaire), [nertz](/guides/nertz-rul
   ],
   sources: [
     {
+      label: "Bicycle: Solitaire rules",
+      url: "https://bicyclecards.com/how-to-play/solitaire",
+    },
+    {
       label: "Wikipedia: Klondike (solitaire)",
       url: "https://en.wikipedia.org/wiki/Klondike_(solitaire)",
     },
-    { label: "Wikipedia: Patience (game)", url: "https://en.wikipedia.org/wiki/Patience_(game)" },
+    {
+      label: "Wikipedia: Patience (game)",
+      url: "https://en.wikipedia.org/wiki/Patience_(game)",
+    },
   ],
   related: [
     "double-solitaire",
@@ -165,5 +161,5 @@ See also [double solitaire](/guides/double-solitaire), [nertz](/guides/nertz-rul
     "52-card-deck",
   ],
   howTo: true,
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

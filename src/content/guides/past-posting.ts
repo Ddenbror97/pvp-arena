@@ -111,7 +111,7 @@ Craps and roulette pay less than the true odds on the bets most people make, whi
 
 ### A bet you can check
 
-PVPspinArena is a different product from a Strip table, and it is still gambling for adults, 18+. Rounds are settled from committed seeds, and you can recompute a finished round on the [fairness](/fairness) page. There is no layout to drop a late chip onto, because the result is locked to the seeds rather than to a physical object you can watch settle and then bet. Read the rules before you play, and keep the stake inside money you can lose. Set a limit before the session, and stop when you hit it. The wider background sits in the [Casino knowledge topic](/guides/topics/casino-knowledge).
+Rounds are settled from committed seeds, and you can recompute a finished round on the [fairness](/fairness) page. There is no layout to drop a late chip onto, because the result is locked to the seeds rather than to a physical object you can watch settle and then bet. Read the rules before you play, and keep the stake inside money you can lose. Set a limit before the session, and stop when you hit it. The wider background sits in the [Casino knowledge topic](/guides/topics/casino-knowledge).
 
 If you remember one line, remember this: a bet counts only when it was at risk before the outcome. Anything after that is a late chip, and trying to get it paid is past posting.
 
@@ -145,8 +145,14 @@ See also [hole carding](/guides/hole-carding) and [marked cards](/guides/marked-
       label: "Nevada Legislature: NRS Chapter 465",
       url: "https://www.leg.state.nv.us/nrs/nrs-465.html",
     },
-    { label: "Nevada Gaming Control Board", url: "https://www.gaming.nv.gov/" },
-    { label: "Encyclopaedia Britannica: craps", url: "https://www.britannica.com/topic/craps" },
+    {
+      label: "Nevada Gaming Control Board",
+      url: "https://www.gaming.nv.gov/",
+    },
+    {
+      label: "Encyclopaedia Britannica: craps",
+      url: "https://www.britannica.com/topic/craps",
+    },
   ],
   related: [
     "casino-surveillance",
@@ -155,5 +161,5 @@ See also [hole carding](/guides/hole-carding) and [marked cards](/guides/marked-
     "craps-odds",
     "casino-etiquette",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

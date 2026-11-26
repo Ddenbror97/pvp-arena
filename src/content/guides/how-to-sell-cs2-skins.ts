@@ -112,7 +112,7 @@ Sell through a rail with a receipt. A friend-of-a-friend cash deal is how knives
 
 Do not sell from a shared account to “help a friend cash out.” You inherit the ban story.
 
-This page will not coach you on which payout vendor is “hard to reverse.” That is the payment-processor line we will not cross. If a book pays you, their help center is the document.`,
+Read the payout provider’s dispute, reversal and identity-verification rules. A payment method’s reversal risk belongs in the sale decision. If a book pays you, their help center is the document.`,
     },
     {
       id: "after",
@@ -197,5 +197,5 @@ Where the item goes is the whole risk. [CS2 trading sites](/guides/cs2-trading-s
     "skin-cashout-guide",
     "steam-wallet-to-cash",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

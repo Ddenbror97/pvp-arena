@@ -15,7 +15,7 @@ export const guide: Guide = {
     "A fair cash match on this site is equal stakes. No secret handicap is written into the seat.",
     "The fee is 5% of the pot. The winner is credited 95% when the match settles.",
     "You call a pocket only for the 8. The 8 on the break wins unless the cue ball scratches.",
-    "Ghost-ball aim is a teaching picture. This page does not publish a measured make percentage.",
+    "Ghost-ball aim is a teaching picture. No measured make percentage is available for this technique.",
   ],
   sections: [
     {
@@ -32,7 +32,7 @@ Stop when the 8 sits in the jaws of their pocket and you still have a choice. A 
 
 The technique next to this is [the opening break](/guides/8-ball-pool-break), [aim and spin](/guides/8-ball-pool-aim), and [banks, kicks, and safeties](/guides/pool-shots). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "leave",
@@ -58,7 +58,7 @@ The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on
       title: "Play safe while you still can",
       body: `A safety is due earlier than most players admit. If the 8 is hanging in their pocket and you have two balls left, clearing those two can hand them the rack. Leave them without a shot instead. The safety does not need a name. It needs to take the line away, even if your object ball stays on the table and the inning looks quiet.
 
-Do not fire a low-percentage bank when a safety exists. The bank might fall on a given night. This page will not invent the odds that it does. When the safety is available and the bank needs two rails plus a wish, the safety is the strategy. Hero shots are how a session of equal players gets expensive, one donated rack at a time. The fee does not refund a brave miss, and the other player keeps the inning.`,
+Do not fire a low-percentage bank when a safety exists. The bank might fall on a given night. That requires measured shot outcomes rather than a prediction from the diagram. When the safety is available and the bank needs two rails plus a wish, the safety is the strategy. Hero shots are how a session of equal players gets expensive, one donated rack at a time. The fee does not refund a brave miss, and the other player keeps the inning.`,
     },
     {
       id: "money-table",
@@ -71,7 +71,7 @@ Stakes are $1, $2, $5, $10, $25, and $50, posted equally. The fee is 5% of the p
   faqs: [
     {
       q: "Do 8 ball pool tips guarantee a win?",
-      a: "No. Pattern play and a good leave raise the chance you get another shot. They do not publish a win rate, and this page will not invent one. The 5% fee still comes off the pot when you win.",
+      a: "No. Pattern play and a good leave raise the chance you get another shot. They describe execution, not a measured win-rate advantage. The 5% fee still comes off the pot when you win.",
     },
     {
       q: "What is the first strategic choice?",
@@ -99,8 +99,11 @@ Stakes are $1, $2, $5, $10, $25, and $50, posted equally. The fee is 5% of the p
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "8-ball-pool-break", "8-ball-pool-aim"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

@@ -40,7 +40,9 @@ The four faces are different shapes, so a fair astragalus does not give four equ
 
 A one-line version of this sits inside the wider [history of gambling](/guides/history-of-gambling). That guide has to cover cards, lotteries, casinos, and the internet. This page stays with the object in the hand: how the bone became a cube, how the cube became a casino tool, and which games still use the throw. Painted and carved knucklebones from classical sites are museum objects now. Replicas sold as toys are a children's game, jacks by another route, and they are not the betting culture the archaeological finds belong to.
 
-The [Casino knowledge topic](/guides/topics/casino-knowledge) is where this sits next to the buildings and the rules that came much later.`,
+The [Casino knowledge topic](/guides/topics/casino-knowledge) is where this sits next to the buildings and the rules that came much later.
+
+The British Museum's Royal Game of Ur record is physical evidence for ancient dice-driven board play. It does not make every surviving die proof of a cash wager.`,
     },
     {
       id: "cubes-and-ur",
@@ -77,7 +79,7 @@ Hazard is a two-dice game with a caller, a main, and a chance. The full scheme i
 
 ### Probability looks up from the table
 
-In 1654 Blaise Pascal and Pierre de Fermat wrote to each other about dice and about splitting a stake when a game stops early. Those letters are the usual starting point for probability as a subject. They priced dice. They did not invent them. The maths page on this site is the one linked above.
+In 1654 Blaise Pascal and Pierre de Fermat wrote to each other about dice and about splitting a stake when a game stops early. Those letters are the usual starting point for probability as a subject. They priced dice. They did not invent them.
 
 The rules, the meaning of crabs as a losing throw, and the path from that throw to the modern name belong in the [hazard dice game](/guides/hazard-dice-game) guide. Read that for the play. The point for a history of the dice themselves is narrower: two cubes, thrown together, had become the standard instrument of a betting game that could fill a room. The knucklebone was still known. The cube had won the casino future, because six equal faces are easier to manufacture, easier to check, and easier to price.`,
     },
@@ -107,7 +109,7 @@ You are supposed to be able to look through the cube. Opaque dice still exist fo
 
 Home games can use any six-sided set you trust. If money is involved, keep it among adults and keep it small enough to lose. A casino die does not remember the last roll. Neither does a kitchen die.
 
-PVPspinArena does not roll physical dice. Its results come from committed seeds you can recompute on the [fairness](/fairness) page, including a two-player coinflip that is the one-bit cousin of a single yes-or-no face. Play is 18+ only. The bones, the tesserae, and the red casino cubes are the long road to that same demand: a throw you can believe, because you can see how it was made.`,
+Play is 18+ only. The bones, the tesserae, and the red casino cubes are the long road to that same demand: a throw you can believe, because you can see how it was made.`,
     },
   ],
   faqs: [
@@ -133,9 +135,22 @@ PVPspinArena does not roll physical dice. Its results come from committed seeds 
     },
   ],
   sources: [
-    { label: "Wikipedia: Dice", url: "https://en.wikipedia.org/wiki/Dice" },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
-    { label: "Wikipedia: Royal Game of Ur", url: "https://en.wikipedia.org/wiki/Royal_Game_of_Ur" },
+    {
+      label: "British Museum: Royal Game of Ur collection record",
+      url: "https://artsandculture.google.com/asset/the-royal-game-of-ur/MwE2MMZNSKiTwQ?hl=en",
+    },
+    {
+      label: "Wikipedia: Dice",
+      url: "https://en.wikipedia.org/wiki/Dice",
+    },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
+    {
+      label: "Wikipedia: Royal Game of Ur",
+      url: "https://en.wikipedia.org/wiki/Royal_Game_of_Ur",
+    },
   ],
   related: [
     "history-of-gambling",
@@ -144,5 +159,5 @@ PVPspinArena does not roll physical dice. Its results come from committed seeds 
     "chuck-a-luck",
     "yahtzee-rules",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

@@ -32,7 +32,9 @@ export const guide: Guide = {
 
 The picture is educational. It shows that a 1-to-1 bet can be ahead after a short session and behind after a long one, while the mean stays under the amount you staked. It does not crown a strategy. If the rules of the bet are the standard casino rates, the mean of the simulation should sit near the mean of the arithmetic. When it does not, the simulator is using a different rule, or you have not run enough spins to see the mean.
 
-You must be 18+. Practice chips are still a rehearsal of a gambling game. Keep [responsible gambling](/responsible-gambling) as the real-money stop. The rules of a single spin are [how to play roulette](/guides/how-to-play-roulette). The spread of results around a mean is [variance in gambling](/guides/variance-in-gambling). This cluster's home is [Games and odds](/guides/topics/games-and-odds).`,
+You must be 18+. Practice chips are still a rehearsal of a gambling game. Keep [responsible gambling](/responsible-gambling) as the real-money stop. The rules of a single spin are [how to play roulette](/guides/how-to-play-roulette). The spread of results around a mean is [variance in gambling](/guides/variance-in-gambling). This cluster's home is [Games and odds](/guides/topics/games-and-odds).
+
+The Massachusetts specification defines the standard 37- and 38-pocket wheels. Select the matching model before interpreting a simulation.`,
     },
     {
       id: "not-live",
@@ -134,10 +136,17 @@ Keep the money decision on the expectation and the limit, not on the prettiest p
     },
   ],
   sources: [
-    { label: "Roulette", url: "https://en.wikipedia.org/wiki/Roulette" },
+    {
+      label: "Roulette",
+      url: "https://en.wikipedia.org/wiki/Roulette",
+    },
     {
       label: "Expected value",
       url: "https://en.wikipedia.org/wiki/Expected_value",
+    },
+    {
+      label: "Massachusetts Gaming Commission: roulette equipment rules",
+      url: "https://www.mass.gov/doc/205-cmr-146-gaming-equipment/download",
     },
   ],
   related: [
@@ -147,5 +156,5 @@ Keep the money decision on the expectation and the limit, not on the prettiest p
     "martingale-calculator",
   ],
   widget: "roulette-sim",
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

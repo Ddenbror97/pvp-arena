@@ -24,7 +24,9 @@ export const guide: Guide = {
       title: "The first card is the simple part",
       body: `You bet. You get a card. The dealer gets a card. Higher rank wins 1 to 1. Lower rank loses the stake. There is no draw, no hit, and no skill on that card. The game feels even because, on a six-deck shoe, each side wins that first comparison about 46.3% of the time. The missing slice is the tie, and the tie is not settled like a push in baccarat.
 
-[Baccarat rules](/guides/baccarat-rules) are a useful contrast. A baccarat tie can be a push on the main bets. A war tie is a decision that costs you something either way.`,
+[Baccarat rules](/guides/baccarat-rules) are a useful contrast. A baccarat tie can be a push on the main bets. A war tie is a decision that costs you something either way.
+
+The Massachusetts Gaming Commission publishes Casino War as its own approved rules document; compare its surrender and war procedures with the offered table.`,
     },
     {
       id: "tie",
@@ -35,7 +37,7 @@ If your war card is higher, you win an amount equal to the original stake only. 
 
 That "win the original only" is why the first-card game can look fair and still carry an edge. You are paid even money on a contest that was not quite 50/50, and when the ranks match you are offered two losing prices. Wikipedia's summary of the strategy says surrender gives the house a slightly higher advantage when a bonus payout is offered, so the expectation is to go to war rather than surrender. That advice is about the posted bonus rules. If your table's war payoff differs, the choice can differ. Read it.
 
-The same source says the house advantage is usually over 2%, rises as more decks are added, and falls when the casino adds a bonus payout. This page will not replace "usually over 2%" with a fake precise edge. Decks and bonuses are the inputs.`,
+Deck count, surrender rules and the treatment of a second tie determine the house advantage. Use the published rules for the version being played before attaching an edge figure to it.`,
     },
     {
       id: "side",
@@ -43,13 +45,6 @@ The same source says the house advantage is usually over 2%, rises as more decks
       body: `A separate wager pays if the first two cards match. A commonly printed payoff is 10 to 1 on that side stake. Ten to 1 is not a generous price for a tie unless you have counted the decks. Do not treat a lit tie button as insurance. It is a high-edge proposition on many layouts, and the layout in front of you is the one to price.
 
 [House edge](/guides/house-edge) explains how to compare a payoff with the chance of the event. [Expected value](/guides/expected-value-gambling) is the arithmetic once both numbers are known. If the rules screen hides the payoff, you do not have the second number.`,
-    },
-    {
-      id: "where",
-      title: "What this site does not deal",
-      body: `PVPspinArena does not offer casino war. Nothing in the [terms](/terms) is a war paytable. Adults only. [Responsible gambling](/responsible-gambling) matters on a game that asks you to double after a tie, because the second stake is a new decision made in a hurry.
-
-More table games are grouped under [casino games](/guides/topics/casino-games). [Sic bo online](/guides/sic-bo-online) is a different one-roll game. Do not carry war's tie rule across to it.`,
     },
   ],
   faqs: [
@@ -74,7 +69,16 @@ More table games are grouped under [casino games](/guides/topics/casino-games). 
       a: "No. The tie bet is an optional side wager on the first two cards matching. Going to war is what you may do with the main bet after they match.",
     },
   ],
-  sources: [{ label: "Wikipedia: Casino War", url: "https://en.wikipedia.org/wiki/Casino_War" }],
+  sources: [
+    {
+      label: "Massachusetts Gaming Commission: approved Casino War rules",
+      url: "https://massgaming.com/regulations/table-games-rules/",
+    },
+    {
+      label: "Wikipedia: Casino War",
+      url: "https://en.wikipedia.org/wiki/Casino_War",
+    },
+  ],
   related: ["house-edge", "baccarat-rules", "sic-bo-online", "expected-value-gambling"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

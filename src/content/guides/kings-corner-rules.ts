@@ -129,7 +129,7 @@ With six players the stock vanishes quickly. After it is gone, turns are play-or
 - Must play. Some tables require every legal card to be played before the turn can end.
 - Draw one and stop. A simpler school version says the drawn card ends your turn even when it fits. This page lets you play the drawn card.
 
-None of these adds a house percentage. The winner is a player at the table. If adults stake a small amount on the hand, keep it agreed and small, and 18+ applies. A different kind of two-player stake is a [coinflip](/coinflip) between two people, which is not this layout and does not use these cards.
+None of these adds a house percentage. The winner is a player at the table. If adults stake a small amount on the hand, keep it agreed and small, and 18+ applies.
 
 Two habits save arguments. Square each pile so the top card is the only one you can see in full, with a corner of each card under it offset enough to read the sequence. And say "king to the corner" when you open a space, so the next player sees the new target.
 
@@ -167,7 +167,10 @@ See also [klondike solitaire](/guides/solitaire-rules), [double solitaire](/guid
       label: "Wikipedia: Kings in the Corner",
       url: "https://en.wikipedia.org/wiki/Kings_in_the_Corner",
     },
-    { label: "Pagat: Kings Corners", url: "https://www.pagat.com/layout/kingscorners.html" },
+    {
+      label: "Pagat: Kings Corners",
+      url: "https://www.pagat.com/layout/kingscorners.html",
+    },
   ],
   related: [
     "solitaire-rules",
@@ -176,6 +179,6 @@ See also [klondike solitaire](/guides/solitaire-rules), [double solitaire](/guid
     "golf-card-game-rules",
     "52-card-deck",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
   howTo: true,
 };

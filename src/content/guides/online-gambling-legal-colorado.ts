@@ -27,40 +27,22 @@ export const guide: Guide = {
     {
       id: "legal",
       title: "What is legal online in Colorado",
-      body: `| Product | Legal online? | Notes |
-| --- | --- | --- |
-| Sports betting | Yes, since 1 May 2020 | 21+, inside Colorado, licensed operators |
-| Online casino (slots, table games) | **No** | Casinos are land-based only |
-| Online poker | **No** | Live poker in licensed casinos |
-| Lottery | State lottery products | Colorado Lottery |
-| Horse racing | Licensed wagering | State racing rules |
-
-Colorado voters approved sports betting in November 2019 (Proposition DD), and it launched on 1 May 2020. The [Colorado Division of Gaming](https://sbg.colorado.gov/sports-betting-rules-and-regulations) publishes the sports betting rules and the list of licensed operators. [Where sports betting is legal](/guides/sports-betting-legal-states) compares states.`,
+      body: "| Product | Legal online? | Notes |\n| --- | --- | --- |\n| Sports betting | Yes, since 1 May 2020 | 21+, inside Colorado, licensed operators |\n| Online casino (slots, table games) | **No** | Casinos are land-based only |\n| Online poker | **No** | Live poker in licensed casinos |\n| Lottery | State lottery products | Colorado Lottery |\n| Horse racing | Licensed wagering | State racing rules |\n\nColorado voters approved sports betting in November 2019 (Proposition DD), and it launched on 1 May 2020. The [Colorado Division of Gaming](https://sbg.colorado.gov/sports-betting-rules-and-regulations) publishes the sports betting rules and the list of licensed operators. [Where sports betting is legal](/guides/sports-betting-legal-states) compares states.",
     },
     {
       id: "casino",
       title: "Casinos in Colorado",
-      body: `Commercial casinos are limited by the state constitution to Black Hawk, Central City and Cripple Creek. Voters in those towns removed the old $100 maximum bet in 2021, so local limits now apply. Two tribes, the Southern Ute and the Ute Mountain Ute, run casinos under federal tribal gaming law; [Native American casinos](/guides/native-american-casinos) explains how compacts work. None of these licences allows an online casino.`,
+      body: "Commercial casinos are limited by the state constitution to Black Hawk, Central City and Cripple Creek. Voters in those towns removed the old $100 maximum bet in 2021, so local limits now apply. Two tribes, the Southern Ute and the Ute Mountain Ute, run casinos under federal tribal gaming law; [Native American casinos](/guides/native-american-casinos) explains how compacts work. None of these licences allows an online casino.",
     },
     {
       id: "offshore",
-      title: "Offshore and sweepstakes sites",
-      body: `Colorado has not licensed online casinos, so a real-money online casino that accepts Coloradans is offshore. That means no Colorado regulator for a dispute. Sweepstakes casinos use a separate promotional model; see [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states).
-
-### How to check an app is licensed
-
-1. Find the operator's name and licence number on its site.
-2. Look it up on the regulator's own list of licensees.
-3. Confirm the app checks your location: licensed apps only accept bets placed inside the state.
-4. Treat "licensed offshore" (Curaçao, Anjouan) as not licensed by the state; see [crypto casino licenses](/guides/crypto-casino-license).
-
-More in the [crypto casino basics topic](/guides/topics/foundations).`,
+      title: "Check the authority for this activity",
+      body: "Colorado's [official sports-betting FAQ](https://sbg.colorado.gov/sites/sbg/files/documents/FAQs%20Sports%20Betting.docx%20%281%29.pdf) directs players to the Division of Gaming's list of licensed, open sportsbook operators and explains geolocation within state boundaries. That register concerns sports betting, not remote casino slots or poker.\n\nCheck a site's claimed Colorado activity against the Division's actual authorization. Neither an overseas [casino licence](/guides/crypto-casino-license) nor a working wallet connection establishes a Colorado casino permission. The [Foundations collection](/guides/topics/foundations) covers the wider operator questions.",
     },
     {
       id: "tax",
       title: "Taxes",
-      body: `Gambling winnings are taxable federally and in Colorado. See [report gambling winnings](/guides/report-gambling-winnings) for the federal forms.
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Colorado. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Gambling winnings are taxable federally and in Colorado. See [report gambling winnings](/guides/report-gambling-winnings) for the federal forms.\nColorado casino and sports-betting eligibility starts at 21, with location checks for online sports wagers. Keep a failed geolocation check separate from a payment problem; do not fund another site to bypass it. [Responsible gambling](/responsible-gambling) provides account controls.",
     },
   ],
   faqs: [
@@ -84,6 +66,10 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
   ],
   sources: [
     {
+      label: "Colorado Division of Gaming — official sports-betting FAQ",
+      url: "https://sbg.colorado.gov/sites/sbg/files/documents/FAQs%20Sports%20Betting.docx%20%281%29.pdf",
+    },
+    {
       label: "Colorado Division of Gaming: sports betting rules and regulations",
       url: "https://sbg.colorado.gov/sports-betting-rules-and-regulations",
     },
@@ -91,7 +77,10 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
   ],
   related: [
     "sports-betting-legal-states",
@@ -100,5 +89,5 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     "sweepstakes-casino-legal-states",
     "gambling-age-us",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

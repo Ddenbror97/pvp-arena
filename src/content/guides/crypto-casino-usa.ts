@@ -10,126 +10,66 @@ export const guide: Guide = {
     "us crypto casino legal",
     "offshore crypto casino us",
   ],
-  title: "Crypto Casinos in the USA: Legal Status | PvP Spin Arena",
+  title: "Crypto Casinos in the USA: State and Product Checks",
   description:
-    "US crypto casino access depends on federal law, state rules and the sweepstakes model. What is legal, what is risky, and how winnings are taxed.",
+    "Check US crypto casino claims by state, operator and activity. Compare official New Jersey and Pennsylvania records without treating them as national approval.",
   h1: "Crypto Casinos in the USA: Legality and Access",
   answer:
-    "Crypto casino USA searches collide with a patchwork: states regulate much of gambling, federal law still matters for banking and illegal gambling businesses, and crypto does not create a national casino licence. This page is high-level public context for adults 18+, not legal advice, and not a claim that PVPspinArena is a licensed US casino.",
+    "Crypto casino USA permission is a state- and product-specific question. A casino, sportsbook, poker room and sweepstakes product can require different analysis. New Jersey and Pennsylvania provide official records for their authorized online services; neither record authorizes a site throughout the country. Accepting bitcoin or a stablecoin does not establish state permission.",
   facts: [
-    "US gambling authority is largely state-based; products differ by state and by tribal compact.",
-    "Accepting crypto does not by itself authorize an operator in a US state.",
-    "Sweepstakes and social casinos are a different product model with their own state maps.",
-    "Offshore sites that take US traffic are not the same as state-licensed casinos.",
-    "PVPspinArena does not market itself as a US-licensed casino; check where you are allowed to play.",
+    "A state's online gaming permission is not a national casino licence.",
+    "Official records should identify the operator, website and approved activity.",
+    "Sports wagering and internet casino approval are different categories.",
+    "A foreign gambling licence does not establish US state authorization.",
   ],
   sections: [
     {
-      id: "scope",
-      title: "Scope and a hard disclaimer",
-      body: `Crypto casino USA is not one statute. State gaming agencies, tribal regulators, federal enforcement themes and payment rules all show up in headlines. This guide is orientation dated 2026-09-26. It is not a live licence database, not a VPN guide and not legal advice.
-
-Adults 18+ only — age floors can be higher by product and state; see [gambling age us](/guides/gambling-age-us). Read [what is a crypto casino](/guides/what-is-a-crypto-casino) for the product definition.
-
-This sits in [Foundations](/guides/topics/foundations). PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars. We will not claim a state casino licence we do not have. If you need a licensed US casino or sportsbook, use the operator list from your state regulator.
-
-If play is already harmful, use [responsible gambling](/responsible-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion).
-`,
+      id: "records",
+      title: "Use actual state operator records",
+      body: "New Jersey's [internet gaming site list](https://www.njoag.gov/about/divisions-and-offices/division-of-gaming-enforcement-home/internet-gaming-sites/) identifies approved websites. Pennsylvania's [online operator pages](https://gamingcontrolboard.pa.gov/pa-licensed-online-gaming-operators) separate iGaming, sports wagering, poker and fantasy contests.\n\nThese are examples of primary checks, not a complete national availability map.",
     },
     {
-      id: "patchwork",
-      title: "Why “legal in the USA” is the wrong sentence",
-      body: `People ask whether a crypto casino is “legal in the US” as if the country were one licence. It is not. A sportsbook can be lawful in one state and unavailable in the next. A casino floor can be tribal-only. An online product can be banned while retail exists.
-
-Crypto is a funding rail. Rails do not rewrite the underlying gambling authorization. An operator that takes Bitcoin while blocked by your state is not “more legal” because the asset is digital.
-
-For sports, start with [sports betting legal states](/guides/sports-betting-legal-states) as a map of *kinds* of regimes — still not your personal ruling. For casino-like social models, see [sweepstakes casino](/guides/sweepstakes-casino) and [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states). Those pages are also orientation, not counsel.
-`,
+      id: "activity",
+      title: "A familiar brand can offer different products",
+      body: "Match the legal entity, domain and game to the state approval. A sports app and a casino lobby sharing a brand do not share every permission. [US sports-betting states](/guides/sports-betting-legal-states) and [sweepstakes legal checks](/guides/sweepstakes-casino-legal-states) concern different product questions.",
     },
     {
-      id: "federal",
-      title: "Federal themes players hear about",
-      body: `Without turning this into a law seminar: federal statutes and enforcement stories around illegal gambling businesses, wire activity and banking access appear in public DOJ and FinCEN materials from time to time. Payment processors and banks set their own risk appetites. Crypto exchanges apply their own compliance screens.
-
-None of that paragraph tells you whether a named site may take your bet tonight. It explains why US-facing crypto gambling sits in a noisy compliance environment. For primary reading, use official pages — for example DOJ press materials and FinCEN guidance hubs — and a lawyer if the dollars are serious.
-
-We will not advise structuring deposits to hide activity. Record-keeping for taxes is a different topic: [crypto gambling taxes](/guides/crypto-gambling-taxes) is US education, not a how-to evade.
-`,
+      id: "payments",
+      title: "Payment support does not extend a licence",
+      body: "A wallet receiving a token confirms a payment destination, not regulatory scope. Check the activity and your physical location before considering funding. A [crypto casino licence](/guides/crypto-casino-license) from abroad should be checked with its issuer, while US permission remains a separate question.\n\nRead the actual [gambling-age requirements](/guides/gambling-age-us) for the product rather than applying a general adult label.",
     },
     {
-      id: "offshore",
-      title: "Offshore crypto casinos vs state-licensed products",
-      body: `State-licensed casinos and sportsbooks appear on regulator websites. Offshore crypto casinos often cite foreign seals. Read [crypto casino license](/guides/crypto-casino-license) and [curacao gambling license](/guides/curacao-gambling-license) for what seals usually mean.
-
-Differences that matter to you:
-
-- Who hears a complaint.
-- Whether identity checks are banking-grade.
-- Whether advertising is allowed in your state.
-- Whether a “works here” blog post is current.
-
-[Fake casino sites](/guides/fake-casino-sites) still target US players with clone domains. Licence confusion is part of the lure.
-
-PVPspinArena is not presenting a US state seal. Judge our [Fairness](/fairness) docs and cashier behaviour as a crypto product, and separately decide whether you are allowed to play.
-`,
-    },
-    {
-      id: "sweepstakes",
-      title: "Sweepstakes casinos are not the same product",
-      body: `US searchers often land on sweepstakes or social casinos when they type crypto casino USA. Gold coins, sweeps coins and redemption rules are a different model. Start at the [sweepstakes topic](/guides/topics/sweepstakes) and [sweepstakes casino](/guides/sweepstakes-casino).
-
-Do not assume a sweeps lobby makes an offshore crypto casino lawful. Do not assume crypto deposits make a sweeps product a crypto casino. Read the terms for the product in front of you.
-`,
-    },
-    {
-      id: "practical",
-      title: "Practical checks before any deposit",
-      body: `1. Confirm age and product eligibility for your state.
-2. Prefer operators listed by your state regulator when you want a licensed US product.
-3. If you still evaluate a crypto site, use the [best crypto gambling sites](/guides/best-crypto-gambling-sites) checklist.
-4. Verify fairness tools; run a tiny withdrawal test.
-5. Keep tax records if you have US filing duties.
-
-Play on [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), or [Coinflip](/coinflip) only if that is lawful for you and fits a budget. See [how it works](/how-it-works) for how credits move on this site.`,
-    },
-    {
-      id: "bottom",
-      title: "Bottom line",
-      body: `Crypto casino USA is a geography-and-product question, not a token question. Check state sources, do not treat offshore seals as US licences, and do not read this page as authorization. Adults 18+. Not legal advice.
-
-A network trick is not a licence. The [VPN casino](/guides/vpn-casino) page is why hiding a location does not make a blocked state into an open one.`,
+      id: "protection",
+      title: "Preserve records and use the right complaint route",
+      body: "PVPspinArena does not claim a US state casino licence. If an authorization claim is disputed, save the domain, legal entity, terms and payment records and contact the relevant authority.\n\nUse [responsible gambling](/responsible-gambling) for personal limits. Further operator and legal distinctions are in [Foundations](/guides/topics/foundations).",
     },
   ],
   faqs: [
     {
-      q: "Is crypto gambling legal in the USA?",
-      a: "It depends on the state, the product and the operator’s authorization — not on whether the balance is in USDC. Check your regulator. This is not a yes/no for every zip code.",
+      q: "Is there one crypto casino licence for the USA?",
+      a: "No. Verify the applicable state and product authorization.",
     },
     {
-      q: "Does using Bitcoin make an online casino legal in my state?",
-      a: "No. Payment method does not replace a licence or an authorization.",
+      q: "Does a sportsbook approval include every casino game?",
+      a: "No. Check the activity listed in the state's actual records.",
     },
     {
-      q: "Is PVPspinArena a licensed US casino?",
-      a: "No. We do not claim a US state casino licence. We describe a crypto PvP and roulette product; you must decide whether you may use it.",
+      q: "Does paying with bitcoin change the permission?",
+      a: "Payment support does not establish regulatory authorization.",
     },
     {
-      q: "Are sweepstakes casinos the same as crypto casinos?",
-      a: "No. Sweepstakes models use different coin and redemption rules. Read sweepstakes guides separately.",
-    },
-    {
-      q: "Is this legal advice?",
-      a: "No. Laws change. Use official state and federal sources or a qualified attorney for decisions that matter.",
+      q: "Does PVPspinArena claim a US state casino licence?",
+      a: "No. It does not claim a US state casino licence.",
     },
   ],
   sources: [
     {
-      label: "American Gaming Association — State of the States resources",
-      url: "https://www.americangaming.org/",
+      label: "New Jersey Division of Gaming Enforcement — approved internet gaming sites",
+      url: "https://www.njoag.gov/about/divisions-and-offices/division-of-gaming-enforcement-home/internet-gaming-sites/",
     },
     {
-      label: "FinCEN — Money services businesses / virtual currency materials",
-      url: "https://www.fincen.gov/",
+      label: "Pennsylvania Gaming Control Board — online operators by activity",
+      url: "https://gamingcontrolboard.pa.gov/pa-licensed-online-gaming-operators",
     },
   ],
   related: [
@@ -139,5 +79,5 @@ A network trick is not a licence. The [VPN casino](/guides/vpn-casino) page is w
     "crypto-casino-license",
     "vpn-casino",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

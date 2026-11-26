@@ -73,7 +73,7 @@ The camera is also relevant. Third-person positioning gives a different relation
       ],
       [
         "Keep the names and balances straight",
-        `The official GUNZ explanation distinguishes the infrastructure from its GUN currency. Searches for a “GUNZ token” often merge those names, but a wallet transfer needs the actual supported asset and network, not an approximate search phrase. Do not copy a contract address from a chat reply or assume two identically named balances are interchangeable.
+        `The official GUNZ explanation distinguishes the infrastructure from its GUN currency. GUNZ names the infrastructure and GUN names the currency. A wallet transfer needs the actual supported asset and network. Do not copy a contract address from a chat reply or assume two identically named balances are interchangeable.
 
 | Term | What to identify | What it does not establish |
 | --- | --- | --- |

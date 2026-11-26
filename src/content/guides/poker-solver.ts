@@ -21,7 +21,7 @@ export const guide: Guide = {
     "Last tested 20 October 2026 on PioSOLVER's quick start and FAQ, GTO Wizard's solver article and Study Mode help, and the Simple Postflop product page.",
     "The visible output of a poker solver is a range weight, an action frequency, and an EV. The definitions below are from those pages.",
     "We did not buy a licence, run a solve, or time a calculation. No affiliate link.",
-    "A commercial Pio install asks for a licence code. This page does not provide keys, cracks, or a workaround.",
+    "A commercial Pio install asks for a licence code. Use an authorised software licence and follow the room’s rules on analysis tools.",
     "Equilibrium play is a separate article. This one stops at what the print means and where a single study fails.",
   ],
   sections: [
@@ -30,11 +30,11 @@ export const guide: Guide = {
       title: "What the program actually is",
       body: `A study program for Hold'em takes the game you describe and searches for a strategy pair neither player can improve inside that description. PioSOLVER's viewer manual treats the range as the basic object: the hands a player might hold, stored as a relative probability rather than as the two cards dealt.
 
-GTO Wizard's 2023 article calls these programs EV-maximizing routines that stop when neither side can improve, and it names that stop equilibrium. PioSOLVER's quick start shows a free install and a commercial Pro or Edge install that asks for a licence code. This page will not supply a code, a crack, or a step that skips payment.
+GTO Wizard's 2023 article calls these programs EV-maximizing routines that stop when neither side can improve, and it names that stop equilibrium. PioSOLVER's quick start shows a free install and a commercial Pro or Edge install that asks for a licence code. Use the vendor’s official licensing and documentation rather than an untrusted cracked installer.
 
 Simple Postflop's product page describes a two-player Hold'em program that shows a strategy, an EV, and equity for a tree you build. The page calls that product the most accurate of its kind. That line is marketing we did not test.
 
-You can read [equilibrium play notes](/guides/gto-poker-strategy) if you want the idea of an unexploitable mix. This page does not reteach that idea as a betting system. The [poker topic hub](/guides/topics/poker) collects the rest of the cluster.
+You can read [equilibrium play notes](/guides/gto-poker-strategy) if you want the idea of an unexploitable mix. Equilibrium is a conditional game model, not a progression of stake sizes. The [poker topic hub](/guides/topics/poker) collects the rest of the cluster.
 
 Adults only. If a study session turns into chasing a loss, stop and call 1-800-GAMBLER. [Responsible gambling](/responsible-gambling) is the longer limit.`,
     },
@@ -176,7 +176,10 @@ Who should stay away: minors, anyone who wants a winning script, anyone who will
     },
   ],
   sources: [
-    { label: "PioSOLVER quick start", url: "https://piosolver.com/docs/" },
+    {
+      label: "PioSOLVER quick start",
+      url: "https://piosolver.com/docs/",
+    },
     {
       label: "PioSOLVER FAQ (ranges, strategy, frequency, EV)",
       url: "https://piofiles.com/faq/flat.html",
@@ -185,7 +188,10 @@ Who should stay away: minors, anyone who wants a winning script, anyone who will
       label: "PioSOLVER viewer manual (ranges)",
       url: "https://piofiles.com/docs/viewer_manual/flat.html",
     },
-    { label: "GTO Wizard, How Solvers Work", url: "https://blog.gtowizard.com/how-solvers-work/" },
+    {
+      label: "GTO Wizard, How Solvers Work",
+      url: "https://blog.gtowizard.com/how-solvers-work/",
+    },
     {
       label: "GTO Wizard Study Mode help (EV definition)",
       url: "https://help.gtowizard.com/study-mode/",
@@ -203,5 +209,5 @@ Who should stay away: minors, anyone who wants a winning script, anyone who will
     "poker-equity-calculator",
     "provably-fair-casino",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

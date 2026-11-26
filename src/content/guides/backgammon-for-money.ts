@@ -28,7 +28,9 @@ export const guide: Guide = {
 
 [Wager app](/guides/wager-app) describes the hold in the abstract. Backgammon’s twist is that the hold may need to grow when the cube grows. If the app only locked the original stake, an accepted double is a promise to pay more later. Promises are how winners chase losers through support chat. Prefer a room that escrows the maximum, or that ends the game when a player cannot cover the next double.
 
-Adults 18+ only. Real-money games of skill are treated differently in different places. The site’s eligibility check is the practical border. This is not legal advice, and there is no state list here for you to route around.`,
+Adults 18+ only. Real-money games of skill are treated differently in different places. The site’s eligibility check is the practical border. This is not legal advice, and there is no state list here for you to route around.
+
+The U.S. Backgammon Federation publishes separate online tournament rules. Agree which rules apply alongside the money terms; a platform’s fee is not a backgammon rule.`,
     },
     {
       id: "rules-pointer",
@@ -150,9 +152,19 @@ Leave the base stake alone when you cannot describe the gammon price without loo
     },
   ],
   sources: [
-    { label: "Backgammon (Wikipedia)", url: "https://en.wikipedia.org/wiki/Backgammon" },
-    { label: "Doubling cube (Wikipedia)", url: "https://en.wikipedia.org/wiki/Doubling_cube" },
+    {
+      label: "Backgammon (Wikipedia)",
+      url: "https://en.wikipedia.org/wiki/Backgammon",
+    },
+    {
+      label: "Doubling cube (Wikipedia)",
+      url: "https://en.wikipedia.org/wiki/Doubling_cube",
+    },
+    {
+      label: "U.S. Backgammon Federation: rules for online play",
+      url: "https://usbgf.org/tournament-rules/rules-for-online-play/",
+    },
   ],
   related: ["spades-for-money", "gin-rummy-for-money", "trivia-for-money", "backgammon-rules"],
-  updated: "2026-10-07",
+  updated: "2026-11-26",
 };

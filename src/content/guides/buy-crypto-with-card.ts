@@ -15,7 +15,7 @@ export const guide: Guide = {
     "How to buy crypto with a card for gambling: exchange versus in-wallet ramps, fees, declines, and a cheaper path to USDC on Base.",
   h1: "Buy crypto with a card: fees, limits and a safer deposit path",
   answer:
-    "People search buy crypto with card when they want USDC or ETH from a debit or credit card without a bank transfer wait. You can do that on a regulated exchange or through an in-wallet ramp such as MoonPay. Cards are fast and expensive. Issuers decline gambling-coded purchases. The safer path is still: buy USDC on an exchange, withdraw on Base to a wallet you control, then deposit to PVPspinArena from that verified address.",
+    "Buy crypto with card through an eligible provider that accepts your debit or credit card, asset and country. You can do that on a regulated exchange or through an in-wallet ramp such as MoonPay. Cards are fast and expensive. Issuers decline gambling-coded purchases. The safer path is still: buy USDC on an exchange, withdraw on Base to a wallet you control, then deposit to PVPspinArena from that verified address.",
   facts: [
     "Card ramps usually charge a percentage plus a spread on top of the asset price.",
     "Many banks treat crypto card purchases as cash-like and decline or add extra fees.",
@@ -206,6 +206,6 @@ A different on-ramp with its own limits is [buy crypto with PayPal](/guides/buy-
     "buy-crypto-with-paypal",
     "crypto-debit-card",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
   howTo: true,
 };

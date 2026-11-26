@@ -33,7 +33,9 @@ export const guide: Guide = {
 2. **Size.** Some players are famous because the numbers were enormous. A billionaire betting six figures a hand is newsworthy even if his expected result is the same small percentage every other player pays.
 3. **Scandal.** Cheats, court cases and collapses make headlines. They teach you about casino security and about the human cost of losing control.
 
-A useful habit is to ask one question of every legend: *where did the edge come from?* If the answer is "nowhere", the story is about [variance in gambling](/guides/variance-in-gambling), not skill, and the ending is usually predictable. The profiles below link to full pages in the [Casino knowledge topic](/guides/topics/casino-knowledge), where each story is told with the documented facts separated from the folklore.`,
+A useful habit is to ask one question of every legend: *where did the edge come from?* If the answer is "nowhere", the story is about [variance in gambling](/guides/variance-in-gambling), not skill, and the ending is usually predictable. The profiles below link to full pages in the [Casino knowledge topic](/guides/topics/casino-knowledge), where each story is told with the documented facts separated from the folklore.
+
+The WSOP Hall of Fame records poker inductions. An induction documents recognition, not a player's private net worth or lifetime profit.`,
     },
     {
       id: "advantage-players",
@@ -145,19 +147,6 @@ Suppose a high roller plays baccarat's banker bet, with a house edge of about 1.
 - **Watch round numbers.** "$40 million" and "$100 million" figures are usually estimates, not ledgers.
 - **Ask what the house did next.** When an edge was real, casinos changed rules, barred players or went to court. When nothing changed, the player was probably just lucky.`,
     },
-    {
-      id: "pvp",
-      title: "How the same lessons apply on PVPspinArena",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, and each maps onto one of these lessons.
-
-- [Roulette](/roulette) uses a 33-slot wheel: 16 Purple and 16 Silver pay 2x, 1 Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Like a whale's baccarat, no staking plan changes that number.
-- [Coinflip](/coinflip) is a straight 50/50 between two players; the winner takes the pot minus any fee shown before entry.
-- In Jackpot, your win chance equals your share of the pot, so a bigger stake buys a bigger chance and nothing more.
-
-Every result comes from committed seeds, and any settled round can be checked on the [fairness](/fairness) page. That answers the question the cheating stories raise: whether the game you played was the game you were shown. Play is 18+ only. If the famous-gambler stories feel like a plan rather than history, set limits first on the [responsible gambling](/responsible-gambling) page.
-
-One Hall of Fame career still prints conflicting earnings lines on the official pages. [The bracelet header versus the biography](/guides/daniel-negreanu) leaves net worth unpublished.`,
-    },
   ],
   faqs: [
     {
@@ -182,7 +171,14 @@ One Hall of Fame career still prints conflicting earnings lines on the official 
     },
   ],
   sources: [
-    { label: "Wikipedia: Edward O. Thorp", url: "https://en.wikipedia.org/wiki/Edward_O._Thorp" },
+    {
+      label: "WSOP: Poker Hall of Fame",
+      url: "https://www.wsop.com/hall-of-fame/",
+    },
+    {
+      label: "Wikipedia: Edward O. Thorp",
+      url: "https://en.wikipedia.org/wiki/Edward_O._Thorp",
+    },
     {
       label: "Wikipedia: World Series of Poker",
       url: "https://en.wikipedia.org/wiki/World_Series_of_Poker",
@@ -200,5 +196,5 @@ One Hall of Fame career still prints conflicting earnings lines on the official 
     "kerry-packer",
     "don-johnson-blackjack",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

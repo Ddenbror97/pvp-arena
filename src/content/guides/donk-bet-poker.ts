@@ -116,7 +116,7 @@ Camouflage is the other point the entry makes. A play with a rude name can be th
 
 If you cannot name the two ranges, you have a bet rather than the advantage the glossary is pointing at. Calling the lead a donk bet does not fill the blank cells for size, stack depth, or players still to act.
 
-[The two-card street order](/guides/texas-holdem-rules) is the deal this lead usually sits on. This page does not reteach the flop, the turn, and the river.`,
+[The two-card street order](/guides/texas-holdem-rules) is the deal this lead usually sits on. The street order is unchanged; the term describes who leads the betting.`,
     },
     {
       id: "list",
@@ -196,5 +196,5 @@ PVPspinArena does not book sports. Cash-out minimum is $20 in BTC, USDC, or ETH.
     "check-raise-poker",
     "poker-hud",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

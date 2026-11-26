@@ -12,7 +12,6 @@ export const guide: Guide = {
   answer:
     "Nevada's indoor-air statute prohibits smoking in many indoor workplaces, including restaurants, and then excepts areas inside casinos where minors are already barred from loitering. The same section lets an owner ban smoking anyway, and it lets a city adopt a stricter rule. This page does not print a single nationwide yes.",
   facts: [
-    "Last tested 20 October 2026 on NRS 202.2483 and NRS 463.350.",
     "NRS 202.2483 prohibits smoking in listed indoor workplaces, including all indoor areas within restaurants, with stated exceptions.",
     "One exception is areas within casinos where loitering by minors is already prohibited under NRS 463.350.",
     "Subsection 8 lets an owner create a nonsmoking section or make the whole establishment smoke-free.",
@@ -85,21 +84,18 @@ We did not open a smoke map for Bellagio, Wynn, Circa, Golden Nugget, or Binion'
     {
       id: "compare",
       title: "A smoking rule beside a wheel that posts a fee",
-      body: `Smoke policy is not a hold percentage. The wheel on this site has a fee that does not depend on a pit's ashtrays.
+      body: `Smoke policy is not a hold percentage.
 
 | | Fee or edge | Who you play against | Payout speed | Provably fair | Minimum bet |
 | --- | --- | --- | --- | --- | --- |
 | Nevada indoor-air rule | not a game fee | not a game | not a payout clock | not published | not a bet |
 | House-banked casino | inside the paytable; not published here | the house | not published | not published | not published |
-| PVPspinArena | Purple and Silver about a 7.88% edge after the 5% win fee | other players | balance updates when the round settles | yes, seed committed before the round | shown on the bet control |
-
-How PvP compares: [Roulette](/roulette) uses 33 slots, with 16 Purple, 16 Silver, and 1 Green. Purple and Silver pay 2x, then 5% comes off the winning payout.
 
 The [fairness page](/fairness) recomputes the committed seed. It does not inspect a casino's air, its signs, or its license. Green pays 14x, and this page does not quote a Green edge.
 
 Balances are US dollars, funded with Bitcoin or with USDC or ETH on Base. Cash-out minimum is $20 in BTC, USDC, or ETH, and we did not time a cash-out.
 
-This site is not a Nevada pit. Its fee does not depend on whether a resort keeps ashtrays.`,
+Its fee does not depend on whether a resort keeps ashtrays.`,
     },
     {
       id: "examples",
@@ -107,8 +103,6 @@ This site is not a Nevada pit. Its fee does not depend on whether a resort keeps
       body: `Example 1, the bar penalty printed in the statute. A supervisor who lets someone under 21 loiter in an age-restricted bar, or in a bar area where smoking is allowed under this section, commits a misdemeanor. The business faces a civil penalty of $1,000 for a first offense and $2,000 for a later offense.
 
 That pair of dollars is a penalty, not a buy-in. It is printed for those bar rules. Do not paste it onto a table minimum.
-
-Example 2, a Purple stake here: stake $20, a win pays 2x for a $40 gross, the fee is $2, and the net is $38. The air in a Strip pit does not change that fee, and most Purple stakes lose.
 
 Example 3, a supposed smoking surcharge at a named resort, which is not published. We did not open a cover, a cigar fee, or a nonsmoking-room rate, so those cells stay blank.`,
     },
@@ -131,7 +125,7 @@ Example 3, a supposed smoking surcharge at a named resort, which is not publishe
     {
       id: "stop",
       title: "Who should stay out of the pit, smoky or not",
-      body: `Do not play if you are under 21 on a Nevada gaming floor, or under 18 on this site. Do not play where the game is illegal, and do not stake rent, savings, or money with a due date.
+      body: `Do not play where the game is illegal, and do not stake rent, savings, or money with a due date.
 
 Smoke in the air is not a reason to chase. A longer session in a familiar room is still a session.
 
@@ -184,5 +178,5 @@ This page is not legal advice and not a property policy. The statute is the text
     "las-vegas-strip-map",
     "casino-cage",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

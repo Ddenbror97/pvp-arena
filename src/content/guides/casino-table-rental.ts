@@ -12,12 +12,10 @@ export const guide: Guide = {
   answer:
     "Blackjack table rental means a land casino holds a table for your party instead of open seating. Luxor's high-limit page, opened 20 October 2026, prints a $100 minimum and a $5,000 maximum. It does not print an hourly rate, so that price stays not published. The shoe is still the house's game. A private seat is not a win promise.",
   facts: [
-    "Last tested 20 October 2026 on Luxor's high-limit page at luxor.mgmresorts.com/en/casino/high-limit.html.",
     "That page lists blackjack at a $100 minimum and a $5,000 maximum, plus double-deck and six-deck shoe games in the high-limit area.",
     "A blackjack table rental price by the hour is not on the page. A host quote that is not printed stays not published.",
     "The same page lists baccarat at the same $100 to $5,000 band, and it names mini baccarat as an offer. It does not define a reserved-table contract.",
     "Who sets the printed minimum is the property. Luxor is the name on the sheet we opened. A higher private hold is not published there.",
-    "PVPspinArena does not rent a blackjack table. Roulette is a 33-slot player game with about a 7.88% Purple or Silver edge after the fee.",
   ],
   sections: [
     {
@@ -86,7 +84,7 @@ Example 2 — the missing hour. An hourly hold has no dollar on the URL. The cel
 
 Do not multiply a hand minimum by 60 and call the product a rate.
 
-Example 3 — a fee that is printed, on a different product. Two $50 Coinflip stakes make a $100 pot, the fee is $5, and the winner receives $95.
+Example 3 — a fee that is printed, on a different product.
 
 That arithmetic is in the terms. It is not a substitute for the blank on Luxor's page.
 
@@ -101,13 +99,12 @@ The contrast is the point. One price can be recomputed because it is written. Th
 | --- | --- | --- | --- | --- | --- |
 | Reserved blackjack ask | Hourly rate not published. Hand band at Luxor is $100 to $5,000 | The house | not published | not published | $100 on the Luxor high-limit list |
 | House-banked casino | The shoe's edge, not published for this pit's rules card | The house | not published | not published | Set by the property. Luxor prints $100 in that room |
-| PVPspinArena | Purple and Silver about 7.88% after the 5% win fee. No blackjack table | Each roulette stake is settled on its own | Balance updates when the round settles | yes, seed committed before the round | Shown on the bet control. Coinflip minimum is $1 |
 
-How PvP compares: nobody rents a shoe here. [Roulette](/roulette) is 33 slots, 16 Purple, 16 Silver, and 1 Green. Purple and Silver pay 2x, then 5% comes off the winning payout.
+How PvP compares: nobody rents a shoe here.
 
 Sixteen divided by 33, times 1.90, minus 1, is about −0.0788. That is the 7.88% edge. It is not a blackjack edge, and it does not fill Luxor's blank hourly cell.
 
-A settled round can be checked on the [fairness page](/fairness). The check matches this site's commit. It does not audit MGM, Luxor, or any pit.
+A settled round can be checked on the [fairness page](/fairness). It does not audit MGM, Luxor, or any pit.
 
 Cash-out minimum is $20 in BTC, USDC, or ETH, after you have wagered at least half of deposited dollars. We did not time a cash-out.
 
@@ -138,22 +135,12 @@ We did not visit the property, open a marker, or ask a host for a hold. The test
       title: "Checks before you ask a host to hold a table",
       body: `Use the list before you treat a lounge as a booked game. The Luxor page is one property on one date.
 
-- [ ] Confirm you are 18, or older if local law sets a higher age.
-- [ ] Read the printed minimum on the table you will actually play.
-- [ ] Accept $100 and $5,000 only for the Luxor high-limit list we opened.
-- [ ] Leave an hourly rental price unpublished if the page does not print it.
-- [ ] Ask who sets a private minimum, and write the answer down only if they do.
-- [ ] Remember the bets are still against the house.
-- [ ] Open the rules card for decks, soft 17, and surrender before you sit.
-- [ ] Do not multiply the hand minimum into a fake hourly rate.
-- [ ] Set a loss stop in dollars before the first hand.
-- [ ] If the session becomes a chase, call 1-800-GAMBLER.
-- [ ] Do not ask this site's fairness page to audit a pit shoe.`,
+- [ ] Confirm you are 18, or older if local law sets a higher age. - [ ] Read the printed minimum on the table you will actually play. - [ ] Accept $100 and $5,000 only for the Luxor high-limit list we opened. - [ ] Leave an hourly rental price unpublished if the page does not print it. - [ ] Ask who sets a private minimum, and write the answer down only if they do. - [ ] Remember the bets are still against the house. - [ ] Open the rules card for decks, soft 17, and surrender before you sit. - [ ] Do not multiply the hand minimum into a fake hourly rate. - [ ] Set a loss stop in dollars before the first hand. - [ ] If the session becomes a chase, call 1-800-GAMBLER.`,
     },
     {
       id: "leave",
       title: "Who should not buy a private seat to get even",
-      body: `A reserved room can make a losing hour feel like a service you are owed. The shoe does not owe you the next hand. The missing hourly price does not make the hands free.
+      body: `The shoe does not owe you the next hand. The missing hourly price does not make the hands free.
 
 Do not play if you are under 18, or under a higher age where you live. Do not play where the game is illegal. Do not stake rent, savings, or money with a due date so a host will hold a table.
 
@@ -165,7 +152,7 @@ This file is an editorial note on one property URL. It is not a host agreement a
 
 If the booking is how you hide a chase, stop. Call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).
 
-The [terms](/terms) on this site list player-game fees. They do not list a blackjack table you can rent.`,
+They do not list a blackjack table you can rent.`,
     },
   ],
   faqs: [
@@ -186,8 +173,8 @@ The [terms](/terms) on this site list player-game fees. They do not list a black
       a: "Baccarat is listed at the same $100 to $5,000 band. The offers named are double-deck blackjack, six-deck shoe blackjack, mini baccarat, and high-denomination slots. Reel slots, video reels, and video poker have their own small bands on the page. None of those lines is an hourly rental. A rules card for the shoe was not part of the page, so payout details stay not published.",
     },
     {
-      q: "Can you rent a blackjack table on PVPspinArena?",
-      a: "No. This site does not run a pit and does not publish a table-hold rate. Roulette uses 33 slots, and Purple or Silver carries about a 7.88% edge after the 5% fee on a winning payout. That figure is not a blackjack edge and does not fill Luxor's blank. A settled round can be recomputed on the fairness page. We did not time a cash-out.",
+      q: "What should a table-rental quote include?",
+      a: "Confirm delivery, setup, collection, staffing, damage terms, cancellation and whether chips have any redeemable value. Cash-prize activity needs its own local legal review.",
     },
     {
       q: "Does the $5,000 maximum buy the table for the night?",
@@ -208,5 +195,5 @@ The [terms](/terms) on this site list player-game fees. They do not list a black
     "blackjack-surrender",
     "live-dealer-casino",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

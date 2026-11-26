@@ -28,7 +28,9 @@ His route into gambling was academic. In 1956, four US Army engineers (Roger Bal
 
 That observation is the whole idea. Roulette and dice have no memory; each spin or roll starts fresh. A blackjack deck does have memory until it is shuffled. If the remaining cards are rich in tens and aces, the player gains; if they are rich in fives and sixes, the dealer gains. Thorp's question was how much, and whether a player could bet more when the balance tipped his way.
 
-This page covers Thorp himself. The general history of famous players sits on the [famous gamblers](/guides/famous-gamblers) hub in the [Casino knowledge topic](/guides/topics/casino-knowledge).`,
+This page covers Thorp himself. The general history of famous players sits on the [famous gamblers](/guides/famous-gamblers) hub in the [Casino knowledge topic](/guides/topics/casino-knowledge).
+
+Thorp's own book page identifies Beat the Dealer as his explanation of blackjack counting. Its advantage depends on the game's rules and changing deck composition.`,
     },
     {
       id: "computer",
@@ -126,19 +128,6 @@ A 1% edge produces violent swings. A counter can be down hundreds of units over 
 
 Every edge Thorp found was eventually closed, diluted or policed. Advantage play is a moving target.`,
     },
-    {
-      id: "pvp",
-      title: "Thorp's questions applied to a PvP round",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Asking Thorp's questions of each is a quick way to understand them.
-
-- **Is there memory?** No. Each round uses fresh committed seeds, so past results carry no information, exactly like a freshly shuffled deck.
-- **What is the expectation?** On [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and 1 Green pays 14x on a 33-slot wheel. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 between two players, with the winner taking the pot minus any fee shown before entry.
-- **Can the result be checked?** Yes. Any settled round can be verified on the [fairness](/fairness) page.
-
-Thorp would note that Kelly sizing gives a stake of zero on a negative-expectation bet. If you play, treat it as paid entertainment with a fixed budget, and use the limits on the [responsible gambling](/responsible-gambling) page. Play is 18+ only.
-
-In the same cluster, see also [phil ivey](/guides/phil-ivey) and [mit blackjack team](/guides/mit-blackjack-team).`,
-    },
   ],
   faqs: [
     {
@@ -163,9 +152,22 @@ In the same cluster, see also [phil ivey](/guides/phil-ivey) and [mit blackjack 
     },
   ],
   sources: [
-    { label: "Wikipedia: Edward O. Thorp", url: "https://en.wikipedia.org/wiki/Edward_O._Thorp" },
-    { label: "Wikipedia: Beat the Dealer", url: "https://en.wikipedia.org/wiki/Beat_the_Dealer" },
-    { label: "Wikipedia: Kelly criterion", url: "https://en.wikipedia.org/wiki/Kelly_criterion" },
+    {
+      label: "Edward O. Thorp: Beat the Dealer",
+      url: "https://www.edwardothorp.com/books/beat-the-dealer/",
+    },
+    {
+      label: "Wikipedia: Edward O. Thorp",
+      url: "https://en.wikipedia.org/wiki/Edward_O._Thorp",
+    },
+    {
+      label: "Wikipedia: Beat the Dealer",
+      url: "https://en.wikipedia.org/wiki/Beat_the_Dealer",
+    },
+    {
+      label: "Wikipedia: Kelly criterion",
+      url: "https://en.wikipedia.org/wiki/Kelly_criterion",
+    },
   ],
   related: [
     "famous-gamblers",
@@ -176,5 +178,5 @@ In the same cluster, see also [phil ivey](/guides/phil-ivey) and [mit blackjack 
     "don-johnson-blackjack",
     "phil-ivey",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

@@ -15,7 +15,7 @@ export const guide: Guide = {
     "How do sweepstakes casinos work, step by step: account, Gold Coins, Sweeps Coins, playthrough, redeem checks, and how that loop differs from a hashed USDC pot.",
   h1: "How do sweepstakes casinos work? From coins to a redeem request",
   answer:
-    "How do sweepstakes casinos work? You create an account, receive Gold Coins for fun play and Sweeps Coins as promotional entries, play under a playthrough rule, then request a redeem if you clear the floor, the identity checks and the state filter. That is the loop. PVPspinArena is not on that loop. It runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott, settled in US dollars.",
+    "How do sweepstakes casinos work? You create an account, receive Gold Coins for fun play and Sweeps Coins as promotional entries, play under a playthrough rule, then request a redeem if you clear the floor, the identity checks and the state filter. That is the loop.",
   howTo: true,
   facts: [
     "The loop is account → coins → play → playthrough → redeem request → review → payout or denial.",
@@ -32,7 +32,7 @@ export const guide: Guide = {
 
 This [sweepstakes](/guides/topics/sweepstakes) how-to is for adults aged 18 or over. Steps below are the usual order, not a promise that any named brand follows them. We do not invent live SC amounts.
 
-If you only remember one sentence: you buy or receive chips, you play the promotional chip through a meter, you ask to redeem, and a human or a script can still say no. [Gold Coins versus Sweeps Coins](/guides/gold-coins-vs-sweeps-coins) is the wallet picture. This page is the sequence.`,
+If you only remember one sentence: you buy or receive chips, you play the promotional chip through a meter, you ask to redeem, and a human or a script can still say no. [Gold Coins versus Sweeps Coins](/guides/gold-coins-vs-sweeps-coins) is the wallet picture. The sequence below follows the account from entry to prize review.`,
     },
     {
       id: "account-coins",
@@ -49,7 +49,7 @@ You now have a social-looking stack and a gated stack. Play the wrong stack if y
 
 Write the account email, the legal name you used, and the payment method on a card in a drawer. Redeem review compares those three. A nickname in the lobby and a different name on the card is a common denial. Fix it before you grind, not after the ticket.
 
-If the signup form asks for a state and you hesitate, stop. That hesitation is the legal-map question. This how-to will not answer it. Check your attorney general, then come back only if you still want the product and you are allowed to have it. Age 18+ is the floor this site will state. Your state may set it higher.`,
+If the signup form asks for a state and you hesitate, stop. That hesitation is the legal-map question. This how-to will not answer it. Check your attorney general, then come back only if you still want the product and you are allowed to have it. Your state may set it higher.`,
     },
     {
       id: "play-meter",
@@ -71,7 +71,17 @@ If the lobby hides playthrough progress, keep a notebook: date, game, SC staked,
     {
       id: "redeem",
       title: "Steps 5–6: request, review, payout or no",
-      body: "### Step 5 — Request a redeem\n\nYou need a balance at or above the floor, a finished meter, and a method the site supports: ACH, a gift card, a check, sometimes another rail. The request creates a ticket. If it only opens a chat, expect more friction.\n\n### Step 6 — Sit through review\n\nIdentity documents, address checks, source-of-funds questions, and a cooling-off clock are common. A blocked state ends the ticket. [Are sweepstakes casinos legal](/guides/sweepstakes-casino-legal-states) is not advice; it is the reminder to check your attorney general rather than the redeem spinner.\n\nA paid ticket is the only moment SC became money. Until then you held a promotional ledger line. Denials should cite a rule. “Bonus abuse” without a citation is a support-quality problem, not a maths problem.\n\nDo not start a second bundle while a ticket is in review “in case they need more play.” Review is not a hint that you under-wagered unless the cited rule says so. Adding more GC purchases during review is how a $25 test becomes a $100 week. Wait for a written status. If the status is silence past the window in the rules, send one follow-up with the ticket id, then use the consumer path you already saved — operator, payment provider, AG complaint form. This how-to will not write that form for you.",
+      body: `### Step 5 — Request a redeem
+
+You need a balance at or above the floor, a finished meter, and a method the site supports: ACH, a gift card, a check, sometimes another rail. The request creates a ticket. If it only opens a chat, expect more friction.
+
+### Step 6 — Sit through review
+
+Identity documents, address checks, source-of-funds questions, and a cooling-off clock are common. A blocked state ends the ticket. [Are sweepstakes casinos legal](/guides/sweepstakes-casino-legal-states) is not advice; it is the reminder to check your attorney general rather than the redeem spinner.
+
+A paid ticket is the only moment SC became money. Until then you held a promotional ledger line. Denials should cite a rule. “Bonus abuse” without a citation is a support-quality problem, not a maths problem.
+
+Do not start a second bundle while a ticket is in review “in case they need more play.” Review is not a hint that you under-wagered unless the cited rule says so. Adding more GC purchases during review is how a $25 test becomes a $100 week. Wait for a written status. If the status is silence past the window in the rules, send one follow-up with the ticket id, then use the consumer path you already saved — operator, payment provider, AG complaint form. This how-to will not write that form for you.`,
     },
     {
       id: "example",
@@ -101,26 +111,13 @@ Do not pay a “helper” to mail entries for you. That is how people hand a str
 If AMOE is missing from the current PDF, do not invent a 2022 address from a forum. The door moved or it never existed on that brand. Buying a bundle because you could not find AMOE is a purchase, not a workaround. Call it a purchase when you write your budget.`,
     },
     {
-      id: "pvp-loop",
-      title: "A hashed PvP round is a different loop",
-      body: `PVPspinArena does not sell Gold Coins and does not issue Sweeps Coins. The loop here is: verify a wallet, deposit USDC or ETH on Base, join a pot or a wheel, then withdraw the same asset.
-
-| Stage | Sweepstakes casino | This site |
-| --- | --- | --- |
-| On-ramp | Account + GC/SC or AMOE | Wallet verify + USDC/ETH |
-| Stake | SC (or GC for fun) | Dollars in a pot or on a 33-slot wheel |
-| Hidden meter | Playthrough + weights | None by default |
-| Proof | Terms + support ticket | [Fairness](/fairness) recompute |
-| Off-ramp | Redeem review | Withdrawal to the verified wallet |
-
-Jackpot and Coinflip are player-versus-player with a 5% house fee on the pot. Roulette posts its edge. None of those sentences is a sweepstakes official rule.
-
-If you wanted the sweepstakes loop, stay on that product and finish reading its PDF. If you wanted a pot you can check, use this site’s games. Do not expect one loop to satisfy the other checklist. Mixing the loops in one night is how a denied redeem becomes a second deposit.`,
-    },
-    {
       id: "summary",
       title: "Summary and when to stop",
-      body: "How do sweepstakes casinos work? Account, two coins, play on the promotional chip, finish the meter, request a redeem, survive review. That is the whole machine. This site is a different machine.\n\nYou must be 18 or over. If you are repeating steps 2–4 because step 6 never arrives, stop buying bundles. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A loop that always needs one more pack is not a how-to you should keep running.\n\nA no-purchase entry is the legal theory, and it is also a marketing tile. [No-deposit sweepstakes casinos](/guides/no-deposit-sweepstakes-casinos) are that tile. The redeemable coin still has a playthrough.",
+      body: `How do sweepstakes casinos work? Account, two coins, play on the promotional chip, finish the meter, request a redeem, survive review. That is the whole machine.
+
+You must be 18 or over. If you are repeating steps 2–4 because step 6 never arrives, stop buying bundles. Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). A loop that always needs one more pack is not a how-to you should keep running.
+
+A no-purchase entry is the legal theory, and it is also a marketing tile. [No-deposit sweepstakes casinos](/guides/no-deposit-sweepstakes-casinos) are that tile. The redeemable coin still has a playthrough.`,
     },
   ],
   faqs: [
@@ -138,15 +135,15 @@ If you wanted the sweepstakes loop, stay on that product and finish reading its 
     },
     {
       q: "Why was my redeem denied after I finished playthrough?",
-      a: "Common causes are a balance under the floor, a blocked state, a failed identity match, play on zero-weight games, a max-bet breach, or an expired promotion. Ask support to cite the rule. This page cannot override a denial. Keep the ticket id and the PDF you saved on purchase day.",
+      a: "Common causes are a balance under the floor, a blocked state, a failed identity match, play on zero-weight games, a max-bet breach, or an expired promotion. Ask support to cite the rule. A disputed denial needs the operator's written reason and the applicable rule. Keep the ticket id and the PDF you saved on purchase day.",
     },
     {
-      q: "Does PVPspinArena work like a sweepstakes casino?",
-      a: "No. There is no GC/SC pair and no redeem desk. You deposit USDC or ETH on Base, play [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette), and withdraw the same asset. Fairness is a hash you can recompute, not a promotional review. Do not expect a sweepstakes how-to to apply to a pot.",
+      q: "Does completing playthrough guarantee a prize payment?",
+      a: "No. Eligibility, identity verification, minimum redemption amounts and the applicable promotion rules still need to be satisfied.",
     },
     {
       q: "How long does a Sweeps Coin redeem take?",
-      a: "It varies by operator and by whether review is manual. Some tickets clear in days. Some sit through extra document rounds. This guide will not invent a live SLA. If the rules state a window, start the clock from the ticket, not from the spin.",
+      a: "It varies by operator and by whether review is manual. Some tickets clear in days. Some sit through extra document rounds. There is no universal redemption deadline across operators. If the rules state a window, start the clock from the ticket, not from the spin.",
     },
   ],
   sources: [
@@ -154,8 +151,14 @@ If you wanted the sweepstakes loop, stay on that product and finish reading its 
       label: "FTC — Prize, sweepstakes and lottery scams",
       url: "https://www.ftc.gov/consumer-advice/money-credit/scams/prize-sweepstakes-lotteries",
     },
-    { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
-    { label: "Circle — USDC overview", url: "https://www.circle.com/usdc" },
+    {
+      label: "NCPG — Responsible gambling resources",
+      url: "https://www.ncpgambling.org/",
+    },
+    {
+      label: "Circle — USDC overview",
+      url: "https://www.circle.com/usdc",
+    },
   ],
   related: [
     "sweepstakes-casino",
@@ -166,5 +169,5 @@ If you wanted the sweepstakes loop, stay on that product and finish reading its 
     "gambling-budget",
     "how-do-sweepstakes-casinos-make-money",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

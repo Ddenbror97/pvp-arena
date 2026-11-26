@@ -36,7 +36,7 @@ PVPspinArena does not host Hold'em. Strategy here does not apply to [Coinflip](/
 
 ### Cash versus tournament, one paragraph
 
-Cash lets you reload and walk. Tournaments shrink blinds on a clock and pay a ladder. The same hand that is a fold in a deep cash pot can be a shove near the bubble when twenty big blinds are a stack and antes are eating the table. This page is cash-shaped: 100bb, no clock, leave when you want. If you sit a tournament, you need a different set of defaults — push/fold charts, ICM — that this article will not fake in a sidebar. Do not export a 2.5× cash open onto a 15bb MTT without noticing the stack.`,
+Cash lets you reload and walk. Tournaments shrink blinds on a clock and pay a ladder. The same hand that is a fold in a deep cash pot can be a shove near the bubble when twenty big blinds are a stack and antes are eating the table. This page is cash-shaped: 100bb, no clock, leave when you want. Tournament decisions also depend on stack depth, blind increases and payouts; use the relevant push/fold and ICM analysis for that structure. Do not export a 2.5× cash open onto a 15bb MTT without noticing the stack.`,
     },
     {
       id: "position-table",
@@ -188,9 +188,18 @@ The book that taught a generation of Hold'em is tied to [Doyle Brunson](/guides/
     },
   ],
   sources: [
-    { label: "Wikipedia: Texas hold 'em", url: "https://en.wikipedia.org/wiki/Texas_hold_%27em" },
-    { label: "Wikipedia: Poker strategy", url: "https://en.wikipedia.org/wiki/Poker_strategy" },
-    { label: "UK Gambling Commission — Poker", url: "https://www.gamblingcommission.gov.uk/" },
+    {
+      label: "Wikipedia: Texas hold 'em",
+      url: "https://en.wikipedia.org/wiki/Texas_hold_%27em",
+    },
+    {
+      label: "Wikipedia: Poker strategy",
+      url: "https://en.wikipedia.org/wiki/Poker_strategy",
+    },
+    {
+      label: "UK Gambling Commission — Poker",
+      url: "https://www.gamblingcommission.gov.uk/",
+    },
   ],
   related: [
     "texas-holdem-rules",
@@ -202,5 +211,5 @@ The book that taught a generation of Hold'em is tied to [Doyle Brunson](/guides/
     "poker-math",
     "doyle-brunson",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

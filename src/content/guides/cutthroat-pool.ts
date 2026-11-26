@@ -30,9 +30,7 @@ That picture is widely played. It is not a single official rulebook, and this pa
       title: "Party games and the two-player card",
       body: `Cutthroat is three players and five balls each. This table is two players and groups. The money version of the two-player game is [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other rule cards are [lives, not groups](/guides/killer-pool) and [two-player 8-ball](/guides/8-ball-pool-rules). The group is the [games of chance guides](/guides/topics/games-of-chance).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other rule cards are [lives, not groups](/guides/killer-pool) and [two-player 8-ball](/guides/8-ball-pool-rules). The group is the [games of chance guides](/guides/topics/games-of-chance).`,
     },
     {
       id: "last-ball",
@@ -65,7 +63,9 @@ What you can settle before the break is short and useful. Ask who owns 1 through
       title: "A bar game with no pot on this site",
       body: `This site does not stake cutthroat. The lobby is a two-player 8-ball match. A three-handed group game has no button beside that match. Killer is absent too, and so are 9-ball, 10-ball, straight pool, one-pocket, and bank. A searcher who wanted a cash cutthroat app will not find a hidden rake on this page. Inventing another company's fee would be the same kind of fake as inventing an official cutthroat book.
 
-Read the five-ball pattern. Play it where three people agree on the gaps. Do not expect the 8-ball cashier to score groups of 1 through 5. Two friends and a stranger can still play the pattern on a bar table without this website being part of the stake. If they want a recorded pot, they need a room that actually books three players. This one books two, and only at 8-ball. The pattern can be read here. The pot cannot be posted here.`,
+Read the five-ball pattern. Play it where three people agree on the gaps. Do not expect the 8-ball cashier to score groups of 1 through 5. Two friends and a stranger can still play the pattern on a bar table without this website being part of the stake. If they want a recorded pot, they need a room that actually books three players. This one books two, and only at 8-ball. The pattern can be read here. The pot cannot be posted here.
+
+For money games, set [spending limits](/responsible-gambling) before dealing.`,
     },
   ],
   faqs: [
@@ -99,8 +99,11 @@ Read the five-ball pattern. Play it where three people agree on the gaps. Do not
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "killer-pool", "8-ball-pool-rules"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

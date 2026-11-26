@@ -51,7 +51,7 @@ Use a center hit until the line is real. Add a tip of English when you already k
 
 The technique next to this is [banks, kicks, and masse](/guides/pool-shots), [leaving the cue ball](/guides/how-to-win-8-ball-pool), and [the words for spin and contact](/guides/pool-terminology). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "speed",
@@ -71,7 +71,7 @@ The 8 in the wrong pocket loses. A scratch while pocketing the 8 loses. Aim the 
   faqs: [
     {
       q: "What is a ghost ball?",
-      a: "It is an imagined ball sitting on the object ball at the contact point that would send it along your line. You aim the cue ball at the center of that picture. It is a teaching idea. This page does not claim a measured make percentage for it.",
+      a: "It is an imagined ball sitting on the object ball at the contact point that would send it along your line. You aim the cue ball at the center of that picture. It is a teaching idea. The diagram explains alignment rather than a measured make percentage.",
     },
     {
       q: "Does spin change where the object ball goes?",
@@ -99,8 +99,11 @@ The 8 in the wrong pocket loses. A scratch while pocketing the 8 loses. Aim the 
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "pool-shots", "how-to-win-8-ball-pool"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };
