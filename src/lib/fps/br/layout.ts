@@ -3692,7 +3692,9 @@ function hospitalCampus(poi: Poi, out: Placement[]) {
             else put("vitals-monitor", ba! - 1.5, bd! + 0.9, "in");
           }
           put("curtain-screen", len / 2, depth / 2, "along");
-          put("med-cupboard", len / 2, depth - 0.15, "in", 1.4);
+          // On the room's end wall between the beds (owner, 2026-11-26: "items that stands in
+          // the air": on the windows' wall at the middle it hung in the window's opening).
+          put("med-cupboard", 0.16, depth / 2, "along", 1.4);
           if (pick(2) < 0.6) put("paper-debris", len / 2 + 0.6, 1.2, "along");
           break;
         case "icu":
@@ -9238,6 +9240,9 @@ function nature(out: Placement[], ctx: Context) {
  * let other rooms in its isolate run while a cold island is built (1.3 s in one piece otherwise).
  * The result is the generator's return value.
  */
+/** How far a model is set down from where it was placed (its own feet stand over its origin). */
+const FOOT_DROP: Record<string, number> = { "army-tent": 0.08, "medical-tent": 0.08 };
+
 export function* islandLayoutSteps(
   meta: WorldMeta,
   heightAt: (x: number, z: number) => number,
@@ -9286,6 +9291,11 @@ export function* islandLayoutSteps(
       [p.x, p.y, p.z] = site.to as [number, number, number];
       p.turn = site.turn as Placement["turn"];
     }
+    // Tents whose canvas, poles and stakes end 8 cm over their origin (the downloads' ground
+    // sheet or nothing lay at 0): set down onto them (owner, 2026-11-26, Central Hospital: the
+    // tents' stands "do not stand on the ground").
+    const foot = FOOT_DROP[p.model];
+    if (foot) p.y = +(p.y - foot).toFixed(3);
     // A building stands at the lowest ground under it, so on a slope its uphill side is dug
     // in: a shed whose porch steps face uphill had its door buried (owner, 2026-11-08: "a small
     // house on a farm can't be entered"). Turned half round (the same footprint), the steps
