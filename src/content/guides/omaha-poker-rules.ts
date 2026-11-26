@@ -73,7 +73,7 @@ You want the nut, or a draw to it, more than in Hold’em. Second-nut flushes ge
 | Ace with rags | Looks like a hand | Second-best flushes |
 | One pair, three danglers | A single combination | The other cards do nothing |
 
-Position still matters. Acting last is worth as much here as on the positions page, and maybe more, because equities run close and the pot gets big. This page will not become a full preflop chart. The rule to remember is: if only one of your four cards is doing the work, fold more often than your pride wants.`,
+Position still matters. Acting last is worth as much here as on the positions page, and maybe more, because equities run close and the pot gets big. Preflop selection also depends on position, stack depth, suits and connectedness. The rule to remember is: if only one of your four cards is doing the work, fold more often than your pride wants.`,
     },
     {
       id: "hilo",
@@ -149,5 +149,5 @@ Four hole cards are not five. [Five-card Omaha](/guides/big-o-poker) still uses 
     "poker-positions",
     "big-o-poker",
   ],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

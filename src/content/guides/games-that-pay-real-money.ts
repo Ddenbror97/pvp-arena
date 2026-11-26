@@ -31,7 +31,9 @@ A player-funded chance pot funds it with the people in the round. A coinflip is 
 
 A house game funds prizes from the paytable and the operator’s bankroll. Slots, a roulette wheel, a sportsbook ticket: the price is the edge or the vig. [Online casino real money](/guides/online-casino-real-money) is the page about depositing into that kind of casino and what you can lose. Do not use this guide as a brand ranking of online casinos. The job here is to separate the shapes so you do not shop them as one list of “money games.”
 
-Adults 18+ only. “Pays real money” is also a legal phrase. An app can be available and still be unlawful where you are. This is not legal advice and not a promise of income.`,
+Adults 18+ only. “Pays real money” is also a legal phrase. An app can be available and still be unlawful where you are. This is not legal advice and not a promise of income.
+
+Skillz distinguishes cash competitions from virtual-currency play and says Bonus Cash is not directly withdrawable. Check which balance an advertised reward actually creates.`,
     },
     {
       id: "comparison-table",
@@ -93,12 +95,34 @@ Jackpot on the [home page](/) settles a round when the draw finishes, and your c
     {
       id: "what-is-worth-time",
       title: "What is worth your time, in plain filters",
-      body: "Worth your time is a personal filter, not a leaderboard. Use these and discard the rest of the ad.\n\nIf you want skill, pick a game you already play well, with a rake you can beat at a realistic win rate, against people of your level, with a cheat policy. If you cannot estimate the win rate, the game is entertainment with a fee. Cap it like entertainment.\n\nIf you want a chance pot against other people, pick a rule you can say in one sentence and a fee you saw first. Coinflip and jackpot qualify. A [slot battle](/guides/slot-battles) can qualify and adds the slot’s variance on top. Read the format before you call it the same thing. A cash-tournament phone app in the skill family is the subject of the [Skillz review](/guides/skillz-review).\n\nIf you want a house game, know you are paying for the session. The paytable is the souvenir. Do not enter to “make” a number.\n\nIf you want a job, this is the wrong page. Games that pay real money pay some users every day and take a margin from the pool. A job pays you for time without requiring you to beat a rake. Mixing those hopes is how entertainment budgets become debts.\n\nTime is the hidden stake in skill games. A 2 edge per hour, if you even have it, is a bad wage. Price the hour. Then decide if you would have played anyway. If you would not, you are working a shift with a chance of going backward. That is a strange job to apply for.",
+      body: `Worth your time is a personal filter, not a leaderboard. Use these and discard the rest of the ad.
+
+If you want skill, pick a game you already play well, with a rake you can beat at a realistic win rate, against people of your level, with a cheat policy. If you cannot estimate the win rate, the game is entertainment with a fee. Cap it like entertainment.
+
+If you want a chance pot against other people, pick a rule you can say in one sentence and a fee you saw first. Coinflip and jackpot qualify. A [slot battle](/guides/slot-battles) can qualify and adds the slot’s variance on top. Read the format before you call it the same thing. A cash-tournament phone app in the skill family is the subject of the [Skillz review](/guides/skillz-review).
+
+If you want a house game, know you are paying for the session. The paytable is the souvenir. Do not enter to “make” a number.
+
+If you want a job, this is the wrong page. Games that pay real money pay some users every day and take a margin from the pool. A job pays you for time without requiring you to beat a rake. Mixing those hopes is how entertainment budgets become debts.
+
+Time is the hidden stake in skill games. A 2 edge per hour, if you even have it, is a bad wage. Price the hour. Then decide if you would have played anyway. If you would not, you are working a shift with a chance of going backward. That is a strange job to apply for.`,
     },
     {
       id: "stop-rules",
       title: "Stop rules that keep a payout from becoming a chase",
-      body: "Write the stop before the first entry. A cash amount you can lose, a number of matches, and a rule that a win does not raise the limit. Raising the limit after a win is how a 20 night becomes a 200 night that happens to include a payout screenshot.\n\nDo not chase across categories. A lost pool match is not a reason to open a jackpot. A lost jackpot is not a reason to open a sportsbook. The categories do not owe you a refund. They do not even share a cashier in any sense that repairs the first loss.\n\nKeep one account per app and one budget. Borrowed accounts get frozen at the exact moment of a payout, and the freeze will be correct under the terms. Lying about your region does the same thing.\n\nIf gambling stops being a choice, use the responsible-play tools where you are, including cooling-off and deposit limits, and talk to a person rather than to the next lobby. This site is 18+ entertainment. It is not a recovery plan and not an income plan.\n\nThe useful summary is short. Games that pay real money are real when the cashier matches the rule. They are worth your time only when you like the game at a price you can lose. Everything else in the ad is decoration.\n\nStop before a diamond in the title becomes a suit or a slot. [The crowded diamonds search](/guides/diamonds-casino-game) says the name is shared and the payout is not published.\n\nShooter players should separate app rewards from risking an entry against an opponent. The [FPS cash-match guide](/guides/fps-for-money-hub) prices that risk, while [browser FPS games](/guides/browser-fps-games) compares access and performance rather than advertised income.",
+      body: `Write the stop before the first entry. A cash amount you can lose, a number of matches, and a rule that a win does not raise the limit. Raising the limit after a win is how a 20 night becomes a 200 night that happens to include a payout screenshot.
+
+Do not chase across categories. A lost pool match is not a reason to open a jackpot. A lost jackpot is not a reason to open a sportsbook. The categories do not owe you a refund. They do not even share a cashier in any sense that repairs the first loss.
+
+Keep one account per app and one budget. Borrowed accounts get frozen at the exact moment of a payout, and the freeze will be correct under the terms. Lying about your region does the same thing.
+
+If gambling stops being a choice, use the responsible-play tools where you are, including cooling-off and deposit limits, and talk to a person rather than to the next lobby. This site is 18+ entertainment. It is not a recovery plan and not an income plan.
+
+The useful summary is short. Games that pay real money are real when the cashier matches the rule. They are worth your time only when you like the game at a price you can lose. Everything else in the ad is decoration.
+
+Stop before a diamond in the title becomes a suit or a slot. [The crowded diamonds search](/guides/diamonds-casino-game) says the name is shared and the payout is not published.
+
+Shooter players should separate app rewards from risking an entry against an opponent. The [FPS cash-match guide](/guides/fps-for-money-hub) prices that risk, while [browser FPS games](/guides/browser-fps-games) compares access and performance rather than advertised income.`,
     },
   ],
   faqs: [
@@ -124,10 +148,17 @@ Jackpot on the [home page](/) settles a round when the draw finishes, and your c
     },
   ],
   sources: [
-    { label: "Wikipedia: Gambling", url: "https://en.wikipedia.org/wiki/Gambling" },
+    {
+      label: "Wikipedia: Gambling",
+      url: "https://en.wikipedia.org/wiki/Gambling",
+    },
     {
       label: "Wikipedia: Game of skill",
       url: "https://en.wikipedia.org/wiki/Game_of_skill",
+    },
+    {
+      label: "Skillz: cash, virtual currency and Bonus Cash",
+      url: "https://support.skillz.com/hc/en-us/articles/50571215655700-How-does-Skillz-work-Can-I-actually-win-real-money",
     },
   ],
   related: [
@@ -140,5 +171,5 @@ Jackpot on the [home page](/) settles a round when the draw finishes, and your c
     "fps-for-money-hub",
     "browser-fps-games",
   ],
-  updated: "2026-10-31",
+  updated: "2026-11-26",
 };

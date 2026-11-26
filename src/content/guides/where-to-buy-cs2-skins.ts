@@ -10,7 +10,7 @@ export const guide: Guide = {
     "Where to buy CS2 skins: Steam Market versus third-party checklists, fees, holds, inspects, and why this is not a ranked shop list.",
   h1: "Where to buy CS2 skins: Steam Market and a third-party checklist",
   answer:
-    "Where to buy CS2 skins is a process question, not a shop ranking. The Steam Community Market is the default public tape in Steam Wallet funds. Third-party books sell the same inspects for cash or crypto and add their own fees, identity checks and scam surface. Use a checklist — exit currency, fee page, inspect, float, holds — then buy one item you can actually receive. This page will not crown a marketplace.",
+    "Where to buy CS2 skins is a process question, not a shop ranking. The Steam Community Market is the default public tape in Steam Wallet funds. Third-party books sell the same inspects for cash or crypto and add their own fees, identity checks and scam surface. Use a checklist — exit currency, fee page, inspect, float, holds — then buy one item you can actually receive. Compare the total price, custody, fees and dispute terms for the exact transaction.",
   facts: [
     "Steam Community Market listings settle in Steam Wallet funds, not unrestricted cash.",
     "Third-party CS2 books quote cash or crypto and publish their own fee and hold rules.",
@@ -22,7 +22,7 @@ export const guide: Guide = {
     {
       id: "what",
       title: "What “where to buy” actually asks",
-      body: `People type **where to buy CS2 skins** when they want a loadout, a gift or a flip. The useful answer is which *exit* you want and which *risks* you will accept. It is not a top-ten of Discord shops.
+      body: `Buying CS2 skins for a loadout, a gift or resale creates different budget and transfer requirements. The useful answer is which *exit* you want and which *risks* you will accept. It is not a top-ten of Discord shops.
 
 If you have not chosen an item yet, compare [AWP finishes](/guides/awp-skins), [AK-47 finishes](/guides/ak-47-skins) or a [fixed-budget CS2 loadout](/guides/cheap-cs2-skins) first. Those guides help choose the cosmetic; this page checks the purchase channel and delivery process.
 
@@ -173,7 +173,10 @@ Buy the inspect you planned. Close the tab. Play the game, or do not. Do not ope
     },
   ],
   sources: [
-    { label: "Steam Community Market", url: "https://steamcommunity.com/market/" },
+    {
+      label: "Steam Community Market",
+      url: "https://steamcommunity.com/market/",
+    },
     {
       label: "Steam Support — Community Market FAQ",
       url: "https://help.steampowered.com/en/faqs/view/61F0-72B7-9A18-C70B",
@@ -194,5 +197,5 @@ Buy the inspect you planned. Close the tab. Play the game, or do not. Do not ope
     "csfloat-vs-skinport",
     "cs2-float-checker",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

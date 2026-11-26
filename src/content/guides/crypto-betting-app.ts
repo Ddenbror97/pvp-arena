@@ -27,77 +27,37 @@ export const guide: Guide = {
     {
       id: "define",
       title: "What people mean by crypto betting app",
-      body: `Searchers lump three products together: mobile crypto sportsbooks, mobile crypto casinos, and PvP original-game sites that happen to work on a phone. A crypto betting app label in an ad may mean any of them. An app whose job is to match two people and hold their bet is a [P2P betting app](/guides/p2p-betting-app), not a mobile sportsbook.
-
-Start with [what is a crypto casino](/guides/what-is-a-crypto-casino) and [best crypto gambling sites](/guides/best-crypto-gambling-sites) for rail literacy. For sports legality orientation in the US, see [sports betting legal states](/guides/sports-betting-legal-states). For esports as a category, see the [esports betting topic](/guides/topics/esports-betting) and [esports betting](/guides/esports-betting).
-
-This [Foundations](/guides/topics/foundations) guide is for adults 18+. Not legal advice. PVPspinArena is not a licensed sportsbook and does not sell an APK in Google Play as a regulated betting app.
-`,
+      body: "Searchers lump three products together: mobile crypto sportsbooks, mobile crypto casinos, and PvP original-game sites that happen to work on a phone. A crypto betting app label in an ad may mean any of them. An app whose job is to match two people and hold their bet is a [P2P betting app](/guides/p2p-betting-app), not a mobile sportsbook.\n\nStart with [what is a crypto casino](/guides/what-is-a-crypto-casino) and [best crypto gambling sites](/guides/best-crypto-gambling-sites) for rail literacy. For sports legality orientation in the US, see [sports betting legal states](/guides/sports-betting-legal-states). For esports as a category, see the [esports betting topic](/guides/topics/esports-betting) and [esports betting](/guides/esports-betting).\n\nThis [Foundations](/guides/topics/foundations) guide is for adults 18+. Not legal advice. PVPspinArena is not a licensed sportsbook and does not sell an APK in Google Play as a regulated betting app.",
     },
     {
       id: "mobile",
       title: "What actually changes on mobile",
-      body: `### Convenience
-
-You can deposit between tasks. That is also how budgets die. Face ID opens the cashier faster than a desktop password ritual. Set limits before you enable one-tap habits.
-
-### Interface risk
-
-Tiny screens hide wagering tables and max-bet clauses. Open terms on a large display once before you rely on the phone.
-
-### Distribution risk
-
-Official mobile web over HTTPS beats “download our APK” Telegram links. Unsigned packages are a classic malware path. Prefer bookmarks you typed yourself — [fake casino sites](/guides/fake-casino-sites) love mobile ads.
-
-Push “you won” notifications are marketing. They are not fairness proofs.
-`,
+      body: "### Convenience\n\nYou can deposit between tasks. That is also how budgets die. Face ID opens the cashier faster than a desktop password ritual. Set limits before you enable one-tap habits.\n\n### Interface risk\n\nTiny screens hide wagering tables and max-bet clauses. Open terms on a large display once before you rely on the phone.\n\n### Distribution risk\n\nOfficial mobile web over HTTPS beats “download our APK” Telegram links. Unsigned packages are a classic malware path. Prefer bookmarks you typed yourself — [fake casino sites](/guides/fake-casino-sites) love mobile ads.\n\nPush “you won” notifications are marketing. They are not fairness proofs.",
     },
     {
       id: "payments",
       title: "Wallet flows on a phone",
-      body: `Mobile wallets and WalletConnect-style flows are common. Read the permission prompt. A casino that only needs a transfer should not need unlimited token approval. Message signatures for login are different from spend approvals.
-
-On PVPspinArena, wallet proof is a signed message and deposits are USDC/ETH on Base — see [how it works](/how-it-works) and [wallet](/how-it-works#wallet). That pattern is one design; judge others by what they ask you to sign.
-
-Wrong-network sends still ruin sessions. Double-check chain and address on a seed phrase–safe device, not on a borrowed phone.
-`,
+      body: "Mobile wallets and WalletConnect-style flows are common. Read the permission prompt. A casino that only needs a transfer should not need unlimited token approval. Message signatures for login are different from spend approvals.\n\nOn PVPspinArena, wallet proof is a signed message and deposits are USDC/ETH on Base — see [how it works](/how-it-works) and [wallet](/how-it-works#wallet). That pattern is one design; judge others by what they ask you to sign.\n\nWrong-network sends still ruin sessions. Double-check chain and address on a seed phrase–safe device, not on a borrowed phone.",
     },
     {
       id: "fairness",
       title: "Fairness and product checks that survive the small screen",
-      body: `Open fairness docs before the first bet. [Provably fair casino](/guides/provably-fair-casino) explains commit-reveal. Verify a sample round on [Fairness](/fairness) when using this site.
-
-Price the game with [house edge](/guides/house-edge) literacy. Mobile skins do not change RTP. Bonus banners still hide [casino wagering requirements](/guides/casino-wagering-requirements).
-
-Sports and esports apps need integrity awareness — [esports match fixing](/guides/esports-match-fixing) — and licensed-book checks where you live. A crypto rail does not create a state sports licence.
-`,
+      body: "Open fairness docs before the first bet. [Provably fair casino](/guides/provably-fair-casino) explains commit-reveal. Verify a sample round on [Fairness](/fairness) when using this site.\n\nPrice the game with [house edge](/guides/house-edge) literacy. Mobile skins do not change RTP. Bonus banners still hide [casino wagering requirements](/guides/casino-wagering-requirements).\n\nSports and esports apps need integrity awareness — [esports match fixing](/guides/esports-match-fixing) — and licensed-book checks where you live. A crypto rail does not create a state sports licence.",
     },
     {
       id: "legal",
       title: "Licence and geography still gate the app",
-      body: `If your state or country requires a licensed operator for the product, an offshore crypto betting app is not a workaround we will bless. Read [crypto casino license](/guides/crypto-casino-license). We will not explain geo-spoofing.
-
-Age rules still apply — [gambling age us](/guides/gambling-age-us) for US orientation. Phones make underage access easier in households; lock devices.
-
-PVPspinArena does not claim US or UK sportsbook licensing via any mobile wrapper.
-`,
+      body: "If your state or country requires a licensed operator for the product, an offshore crypto betting app is not a workaround we will bless. Read [crypto casino license](/guides/crypto-casino-license).\n\nAge rules still apply — [gambling age us](/guides/gambling-age-us) for US orientation. Phones make underage access easier in households; lock devices.\n\nPVPspinArena does not claim US or UK sportsbook licensing via any mobile wrapper.",
     },
     {
       id: "session",
       title: "Safer mobile session habits",
-      body: `1. Set a deposit ceiling before unlocking biometrics for betting.
-2. Disable non-essential push notifications from gambling apps.
-3. Use a play-only wallet with limited funds.
-4. Run a tiny withdrawal test from mobile data and from Wi-Fi once.
-5. Step away if you are betting to change a mood.
-
-Try [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette) only inside a budget. If mobile play is already compulsive, use [gambling self-exclusion](/guides/gambling-self-exclusion) and [responsible gambling](/responsible-gambling).
-`,
+      body: "1. Set a deposit ceiling before unlocking biometrics for betting.\n2. Disable non-essential push notifications from gambling apps.\n3. Use a play-only wallet with limited funds.\n4. Run a tiny withdrawal test from mobile data and from Wi-Fi once.\n5. Step away if you are betting to change a mood.\n\nTry [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), or [Roulette](/roulette) only inside a budget. If mobile play is already compulsive, use [gambling self-exclusion](/guides/gambling-self-exclusion) and [responsible gambling](/responsible-gambling).",
     },
     {
       id: "bottom",
       title: "Bottom line",
-      body: `A crypto betting app is gambling with a smaller screen and faster prompts. Check legality, fairness, permissions and cashier behaviour. Adults 18+. Not legal advice. Speed is not safety.`,
+      body: "A crypto betting app is gambling with a smaller screen and faster prompts. Check legality, fairness, permissions and cashier behaviour. Adults 18+. Not legal advice. Speed is not safety.",
     },
   ],
   faqs: [
@@ -135,5 +95,5 @@ Try [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), [Coinflip](/coin
     "esports-betting",
     "sports-betting-legal-states",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

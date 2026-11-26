@@ -35,7 +35,7 @@ That triple clause is the whole house edge on Big and Small. Without it, the bet
 
 ### Why it matters
 
-Paytables vary by casino, by country and by software provider. If you learn the formula, you can price any bet in a few seconds, including ones this guide does not list. Dice combinatorics in more depth are in [dice roll probability](/guides/dice-roll-probability).`,
+Paytables vary by casino, by country and by software provider. If you learn the formula, you can price any bet in a few seconds, including additional paytable boxes. Dice combinatorics in more depth are in [dice roll probability](/guides/dice-roll-probability).`,
     },
     {
       id: "ranking",
@@ -159,15 +159,6 @@ When you meet a table or app with different numbers:
 
 Example: a specific double paying 11 to 1 wins on 16 outcomes. 12 × 16 = 192, and 192/216 ≈ 88.9%, an 11.1% edge. Better than 10 to 1, still four times the cost of Small.`,
     },
-    {
-      id: "pvp",
-      title: "The same arithmetic in a PvP round",
-      body: `The sic bo formula, return equals payout times probability, works on every game. Apply it to PVPspinArena [Roulette](/roulette): Purple wins on 16 of 33 slots and pays 2x, so 2 × 16/33 = 32/33. Green wins on 1 of 33 and pays 14x, so 14 × 1/33 = 14/33. Purple and Silver return 32/33 before the 5% win fee, about a 7.88% edge after it. Green returns 14/33, so the colour choice changes the cost, not only the variance.
-
-Round results come from committed seeds and can be checked on the [fairness](/fairness) page. Gambling is 18+ (or the local legal age). If you find yourself raising stakes to recover losses, the [responsible gambling](/responsible-gambling) page has limits and support.
-
-In the same cluster, see also [teen patti](/guides/teen-patti) and [pai gow tiles](/guides/pai-gow-tiles).`,
-    },
   ],
   faqs: [
     {
@@ -192,9 +183,18 @@ In the same cluster, see also [teen patti](/guides/teen-patti) and [pai gow tile
     },
   ],
   sources: [
-    { label: "Wizard of Odds: sic bo", url: "https://wizardofodds.com/games/sic-bo/" },
-    { label: "Wikipedia: Sic bo", url: "https://en.wikipedia.org/wiki/Sic_bo" },
-    { label: "Wikipedia: Chuck-a-luck", url: "https://en.wikipedia.org/wiki/Chuck-a-luck" },
+    {
+      label: "Wizard of Odds: sic bo",
+      url: "https://wizardofodds.com/games/sic-bo/",
+    },
+    {
+      label: "Wikipedia: Sic bo",
+      url: "https://en.wikipedia.org/wiki/Sic_bo",
+    },
+    {
+      label: "Wikipedia: Chuck-a-luck",
+      url: "https://en.wikipedia.org/wiki/Chuck-a-luck",
+    },
   ],
   related: [
     "sic-bo-online",
@@ -206,5 +206,5 @@ In the same cluster, see also [teen patti](/guides/teen-patti) and [pai gow tile
     "teen-patti",
     "pai-gow-tiles",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

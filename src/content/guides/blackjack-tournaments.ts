@@ -24,7 +24,9 @@ export const guide: Guide = {
       title: "Cash chips and tournament chips are different objects",
       body: `In a cash game you win or lose money on the hand, and the right chart is the one that loses least to the posted rules. [How to play blackjack](/guides/how-to-play-blackjack) is that game: two cards, a dealer card, hit, stand, double, split, or surrender, then the dealer's rule. [Blackjack basic strategy](/guides/blackjack-basic-strategy) is the chart for a named set of those rules.
 
-A tournament uses the same buttons and a different scoreboard. Your stack is compared with the other stacks at a deadline. Finishing one chip above a cut is a success. Finishing one chip below it is a failure, even if your decisions had the better cash expectation. That is the whole change.`,
+A tournament uses the same buttons and a different scoreboard. Your stack is compared with the other stacks at a deadline. Finishing one chip above a cut is a success. Finishing one chip below it is a failure, even if your decisions had the better cash expectation. That is the whole change.
+
+A concrete example is Mohegan Sun’s November 6, 2026 event: its page specified promotional-chip prizes and directed entrants to registration for full rules. Prize type and advancement conditions therefore need the actual event sheet.`,
     },
     {
       id: "when-chart-breaks",
@@ -72,12 +74,21 @@ More blackjack pages are under [blackjack](/guides/topics/blackjack). The [terms
       a: "No.",
     },
   ],
-  sources: [{ label: "Wikipedia: Blackjack", url: "https://en.wikipedia.org/wiki/Blackjack" }],
+  sources: [
+    {
+      label: "Wikipedia: Blackjack",
+      url: "https://en.wikipedia.org/wiki/Blackjack",
+    },
+    {
+      label: "Mohegan Sun: November 6, 2026 blackjack tournament",
+      url: "https://mohegansun.com/events-and-promotions/promotions/10k-blackjack-tournament-1106.html",
+    },
+  ],
   related: [
     "how-to-play-blackjack",
     "blackjack-basic-strategy",
     "expected-value-gambling",
     "house-edge",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

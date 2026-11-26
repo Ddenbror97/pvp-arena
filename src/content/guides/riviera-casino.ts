@@ -58,7 +58,7 @@ Orson Welles played the Riviera in 1956. Barbra Streisand opened for Liberace th
       title: "Riklis, bankruptcy, and the middle-market Riv",
       body: `In 1973 AITS Inc., a Boston travel company controlled by Meshulam Riklis, bought the Riviera for $60 million. Riklis was the majority owner. A 17-storey tower, later called the Monte Carlo, opened in 1975. The early 1980s were harder. Recession and new Atlantic City casinos hurt the Strip's older rooms. The Riviera filed for Chapter 11 bankruptcy protection in 1983.
 
-Riklis put in money to keep the doors open and brought in Jeffrey Silver to change the pitch. Silver aimed the marketing at middle-income and working guests rather than at a short list of high rollers. In 1984 the Riviera put a Burger King on the property, widely described as the first fast-food chain outlet inside a Strip resort. The hotel came out of bankruptcy in 1985. The phrase people used for this shift, the "Burger King revolution," was really a customer shift: buffets, familiar brands, and volume, on a campus that was no longer new.
+In 1984 the Riviera put a Burger King on the property, widely described as the first fast-food chain outlet inside a Strip resort. The hotel came out of bankruptcy in 1985. The phrase people used for this shift, the "Burger King revolution," was really a customer shift: buffets, familiar brands, and volume, on a campus that was no longer new.
 
 ### Splash, Crazy Girls, and a second bankruptcy
 
@@ -116,7 +116,7 @@ The resort never held the Sands' place in the Rat Pack years. It was a solid hot
 
 European gambling houses are centuries older. The [oldest casino](/guides/oldest-casino) guide is the right page for Venice and the spa towns. The [history of gambling](/guides/history-of-gambling) is the wide timeline, from bones and dice to online play. A single gambler's run at modern Las Vegas tables, which has nothing to do with this hotel's deed, is [Archie Karas](/guides/archie-karas). Use those pages instead of asking the Riviera to stand for every casino story.
 
-The building is gone. The games people played inside it were the usual ones: slots, blackjack, craps, roulette, with a house edge on the timely bets and a surveillance department that existed because the cash was real. If you want a wheel whose return is written down in advance, PVPspinArena's [roulette](/roulette) is a 33-slot game that pays 32/33, about a 7.88% Purple or Silver edge after the win fee, between players and the published rules. It is not a revival of the Riviera, and it is gambling for adults, 18+. The resort's history lives in the photographs and in the [Casino knowledge topic](/guides/topics/casino-knowledge), not in a tower you can still book.
+The building is gone. The games people played inside it were the usual ones: slots, blackjack, craps, roulette, with a house edge on the timely bets and a surveillance department that existed because the cash was real. It is not a revival of the Riviera, and it is gambling for adults, 18+. The resort's history lives in the photographs and in the [Casino knowledge topic](/guides/topics/casino-knowledge), not in a tower you can still book.
 
 See also [the Black Book](/guides/casino-black-book).`,
     },
@@ -164,5 +164,5 @@ See also [the Black Book](/guides/casino-black-book).`,
     "oldest-casino",
     "history-of-gambling",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

@@ -47,7 +47,9 @@ Most packs include two jokers, often one more colourful than the other, plus one
 
 ### Rank order depends on the game
 
-There is no universal rank order. Aces are high in poker and bridge, low or dual in many rummy games, and worth 1 or 11 in blackjack. Suits have no ranking in poker, while bridge ranks them spades, hearts, diamonds, clubs for bidding. For card-by-card values in the most common casino game, see [blackjack rules](/guides/blackjack-rules); for poker, see [poker hand rankings](/guides/poker-hand-rankings).`,
+There is no universal rank order. Aces are high in poker and bridge, low or dual in many rummy games, and worth 1 or 11 in blackjack. Suits have no ranking in poker, while bridge ranks them spades, hearts, diamonds, clubs for bidding. For card-by-card values in the most common casino game, see [blackjack rules](/guides/blackjack-rules); for poker, see [poker hand rankings](/guides/poker-hand-rankings).
+
+Bicycle's Solitaire rules use a standard 52-card pack. Jokers and specialty-game cards must be removed before applying probabilities derived for that pack.`,
     },
     {
       id: "history",
@@ -175,17 +177,6 @@ Two principles carry across all of them:
 
 Card games played for money are for adults only, 18+ or your local legal age.`,
     },
-    {
-      id: "pvp",
-      title: "Counting outcomes on a hashed PvP round",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, for adults 18+ only. There is no deck, but the counting method is the same: favourable outcomes over total outcomes.
-
-On [Roulette](/roulette), the wheel has 33 slots. Purple covers 16, so P(Purple) = 16/33 ≈ 48.5%, a little like the chance of drawing a red card from a deck that has one extra green card added. Purple and Silver pay 2x and Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Unlike a shoe, every round starts fresh: there is no removal effect, so past results say nothing about the next spin.
-
-[Coinflip](/coinflip) is a plain 50/50, and in [Jackpot](/) your win chance equals your share of the pot. Each result comes from committed seeds, and you can check any settled round on the [fairness page](/fairness).
-
-See also [hearts](/guides/hearts-card-game-rules), [klondike solitaire](/guides/solitaire-rules), [go fish](/guides/go-fish-rules) and [phase 10](/guides/phase-10-rules).`,
-    },
   ],
   faqs: [
     {
@@ -211,6 +202,10 @@ See also [hearts](/guides/hearts-card-game-rules), [klondike solitaire](/guides/
   ],
   sources: [
     {
+      label: "Bicycle: standard-deck Klondike rules",
+      url: "https://bicyclecards.com/how-to-play/solitaire",
+    },
+    {
       label: "Wikipedia: Standard 52-card deck",
       url: "https://en.wikipedia.org/wiki/Standard_52-card_deck",
     },
@@ -231,5 +226,5 @@ See also [hearts](/guides/hearts-card-game-rules), [klondike solitaire](/guides/
     "card-counting",
     "poker-math",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

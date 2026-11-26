@@ -33,7 +33,9 @@ What a dress code rarely does today is police taste. The long trend since the 19
 
 This page sits in the [Casino knowledge topic](/guides/topics/casino-knowledge). For behaviour once you are inside, see [casino etiquette](/guides/casino-etiquette). Entry to a gaming floor is for adults only: the minimum age is 18 in much of Europe and 21 in most US states and some other countries, and ID can be requested at the door or at a table.
 
-A useful rule of thumb: dress for the most formal part of the evening you have planned. If dinner at a restaurant with a jacket requirement comes before the tables, you are already covered.`,
+A useful rule of thumb: dress for the most formal part of the evening you have planned. If dinner at a restaurant with a jacket requirement comes before the tables, you are already covered.
+
+Monte-Carlo SBM's entry notice recommends a jacket and tie for casino access. Check the specific room's current entry conditions rather than assuming every casino shares that standard.`,
     },
     {
       id: "by-venue",
@@ -123,21 +125,6 @@ For almost any casino in the world, a smart-casual outfit works: dark trousers o
 
 Some players wear a particular shirt, colour or piece of jewellery for luck. It is harmless as long as it stays a ritual. Clothes do not change a card, a die or a wheel. The same applies to colours on a wheel: see [roulette colors](/guides/roulette-colors) for what red, black and green actually mean in probability terms. A belief that a ritual can steer the outcome is a version of the [illusion of control](/guides/illusion-of-control).`,
     },
-    {
-      id: "online",
-      title: "No dress code online: what still matters",
-      body: `Online there is no door to be turned away at, which removes one of the natural pauses a casino visit builds in. Getting dressed, travelling and showing ID all create moments to reconsider. At home, you can start a session in seconds.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and play is settled in US dollars. There is no dress code, but the age rule is the same as at any casino door: play is for adults 18 and over. The maths is also the same whatever you are wearing. In [Roulette](/roulette), the 33-slot wheel has 16 Purple and 16 Silver slots paying 2x and one Green paying 14x; Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. In Coinflip, the two sides are a true 50/50. In Jackpot, your chance equals your share of the pot.
-
-Because the online version has no natural brakes, it helps to add your own:
-
-- set a spending limit before the first round;
-- decide on a stop time, the way a trip to a casino ends when the last train leaves;
-- use the tools on the [responsible gambling](/responsible-gambling) page if you need a break enforced for you.
-
-Results on PVPspinArena come from committed seeds, and any settled round can be checked on the fairness page. That replaces the reassurance of watching a dealer in person. What it cannot replace is the moment at the door when you decide whether tonight is a night to play at all.`,
-    },
   ],
   faqs: [
     {
@@ -163,6 +150,10 @@ Results on PVPspinArena come from committed seeds, and any settled round can be 
   ],
   sources: [
     {
+      label: "Monte-Carlo SBM: casino entry legal notice",
+      url: "https://ticket-online.montecarlolive.com/en/legal-notice",
+    },
+    {
       label: "Wikipedia: Monte Carlo Casino",
       url: "https://en.wikipedia.org/wiki/Monte_Carlo_Casino",
     },
@@ -170,7 +161,10 @@ Results on PVPspinArena come from committed seeds, and any settled round can be 
       label: "Encyclopaedia Britannica: Monte-Carlo",
       url: "https://www.britannica.com/place/Monte-Carlo",
     },
-    { label: "Wikipedia: Dress code", url: "https://en.wikipedia.org/wiki/Dress_code" },
+    {
+      label: "Wikipedia: Dress code",
+      url: "https://en.wikipedia.org/wiki/Dress_code",
+    },
   ],
   related: [
     "casino-etiquette",
@@ -179,5 +173,5 @@ Results on PVPspinArena come from committed seeds, and any settled round can be 
     "las-vegas-history",
     "casino-chip-values",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

@@ -30,7 +30,9 @@ Cash does not come out of the hopper as a jackpot cheque. Halls pay in medals or
 
 Online tiles labelled "pachislot" are usually Western slots with Japanese art, or skill-stop clones with a posted lab RTP. Price those from the info panel, the way you would price [crypto slots](/guides/crypto-slots). The parlour machine and the lobby tile are different products.
 
-Pachislot sits in the [Games of chance topic](/guides/topics/games-of-chance). The ball-and-nail cousin is pachinko; the Western reel maths is [slot machine odds](/guides/slot-machine-odds).`,
+Pachislot sits in the [Games of chance topic](/guides/topics/games-of-chance). The ball-and-nail cousin is pachinko; the Western reel maths is [slot machine odds](/guides/slot-machine-odds).
+
+SANKYO's smart-machine briefing distinguishes pachinko from pachislot and explains model-generation changes. Those specifications cannot be reduced to one nationwide player return.`,
     },
     {
       id: "skill-stop",
@@ -118,21 +120,6 @@ Some US and UK novelty machines copied the three buttons. Many still decided the
 
 Home cabinets sold as second-hand "pachislo" often have a dip-switch block for settings 1–6. On a living-room machine that pays nobody, a switch on 6 is how you make the toy last. In a parlour, that switch is the hall's margin tool.`,
     },
-    {
-      id: "pvp",
-      title: "Opaque settings versus a hashed PvP round",
-      body: `Pachislot hides the most important number (the setting) inside the cabinet. You see medals, lights and a stop order. You do not see the switch.
-
-PVPspinArena publishes the price instead. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) is 33 slots: 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. [Jackpot](/) sets win chance equal to your share of the pot. Results use committed seeds; any settled round can be recomputed on [fairness](/fairness). There is no hidden setting 4.
-
-A hall on setting 5 is not "hot tonight." It is a long-run medal-out rate that still produces dead hours. Sitting down because the last player walked away with a bag is a hidden switch plus ordinary clustering. If you cannot know the setting, you cannot price the session.
-
-Pachislot pays medals. The parlour's prize counter then exchanges those medals, often through a separate shop, for goods or a voucher. That extra step is why a "setting 6" story still is not a published RTP like a Western slot's help screen. You are estimating a chain: lottery rate, stop skill, exchange rate. The pinball cousin on the other side of the aisle is priced in [pachinko odds](/guides/pachinko-odds). Related luck-and-lotto pages: [quick pick](/guides/quick-pick-lottery), [pull tabs](/guides/pull-tabs), and [lucky numbers](/guides/lucky-numbers-gambling).
-
-The same variable-ratio lights that make pachislot sticky are the topic of [skinner box slot machines](/guides/skinner-box-slot-machines). If the row of cabinets, or the next on-chain match, is already a chase, use [responsible gambling](/responsible-gambling). Play is 18+ only.
-
-See also [loose slots](/guides/loose-slots).`,
-    },
   ],
   faqs: [
     {
@@ -157,6 +144,10 @@ See also [loose slots](/guides/loose-slots).`,
     },
   ],
   sources: [
+    {
+      label: "SANKYO: smart pachinko and pachislot technical briefing",
+      url: "https://www.sankyo-fever.co.jp/corporate/modify/IR_EN/Library_Briefing/files/explanation_20220804_en.pdf",
+    },
     {
       label: "Wikipedia: Slot machine (pachislot section)",
       url: "https://en.wikipedia.org/wiki/Slot_machine#Japanese_pachisuro_or_pachislot",
@@ -186,5 +177,5 @@ See also [loose slots](/guides/loose-slots).`,
     "lucky-numbers-gambling",
     "loose-slots",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

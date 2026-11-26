@@ -22,44 +22,27 @@ export const guide: Guide = {
     {
       id: "what",
       title: "What Stake originals games are",
-      body: `Most online casinos license slots and table games from studios. Crypto casinos such as Stake also build their own "originals": simple, fast games where the operator controls the maths. The ones most people search for are Dice, Plinko, Mines, Limbo, Crash, Keno, HiLo and Wheel. Many crypto casinos run near-identical versions of the same games; their mechanics are explained in our [crypto dice](/guides/crypto-dice-game), [Plinko](/guides/plinko-gambling), [Mines](/guides/mines-game-casino), [Limbo](/guides/limbo-game-strategy) and [Crash](/guides/crash-gambling) guides.
-
-All of them are house-banked: you play against the casino, which takes a fixed edge on every bet.`,
+      body: 'Most online casinos license slots and table games from studios. Crypto casinos such as Stake also build their own "originals": simple, fast games where the operator controls the maths. Examples include Dice, Plinko, Mines, Limbo, Crash, Keno, HiLo and Wheel. Many crypto casinos run near-identical versions of the same games; their mechanics are explained in our [crypto dice](/guides/crypto-dice-game), [Plinko](/guides/plinko-gambling), [Mines](/guides/mines-game-casino), [Limbo](/guides/limbo-game-strategy) and [Crash](/guides/crash-gambling) guides.\n\nAll of them are house-banked: you play against the casino, which takes a fixed edge on every bet.',
     },
     {
       id: "edge",
       title: "House edge and RTP",
-      body: `Each original shows its RTP (return to player) in the game's information or fairness panel. Read it there before you play; operators can change it, and the same game name can carry a different RTP at another casino.
-
-**House edge = 100% − RTP.** A game with a 99% RTP has a 1% house edge.
-
-**Worked example.** At a 1% edge, 500 bets of $10 ($5,000 wagered) have an expected loss of 5,000 × 0.01 = **$50**. At a 3% edge the same play costs $150 on average. Short sessions swing far from those figures; the expected loss is what the wagered amount costs over time. [House edge](/guides/house-edge) and [RTP explained](/guides/rtp-explained) cover the calculation.
-
-Settings such as Plinko rows and risk, the number of Mines, or a Dice target change the **volatility**: how often you win and how big the wins are. They do not remove the edge. A 99x Limbo target and a 1.5x target lose the same share of the amount wagered in the long run.`,
+      body: "Each original shows its RTP (return to player) in the game's information or fairness panel. Read it there before you play; operators can change it, and the same game name can carry a different RTP at another casino.\n\n**House edge = 100% − RTP.** A game with a 99% RTP has a 1% house edge.\n\n**Worked example.** At a 1% edge, 500 bets of $10 ($5,000 wagered) have an expected loss of 5,000 × 0.01 = **$50**. At a 3% edge the same play costs $150 on average. Short sessions swing far from those figures; the expected loss is what the wagered amount costs over time. [House edge](/guides/house-edge) and [RTP explained](/guides/rtp-explained) cover the calculation.\n\nSettings such as Plinko rows and risk, the number of Mines, or a Dice target change the **volatility**: how often you win and how big the wins are. They do not remove the edge. A 99x Limbo target and a 1.5x target lose the same share of the amount wagered in the long run.",
     },
     {
       id: "fair",
       title: "Checking a result with seeds",
-      body: `Stake originals are presented as provably fair. Before you bet, the casino commits to a **server seed** by showing its hash. You supply or accept a **client seed**, and each bet increases a **nonce** (a counter). The result is computed from all three; when you rotate the server seed, the casino reveals the old one so you can recompute past results and confirm they match.
-
-That proves the casino did not change a result after seeing your bet. It does not prove the game's RTP is good or that the casino will pay a withdrawal. [Server seed and client seed](/guides/server-seed-client-seed), [nonce and cursor](/guides/nonce-and-cursor-provably-fair) and [verify a casino bet](/guides/verify-a-casino-bet) walk through the check.`,
+      body: "Stake originals are presented as provably fair. Before you bet, the casino commits to a **server seed** by showing its hash. You supply or accept a **client seed**, and each bet increases a **nonce** (a counter). The result is computed from all three; when you rotate the server seed, the casino reveals the old one so you can recompute past results and confirm they match.\n\nThat proves the casino did not change a result after seeing your bet. It does not prove the game's RTP is good or that the casino will pay a withdrawal. [Server seed and client seed](/guides/server-seed-client-seed), [nonce and cursor](/guides/nonce-and-cursor-provably-fair) and [verify a casino bet](/guides/verify-a-casino-bet) walk through the check.",
     },
     {
       id: "compare",
       title: "Originals versus PvP games",
-      body: `| | House-banked originals | PvP pot (PVPspinArena Jackpot) |
-| --- | --- | --- |
-| Who you play against | The casino | Other players |
-| Cost | House edge on every bet | 5% of the pot |
-| Your chance | Set by the game's maths | Your share of the pot |
-| Result check | Server seed, client seed, nonce | Committed seed, checked on [fairness](/fairness) |
-
-Both can be verified; the difference is who holds the other side and how the cost is taken. More context in the [crypto casino basics topic](/guides/topics/foundations) and [Stake alternatives](/guides/stake-alternatives).`,
+      body: "| | House-banked originals | PvP pot (PVPspinArena Jackpot) |\n| --- | --- | --- |\n| Who you play against | The casino | Other players |\n| Cost | House edge on every bet | 5% of the pot |\n| Your chance | Set by the game's maths | Your share of the pot |\n| Result check | Server seed, client seed, nonce | Committed seed, checked on [fairness](/fairness) |\n\nBoth can be verified; the difference is who holds the other side and how the cost is taken. More context in the [crypto casino basics topic](/guides/topics/foundations) and [Stake alternatives](/guides/stake-alternatives).",
     },
     {
       id: "before",
       title: "Before you play",
-      body: `Check the RTP in the game panel, decide your stake and loss limit first, and remember that fast games mean a lot of wagering in a short time: 500 bets can take minutes. Adults only, 18 or the higher age your law sets, and only where the casino is licensed for you. This page is not a review of Stake or a recommendation. If spending stops being a fixed, affordable amount, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Check the RTP in the game panel, decide your stake and loss limit first, and remember that fast games mean a lot of wagering in a short time: 500 bets can take minutes. Adults only, 18 or the higher age your law sets, and only where the casino is licensed for you. Read the game's actual rules before staking money. If spending stops being a fixed, affordable amount, stop and read [responsible gambling](/responsible-gambling).",
     },
   ],
   faqs: [
@@ -99,7 +82,7 @@ Both can be verified; the difference is who holds the other side and how the cos
     "server-seed-client-seed",
     "crypto-dice-game",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
   cta: {
     title: "Play against players, not the house",
     text: "PVPspinArena's Jackpot pays the pot to one player, minus a 5% fee; chance equals your share.",

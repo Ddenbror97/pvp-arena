@@ -27,53 +27,17 @@ export const guide: Guide = {
     {
       id: "what-it-is",
       title: "What a Curaçao licence is",
-      body: `A Curacao gambling license is authorisation to offer games of chance from Curaçao, a constituent country of the Kingdom of the Netherlands. For years, many online rooms — including crypto brands — used a Curaçao paper because it was obtainable, recognised in industry ads, and cheaper or faster than some European licences.
-
-People still say "Curacao eGaming" because that was the well-known private administrator under the old sublicence system. The government has moved to a regulator commonly called the Gaming Control Board (GCB), with operators expected to hold a direct licence rather than a sublicence under a master holder. Names on footers lag that change. Read the current certificate, not a 2018 blog post.
-
-This [Foundations](/guides/topics/foundations) article is for adults aged 18 or over. It is not legal advice. A Curaçao paper does not make play lawful in your country. PVPspinArena is a PvP Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip site on Base; judge it on its published rules and [Fairness](/fairness) tools, not on a Caribbean seal in the abstract.
-
-Licences exist because gambling is a regulated product in many places, not because a PDF makes variance kinder. A well-supervised licence can still sit on a game with a 15% hold. An unlicensed hashed pot can still pay. Your job is to know which question you are asking: permission, solvency, honesty of the draw, or local legality. This page answers the first and warns you off using it as the third.`,
+      body: 'A Curacao gambling license is authorisation to offer games of chance from Curaçao, a constituent country of the Kingdom of the Netherlands. For years, many online rooms — including crypto brands — used a Curaçao paper because it was obtainable, recognised in industry ads, and cheaper or faster than some European licences.\n\nPeople still say "Curacao eGaming" because that was the well-known private administrator under the old sublicence system. The government has moved to a regulator commonly called the Gaming Control Board (GCB), with operators expected to hold a direct licence rather than a sublicence under a master holder. Names on footers lag that change. Read the current certificate, not a 2018 blog post.\n\nThis [Foundations](/guides/topics/foundations) article is for adults aged 18 or over. It is not legal advice. A Curaçao paper does not make play lawful in your country. PVPspinArena is a PvP Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip site on Base; judge it on its published rules and [Fairness](/fairness) tools, not on a Caribbean seal in the abstract.\n\nLicences exist because gambling is a regulated product in many places, not because a PDF makes variance kinder. A well-supervised licence can still sit on a game with a 15% hold. An unlicensed hashed pot can still pay. Your job is to know which question you are asking: permission, solvency, honesty of the draw, or local legality.',
     },
     {
       id: "covers",
       title: "What the licence is meant to cover",
-      body: `A remote-gaming licence is a government permission. In principle it covers:
-
-- The legal identity of the operator (a company that can be named).
-- A requirement to follow the jurisdiction's gambling ordinance and licence conditions.
-- A channel for some complaints, if the regulator still lists the operator as active.
-- Basic expectations around not taking play from prohibited markets, as the licence text defines them.
-
-Those are operator-level facts. They answer "is this a registered gambling business in Curaçao?" They do not answer "will this RNG pay the posted RTP tonight?" or "will my $80 withdrawal leave today?"
-
-Complaint channels are only as useful as the regulator's willingness to act and the operator's remaining assets. A ticket number is not a chargeback. Crypto deposits remain hard to reverse even when a licence is genuine.
-
-A [crypto casino licence](/guides/crypto-casino-license) in any country is the same category of object: permission to operate. Payment in USDC does not upgrade the paper. Payment in TRX does not either. Some licences are silent on crypto; the operator added a cashier later. Read the permitted activities, not only the word "casino."
-
-Curaçao is not unique in being misunderstood. Players also treat a UK or Malta mark as a personal guarantee. Those regimes are often stricter on player-fund language and advertising. They still do not recompute a spin for you. The point of this guide is the Curaçao brand because search demand clusters there.`,
+      body: 'A remote-gaming licence is a government permission. In principle it covers:\n\n- The legal identity of the operator (a company that can be named).\n- A requirement to follow the jurisdiction\'s gambling ordinance and licence conditions.\n- A channel for some complaints, if the regulator still lists the operator as active.\n- Basic expectations around not taking play from prohibited markets, as the licence text defines them.\n\nThose are operator-level facts. They answer "is this a registered gambling business in Curaçao?" They do not answer "will this RNG pay the posted RTP tonight?" or "will my $80 withdrawal leave today?"\n\nComplaint channels are only as useful as the regulator\'s willingness to act and the operator\'s remaining assets. A ticket number is not a chargeback. Crypto deposits remain hard to reverse even when a licence is genuine.\n\nA [crypto casino licence](/guides/crypto-casino-license) in any country is the same category of object: permission to operate. Payment in USDC does not upgrade the paper. Payment in TRX does not either. Some licences are silent on crypto; the operator added a cashier later. Read the permitted activities, not only the word "casino."\n\nCuraçao is not unique in being misunderstood. Players also treat a UK or Malta mark as a personal guarantee. Those regimes are often stricter on player-fund language and advertising. They still do not recompute a spin for you.',
     },
     {
       id: "misses",
       title: "What a Curaçao licence misses",
-      body: `Players treat the seal as a fairness stamp. That is the miss.
-
-A licence does not, by itself:
-
-- Publish the house edge of each game.
-- Let you recompute a result from a pre-committed seed.
-- Guarantee that a third-party slot studio's feed is the feed you saw.
-- Force instant cashouts or ban withdrawal reviews.
-- Insure your balance the way a bank deposit might be insured.
-- Override a prohibition in your country.
-
-Curaçao has also been criticised, fairly, for periods of light supervision and for a long tail of sublicensed brands that were hard to tie to a responsible person. Reform of the GCB model is an attempt to tighten that. Reform does not rewrite old marketing. "Is curacao license legit?" is the wrong binary. The paper can be genuine and the product still poor. The paper can be forged and the product still hashed and honest. Check both.
-
-White-label skins complicate identity. One licence may sit behind many domains. A dispute may bounce you to a company you never typed. Write down the legal name at sign-up, not only the brand.
-
-If you are asking [are online casinos rigged](/guides/are-online-casinos-rigged), a footer seal is weak evidence. A recomputable result is stronger evidence about the draw. A pattern of unpaid withdrawals is strong evidence about the cashier, licence or not. Forums that say "Curaçao = scam" and forums that say "Curaçao = safe" are both flattening a permit into a moral score. Do the lookup.
-
-Responsible-gambling tools are another miss. A licence condition may mention them. The site you see may bury them. Look for limits and self-exclusion on the page, not in a 2019 application PDF.`,
+      body: 'Players treat the seal as a fairness stamp. That is the miss.\n\nA licence does not, by itself:\n\n- Publish the house edge of each game.\n- Let you recompute a result from a pre-committed seed.\n- Guarantee that a third-party slot studio\'s feed is the feed you saw.\n- Force instant cashouts or ban withdrawal reviews.\n- Insure your balance the way a bank deposit might be insured.\n- Override a prohibition in your country.\n\nCuraçao has also been criticised, fairly, for periods of light supervision and for a long tail of sublicensed brands that were hard to tie to a responsible person. Reform of the GCB model is an attempt to tighten that. Reform does not rewrite old marketing. "Is curacao license legit?" is the wrong binary. The paper can be genuine and the product still poor. The paper can be forged and the product still hashed and honest. Check both.\n\nWhite-label skins complicate identity. One licence may sit behind many domains. A dispute may bounce you to a company you never typed. Write down the legal name at sign-up, not only the brand.\n\nIf you are asking [are online casinos rigged](/guides/are-online-casinos-rigged), a footer seal is weak evidence. A recomputable result is stronger evidence about the draw. A pattern of unpaid withdrawals is strong evidence about the cashier, licence or not. Forums that say "Curaçao = scam" and forums that say "Curaçao = safe" are both flattening a permit into a moral score. Do the lookup.\n\nResponsible-gambling tools are another miss. A licence condition may mention them. The site you see may bury them. Look for limits and self-exclusion on the page, not in a 2019 application PDF.',
     },
     {
       id: "check",
@@ -83,29 +47,12 @@ Responsible-gambling tools are another miss. A licence condition may mention the
     {
       id: "fairness",
       title: "A licence is not a fairness protocol",
-      body: `Fairness systems come in two common families.
-
-Labs test an RNG and issue a letter. Regulators in some countries require that. You still trust the operator to keep using the tested process.
-
-A [provably fair casino](/guides/provably-fair-casino) publishes a hash before you bet and a seed after. You recompute. That check does not need Curaçao to be true, and Curaçao does not perform that check for you.
-
-PVPspinArena's P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette rounds are built around a commitment you can verify. That is a product choice about the draw. It is complementary to whatever corporate licences an operator holds. It is not replaced by a licence, and it does not replace your local law or a [gambling budget](/guides/gambling-budget).`,
+      body: "Fairness systems come in two common families.\n\nLabs test an RNG and issue a letter. Regulators in some countries require that. You still trust the operator to keep using the tested process.\n\nA [provably fair casino](/guides/provably-fair-casino) publishes a hash before you bet and a seed after. You recompute. That check does not need Curaçao to be true, and Curaçao does not perform that check for you.\n\nPVPspinArena's P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette rounds are built around a commitment you can verify. That is a product choice about the draw. It is complementary to whatever corporate licences an operator holds. It is not replaced by a licence, and it does not replace your local law or a [gambling budget](/guides/gambling-budget).",
     },
     {
       id: "example",
       title: "Worked example: two footers, two questions",
-      body: `Sam is comparing Site L and Site H.
-
-1. Site L shows a Curaçao seal and a number. Sam looks up the number on the official register. It matches company L and is active. Sam still cannot recompute a slot spin. Sam reads a $500 withdrawal delay in the terms.
-2. Site H shows no Curaçao seal. It publishes a server-seed hash before each PvP pot and a reveal after. Sam recomputes one finished round. Sam still has site-credit risk until a cashout confirms on-chain.
-3. Sam does not conclude that L is "safer" because of the island, or that H is "illegal" because the footer is quieter.
-4. Sam asks: Is this legal for me? Can I verify the draw? Can I leave with money? Those three answers can split.
-
-The licence was useful for L's identity. It was silent on H's hash. Both checks belong on the same notepad.
-
-A third site, Site F, uses L's seal and a different URL. The register does not list that URL. Sam treats F as a [fake casino site](/guides/fake-casino-sites) problem first, a licensing problem second. Paying F because L looked genuine is how clones harvest deposits.
-
-Sam also writes the date of the check. Licences get suspended. A screenshot from last year is not this week's status.`,
+      body: "Sam is comparing Site L and Site H.\n\n1. Site L shows a Curaçao seal and a number. Sam looks up the number on the official register. It matches company L and is active. Sam still cannot recompute a slot spin. Sam reads a $500 withdrawal delay in the terms.\n2. Site H shows no Curaçao seal. It publishes a server-seed hash before each PvP pot and a reveal after. Sam recomputes one finished round. Sam still has site-credit risk until a cashout confirms on-chain.\n3. Sam does not conclude that L is \"safer\" because of the island, or that H is \"illegal\" because the footer is quieter.\n4. Sam asks: Is this legal for me? Can I verify the draw? Can I leave with money? Those three answers can split.\n\nThe licence was useful for L's identity. It was silent on H's hash. Both checks belong on the same notepad.\n\nA third site, Site F, uses L's seal and a different URL. The register does not list that URL. Sam treats F as a [fake casino site](/guides/fake-casino-sites) problem first, a licensing problem second. Paying F because L looked genuine is how clones harvest deposits.\n\nSam also writes the date of the check. Licences get suspended. A screenshot from last year is not this week's status.",
     },
     {
       id: "summary",
@@ -153,5 +100,5 @@ Sam also writes the date of the check. Licences get suspended. A screenshot from
     "anjouan-gaming-license",
     "kahnawake-gaming-license",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

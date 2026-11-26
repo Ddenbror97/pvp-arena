@@ -25,33 +25,22 @@ export const guide: Guide = {
     {
       id: "sports",
       title: "What Kentucky authorizes online",
-      body: `KRS 230.805 sets the framework for mobile and website sports wagering. KRS 230.811 requires licensing; an offshore registration is not a Kentucky sports-wagering licence. The Kentucky Horse Racing and Gaming Corporation publishes a licensee-search link on its sports-wagering page. Use that register to match the operator, rather than relying on an app-store listing.
-
-For the meaning of a market or ticket, use [sports betting explained](/guides/what-is-sports-betting). That describes the product; the state sources below establish the authorization.`,
+      body: "KRS 230.805 sets the framework for mobile and website sports wagering. KRS 230.811 requires licensing; an offshore registration is not a Kentucky sports-wagering licence. The Kentucky Horse Racing and Gaming Corporation publishes a licensee-search link on its sports-wagering page. Use that register to match the operator, rather than relying on an app-store listing.\n\nFor the meaning of a market or ticket, use [sports betting explained](/guides/what-is-sports-betting). That describes the product; the state sources below establish the authorization.",
     },
     {
       id: "eligibility",
       title: "Age, identity and physical location",
-      body: `The version of KRS 230.805 effective July 15, 2026 requires operators to prevent sports wagering by people under 21, verify identity and use geolocation. Being a Kentucky resident is not a substitute for being physically inside the state when placing an online wager.
-
-The current statute is the reference for these requirements. A dated article about the 2023 launch can accurately describe the launch while being out of date on today's eligibility rules.`,
+      body: "The version of KRS 230.805 effective July 15, 2026 requires operators to prevent sports wagering by people under 21, verify identity and use geolocation. Being a Kentucky resident is not a substitute for being physically inside the state when placing an online wager.\n\nThe current statute is the reference for these requirements. A dated article about the 2023 launch can accurately describe the launch while being out of date on today's eligibility rules.",
     },
     {
       id: "casino",
       title: "Sports authorization is not an online casino licence",
-      body: `The permission in KRS 230.805 is specifically for sports wagering. It does not grant a general online-casino licence for slots, roulette or poker. A casino tab, a cryptocurrency deposit option or a licence issued elsewhere does not demonstrate Kentucky authorization for that separate product.
-
-Keep [online casino legality](/guides/is-online-casino-legal) separate from [Kentucky Derby betting](/guides/kentucky-derby-betting). The first concerns product authorization; the second explains race wagers. Neither changes the scope of a sportsbook licence.`,
+      body: "The permission in KRS 230.805 is specifically for sports wagering. It does not grant a general online-casino licence for slots, roulette or poker. A casino tab, a cryptocurrency deposit option or a licence issued elsewhere does not demonstrate Kentucky authorization for that separate product.\n\nKeep [online casino legality](/guides/is-online-casino-legal) separate from [Kentucky Derby betting](/guides/kentucky-derby-betting). The first concerns product authorization; the second explains race wagers. Neither changes the scope of a sportsbook licence.",
     },
     {
       id: "check",
       title: "How to check an operator before registering",
-      body: `1. Start with the corporation's sports-wagering page and its licensee search.
-2. Match the legal entity and the app or website you intend to use.
-3. Read the current age and location requirements before opening an account.
-4. Check the operator's complaint route and keep the wager record if a dispute occurs.
-
-This guide belongs to the [foundations topic](/guides/topics/foundations). It is a dated explanation of the cited rules, not advice about an individual case or approval of PVPspinArena for Kentucky. [Responsible gambling](/responsible-gambling) applies even where a product is authorized.`,
+      body: "1. Start with the corporation's sports-wagering page and its licensee search.\n2. Match the legal entity and the app or website you intend to use.\n3. Read the current age and location requirements before opening an account.\n4. Check the operator's complaint route and keep the wager record if a dispute occurs.\n\nSee [foundations topic](/guides/topics/foundations). It is a dated explanation of the cited rules, not advice about an individual case or approval of PVPspinArena for Kentucky. [Responsible gambling](/responsible-gambling) applies even where a product is authorized.",
     },
   ],
   faqs: [
@@ -91,5 +80,5 @@ This guide belongs to the [foundations topic](/guides/topics/foundations). It is
     "online-gambling-legal-south-carolina",
     "kentucky-derby-betting",
   ],
-  updated: "2026-11-05",
+  updated: "2026-11-26",
 };

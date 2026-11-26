@@ -10,13 +10,13 @@ export const guide: Guide = {
   description:
     "Are online casinos safe? Use these checks for licensing, fund custody, fairness, and account security before you play for US dollars.",
   answer:
-    "Are online casinos safe? Some are careful businesses with a license you can verify, rules you can read, and withdrawals that match those rules. Some are sloppy. Some are built to take a deposit and stall. The category is not safe or unsafe by itself. This page is a way to check a specific site before you leave money there. It is for adults 18 or older, or the age required where you live. Only wager US dollars you can afford to lose, and stop if gambling stops feeling like entertainment you control.\n\nSafety here means several things at once: that the company is identifiable, that the bet is one you are allowed to place, that the game does what the rules say, that you can withdraw under those rules, and that your login is not easy to steal. A site can pass one of those and fail another. Check them separately.",
+    "Are online casinos safe? Some are careful businesses with a license you can verify, rules you can read, and withdrawals that match those rules. Some are sloppy. Some are built to take a deposit and stall. The category is not safe or unsafe by itself. It is for adults 18 or older, or the age required where you live. Only wager US dollars you can afford to lose, and stop if gambling stops feeling like entertainment you control.\n\nSafety here means several things at once: that the company is identifiable, that the bet is one you are allowed to place, that the game does what the rules say, that you can withdraw under those rules, and that your login is not easy to steal. A site can pass one of those and fail another. Check them separately.",
   facts: [],
   sections: [
     {
       id: "start-with-whether-you-are-allowed-to-play",
       title: "Start with whether you are allowed to play",
-      body: "A polished site is not a legal permission. Real-money online casino play is restricted in most US states. A license from another country can be real and still not authorize your bet. Sweepstakes casinos and social casinos are different products. Cryptocurrency does not erase state law. This article is not legal advice, and state rules change. If you cannot confirm the current rule with your state regulator, do not deposit. No safety check inside the lobby fixes an illegal wager.\n\nAge is part of the same gate. If you are under 21, you are not the customer these products are for. A site that lets a minor through has already failed a basic control, which is useful information if you are an adult judging it, and a hard stop if you are not.\n\nWrite down the company name in the terms before you look at games. If there is no company name, stop. If a license number is printed, open the regulator's register and see whether that number belongs to that company and to gambling. A badge that does not resolve is decoration. Decoration is not safety.",
+      body: "A polished site is not a legal permission. Real-money online casino play is restricted in most US states. A license from another country can be real and still not authorize your bet. Sweepstakes casinos and social casinos are different products. Cryptocurrency does not erase state law. If you cannot confirm the current rule with your state regulator, do not deposit. No safety check inside the lobby fixes an illegal wager.\n\nAge is part of the same gate. If you are under 21, you are not the customer these products are for. A site that lets a minor through has already failed a basic control, which is useful information if you are an adult judging it, and a hard stop if you are not.\n\nWrite down the company name in the terms before you look at games. If there is no company name, stop. If a license number is printed, open the regulator's register and see whether that number belongs to that company and to gambling. A badge that does not resolve is decoration. Decoration is not safety.",
     },
     {
       id: "custody-whose-hands-hold-the-balance",
@@ -79,5 +79,5 @@ export const guide: Guide = {
     { label: "UK Gambling Commission", url: "https://www.gamblingcommission.gov.uk/" },
   ],
   related: ["are-online-casinos-rigged", "fake-casino-sites"],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

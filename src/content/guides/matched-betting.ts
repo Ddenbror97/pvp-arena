@@ -27,70 +27,27 @@ export const guide: Guide = {
     {
       id: "how",
       title: "How matched betting works",
-      body: `A bookmaker offers a promotion, typically "bet $10, get a $10 free bet". You place the qualifying bet with the bookmaker (a **back** bet: you win if the outcome happens). At the same time you place a **lay** bet on the same outcome on a betting exchange: you win if it does not happen, because you are acting as the bookmaker for another exchange user.
-
-If the two prices are close, the back and the lay cancel each other. You lose a little on the qualifying bet, then use the free bet the same way. Because a free bet risks none of your own money, laying it off locks in most of its value whichever side wins.
-
-Two things make the exchange half possible. First, an exchange lets you lay at all; see [betting exchanges explained](/guides/betting-exchange-explained). Second, the exchange charges **commission** on net winnings in a market, so every lay is priced with that fee in mind. Matched betting is related to [arbitrage betting](/guides/arbitrage-betting), which looks for a price gap without a bonus, and to [hedge betting](/guides/hedge-betting), which offsets a bet you already hold. The whole family sits in the [sports betting topic](/guides/topics/sports-betting).`,
+      body: 'A bookmaker offers a promotion, typically "bet $10, get a $10 free bet". You place the qualifying bet with the bookmaker (a **back** bet: you win if the outcome happens). At the same time you place a **lay** bet on the same outcome on a betting exchange: you win if it does not happen, because you are acting as the bookmaker for another exchange user.\n\nIf the two prices are close, the back and the lay cancel each other. You lose a little on the qualifying bet, then use the free bet the same way. Because a free bet risks none of your own money, laying it off locks in most of its value whichever side wins.\n\nTwo things make the exchange half possible. First, an exchange lets you lay at all; see [betting exchanges explained](/guides/betting-exchange-explained). Second, the exchange charges **commission** on net winnings in a market, so every lay is priced with that fee in mind. Matched betting is related to [arbitrage betting](/guides/arbitrage-betting), which looks for a price gap without a bonus, and to [hedge betting](/guides/hedge-betting), which offsets a bet you already hold. The whole family sits in the [sports betting topic](/guides/topics/sports-betting).',
     },
     {
       id: "formula",
       title: "The lay-stake formula and a qualifying bet",
-      body: `For a normal (cash) back bet, the lay stake that leaves the same result either way is:
-
-**Lay stake = back stake × back odds ÷ (lay odds − commission)**
-
-Commission is written as a decimal: 2% is 0.02.
-
-**Worked example: qualifying bet.** You back $10 at decimal odds of 3.00 with the bookmaker. The exchange lay price is 3.10 and commission is 2%.
-
-- Lay stake = 10 × 3.00 ÷ (3.10 − 0.02) = 30 ÷ 3.08 = **$9.74**.
-- Your lay **liability** (what you pay if the outcome happens) = 9.74 × (3.10 − 1) = **$20.45**.
-
-| Outcome | Bookmaker bet | Exchange lay | Net |
-| --- | --- | --- | --- |
-| Back wins | +$20.00 | −$20.45 | **−$0.45** |
-| Back loses | −$10.00 | +$9.74 × 0.98 = +$9.55 | **−$0.45** |
-
-The $0.45 is the **qualifying loss**: the price of unlocking the free bet. The exchange must hold the liability ($20.45) in your account before the lay is matched, so you need that money available, not just the $10 back stake. Smarkets' help centre shows the same [lay liability calculation](https://help.smarkets.com/hc/en-gb/articles/115003381865-How-to-calculate-the-liability-of-a-lay-bet).`,
+      body: "For a normal (cash) back bet, the lay stake that leaves the same result either way is:\n\n**Lay stake = back stake × back odds ÷ (lay odds − commission)**\n\nCommission is written as a decimal: 2% is 0.02.\n\n**Worked example: qualifying bet.** You back $10 at decimal odds of 3.00 with the bookmaker. The exchange lay price is 3.10 and commission is 2%.\n\n- Lay stake = 10 × 3.00 ÷ (3.10 − 0.02) = 30 ÷ 3.08 = **$9.74**.\n- Your lay **liability** (what you pay if the outcome happens) = 9.74 × (3.10 − 1) = **$20.45**.\n\n| Outcome | Bookmaker bet | Exchange lay | Net |\n| --- | --- | --- | --- |\n| Back wins | +$20.00 | −$20.45 | **−$0.45** |\n| Back loses | −$10.00 | +$9.74 × 0.98 = +$9.55 | **−$0.45** |\n\nThe $0.45 is the **qualifying loss**: the price of unlocking the free bet. The exchange must hold the liability ($20.45) in your account before the lay is matched, so you need that money available, not just the $10 back stake. Smarkets' help centre shows the same [lay liability calculation](https://help.smarkets.com/hc/en-gb/articles/115003381865-How-to-calculate-the-liability-of-a-lay-bet).",
     },
     {
       id: "free-bet",
       title: "Laying off a free bet",
-      body: `Most free bets are **stake not returned (SNR)**: if a $10 free bet wins at 5.00, you receive the $40 profit but not the $10 stake. So the formula uses (back odds − 1):
-
-**Lay stake (SNR free bet) = free bet × (back odds − 1) ÷ (lay odds − commission)**
-
-**Worked example.** A $10 SNR free bet backed at 5.00, laid at 5.20 with 2% commission.
-
-- Lay stake = 10 × 4.00 ÷ (5.20 − 0.02) = 40 ÷ 5.18 = **$7.72**.
-- Liability = 7.72 × 4.20 = **$32.43**.
-
-| Outcome | Free bet | Exchange lay | Net |
-| --- | --- | --- | --- |
-| Back wins | +$40.00 | −$32.43 | **+$7.57** |
-| Back loses | $0 | +$7.72 × 0.98 = +$7.57 | **+$7.57** |
-
-The "$10" free bet is worth about $7.57, and after the $0.45 qualifying loss the whole offer nets about **$7.12**. Higher back odds usually keep more of a free bet's value, but they also raise the liability you must fund on the exchange. A [bonus bet](/guides/bonus-bets-explained) page explains the stake-returned and stake-not-returned wording you will see in terms.`,
+      body: 'Most free bets are **stake not returned (SNR)**: if a $10 free bet wins at 5.00, you receive the $40 profit but not the $10 stake. So the formula uses (back odds − 1):\n\n**Lay stake (SNR free bet) = free bet × (back odds − 1) ÷ (lay odds − commission)**\n\n**Worked example.** A $10 SNR free bet backed at 5.00, laid at 5.20 with 2% commission.\n\n- Lay stake = 10 × 4.00 ÷ (5.20 − 0.02) = 40 ÷ 5.18 = **$7.72**.\n- Liability = 7.72 × 4.20 = **$32.43**.\n\n| Outcome | Free bet | Exchange lay | Net |\n| --- | --- | --- | --- |\n| Back wins | +$40.00 | −$32.43 | **+$7.57** |\n| Back loses | $0 | +$7.72 × 0.98 = +$7.57 | **+$7.57** |\n\nThe "$10" free bet is worth about $7.57, and after the $0.45 qualifying loss the whole offer nets about **$7.12**. Higher back odds usually keep more of a free bet\'s value, but they also raise the liability you must fund on the exchange. A [bonus bet](/guides/bonus-bets-explained) page explains the stake-returned and stake-not-returned wording you will see in terms.',
     },
     {
       id: "costs",
       title: "What eats the margin",
-      body: `The tables above assume the prices are still there when you click. In practice:
-
-- **Price movement.** If the lay price moves before your lay is matched, the two sides no longer cancel. Place the lay first and check it is fully matched, or accept that a partly matched lay leaves you exposed.
-- **Commission.** Exchanges charge a percentage of net winnings in each market. Smarkets explains [why it charges commission](https://help.smarkets.com/hc/en-gb/articles/212654725-Why-do-Smarkets-charge-commission) and gives a [commission breakdown](https://help.smarkets.com/hc/en-gb/articles/212106009-Commission-breakdown); other exchanges use other rates.
-- **Terms.** Minimum odds, qualifying markets, expiry dates, one-offer-per-household rules and "bet must settle within 7 days" clauses decide whether the bonus pays at all. A missed condition turns the qualifying loss into a plain loss.
-- **Wagering requirements.** Casino-style bonuses that must be wagered many times are a different product; the [wagering requirement calculator](/guides/wagering-requirement-calculator) shows why they are rarely worth matching.`,
+      body: 'The tables above assume the prices are still there when you click. In practice:\n\n- **Price movement.** If the lay price moves before your lay is matched, the two sides no longer cancel. Place the lay first and check it is fully matched, or accept that a partly matched lay leaves you exposed.\n- **Commission.** Exchanges charge a percentage of net winnings in each market. Smarkets explains [why it charges commission](https://help.smarkets.com/hc/en-gb/articles/212654725-Why-do-Smarkets-charge-commission) and gives a [commission breakdown](https://help.smarkets.com/hc/en-gb/articles/212106009-Commission-breakdown); other exchanges use other rates.\n- **Terms.** Minimum odds, qualifying markets, expiry dates, one-offer-per-household rules and "bet must settle within 7 days" clauses decide whether the bonus pays at all. A missed condition turns the qualifying loss into a plain loss.\n- **Wagering requirements.** Casino-style bonuses that must be wagered many times are a different product; the [wagering requirement calculator](/guides/wagering-requirement-calculator) shows why they are rarely worth matching.',
     },
     {
       id: "limits",
       title: "Account limits, legality and tax",
-      body: `Matched betting uses offers as written. It is not cheating the event. But a bookmaker sets its own commercial rules: it can restrict the stake you may place, stop sending offers ("gubbing"), or close an account that only bets on promotions. Expect that to happen; it is the usual end of a matched betting run, not a malfunction.
-
-Whether matched betting is permitted where you live depends on whether the bookmaker and the exchange are licensed for you. Many US states license sportsbooks but not betting exchanges, so the lay side may not exist. Check [where sports betting is legal](/guides/sports-betting-legal-states) and use only licensed operators. Tax treatment also varies by country: in the United States, gambling winnings are taxable income and losses are only deductible within the IRS rules in [Topic 419](https://www.irs.gov/taxtopics/tc419). Keep a log of every back, lay, commission and bonus, so you can show the net result.
-
-Adults only, 18 or the higher age your law sets. This guide explains the arithmetic; it is not legal or tax advice. PVPspinArena does not run a sportsbook or an exchange, and any promotional credit it gives follows its own [terms](/terms), not a bookmaker's. Its games are player-versus-player pots explained on [how it works](/how-it-works). If betting stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: 'Matched betting uses offers as written. It is not cheating the event. But a bookmaker sets its own commercial rules: it can restrict the stake you may place, stop sending offers ("gubbing"), or close an account that only bets on promotions. Expect that to happen; it is the usual end of a matched betting run, not a malfunction.\n\nWhether matched betting is permitted where you live depends on whether the bookmaker and the exchange are licensed for you. Many US states license sportsbooks but not betting exchanges, so the lay side may not exist. Check [where sports betting is legal](/guides/sports-betting-legal-states) and use only licensed operators. Tax treatment also varies by country: in the United States, gambling winnings are taxable income and losses are only deductible within the IRS rules in [Topic 419](https://www.irs.gov/taxtopics/tc419). Keep a log of every back, lay, commission and bonus, so you can show the net result.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.',
     },
   ],
   faqs: [
@@ -132,7 +89,10 @@ Adults only, 18 or the higher age your law sets. This guide explains the arithme
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "GambleAware", url: "https://www.gambleaware.org/" },
+    {
+      label: "GambleAware",
+      url: "https://www.gambleaware.org/",
+    },
   ],
   related: [
     "arbitrage-betting",
@@ -141,11 +101,17 @@ Adults only, 18 or the higher age your law sets. This guide explains the arithme
     "hedge-betting",
     "wagering-requirement-calculator",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
   cta: {
     title: "Prefer a pot you can check?",
     text: "PVPspinArena runs no sportsbook to match against. Jackpot pays the pot to one player, chance equal to stake share, with a 5% fee.",
-    primary: { to: "/how-it-works", label: "How the games work" },
-    secondary: { to: "/guides/betting-exchange-explained", label: "Betting exchanges explained" },
+    primary: {
+      to: "/how-it-works",
+      label: "How the games work",
+    },
+    secondary: {
+      to: "/guides/betting-exchange-explained",
+      label: "Betting exchanges explained",
+    },
   },
 };

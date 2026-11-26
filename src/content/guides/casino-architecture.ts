@@ -101,7 +101,7 @@ European gambling houses start from a different brief. A spa-town casino or a Ve
 
 ### What you can check yourself
 
-You cannot audit a count room from the slot aisle, and you are not supposed to. You can audit a game whose rules publish the return and whose results you can recompute. PVPspinArena's table is a screen, not a pit: [roulette](/roulette) uses a 33-slot wheel that returns 32/33 on a win, about a 7.88% Purple or Silver edge after the win fee, with no ceiling full of domes because there is no physical layout to film. Seeds commit the outcome, and the fairness page shows the check. It is still gambling, 18+ only, and the stake should be money you can lose.
+You cannot audit a count room from the slot aisle, and you are not supposed to. You can audit a game whose rules publish the return and whose results you can recompute. Seeds commit the outcome, and the fairness page shows the check. It is still gambling, 18+ only, and the stake should be money you can lose.
 
 The building lessons stay useful when you walk into a real casino. Notice whether you can see an exit sign, whether the pit is actually visible to its own supervisor, and whether anyone is asking you to ignore the clock in your pocket. The room is designed. You can still decide when to stand up.`,
     },
@@ -129,13 +129,19 @@ The building lessons stay useful when you walk into a real casino. Notice whethe
     },
   ],
   sources: [
-    { label: "Wikipedia: Casino", url: "https://en.wikipedia.org/wiki/Casino" },
+    {
+      label: "Wikipedia: Casino",
+      url: "https://en.wikipedia.org/wiki/Casino",
+    },
     {
       label: "Encyclopaedia Britannica: casino",
       url: "https://www.britannica.com/topic/casino-gambling-house",
     },
-    { label: "UNLV Center for Gaming Research", url: "https://gaming.library.unlv.edu/" },
+    {
+      label: "UNLV Center for Gaming Research",
+      url: "https://gaming.library.unlv.edu/",
+    },
   ],
   related: ["casino-carpet", "casino-surveillance", "casino-cage", "las-vegas-history", "pit-boss"],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

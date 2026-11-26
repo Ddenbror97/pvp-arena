@@ -10,196 +10,10 @@ export const guide: Guide = {
     "beat the slots",
     "slot tips that work",
   ],
-  title: "How to Win Online Slots: Why You Cannot Beat RTP",
+  title: "How to Win Online Slots: Odds, Costs and Limits",
   description:
-    "How to win online slots: you cannot beat a negative-EV reel. RTP and volatility are the only honest levers. No pattern or system fixes the edge.",
-  h1: "How to win online slots: you cannot beat a negative-EV reel",
-  answer:
-    "How to win online slots has an honest answer: you cannot beat a negative-EV reel. Every published RTP under 100% is a house edge on turnover. Patterns, martingales, “due” machines and streamer rituals do not change that edge. The only levers you actually have are a higher RTP build, a volatility you can survive, a smaller stake and fewer spins. Short sessions can finish ahead; that is variance, not a method.",
-  facts: [
-    "A slot with RTP below 100% is a negative-EV bet on every spin, including the one after a bonus.",
-    "Betting systems change the shape of losses, not the sign of expected value.",
-    "Independent spins have no memory; a dry hour does not raise the next hit chance.",
-    "Higher RTP and lower turnover are the only cost levers you can choose from the outside.",
-    "PVPspinArena's slot game is P2P Slott, a 1v1 duel; Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker are the live games.",
-  ],
-  sections: [
-    {
-      id: "honest",
-      title: "The honest answer",
-      body: `People search how to win online slots because the banners say someone just did. Someone did. A volatile paytable pays a screenshot now and then. That screenshot is not a repeatable method.
-
-A 96% RTP slot has a 4% house edge. [RTP explained](/guides/rtp-explained) is the identity: RTP + edge = 100%. You cannot remove the 4% by changing the order of your stakes. You cannot remove it by watching a stream. You cannot remove it by switching colours of the spin button.
-
-This [slots topic](/guides/topics/slots) page is for adults 18+. It will not teach a pattern. If you want the controls, use [how to play online slots](/guides/how-to-play-slots). If you want the cost in dollars, use [online slots real money](/guides/online-slots-real-money).
-
-PVPspinArena's slot game is P2P Slott, a 1v1 duel. The comparable honesty on this site is [how to win at roulette](/guides/how-to-win-at-roulette): pick the known edge, bet less often, leave. Reels hide the strips; the conclusion is the same sign.`,
-    },
-    {
-      id: "negative-ev",
-      title: "Why the reel is negative expected value",
-      body: `Expected value per spin is (RTP − 100%) × stake. For a $1 spin at 96% RTP, EV is −$0.04. For a $2 spin it is −$0.08. The bonus round is already inside that RTP. Hitting the feature does not flip the sign of the model. It is how the model delivers part of the 96%.
-
-### Illustration, not a live paytable
-
-| Action | Stake | RTP (illustration) | EV per spin | 250 spins EV |
-| --- | --- | --- | --- | --- |
-| Base game | $1 | 96% | −$0.04 | −$10 |
-| Same title, leaner build | $1 | 94% | −$0.06 | −$15 |
-| Double stake | $2 | 96% | −$0.08 | −$20 |
-| Bonus buy at 80× | $80 | 96% | −$3.20 | n/a (one buy) |
-| Bonus buy at 80× | $80 | 94% | −$4.80 | n/a |
-
-The buy row is one click. It is not a smarter click. [Bonus buy slots](/guides/bonus-buy-slots) only compress the same leak into a larger ticket.
-
-[Expected value](/guides/expected-value-gambling) is the dollar language. [Slot machine odds](/guides/slot-machine-odds) is the slot language. Both say the centre of the dartboard is below zero when RTP is below 100%.`,
-    },
-    {
-      id: "not-systems",
-      title: "Systems that do not beat the edge",
-      body: `These show up in the same search results. None of them change EV.
-
-- **Martingale on a line.** Doubling after a loss hits a table limit or a budget limit. The edge is still 4% on every dollar that actually gets spun. The [martingale strategy](/guides/martingale-strategy) fails on even-money games; it fails louder on a slot that does not even pay even money most hits.
-- **Due machines.** The last 200 dry spins do not raise P(bonus). That is the [gambler's fallacy](/guides/gamblers-fallacy).
-- **Hot machines.** A bonus does not raise the next spin’s RTP. Independent draws have no temperature.
-- **Time of day / new seed / after a jackpot.** Unless the operator publishes a must-hit function you can price, these are stories. [Progressive jackpot odds](/guides/progressive-jackpot-odds) is the long-shot page, not a hunt clock.
-- **Stop after two features.** A stop rule can limit turnover. It does not make the spins you already took plus-EV.
-- **Watching a streamer first.** You are sampling their highlights, not the strips.
-
-Pattern-chasing is how people turn a $20 planned leak into a $200 unplanned one. This guide will not give you a pattern to chase.
-
-### Why “systems” keep getting republished
-
-A minus-EV game produces winners every hour. Those winners write posts. The losers do not. The archive is a highlight reel with a comments section. A rule that would actually flip EV would require either a published strip you can exploit (studios do not ship that) or a broken operator (you cannot count on a crime as a strategy). What remains is folklore that rearranges stakes.
-
-If a page shows a colour-coded “best time to spin,” close it. Time of day is not a weight on a virtual stop. If a page shows a Fibonacci on a $0.20 line, close it. The sequence changes the path to the limit, not the 4% on each dollar that gets spun. [House edge](/guides/house-edge) is the keep-rate language if you want the same fact without the reel skin.`,
-    },
-    {
-      id: "levers",
-      title: "The only levers you actually have",
-      body: `You cannot beat the reel. You can choose a cheaper hour.
-
-1. **RTP on this install.** Prefer 96% over 94% when cost matters. Read the panel, not a review of a different build.
-2. **Volatility you can survive.** High volatility is not “better odds.” It is a wider error bar around the same leak. [Slot volatility](/guides/slot-volatility) is the shape. If a drought ends the night, pick lower volatility or do not play.
-3. **Stake size.** Halving the stake halves the dollar EV and the dollar swings. It does not flip the sign.
-4. **Spin count.** Fewer spins, less turnover, smaller expected cost. Autoplay is the opposite lever.
-5. **Skip the bonus buy** unless you are explicitly buying a larger, faster ticket and can lose it.
-6. **Skip the progressive qualifier** if the only reason you max-bet is the meter.
-
-### Illustration, not a promise
-
-Two players, both on 96% RTP.
-
-- A: $0.40 × 100 spins = $40 wagered. Expected cost $1.60.
-- B: $2 × 400 autoplay = $800 wagered. Expected cost $32.
-
-B will have more screenshots. B also bought twenty times the leak. Neither “won at slots” as a method. A spent less. That is the only honest ranking.
-
-[Crypto slots](/guides/crypto-slots) do not add a seventh lever. The coin is the cashier.
-
-### A budget is damage control, not a win method
-
-A [gambling budget](/guides/gambling-budget) stops the leak from hitting rent. It does not make the leak plus-EV. People treat a written $40 cap as if the game will “respect” it and pay before it hits. The game does not know the cap. The cap is for you. When it hits, you already received the entertainment you paid for — including the dry spins. Asking the reel to refund the cap is how a budget becomes a chase.
-
-[Free slots](/guides/free-slots) are the place to learn that a feature can refuse to land in a 200-spin clip. Learn it there. Do not pay cash to relearn it.`,
-    },
-    {
-      id: "sessions",
-      title: "Why a winning session is not a method",
-      body: `[Variance in gambling](/guides/variance-in-gambling) is why minus-EV games pay winners every hour of the day. A high-volatility 96% title can return 250% in 80 spins. It can also return 20%. Both are legal draws.
-
-A method would be a rule that makes EV positive from the outside. You do not have the strips. You do not have a count. You do not have a dealer error. Slots are not blackjack. There is no basic-strategy chart that cuts 4% to 0.5%. The leftover edge on a slot is the whole edge.
-
-Treat a win as a good draw you can walk with. Treat a loss as the product working. Do not treat either as information about the next grid.
-
-### Paylines and “covering the board”
-
-Max lines do not create a winning method. They create a complete bet at a higher total stake. [Slot paylines explained](/guides/slot-paylines-explained) is the arithmetic. If someone sells “play 1–2–3 lines on Tuesdays,” they are selling a story. The strips do not keep a calendar.
-
-### Crypto does not mint an edge
-
-[Crypto slots](/guides/crypto-slots) change the cashier. A hashed dice game in the same lobby does not make the slot computable. If you cannot replay the grid, you do not have a beatable leak you can measure from the outside. You have a 4% product with a faster reload.`,
-    },
-    {
-      id: "not-here",
-      title: "What “winning” looks like on PVPspinArena",
-      body: `P2P Slott is the reel game, a 1v1 duel. Jackpot and Coinflip take a 5% fee from the pot, so the winner receives 95%. The house is not a player in the pot. You can still lose the whole stake in one draw. Roulette is house-banked. Purple and Silver return 32/33 before the win fee, and Green returns 14/33. You can count the pockets on [Roulette](/roulette) and repeat the multiplication.
-
-That is a different product, not a slot-beating trick. If you came for a reel system, you will not find one here either. You will find a wheel you can price and a [Fairness](/fairness) page for the hash.
-
-A $20 Jackpot ticket in a $200 pot is 10%. That sentence is the opposite of a hidden 1-in-10-million symbol. Do not import slot folklore onto that pot.`,
-    },
-    {
-      id: "what-win-means",
-      title: "What a “win” even means on a reel",
-      body: `Search copy uses “win” for three different events. Mixing them is how a method page gets written.
-
-### Spin win
-
-Any paying combination, including 0.2×. Hit rate loves this. Your pocket may not.
-
-### Session win
-
-You leave with more than you sat down with. Variance allows it on a minus-EV game every day of the year. It is not evidence you found a rule.
-
-### Cashout win
-
-The cashier paid you and the bonus terms are clear. Until then, a banner is a banner.
-
-### Illustration, not a forecast
-
-Two hundred $1 spins on a 96% title. Expected return $192. Player A finishes at $240 and calls it a method (they raised after two features). Player B finishes at $70 and calls the game broken. Player C finishes at $188 and thinks they “about hit RTP.” All three are compatible with the same model. A is not a coach. B is not owed a refund. C did not measure 96% in 200 spins.
-
-[Slot volatility](/guides/slot-volatility) is why A and B can sit at the same RTP. [How to play online slots](/guides/how-to-play-slots) is how to stop on a count so you do not turn A’s screenshot into B’s reload.
-
-### House edge on winners
-
-The edge does not take a holiday because you are ahead. The next spin still has EV = (RTP − 100%) × stake. Walking while ahead is a stop rule. It is a good stop rule. It is not a plus-EV rule. Staying because you are “running good” is the same edge with a story attached.
-
-If you want a game where “winning” can mean a share you wrote before the draw, use a [PvP jackpot](/guides/crypto-jackpot). That is still a risk. It is not a hidden reel. It is also not a slot-beating workaround.`,
-    },
-    {
-      id: "when-to-stop",
-      title: "When the hunt for a method is the harm",
-      body: `If you are still looking for a way to beat the reels after this page, pause. The next article with a “secret” is a sales page.
-
-Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion) if the search itself is keeping you at the cashier. [Responsible gambling](/responsible-gambling) lists limits and helplines including 1-800-GAMBLER. Wanting a method is common. Needing one to get even is a warning sign.`,
-    },
-  ],
-  faqs: [
-    {
-      q: "Is there a way to win at online slots consistently?",
-      a: "No. A slot with RTP under 100% has a negative expected value on every spin. Short-term wins happen; they are variance, not a repeatable edge.",
-    },
-    {
-      q: "Do betting systems work on slots?",
-      a: "They change how bumpy the path is, not the house edge. Martingale and similar progressions fail when a drought meets a limit.",
-    },
-    {
-      q: "Does a dry session mean a bonus is due?",
-      a: "No. Independent spins have no memory. A long wait is compatible with the average feature interval and does not raise the next spin’s chance.",
-    },
-    {
-      q: "What is the only thing I can change?",
-      a: "The RTP build you accept, the volatility you can survive, the stake and the number of spins. Those change cost and ride, not the sign of EV.",
-    },
-    {
-      q: "Does PVPspinArena have a slot system?",
-      a: "No. This site's slot game is P2P Slott, a 1v1 duel, and it does not publish a reel-beating method. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
-    },
-    {
-      q: "Can a bonus buy be +EV?",
-      a: "Only if that buy’s own RTP is above 100%, which studio buys are not built to be. A buy is a larger negative-EV ticket with more variance.",
-    },
-  ],
-  sources: [
-    { label: "Wikipedia: Expected value", url: "https://en.wikipedia.org/wiki/Expected_value" },
-    { label: "Wikipedia: Return to player", url: "https://en.wikipedia.org/wiki/Return_to_player" },
-    {
-      label: "Wikipedia: Gambler's fallacy",
-      url: "https://en.wikipedia.org/wiki/Gambler%27s_fallacy",
-    },
-  ],
+    "Understand what a slot win means, calculate turnover and expected cost, and use practical stake and time limits without relying on streaks or betting systems.",
+  h1: "How to Win Online Slots: Odds, Costs and Limits",
   related: [
     "free-slots",
     "slot-volatility",
@@ -208,5 +22,57 @@ Use [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-excl
     "gamblers-fallacy",
     "expected-value-gambling",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
+  answer:
+    "How to win online slots starts with the payout rules: a qualifying combination can award more than its stake, but no betting pattern guarantees a profitable session. In an independent random game, earlier losses do not improve the next spin. Control total spending rather than treating a win as a repeatable system.",
+  facts: [
+    "A paying spin can return less than its cost.",
+    "At an illustrative 96% RTP, theoretical expected cost is 4% of turnover.",
+  ],
+  sections: [
+    {
+      id: "section-1",
+      title: "Gross return is not profit",
+      body: "If a $1 spin returns $0.40, the balance falls by $0.60 despite the win animation. If ten $1 spins return $6 altogether, the session result is a $4 loss. Count all paid stakes rather than just bonus totals.",
+    },
+    {
+      id: "section-2",
+      title: "Turnover determines expected cost",
+      body: "At 96% RTP, 100 spins of $0.20 create $20 turnover and $0.80 theoretical expected loss. The same spin count at $2 creates $200 turnover and $8 expected loss. Neither is a loss ceiling. [RTP explained](/guides/rtp-explained) covers the average; [slot volatility](/guides/slot-volatility) explains variation.",
+    },
+    {
+      id: "section-3",
+      title: "Why streak systems do not establish an edge",
+      body: "Doubling after losses increases exposure but does not change an independent spin’s probability. A stop rule can constrain spending without making the next wager favourable. [Slot machine myths](/guides/slot-machine-myths) covers common assumptions, with other mechanics in the [Slots topic](/guides/topics/slots).",
+    },
+    {
+      id: "section-4",
+      title: "A practical session plan",
+      body: "Read the total bet, active RTP and feature prices. Set a money ceiling and stop time before play. Keep essential funds separate and do not use extra deposits to recover the earlier session. If those limits become difficult to follow, use [responsible-play options](/responsible-gambling) for a break or exclusion.",
+    },
+  ],
+  faqs: [
+    {
+      q: "Can a session finish ahead?",
+      a: "Yes. That does not establish a repeatable winning method.",
+    },
+    {
+      q: "Does a paying spin always make profit?",
+      a: "No. Its award can be below the stake.",
+    },
+    {
+      q: "Does doubling remove the edge?",
+      a: "No. It changes monetary exposure.",
+    },
+    {
+      q: "Is expected loss the most I can lose?",
+      a: "No. Short-session losses can exceed that average.",
+    },
+  ],
+  sources: [
+    {
+      label: "UK Gambling Commission: long-run return and random outcomes",
+      url: "https://www.gamblingcommission.gov.uk/public-and-players/guide/return-to-player-how-much-gaming-machines-payout",
+    },
+  ],
 };

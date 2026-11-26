@@ -21,27 +21,37 @@ export const guide: Guide = {
     {
       id: "eligibility",
       title: "Qualifying XP is not a competitive rank",
-      body: "Valve’s client text identifies Prime eligibility for XP and weekly rewards, then tells eligible players to earn an XP rank for a Care Package. That is a profile progression event, not a Premier rating threshold or a promise based on match wins. Read the current progress and weekly eligibility notice in the client.\n\nA [free CS2 skins](/guides/free-cs2-skins) claim from a third-party site is a separate proposition. The [CS:GO heritage hub](/guides/topics/csgo-heritage) distinguishes the official item systems from external services.",
+      body: `Valve’s client text identifies Prime eligibility for XP and weekly rewards, then tells eligible players to earn an XP rank for a Care Package. That is a profile progression event, not a Premier rating threshold or a promise based on match wins. Read the current progress and weekly eligibility notice in the client.
+
+A [free CS2 skins](/guides/free-cs2-skins) claim from a third-party site is a separate proposition. The [CS:GO heritage hub](/guides/topics/csgo-heritage) distinguishes the official item systems from external services.`,
     },
     {
       id: "choices",
       title: "Read selection cost before claiming",
-      body: "Do not assume every offered reward costs one selection. The current UI text includes a warning for an untradable option that consumes both rewards. Compare the item, its tradability and the displayed selection cost before confirming.\n\nTwo available selections therefore do not necessarily mean two separate items. This page does not freeze the number of offers shown by every version of the client or list an unsupported universal item pool.",
+      body: `Do not assume every offered reward costs one selection. The current UI text includes a warning for an untradable option that consumes both rewards. Compare the item, its tradability and the displayed selection cost before confirming.
+
+Two available selections therefore do not necessarily mean two separate items. Read the current client’s offers; item pools and presentation can change with updates.`,
     },
     {
       id: "later",
       title: "Unclaimed rewards can be stored—but not indefinitely",
-      body: "The client says rewards can be redeemed later through the store. It also warns that unredeemed rewards are lost if you earn new ones first. That is different from claiming that profile XP itself vanishes at the weekly reset.\n\nCheck the current rollover and claim notices before assuming an old package will accumulate alongside a new one. Do not confuse this claim flow with [Armory rewards](/guides/cs2-armory-pass), which have their own conditions.",
+      body: `The client says rewards can be redeemed later through the store. It also warns that unredeemed rewards are lost if you earn new ones first. That is different from claiming that profile XP itself vanishes at the weekly reset.
+
+Check the current rollover and claim notices before assuming an old package will accumulate alongside a new one. Do not confuse this claim flow with [Armory rewards](/guides/cs2-armory-pass), which have their own conditions.`,
     },
     {
       id: "case",
       title: "Receiving a case does not open it",
-      body: "Valve’s case-reward UI warns that opening requires a purchased key. A claimed case and a result inside an opened case are separate inventory events; the package itself does not promise the case’s rarest item.\n\n[CS2 case odds](/guides/cs2-case-odds) explains the separate outcome question. You do not need to buy a key merely because you received a case.",
+      body: `Valve’s case-reward UI warns that opening requires a purchased key. A claimed case and a result inside an opened case are separate inventory events; the package itself does not promise the case’s rarest item.
+
+[CS2 case odds](/guides/cs2-case-odds) explains the separate outcome question. You do not need to buy a key merely because you received a case.`,
     },
     {
       id: "pool",
       title: "A dated pool update is not a permanent drop list",
-      body: "Valve’s January 21, 2026 announcement introduced new Care Package collections. That is evidence that the pool can change, not a complete current inventory list. Check the actual reward offers and trade restrictions rather than pricing a hoped-for drop from an old article.\n\nIf an item can be sold, [Steam market fees](/guides/steam-market-fees) explains why a listed buyer price is not necessarily the amount received. PVPspinArena does not distribute Valve rewards or pay for claiming them. Use [responsible gambling](/responsible-gambling) for support with paid random outcomes.",
+      body: `Valve’s January 21, 2026 announcement introduced new Care Package collections. That is evidence that the pool can change, not a complete current inventory list. Check the actual reward offers and trade restrictions rather than pricing a hoped-for drop from an old article.
+
+If an item can be sold, [Steam market fees](/guides/steam-market-fees) explains why a listed buyer price is not necessarily the amount received. PVPspinArena does not distribute Valve rewards or pay for claiming them. Use [responsible gambling](/responsible-gambling) for support with paid random outcomes.`,
     },
   ],
   faqs: [
@@ -74,5 +84,5 @@ export const guide: Guide = {
     },
   ],
   related: ["free-cs2-skins", "cs2-armory-pass", "cs2-case-odds", "steam-market-fees"],
-  updated: "2026-11-15",
+  updated: "2026-11-26",
 };

@@ -16,7 +16,7 @@ export const guide: Guide = {
     {
       id: "native-networks-versus-a-bitcoin-wallet",
       title: "Native networks versus a Bitcoin wallet",
-      body: "A Bitcoin wallet derives bitcoin addresses, shows bitcoin balances, and builds bitcoin transactions. Those addresses do not look like the 0x addresses MetaMask uses on Ethereum and EVM chains. They are not a display setting you can flip. Sending bitcoin to an 0x address, or sending an EVM token to a bitcoin address, fails the “same account” assumption people bring from banks. The two systems do not credit each other because both are called crypto.\n\nMetaMask earns its place on EVM networks: one keyring, many chains that share an address style, and prompts for messages, transfers, and token approvals. That toolkit does not become a bitcoin toolkit because a help article wishes it would. Optional Snaps or bridges sometimes advertise a path toward other assets. They are add-ons with extra trust. This guide will not walk through installing one. A fake site copies the clicks and then asks for the phrase. The safe path for bitcoin gambling is a Bitcoin wallet.\n\nSelf-custody is the same idea on both sides. You hold the phrase for whichever wallet you created. MetaMask cannot restore a Bitcoin wallet’s phrase, and a Bitcoin wallet cannot call MetaMask support to unwind a send. If you lose the phrase, the company behind the interface cannot issue a new one. Keep each phrase inside its own official app when you restore, and never in a browser form.",
+      body: "A Bitcoin wallet derives bitcoin addresses, shows bitcoin balances, and builds bitcoin transactions. Those addresses do not look like the 0x addresses MetaMask uses on Ethereum and EVM chains. They are not a display setting you can flip. Sending bitcoin to an 0x address, or sending an EVM token to a bitcoin address, fails the “same account” assumption people bring from banks. The two systems do not credit each other because both are called crypto.\n\nMetaMask earns its place on EVM networks: one keyring, many chains that share an address style, and prompts for messages, transfers, and token approvals. That toolkit does not become a bitcoin toolkit because a help article wishes it would. Optional Snaps or bridges sometimes advertise a path toward other assets. They are add-ons with extra trust. A fake site copies the clicks and then asks for the phrase. The safe path for bitcoin gambling is a Bitcoin wallet.\n\nSelf-custody is the same idea on both sides. You hold the phrase for whichever wallet you created. MetaMask cannot restore a Bitcoin wallet’s phrase, and a Bitcoin wallet cannot call MetaMask support to unwind a send. If you lose the phrase, the company behind the interface cannot issue a new one. Keep each phrase inside its own official app when you restore, and never in a browser form.",
     },
     {
       id: "wrapped-tokens-are-an-evm-asset",
@@ -78,5 +78,5 @@ export const guide: Guide = {
     },
   ],
   related: ["bitcoin-casino", "lightning-network-gambling", "bitcoin-fees"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

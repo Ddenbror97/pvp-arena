@@ -22,7 +22,7 @@ export const guide: Guide = {
     "If you never make a play bet, the river decision is to bet 1x or fold and lose the ante and the blind.",
     "The dealer needs a pair or better or the ante pushes when you win; the blind uses its own posted bonus.",
     "A commonly published figure for one standard layout is about 2.2% of the ante. The felt controls the blind and trips schedules.",
-    "Adults 18+ only. PVPspinArena does not deal this game.",
+    "Adults 18+ only.",
   ],
   sections: [
     {
@@ -34,7 +34,7 @@ export const guide: Guide = {
 
 [Texas Hold'em rules](/guides/texas-holdem-rules) describe a player-versus-player game with blinds that open a pot. This table uses an ante and a blind that both belong to the house contract. [Casino holdem](/guides/casino-hold-em) is a cousin with a different call size and a different qualify rule. [Mississippi Stud](/guides/mississippi-stud) is the street-and-paytable cousin, with no dealer hand to beat. Hand order still follows [poker hand rankings](/guides/poker-hand-rankings): high card through royal flush. The price does not. It lives in how the ante, the blind, and the play bet settle.
 
-This page sits in [Casino games](/guides/topics/casino-games). Adults 18+ only. If the session starts to feel like a chase, stop on [responsible gambling](/responsible-gambling) before the next ante.
+[Casino games](/guides/topics/casino-games) includes related dealer-banked variants. Adults 18+ only. If the session starts to feel like a chase, stop on [responsible gambling](/responsible-gambling) before the next ante.
 
 A single 52-card deck is the usual deal. Ties push the ante, the blind, and the play bet. The trips chip, if you posted one, is a separate schedule on your hand alone.`,
     },
@@ -65,7 +65,7 @@ Trips looks only at your final five-card hand. The dealer does not have to quali
 
 The turn is not its own decision on this common structure. The last two cards arrive together, so the river bet is the smallest multiple.
 
-Checking spends the chance to put more money in while you are ahead. Folding at the end gives up the ante and the blind. A published basic strategy maps hands onto these choices. That chart belongs to one paytable, and this guide does not reprint it. Use a chart written for the felt in front of you.
+Checking spends the chance to put more money in while you are ahead. Folding at the end gives up the ante and the blind. A published basic strategy maps hands onto these choices. The strategy analysis must match the actual rules and Blind paytable. Use a chart written for the felt in front of you.
 
 The play bet itself pays even money when your hand beats the dealer, whether or not the dealer holds a pair. It loses when the dealer wins the comparison. It pushes on a tie. Even money is the simple part. The street decides how large a bet you were allowed to post.`,
     },
@@ -116,9 +116,9 @@ A chart written for a different blind table moves the cost, and so does betting 
 
 Blind multiples are rare, which is why ordinary wins often push that bet. Raising every preflop hand to chase one adds money on hands that lose.
 
-Adults 18+ only. This page explains a house game. It is not a license where the game is barred, and it is not a tax opinion. If you cannot leave after the stop number, leave before the next ante. A clock works beside the loss number, because fast hands make an open session longer than it feels.
+Adults 18+ only. Ultimate Texas Hold'em is a house game. It is not a license where the game is barred, and it is not a tax opinion. If you cannot leave after the stop number, leave before the next ante. A clock works beside the loss number, because fast hands make an open session longer than it feels.
 
-PVPspinArena does not offer Ultimate Texas Hold'em. The live games here are P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette, settled in US dollars. A guide about a pit poker variant is not a deposit path into those games.`,
+A guide about a pit poker variant is not a deposit path into those games.`,
     },
     {
       id: "keep",
@@ -152,8 +152,8 @@ Then write a loss limit in ante units. Twenty antes is a different pile of money
       a: "A commonly published figure for one standard layout, with a known basic strategy, is about 2.2% of the ante. The felt in front of you controls the blind and trips schedules, so confirm both columns.",
     },
     {
-      q: "Does PVPspinArena deal this game?",
-      a: "No. This site offers Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot. The guide is for adults 18+ reading a house poker variant dealt elsewhere.",
+      q: "Is this the same as ordinary poker against other players?",
+      a: "No. Ultimate Texas Hold'em is a dealer-banked game with Ante, Blind and Play wagers. Other players do not fund a shared poker pot.",
     },
   ],
   sources: [
@@ -171,5 +171,5 @@ Then write a loss limit in ante units. Twenty antes is a different pile of money
     },
   ],
   related: ["casino-hold-em", "mississippi-stud", "texas-holdem-rules", "poker-hand-rankings"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

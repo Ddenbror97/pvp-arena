@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Understand Telegram casino bot deposits, balances, withdrawal evidence and fairness claims. Verify custody and identity without relying on chat branding.",
   h1: "Telegram casino bot: follow the funds and the evidence",
   answer:
-    "A Telegram casino bot can present game controls and deposit instructions through chat. An internal bot balance is not proof that you control the corresponding crypto. Before trusting a displayed payout or fairness claim, distinguish the messaging account, the operator’s ledger and any actual transaction. This guide endorses no bot.",
+    "A Telegram casino bot can present game controls and deposit instructions through chat. An internal bot balance is not proof that you control the corresponding crypto. Before trusting a displayed payout or fairness claim, distinguish the messaging account, the operator’s ledger and any actual transaction.",
   facts: [
     "Telegram is the messaging interface; a third-party bot can have its own operator and terms.",
     "A transaction should be checked on the stated network and asset, not judged from a screenshot alone.",
@@ -82,5 +82,5 @@ export const guide: Guide = {
     "crypto-casino-withdrawals",
     "provably-fair-casino",
   ],
-  updated: "2026-11-15",
+  updated: "2026-11-26",
 };

@@ -23,67 +23,37 @@ export const guide: Guide = {
     {
       id: "what-grants",
       title: "What a token approval grants",
-      body: `When you “approve” USDC for a contract, that contract may call transferFrom on your balance up to the allowance. You can set a exact amount or unlimited. Unlimited means future top-ups are also exposed.
-
-This guide sits in [crypto payments](/guides/topics/crypto-payments). Adults 18+. Pair with [self-custody wallet](/guides/self-custody-wallet) and [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling).
-
-Connecting a site and signing a hello message is not an approval. Read the wallet prompt type every time.`,
+      body: "When you “approve” USDC for a contract, that contract may call transferFrom on your balance up to the allowance. You can set a exact amount or unlimited. Unlimited means future top-ups are also exposed.\n\nSee [crypto payments](/guides/topics/crypto-payments). Adults 18+. Pair with [self-custody wallet](/guides/self-custody-wallet) and [crypto wallet for gambling](/guides/best-crypto-wallet-for-gambling).\n\nConnecting a site and signing a hello message is not an approval. Read the wallet prompt type every time.",
     },
     {
       id: "danger",
       title: "Why old approvals are dangerous",
-      body: `Phishing sites ask for unlimited USDC “to deposit.” Weeks later the spender drains you. The wallet still unlocks fine. The allowance was the hole.
-
-Gambling wallets that visit many promo links collect allowances like lint. Monthly review beats annual horror.`,
+      body: "Phishing sites ask for unlimited USDC “to deposit.” Weeks later the spender drains you. The wallet still unlocks fine. The allowance was the hole.\n\nGambling wallets that visit many promo links collect allowances like lint. Monthly review beats annual horror.",
     },
     {
       id: "audit",
       title: "Auditing your approvals",
-      body: `Use a reputable approval explorer you typed from official wallet docs or well-known security vendors—not a sponsored Discord link. Connect carefully, view spenders per chain (Ethereum, Base, etc.), and note unlimited rows first.
-
-If you do not recognise a spender, treat it as revoke-first. If you recognise a DEX you still use, consider capping rather than unlimited.`,
+      body: "Use a reputable approval explorer you typed from official wallet docs or well-known security vendors—not a sponsored Discord link. Connect carefully, view spenders per chain (Ethereum, Base, etc.), and note unlimited rows first.\n\nIf you do not recognise a spender, treat it as revoke-first. If you recognise a DEX you still use, consider capping rather than unlimited.",
     },
     {
       id: "revoke-steps",
       title: "Revoking step by step",
-      body: `1. Open the revoke tool from a bookmark.
-2. Connect the play wallet on the correct network.
-3. Select the token and spender.
-4. Revoke or set allowance to zero.
-5. Confirm the transaction; pay gas.
-6. Refresh until the tool shows cleared.
-7. Repeat per chain you used.
-
-On Base, gas is usually small but not free—keep ETH for the cleanup session.`,
+      body: "1. Open the revoke tool from a bookmark.\n2. Connect the play wallet on the correct network.\n3. Select the token and spender.\n4. Revoke or set allowance to zero.\n5. Confirm the transaction; pay gas.\n6. Refresh until the tool shows cleared.\n7. Repeat per chain you used.\n\nOn Base, gas is usually small but not free—keep ETH for the cleanup session.",
     },
     {
       id: "unlimited",
       title: "Unlimited vs capped approvals",
-      body: `Capped approvals for the exact swap size reduce leftover risk. Unlimited reduces popups. For gambling deposits that only need a transfer, the best approval is **none**.
-
-If a casino requires unlimited USDC spend, leave. PVPspinArena does not.`,
+      body: "Capped approvals for the exact swap size reduce leftover risk. Unlimited reduces popups. For gambling deposits that only need a transfer, the best approval is **none**.\n\nIf a casino requires unlimited USDC spend, leave. PVPspinArena does not.",
     },
     {
       id: "habits",
       title: "Approval habits for gambling wallets",
-      body: `Keep a play wallet separate from savings ([cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet) mindset). Never approve from the savings seed. Prefer transfer deposits. After experiments with new DEXs, revoke the same day.
-
-[Seed phrase](/guides/seed-phrase) safety still matters: approvals drain tokens; phished phrases drain everything including ETH.`,
+      body: "Keep a play wallet separate from savings ([cold wallet vs hot wallet](/guides/cold-wallet-vs-hot-wallet) mindset). Never approve from the savings seed. Prefer transfer deposits. After experiments with new DEXs, revoke the same day.\n\n[Seed phrase](/guides/seed-phrase) safety still matters: approvals drain tokens; phished phrases drain everything including ETH.",
     },
     {
       id: "monthly",
       title: "Monthly review routine",
-      body: `Calendar a 15-minute revoke session:
-
-1. List chains you touched.
-2. Clear unknown spenders.
-3. Disconnect dead site connections in the wallet.
-4. Confirm play wallet balance matches expectations.
-5. Only then deposit to the real [wallet](/how-it-works#wallet) page if you still want a session.
-
-More checklist thinking lives under [crypto payments](/guides/topics/crypto-payments). Games on [how it works](/how-it-works) still need a budget.
-
-Unlimited allowances next to phishing sites are how delayed drains happen. Revoke on a schedule.`,
+      body: "Calendar a 15-minute revoke session:\n\n1. List chains you touched.\n2. Clear unknown spenders.\n3. Disconnect dead site connections in the wallet.\n4. Confirm play wallet balance matches expectations.\n5. Only then deposit to the real [wallet](/how-it-works#wallet) page if you still want a session.\n\nMore checklist thinking lives under [crypto payments](/guides/topics/crypto-payments). Games on [how it works](/how-it-works) still need a budget.\n\nUnlimited allowances next to phishing sites are how delayed drains happen. Revoke on a schedule.",
     },
   ],
   faqs: [
@@ -124,5 +94,5 @@ Unlimited allowances next to phishing sites are how delayed drains happen. Revok
     "seed-phrase",
     "is-metamask-safe",
   ],
-  updated: "2026-11-05",
+  updated: "2026-11-26",
 };

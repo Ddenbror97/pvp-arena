@@ -48,9 +48,7 @@ The incoming player needs the right word, because a foul break and an illegal br
       title: "Rotation games and the 8-ball card",
       body: `9-ball is rotation to the 9. This site does not stake it. The only money game here is 8-ball, on [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other rule cards are [called 10-ball](/guides/10-ball-pool), [8-ball groups](/guides/8-ball-pool-rules), and [straight pool points](/guides/straight-pool). The group is the [games of chance guides](/guides/topics/games-of-chance).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other rule cards are [called 10-ball](/guides/10-ball-pool), [8-ball groups](/guides/8-ball-pool-rules), and [straight pool points](/guides/straight-pool). The group is the [games of chance guides](/guides/topics/games-of-chance).`,
     },
     {
       id: "push",
@@ -64,7 +62,9 @@ A 9 that disappears on a push out does not win the rack. It is spotted. The same
       title: "Spotting the 9, three fouls, and ball in hand",
       body: `A standard foul in this 9-ball chapter gives the incoming player ball in hand anywhere. The cue ball is not fenced behind the head string the way a one-pocket scratch is. That freedom is why a bad hit is expensive: the opponent may place the cue ball on the 9 if the 9 is the legal ball, or on whatever number is lowest. Three fouls in a row end the rack by themselves. The third foul does not need a pocketed 9 to decide the winner.
 
-This site does not run 9-ball for money. The paragraph you just read is the WPA game. The stake buttons on this website belong to 8-ball, with a 5% fee and a called pocket only on the 8. The easy phrase is the rule. The hard phrase is the product name.`,
+This site does not run 9-ball for money. The paragraph you just read is the WPA game. The stake buttons on this website belong to 8-ball, with a 5% fee and a called pocket only on the 8. The easy phrase is the rule. The hard phrase is the product name.
+
+For money games, set [spending limits](/responsible-gambling) before dealing.`,
     },
   ],
   faqs: [
@@ -98,8 +98,11 @@ This site does not run 9-ball for money. The paragraph you just read is the WPA 
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "10-ball-pool", "straight-pool"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

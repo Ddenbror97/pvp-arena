@@ -22,11 +22,7 @@ export const guide: Guide = {
     {
       id: "network",
       title: "Why a TON wallet is not MetaMask",
-      body: `The Open Network uses its own accounts and its own address format. Software built for Ethereum, including MetaMask, speaks a different protocol. Importing a twelve-word Ethereum secret into a TON app, or the reverse, is not a restore. It is either ignored or, worse, handed to an app you did not mean to trust.
-
-Tonkeeper is a normal example of a TON wallet people actually install. The official TON docs are the place to confirm how that network expects you to receive Toncoin. This page will not walk through a seed backup, because a backup written into a chat is how the coins leave.
-
-You are in [Crypto payments](/guides/topics/crypto-payments). [How to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) is the general key-custody page. [Base versus Ethereum](/guides/base-vs-ethereum) is a different pair of networks that do share an address style, which is its own mistake. TON does not share that style.`,
+      body: "The Open Network uses its own accounts and its own address format. Software built for Ethereum, including MetaMask, speaks a different protocol. Importing a twelve-word Ethereum secret into a TON app, or the reverse, is not a restore. It is either ignored or, worse, handed to an app you did not mean to trust.\n\nTonkeeper is a normal example of a TON wallet people actually install. The official TON docs are the place to confirm how that network expects you to receive Toncoin. Keep the recovery backup offline and private. A support chat should never receive it.\n\nYou are in [Crypto payments](/guides/topics/crypto-payments). [How to create a crypto wallet](/guides/how-to-create-a-crypto-wallet) is the general key-custody page. [Base versus Ethereum](/guides/base-vs-ethereum) is a different pair of networks that do share an address style, which is its own mistake. TON does not share that style.",
     },
     {
       id: "casino-network-check",
@@ -36,29 +32,17 @@ You are in [Crypto payments](/guides/topics/crypto-payments). [How to create a c
     {
       id: "not-here",
       title: "This cashier does not take TON",
-      body: `The terms say the playable balance is a US-dollar ledger. Bitcoin, and USDC or ETH on Base, can fund it and cash out. They are not separate playable balances, and TON is not named.
-
-If a page, a bot, or a "support" account tells you to deposit Toncoin to play here, it is not describing these terms. Stop and open the site you typed yourself. [Wallet security checklist](/guides/wallet-security-checklist) is the short version: no seed phrase in a form, no unlimited approval for a transfer that should be a simple send.
-
-[How it works](/how-it-works) lists the games after a dollar balance exists. None of them are priced in Toncoin.`,
+      body: 'The terms say the playable balance is a US-dollar ledger. Bitcoin, and USDC or ETH on Base, can fund it and cash out. They are not separate playable balances, and TON is not named.\n\nIf a page, a bot, or a "support" account tells you to deposit Toncoin to play here, it is not describing these terms. Stop and open the site you typed yourself. [Wallet security checklist](/guides/wallet-security-checklist) is the short version: no seed phrase in a form, no unlimited approval for a transfer that should be a simple send.\n\n[How it works](/how-it-works) lists the games after a dollar balance exists. None of them are priced in Toncoin.',
     },
     {
       id: "bots",
       title: "Telegram is where the theft story usually starts",
-      body: `TON activity clusters in Telegram. That is also where fake airdrops, fake support, and fake "connect your wallet" bots live. A real wallet connection does not require you to reveal the phrase that recreates the account. A prompt that wants the phrase wants the account.
-
-Check the app you installed against the publisher you meant, not against a reply in a group. [Fake casino sites](/guides/fake-casino-sites) is the same pattern on the web: a lookalike that arrives the week a brand is being searched.
-
-Adults only. A wallet guide is not a reason to gamble with money you need. [Responsible gambling](/responsible-gambling) still applies if the TON you hold is going to be staked somewhere else.`,
+      body: 'TON activity clusters in Telegram. That is also where fake airdrops, fake support, and fake "connect your wallet" bots live. A real wallet connection does not require you to reveal the phrase that recreates the account. A prompt that wants the phrase wants the account.\n\nCheck the app you installed against the publisher you meant, not against a reply in a group. [Fake casino sites](/guides/fake-casino-sites) is the same pattern on the web: a lookalike that arrives the week a brand is being searched.\n\nAdults only. A wallet guide is not a reason to gamble with money you need. [Responsible gambling](/responsible-gambling) still applies if the TON you hold is going to be staked somewhere else.',
     },
     {
       id: "if-you-hold-it",
       title: "If you do hold Toncoin",
-      body: `Send a small test to your own TON address and confirm it in a block explorer you chose, not in a link from a stranger. Fees and memo or comment fields, where a service demands them, are that service's rule. This site has no TON memo because it has no TON deposit.
-
-Do not bridge or swap into a "wrapped" asset because a guide told you the ticker matched. [Gas fees explained](/guides/gas-fees-explained) is about EVM gas, not TON fees. Different networks, different bills.
-
-This page is not a review of Tonkeeper and not an endorsement of any TON casino.`,
+      body: 'Send a small test to your own TON address and confirm it in a block explorer you chose, not in a link from a stranger. Fees and memo or comment fields, where a service demands them, are that service\'s rule. This site has no TON memo because it has no TON deposit.\n\nDo not bridge or swap into a "wrapped" asset because a guide told you the ticker matched. [Gas fees explained](/guides/gas-fees-explained) is about EVM gas, not TON fees. Different networks, different bills.',
     },
   ],
   faqs: [
@@ -93,5 +77,5 @@ This page is not a review of Tonkeeper and not an endorsement of any TON casino.
     "base-vs-ethereum",
     "gas-fees-explained",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

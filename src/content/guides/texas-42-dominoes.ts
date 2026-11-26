@@ -37,7 +37,9 @@ The commonly told origin story places the game in Garner, Texas, in 1887, where 
 - Four players in two partnerships, partners sitting opposite.
 - A score sheet for marks or points.
 
-If you want the card-game logic behind 42, the [pitch card game](/guides/pitch-card-game) and [how to play spades](/guides/how-to-play-spades) guides cover bidding and trumps with cards. For line-building domino games, see [dominoes rules](/guides/dominoes-rules). All of these sit in the [Games of chance topic](/guides/topics/games-of-chance).`,
+If you want the card-game logic behind 42, the [pitch card game](/guides/pitch-card-game) and [how to play spades](/guides/how-to-play-spades) guides cover bidding and trumps with cards. For line-building domino games, see [dominoes rules](/guides/dominoes-rules). All of these sit in the [Games of chance topic](/guides/topics/games-of-chance).
+
+University Games lists 42 among the rules supplied with its domino set. For the marks version detailed here, Pagat's named contributors document the bidding and trick procedures.`,
     },
     {
       id: "points",
@@ -158,17 +160,6 @@ You hold 6-6, 6-5, 6-3, 6-0, 5-5, 4-4 and 2-1. That is four sixes including the 
 
 A bid of 30 or 31 is comfortable here. Most players would not push higher without knowing more about partner's hand.`,
     },
-    {
-      id: "stakes",
-      title: "Stakes, tournaments and the PvP link",
-      body: `42 is played in church halls, family kitchens and organised tournaments across Texas, usually for bragging rights. Where groups do play for money, it is typically a small amount per mark or per game between partnerships. Money play is for adults only, 18+ or the local legal age, and private gambling rules vary by country and state.
-
-42 is a skill game with a luck deal. Over one hand, the draw matters enormously: a hand with four doubles is simply better than a hand of trash. Over dozens of games, the stronger partnership bids more accurately, loses fewer sets and wins more marks. That skill edge is why tournament winners repeat.
-
-PVPspinArena sits at the other end of the scale. Its Jackpot, Coinflip, house-banked Roulette, and P2P Slott, have no skill layer at all, settled in US dollars. On Roulette's 33-slot wheel, each of Purple and Silver hits 16/33 of the time and pays 2x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. Seeds are committed before the round, and any settled result can be verified on [fairness](/fairness). If money on any game stops being a pastime, see [responsible gambling](/responsible-gambling).
-
-In the same cluster, see also [mahjong tiles](/guides/mahjong-tiles) and [mexican train rules](/guides/mexican-train-rules).`,
-    },
   ],
   faqs: [
     {
@@ -193,8 +184,22 @@ In the same cluster, see also [mahjong tiles](/guides/mahjong-tiles) and [mexica
     },
   ],
   sources: [
-    { label: "Wikipedia: 42 (dominoes)", url: "https://en.wikipedia.org/wiki/42_(dominoes)" },
-    { label: "Wikipedia: Dominoes", url: "https://en.wikipedia.org/wiki/Dominoes" },
+    {
+      label: "Pagat: Texas 42 rules from named contributors",
+      url: "https://www.pagat.com/domino/trick/42.html",
+    },
+    {
+      label: "University Games: Mexican Train and Chickenfoot set, included 42 rules",
+      url: "https://www.universitygames.com/mexicanchicken",
+    },
+    {
+      label: "Wikipedia: 42 (dominoes)",
+      url: "https://en.wikipedia.org/wiki/42_(dominoes)",
+    },
+    {
+      label: "Wikipedia: Dominoes",
+      url: "https://en.wikipedia.org/wiki/Dominoes",
+    },
     {
       label: "Wikipedia: Trick-taking game",
       url: "https://en.wikipedia.org/wiki/Trick-taking_game",
@@ -208,5 +213,5 @@ In the same cluster, see also [mahjong tiles](/guides/mahjong-tiles) and [mexica
     "how-to-play-spades",
     "mahjong-tiles",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

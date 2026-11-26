@@ -110,7 +110,7 @@ That is the whole job of rankings: name the category, then compare the five card
 
 [Video poker paytables](/guides/video-poker-paytables) pay a posted schedule for five-card categories. That is a house game. [Three Card Poker strategy](/guides/three-card-poker-strategy) uses a three-card order and ante bonuses. Do not export Hold'em folklore onto those felts. They are not the same ranking job.
 
-Omaha high uses this same list but you must use exactly two hole cards and three board cards. A flush in your hand with one suit on the board is not a flush. Short-deck (six-plus) often ranks a flush above a full house because the stripped deck changes frequencies. If the sticker says short-deck, ask for that order before you put a chip in. This page will not save you from a ranking you refused to read.`,
+Omaha high uses this same list but you must use exactly two hole cards and three board cards. A flush in your hand with one suit on the board is not a flush. Short-deck (six-plus) often ranks a flush above a full house because the stripped deck changes frequencies. If the sticker says short-deck, ask for that order before you put a chip in. Read the complete five-card hand before comparing kickers.`,
     },
     {
       id: "ties-and-chops",
@@ -189,8 +189,14 @@ How often those hands show up, and what they are worth, is [poker math](/guides/
       label: "Wikipedia: List of poker hands",
       url: "https://en.wikipedia.org/wiki/List_of_poker_hands",
     },
-    { label: "Wikipedia: Texas hold 'em", url: "https://en.wikipedia.org/wiki/Texas_hold_%27em" },
-    { label: "Wizard of Odds: video poker", url: "https://wizardofodds.com/games/video-poker/" },
+    {
+      label: "Wikipedia: Texas hold 'em",
+      url: "https://en.wikipedia.org/wiki/Texas_hold_%27em",
+    },
+    {
+      label: "Wizard of Odds: video poker",
+      url: "https://wizardofodds.com/games/video-poker/",
+    },
   ],
   related: [
     "how-to-play-poker",
@@ -200,5 +206,5 @@ How often those hands show up, and what they are worth, is [poker math](/guides/
     "three-card-poker-strategy",
     "poker-math",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

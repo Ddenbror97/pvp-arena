@@ -30,9 +30,7 @@ What the players share is a pile of chances and a table. You shoot. Something in
       title: "Other informal games, and the game this site books",
       body: `Killer is lives, not groups. This site does not run it for a stake. The cash 8-ball game is [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other rule cards are [three players, five balls](/guides/cutthroat-pool) and [a different cue game](/guides/pool-vs-snooker). The group is the [games of chance guides](/guides/topics/games-of-chance).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other rule cards are [three players, five balls](/guides/cutthroat-pool) and [a different cue game](/guides/pool-vs-snooker). The group is the [games of chance guides](/guides/topics/games-of-chance).`,
     },
     {
       id: "miss-or-scratch",
@@ -65,7 +63,9 @@ The query is small and moderately competitive. That profile fits a game people h
       title: "A party format, not the money 8-ball table",
       body: `This site does not run killer for money. It is not a standard stake game here, and it will not be described as one in order to catch a search. The lobby books 8-ball between two players. It does not book a ring of lives. Cutthroat, the other informal game in this set, is also unstaked. So are 9-ball, 10-ball, straight pool, one-pocket, and bank.
 
-You can still learn the shape. Lives, often three. A miss or a scratch can spend one. The rest is the host's. If someone offers a killer pot and cites this page as the rulebook, they are citing a page that refused to be a rulebook. Send them back to the napkin. The 8-ball match, if they want a recorded pot instead, has its own card on [8 ball pool rules](/guides/8-ball-pool-rules) and its own fee, and it does not use lives. A napkin at the party is the only rule card.`,
+You can still learn the shape. Lives, often three. A miss or a scratch can spend one. The rest is the host's. If someone offers a killer pot and cites this page as the rulebook, they are citing a page that refused to be a rulebook. Send them back to the napkin. The 8-ball match, if they want a recorded pot instead, has its own card on [8 ball pool rules](/guides/8-ball-pool-rules) and its own fee, and it does not use lives. A napkin at the party is the only rule card.
+
+For money games, set [spending limits](/responsible-gambling) before dealing.`,
     },
   ],
   faqs: [
@@ -99,8 +99,11 @@ You can still learn the shape. Lives, often three. A miss or a scratch can spend
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "cutthroat-pool", "pool-vs-snooker"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

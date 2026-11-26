@@ -35,7 +35,9 @@ The tile count comes from choosing two numbers with repetition allowed: for a do
 
 Each group of tiles sharing a number is called a **suit**. In a double-six set the 5-suit is 5-0, 5-1, 5-2, 5-3, 5-4, 5-5 and 5-6: seven tiles, but eight 5-ends, because the double carries two. Pip totals follow from that: each number appears on 8 ends, so the double-six set holds 8 × (0 + 1 + … + 6) = 8 × 21 = 168 pips.
 
-Chinese dominoes, which developed centuries earlier and are tied to dice combinations, use a different 32-tile set; they are covered in the [pai gow tiles](/guides/pai-gow-tiles) guide. European dominoes appear in 18th-century Italy and France and spread from there. Most Western games, and this page, use the double-six set unless stated otherwise.`,
+Chinese dominoes, which developed centuries earlier and are tied to dice combinations, use a different 32-tile set; they are covered in the [pai gow tiles](/guides/pai-gow-tiles) guide. European dominoes appear in 18th-century Italy and France and spread from there. Most Western games, and this page, use the double-six set unless stated otherwise.
+
+University Games publishes multiple domino rules in one booklet. Pick the named game before using its drawing, blocking or scoring procedure.`,
     },
     {
       id: "terms",
@@ -173,7 +175,7 @@ In a two-player block game, your opponent holds 7 of the 21 tiles you cannot see
 
 Luck still dominates short sessions: a hand full of doubles is hard to play well. Over many hands, counting and blocking decide results. The [variance in gambling](/guides/variance-in-gambling) guide explains why a handful of hands proves little either way.
 
-If you play for stakes, keep it among adults 18+ (or the local legal age), agree the points value first, and set a limit. PVPspinArena's player-vs-player games take the table shuffle out of human hands: a [Coinflip](/coinflip) is a fair 50/50, and every result comes from committed seeds you can verify after the round on [fairness](/fairness). More tile, dice and board games sit in the [Games of chance topic](/guides/topics/games-of-chance), and support tools are on [responsible gambling](/responsible-gambling).`,
+If you play for stakes, keep it among adults 18+ (or the local legal age), agree the points value first, and set a limit. More tile, dice and board games sit in the [Games of chance topic](/guides/topics/games-of-chance), and support tools are on [responsible gambling](/responsible-gambling).`,
     },
   ],
   faqs: [
@@ -203,7 +205,14 @@ If you play for stakes, keep it among adults 18+ (or the local legal age), agree
     },
   ],
   sources: [
-    { label: "Wikipedia: Dominoes", url: "https://en.wikipedia.org/wiki/Dominoes" },
+    {
+      label: "University Games: domino game rules",
+      url: "https://www.universitygames.com/_files/ugd/05f72c_230047a18d1c4372a9ec2dd61b1de8f0.pdf",
+    },
+    {
+      label: "Wikipedia: Dominoes",
+      url: "https://en.wikipedia.org/wiki/Dominoes",
+    },
     {
       label: "Encyclopaedia Britannica: dominoes",
       url: "https://www.britannica.com/topic/dominoes",
@@ -216,5 +225,5 @@ If you play for stakes, keep it among adults 18+ (or the local legal age), agree
     "mahjong-tiles",
     "pai-gow-tiles",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

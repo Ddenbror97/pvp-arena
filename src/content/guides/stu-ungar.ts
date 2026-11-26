@@ -32,7 +32,9 @@ Much of what is known about his early life comes from *One of a Kind*, the 2005 
 
 Card games reward players who can track what has been seen. In gin rummy, remembering every discard lets you infer what your opponent is collecting and which cards are still live. In blackjack, it is the basis of [card counting](/guides/card-counting). Ungar's reputation was that he could hold far more of that information than other players, and apply it instantly.
 
-For the broader line-up of legendary players from this period, see the [famous gamblers overview](/guides/famous-gamblers) and the [casino knowledge topic hub](/guides/topics/casino-knowledge).`,
+For the broader line-up of legendary players from this period, see the [famous gamblers overview](/guides/famous-gamblers) and the [casino knowledge topic hub](/guides/topics/casino-knowledge).
+
+The WSOP player record distinguishes Ungar's five bracelets from his three Main Event titles. Those are tournament achievements, not a record of private finances.`,
     },
     {
       id: "gin",
@@ -92,7 +94,7 @@ After the 1997 win, he reportedly lost most of his share of the prize within mon
 
 ### If this story is close to home
 
-Gambling problems and substance problems often occur together, and both are treatable. If you recognise any of this pattern, the [gambling addiction guide](/guides/gambling-addiction) lists signs and routes to help, and PVPspinArena's [responsible gambling](/responsible-gambling) page links to support services and limit tools.`,
+Gambling problems and substance problems often occur together, and both are treatable.`,
     },
     {
       id: "maths",
@@ -118,19 +120,6 @@ Now suppose the same player also bets on games where p is below 50%. Every dolla
 
 Even inside poker, a single tournament is mostly variance. Winning three Main Events is extraordinary, but any single result tells you little. That is the subject of [variance in gambling](/guides/variance-in-gambling).`,
     },
-    {
-      id: "legacy",
-      title: "Legacy, and what it means for a PvP round",
-      body: `Ungar was inducted into the Poker Hall of Fame in 2001. His life was dramatised in the 2003 film *High Roller: The Stu Ungar Story*, and the Dalla and Alson biography remains the main source on his career. Players who sat with him, including Doyle Brunson, have described him as one of the most naturally gifted card players they ever saw.
-
-His legacy has two halves. One is the talent: three Main Events, gin dominance, and a memory that casinos reportedly feared. The other is the cost: addiction, lost fortunes and an early death. Both are true, and neither cancels the other.
-
-### The PvP connection
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott where talent of Ungar's kind has nothing to work on. A [Coinflip](/coinflip) is a fair 50/50 between two players. Jackpot gives each player a win chance equal to their share of the pot. Roulette uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. There are no discards to remember and no shoe to count; each result comes from a committed seed that is revealed after settlement and can be checked on the [fairness](/fairness) page.
-
-That makes the bankroll lesson the only one that transfers. Size stakes so that a losing run is affordable, decide the stopping point before you start, and treat any game with a house edge as a cost rather than an income source. Gambling is 18+.`,
-    },
   ],
   faqs: [
     {
@@ -155,12 +144,22 @@ That makes the bankroll lesson the only one that transfers. Size stakes so that 
     },
   ],
   sources: [
-    { label: "Wikipedia: Stu Ungar", url: "https://en.wikipedia.org/wiki/Stu_Ungar" },
+    {
+      label: "WSOP: Stu Ungar player record",
+      url: "https://www.wsop.com/players/735736824/stu-ungar/",
+    },
+    {
+      label: "Wikipedia: Stu Ungar",
+      url: "https://en.wikipedia.org/wiki/Stu_Ungar",
+    },
     {
       label: "Wikipedia: World Series of Poker",
       url: "https://en.wikipedia.org/wiki/World_Series_of_Poker",
     },
-    { label: "Wikipedia: Gambler's ruin", url: "https://en.wikipedia.org/wiki/Gambler%27s_ruin" },
+    {
+      label: "Wikipedia: Gambler's ruin",
+      url: "https://en.wikipedia.org/wiki/Gambler%27s_ruin",
+    },
   ],
   related: [
     "famous-gamblers",
@@ -170,5 +169,5 @@ That makes the bankroll lesson the only one that transfers. Size stakes so that 
     "risk-of-ruin",
     "gambling-addiction",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

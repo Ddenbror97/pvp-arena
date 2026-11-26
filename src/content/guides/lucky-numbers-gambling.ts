@@ -26,7 +26,9 @@ export const guide: Guide = {
 
 A lucky number can be harmless fun. It gives a bet a story, and choosing between 37 roulette numbers is easier with a reason. The problem starts only when the belief drives decisions: betting more because "my number is due", or chasing losses because a date feels significant. That is the [gambler's fallacy](/guides/gamblers-fallacy) wearing personal clothes.
 
-This page sits in the [Games of chance topic](/guides/topics/games-of-chance). It covers the numbers themselves; [lucky colors](/guides/lucky-colors-gambling) and [horseshoe luck](/guides/horseshoe-luck) cover other charms.`,
+This page sits in the [Games of chance topic](/guides/topics/games-of-chance). It covers the numbers themselves; [lucky colors](/guides/lucky-colors-gambling) and [horseshoe luck](/guides/horseshoe-luck) cover other charms.
+
+California Lottery rules permit manual number selection or Quick Pick within the same draw game. The selection method does not create a separate prize schedule for lucky numbers.`,
     },
     {
       id: "cultures",
@@ -136,15 +138,6 @@ At 100 spins, five personal numbers turn over $500 and cost about $13.50 on aver
 - Treat a hit on a meaningful date as a nice story, not a signal to press.
 - Keep the total you are willing to lose separate from the numbers you like. The ritual chooses the chips' positions; the budget decides how many chips there are.`,
     },
-    {
-      id: "pvp",
-      title: "Lucky numbers and a hashed PvP round",
-      body: `Keeping a lucky number is fine; it is a way to enjoy a game, not a way to beat it. The healthy version is to let the number choose where a bet goes, never how much.
-
-PVPspinArena's games make the maths easy to see. On [Roulette](/roulette), the 33-slot wheel has 16 Purple slots, 16 Silver slots and 1 Green. Purple and Silver pay 2x and Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. In [Coinflip](/coinflip), two players each take a side of a 50/50, and the winner takes the pot minus any fee shown before entry. In Jackpot, your win chance equals your share of the pot, not your favourite number.
-
-Results come from seeds committed before each round, and every settled round can be recomputed on the [fairness](/fairness) page. That lets you check that no number was favoured. Gambling is for adults (18+) only; if a lucky date or number is driving you to chase, the [responsible gambling](/responsible-gambling) page has limits and support.`,
-    },
   ],
   faqs: [
     {
@@ -170,10 +163,17 @@ Results come from seeds committed before each round, and every settled round can
   ],
   sources: [
     {
+      label: "California Lottery: game selection and draw regulations",
+      url: "https://static.www.calottery.com/-/media/project/calottery/pws/pdfs/approved-regulations-12325-eff-04052556.pdf?hash=70396441EA7884503C35A86E55E0264B&rev=2d8d289bcac445b0b653c6e21b68bc4d",
+    },
+    {
       label: "Wikipedia: Chinese numerology",
       url: "https://en.wikipedia.org/wiki/Chinese_numerology",
     },
-    { label: "Wikipedia: Tetraphobia", url: "https://en.wikipedia.org/wiki/Tetraphobia" },
+    {
+      label: "Wikipedia: Tetraphobia",
+      url: "https://en.wikipedia.org/wiki/Tetraphobia",
+    },
     {
       label: "Wikipedia: Triskaidekaphobia",
       url: "https://en.wikipedia.org/wiki/Triskaidekaphobia",
@@ -191,5 +191,5 @@ Results come from seeds committed before each round, and every settled round can
     "illusion-of-control",
     "roulette-odds-chart",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

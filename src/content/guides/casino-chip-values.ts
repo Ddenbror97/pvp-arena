@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Casino chip values by color: the common $1 to $5,000 scheme, roulette wheel chips, plaques, regional differences, old slot tokens and how chips resist forgery.",
   h1: "Casino chip values: colors, denominations and how chips are protected",
   answer:
-    "Casino chip values are set by each casino, but most North American venues follow a shared colour scheme: white or blue for $1, red for $5, green for $25, black for $100, purple for $500 and orange or yellow for $1,000. The printed denomination on the chip is what counts. Roulette wheel chips have no printed value, and chips are only redeemable at the casino that issued them.",
+    "The printed denomination on the chip is what counts. Roulette wheel chips have no printed value, and chips are only redeemable at the casino that issued them.",
   facts: [
     "The printed value on a chip always overrides its colour; colour schemes are a convention, not a law everywhere.",
     "Red $5, green $25 and black $100 are the most consistent colours across North American casinos.",
@@ -36,7 +36,6 @@ export const guide: Guide = {
 | Red | $5 | "Nickels" |
 | Green | $25 | "Quarters" |
 | Black | $100 | A big bet in black prompts a "checks play" call |
-| Purple | $500 | Sometimes called "barneys" |
 | Orange or yellow | $1,000 | Varies more than lower values |
 | Grey, brown or other | $5,000 and up | Casino-specific |
 
@@ -46,7 +45,9 @@ When a dealer pays a bet, they "cut" stacks of chips by colour. A player betting
 
 Standard casino chips are about 39 mm in diameter and weigh roughly 8.5 to 10 grams. Most are compression-moulded clay composite, although ceramic chips are common for printed designs.
 
-This page belongs to the [Casino knowledge topic](/guides/topics/casino-knowledge). For how to handle chips at a table, see [casino etiquette](/guides/casino-etiquette).`,
+This page belongs to the [Casino knowledge topic](/guides/topics/casino-knowledge). For how to handle chips at a table, see [casino etiquette](/guides/casino-etiquette).
+
+Nevada Regulation 12 governs chip and token design, approval and handling. The denomination and issuer matter; a remembered color is not a universal value.`,
     },
     {
       id: "regional",
@@ -67,7 +68,7 @@ Cruise ship casinos usually run in US dollars with a colour scheme similar to La
 
 ### Roulette wheel chips
 
-Roulette is the exception everywhere. Each player at a table gets a unique colour with no printed value. When you buy in, the dealer sets the value per chip, for example $1 each for 100 chips, and marks it with a button on the wheel-chip rack. Those chips are only worth anything at that table. Before you leave, you must exchange them for value chips; a cashier cannot redeem them. On PVPspinArena's own [Roulette](/roulette), the colours Purple, Silver and Green are wheel slots rather than chip denominations, but the idea is the same: a colour only has meaning within its own game.`,
+Roulette is the exception everywhere. Each player at a table gets a unique colour with no printed value. When you buy in, the dealer sets the value per chip, for example $1 each for 100 chips, and marks it with a button on the wheel-chip rack. Those chips are only worth anything at that table. Before you leave, you must exchange them for value chips; a cashier cannot redeem them.`,
     },
     {
       id: "chips-vs-tokens",
@@ -133,23 +134,6 @@ When you finish, push your chips to the dealer and ask to colour up. You might t
 
 Chips feel less like money than cash. Gambling writers and researchers have long suggested that turning notes into coloured discs makes it easier to bet more than you would hand over in cash, although the size of that effect is hard to measure. A simple guard is to note your buy-in total and check your chip count against it every hour. If the number is well below where you planned to stop, colour up and leave.`,
     },
-    {
-      id: "online",
-      title: "Stablecoin stakes instead of chips",
-      body: `Online, chips disappear entirely. PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and stakes are settled in US dollars network. USDC is designed to track the US dollar one-to-one, so a 5 USDC bet reads like a red chip, without the colour conversion step. There is no cage because there are no chips to redeem.
-
-The absence of chips removes some of the psychological padding: the amount you stake is shown in the same units you hold in your wallet. It does not remove the edge or the variance.
-
-- In Roulette, 16 Purple and 16 Silver slots pay 2x, and one Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. On 100 USDC wagered, the expected loss is about 7.88 USDC on Purple or Silver after the win fee.
-- In Coinflip, the two sides are a true 50/50, and the winner takes the pot minus any fee shown before entry.
-- In [Jackpot](/), your win chance equals your share of the pot.
-
-Where a physical casino relies on chip security features and cameras, PVPspinArena relies on committed seeds: the result of every round is fixed before the round begins, and any settled round can be verified on the [fairness](/fairness) page. That is the online counterpart to UV marks and RFID tags, a way to check that what you were paid matches what the game promised.
-
-Play is for adults 18 and over. Whatever the unit, chip or stablecoin, set the limit in money before you start.
-
-A casino color scheme is not a shopping list. [Buying a set for a kitchen table](/guides/poker-chip-set) is clay versus plastic, not a cage denomination.`,
-    },
   ],
   faqs: [
     {
@@ -174,7 +158,14 @@ A casino color scheme is not a shopping list. [Buying a set for a kitchen table]
     },
   ],
   sources: [
-    { label: "Wikipedia: Casino token", url: "https://en.wikipedia.org/wiki/Casino_token" },
+    {
+      label: "Nevada Gaming Commission: Regulation 12, chips and tokens",
+      url: "https://www.gaming.nv.gov/siteassets/content/regs/regulation-12-as-of-01-26.pdf",
+    },
+    {
+      label: "Wikipedia: Casino token",
+      url: "https://en.wikipedia.org/wiki/Casino_token",
+    },
     {
       label: "Wikipedia: Radio-frequency identification",
       url: "https://en.wikipedia.org/wiki/Radio-frequency_identification",
@@ -192,5 +183,5 @@ A casino color scheme is not a shopping list. [Buying a set for a kitchen table]
     "house-edge",
     "poker-chip-set",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

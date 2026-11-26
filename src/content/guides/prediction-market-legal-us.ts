@@ -5,63 +5,63 @@ export const guide: Guide = {
   cluster: "Prediction markets",
   keyword: "prediction market legal us",
   secondary: ["event contracts CFTC", "US prediction market rules"],
-  title: "Prediction Market Legal US: A Cautious Overview",
-  h1: "Prediction Market Legal US: A Cautious Overview",
+  title: "Prediction Market Legal US: Rules and Disputes",
+  h1: "Prediction market legal US rules and current disputes",
   description:
-    "Prediction market legal US status turns on event contracts and commodities rules, apart from state sportsbook law. This is not legal advice.",
+    "Understand US prediction market regulation, the CFTC’s role, state disputes and the product, location and contract checks needed before trading.",
   answer:
-    "Prediction market legal US questions do not have one national on-off switch this page can flip for you. Event contracts, the Commodity Futures Trading Commission, and state gaming statutes sit in different regimes. A careful reading starts with which product you mean and which regulator has actually spoken about it. This is not legal advice. Rules change. Nothing here says a named venue is legal in every state.\n\nThis page is for adults 18 or older, or the age required where you live. Funding an event contract can lose the money you post. If that stops being something you can afford, stop and use the limits on our [responsible gambling](/responsible-gambling) page. PVPspinArena does not offer prediction markets. It offers jackpot, coinflip, roulette, P2P Slott, and six-max poker in USD only.\n\nWhat the product is — a share that pays if an event happens — is explained on [crypto prediction markets](/guides/crypto-prediction-markets). Whether a crypto casino wager is legal where you live is a different article, [is crypto gambling legal](/guides/is-crypto-gambling-legal). Do not treat those answers as interchangeable with the paragraphs below.",
-  facts: [],
+    "US prediction-market legality depends on the exchange, contract, customer and current court orders. CFTC registration concerns federal derivatives oversight; it does not eliminate disputes with state gambling authorities. As of November 26, 2026, jurisdiction remains contested, including the CFTC’s November 13 lawsuit against Arkansas over event-contract trading.",
+  facts: [
+    "Federal exchange status and state sportsbook licensing are different authorizations.",
+    "One contract type can face restrictions that another does not.",
+    "A proposed rule, agency position and final court judgment have different effects.",
+    "Platform access is not a legal opinion about every transaction.",
+  ],
   sections: [
     {
-      id: "event-contracts-are-their-own-product",
-      title: "Event contracts are their own product",
-      body: "An event contract, in the plain sense readers mean, is a position that settles when a defined event happens or does not happen. You pay a price now. The contract states a settlement value later. People call the same object a prediction share, a yes-or-no market, or a bet. The everyday word and the legal word can diverge. This page will not pick a legal label for your trade. It will keep the product distinct from a sportsbook ticket so you know which rulebook to ask about.\n\nA sportsbook ticket is a wager with a book that set a line, usually under a state gaming license, on a sport or sometimes on other events that license allows. An event contract is written as a derivative-style payoff: a published settlement if the condition is met. The screen can look similar. Two buttons, a price, a cutoff time. Similarity of buttons is not similarity of license. If you only remember the buttons, you will apply the wrong regulator.\n\nRead the contract’s own definition of the event. Who decides the outcome. Which source counts. What happens if the event is canceled, delayed, or ambiguous. Those sentences are the product. They are also the sentences a regulator looks at when deciding what the product is. A market titled with a team name can still be structured as an event contract. A market titled with an election, a price level, or a policy date can still be treated as gambling by a state that says so. The title is not the classification. The document and the authority are.\n\nBecause classification is disputed, honest operators put eligibility gates in front of funding. They block regions. They ask for identity. They describe the legal theory they think they are using. You should read that description as a claim, not as a ruling. A claim on a signup page is marketing plus a terms file. A ruling is a statute, a license, a court, or an agency order. This page cannot convert the first into the second.\n\nWhether that contract counts as gambling in ordinary language is [is Kalshi gambling](/guides/is-kalshi-gambling), which is a different question from which agency wrote the rule.",
+      id: "framework",
+      title: "Start with the exchange and the contract",
+      body: "Determine the legal entity operating the exchange, its registration, the type of contract and the customer restrictions. A binary economic-event contract and a sports-related contract can raise different questions. The CFTC’s March 2026 advisory addresses event contracts within the federal exchange framework. It is not a personal permission letter for all products and locations.\n\n[Crypto prediction markets](/guides/crypto-prediction-markets) explains the payoff; [is Kalshi gambling](/guides/is-kalshi-gambling) separates everyday language from regulatory classification.",
     },
     {
-      id: "the-cftc-is-not-a-state-gaming-commission",
-      title: "The CFTC is not a state gaming commission",
-      body: "The Commodity Futures Trading Commission is the federal agency that oversees certain derivatives markets in the United States. Event contracts have been part of that federal conversation: what may be listed, what is contrary to the public interest, what a registered venue may offer, and what an unregistered venue may not. The details of that conversation move. An article that cites a specific order as if it were permanent will mislead you the month the order is stayed, narrowed, or replaced. Go to the agency’s own current releases if you need the primary text. Do not stop at a recap.\n\nA state gaming commission does a different job. It licenses casinos and sportsbooks, writes wagering rules, and enforces state gambling statutes. It is not the CFTC, and the CFTC is not your state commission. A product can be discussed in Washington under commodities law and still be the subject of a state attorney general letter, a cease-and-desist, or a criminal statute at home. A product can be licensed as a sportsbook in one state and unavailable in another. Those facts can be true at the same time. “Federal” does not erase “state,” and “state” does not automatically answer a derivatives filing.\n\nWhen you see a headline that a venue “won” or “lost” against a regulator, shrink the headline to the parties and the remedy. Who was sued. Which contracts. Whether the result was a settlement, an injunction, a dismissal, or a rule. Then ask whether you are the same kind of customer in the same kind of contract. If you cannot answer, you do not have a legal conclusion. You have a headline. Headlines are a poor reason to deposit.\n\nThis page will not recite a scoreboard of cases. Case posture in this area has changed more than once, and a scoreboard invented from memory would be a fake fact. The stable point is structural: commodities regulation and state gaming regulation are different systems. Your question has to name which system you think applies, and then you have to check that system’s current text.",
+      id: "litigation",
+      title: "What the 2026 dispute actually establishes",
+      body: "On November 13, the CFTC announced a lawsuit seeking to stop Arkansas from restricting trading on CFTC-registered exchanges and imposing civil penalties. That announcement establishes the agency’s asserted jurisdiction and the existence of a dispute. It does not by itself establish that the agency has won or that every state restriction is unenforceable.\n\nCheck the latest applicable order and its scope: parties, products, territory, effective date and any stay or appeal. Avoid treating a preliminary order as a final nationwide judgment.",
     },
     {
-      id: "state-sportsbook-law-does-not-close-the-question",
-      title: "State sportsbook law does not close the question",
-      body: "It is reasonable to ask, “Sports betting is legal in my state, so is this market legal too?” The reason the answer is not automatic is the product difference above. A state that authorized sportsbooks authorized the thing it defined in that statute: typically a wager placed with a licensee, on events the statute lists, through channels the statute allows. An event-contract venue may not be that licensee. The event may not be on that list. The channel may be a website the statute never mentioned.\n\nThe reverse mistake is just as common. “My state has not authorized sports betting, so every yes-or-no market is illegal.” Some states write gambling laws broadly enough that a private person would be foolish to assume a gap. Some event-contract operators argue they are outside those laws because they are in the federal derivatives system. You are not equipped by this article to decide which argument wins at your address. You are equipped to notice that the argument exists, and that “sportsbook map” pages do not settle it.\n\nTribal compacts, state monopolies, and local limits add more layers. A state-level headline can be wrong for a city, a tribal jurisdiction, or a type of event such as elections or awards. Election-related contracts in particular draw extra statutes about elections, not only about wagers. If the market is about politics, your reading list is longer, not shorter.\n\nAge is its own rule. This site’s responsible-gambling line is 18 or older, or the age required where you live. A venue or a statute may say something else. Follow the stricter standard that applies to you. A signup screen that lets a click through is not an age ruling.",
-    },
-    {
-      id: "no-named-venue-is-legal-everywhere-on-this-page",
-      title: "No named venue is “legal everywhere” on this page",
-      body: "Readers want a list: this brand is fine in these states. This page will not give that list. A list would go stale, and a confident national “yes” would be false to the structure described above. Any venue you can name — a well-known crypto prediction site, a US-registered exchange, a small offshore board — can be lawful for one customer and unavailable or contested for another. Treat brand certainty as a warning sign. The careful sentence sounds like: “As of the date I checked, this operator’s terms say they accept my region, and I have read the primary sources I care about.” That sentence expires.\n\nGeo-blocks are evidence of the operator’s policy, not a court order about you. A block can reflect a license condition, a risk decision, or a stale list. The absence of a block can reflect a license, a loophole the operator likes, or a failure to detect your location. VPN use to step around a block can violate the terms and can be the fact that makes an already unclear legal picture worse. This page does not explain how to evade a block. If the site does not want your region, take the refusal.\n\nIdentity checks cut both ways. A venue that collects documents may be trying to follow a regulatory program. A venue that collects documents may also be a scam collecting documents. The check is not proof of legality. Pair it with who the company says it is, which regulator it names, and whether you can find that regulator’s record without relying on the company’s link alone. Phishing pages copy those links. Type the agency address yourself.\n\nFunding method does not choose the statute. Paying in USD by bank, or paying in a stablecoin, does not by itself move you from gambling law into commodities law or the reverse. The contract and the operator’s status do that work, if anything does. A crypto cashier is not a disguise that answers prediction market legal US questions. It is a rail. Rails are covered, as a product matter, on [crypto prediction markets](/guides/crypto-prediction-markets).",
-    },
-    {
-      id: "what-to-verify-before-you-fund-anything",
-      title: "What to verify before you fund anything",
-      body: "Write a five-line note. The exact event and the settlement source. The legal name of the operator. The regulator, if any, the terms claim, and the primary page where you confirmed that claim. Whether your state is accepted, blocked, or unmentioned. The maximum you can lose in USD, which is the money you are about to post, not a hoped-for payout.\n\nIf a line is blank, do not fill it with a forum post. Forums recycle headlines. If the operator’s theory is “we are a derivatives venue,” look for the federal source, then look separately for your state. If the operator’s theory is “we are a licensed sportsbook,” confirm the license with the state, then confirm the market you want is one that license covers. If the operator names no theory at all, you are funding a website with a price chart. That is a risk decision you can decline.\n\n[Is crypto gambling legal](/guides/is-crypto-gambling-legal) answers a neighboring question about casino-style crypto wagering by country. Use it when the product is a casino game. Do not paste its conclusion onto an event contract, and do not paste this page’s caution onto a slot. The harm of mixing them is practical: you follow the wrong agency and think you have finished the homework.\n\nPVPspinArena’s jackpot, coinflip, and roulette in USD are not event contracts and not a sportsbook. They do not become lawful or unlawful because of a CFTC headline. Judge them under the terms and the rules that apply to those games. Judge prediction markets under the regime this page only sketches. The sketch is a map of questions. A lawyer in your jurisdiction, or the text of the current rule, is the place those questions get answers. This article will not stand in for either.\n\nAdults 18 or older, or the age required where you live should assume the legal picture they read today can move before a contract settles. Size the position as money you can lose twice: once to the outcome, and once to a market that closes, voids, or refuses your region while the position is open. If that double uncertainty is too much, do not fund it.\n\nThe rest of this subject is on the [prediction market guides](/guides/topics/prediction-markets). See [crypto prediction markets](/guides/crypto-prediction-markets), [is crypto gambling legal](/guides/is-crypto-gambling-legal), [how does sports betting work](/guides/how-does-sports-betting-work). PVPspinArena settles jackpot, coinflip, roulette, P2P Slott, and six-max poker in US dollars. Read [responsible gambling](/responsible-gambling) before you play.",
+      id: "verification",
+      title: "What to verify for your location",
+      body: "Read the operator’s current eligibility terms and the relevant agency or court material. Confirm whether the restriction concerns all trading, sports contracts, a specific market or new accounts. Identity and geolocation controls are part of access; circumventing a block can violate terms and add legal risk.\n\n[Polymarket versus Kalshi](/guides/polymarket-vs-kalshi) compares product structures, while the [prediction market topic](/guides/topics/prediction-markets) collects related explanations. Seek qualified local advice when the legal position affects a decision to fund an account. Set a spending ceiling with [responsible gambling resources](/responsible-gambling), because event contracts can lose the entire amount paid.",
     },
   ],
   faqs: [
     {
-      q: "Is a prediction market the same as a state sportsbook?",
-      a: "A state sportsbook is licensed under state gaming law to take sports wagers. An event contract is a different product that has been discussed under federal commodities rules, and a sportsbook license does not answer that product by itself.",
+      q: "Does CFTC registration equal a state sportsbook license?",
+      a: "No. They concern different regulatory systems; their interaction for certain event contracts is being litigated.",
     },
     {
-      q: "Does the CFTC approval of one product make every venue lawful?",
-      a: "The Commodity Futures Trading Commission is a federal derivatives regulator, and its actions are specific to the filings and parties in front of it. A headline about one venue is not a finding that every site is legal in every state.",
+      q: "Does an available app prove a contract is lawful for me?",
+      a: "No. Access is evidence of platform policy, not a definitive ruling about a customer’s circumstances.",
     },
     {
-      q: "Can I rely on this page for my state?",
-      a: "No. This is not legal advice, and the rules change. Check the venue’s eligibility rules, current federal releases, and your own state’s statements before you fund an account.",
+      q: "Does the Arkansas lawsuit settle the issue nationally?",
+      a: "No. A filed lawsuit states claims and requested relief. Its current orders, scope and later decisions must be checked.",
     },
     {
-      q: "Does a geo-block mean the product is legal where it is open?",
-      a: "A block means the operator is refusing some locations. It does not certify that an open location is lawful for you, and an open screen can still be a mistake or a stale setting.",
-    },
-    {
-      q: "Where is the product explained?",
-      a: "What a crypto prediction market share is, and how it pays, is on the crypto prediction markets page. Whether crypto casino gambling is legal is a separate question on is crypto gambling legal.",
+      q: "Which source matters more than a promotional legal map?",
+      a: "Use the actual regulator record, applicable court order and operator eligibility terms, with their dates and product scope.",
     },
   ],
-  sources: [{ label: "U.S. Commodity Futures Trading Commission", url: "https://www.cftc.gov/" }],
+  sources: [
+    {
+      label: "CFTC: 2026 advisory on event-contract markets",
+      url: "https://www.cftc.gov/csl/26-08/download",
+    },
+    {
+      label: "CFTC: Arkansas event-contract jurisdiction lawsuit, November 13, 2026",
+      url: "https://www.cftc.gov/PressRoom/PressReleases/9325-26",
+    },
+  ],
   related: ["crypto-prediction-markets", "is-crypto-gambling-legal"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

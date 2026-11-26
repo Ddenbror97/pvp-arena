@@ -367,7 +367,7 @@ Server validation of inputs, hits and results does not promise cheating immunity
       "Learn how to assess Deadshot io access, build a useful aiming session and choose alternatives. Separate school permission from browser compatibility.",
     h1: "Deadshot io: permitted access and a useful first session",
     answer:
-      "Deadshot.io is a browser FPS with an official entry at deadshot.io. Start there on a permitted network, then use the current client to confirm controls and available play. Its public page exposes little readable documentation, so this guide does not invent a current weapon ranking, mode list, population or payout system.",
+      "Deadshot.io is a browser FPS with an official entry at deadshot.io. Start there on a permitted network, then use the current client to confirm controls and available play. Its public page exposes little readable documentation, so current weapons, modes, population and payouts need confirmation in the client or publisher documentation.",
     facts: [
       "A reachable game page is not a verified live match or an uptime guarantee.",
       "School access depends on the school's permission; the word unblocked cannot supply that permission.",

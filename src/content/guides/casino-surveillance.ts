@@ -45,7 +45,9 @@ In regulated markets, rules typically require coverage of:
 
 Recordings must usually be kept for a minimum period set by the regulator, and longer if an incident is under investigation.
 
-This guide is part of the [Casino knowledge topic](/guides/topics/casino-knowledge). The etiquette rules in [casino etiquette](/guides/casino-etiquette), such as cash on the felt and hand signals at blackjack, exist largely so that transactions are clear on these cameras.`,
+This guide is part of the [Casino knowledge topic](/guides/topics/casino-knowledge). The etiquette rules in [casino etiquette](/guides/casino-etiquette), such as cash on the felt and hand signals at blackjack, exist largely so that transactions are clear on these cameras.
+
+Nevada's surveillance standards specify coverage of gaming activity, cages and other sensitive areas. They describe required recording capabilities, not a guarantee that every incident is prevented.`,
     },
     {
       id: "vs-security",
@@ -150,25 +152,6 @@ A roulette wheel with a single zero should return about 97.3% of wagers over tim
 
 For a typical player, surveillance is invisible. It shows up only when you are paid a large jackpot, when a disputed hand is reviewed in your favour, or when a problem is resolved by footage rather than argument.`,
     },
-    {
-      id: "online",
-      title: "Verification instead of cameras",
-      body: `An online game cannot be watched by a camera over the table, so it needs a different kind of oversight. On PVPspinArena, that role is played by cryptographic verification.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Results come from committed seeds: before a round, the game publishes a hash of a secret seed, and after the round it reveals the seed. Anyone can check that the revealed seed matches the commitment and that it produces the recorded result. You can do that for any settled round on the [fairness](/fairness) page. The [commit-reveal scheme](/guides/commit-reveal-scheme) guide explains the method step by step.
-
-This gives players something a physical casino's surveillance does not: direct access to the evidence. In a casino, the footage belongs to the operator and is reviewed by its staff and regulators. With commit-reveal, the player can run the check.
-
-The maths it protects is the same maths a surveillance team defends:
-
-- in Roulette, 16 Purple and 16 Silver slots pay 2x and one Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee;
-- in Coinflip, two players face a fair 50/50;
-- in [Jackpot](/), win chance equals your share of the pot.
-
-Verification proves a round was not tampered with. It does not change the odds or promise a win. Play is for adults 18 and over, and the same budgeting rules apply online as at a table with cameras overhead.
-
-See also [marked cards](/guides/marked-cards) and [past posting](/guides/past-posting).`,
-    },
   ],
   faqs: [
     {
@@ -194,6 +177,10 @@ See also [marked cards](/guides/marked-cards) and [past posting](/guides/past-po
   ],
   sources: [
     {
+      label: "Nevada Gaming Commission: surveillance standards, April 2026",
+      url: "https://www.gaming.nv.gov/siteassets/content/regs/regulation-5---surveillance-standards-as-of-04-26.pdf",
+    },
+    {
       label: "Wikipedia: Closed-circuit television",
       url: "https://en.wikipedia.org/wiki/Closed-circuit_television",
     },
@@ -201,7 +188,10 @@ See also [marked cards](/guides/marked-cards) and [past posting](/guides/past-po
       label: "Wikipedia: Facial recognition system",
       url: "https://en.wikipedia.org/wiki/Facial_recognition_system",
     },
-    { label: "Wikipedia: Casino", url: "https://en.wikipedia.org/wiki/Casino" },
+    {
+      label: "Wikipedia: Casino",
+      url: "https://en.wikipedia.org/wiki/Casino",
+    },
   ],
   related: [
     "casino-cage",
@@ -212,5 +202,5 @@ See also [marked cards](/guides/marked-cards) and [past posting](/guides/past-po
     "pit-boss",
     "marked-cards",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

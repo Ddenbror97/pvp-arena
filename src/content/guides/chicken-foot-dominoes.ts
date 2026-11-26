@@ -41,7 +41,9 @@ Most published sources credit the game to Louis and Betty Howsley, who designed 
 
 Double-6 works for two or three players who want a short game, but the board blocks quickly. Double-9 is the usual choice for four to six players. Double-12 suits bigger groups or anyone who wants long rounds. You also need a pencil and a score sheet, because the game is scored across every round.
 
-If you are new to tiles in general, the base terminology (spinner, boneyard, pips, blocking) is covered in [dominoes rules](/guides/dominoes-rules), and the closest relative is [Mexican train rules](/guides/mexican-train-rules). Both sit in the [Games of chance topic](/guides/topics/games-of-chance) with the other tile games.`,
+If you are new to tiles in general, the base terminology (spinner, boneyard, pips, blocking) is covered in [dominoes rules](/guides/dominoes-rules), and the closest relative is [Mexican train rules](/guides/mexican-train-rules). Both sit in the [Games of chance topic](/guides/topics/games-of-chance) with the other tile games.
+
+University Games' booklet distinguishes Chickenfoot's double-covering obligations from Mexican Train. Do not carry one game's public-train rule into the other.`,
     },
     {
       id: "setup",
@@ -154,15 +156,6 @@ Write the chosen rules at the top of the score sheet. Most arguments in family g
 
 If your group likes a partnership bidding game on a double-6 set, [Texas 42 dominoes](/guides/texas-42-dominoes) is the natural next step. If you prefer luck-heavy tile games with a gambling tradition, [mahjong tiles](/guides/mahjong-tiles) covers the classic Chinese set.`,
     },
-    {
-      id: "stakes",
-      title: "Playing for stakes and the PvP connection",
-      body: `Chicken foot is mostly played for fun at family tables, but some groups put a small stake on each round or on the final total. A simple method is a pot where the lowest total after all rounds takes it, or a per-point settlement where each player pays the difference between their total and the winner's at an agreed rate. Keep the rate small. A double-9 game has ten rounds and one bad round can cost 60 points or more. Money play is for adults only, 18+ or the local legal age, and private stakes are regulated differently around the world.
-
-The honest way to think about a stake is that luck dominates any single round. The shuffle decides your seven tiles, and the draw decides what you find. Skill shows up across many rounds as slightly lower totals, not as a guaranteed win tonight.
-
-PVPspinArena takes the skill layer out entirely. It runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott), settled in US dollars. Coinflip is a fair 50/50 between two players, and in Jackpot your win chance equals your share of the pot. Every result comes from committed seeds, and any settled round can be checked on the [fairness](/fairness) page, much like being able to turn over the boneyard afterwards and confirm nobody stacked it. If playing for stakes stops being fun, the [responsible gambling](/responsible-gambling) page has limits and help links.`,
-    },
   ],
   faqs: [
     {
@@ -188,11 +181,21 @@ PVPspinArena takes the skill layer out entirely. It runs [six-max poker](/poker)
   ],
   sources: [
     {
+      label: "University Games: Chickenfoot and domino rules",
+      url: "https://www.universitygames.com/_files/ugd/05f72c_4adf51aa5fdc4239904bf079809cfc78.pdf",
+    },
+    {
       label: "Wikipedia: Chickenfoot (domino game)",
       url: "https://en.wikipedia.org/wiki/Chicken_foot_(game)",
     },
-    { label: "Wikipedia: Dominoes", url: "https://en.wikipedia.org/wiki/Dominoes" },
-    { label: "Wikipedia: Mexican Train", url: "https://en.wikipedia.org/wiki/Mexican_Train" },
+    {
+      label: "Wikipedia: Dominoes",
+      url: "https://en.wikipedia.org/wiki/Dominoes",
+    },
+    {
+      label: "Wikipedia: Mexican Train",
+      url: "https://en.wikipedia.org/wiki/Mexican_Train",
+    },
   ],
   related: [
     "dominoes-rules",
@@ -201,5 +204,5 @@ PVPspinArena takes the skill layer out entirely. It runs [six-max poker](/poker)
     "mahjong-tiles",
     "mahjong-gambling",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

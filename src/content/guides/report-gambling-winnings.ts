@@ -27,68 +27,37 @@ export const guide: Guide = {
     {
       id: "scope",
       title: "Scope and disclaimer",
-      body: `This page is general US federal education on how to report gambling winnings themes. States differ. Other countries differ. Not legal advice, not tax advice.
-
-Adults 18+. See [crypto gambling taxes](/guides/crypto-gambling-taxes) for the crypto-specific traps. This sits in [Foundations](/guides/topics/foundations).
-
-If you are hiding wins from a household budget conversation, that is a harm signal — [responsible gambling](/responsible-gambling) — not a paperwork puzzle.
-`,
+      body: "States differ. Other countries differ. Not legal advice, not tax advice.\n\nAdults 18+. See [crypto gambling taxes](/guides/crypto-gambling-taxes) for the crypto-specific traps. This sits in [Foundations](/guides/topics/foundations).\n\nIf you are hiding wins from a household budget conversation, that is a harm signal — [responsible gambling](/responsible-gambling) — not a paperwork puzzle.",
     },
     {
       id: "income",
       title: "What counts as winnings in IRS language",
-      body: `Topic 419 describes gambling winnings as taxable income for casual gamblers, including cash and the fair market value of prizes. You report them on the return even when no W-2G arrives.
-
-A credit after a winning [Coinflip](/coinflip) or pot is the kind of event people discuss with preparers as a win — valued in dollars at a sensible timestamp. Money you deposited is not a win. Money you withdrew can be a mix of stake returned and profit.
-
-Professional-gambler status is a different regime. Do not self-declare it from a blog.
-`,
+      body: "Topic 419 describes gambling winnings as taxable income for casual gamblers, including cash and the fair market value of prizes. You report them on the return even when no W-2G arrives.\n\nA credit after a winning [Coinflip](/coinflip) or pot is the kind of event people discuss with preparers as a win — valued in dollars at a sensible timestamp. Money you deposited is not a win. Money you withdrew can be a mix of stake returned and profit.\n\nProfessional-gambler status is a different regime. Do not self-declare it from a blog.",
     },
     {
       id: "w2g",
       title: "Form W-2G without the myths",
-      body: `Certain payers issue Form W-2G when thresholds and game types hit IRS rules. Many players never see one. Many crypto operators will never send one. Absence of W-2G is not absence of income under Topic 419’s casual-gambler framing.
-
-If you receive a W-2G, keep it with your diary. If you do not, your diary still matters. Ask a professional how your facts map to Schedule 1 and related lines for the year.
-`,
+      body: "Certain payers issue Form W-2G when thresholds and game types hit IRS rules. Many players never see one. Many crypto operators will never send one. Absence of W-2G is not absence of income under Topic 419’s casual-gambler framing.\n\nIf you receive a W-2G, keep it with your diary. If you do not, your diary still matters. Ask a professional how your facts map to Schedule 1 and related lines for the year.",
     },
     {
       id: "crypto",
       title: "Crypto credits and dollar stamps",
-      body: `When a site credits ETH, the gambling story needs a USD value at credit. When you later dispose of the ETH, property rules may add another event. USDC reduces noise while you play on a [what is a crypto casino](/guides/what-is-a-crypto-casino) balance, but you still journal amounts and txids.
-
-### Mini example (illustrative)
-
-Deposit 100 USDC. Win a pot; balance 155 USDC. Withdraw 155 USDC. The gambling win people mean is closer to 55, not 155 — if those were the only movements. Take the sketch to a preparer; do not paste it onto a return from this article.
-
-See [how it works](/how-it-works) for how this site shows dollar balances.
-`,
+      body: "When a site credits ETH, the gambling story needs a USD value at credit. When you later dispose of the ETH, property rules may add another event. USDC reduces noise while you play on a [what is a crypto casino](/guides/what-is-a-crypto-casino) balance, but you still journal amounts and txids.\n\n### Mini example (illustrative)\n\nDeposit 100 USDC. Win a pot; balance 155 USDC. Withdraw 155 USDC. The gambling win people mean is closer to 55, not 155 — if those were the only movements.\n\nSee [how it works](/how-it-works) for how this site shows dollar balances.",
     },
     {
       id: "diary",
       title: "A diary that survives April",
-      body: `Publication 529 discusses records for gambling. Build a habit:
-
-- Date, site, game type.
-- Deposit and withdrawal txids.
-- Session result in account units and USD.
-- Screenshots or CSV exports.
-
-[Online casino real money](/guides/online-casino-real-money) sessions should be entertainment-sized so the diary stays short. [House edge](/guides/house-edge) explains why long volume grows both losses and paperwork.
-`,
+      body: "Publication 529 discusses records for gambling. Build a habit:\n\n- Date, site, game type.\n- Deposit and withdrawal txids.\n- Session result in account units and USD.\n- Screenshots or CSV exports.\n\n[Online casino real money](/guides/online-casino-real-money) sessions should be entertainment-sized so the diary stays short. [House edge](/guides/house-edge) explains why long volume grows both losses and paperwork.",
     },
     {
       id: "timing",
       title: "Timing and estimated tax chatter",
-      body: `Large wins can create underpayment questions for people who otherwise only withhold from wages. Publication 505 discusses estimated tax themes at a high level. Whether you need quarterly payments is a personal facts question — ask a professional. Do not ignore a life-changing cash-out until April and hope.
-
-We will not coach you to hide wins offshore or to break reporting rules.
-`,
+      body: "Large wins can create underpayment questions for people who otherwise only withhold from wages. Publication 505 discusses estimated tax themes at a high level. Whether you need quarterly payments is a personal facts question — ask a professional. Do not ignore a life-changing cash-out until April and hope.",
     },
     {
       id: "next",
       title: "Next steps",
-      body: "Export the ledger. Stamp FMV on volatile tokens. Separate deposits from results. File with current instructions or hire help.\n\nPlay [Jackpot](/) or [Roulette](/roulette) only if you can afford the entertainment cost and the paperwork. If wins are already funding chasing, stop — [gambling self-exclusion](/guides/gambling-self-exclusion).\n\nA jackpot withholding line is its own worksheet. [Lottery taxes](/guides/lottery-taxes) covers the cash option and the state share, separate from the form on this page.\n\nSee also: [Form W-2G explained](/guides/w2g-form).",
+      body: "Export the ledger. Stamp FMV on volatile tokens. Separate deposits from results. File with current instructions or hire help.\n\nPlay [Jackpot](/) or [Roulette](/roulette) only if you can afford the entertainment cost and the paperwork. If wins are already funding chasing, stop — [gambling self-exclusion](/guides/gambling-self-exclusion).\n\nA jackpot withholding line is its own worksheet. See [Lottery taxes](/guides/lottery-taxes).\n\nSee also: [Form W-2G explained](/guides/w2g-form).",
     },
   ],
   faqs: [
@@ -128,5 +97,5 @@ We will not coach you to hide wins offshore or to break reporting rules.
     "online-casino-real-money",
     "does-metamask-report-to-irs",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

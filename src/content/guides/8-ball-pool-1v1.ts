@@ -50,7 +50,7 @@ There is no handicap inside that match. No FargoRate shortens one side. No APA s
 
 The neighbouring money pages are [a house bank versus a pot](/guides/8-ball-pool-casino) and [funding the stake](/guides/crypto-8-ball-pool). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "replay",
@@ -98,7 +98,10 @@ The playing surface is 2.54 m by 1.27 m. Cue upgrades are not sold, so a cosmeti
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: [
     "8-ball-pool-for-money",
@@ -106,5 +109,5 @@ The playing surface is 2.54 m by 1.27 m. Cue upgrades are not sold, so a cosmeti
     "8-ball-pool-hub",
     "crypto-8-ball-pool",
   ],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

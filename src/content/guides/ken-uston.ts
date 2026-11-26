@@ -33,7 +33,9 @@ In the early 1970s he met Al Francesco, a gambler who had worked out that the we
 
 Uston joined Francesco's team, proved a talented player, and eventually left the stock exchange to gamble full time. His business background made him an effective organiser and, later, a natural public spokesman.
 
-This profile belongs to the [famous gamblers](/guides/famous-gamblers) series in the [Casino knowledge topic](/guides/topics/casino-knowledge). For the counting maths itself, start with [card counting](/guides/card-counting); for the man who first published it, see [Edward Thorp](/guides/edward-thorp).`,
+This profile belongs to the [famous gamblers](/guides/famous-gamblers) series in the [Casino knowledge topic](/guides/topics/casino-knowledge). For the counting maths itself, start with [card counting](/guides/card-counting); for the man who first published it, see [Edward Thorp](/guides/edward-thorp).
+
+The New Jersey Supreme Court's 1982 Uston opinion addresses Resorts' exclusion of a card counter under that state's Casino Control Act. It is not a nationwide right of entry.`,
     },
     {
       id: "big-player",
@@ -126,17 +128,6 @@ Uston's era also tested hidden computers. According to accounts of the period, a
 
 *Uston v. Resorts* is still cited whenever the question of barring skilled players comes up, including in online gambling, where operators can limit or close accounts with a click. It frames the question every advantage player eventually faces: the maths may be on your side, but the house decides whether you play.`,
     },
-    {
-      id: "pvp",
-      title: "No counting needed in a PvP round",
-      body: `Uston's method depended on a shoe that remembers which cards are gone. PVPspinArena's Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars, have no memory at all. Each round comes from fresh committed seeds, so there is no running count to track and no favourable moment to wait for.
-
-- On [Roulette](/roulette), a 33-slot wheel with 16 Purple and 16 Silver slots paying 2x and 1 Green paying 14x, Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee on every spin.
-- [Coinflip](/coinflip) is a 50/50 between two players; the winner takes the pot minus any fee shown before entry.
-- In Jackpot, your win chance is your share of the pot.
-
-Instead of watching for the house to change the game, you can check any settled round yourself on the [fairness](/fairness) page. Play is 18+ only; set limits on the [responsible gambling](/responsible-gambling) page.`,
-    },
   ],
   faqs: [
     {
@@ -161,12 +152,22 @@ Instead of watching for the house to change the game, you can check any settled 
     },
   ],
   sources: [
-    { label: "Wikipedia: Ken Uston", url: "https://en.wikipedia.org/wiki/Ken_Uston" },
+    {
+      label: "New Jersey Supreme Court: Uston v. Resorts International, 1982",
+      url: "https://law.justia.com/cases/new-jersey/supreme-court/1982/89-n-j-163-0.html",
+    },
+    {
+      label: "Wikipedia: Ken Uston",
+      url: "https://en.wikipedia.org/wiki/Ken_Uston",
+    },
     {
       label: "Wikipedia: Griffin Investigations",
       url: "https://en.wikipedia.org/wiki/Griffin_Investigations",
     },
-    { label: "Wikipedia: Card counting", url: "https://en.wikipedia.org/wiki/Card_counting" },
+    {
+      label: "Wikipedia: Card counting",
+      url: "https://en.wikipedia.org/wiki/Card_counting",
+    },
   ],
   related: [
     "famous-gamblers",
@@ -176,5 +177,5 @@ Instead of watching for the house to change the game, you can check any settled 
     "is-card-counting-illegal",
     "don-johnson-blackjack",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

@@ -59,7 +59,7 @@ Account sales violate Steam rules and are scam magnets. The item bridge can work
 
 If the Wallet funds came from a gift and you simply want games, spend them on Steam. That is what they are for.
 
-Do not use gambling bots as “buyers.” That is a wager. [Fake casino sites](/guides/fake-casino-sites) thrive on Wallet-cashout keywords.`,
+Do not use gambling bots as “buyers.” That is a wager. [Fake casino sites](/guides/fake-casino-sites) may advertise cashouts they cannot deliver.`,
     },
     {
       id: "chargeback",

@@ -28,7 +28,9 @@ This guide stays on the category. You get a way to read an entry, a way to think
 
 [Games that pay real money](/guides/games-that-pay-real-money) is the wider map, including pots that have no cards. [Skillz review](/guides/skillz-review) is one tournament platform in the same economic family. [Wager app](/guides/wager-app) explains the 1v1 hold. None of those pages is a substitute for the confirm screen in the app you opened.
 
-Adults 18+ only. Some regions allow skill entries and some restrict them. The app’s availability notice is the list that matters, and this page will not invent a state chart or offer legal advice.`,
+Adults 18+ only. Some regions allow skill entries and some restrict them. The app’s availability notice is the list that matters, and this page will not invent a state chart or offer legal advice.
+
+Skillz describes matched score-based cash competitions and separate virtual-currency play. That is one platform model, not evidence about every solitaire app’s opponents or fees.`,
     },
     {
       id: "rules-pointer",
@@ -122,7 +124,7 @@ If what you wanted was a friend across a table and a polite stake, [bet with fri
 - You are inside the region the app serves, under your own identity.
 - You can lose the entry and leave the category alone for the night.
 
-The win-rate line is the one this page exists to defend. “Best apps” without your count is a slogan. Your count without the fee is a brag. Together they are a decision. Apart they are how solitaire for money stays a search term instead of a hobby with a budget.
+The win-rate line is the one this page exists to defend. “Best apps” without your count is a slogan. Your count without the fee is a brag. Together they are a decision. Without both, the comparison cannot show whether entry costs fit a budget.
 
 Eighteen plus. If the checklist is something you plan to follow after this session recovers, the session is the problem. Limits and cool-offs live on [responsible gambling](/responsible-gambling).
 
@@ -156,8 +158,15 @@ Keep the cards if you like the cards. Pay the gap with money that can go to zero
       label: "Klondike solitaire (Wikipedia)",
       url: "https://en.wikipedia.org/wiki/Klondike_(solitaire)",
     },
-    { label: "Game of skill (Wikipedia)", url: "https://en.wikipedia.org/wiki/Game_of_skill" },
+    {
+      label: "Game of skill (Wikipedia)",
+      url: "https://en.wikipedia.org/wiki/Game_of_skill",
+    },
+    {
+      label: "Skillz: how cash competitions work",
+      url: "https://support.skillz.com/hc/en-us/articles/50571215655700-How-does-Skillz-work-Can-I-actually-win-real-money",
+    },
   ],
   related: ["spades-for-money", "gin-rummy-for-money", "trivia-for-money"],
-  updated: "2026-10-07",
+  updated: "2026-11-26",
 };

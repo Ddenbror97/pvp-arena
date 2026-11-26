@@ -61,14 +61,14 @@ A picture drawn on one phone stays on that phone. The server stores the shot and
 
 The neighbouring money pages are [cash credited in dollars](/guides/8-ball-pool-for-money), [whether the replay can be checked](/guides/is-8-ball-pool-rigged), and [a stake between two players](/guides/pool-betting). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "five-percent-on-crypto-pot",
       title: "What five percent costs on a funded pot",
       body: `The cost is 5% of the pot, taken when the match settles. The winner is credited 95%. Stake $25 against $25 and the pot is $50, the fee is $2.50, and the winner is credited $47.50. Stake $5 against $5 and the pot is $10, the fee is $0.50, and the winner is credited $9.50. Crypto funding does not rewrite those dollars. The full button list is on [8 ball pool real money](/guides/8-ball-pool-for-money).
 
-This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. A crypto label on someone else's app would not fill those cells. If nobody joins within 24 hours, the stake comes back and no fee is charged. Promo credit and partner credit can be staked. Deposited money is used first, even when a bonus arrived beside that deposit.
+Each app’s fee must be checked against its own entry and prize terms. A crypto label on someone else's app would not fill those cells. If nobody joins within 24 hours, the stake comes back and no fee is charged. Promo credit and partner credit can be staked. Deposited money is used first, even when a bonus arrived beside that deposit.
 
 No weekly tournament is published, and no break-win rate is published. A seed that shuffles coloured balls is not a jackpot wheel. It also does not promise that the break wins often enough to cover the fee.`,
     },
@@ -79,7 +79,7 @@ No weekly tournament is published, and no break-win rate is published. A seed th
 
 The World Pool-Billiard Association book effective 21 October 2026 calls every shot, and a legal 8 on the break is spotted or rebroken. That citation is a contrast. It is not the rule that pays this pot.
 
-The credit is dollars in the balance. A token is not offered instead. Adults play only where a stake is allowed. This page will not name a place and call the game legal or banned there.`,
+The credit is dollars in the balance. A token is not offered instead. Adults play only where a stake is allowed. Confirm the applicable location rules before staking; cryptocurrency funding is not a legal exemption.`,
     },
   ],
   faqs: [
@@ -113,7 +113,10 @@ The credit is dollars in the balance. A token is not offered instead. Adults pla
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: [
     "8-ball-pool-for-money",
@@ -121,5 +124,5 @@ The credit is dollars in the balance. A token is not offered instead. Adults pla
     "8-ball-pool-hub",
     "8-ball-pool-1v1",
   ],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

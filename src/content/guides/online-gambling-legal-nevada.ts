@@ -27,39 +27,22 @@ export const guide: Guide = {
     {
       id: "legal",
       title: "What is legal online in Nevada",
-      body: `| Product | Legal online? | Notes |
-| --- | --- | --- |
-| Sports betting | Yes, via apps of Nevada-licensed sportsbooks | 21+, inside Nevada |
-| Online poker | Yes, intrastate | Licensed operators only |
-| Online casino (slots, table games) | **No** | Legal only in licensed casinos |
-| Lottery | **No state lottery** | — |
-
-The [Nevada Gaming Control Board](https://gaming.nv.gov/) and the Nevada Gaming Commission license every operator. Nevada sportsbook apps have long required new customers to register in person at a casino before betting remotely; the [Nevada Independent](https://thenevadaindependent.com/article/sports-betting-is-increasingly-online-why-is-nevada-still-tied-to-in-person-registration) has examined why. Check the current sign-up rules of the app you use. [Where sports betting is legal](/guides/sports-betting-legal-states) compares states.`,
+      body: "| Product | Legal online? | Notes |\n| --- | --- | --- |\n| Sports betting | Yes, via apps of Nevada-licensed sportsbooks | 21+, inside Nevada |\n| Online poker | Yes, intrastate | Licensed operators only |\n| Online casino (slots, table games) | **No** | Legal only in licensed casinos |\n| Lottery | **No state lottery** | — |\n\nThe [Nevada Gaming Control Board](https://gaming.nv.gov/) and the Nevada Gaming Commission license every operator. Nevada sportsbook apps have long required new customers to register in person at a casino before betting remotely; the [Nevada Independent](https://thenevadaindependent.com/article/sports-betting-is-increasingly-online-why-is-nevada-still-tied-to-in-person-registration) has examined why. Check the current sign-up rules of the app you use. [Where sports betting is legal](/guides/sports-betting-legal-states) compares states.",
     },
     {
       id: "casino",
       title: "Why slots are legal in Las Vegas but not online",
-      body: `Nevada's casino licences cover games played on a licensed casino floor. The state authorized online poker in 2013 but not online casino games, so a real-money online slot or blackjack site that accepts Nevadans is not licensed by Nevada, even if it advertises Las Vegas. [Is online casino legal](/guides/is-online-casino-legal) lists the states that have authorized online casinos.`,
+      body: "Nevada's casino licences cover games played on a licensed casino floor. The state authorized online poker in 2013 but not online casino games, so a real-money online slot or blackjack site that accepts Nevadans is not licensed by Nevada, even if it advertises Las Vegas. [Is online casino legal](/guides/is-online-casino-legal) lists the states that have authorized online casinos.",
     },
     {
       id: "offshore",
-      title: "Offshore and sweepstakes sites",
-      body: `Offshore casinos and sweepstakes casinos operate outside Nevada's licensing; Nevada regulators have warned against unlicensed operators. See [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states).
-
-### How to check an app is licensed
-
-1. Find the operator's name and licence number on its site.
-2. Look it up on the regulator's own list of licensees.
-3. Confirm the app checks your location: licensed apps only accept bets placed inside the state.
-4. Treat "licensed offshore" (Curaçao, Anjouan) as not licensed by the state; see [crypto casino licenses](/guides/crypto-casino-license).
-
-More in the [crypto casino basics topic](/guides/topics/foundations).`,
+      title: "Check the authority for this activity",
+      body: "Nevada publishes a specific [interactive-gaming operator list](https://www.gaming.nv.gov/gaming-commission/online-gaming). It names the licensed entities and directs disputes about winnings, losses and game conduct to the statutory process or the Gaming Control Board's Enforcement Division.\n\nCheck that actual list instead of treating a Las Vegas address or a land-based casino brand as a general internet licence. An overseas [casino approval](/guides/crypto-casino-license) concerns a different authority. The [Foundations hub](/guides/topics/foundations) explains the distinction between operator identity and the product authorized.",
     },
     {
       id: "tax",
       title: "Taxes",
-      body: `Nevada has no state income tax, but gambling winnings are still taxable for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Nevada. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Nevada has no state income tax, but gambling winnings are still taxable for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).\nNevada online poker and mobile sports accounts have product-specific registration and location requirements. Confirm the operator's current process before funding. [Responsible gambling](/responsible-gambling) covers affordable limits alongside the formal dispute route.",
     },
   ],
   faqs: [
@@ -82,7 +65,14 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     { q: "Does Nevada have a lottery?", a: "No. Nevada has no state lottery." },
   ],
   sources: [
-    { label: "Nevada Gaming Control Board", url: "https://gaming.nv.gov/" },
+    {
+      label: "Nevada Gaming Commission — approved interactive-gaming operators and disputes",
+      url: "https://www.gaming.nv.gov/gaming-commission/online-gaming",
+    },
+    {
+      label: "Nevada Gaming Control Board",
+      url: "https://gaming.nv.gov/",
+    },
     {
       label: "The Nevada Independent: why is Nevada still tied to in-person registration",
       url: "https://thenevadaindependent.com/article/sports-betting-is-increasingly-online-why-is-nevada-still-tied-to-in-person-registration",
@@ -91,7 +81,10 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
   ],
   related: [
     "sports-betting-legal-states",
@@ -100,5 +93,5 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     "gambling-age-us",
     "online-gambling-legal-colorado",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

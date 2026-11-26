@@ -27,7 +27,11 @@ If you came from a pick'em or a survivor pool, that word is a shared pot on spor
     {
       id: "where",
       title: "Pages that sit next to a stake",
-      body: "A bar stake, an app prize, and a sportsbook ticket are three different bets. The fee on this site's 8-ball pot is worked on [8 ball pool online](/guides/8-ball-pool-hub).\n\nThe neighbouring money pages are [skill or chance](/guides/skill-games-for-money-pool) and [a casino table versus a pot](/guides/8-ball-pool-casino). The group is the [skill wagers guides](/guides/topics/skill-wagers).\n\nThe match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).",
+      body: `A bar stake, an app prize, and a sportsbook ticket are three different bets. The fee on this site's 8-ball pot is worked on [8 ball pool online](/guides/8-ball-pool-hub).
+
+The neighbouring money pages are [skill or chance](/guides/skill-games-for-money-pool) and [a casino table versus a pot](/guides/8-ball-pool-casino). The group is the [skill wagers guides](/guides/topics/skill-wagers).
+
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "apa-ban",
@@ -62,7 +66,7 @@ If someone in a chat offers pool betting and asks you to send crypto to a person
     {
       id: "what-we-will-not-price",
       title: "Odds this page will not print",
-      body: `A televised 9-ball final has a favourite. This page does not have that price, so it will not invent minus 180 or any other number. A break-win rate for money 8-ball is a real question and this lobby does not publish one. Printing 40% or 55% because it sounds familiar would be a guess.
+      body: `A televised 9-ball final has a favourite. A bookmaker market needs its own current price; a cash-table fee is not sportsbook odds. A break-win rate for money 8-ball is a real question and this lobby does not publish one. Printing 40% or 55% because it sounds familiar would be a guess.
 
 What you can compute is the fee. Against an equal player, a 5% pot fee means you need to win about 52.63% of $25 matches to break even, because you risk $25 to receive $47.50. If your opponent is better, the fee makes a bad match worse. If your opponent is worse, the fee still takes $2.50 from a $50 pot before you enjoy the gap.
 
@@ -100,7 +104,10 @@ That is the whole betting model on this table. Skill can move the win rate. It c
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: [
     "8-ball-pool-for-money",
@@ -108,5 +115,5 @@ That is the whole betting model on this table. Skill can move the win rate. It c
     "8-ball-pool-hub",
     "is-crypto-gambling-legal",
   ],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

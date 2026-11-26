@@ -15,39 +15,27 @@ export const guide: Guide = {
     "Regulation cannot finish as a draw. Overtime is part of the league rule, in five-minute periods.",
     "Scoring is 2, 3, and 1. There is no fixed menu of 3 and 7 the way there is in football.",
     "A spread, a total, and a moneyline ask different questions. The hold sits in the price.",
-    "A back-to-back is a date on the schedule. It is not, on this page, a measured advantage.",
-    "PVPspinArena does not book basketball.",
   ],
   sections: [
     {
       id: "clock",
       title: "The clock and the overtime rule",
-      body: `The NBA's official playing rules say each regulation period is 12 minutes and each overtime period is five. If the score is tied when the fourth period ends, play resumes, without a change of baskets, for however many overtime periods are required. That is why an NBA moneyline does not have a draw the way a soccer 1X2 does. The game produces a winner unless it is stopped for a reason the competition, not a betting guide, defines.
-
-A basket in the air as time expires can still count, under the end-of-period exceptions in those rules. That is a scoring question for the officials. Your bet is graded by the market rules after the official result.
-
-For women's professional basketball markets, use the separate [WNBA betting guide](/guides/wnba-betting). Do not carry NBA game assumptions into a different league's rules.`,
+      body: "The NBA's official playing rules say each regulation period is 12 minutes and each overtime period is five. If the score is tied when the fourth period ends, play resumes, without a change of baskets, for however many overtime periods are required. That is why an NBA moneyline does not have a draw the way a soccer 1X2 does. The game produces a winner unless it is stopped for a reason the competition, not a betting guide, defines.\n\nA basket in the air as time expires can still count, under the end-of-period exceptions in those rules. That is a scoring question for the officials. Your bet is graded by the market rules after the official result.\n\nFor women's professional basketball markets, use the separate [WNBA betting guide](/guides/wnba-betting). Do not carry NBA game assumptions into a different league's rules.",
     },
     {
       id: "markets",
       title: "Why basketball lines look different from football lines",
-      body: `Possessions are worth two or three, plus free throws of one. The total is a large number because there are many possessions, not because someone invented a big total. A spread of a few points is a small slice of that total. Neither fact tells you whether the price is fair.
-
-[Moneyline betting explained](/guides/moneyline-betting-explained) is who wins. [Vig betting](/guides/vig-betting) is the book's margin on both sides. [What sports betting is](/guides/what-is-sports-betting) is the general contract. A player prop is a different settlement: points, rebounds, or assists as the market defines them, which may or may not include overtime. Read that sentence on the prop, not on the game spread.`,
+      body: "Possessions are worth two or three, plus free throws of one. The total is a large number because there are many possessions, not because someone invented a big total. A spread of a few points is a small slice of that total. Neither fact tells you whether the price is fair.\n\n[Moneyline betting explained](/guides/moneyline-betting-explained) is who wins. [Vig betting](/guides/vig-betting) is the book's margin on both sides. [What sports betting is](/guides/what-is-sports-betting) is the general contract. A player prop is a different settlement: points, rebounds, or assists as the market defines them, which may or may not include overtime. Read that sentence on the prop, not on the game spread.",
     },
     {
       id: "schedule",
       title: "Schedule spots are facts, not edges",
-      body: `The league calendar shows who played yesterday and who travels. A back-to-back is visible without a model. What it is worth in points is a forecast. This page does not make it. Books disagree, and a public "rest edge" percent you did not compute is not a number to bet.
-
-The same restraint applies to injuries. A listed absence is news. The point value of the absence is the book's opinion plus yours. Separate the two.`,
+      body: 'The league calendar shows who played yesterday and who travels. A back-to-back is visible without a model. What it is worth in points is a forecast. Build that estimate from the matchup and confirmed player availability. Books disagree, and a public "rest edge" percent you did not compute is not a number to bet.\n\nThe same restraint applies to injuries. A listed absence is news. The point value of the absence is the book\'s opinion plus yours. Separate the two.',
     },
     {
       id: "grade",
       title: "Grade the market you bought",
-      body: `Because overtime is required, many basketball markets include it. "Many" is not "this slip." A first-half total ends at halftime even if the game later needs an extra period. A shortened or postponed game follows the book, not a custom you heard about football.
-
-PVPspinArena does not offer NBA betting. Adults only. [Responsible gambling](/responsible-gambling) is the limit on a nightly schedule that can hold ten games. The cluster is [sports betting](/guides/topics/sports-betting). The [terms](/terms) are about this site's own products.`,
+      body: 'Because overtime is required, many basketball markets include it. "Many" is not "this slip." A first-half total ends at halftime even if the game later needs an extra period. A shortened or postponed game follows the book, not a custom you heard about football.\n\nExplore the [sports betting topic](/guides/topics/sports-betting) for related rules and examples.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.',
     },
   ],
   faqs: [
@@ -65,11 +53,11 @@ PVPspinArena does not offer NBA betting. Adults only. [Responsible gambling](/re
     },
     {
       q: "Is a back-to-back worth a certain number of points?",
-      a: "It is a schedule fact. This page does not assign it a point value.",
+      a: "It is a schedule fact. Rest and travel effects vary by team, schedule and lineup; they do not justify a fixed point adjustment by themselves.",
     },
     {
-      q: "Does this site book the NBA?",
-      a: "No.",
+      q: "Does overtime count in a basketball total?",
+      a: "It commonly counts in a full-game total, while quarter or regulation-only markets can differ. Use the period and sport-specific rule on the accepted wager.",
     },
   ],
   sources: [
@@ -84,5 +72,5 @@ PVPspinArena does not offer NBA betting. Adults only. [Responsible gambling](/re
     "what-is-sports-betting",
     "prop-bets-explained",
   ],
-  updated: "2026-11-05",
+  updated: "2026-11-26",
 };

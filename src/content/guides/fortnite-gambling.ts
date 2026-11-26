@@ -22,7 +22,7 @@ export const guide: Guide = {
     {
       id: "covers",
       title: "What Fortnite gambling covers",
-      body: `People search “Fortnite gambling” for three different things: private wagers between players, streamer tip races, and third-party sites that take bets on matches or mini-games themed around Fortnite. Only some of those are formal gambling products. All of them can violate platform rules or local age law.
+      body: `Fortnite gambling can refer to three different activities: private wagers between players, streamer tip races, and third-party sites that take bets on matches or mini-games themed around Fortnite. Only some of those are formal gambling products. All of them can violate platform rules or local age law.
 
 This explainer sits with other game-economy risk pages in [CS:GO heritage](/guides/topics/csgo-heritage) because readers arrive from skin-era habits. Adults 18+ only. It is parent- and player-safety oriented, not a how-to for underage wagering.
 
@@ -117,7 +117,10 @@ For a cash challenge in which you play the match yourself, use the existing [wag
     },
   ],
   sources: [
-    { label: "Epic Games — Terms of Service", url: "https://www.epicgames.com/site/en-US/tos" },
+    {
+      label: "Epic Games — Terms of Service",
+      url: "https://www.epicgames.com/site/en-US/tos",
+    },
     {
       label: "Fortnite — Parental Controls",
       url: "https://www.epicgames.com/fortnite/en-US/news/parental-controls",
@@ -130,5 +133,5 @@ For a cash challenge in which you play the match yourself, use the existing [wag
     "fake-casino-sites",
     "fps-for-money-hub",
   ],
-  updated: "2026-11-05",
+  updated: "2026-11-26",
 };

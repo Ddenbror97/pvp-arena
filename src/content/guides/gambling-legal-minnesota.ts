@@ -27,34 +27,17 @@ export const guide: Guide = {
     {
       id: "status",
       title: "Where Minnesota stands",
-      body: `Minnesota lawmakers have introduced sports betting bills in several sessions, usually giving the state's tribes control of mobile betting. In 2026 the effort stalled again while lawmakers debated other gambling measures, including sweepstakes casinos, as [Covers reported in April 2026](https://www.covers.com/industry/minnesota-sweeps-casino-ban-progresses-sports-betting-falters-april-15-2026). After the November 2026 election, analysts expect the issue to return in the next session. Until a law passes and operators are licensed, sports betting is not legal in Minnesota.`,
+      body: "Minnesota lawmakers have introduced sports betting bills in several sessions, usually giving the state's tribes control of mobile betting. In 2026 the effort stalled again while lawmakers debated other gambling measures, including sweepstakes casinos, as [Covers reported in April 2026](https://www.covers.com/industry/minnesota-sweeps-casino-ban-progresses-sports-betting-falters-april-15-2026). After the November 2026 election, analysts expect the issue to return in the next session. Until a law passes and operators are licensed, sports betting is not legal in Minnesota.",
     },
     {
       id: "legal",
       title: "What is legal in Minnesota",
-      body: `| Product | Status |
-| --- | --- |
-| Sports betting (retail or online) | **Not legal** |
-| Tribal casinos | Legal, under compacts |
-| Lottery | State lottery products |
-| Horse racing | Legal at licensed tracks |
-| Charitable gambling (pull-tabs, bingo) | Legal under state rules |
-| Online casino and online poker | **Not legal** |
-
-[Pull tabs](/guides/pull-tabs) explains Minnesota's best-known charitable game. [Where sports betting is legal](/guides/sports-betting-legal-states) shows the states that have legalized it, and [Native American casinos](/guides/native-american-casinos) explains tribal compacts.`,
+      body: "| Product | Status |\n| --- | --- |\n| Sports betting (retail or online) | **Not legal** |\n| Tribal casinos | Legal, under compacts |\n| Lottery | State lottery products |\n| Horse racing | Legal at licensed tracks |\n| Charitable gambling (pull-tabs, bingo) | Legal under state rules |\n| Online casino and online poker | **Not legal** |\n\n[Pull tabs](/guides/pull-tabs) explains Minnesota's best-known charitable game. [Where sports betting is legal](/guides/sports-betting-legal-states) shows the states that have legalized it, and [Native American casinos](/guides/native-american-casinos) explains tribal compacts.",
     },
     {
       id: "offshore",
       title: "Offshore sportsbooks and prediction markets",
-      body: `Offshore sportsbooks that accept Minnesotans are not licensed by the state, so there is no Minnesota regulator to help with a dispute or a withheld withdrawal. Some prediction-market apps offer sports event contracts under federal rules; whether those are lawful in a state is contested, as [prediction markets and US law](/guides/prediction-market-legal-us) explains. Daily fantasy and pick'em apps are a separate category again.
-
-The [sports betting topic](/guides/topics/sports-betting) collects the betting basics.`,
-    },
-    {
-      id: "tax",
-      title: "Taxes",
-      body: `Gambling winnings, including from tribal casinos and the lottery, are taxable federally and in Minnesota; see [report gambling winnings](/guides/report-gambling-winnings).
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Minnesota. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Offshore sportsbooks that accept Minnesotans are not licensed by the state, so there is no Minnesota regulator to help with a dispute or a withheld withdrawal. Some prediction-market apps offer sports event contracts under federal rules; whether those are lawful in a state is contested, as [prediction markets and US law](/guides/prediction-market-legal-us) explains. Daily fantasy and pick'em apps are a separate category again.\n\nThe [sports betting topic](/guides/topics/sports-betting) collects the betting basics.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.",
     },
   ],
   faqs: [
@@ -93,7 +76,10 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
   ],
   related: [
     "sports-betting-legal-states",
@@ -102,5 +88,5 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     "pull-tabs",
     "prediction-market-legal-us",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

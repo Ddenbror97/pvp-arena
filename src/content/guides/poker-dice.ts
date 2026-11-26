@@ -32,7 +32,9 @@ The game has many relatives. Generala in Latin America and Yahtzee in the Englis
 
 You need five dice, a cup or shaker, and ideally a tray with raised sides so dice cannot roll off the table. Card-faced dice are cheap and make hands easy to read at a glance, which matters when four people are comparing results quickly. Pipped dice work fine once everyone agrees which face is high. A pen and paper help if you play to a points total or track lives rather than settling each round in cash.
 
-If you already know the card game, the hand names will be familiar; [poker hand rankings](/guides/poker-hand-rankings) covers the card order, and the differences here come straight from the missing suits and the different counting.`,
+If you already know the card game, the hand names will be familiar; [poker hand rankings](/guides/poker-hand-rankings) covers the card order, and the differences here come straight from the missing suits and the different counting.
+
+Foster's Complete Hoyle describes five dice and up to three throws, with selected dice retained between throws. It is a historical rules source; modern editions can choose different straight rankings.`,
     },
     {
       id: "rules",
@@ -124,15 +126,6 @@ A few sensible habits:
 
 Dice fairness matters more than people think. Cheap dice with drilled pips are close enough for a pub game, but a loaded or shaved die shifts the counts in the table above. Casinos use precision dice for this reason, as [craps odds](/guides/craps-odds) explains.`,
     },
-    {
-      id: "pvp",
-      title: "From dice on a table to a hashed PvP round",
-      body: `Poker dice works because every face is equally likely and every roll is independent. The same two properties are what make an online game fair, but a screen cannot show you the dice, so you need another way to check them.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott. [Coinflip](/coinflip) is the closest cousin to a two-player dice duel: two players, a 50/50 result, and the winner takes the pot minus any fee shown before entry. Jackpot works like a shared pot where your win chance equals your share of it. Roulette uses a 33-slot wheel where Purple and Silver pay 2x and return about 96.97% of each bet before the win fee, while Green pays 14x and returns about 42.42%. After the fee the Purple or Silver edge is about 7.88%.
-
-Results come from committed seeds: the server commits to a hidden seed before the round and reveals it afterwards, so anyone can recompute the outcome on the [fairness](/fairness) page. That is the digital equivalent of rolling in an open tray. If you enjoy the head-to-head side of dice, [dice duel](/guides/dice-duel-game) compares PvP dice formats, and [liar's dice](/guides/liars-dice) adds bluffing to five-dice hands. Play is 18+, and the [responsible gambling](/responsible-gambling) page has limits and help if a friendly game stops feeling friendly.`,
-    },
   ],
   faqs: [
     {
@@ -157,9 +150,22 @@ Results come from committed seeds: the server commits to a hidden seed before th
     },
   ],
   sources: [
-    { label: "Wikipedia: Poker dice", url: "https://en.wikipedia.org/wiki/Poker_dice" },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
-    { label: "Wikipedia: Generala", url: "https://en.wikipedia.org/wiki/Generala" },
+    {
+      label: "R. F. Foster: Complete Hoyle, Poker Dice rules",
+      url: "https://www.gutenberg.org/cache/epub/53881/pg53881-images.html",
+    },
+    {
+      label: "Wikipedia: Poker dice",
+      url: "https://en.wikipedia.org/wiki/Poker_dice",
+    },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
+    {
+      label: "Wikipedia: Generala",
+      url: "https://en.wikipedia.org/wiki/Generala",
+    },
   ],
   related: [
     "yahtzee-rules",
@@ -169,5 +175,5 @@ Results come from committed seeds: the server commits to a hidden seed before th
     "dice-roll-probability",
     "poker-hand-rankings",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

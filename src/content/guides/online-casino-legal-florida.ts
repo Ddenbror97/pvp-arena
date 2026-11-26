@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Is online casino play legal in Florida? No: only the Seminole Tribe's Hard Rock Bet sportsbook is legal online. What the compact allows.",
   h1: "Online casino legal Florida: what the Seminole compact allows online",
   answer:
-    "Online casino legal Florida? No. Florida has not authorized online casino games for real money. The only legal online gambling product is sports betting through the Seminole Tribe's Hard Rock Bet app, which has been open statewide since late 2023 under the tribe's 2021 gaming compact. Casino games are legal in person at Seminole casinos and at licensed pari-mutuel facilities in Broward and Miami-Dade counties.",
+    "Online casino legal Florida? Florida has not authorized a general real-money online casino market. The Florida Gaming Control Commission distinguishes Seminole-linked sports wagering from online casino games, tribal casino play and licensed cardrooms. A sportsbook, retail cardroom or out-of-state casino permission cannot be treated as authorization for every game in an app.",
   facts: [
     "Online casino games for real money: not legal in Florida.",
     "Online sports betting: legal only through the Seminole Tribe's Hard Rock Bet, 21+.",
@@ -27,41 +27,22 @@ export const guide: Guide = {
     {
       id: "glance",
       title: "Florida at a glance",
-      body: `| Product | Legal online in Florida? |
-| --- | --- |
-| Sports betting | Yes, only via the Seminole Tribe's Hard Rock Bet (21+) |
-| Online casino (slots, table games) | **No** |
-| Online poker | **No** |
-| Lottery | Florida Lottery products |
-| In-person casino games | Seminole casinos; slots and card rooms at licensed pari-mutuels |
-
-[Where sports betting is legal](/guides/sports-betting-legal-states) compares states, and [is online casino legal](/guides/is-online-casino-legal) lists the states that license online casinos.`,
+      body: "| Product | Legal online in Florida? |\n| --- | --- |\n| Sports betting | Yes, only via the Seminole Tribe's Hard Rock Bet (21+) |\n| Online casino (slots, table games) | **No** |\n| Online poker | **No** |\n| Lottery | Florida Lottery products |\n| In-person casino games | Seminole casinos; slots and card rooms at licensed pari-mutuels |\n\n",
     },
     {
       id: "law",
       title: "What the law says",
-      body: `The Seminole Tribe's 2021 compact with the state gave it the right to offer sports betting, including online bets placed anywhere in Florida and processed on tribal servers. After court challenges, Hard Rock Bet [relaunched in November 2023](https://www.covers.com/industry/florida-hard-rock-bet-relaunch-online-sports-betting-limited-november-2023) and opened to all Floridians in December 2023. The compact does not authorize online casino games, and no other company can offer licensed online sports betting in Florida. The [Florida Gaming Control Commission](https://www.flgaming.gov/) regulates pari-mutuel gaming and acts against illegal gambling operators.`,
+      body: "The [Florida Gaming Control Commission FAQ](https://www.flgaming.gov/faq/) distinguishes sports wagering operated by or with the Seminole Tribe from other online sportsbook offers. It warns that a licence in another state does not authorize Florida wagering.\n\nThe FAQ separately identifies tribal casino gaming, licensed cardrooms, pari-mutuel facilities and other limited activities. Those permissions do not create a general internet-casino market. Match the actual game and location to the applicable authority.",
     },
     {
       id: "offshore",
-      title: "Offshore and sweepstakes sites",
-      body: `A real-money site that is not licensed in Florida offers no state protection if it withholds a withdrawal. Sweepstakes casinos rely on a promotional model; see [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states).
-
-### How to check an app is licensed
-
-1. Find the operator's name and licence number on its site.
-2. Look it up on the regulator's own list of licensees.
-3. Confirm the app checks your location: licensed apps only accept bets placed inside the state.
-4. Treat "licensed offshore" (Curaçao, Anjouan) as not licensed by the state; see [crypto casino licenses](/guides/crypto-casino-license).
-
-More in the [crypto casino basics topic](/guides/topics/foundations).`,
+      title: "Check the authority for this activity",
+      body: "Florida requires a different check from states with competing sportsbook lists. The [FGCC FAQ](https://www.flgaming.gov/faq/) says online sports wagers outside sportsbooks operated by or with the Seminole Tribe are most likely illegal. A licence from another US state does not settle Florida permission.\n\nThe same FAQ distinguishes tribal casino games, licensed cardrooms and pari-mutuel slots. Those in-person permissions are not a general online casino licence. Compare the exact activity rather than a generic [casino badge](/guides/crypto-casino-license). The [Foundations topic](/guides/topics/foundations) explains further operator checks.",
     },
     {
       id: "tax",
       title: "Taxes and limits",
-      body: `Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).
-
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Florida. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).\n\nFlorida's product distinctions also affect age rules: the FGCC separately describes limited private recreational card games for adults 18+ under specified conditions. Do not replace those rules with a universal casino-age statement. [Responsible gambling](/responsible-gambling) provides spending controls independently of eligibility.",
     },
   ],
   faqs: [
@@ -83,20 +64,26 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     },
     {
       q: "Are offshore casinos legal in Florida?",
-      a: "They are not licensed by Florida, so a dispute has no state regulator.",
+      a: "An offshore or another state's licence does not establish Florida authorization. The FGCC FAQ explains the activity-specific framework and reporting route.",
     },
   ],
   sources: [
-    { label: "Florida Gaming Control Commission", url: "https://www.flgaming.gov/" },
     {
-      label: "Covers: Hard Rock Bet relaunches in Florida (November 2023)",
-      url: "https://www.covers.com/industry/florida-hard-rock-bet-relaunch-online-sports-betting-limited-november-2023",
+      label: "Florida Gaming Control Commission — legal activities and online wagering FAQ",
+      url: "https://www.flgaming.gov/faq/",
+    },
+    {
+      label: "Florida Gaming Control Commission",
+      url: "https://www.flgaming.gov/",
     },
     {
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
   ],
   related: [
     "is-online-casino-legal",
@@ -105,5 +92,5 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     "sports-betting-legal-states",
     "sweepstakes-casino-legal-states",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

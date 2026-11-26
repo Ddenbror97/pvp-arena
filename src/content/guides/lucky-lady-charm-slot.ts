@@ -27,7 +27,7 @@ export const guide: Guide = {
     {
       id: "sheet",
       title: "What the lucky lady charm sheet prints",
-      body: `The page opened first is Novomatic's product card at novomatic.com/en/products/gaming/games/lucky-ladys-charm-deluxe. The heading uses an apostrophe and the word deluxe. This note uses the spaced keyword so the three tokens stay separate.
+      body: `The page opened first is Novomatic's product card at novomatic.com/en/products/gaming/games/lucky-ladys-charm-deluxe. The heading uses an apostrophe and the word deluxe. The manufacturer calls this variant Lucky Lady’s Charm Deluxe.
 
 Game Facts on that card are three lines: Lines 10, Reels 5, and Volatility 4.
 
@@ -164,11 +164,11 @@ Coinflip minimum is $1. The charm card's minimum is not published, so do not mix
       title: "Who should leave the charm tile alone",
       body: `A sitting on this title can end below the stake you brought. There is no printed return on the studio card, so nobody on this page can tell you the long-run centre of the build in your lobby. The digit 4 is not a plan.
 
-Do not play if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent, savings, or money that has a due date.
+Adults only where legal. Set a loss limit before play.
 
 Do not play to get even. The card does not owe the next spin a charm. This page is an editorial note, not a statute, and not a coupon.
 
-PVPspinArena does not offer this title. If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).
+This game is not offered here. [Help with gambling](/responsible-gambling) is available.
 
 An alien grid from another studio is a separate sheet. Read [the alien grid notes](/guides/reactoonz-slot) only when that tile is the one you meant.`,
     },

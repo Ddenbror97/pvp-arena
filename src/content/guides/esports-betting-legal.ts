@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Esports betting is regulated unevenly. How it is classified across the US, UK, EU and Australia, plus skin betting, age limits and integrity rules.",
   h1: "Is Esports Betting Legal? Rules by Region",
   answer:
-    "Esports betting legal status usually follows the same local sports-betting framework that covers traditional sports — with extra integrity and age questions on top. Crypto rails do not create a new licence. This page is high-level orientation for adults 18+, not legal advice, and PVPspinArena is not an esports sportsbook.",
+    "Esports betting legal status usually follows the same local sports-betting framework that covers traditional sports — with extra integrity and age questions on top. Crypto rails do not create a new licence.",
   facts: [
     "Where sports betting is authorized, esports markets may be offered by licensed books — subject to each regulator’s rules.",
     "Where sports betting is not authorized, an “esports crypto book” is not automatically lawful.",
@@ -27,74 +27,42 @@ export const guide: Guide = {
     {
       id: "scope",
       title: "Scope and disclaimer",
-      body: `Esports betting legal questions are geography questions. This guide is orientation dated 2026-09-26. It is not a country-by-country licence feed and not legal advice.
-
-Adults 18+ — many US sports products require 21. See [gambling age us](/guides/gambling-age-us). This legality note lives with the other geography pages in [Foundations](/guides/topics/foundations). Product literacy stays on [esports betting](/guides/esports-betting) and the [esports betting topic](/guides/topics/esports-betting).
-
-PVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. We are not a state-licensed sportsbook and will not claim otherwise.
-
-If betting is already harmful, use [responsible gambling](/responsible-gambling).
-`,
+      body: "Esports betting legal questions are geography questions. It is not a country-by-country licence feed and not legal advice.\n\nAdults 18+ — many US sports products require 21. See [gambling age us](/guides/gambling-age-us). This legality note lives with the other geography pages in [Foundations](/guides/topics/foundations). Product literacy stays on [esports betting](/guides/esports-betting) and the [esports betting topic](/guides/topics/esports-betting).\n\nPVPspinArena runs six-max poker, Jackpot, Coinflip, Roulette, and P2P Slott. We are not a state-licensed sportsbook and will not claim otherwise.\n\nIf betting is already harmful, use [responsible gambling](/responsible-gambling).",
     },
     {
       id: "sports-frame",
       title: "Usually sports-betting law, not a special esports statute",
-      body: `In many regulated markets, esports appears as another vertical inside a sportsbook licence. That means the same geo-fencing, identity, advertising and age rules that cover football or basketball can apply to League of Legends or CS2 markets.
-
-US readers should start with [sports betting legal states](/guides/sports-betting-legal-states) as a map of regime *types*, then open their state regulator’s operator list. “Esports” in an ad does not override a state that has not authorized online sports betting.
-
-Crypto deposits at an offshore book do not create a state licence. Tokens are rails.
-`,
+      body: "In many regulated markets, esports appears as another vertical inside a sportsbook licence. That means the same geo-fencing, identity, advertising and age rules that cover football or basketball can apply to League of Legends or CS2 markets.\n\nUS readers should start with [sports betting legal states](/guides/sports-betting-legal-states) as a map of regime *types*, then open their state regulator’s operator list. “Esports” in an ad does not override a state that has not authorized online sports betting.\n\nCrypto deposits at an offshore book do not create a state licence. Tokens are rails.",
     },
     {
       id: "integrity",
       title: "Integrity and match-fixing overlays",
-      body: `Even where esports betting is lawful, integrity risk remains. Smaller tournaments and lower liquidity markets historically attract fix attempts. Read [esports match fixing](/guides/esports-match-fixing).
-
-Licensed books may void markets, limit accounts or share data with integrity units. Offshore crypto books may simply disappear with the stake. Legality of the market does not guarantee a clean match — and a clean match does not guarantee a solvent cashier.
-
-Tournament publishers can ban players for betting-related breaches under their own codes. That is separate from criminal law.
-`,
+      body: "Even where esports betting is lawful, integrity risk remains. Smaller tournaments and lower liquidity markets historically attract fix attempts. Read [esports match fixing](/guides/esports-match-fixing).\n\nLicensed books may void markets, limit accounts or share data with integrity units. Offshore crypto books may simply disappear with the stake. Legality of the market does not guarantee a clean match — and a clean match does not guarantee a solvent cashier.\n\nTournament publishers can ban players for betting-related breaches under their own codes. That is separate from criminal law.",
     },
     {
       id: "age",
       title: "Age gates and under-18 audiences",
-      body: `Esports audiences skew young. Betting products must still clear adult age gates. Households with shared PCs and saved payment methods create underage risk. Lock devices. Do not treat a Discord tip as age verification.
-
-[Gambling self-exclusion](/guides/gambling-self-exclusion) tools on licensed apps exist for a reason — use them if esports betting spills past entertainment.
-`,
+      body: "Esports audiences skew young. Betting products must still clear adult age gates. Households with shared PCs and saved payment methods create underage risk. Lock devices. Do not treat a Discord tip as age verification.\n\n[Gambling self-exclusion](/guides/gambling-self-exclusion) tools on licensed apps exist for a reason — use them if esports betting spills past entertainment.",
     },
     {
       id: "crypto-offshore",
       title: "Crypto esports books and offshore marketing",
-      body: `Search ads push crypto esports books globally. Judge them with [best crypto gambling sites](/guides/best-crypto-gambling-sites) discipline only after local law clears. Check [crypto casino license](/guides/crypto-casino-license) claims on the register that actually matters for your country.
-
-[Fake casino sites](/guides/fake-casino-sites) clone sportsbook brands too. We will not help evade geo-blocks or KYC.
-
-If you want verifiable PvP rounds instead of match odds, that is a different product — [Fairness](/fairness) on this site — not a substitute licence for esports betting.
-`,
+      body: "Search ads push crypto esports books globally. Judge them with [best crypto gambling sites](/guides/best-crypto-gambling-sites) discipline only after local law clears. Check [crypto casino license](/guides/crypto-casino-license) claims on the register that actually matters for your country.\n\n[Fake casino sites](/guides/fake-casino-sites) clone sportsbook brands too.\n\nIf you want verifiable PvP rounds instead of match odds, that is a different product — [Fairness](/fairness) on this site — not a substitute licence for esports betting.",
     },
     {
       id: "sweeps",
       title: "Sweepstakes and social products are different",
-      body: `Some US players meet “esports-like” play inside sweepstakes or social casinos. Those models have their own maps — [sweepstakes casino](/guides/sweepstakes-casino) and [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states). Do not assume a sweeps coin lobby equals a licensed esports sportsbook.
-`,
+      body: "Some US players meet “esports-like” play inside sweepstakes or social casinos. Those models have their own maps — [sweepstakes casino](/guides/sweepstakes-casino) and [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states). Do not assume a sweeps coin lobby equals a licensed esports sportsbook.",
     },
     {
       id: "practical",
       title: "Practical checks",
-      body: `1. Confirm sports-betting authorization where you live.
-2. Confirm the operator is on the regulator list.
-3. Confirm esports markets are allowed under that licence.
-4. Use integrity tools and limits.
-5. Skip offshore “anyone can bet” pitches if you need a lawful book.
-
-Curious about PvP instead? [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), and [Coinflip](/coinflip) are casino-style products — still only if lawful for you. See [how it works](/how-it-works).`,
+      body: "1. Confirm sports-betting authorization where you live.\n2. Confirm the operator is on the regulator list.\n3. Confirm esports markets are allowed under that licence.\n4. Use integrity tools and limits.\n5. Skip offshore “anyone can bet” pitches if you need a lawful book.\n\nCurious about PvP instead? [Roulette](/roulette), [P2P Slott](/slott), [six-max poker](/poker), [Jackpot](/), and [Coinflip](/coinflip) are casino-style products — still only if lawful for you. See [how it works](/how-it-works).",
     },
     {
       id: "bottom",
       title: "Bottom line",
-      body: `Esports betting legal status tracks local sports-betting rules, age gates and integrity overlays. Crypto does not invent a licence. Adults 18+. Not legal advice. PVPspinArena is not your esports sportsbook.`,
+      body: "Esports betting legal status tracks local sports-betting rules, age gates and integrity overlays. Crypto does not invent a licence. Adults 18+. Not legal advice. PVPspinArena is not your esports sportsbook.",
     },
   ],
   faqs: [
@@ -135,5 +103,5 @@ Curious about PvP instead? [Roulette](/roulette), [P2P Slott](/slott), [six-max 
     "sports-betting-legal-states",
     "gambling-age-us",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

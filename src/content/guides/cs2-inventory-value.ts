@@ -48,7 +48,7 @@ Adults 18+ only. Adding numbers is not a promise that anyone will pay them today
     {
       id: "market-vs-cash",
       title: "Market value is not cash in your pocket",
-      body: `People search “how much is my cs2 inventory” and “steam inventory worth” as if the answer were a bank balance. It is not.
+      body: `A CS2 inventory valuation is a market estimate, rather than a bank balance. It is not.
 
 ### Three different numbers
 
@@ -219,7 +219,10 @@ PVPspinArena will not import this worksheet. It does not list skins, open cases 
       label: "Steam Subscriber Agreement",
       url: "https://store.steampowered.com/subscriber_agreement/",
     },
-    { label: "Counter-Strike 2 official site", url: "https://www.counter-strike.net/" },
+    {
+      label: "Counter-Strike 2 official site",
+      url: "https://www.counter-strike.net/",
+    },
   ],
   related: [
     "pvp-gambling",
@@ -228,7 +231,7 @@ PVPspinArena will not import this worksheet. It does not list skins, open cases 
     "cs2-knife-prices",
     "cs2-doppler-phases",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
   howTo: true,
   widget: "cs2-inventory",
 };

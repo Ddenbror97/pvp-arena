@@ -27,43 +27,27 @@ export const guide: Guide = {
     {
       id: "how",
       title: "How peer to peer betting works",
-      body: `At a sportsbook, the book quotes both sides of a game, builds a margin into the prices and takes whichever side you choose. In peer to peer sports betting, the platform only connects bettors. You post the bet you want (team, stake, odds) or take a bet someone else has posted. When the two sides agree on a price, the bet is **matched** and both stakes are locked until the game settles.
-
-The biggest example is the betting exchange, where you can back or lay an outcome; see [betting exchanges explained](/guides/betting-exchange-explained). Smarkets' help centre describes [what a betting exchange is](https://help.smarkets.com/hc/en-gb/articles/115001820389-What-is-a-betting-exchange). Some newer apps show the same idea as an order book with "buy" and "sell" buttons, and some prediction-market products trade sports outcomes as contracts; [prediction markets and US law](/guides/prediction-market-legal-us) covers why those are regulated differently.`,
+      body: 'At a sportsbook, the book quotes both sides of a game, builds a margin into the prices and takes whichever side you choose. In peer to peer sports betting, the platform only connects bettors. You post the bet you want (team, stake, odds) or take a bet someone else has posted. When the two sides agree on a price, the bet is **matched** and both stakes are locked until the game settles.\n\nThe biggest example is the betting exchange, where you can back or lay an outcome; see [betting exchanges explained](/guides/betting-exchange-explained). Smarkets\' help centre describes [what a betting exchange is](https://help.smarkets.com/hc/en-gb/articles/115001820389-What-is-a-betting-exchange). Some newer apps show the same idea as an order book with "buy" and "sell" buttons, and some prediction-market products trade sports outcomes as contracts; [prediction markets and US law](/guides/prediction-market-legal-us) covers why those are regulated differently.',
     },
     {
       id: "price",
       title: "Commission instead of vig",
-      body: `A sportsbook typically prices both sides of an even game at −110. You stake $110 to win $100 on either side; the gap is the [vig](/guides/vig-betting), about 4.5% of the money wagered if both sides are bet equally.
-
-On a peer to peer platform, two bettors can meet at even money (+100, or 2.00 decimal) and the platform charges a commission on the winner's profit instead.
-
-**Worked example.** You and another bettor each stake $100 at 2.00. The winner's profit is $100. At a 2% commission the winner keeps $98. Compare: winning a $110 bet at −110 also pays $100 profit, but you had to risk $110 to get it.
-
-Commission rates and how they apply (per bet, per market, on net winnings) differ by platform; Smarkets publishes its [commission breakdown](https://help.smarkets.com/hc/en-gb/articles/212106009-Commission-breakdown). Always compare after the fee: [implied probability](/guides/implied-probability) and the [odds converter](/guides/odds-converter) help.`,
+      body: "A sportsbook typically prices both sides of an even game at −110. You stake $110 to win $100 on either side; the gap is the [vig](/guides/vig-betting), about 4.5% of the money wagered if both sides are bet equally.\n\nOn a peer to peer platform, two bettors can meet at even money (+100, or 2.00 decimal) and the platform charges a commission on the winner's profit instead.\n\n**Worked example.** You and another bettor each stake $100 at 2.00. The winner's profit is $100. At a 2% commission the winner keeps $98. Compare: winning a $110 bet at −110 also pays $100 profit, but you had to risk $110 to get it.\n\nCommission rates and how they apply (per bet, per market, on net winnings) differ by platform; Smarkets publishes its [commission breakdown](https://help.smarkets.com/hc/en-gb/articles/212106009-Commission-breakdown). Always compare after the fee: [implied probability](/guides/implied-probability) and the [odds converter](/guides/odds-converter) help.",
     },
     {
       id: "liquidity",
       title: "Matching and liquidity",
-      body: `The catch is that someone must want the other side. In a big market (an NFL game, a Premier League match) there is usually plenty of money at prices close to fair. In a small one (a lower-league game, a niche prop) your offer may sit unmatched, or be only partly matched.
-
-- **Unmatched** bets carry no risk until matched; you can usually cancel them.
-- **Partly matched** bets mean only some of your stake is live. Check the matched amount before assuming you are fully on.
-- **Moving prices.** If you want an instant match, you take the best price on offer, which may be worse than the price you would post and wait for.
-
-[Line shopping](/guides/line-shopping) still applies: compare the exchange price, after commission, with what licensed sportsbooks offer.`,
+      body: "The catch is that someone must want the other side. In a big market (an NFL game, a Premier League match) there is usually plenty of money at prices close to fair. In a small one (a lower-league game, a niche prop) your offer may sit unmatched, or be only partly matched.\n\n- **Unmatched** bets carry no risk until matched; you can usually cancel them.\n- **Partly matched** bets mean only some of your stake is live. Check the matched amount before assuming you are fully on.\n- **Moving prices.** If you want an instant match, you take the best price on offer, which may be worse than the price you would post and wait for.\n\n[Line shopping](/guides/line-shopping) still applies: compare the exchange price, after commission, with what licensed sportsbooks offer.",
     },
     {
       id: "friends",
       title: "Friend bets, pools and escrow",
-      body: `Peer to peer betting also covers informal bets between people who know each other: office pools, a [pick'em pool](/guides/pick-em-pool), golf side games. These usually have no platform at all, which means no one holds the money and no one enforces settlement. If a third party offers to hold both stakes, read what happens if the result is disputed; [escrow betting](/guides/escrow-betting) explains the questions to ask. In many jurisdictions, social bets are lawful only when nobody takes a cut. The [sports betting topic](/guides/topics/sports-betting) groups the related guides.`,
+      body: "Peer to peer betting also covers informal bets between people who know each other: office pools, a [pick'em pool](/guides/pick-em-pool), golf side games. These usually have no platform at all, which means no one holds the money and no one enforces settlement. If a third party offers to hold both stakes, read what happens if the result is disputed; [escrow betting](/guides/escrow-betting) explains the questions to ask. In many jurisdictions, social bets are lawful only when nobody takes a cut. The [sports betting topic](/guides/topics/sports-betting) groups the related guides.",
     },
     {
       id: "legal",
       title: "Where it is legal",
-      body: `Betting exchanges are licensed in some countries, such as Great Britain. In the United States, sports betting is licensed state by state, and most states license sportsbooks, not exchanges; a few US operators run exchange-style models under a state sportsbook licence. Check [where sports betting is legal](/guides/sports-betting-legal-states) and confirm that the platform names a licence for your state.
-
-Adults only, 18 or the higher age your law sets (21 in most US states). This guide explains how matching works; it is not legal advice. PVPspinArena does not take sports bets. Its Jackpot and Coinflip are peer to peer in a different sense: players' stakes form the pot and a published 5% fee is the only cut, as [how it works](/how-it-works) explains. If betting stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Betting exchanges are licensed in some countries, such as Great Britain. In the United States, sports betting is licensed state by state, and most states license sportsbooks, not exchanges; a few US operators run exchange-style models under a state sportsbook licence. Check [where sports betting is legal](/guides/sports-betting-legal-states) and confirm that the platform names a licence for your state.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.",
     },
   ],
   faqs: [
@@ -101,7 +85,10 @@ Adults only, 18 or the higher age your law sets (21 in most US states). This gui
       label: "Smarkets: what is lay betting on an exchange",
       url: "https://help.smarkets.com/hc/en-gb/articles/115003374849-What-is-lay-betting-on-an-exchange",
     },
-    { label: "GambleAware", url: "https://www.gambleaware.org/" },
+    {
+      label: "GambleAware",
+      url: "https://www.gambleaware.org/",
+    },
   ],
   related: [
     "betting-exchange-explained",
@@ -110,11 +97,5 @@ Adults only, 18 or the higher age your law sets (21 in most US states). This gui
     "vig-betting",
     "sports-betting-legal-states",
   ],
-  updated: "2026-11-18",
-  cta: {
-    title: "Player versus player, with one fee",
-    text: "In PVPspinArena's Jackpot and Coinflip the other side is another player, and the fee is published: 5% of the pot.",
-    primary: { to: "/how-it-works", label: "How the games work" },
-    secondary: { to: "/coinflip", label: "Coinflip" },
-  },
+  updated: "2026-11-26",
 };

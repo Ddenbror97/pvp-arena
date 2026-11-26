@@ -27,42 +27,22 @@ export const guide: Guide = {
     {
       id: "legal",
       title: "What is legal online in Missouri",
-      body: `| Product | Legal online? | Notes |
-| --- | --- | --- |
-| Sports betting | Yes, since 1 December 2025 | 21+, licensed by the Missouri Gaming Commission |
-| Online casino (slots, table games) | **No** | Casinos are land-based |
-| Online poker | **No** | — |
-| Lottery | State lottery products | Missouri Lottery |
-| Daily fantasy sports | Regulated under a 2016 law | — |
-
-Missouri voters narrowly approved Amendment 2 in November 2024, and the state launched sports betting on 1 December 2025, as [Gambling Insider reported](https://www.gamblinginsider.com/news/29501/sports-wagering-set-to-debut-in-missouri-1-december). [Where sports betting is legal](/guides/sports-betting-legal-states) compares states.`,
+      body: "| Product | Legal online? | Notes |\n| --- | --- | --- |\n| Sports betting | Yes, since 1 December 2025 | 21+, licensed by the Missouri Gaming Commission |\n| Online casino (slots, table games) | **No** | Casinos are land-based |\n| Online poker | **No** | — |\n| Lottery | State lottery products | Missouri Lottery |\n| Daily fantasy sports | Regulated under a 2016 law | — |\n\nMissouri voters narrowly approved Amendment 2 in November 2024, and the state launched sports betting on 1 December 2025, as [Gambling Insider reported](https://www.gamblinginsider.com/news/29501/sports-wagering-set-to-debut-in-missouri-1-december). [Where sports betting is legal](/guides/sports-betting-legal-states) compares states.",
     },
     {
       id: "casino",
       title: "Casinos in Missouri",
-      body: `Missouri's commercial casinos sit along the Missouri and Mississippi rivers and are licensed by the Missouri Gaming Commission. Those licences are for in-person gaming; they do not authorize online casino games. [Is online casino legal](/guides/is-online-casino-legal) explains which states have authorized online casinos.`,
+      body: "Missouri's commercial casinos sit along the Missouri and Mississippi rivers and are licensed by the Missouri Gaming Commission. Those licences are for in-person gaming; they do not authorize online casino games. [Is online casino legal](/guides/is-online-casino-legal) explains which states have authorized online casinos.",
     },
     {
       id: "offshore",
-      title: "Offshore and sweepstakes sites",
-      body: `A real-money online casino that accepts Missouri players is not licensed by the state. Sweepstakes casinos use a promotional model; see [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states).
-
-### How to check an app is licensed
-
-1. Find the operator's name and licence number on its site.
-2. Look it up on the regulator's own list of licensees.
-3. Confirm the app checks your location: licensed apps only accept bets placed inside the state.
-4. Treat "licensed offshore" (Curaçao, Anjouan) as not licensed by the state; see [crypto casino licenses](/guides/crypto-casino-license).
-
-More in the [crypto casino basics topic](/guides/topics/foundations).`,
+      title: "Check the authority for this activity",
+      body: "The [Missouri Gaming Commission's launch notice](https://www.mgc.dps.mo.gov/SportsWagering/Sports_Wagering_Launch122025.pdf) confirms sports wagering began on 1 December 2025. It requires licensed operators with approved controls and house rules; it also specifies age 21 and physical presence in Missouri.\n\nThat announcement concerns sports wagering. It is not authorization for a website's online casino lobby. Match the exact operator and activity rather than treating a foreign [casino licence](/guides/crypto-casino-license) as Missouri approval. More licence distinctions are in [Foundations](/guides/topics/foundations).",
     },
     {
       id: "tax",
       title: "Taxes",
-      body: `Gambling winnings are taxable federally and in Missouri. See [report gambling winnings](/guides/report-gambling-winnings).
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Missouri. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).
-
-See also: [online gambling in Illinois](/guides/online-gambling-legal-illinois).`,
+      body: "Gambling winnings are taxable federally and in Missouri. See [report gambling winnings](/guides/report-gambling-winnings).\nThe MGC launch notice also describes voluntary self-exclusion covering licensed sports wagering. Check the applicable programme if account limits are insufficient; [responsible gambling](/responsible-gambling) offers additional spending controls.\n\nSee also: [online gambling in Illinois](/guides/online-gambling-legal-illinois).",
     },
   ],
   faqs: [
@@ -89,6 +69,10 @@ See also: [online gambling in Illinois](/guides/online-gambling-legal-illinois).
   ],
   sources: [
     {
+      label: "Missouri Gaming Commission — official sports-wagering launch notice",
+      url: "https://www.mgc.dps.mo.gov/SportsWagering/Sports_Wagering_Launch122025.pdf",
+    },
+    {
       label: "Gambling Insider: sports wagering set to debut in Missouri on 1 December",
       url: "https://www.gamblinginsider.com/news/29501/sports-wagering-set-to-debut-in-missouri-1-december",
     },
@@ -96,7 +80,10 @@ See also: [online gambling in Illinois](/guides/online-gambling-legal-illinois).
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
   ],
   related: [
     "sports-betting-legal-states",
@@ -105,5 +92,5 @@ See also: [online gambling in Illinois](/guides/online-gambling-legal-illinois).
     "gambling-age-us",
     "sports-betting-legal-oklahoma",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

@@ -36,7 +36,9 @@ This [poker](/guides/topics/poker) page is for adults 18 or older. Format neighb
 
 [Texas Hold'em rules](/guides/texas-holdem-rules) cover the hand itself. This article covers the money wrapped around the hand. If you skip the rules, bet sizing talk will not save you. If you skip the money, you can play pretty hands at a stake that is wrong for your bankroll.
 
-Do not import a push-fold chart from a six-minute blind level onto a cash table where the blinds never move.`,
+Do not import a push-fold chart from a six-minute blind level onto a cash table where the blinds never move.
+
+PokerStars documents cash-game table stakes and buy-in information. Consult the specific room’s current terms for rake and leaving the table.`,
     },
     {
       id: "stakes",
@@ -151,8 +153,18 @@ If the fee card is missing, ask or leave. A table that will not show its price i
     },
   ],
   sources: [
-    { label: "Wikipedia — Cash game", url: "https://en.wikipedia.org/wiki/Cash_game" },
-    { label: "Wikipedia — Texas hold 'em", url: "https://en.wikipedia.org/wiki/Texas_hold_%27em" },
+    {
+      label: "Wikipedia — Cash game",
+      url: "https://en.wikipedia.org/wiki/Cash_game",
+    },
+    {
+      label: "Wikipedia — Texas hold 'em",
+      url: "https://en.wikipedia.org/wiki/Texas_hold_%27em",
+    },
+    {
+      label: "PokerStars: cash games and table information",
+      url: "https://www.pokerstars.com/help/articles/ring-explanations/14982/",
+    },
   ],
   related: [
     "sit-and-go-poker",
@@ -162,5 +174,5 @@ If the fee card is missing, ask or leave. A table that will not show its price i
     "straddle-poker",
     "tom-dwan",
   ],
-  updated: "2026-10-07",
+  updated: "2026-11-26",
 };

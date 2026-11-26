@@ -10,7 +10,7 @@ export const guide: Guide = {
     "A CS2 float checker: paste a 0–1 float, read Factory New through Battle-Scarred, and see how close you are to the next wear band.",
   h1: "CS2 float checker: convert a float into a wear name",
   answer:
-    "A CS2 float checker maps a skin’s float value — a number from 0.0000 to 1.0000 — onto the official wear name: Factory New, Minimal Wear, Field-Tested, Well-Worn or Battle-Scarred. Paste the float you already read from an inventory or inspect tool. This page does not decode an inspect link by itself.",
+    "A CS2 float checker maps a skin’s float value — a number from 0.0000 to 1.0000 — onto the official wear name: Factory New, Minimal Wear, Field-Tested, Well-Worn or Battle-Scarred. Paste the float you already read from an inventory or inspect tool. The embedded checker needs its documented inputs; an inspect link alone is not a decoded float value.",
   facts: [
     "Float is a number in [0, 1]. Lower usually looks cleaner; higher usually looks more worn.",
     "Official wear bands: FN 0.00–0.07, MW 0.07–0.15, FT 0.15–0.38, WW 0.38–0.45, BS 0.45–1.00.",
@@ -132,7 +132,7 @@ A “low float” brag without the finish name is incomplete. 0.01 on a skin tha
 
 Those rows are labels, not bids. A 0.02 and a 0.069 can be hundreds of dollars apart on a knife and three cents apart on a filler rifle. The checker will not tell you which world you are in.
 
-This page will not quote a dollar for your AK. It will tell you whether you are allowed to write Factory New in the listing title.`,
+To value an AK, compare the exact finish, float and pattern with dated sales; float alone is insufficient. It will tell you whether you are allowed to write Factory New in the listing title.`,
     },
     {
       id: "not-a-casino",
@@ -210,8 +210,14 @@ If two sites disagree on the fourth decimal, believe the inspect payload over a 
     },
   ],
   sources: [
-    { label: "Counter-Strike 2 official site", url: "https://www.counter-strike.net/" },
-    { label: "Counter-Strike Wiki: Wear", url: "https://counterstrike.fandom.com/wiki/Wear" },
+    {
+      label: "Counter-Strike 2 official site",
+      url: "https://www.counter-strike.net/",
+    },
+    {
+      label: "Counter-Strike Wiki: Wear",
+      url: "https://counterstrike.fandom.com/wiki/Wear",
+    },
     {
       label: "Steam Community Market (inspect listings show wear names)",
       url: "https://steamcommunity.com/market/",
@@ -224,7 +230,7 @@ If two sites disagree on the fourth decimal, believe the inspect payload over a 
     "most-expensive-cs2-skins",
     "cs2-knife-prices",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
   howTo: true,
   widget: "cs2-float",
 };

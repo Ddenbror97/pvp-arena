@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Is online casino play legal in Delaware? Yes. The Delaware Lottery has run online casinos since 2013, on the BetRivers platform since December 2023.",
   h1: "Online casino Delaware: legal, and run through the Delaware Lottery",
   answer:
-    "Online casino Delaware play is legal. Delaware was one of the first US states to authorize online casino games, and the Delaware Lottery has operated them since 2013 through the state's three casinos. Since December 2023 the platform has been run by Rush Street Interactive under the BetRivers brand, which also added online sports betting. You must be 21 and physically in Delaware.",
+    "Online casino Delaware play is available through the Delaware Lottery's casino-linked platforms. Its current iGaming page identifies BetRivers-powered slots, table games and sports through Delaware Park, Bally's Dover and Harrington. Players must be 21 and physically in Delaware. Product authorization is different from a currently operating service.",
   facts: [
     "Online casino games: legal in Delaware since 2013.",
     "They are operated through the Delaware Lottery and the state's three casinos.",
@@ -27,40 +27,22 @@ export const guide: Guide = {
     {
       id: "glance",
       title: "Delaware at a glance",
-      body: `| Product | Legal online in Delaware? |
-| --- | --- |
-| Online casino (slots, table games) | **Yes**, via the Delaware Lottery platform |
-| Online poker | Yes |
-| Sports betting | Yes, online since the BetRivers launch |
-| Lottery | Delaware Lottery products |
-
-[Where sports betting is legal](/guides/sports-betting-legal-states) compares states, and [is online casino legal](/guides/is-online-casino-legal) lists the states that license online casinos.`,
+      body: "| Product | Legal online in Delaware? |\n| --- | --- |\n| Online casino (slots, table games) | **Yes**, via the Delaware Lottery platform |\n| Online poker | Current availability not confirmed |\n| Sports betting | Yes, online since the BetRivers launch |\n| Lottery | Delaware Lottery products |\n\n",
     },
     {
       id: "law",
       title: "What the law says",
-      body: `Delaware authorized online casino games in 2012 and launched them in 2013, with the Delaware Lottery as operator and the state's three casinos (Delaware Park, Bally's Dover and Harrington Raceway & Casino) as partners. In December 2023 the platform moved to Rush Street Interactive, and BetRivers launched online casino games and online sports betting, as [SBC Americas reported](https://sbcamericas.com/2024/01/03/rush-street-interactive-launches-betrivers-in-delaware/). Because the state lottery runs the market, there is a single online platform rather than competing operators.`,
+      body: "The [Delaware Lottery's current iGaming page](https://www.delottery.com/More/igaming) provides official entry points through Delaware Park, Bally's Dover and Harrington. It identifies online slots, table games and sports powered by BetRivers. Use those links to establish the actual platform rather than an affiliate list.\n\nThe Lottery also links internet-lottery regulations and its self-exclusion programme. Legal authorization of a product category is separate from whether a particular game is live.",
     },
     {
       id: "offshore",
-      title: "Offshore and sweepstakes sites",
-      body: `A real-money site that is not licensed in Delaware offers no state protection if it withholds a withdrawal. Sweepstakes casinos rely on a promotional model; see [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states).
-
-### How to check an app is licensed
-
-1. Find the operator's name and licence number on its site.
-2. Look it up on the regulator's own list of licensees.
-3. Confirm the app checks your location: licensed apps only accept bets placed inside the state.
-4. Treat "licensed offshore" (Curaçao, Anjouan) as not licensed by the state; see [crypto casino licenses](/guides/crypto-casino-license).
-
-More in the [crypto casino basics topic](/guides/topics/foundations).`,
+      title: "Check the authority for this activity",
+      body: "Use the [Delaware Lottery's iGaming page](https://www.delottery.com/More/igaming) to reach the official casino-linked platforms. It lists Delaware Park, Bally's Dover and Harrington and identifies BetRivers-powered online slots, table games and sports. This state-specific route is stronger evidence than a badge on an unrelated website.\n\nThe Lottery says players must be 21 and in Delaware. Its current product page does not by itself confirm a live poker service. The [casino licence guide](/guides/crypto-casino-license) explains how to distinguish an official receiving route from a copied brand. See [Foundations](/guides/topics/foundations) for related checks.",
     },
     {
       id: "tax",
       title: "Taxes and limits",
-      body: `Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).
-
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Delaware. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).\n\nFor Delaware internet games, the Lottery specifies 21+ and physical presence in the state. Confirm that a withdrawal concerns the same official account you funded. [Responsible gambling](/responsible-gambling) explains limits that should be set before depositing.",
     },
   ],
   faqs: [
@@ -87,18 +69,17 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
   ],
   sources: [
     {
-      label: "SBC Americas: Rush Street Interactive launches BetRivers in Delaware",
-      url: "https://sbcamericas.com/2024/01/03/rush-street-interactive-launches-betrivers-in-delaware/",
-    },
-    {
-      label: "Covers: BetRivers launches sports betting in Delaware",
-      url: "https://www.covers.com/industry/betrivers-launches-sports-betting-in-delaware-december-31-2023",
+      label: "Delaware Lottery — official iGaming entry points and eligibility",
+      url: "https://www.delottery.com/More/igaming",
     },
     {
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
   ],
   related: [
     "is-online-casino-legal",
@@ -107,5 +88,5 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     "what-is-a-crypto-casino",
     "sweepstakes-casino-legal-states",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

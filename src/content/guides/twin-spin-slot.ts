@@ -181,11 +181,11 @@ One win does not reveal the 7.88% edge. Most Purple stakes lose, and the edge is
       title: "Who should leave the linked reels alone",
       body: `A twin spin session can end below the stake you brought. The 96.55% return is a long-run average, so the ordinary path includes losses. The 1 000 x bet line is a lid, not a plan.
 
-Do not play if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent, savings, or money that has a due date.
+Adults only where legal. Set a loss limit before play.
 
 Do not play to get even. The sheet does not owe the next spin a five-reel link. This page is an editorial note, not a statute reading, and not a coupon.
 
-PVPspinArena does not offer this title. If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
+This game is not offered here. [Help with gambling](/responsible-gambling) is available.`,
     },
   ],
   faqs: [

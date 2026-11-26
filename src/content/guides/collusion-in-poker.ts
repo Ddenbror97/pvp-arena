@@ -32,7 +32,7 @@ export const guide: Guide = {
 
 That belief is the game. [How to play poker](/guides/how-to-play-poker) starts from it: each player has hole cards, each player may bet or fold, and the best hand or the last remaining player wins the pot. When two seats already know they are on the same side, the hand is a different product. The rules did not change on the felt. The contest did.
 
-### This page refuses a how-to
+### Recognising and reporting prohibited cooperation
 
 - No signal lists, chat words, or timing codes.
 - No seating plans and no advice on how to hide a partnership.
@@ -68,7 +68,7 @@ If a room's terms forbid shared bankrolls, multiple accounts, or real-time advic
     {
       id: "dumping-name",
       title: "Chip dumping, named and not explained",
-      body: `[Chip dumping](/guides/chip-dumping) is deliberately losing pots to move chips to another player. It is collusion with a transfer as the point, not an accident and not a bluff that failed. Rooms ban it as fraud. This page will not describe how a pot is thrown, which hands get used, or how large a bet has to be. A one-line definition is the whole lesson.
+      body: `[Chip dumping](/guides/chip-dumping) is deliberately losing pots to move chips to another player. It is collusion with a transfer as the point, not an accident and not a bluff that failed. Rooms ban it as fraud. Record suspicious hands and their identifiers; a single unusual bet is not conclusive evidence of cooperation. A one-line definition is the whole lesson.
 
 Why mention it at all? Because players hear the phrase and go looking for a method. The method is the harm. Other seats put money in pots that were never contests. The receiving account ends up with chips it did not win under the rules. Saying the name, and saying the room will treat it as cheating, is enough to recognize a report. Teaching the transfer would make this guide part of the cheat.
 
@@ -83,7 +83,7 @@ Ordinary lost pots are not dumping. A weak player loses chips in more than one d
 
 The people who pay are the ones outside the partnership. They call, bet, and fold against what they think are independent ranges. Some of those ranges are fiction. Money leaves their stacks for reasons that were decided off the table. That is the impact: a session they cannot price, on top of the ordinary luck of cards.
 
-Rooms respond with account closures and, under many terms, with locked balances tied to the abuse. This page will not quote a fake percentage of how often that happens. It will not tell you how monitors score a table. Those details are either unknown here or useful to someone trying to stay under a line. You only need the public rule: the conduct is banned, and playing through it is a bad idea.
+Rooms respond with account closures and, under many terms, with locked balances tied to the abuse. A prevalence claim needs a defined dataset and detection method; an isolated allegation cannot establish a rate. It will not tell you how monitors score a table. Those details are either unknown here or useful to someone trying to stay under a line. You only need the public rule: the conduct is banned, and playing through it is a bad idea.
 
 There is also a simple fairness point that does not need a security lecture. You would not accept two teammates in a game that was sold as one-on-one inside a ring. [How to play poker](/guides/how-to-play-poker) is the honest version. If the table stops matching that version, you are free to stand up. The ban exists so the room can remove the seats. Your job is not to replace the ban with a counter-scheme.`,
     },
@@ -168,5 +168,5 @@ Collusion in poker is a shared interest against everyone else. Soft play and tea
     },
   ],
   related: ["chip-dumping", "rigged-poker-sites", "how-to-play-poker", "poker-tips"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

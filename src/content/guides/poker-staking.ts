@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Poker staking explained: backing deals, makeup ledgers, markup, and a dollar split you can recompute before anyone plays a hand.",
   h1: "Poker staking: backing deals, makeup, and the split",
   answer:
-    "Poker staking is a deal where a backer funds some or all of a player's buy-ins and takes a share of the profit. Makeup is the running hole: losses that must be earned back before anyone splits a new profit. Markup is an extra price a buyer pays above face value for a slice of action. Write those three words into the agreement before the first card. This page will not tell you a 'standard' percent is fair, and it is not legal advice.",
+    "Poker staking is a deal where a backer funds some or all of a player's buy-ins and takes a share of the profit. Makeup is the running hole: losses that must be earned back before anyone splits a new profit. Markup is an extra price a buyer pays above face value for a slice of action. Write those three words into the agreement before the first card. A fair split depends on the risk, markup, makeup and withdrawal terms; get advice before signing an agreement you do not understand.",
   facts: [
     "A backer pays for a share of buy-ins. A player plays the cards. Profit is split by the written percentages.",
     "Makeup is cumulative package loss. New winnings fill that hole before a fresh profit split.",
@@ -36,7 +36,9 @@ This [poker](/guides/topics/poker) article is for adults 18 or older. Format nei
 
 Both sides need a stake limit. [Poker bankroll management](/guides/poker-bankroll-management) still applies to the player, and it applies to the backer who is funding several horses at once. A deal does not create an edge. It only decides who eats the downswing.
 
-If you do not yet know how a cash session or a tournament charges a fee, learn the game before you sell it. [Texas Hold'em strategy](/guides/texas-holdem-strategy) is about decisions at the table. Staking is about the spreadsheet after the session. Good decisions do not repair a sloppy sheet, and a beautiful sheet does not repair bad decisions.`,
+If you do not yet know how a cash session or a tournament charges a fee, learn the game before you sell it. [Texas Hold'em strategy](/guides/texas-holdem-strategy) is about decisions at the table. Staking is about the spreadsheet after the session. Good decisions do not repair a sloppy sheet, and a beautiful sheet does not repair bad decisions.
+
+PokerStars says backers and backed players cannot share a cash-game table or Sit & Go. It also declines to settle private backing disputes. Check the room’s rules before selling or buying action.`,
     },
     {
       id: "makeup",
@@ -151,9 +153,23 @@ If you cannot explain the deal without the phrase "you know what I mean," you do
     },
   ],
   sources: [
-    { label: "Wikipedia — Poker staking", url: "https://en.wikipedia.org/wiki/Poker_staking" },
-    { label: "Wikipedia — Poker", url: "https://en.wikipedia.org/wiki/Poker" },
+    {
+      label: "Wikipedia — Poker staking",
+      url: "https://en.wikipedia.org/wiki/Poker_staking",
+    },
+    {
+      label: "Wikipedia — Poker",
+      url: "https://en.wikipedia.org/wiki/Poker",
+    },
+    {
+      label: "PokerStars: staking, backing and escrow rules",
+      url: "https://www.pokerstars.com/help/articles/rmt-staking-escrow-backing/155985/",
+    },
+    {
+      label: "PokerStars: markup and buying action",
+      url: "https://www.pokerstars.com/poker/learn/news/pros-and-cons-the-poker-markup-controversy/",
+    },
   ],
   related: ["sit-and-go-poker", "spin-and-go", "cash-game-poker", "poker-bankroll-management"],
-  updated: "2026-10-07",
+  updated: "2026-11-26",
 };

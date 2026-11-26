@@ -59,7 +59,9 @@ Three players, five dice each. You hold 5, 5, 5, 2, 1, so you count four toward 
 
 If you had challenged the six instead, you would have been wrong. The skill is naming the threshold, not “feeling” that someone is lying.
 
-Liars dice sits in the [games of chance hub](/guides/topics/games-of-chance). The dice are pure luck, but the bidding is a real skill, which makes it a cousin of [poker](/guides/gto-poker-strategy) more than of [Yahtzee](/guides/yahtzee-rules).`,
+Liars dice sits in the [games of chance hub](/guides/topics/games-of-chance). The dice are pure luck, but the bidding is a real skill, which makes it a cousin of [poker](/guides/gto-poker-strategy) more than of [Yahtzee](/guides/yahtzee-rules).
+
+Publisher 25th Century Games describes its Liar's Dice as a hidden-dice bluffing game. Wild-one, exact-call and last-die rules remain edition-specific.`,
     },
     {
       id: "wilds",
@@ -164,13 +166,6 @@ Three players buy in at $10, winner takes $30. Each starts with five dice. After
 
 With one die left, Palifico-style or not, the binomial table shrinks. A lone die is a 1-in-6 shot on a named face, or 1-in-3 with wilds if ones still count. People overbid here because the pot feels “due.” It is not. Call more, raise less, unless you can see that the remaining dice cannot support the bid.`,
     },
-    {
-      id: "pvp",
-      title: "Binomial odds and a hashed PvP round",
-      body: `The binomial table that prices a liars dice bid also prices many small independent chances. It covers streaks of coin flips, hits on a roulette colour, and matches under a cup. For a coin, see [coin flip odds](/guides/coin-flip-odds): p = 1/2 in place of 1/6 or 1/3.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. A [Coinflip](/coinflip) is a fair 50/50 between two players. Roulette's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. Jackpot win chance equals your share of the pot. There's no bluffing in these games. Outcomes come from committed seeds, and any settled round can be checked on the [fairness page](/fairness). Play is 18+. The [responsible gambling](/responsible-gambling) page has limits if a game stops being fun.`,
-    },
   ],
   faqs: [
     {
@@ -195,12 +190,22 @@ PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settle
     },
   ],
   sources: [
-    { label: "Wikipedia: Liar's dice", url: "https://en.wikipedia.org/wiki/Liar%27s_dice" },
+    {
+      label: "25th Century Games: Liar's Dice",
+      url: "https://25thcenturygames.com/products/liars-dice",
+    },
+    {
+      label: "Wikipedia: Liar's dice",
+      url: "https://en.wikipedia.org/wiki/Liar%27s_dice",
+    },
     {
       label: "Wikipedia: Binomial distribution",
       url: "https://en.wikipedia.org/wiki/Binomial_distribution",
     },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
   ],
   related: [
     "poker-dice",
@@ -210,5 +215,5 @@ PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settle
     "coin-flip-odds",
     "skill-based-gambling",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

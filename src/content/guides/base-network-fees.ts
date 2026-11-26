@@ -22,67 +22,37 @@ export const guide: Guide = {
     {
       id: "how-calculated",
       title: "How Base fees are calculated",
-      body: `Base inherits an EIP-1559-style fee market adapted for an L2: you pay for computation and for data that ultimately anchors to Ethereum. Wallets show a max fee estimate before you sign.
-
-This page sits in [crypto payments](/guides/topics/crypto-payments). Adults 18+. Pair with [gas fees explained](/guides/gas-fees-explained) for the general model and [base network](/guides/base-network) for chain context.
-
-You cannot pay Base gas in USDC alone. Keep a small ETH balance on Base even if you deposit USDC to casinos.`,
+      body: "Base inherits an EIP-1559-style fee market adapted for an L2: you pay for computation and for data that is published to Ethereum. Wallets show a max fee estimate before you sign.\n\nCompare other network costs in [Crypto payments](/guides/topics/crypto-payments). Adults 18+. Pair with [gas fees explained](/guides/gas-fees-explained) for the general model and [base network](/guides/base-network) for chain context.\n\nYou cannot pay Base gas in USDC alone. Keep a small ETH balance on Base even if you deposit USDC to casinos.",
     },
     {
       id: "typical",
       title: "Typical costs by action",
-      body: `Illustrative calm-network ranges (they move—check your wallet quote):
-
-- **Native ETH transfer:** often well under a dollar, commonly cents.
-- **ERC-20 USDC transfer:** usually cents to low tens of cents.
-- **Swap on a DEX:** higher than a plain transfer; still typically far below mainnet.
-- **Approval transaction:** its own fee; avoid unlimited approvals you do not need.
-
-During congestion, multiply your mental model. The wallet’s estimate beats any article number—including this one.`,
+      body: "Illustrative calm-network ranges (they move—check your wallet quote):\n\n- **Native ETH transfer:** often well under a dollar, commonly cents.\n- **ERC-20 USDC transfer:** usually cents to low tens of cents.\n- **Swap on a DEX:** higher than a plain transfer; still typically far below mainnet.\n- **Approval transaction:** its own fee; avoid unlimited approvals you do not need.\n\nDuring congestion, multiply your mental model. The wallet’s estimate beats any article number—including this one.",
     },
     {
       id: "spikes",
       title: "Why fees spike",
-      body: `Spikes come from busy Base blocks, elevated priority fees, and rising costs to post data to Ethereum. NFT mints and meme frenzy days are classic triggers.
-
-If a deposit is not urgent, wait. If it is urgent, pay the quote or use a smaller test size first. Do not dig into savings to “save” on a spike by bridging via a random cheap aggregator you have never opened before.`,
+      body: "Spikes come from busy Base blocks, elevated priority fees, and rising costs to post data to Ethereum. NFT mints and meme frenzy days are classic triggers.\n\nIf a deposit is not urgent, wait. If it is urgent, pay the quote or use a smaller test size first. Do not dig into savings to “save” on a spike by bridging via a random cheap aggregator you have never opened before.",
     },
     {
       id: "vs-mainnet",
       title: "Fees vs Ethereum mainnet",
-      body: `Mainnet transfers can cost several dollars to tens of dollars when busy. That is a primary reason PVPspinArena and many apps settle on Base. Bridging from mainnet still incurs mainnet gas once—see conceptual bridging costs in [crypto bridge](/guides/crypto-bridge) and the Base walkthrough pages in this cluster.
-
-After funds live on Base, repeated casino deposits and withdrawals should stay cheap relative to mainnet, subject to living fee markets.`,
+      body: "Mainnet transfers can cost several dollars to tens of dollars when busy. That is a primary reason PVPspinArena and many apps settle on Base. Bridging from mainnet still incurs mainnet gas once—see conceptual bridging costs in [crypto bridge](/guides/crypto-bridge) and the Base walkthrough pages in this cluster.\n\nAfter funds live on Base, repeated casino deposits and withdrawals should stay cheap relative to mainnet, subject to living fee markets.",
     },
     {
       id: "budget",
       title: "Budgeting gas for deposits",
-      body: `Practical reserve: enough Base ETH for several USDC transfers and a couple of mistakes. Exact amounts change; many players keep a buffer measured in a few dollars of ETH rather than dust.
-
-Steps before a session:
-
-1. Confirm Base network selected.
-2. Confirm USDC balance and ETH gas balance.
-3. Send a tiny test deposit to the real [wallet](/how-it-works#wallet) address if new.
-4. Then send the real amount.
-
-[How to swap tokens](/guides/how-to-swap-tokens) helps if you hold only USDC and need ETH for gas—mind swap fees too.`,
+      body: "Practical reserve: enough Base ETH for several USDC transfers and a couple of mistakes. Exact amounts change; many players keep a buffer measured in a few dollars of ETH rather than dust.\n\nSteps before a session:\n\n1. Confirm Base network selected.\n2. Confirm USDC balance and ETH gas balance.\n3. Send a tiny test deposit to the real [wallet](/how-it-works#wallet) address if new.\n4. Then send the real amount.\n\n[How to swap tokens](/guides/how-to-swap-tokens) helps if you hold only USDC and need ETH for gas—mind swap fees too.",
     },
     {
       id: "tools",
       title: "Tools for checking current fees",
-      body: `Use your wallet’s pre-flight estimate, Base block explorers, and status pages from infrastructure providers when they publish congestion notes. Ignore Telegram screenshots of “gas is free today.”
-
-If MetaMask quotes a shocking fee, you may be on the wrong network or interacting with a unexpectedly heavy contract. Cancel and re-read the network dropdown.`,
+      body: "Use your wallet’s pre-flight estimate, Base block explorers, and status pages from infrastructure providers when they publish congestion notes. Ignore Telegram screenshots of “gas is free today.”\n\nIf MetaMask quotes a shocking fee, you may be on the wrong network or interacting with a unexpectedly heavy contract. Cancel and re-read the network dropdown.",
     },
     {
       id: "waste",
       title: "Cutting fee waste",
-      body: `Batch mentally: fewer, clearer transfers beat twelve micro-deposits. Skip vanity contract interactions. Revoke dusty approvals in one periodic session rather than one panic click per scam link.
-
-Casino side: PVPspinArena matches normal transfers—no approval tax. Games on the [home page](/) still charge their own fee or edge; gas is only the rail cost.
-
-Keep ETH on Base for gas even when you play in USDC. Fee quotes move; budget a buffer, not dust.`,
+      body: "Batch mentally: fewer, clearer transfers beat twelve micro-deposits. Skip vanity contract interactions. Revoke dusty approvals in one periodic session rather than one panic click per scam link.\n\nCasino side: PVPspinArena matches normal transfers—no approval tax. Games on the [home page](/) still charge their own fee or edge; gas is only the rail cost.\n\nKeep ETH on Base for gas even when you play in USDC. Fee quotes move; budget a buffer, not dust.",
     },
   ],
   faqs: [
@@ -115,5 +85,5 @@ Keep ETH on Base for gas even when you play in USDC. Fee quotes move; budget a b
     },
   ],
   related: ["base-network", "gas-fees-explained", "how-to-swap-tokens", "crypto-bridge"],
-  updated: "2026-11-05",
+  updated: "2026-11-26",
 };

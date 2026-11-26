@@ -21,7 +21,7 @@ export const guide: Guide = {
     "A withdrawal that stays pending after one clear request is a stop, not a puzzle.",
     "If you cannot name the poker software, you cannot tell who is responsible for the shuffle.",
     "A tiny site with a crowded lobby of instant, silent accounts is a reason to close the tab.",
-    "Cheating hurts the other seats. This page will not teach anyone how to rig a game.",
+    "Cheating hurts the other seats. Report suspected manipulation with hand identifiers and the relevant evidence.",
     "PVPspinArena runs six-max No-Limit Hold'em. The other live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
   ],
   sections: [
@@ -36,7 +36,7 @@ This page is a pre-deposit checklist for adults 18 or older. It belongs with the
 
 - Steps for biasing a shuffle or predicting a deck.
 - Settings, signals, or tools for filling a table with automated seats.
-- Stake patterns that move chips on purpose. That conduct, between players, is [collusion in poker](/guides/collusion-in-poker) and [chip dumping](/guides/chip-dumping). This page does not teach it.
+- Stake patterns that move chips on purpose. That conduct, between players, is [collusion in poker](/guides/collusion-in-poker) and [chip dumping](/guides/chip-dumping). The relevant response is to document and report suspected manipulation.
 - A ranking of rooms, a bonus code, or a promise that any brand is safe.
 
 If you opened this looking for a way to run a crooked game, stop. The impact of that conduct is stolen money and banned accounts. The only actions below are checks, a report, and a decision to leave.
@@ -189,5 +189,5 @@ Rigged poker sites are a trust problem you can often see from the footer, the ca
     "are-online-casinos-rigged",
     "garrett-adelstein",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

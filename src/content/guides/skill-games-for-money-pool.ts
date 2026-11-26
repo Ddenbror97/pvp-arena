@@ -10,22 +10,22 @@ export const guide: Guide = {
     "Skill games for money still pay a fee. A seed shuffles this rack. Shots are not randomly missed. The fee is 5% of the pot. It depends on where you live.",
   h1: "Skill games for money, the rack shuffle, and the fee that remains",
   answer:
-    "Skill games for money include a cash pool match only where the law allows it, and this page will not decide that for you. On this table a seed shuffles the rack and shots are not randomly missed. The fee is still 5% of the pot.",
+    "Skill games for money include pool matches where local law permits the stake; a skill label alone does not establish legal eligibility. On this table a seed shuffles the rack and shots are not randomly missed. The fee is still 5% of the pot.",
   facts: [
     "The rack seed shuffles coloured balls only. Shots are not given a random error.",
     "A 5% pot fee still applies. Skill does not delete it.",
-    "This page does not say pool is always legal skill gaming. It depends on where you live.",
-    "Published by PVPspinArena. No named author. Last check 22 October 2026.",
+    "Pool’s legal treatment depends on the jurisdiction and product. It depends on where you live.",
+    "PVPspinArena’s deterministic shots and rack commitment describe implementation, not legal classification.",
   ],
   sections: [
     {
       id: "label-this-page-will-not-stamp",
-      title: "A legal label this page will not stamp",
-      body: `Skill games for money is a classification fight as much as a search. Advertisers pay attention to the phrase. A court, a regulator, or a statute where you live may not use the advertisers' definition. This page will not pretend they do.
+      title: "Check legality separately from shot skill",
+      body: `Skill-game advertising and legal definitions can use different tests. A court, a regulator, or a statute where you live may not use the advertisers' definition. Check the actual legal classification before paying.
 
-Pool can reward practice. A player who pots more balls, over a long run, wins more of these matches than a player who does not. That observation is not a ruling that the match is legal skill gaming in every place. This page does not say pool is always legal skill gaming. Whether a cash stake is allowed depends on where you live. This is not legal advice, and no state is named as open or closed.
+Pool can reward practice. A player who pots more balls, over a long run, wins more of these matches than a player who does not. That observation is not a ruling that the match is legal skill gaming in every place. Pool’s legal treatment depends on the jurisdiction and product. Whether a cash stake is allowed depends on where you live. This is not legal advice, and no state is named as open or closed.
 
-PVPspinArena publishes the page. There is no named author. The product facts below were last checked on 22 October 2026. They describe the table. They do not licence it.`,
+Product rules describe the table; they do not supply a licence or jurisdictional exemption.`,
     },
     {
       id: "where-chance-sits",
@@ -55,7 +55,7 @@ The open table lasts until a legal pocket assigns solids or stripes. A foul is b
 
 The neighbouring money pages are [call-pocket only on the 8](/guides/8-ball-pool-rules), [a money match in practice](/guides/pool-games-for-money), and [how 9-ball is a different game](/guides/9-ball-rules). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "fee-on-the-edge",
@@ -64,7 +64,7 @@ The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on
 
 That arithmetic is not a measured break-win rate. None is published. No weekly tournament is published either, so there is no multi-round skill sample with a posted prize. The sample you can actually play is one rack at a time. Promo credit and partner credit can be staked, and deposited money is used first. If nobody joins within 24 hours, the stake comes back and no fee is charged.
 
-This page does not know Pool Payday, Skillz, Miniclip, Pool Cash, or 8 Ball Strike fees. An app can be full of skill and still keep an unpublished cut. The unknown cut is not evidence that this 5% is universal.`,
+Other apps have their own entry and prize terms; the 5% fee here cannot be transferred to them. An app can be full of skill and still keep an unpublished cut. The unknown cut is not evidence that this 5% is universal.`,
     },
     {
       id: "rule-book-not-a-statute",
@@ -79,7 +79,7 @@ The APA team manual bans gambling at APA functions: wagers, side bets, side pots
   faqs: [
     {
       q: "Does this page call pool a legal skill game everywhere?",
-      a: "No. Some laws treat a skill game for money as gambling, and some draw a line. This page does not say pool is always legal skill gaming. It depends on where you live, and this is not legal advice.",
+      a: "No. Some laws treat a skill game for money as gambling, and some draw a line. Pool’s legal treatment depends on the jurisdiction and product. It depends on where you live, and this is not legal advice.",
     },
     {
       q: "Where is the chance on this table?",
@@ -107,7 +107,10 @@ The APA team manual bans gambling at APA functions: wagers, side bets, side pots
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: [
     "8-ball-pool-for-money",
@@ -115,5 +118,5 @@ The APA team manual bans gambling at APA functions: wagers, side bets, side pots
     "pool-betting",
     "is-8-ball-pool-rigged",
   ],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

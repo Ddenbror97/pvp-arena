@@ -24,7 +24,7 @@ export const guide: Guide = {
       title: "There is no official room to join",
       body: `8 ball pool discord is a search for a lobby that feels social. This site did not open that lobby. It did not open a Telegram twin. If a server says it is the official table for this cashier, the sentence is false. Official, for a stake, means the account system and the replay. A badge in a chat client is artwork. Artwork can be copied. The cashier cannot be copied by a person who messages you first.
 
-The search exists because free games already have communities, and money games attract people who would rather hold the pot themselves. Those are different motives wearing one keyword. Read the page as a refusal. Then, if you still want a match, go to the product and post a stake against one opponent who posts one too, on the cashier, not in the room.`,
+The search exists because free games already have communities, and money games attract people who would rather hold the pot themselves. A community chat and an official cash table provide different services. Read the page as a refusal. Then, if you still want a match, go to the product and post a stake against one opponent who posts one too, on the cashier, not in the room.`,
     },
     {
       id: "checklist",
@@ -52,14 +52,14 @@ A real pot on this site is two stakes already inside the ledger. You do not prep
 
 The neighbouring money pages are [the actual two-player match](/guides/8-ball-pool-1v1) and [a stake that stays on the site](/guides/pool-betting). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "seed",
       title: "A seed phrase ends the conversation",
       body: `No employee, moderator, or opponent needs your seed phrase. Not to verify age, not to unlock a table, not to refund a stuck match. The phrase is the wallet. Typing it into Discord or Telegram hands the wallet over. Close the message. Do not negotiate a smaller reveal, and do not send a screenshot of the words with one of them blurred. The safe amount to share is none.
 
-This is not a colourful extra warning. It is the same rule as the stake rule. Money matches belong on the cashier. Wallet keys belong offline, away from a pool conversation. If you already typed the phrase, treat the wallet as lost and move anything still movable by a path you control, then stop using that phrase. This guide will not invent a recovery service inside a chat, and it will not name a fake helpline.`,
+This is not a colourful extra warning. It is the same rule as the stake rule. Money matches belong on the cashier. Wallet keys belong offline, away from a pool conversation. If you already typed the phrase, treat the wallet as lost and move anything still movable by a path you control, then stop using that phrase. Use independently located official support; a private message offering fund recovery can introduce another payment scam.`,
     },
     {
       id: "real-match",
@@ -100,7 +100,10 @@ A friend can be the opponent. A stranger in the product lobby can be the opponen
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: [
     "8-ball-pool-for-money",
@@ -108,5 +111,5 @@ A friend can be the opponent. A stranger in the product lobby can be the opponen
     "8-ball-pool-1v1",
     "pool-betting",
   ],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

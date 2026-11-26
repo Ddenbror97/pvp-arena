@@ -91,7 +91,7 @@ The Wikipedia page says that with three or more players the rank probabilities c
 
 Chip count is one rule. This model is another. The director decides whether any deal is open.
 
-Sharing hole cards, soft-playing a partner, or dumping chips is collusion. This page will not describe how to do that.
+Sharing hole cards, soft-playing a partner, or dumping chips is collusion. Coordinated transfers violate fair-play rules and are separate from an independent ICM decision.
 
 Natural8 house rules, opened the same day, say prizes follow the lobby except when a deal is made or the event is cancelled. The security policy bans some off-client final-table deals, including at the Super MILLION$ High Roller, and it bans real-time analyzers during play.
 
@@ -185,7 +185,7 @@ If the session stops being a bounded spend, call 1-800-GAMBLER and open [respons
     },
     {
       q: "What does the same formula ignore?",
-      a: "It ignores skill differences, seat, blind size, and the cards in the current hand. The arXiv note says it is not a model of how chips move from hand to hand. The Wikipedia page says unlikely finishing orders are estimated poorly, and that many-player fields are heavy to compute. A shoving chart from a simulator is a different product. This page does not print one.",
+      a: "It ignores skill differences, seat, blind size, and the cards in the current hand. The arXiv note says it is not a model of how chips move from hand to hand. The Wikipedia page says unlikely finishing orders are estimated poorly, and that many-player fields are heavy to compute. A shoving chart from a simulator is a different product. The answer requires a payout structure, stack distribution and specified action.",
     },
     {
       q: "Can you walk the three-player dollars without a solver?",
@@ -193,7 +193,7 @@ If the session stops being a bounded spend, call 1-800-GAMBLER and open [respons
     },
     {
       q: "Does a deal made from the model count as collusion?",
-      a: "A deal is a split of remaining prizes if the event allows it. Sharing hole cards or dumping chips is collusion, and this page does not explain how. One operator's house rules mention deals as an exception to posted prizes, while its security policy bans some final-table deals and real-time analyzers. Follow the event you entered. The formula does not overrule a floor that forbids a chop.",
+      a: "A deal is a split of remaining prizes if the event allows it. Sharing hole cards or dumping chips is collusion; ICM does not justify it. One operator's house rules mention deals as an exception to posted prizes, while its security policy bans some final-table deals and real-time analyzers. Follow the event you entered. The formula does not overrule a floor that forbids a chop.",
     },
     {
       q: "Why can a fair chip bet still lose dollar value?",
@@ -230,5 +230,5 @@ If the session stops being a bounded spend, call 1-800-GAMBLER and open [respons
     "horse-poker",
     "texas-holdem-rules",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

@@ -24,27 +24,17 @@ export const guide: Guide = {
       title: "What an online coin flip game is",
       body: `An **online coin flip game** puts the kitchen-table coin on a server. Two players. Two sides. One result. The interesting parts are matching, custody, fee, and how the bit of randomness is produced.
 
-Some sites animate a coin while paying from a house table. That is a skin on a house game. A true PvP online coin flip game funds the prize from the two stakes. Ask who pays the winner.
+Some sites animate a coin while paying from a house table. That is a skin on a house game. A true PvP flip funds the prize from the two stakes. Ask who pays the winner.
 
 This article sits in [CS:GO heritage](/guides/topics/csgo-heritage) because the genre scaled through skin coinflip lobbies. Adults 18+ only. PVPspinArena’s version settles settled in US dollars and is linked from [Coinflip](/coinflip).
 
 Background reading: [PvP gambling](/guides/pvp-gambling) and [CS:GO coinflip](/guides/csgo-coinflip).
 
-Write the online coin flip game fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three online coin flip game lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
+Write the fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three limits is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from online coin flip game. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
+PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, including Coinflip. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer online coin flip game label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
-
-Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
-
-Streaks change mood, not probability. A fair coinflip does not owe you a win after five losses. A jackpot ticket does not become warmer because the pot looks large on screen. Re-read the fee after a win streak. Re-read the budget after a loss streak. Then follow the written stop time.
-
-Clone domains and fake support accounts target duel keywords hard. Bookmark the real site. Refuse seed-phrase requests. Refuse unlimited token approvals for a simple deposit. Message signatures that only prove address control are normal. Spending approvals that can drain USDC later are not required for a plain transfer.
-
-Social pressure raises stakes faster than maths. Mute chats that bait “one more.” End the night with zero open IOUs if you bet with friends. Automated settlement exists so relationships do not become ledgers. If a friend cannot pay, stop betting with them rather than escalating.
-
-Long-run cost is the fee or the house edge. Short-run results are noise around that cost. Track dollars, not feelings. If you cannot explain the settlement rule in one sentence, do not deposit. If you can explain it and still cannot afford the loss, do not deposit either.`,
+A clear game label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.`,
     },
     {
       id: "rules",
@@ -92,7 +82,7 @@ A practical habit: fix the number of flips before you start. Ending “after one
     {
       id: "heritage",
       title: "Why this sits with CS:GO heritage",
-      body: `The online coin flip game many adults remember was a skin room between map rounds. Stream overlays, chat spam, and inventory screenshots were part of the show. [CS:GO gambling history](/guides/csgo-gambling-history) is the longer story.
+      body: `The flip game many adults remember was a skin room between map rounds. Stream overlays, chat spam, and inventory screenshots were part of the show. [CS:GO gambling history](/guides/csgo-gambling-history) is the longer story.
 
 Cash versions kept the show structure and replaced the chip. That is clearer for budgeting. It also makes losses feel more like money, which is honest. Play only as an adult 18+ with a planned entertainment spend.`,
     },
@@ -147,5 +137,5 @@ Jackpot on the [home page](/) is a different PvP format. Roulette is house-banke
     "coin-flip-for-money",
     "pvp-gambling",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

@@ -26,7 +26,9 @@ export const guide: Guide = {
 
 Tavla is a social game. It is closely associated with the traditional Turkish coffeehouse (kahvehane), where regulars play quickly, slap checkers down with a loud click, and call the dice aloud. A game that might take ten minutes online at a careful pace can be over in two or three at a coffeehouse table. Speed is part of the culture: experienced players count pips and spot hits at a glance, and slow play draws comments.
 
-If you already know international backgammon, you can sit down at a tavla board and play almost immediately. The [backgammon rules](/guides/backgammon-rules) guide covers the shared mechanics in full: movement, hitting, the bar, entering and bearing off. This page focuses on what changes, and on the vocabulary you will hear. Tavla belongs with the other board, dice and tile games in the [Games of chance topic](/guides/topics/games-of-chance).`,
+If you already know international backgammon, you can sit down at a tavla board and play almost immediately. The [backgammon rules](/guides/backgammon-rules) guide covers the shared mechanics in full: movement, hitting, the bar, entering and bearing off. This page focuses on what changes, and on the vocabulary you will hear. Tavla belongs with the other board, dice and tile games in the [Games of chance topic](/guides/topics/games-of-chance).
+
+The US Backgammon Federation is the reference for the international mechanics compared here. Tavla's local scoring conventions should be agreed separately rather than inferred from international cube rules.`,
     },
     {
       id: "setup",
@@ -145,7 +147,7 @@ Fast play leads to routine mistakes such as missed hits, wrong bear-off order an
 
 Etiquette is simple: roll into the board, do not touch the opponent's checkers, correct illegal moves politely, and keep the pace up. Arguments tend to come from the opening custom and scoring, so settle those first.
 
-The opening throw is the purest chance moment in the game: one die each, with ties rethrown, so each player starts first exactly half the time. That is the structure of a [Coinflip](/coinflip) on PVPspinArena, where two players face a 50/50 and the winner takes the pot minus any fee shown before entry. Tavla then adds skill on top; a coin flip does not. PVPspinArena rounds use committed seeds that anyone can verify afterwards on [fairness](/fairness), and limits and time-outs are available on [responsible gambling](/responsible-gambling).`,
+The opening throw is the purest chance moment in the game: one die each, with ties rethrown, so each player starts first exactly half the time. Tavla then adds skill on top; a coin flip does not.`,
     },
   ],
   faqs: [
@@ -171,9 +173,22 @@ The opening throw is the purest chance moment in the game: one die each, with ti
     },
   ],
   sources: [
-    { label: "Wikipedia: Backgammon", url: "https://en.wikipedia.org/wiki/Backgammon" },
-    { label: "Wikipedia: Tavli", url: "https://en.wikipedia.org/wiki/Tavli" },
-    { label: "Wikipedia: Plakoto", url: "https://en.wikipedia.org/wiki/Plakoto" },
+    {
+      label: "US Backgammon Federation: international game rules",
+      url: "https://usbgf.org/backgammon-basics-how-to-play/",
+    },
+    {
+      label: "Wikipedia: Backgammon",
+      url: "https://en.wikipedia.org/wiki/Backgammon",
+    },
+    {
+      label: "Wikipedia: Tavli",
+      url: "https://en.wikipedia.org/wiki/Tavli",
+    },
+    {
+      label: "Wikipedia: Plakoto",
+      url: "https://en.wikipedia.org/wiki/Plakoto",
+    },
   ],
   related: [
     "backgammon-rules",
@@ -182,5 +197,5 @@ The opening throw is the purest chance moment in the game: one die each, with ti
     "dice-roll-probability",
     "mahjong-tiles",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

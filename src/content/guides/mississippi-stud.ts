@@ -22,7 +22,6 @@ export const guide: Guide = {
     "You use your two hole cards plus three community cards. The dealer has no hand to beat.",
     "A common paytable pushes some middle pairs and pays jacks or better and above.",
     "One standard sheet is often published near a 4.9% house edge. The felt you see controls the price.",
-    "PVPspinArena does not offer Mississippi Stud. The live games are Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker.",
   ],
   sections: [
     {
@@ -32,7 +31,7 @@ export const guide: Guide = {
 
 The five cards are your two hole cards plus three community cards everyone at the table can use. That still does not make it a poker game between seats. The person next to you is not your opponent. Their ante does not fund your straight. [Casino hold em](/guides/casino-hold-em) is another house table that borrows hold'em ranks. [Ultimate Texas Hold'em](/guides/ultimate-texas-holdem) is that shape with an ante, a blind, and a play bet. [Let It Ride](/guides/let-it-ride-poker) scores your own five cards and lets you pull bets back. Mississippi Stud is its own felt.
 
-This page is in the [casino games topic](/guides/topics/casino-games). It explains the ante, the three streets as they are commonly offered, and why you read the paytable instead of a poker book. It does not print a full strategy chart. Adults 18+. PVPspinArena does not spread this game.
+The [casino games topic](/guides/topics/casino-games) separates dealer-banked poker variants. Mississippi Stud decisions concern the ante and three betting streets; a strategy chart must match the table's paytable.
 
 ### The sentence to keep
 
@@ -71,7 +70,7 @@ Folding on a later street forfeits the ante and any street bets you already made
 | 4th | Hole cards plus one community card | 1x, 2x, or 3x, or fold |
 | 5th | Hole cards plus two community cards | 1x, 2x, or 3x, or fold |
 
-That table is the menu, not a chart of which button to press. Optimal choices depend on the exact pays and on the cards. This page will not list them. A chart drawn for a different royal pay or a different push row will quietly mis-price the hand in front of you. If the felt offers something other than 1x to 3x, follow the felt and ignore the sentence that said "commonly."
+That table is the menu, not a chart of which button to press. Optimal choices depend on the exact pays and on the cards. Use the strategy analysis for that specific paytable. A chart drawn for a different royal pay or a different push row will quietly mis-price the hand in front of you. If the felt offers something other than 1x to 3x, follow the felt and ignore the sentence that said "commonly."
 
 The last community card is free information you cannot bet after. That is why the fifth-street decision is the last time the size of the hand is still yours to set.`,
     },
@@ -103,9 +102,9 @@ There is no side-bet chapter here. Optional extra circles are separate wagers wi
     {
       id: "edge",
       title: "The published price is not a strategy poster",
-      body: `Published figures for one standard paytable are often near 4.9% with optimal play. Other layouts differ. That sentence is the whole numeric claim this page will make. It is an average against the ante on a studied sheet, assuming the player makes the best bet-or-fold choice at each street. It is not a quote for the felt you have not read, and it is not permission to treat 4.9% as small enough to ignore.
+      body: `Published figures for one standard paytable are often near 4.9% with optimal play. Other layouts differ. The denominator matters: It is an average against the ante on a studied sheet, assuming the player makes the best bet-or-fold choice at each street. It is not a quote for the felt you have not read, and it is not permission to treat 4.9% as small enough to ignore.
 
-Optimal play is a lookup, not a vibe. Pasting that grid here would copy someone else's chart and would still be wrong the moment a casino changes a row. So the grid stays off this page. If you want the price of a specific layout, you need that layout's own analysis, or you accept that you do not know it.
+Optimal play depends on which cards remain and how the actual paytable rewards each outcome. A strategy grid for a different layout can recommend the wrong raise or fold. Check both the paytable and whether the quoted edge is measured against the initial ante or total money wagered.
 
 Mistakes move the price against you. Folding hands the sheet wants you to continue, or continuing for the maximum when the sheet wants you out, adds loss on top of the published figure. Guessing from hold'em instincts is a common way to add that loss. Without the chart for this glass, you do not know which. "Play poker" is not a strategy for a game with no opponent.
 
@@ -118,9 +117,9 @@ Mistakes move the price against you. Folding hands the sheet wants you to contin
 
 That changes what skill means. Poker skill includes ranges, position, and pressure. This skill, such as it is, is loyalty to a paytable chart and the discipline to skip a sheet you have not priced. [Three card poker strategy](/guides/three-card-poker-strategy) makes the same split for a three-card house game. [Casino hold em](/guides/casino-hold-em) makes it for an ante-and-call hold'em table. None of those charts interchange. A pair of queens does not mean the same action in all three games.
 
-Do not bring bankroll folklore across the line either. A poker win rate assumes weaker opponents and a rake you can beat. A house game has no weaker opponent. The bank is indifferent to your reads. If a host calls Mississippi Stud "poker," ask who pays you when you win. If the answer is the schedule, you are on this page.
+Do not bring bankroll folklore across the line either. A poker win rate assumes weaker opponents and a rake you can beat. A house game has no weaker opponent. The bank is indifferent to your reads. If a host calls Mississippi Stud "poker," ask who pays you when you win. If the answer is the schedule, it is a banked table game.
 
-PVPspinArena does not offer a stud layout. Player-versus-player products on this site, where they exist, are not five community-card hands against a printed column. Mixing the names is how people expect a bluff to work on a machine that has nothing to bluff. Adults 18+. The [casino games topic](/guides/topics/casino-games) is the shelf this game sits on.`,
+Mixing the names is how people expect a bluff to work on a machine that has nothing to bluff. Adults 18+. The [casino games topic](/guides/topics/casino-games) is the shelf this game sits on.`,
     },
     {
       id: "sit",
@@ -137,7 +136,7 @@ PVPspinArena does not offer a stud layout. Player-versus-player products on this
 
 There is no system that turns a near 4.9% standard sheet into a payday. Betting more after a loss raises the swing and leaves the average in the same direction. Betting less does not harvest a refund of the edge. It only shrinks the sample.
 
-[Responsible gambling](/responsible-gambling) is the stop when the ante starts to feel like a debt you owe the shoe. Adults 18+. This site does not deal the game, does not certify a third-party felt, and does not pay Mississippi Stud hands. The printed column pays what it prints, on the bets you chose not to fold, and it pays nothing for a story about what the river "should" have been.`,
+[Responsible gambling](/responsible-gambling) is the stop when the ante starts to feel like a debt you owe the shoe. Adults 18+. The printed column pays what it prints, on the bets you chose not to fold, and it pays nothing for a story about what the river "should" have been.`,
     },
   ],
   faqs: [
@@ -159,7 +158,7 @@ There is no system that turns a near 4.9% standard sheet into a payday. Betting 
     },
     {
       q: "Will a full strategy chart be posted here?",
-      a: "No. Bet-or-fold grids are specific to one paytable and are not reprinted on this page. Read the layout, and do not borrow a chart from a different sheet.",
+      a: "No. Bet-or-fold grids are specific to one paytable and must match the offered game. Read the layout, and do not borrow a chart from a different sheet.",
     },
   ],
   sources: [
@@ -177,5 +176,5 @@ There is no system that turns a near 4.9% standard sheet into a payday. Betting 
     },
   ],
   related: ["ultimate-texas-holdem", "let-it-ride-poker", "casino-hold-em", "poker-hand-rankings"],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

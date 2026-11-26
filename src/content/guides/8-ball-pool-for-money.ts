@@ -32,7 +32,9 @@ The wider map is [games that pay real money](/guides/games-that-pay-real-money).
 
 Adults 18+ only, and only where a skill game for money is allowed. Some regions ban it. Some allow it with conditions. The app store page is not the statute. This is not legal advice and not a promise you will profit.
 
-[Peer-to-peer gambling](/guides/peer-to-peer-gambling) shows the pot shape in casino language. Your pool match is the same shape if both entries fund the prize. It is a house game if the app is secretly the opponent and does not say so.`,
+[Peer-to-peer gambling](/guides/peer-to-peer-gambling) shows the pot shape in casino language. Your pool match is the same shape if both entries fund the prize. It is a house game if the app is secretly the opponent and does not say so.
+
+The WPA rules provide the standard-game comparison. Read the cash table’s own break, foul and 8-ball conditions before assuming league rules apply.`,
     },
     {
       id: "entry-prize-rake",
@@ -149,10 +151,17 @@ If you wanted a short chance game instead of a match, say so and play one with a
     },
   ],
   sources: [
-    { label: "Wikipedia: Eight-ball", url: "https://en.wikipedia.org/wiki/Eight-ball" },
+    {
+      label: "Wikipedia: Eight-ball",
+      url: "https://en.wikipedia.org/wiki/Eight-ball",
+    },
     {
       label: "Wikipedia: Match fixing",
       url: "https://en.wikipedia.org/wiki/Match_fixing",
+    },
+    {
+      label: "WPA: rules of play",
+      url: "https://wpapool.com/rules/",
     },
   ],
   related: [
@@ -163,5 +172,5 @@ If you wanted a short chance game instead of a match, say so and play one with a
     "peer-to-peer-gambling",
     "bet-with-friends-online",
   ],
-  updated: "2026-10-22",
+  updated: "2026-11-26",
 };

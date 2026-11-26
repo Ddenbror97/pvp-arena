@@ -32,7 +32,9 @@ The product loop and myths live on [plinko gambling](/guides/plinko-gambling). T
 
 Treat “strategy” as precommitment. If you change risk after every centre landing, you are not executing a plan — you are reacting to noise. Write the risk label once per session the way you would write a cash-out target in crash.
 
-Adults 18+ only. PVPspinArena does not run a drop game. Compare any board with published PvP prices on [Coinflip](/coinflip) or the 33-slot wheel on [Roulette](/roulette). Cluster reading sits in [games and odds](/guides/topics/games-and-odds).`,
+Adults 18+ only. PVPspinArena does not run a drop game. Compare any board with published PvP prices on [Coinflip](/coinflip) or the 33-slot wheel on [Roulette](/roulette). Cluster reading sits in [games and odds](/guides/topics/games-and-odds).
+
+For one documented implementation, Stake publishes the mapping from random values to Plinko paths. That implementation does not establish another provider’s payout row.`,
     },
     {
       id: "price-first",
@@ -177,8 +179,15 @@ Risk rows on a digital board map to peg rows on a [plinko board](/guides/plinko-
       label: "Wikipedia: Binomial distribution",
       url: "https://en.wikipedia.org/wiki/Binomial_distribution",
     },
-    { label: "Wikipedia: Return to player", url: "https://en.wikipedia.org/wiki/Return_to_player" },
+    {
+      label: "Wikipedia: Return to player",
+      url: "https://en.wikipedia.org/wiki/Return_to_player",
+    },
+    {
+      label: "Stake: published game-event implementation",
+      url: "https://stake.com/provably-fair/game-events",
+    },
   ],
   related: ["plinko-gambling", "plinko-odds", "house-edge", "variance-in-gambling", "plinko-board"],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

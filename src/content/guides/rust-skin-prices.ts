@@ -35,7 +35,7 @@ Four forces show up in almost every spike or dump:
 
 A useful habit: write the **bid**, the **ask**, and the **last three sales** for any item you are about to call a price. If you only have the ask, you have a shop window, not a market. If the last three sales are 90 days old, you have history class.
 
-Adults 18+ only. This page does not give investing advice. Cosmetics go to zero for years and then do not. A streamer “loadout tour” is entertainment. It is not a price list you should paste into a deposit screen.`,
+Adults 18+ only. Skin prices can change sharply and liquidity is not guaranteed. Cosmetics go to zero for years and then do not. A streamer “loadout tour” is entertainment. It is not a price list you should paste into a deposit screen.`,
     },
     {
       id: "store-workshop",
@@ -106,7 +106,7 @@ Garage doors, boxes, and seasonal furniture can have beautiful art and a dead bo
 
 Armour sets and store packs fragment when people sell pieces. The “set price” on a YouTube thumbnail may assume all four pieces at yesterday’s peak. Add the pieces you actually own, at today’s fills.
 
-Clothing you hide under armour is closer to a door than to an AK: someone must care about the screenshot. Metal facemasks and chests get more wear-time on stream, so more people search the name. That still does not make a last ask a bid.
+Clothing you hide under armour is closer to a door than to an AK: someone must care about the screenshot. Prominent equipment on streams can attract attention, but attention is not a completed sale. That still does not make a last ask a bid.
 
 If you need a single number for a backpack, build it like the CS adder: unit price you believe, times quantity, minus fee if you would use Steam. There is no second inventory-value product on this site for Rust; do not wait for one. The method is the same honesty test as [CS2 inventory value](/guides/cs2-inventory-value).`,
     },
@@ -191,7 +191,10 @@ If you only remember one method: bid, ask, last three sales, fee, hold. Five num
     },
   ],
   sources: [
-    { label: "Official Rust item store (Facepunch)", url: "https://rust.facepunch.com/store/" },
+    {
+      label: "Official Rust item store (Facepunch)",
+      url: "https://rust.facepunch.com/store/",
+    },
     {
       label: "Steam Community Market: Rust (app 252490)",
       url: "https://steamcommunity.com/market/search?appid=252490",
@@ -206,5 +209,5 @@ If you only remember one method: bid, ask, last three sales, fee, hold. Five num
     },
   ],
   related: ["pvp-gambling", "tf2-gambling", "rust-gambling", "csgo-coinflip", "cs2-roulette"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

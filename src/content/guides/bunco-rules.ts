@@ -28,7 +28,9 @@ A full table of twelve is the usual picture: three tables of four, two partnersh
 
 The word itself has a double life. Wikipedia traces bunco to a 19th-century confidence game, related to an English pastime called eight-dice cloth, that reached San Francisco gambling rooms around 1855. The same word later named bunco parlors and, in police slang, bunco squads. The living-room game is a later parlor version: same dice, none of the swindle. If you want a street con instead, [three-card monte](/guides/three-card-monte) is the honest write-up of a game you cannot win.
 
-Bunco sits with other kitchen-table dice games in the [Games of chance topic](/guides/topics/games-of-chance). For a party that also wants a chip-passing game with no partnerships, see [left right center rules](/guides/left-right-center-rules). For a night built around play-money tables, [casino party ideas](/guides/casino-party-ideas) covers the rest of the room.`,
+Bunco sits with other kitchen-table dice games in the [Games of chance topic](/guides/topics/games-of-chance). For a party that also wants a chip-passing game with no partnerships, see [left right center rules](/guides/left-right-center-rules). For a night built around play-money tables, [casino party ideas](/guides/casino-party-ideas) covers the rest of the room.
+
+The World Bunco Association distinguishes the temporary team score from the individual Bunco mark. A Bunco contributes 21 team points, while only its roller records that individual Bunco.`,
     },
     {
       id: "how-to-play",
@@ -111,7 +113,7 @@ E = (1×75 + 2×15 + 21×1 + 5×5) / 216 = 151/216 ≈ 0.70 points per roll.
 
 Most of that 0.70 is singles. The bunco row is only 21/216 ≈ 0.10 points of the average, but it is the whole story at the head table because 21 ends the round. A team that "gets hot" is usually stringing singles and doubles, not printing buncos. The bunco is a 1-in-216 lottery ticket that also happens to be the buzzer.
 
-The same counting sits under every dice game on this site. [Dice roll probability](/guides/dice-roll-probability) is the general table. [Farkle rules](/guides/farkle-rules) uses six dice and a push-your-luck stop; bunco uses three dice and a clock.`,
+[Dice roll probability](/guides/dice-roll-probability) is the general table. [Farkle rules](/guides/farkle-rules) uses six dice and a push-your-luck stop; bunco uses three dice and a clock.`,
     },
     {
       id: "party",
@@ -138,19 +140,6 @@ A bunco night is often a potluck with joke prizes. If adults put cash on Ws or o
 - **Sets:** two sets is a short evening; four sets is a long one.
 
 None of these change the 1-in-216 bunco rate. They change how long you sit and what you write on the card.`,
-    },
-    {
-      id: "pvp",
-      title: "Bunco luck and a hashed PvP round",
-      body: `Bunco is honest about being luck. There is no card to count and no tile to save. The only skill is social: keep the dice moving, keep the card honest, stop when the bell says stop.
-
-PVPspinArena is also honest about the price. It runs [six-max poker](/poker), [Jackpot](/), [Coinflip](/coinflip), house-banked [Roulette](/roulette), and [P2P Slott](/slott) settled in US dollars. Coinflip is a 50/50. Roulette is a 33-slot wheel (16 Purple and 16 Silver at 2x, 1 Green at 14x). Purple and Silver return 32/33 before the win fee, about a 7.88% edge after it, and Green returns 14/33. Jackpot pays the pot minus any fee shown before entry, with win chance equal to your share. Seeds are committed up front; any settled round can be checked on [fairness](/fairness).
-
-A bunco night and a hashed round share one useful habit: write the stop before the noise starts. If the party pot or the next match is already a chase, use the tools on [responsible gambling](/responsible-gambling). Play is 18+ only.
-
-If you want a night with more decisions and fewer bells, [shut the box](/guides/shut-the-box) is the tile game at the same party. Bunco stays the game you deal when the room should not have to remember a chart.
-
-See also [tenzi](/guides/tenzi-rules) and [horse race dice](/guides/horse-race-dice-game).`,
     },
   ],
   faqs: [
@@ -180,9 +169,22 @@ See also [tenzi](/guides/tenzi-rules) and [horse race dice](/guides/horse-race-d
     },
   ],
   sources: [
-    { label: "Wikipedia: Bunco", url: "https://en.wikipedia.org/wiki/Bunco" },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
-    { label: "Wikipedia: Dice", url: "https://en.wikipedia.org/wiki/Dice" },
+    {
+      label: "World Bunco Association: published Bunco rules",
+      url: "https://worldbunco.com/rules1.html",
+    },
+    {
+      label: "Wikipedia: Bunco",
+      url: "https://en.wikipedia.org/wiki/Bunco",
+    },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
+    {
+      label: "Wikipedia: Dice",
+      url: "https://en.wikipedia.org/wiki/Dice",
+    },
   ],
   related: [
     "left-right-center-rules",
@@ -193,5 +195,5 @@ See also [tenzi](/guides/tenzi-rules) and [horse race dice](/guides/horse-race-d
     "dice-roll-probability",
     "tenzi-rules",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

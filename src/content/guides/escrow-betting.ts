@@ -28,7 +28,9 @@ That is the entire service. It is valuable because strangers default on voice-ch
 
 [Peer-to-peer gambling](/guides/peer-to-peer-gambling) is the wider idea: players fund the prize and the room takes a fee instead of betting against you. Escrow is the piece of that idea that holds the funds. Do not treat this page as a replacement for the P2P overview. If you do not know who you are playing, read that guide first and come back for the lockbox.
 
-[Bet with friends online](/guides/bet-with-friends-online) is the private version. Friends skip escrow because they trust each other, and then one of them is short on rent. The rule and the hold matter more when the friendship matters. Awkward paperwork saves the awkward conversation later.`,
+[Bet with friends online](/guides/bet-with-friends-online) is the private version. Friends skip escrow because they trust each other, and then one of them is short on rent. The rule and the hold matter more when the friendship matters. Awkward paperwork saves the awkward conversation later.
+
+PokerStars allows certain backing agreements but says it will not settle them or handle disputes. A platform transfer is therefore not automatically a protected escrow service.`,
     },
     {
       id: "three-holders",
@@ -138,8 +140,18 @@ If you want a two-person pot that is already a product, with a fee shown first a
     },
   ],
   sources: [
-    { label: "Wikipedia: Escrow", url: "https://en.wikipedia.org/wiki/Escrow" },
-    { label: "Wikipedia: Smart contract", url: "https://en.wikipedia.org/wiki/Smart_contract" },
+    {
+      label: "Wikipedia: Escrow",
+      url: "https://en.wikipedia.org/wiki/Escrow",
+    },
+    {
+      label: "Wikipedia: Smart contract",
+      url: "https://en.wikipedia.org/wiki/Smart_contract",
+    },
+    {
+      label: "PokerStars: staking, backing and escrow rules",
+      url: "https://www.pokerstars.com/help/articles/rmt-staking-escrow-backing/155985/",
+    },
   ],
   related: [
     "smart-contract-casino",
@@ -147,5 +159,5 @@ If you want a two-person pot that is already a product, with a fee shown first a
     "commit-reveal-scheme",
     "bet-with-friends-online",
   ],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

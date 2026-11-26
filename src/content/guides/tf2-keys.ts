@@ -30,7 +30,7 @@ A team fortress 2 key can still be an item you bought on purpose, to open a crat
 
 ### A TF2 key scam starts with a discount
 
-A TF2 key scam, in the pattern this page will describe, is a stranger offering a key below the in-game store price. The gap is the bait. This article will not invent the number on either side.
+A TF2 key scam, in the pattern this page will describe, is a stranger offering a key below the in-game store price. The gap is the bait. Check both current trade quotes rather than assuming an old key-to-refined rate still holds.
 
 The store price is on the store screen. The stranger's number is whatever they typed. If theirs is lower, stop.
 
@@ -172,7 +172,7 @@ Urgency protects the gap from being compared. Compare it anyway, then decline.
 
 Account takeovers borrow the same item. A free-key giveaway asks you to log in through a page that is not the game. The key was never the prize.
 
-The login was the prize. This page will not link a login portal and will not name a fake domain, because fake domains rotate. The pattern is the lesson.
+The login was the prize. Open Steam independently and inspect the exact domain; lookalike login pages change frequently. The pattern is the lesson.
 
 Third-party sites that want the key as a balance are the same flag with a lobby attached. Their edge, speed, and terms are not published here. Do not send the key.
 
@@ -233,5 +233,5 @@ Editorial only. No code, no store link that pays us, no request that you deposit
     },
   ],
   related: ["sell-skins-for-crypto", "cs2-skin-prices", "fake-casino-sites"],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

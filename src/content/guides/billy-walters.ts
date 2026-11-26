@@ -35,9 +35,11 @@ By the early 1980s he was in Las Vegas. His break came not from a single big win
 
 ### What makes a sports bettor different
 
-Most famous gamblers on this site made their names at cards. Walters is different. His game was the betting market itself: finding prices that were wrong and getting money down before they moved. That puts him closer to a trader than to a card player, which is also why his later legal trouble came from the stock market.
+Walters is different. His game was the betting market itself: finding prices that were wrong and getting money down before they moved. That puts him closer to a trader than to a card player, which is also why his later legal trouble came from the stock market.
 
-For other profiles from the same era, see the [famous gamblers overview](/guides/famous-gamblers) and the [casino knowledge topic hub](/guides/topics/casino-knowledge). This page covers his career; for betting technique itself, the [how to win at sports betting](/guides/how-to-win-at-sports-betting) guide keeps the strategy.`,
+For other profiles from the same era, see the [famous gamblers overview](/guides/famous-gamblers) and the [casino knowledge topic hub](/guides/topics/casino-knowledge). This page covers his career; for betting technique itself, the [how to win at sports betting](/guides/how-to-win-at-sports-betting) guide keeps the strategy.
+
+The Justice Department's 2017 sentencing release concerns securities insider trading. That case should not be conflated with ordinary sports-betting results.`,
     },
     {
       id: "computer-group",
@@ -123,23 +125,6 @@ The table in the previous section shows the problem. A casual bettor who wins 50
 
 Other public cases, told as history rather than a method, are [sports betting scandals](/guides/sports-betting-scandals).`,
     },
-    {
-      id: "pvp",
-      title: "Sports-betting edges versus a hashed PvP round",
-      body: `Walters made money because betting lines are opinions, and opinions can be wrong. A casino game whose odds are fixed by its rules has no opinion to beat.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and each has a fixed, stated structure:
-
-- **Coinflip**: two players, 50/50. The winner takes the pot minus any fee shown before entry. No model or information gives either player an advantage.
-- **Jackpot**: your win chance equals your share of the pot, stated before the draw.
-- **Roulette**: a 33-slot wheel, 16 Purple and 16 Silver slots paying 2x and 1 Green paying 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. There is no line to shop and no early number to take.
-
-Outcomes come from seeds committed before the round and revealed after it, so no one, including the operator, can use information about the result before it settles. Anyone can check a settled round on the [fairness](/fairness) page, or read how the scheme works in [commit reveal](/guides/commit-reveal-scheme).
-
-The honest takeaway is that there is no Walters-style edge in a hashed round. Treat play on [Roulette](/roulette) or Coinflip as entertainment with a known price, not as a market to beat. Gambling is 18+, and limits are on the [responsible gambling](/responsible-gambling) page.
-
-In the same cluster, see also [phil ivey](/guides/phil-ivey) and [edward thorp](/guides/edward-thorp).`,
-    },
   ],
   faqs: [
     {
@@ -169,10 +154,17 @@ In the same cluster, see also [phil ivey](/guides/phil-ivey) and [edward thorp](
   ],
   sources: [
     {
+      label: "US Department of Justice: Walters sentencing, 2017",
+      url: "https://www.justice.gov/usao-sdny/pr/william-t-billy-walters-sentenced-manhattan-federal-court-43-million-insider-trading",
+    },
+    {
       label: "Wikipedia: Billy Walters (gambler)",
       url: "https://en.wikipedia.org/wiki/Billy_Walters_(gambler)",
     },
-    { label: "Wikipedia: Insider trading", url: "https://en.wikipedia.org/wiki/Insider_trading" },
+    {
+      label: "Wikipedia: Insider trading",
+      url: "https://en.wikipedia.org/wiki/Insider_trading",
+    },
     {
       label: "Encyclopaedia Britannica: gambling",
       url: "https://www.britannica.com/topic/gambling",
@@ -187,5 +179,5 @@ In the same cluster, see also [phil ivey](/guides/phil-ivey) and [edward thorp](
     "edward-thorp",
     "phil-ivey",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

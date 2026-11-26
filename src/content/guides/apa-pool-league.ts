@@ -49,9 +49,7 @@ If your pairing is not one of those two, look at the scoresheet in the league, o
       title: "The league beside the rating and the Cup",
       body: `APA skill levels and the Equalizer belong to the league. They are not stored on this account. The cash match is [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other event notes are [a rating that is not a skill level](/guides/fargo-rate), [the 2025 Cup note](/guides/mosconi-cup), and [events versus a weekly league](/guides/pool-tournaments). The group is the [casino knowledge guides](/guides/topics/casino-knowledge).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other event notes are [a rating that is not a skill level](/guides/fargo-rate), [the 2025 Cup note](/guides/mosconi-cup), and [events versus a weekly league](/guides/pool-tournaments). The group is the [casino knowledge guides](/guides/topics/casino-knowledge).`,
     },
     {
       id: "nine-and-ban",
@@ -65,7 +63,9 @@ The official team manual prohibits gambling at APA functions. The prohibition is
       title: "Nothing in the cashier is an SL",
       body: `No APA skill level is stored on this account. A fair money match here is equal stakes, not a secret handicap. You do not give games and you do not get games. You post $1, $2, $5, $10, $25, or $50, the same as the other seat. The fee is 5% of the pot. The winner receives 95%. FargoRate is a separate system and is not applied either. The Mosconi note's race-to-five and race-to-11 language stays in that note.
 
-The rules you do play are 8-ball, call pocket only on the 8, break 8 wins unless the cue ball scratches, three timeouts forfeit, surface 2.54 m by 1.27 m, the physics id stored with that rack, no random miss. Cue upgrades are not sold. A make-on-the-break rate is not published. Those are the house facts of this table. They are not a replacement Equalizer, and they should not be carried back into a league night as if the league had adopted them.`,
+The rules you do play are 8-ball, call pocket only on the 8, break 8 wins unless the cue ball scratches, three timeouts forfeit, surface 2.54 m by 1.27 m, the physics id stored with that rack, no random miss. Cue upgrades are not sold. A make-on-the-break rate is not published. Those are the house facts of this table. They are not a replacement Equalizer, and they should not be carried back into a league night as if the league had adopted them.
+
+For a casino visit, plan [spending limits](/responsible-gambling) before arriving.`,
     },
   ],
   faqs: [
@@ -95,13 +95,19 @@ The rules you do play are 8-ball, call pocket only on the 8, break 8 wins unless
     },
   ],
   sources: [
-    { label: "APA Equalizer", url: "https://poolplayers.com/equalizer/" },
-    { label: "APA league rules download", url: "https://rules.poolplayers.com/download/" },
+    {
+      label: "APA Equalizer",
+      url: "https://poolplayers.com/equalizer/",
+    },
+    {
+      label: "APA league rules download",
+      url: "https://rules.poolplayers.com/download/",
+    },
     {
       label: "APA official team manual (PDF)",
       url: "https://media.poolplayers.com/tmrb/team-manual-english.pdf",
     },
   ],
   related: ["8-ball-pool-hub", "fargo-rate", "mosconi-cup"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

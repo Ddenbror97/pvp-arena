@@ -39,7 +39,9 @@ Three inputs drive the answer.
 
 A fourth input, the **goal**, turns the question into a race: will you hit the target before you hit zero? Without a goal, the question becomes whether you ever go broke over an unlimited number of bets.
 
-This page covers the mathematics. To size a real session budget with your own numbers, use the [bankroll calculator](/guides/bankroll-calculator). For blackjack-specific ruin figures from simulations, the [blackjack simulator](/guides/blackjack-simulator) guide keeps those.`,
+This page covers the mathematics. To size a real session budget with your own numbers, use the [bankroll calculator](/guides/bankroll-calculator). For blackjack-specific ruin figures from simulations, the [blackjack simulator](/guides/blackjack-simulator) guide keeps those.
+
+MIT derives gambler’s ruin with fixed steps and absorbing bankroll boundaries. Changing the stake size or stopping rule changes the calculation.`,
     },
     {
       id: "formula",
@@ -186,9 +188,22 @@ In the same cluster, see also [labouchere system](/guides/labouchere-system).`,
     },
   ],
   sources: [
-    { label: "Wikipedia: Gambler's ruin", url: "https://en.wikipedia.org/wiki/Gambler%27s_ruin" },
-    { label: "Wikipedia: Risk of ruin", url: "https://en.wikipedia.org/wiki/Risk_of_ruin" },
-    { label: "Wikipedia: Random walk", url: "https://en.wikipedia.org/wiki/Random_walk" },
+    {
+      label: "Wikipedia: Gambler's ruin",
+      url: "https://en.wikipedia.org/wiki/Gambler%27s_ruin",
+    },
+    {
+      label: "Wikipedia: Risk of ruin",
+      url: "https://en.wikipedia.org/wiki/Risk_of_ruin",
+    },
+    {
+      label: "Wikipedia: Random walk",
+      url: "https://en.wikipedia.org/wiki/Random_walk",
+    },
+    {
+      label: "MIT: Mathematics for Computer Science, gambler’s ruin",
+      url: "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/mit6_042js15_textbook.pdf",
+    },
   ],
   related: [
     "labouchere-system",
@@ -198,5 +213,5 @@ In the same cluster, see also [labouchere system](/guides/labouchere-system).`,
     "martingale-strategy",
     "variance-in-gambling",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

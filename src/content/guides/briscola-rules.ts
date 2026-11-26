@@ -122,7 +122,7 @@ Table habits that keep the 120 honest:
 - The visible half of the briscola stays visible. Do not square the stock on top of it.
 - At the end, sort aces, 3s, kings, queens and jacks. Ignore the zeros until the total is short, then find the missing card.
 
-Stakes are optional and sit between the players. Adults only if money is involved, 18+. A unit per hand, agreed before the shuffle, is the whole of the betting rule. There is no casino percentage in briscola. A two-player online stake with a published method is a different object. [Coinflip](/coinflip) is a 50/50 between two players on this site, and it is not a model of this deck. The cards are the game if you dealt briscola.
+Stakes are optional and sit between the players. Adults only if money is involved, 18+. A unit per hand, agreed before the shuffle, is the whole of the betting rule. There is no casino percentage in briscola. A two-player online stake with a published method is a different object. The cards are the game if you dealt briscola.
 
 Before you start, confirm the pack: no 8s, 9s or 10s, four aces, four 3s, 40 cards. Name the trump as soon as it is turned. Then lead.
 
@@ -152,8 +152,14 @@ See also [scopa](/guides/scopa-rules) and [pinochle](/guides/pinochle-rules).`,
     },
   ],
   sources: [
-    { label: "Wikipedia: Briscola", url: "https://en.wikipedia.org/wiki/Briscola" },
-    { label: "Pagat: Briscola", url: "https://www.pagat.com/aceten/briscola.html" },
+    {
+      label: "Wikipedia: Briscola",
+      url: "https://en.wikipedia.org/wiki/Briscola",
+    },
+    {
+      label: "Pagat: Briscola",
+      url: "https://www.pagat.com/aceten/briscola.html",
+    },
   ],
   related: [
     "scopa-rules",
@@ -162,6 +168,6 @@ See also [scopa](/guides/scopa-rules) and [pinochle](/guides/pinochle-rules).`,
     "52-card-deck",
     "how-to-shuffle-cards",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
   howTo: true,
 };

@@ -40,7 +40,9 @@ The slice is not free RTP. The base game is built a little leaner, or a dedicate
 
 Our [slot machine odds guide](/guides/slot-machine-odds) is the right parent: this is a slot (or sometimes a table side-bet) with an extra, extremely skewed, payline.
 
-A meter needs a skim you can read. [The branded fortune jackpot](/guides/divine-fortune-slot) is a title search, not a measured meter.`,
+A meter needs a skim you can read. [The branded fortune jackpot](/guides/divine-fortune-slot) is a title search, not a measured meter.
+
+A published overall RTP is a long-run average, not the probability of hitting the progressive prize. That probability needs the specific game’s rules.`,
     },
     {
       id: "long-shot",
@@ -203,8 +205,18 @@ A PvP jackpot pot is a different object. On PVPspinArena your chance is your sha
       label: "Wikipedia: Progressive jackpot",
       url: "https://en.wikipedia.org/wiki/Progressive_jackpot",
     },
-    { label: "Wikipedia: Slot machine", url: "https://en.wikipedia.org/wiki/Slot_machine" },
-    { label: "Wikipedia: Expected value", url: "https://en.wikipedia.org/wiki/Expected_value" },
+    {
+      label: "Wikipedia: Slot machine",
+      url: "https://en.wikipedia.org/wiki/Slot_machine",
+    },
+    {
+      label: "Wikipedia: Expected value",
+      url: "https://en.wikipedia.org/wiki/Expected_value",
+    },
+    {
+      label: "UK Gambling Commission: RTP and house edge",
+      url: "https://www.gamblingcommission.gov.uk/public-and-players/guide/return-to-player-how-much-gaming-machines-payout/",
+    },
   ],
   related: [
     "crypto-jackpot",
@@ -215,5 +227,5 @@ A PvP jackpot pot is a different object. On PVPspinArena your chance is your sha
     "divine-fortune-slot",
     "dragon-link-slot",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

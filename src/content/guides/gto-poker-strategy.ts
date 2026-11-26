@@ -11,176 +11,84 @@ export const guide: Guide = {
     "poker equilibrium",
     "solver poker",
   ],
-  title: "GTO Poker Strategy: Versus Exploitative Play",
+  title: "GTO Poker Strategy: Balance, Bluffs and Pot Odds",
   description:
-    "GTO poker strategy in plain language: equilibrium versus exploitation, why mixed frequencies exist, and why this is not a solver tutorial.",
-  h1: "GTO poker strategy: equilibrium versus exploitation, simply",
+    "Learn GTO poker strategy through a correct river bluff example. Compare equilibrium and exploitation, solver assumptions, rake and limits in multiway games.",
+  h1: "GTO poker strategy: balanced ranges and deliberate adjustments",
   answer:
-    "GTO poker strategy means playing toward a game-theory equilibrium: a mix of bets and folds that cannot be exploited even if the opponent knows your plan. Exploitative strategy abandons that mix to attack a specific leak. GTO is a reference, not a salary and not a solver tutorial. Rake still applies. PVPspinArena runs six-max No-Limit Hold'em, and the fee is 5% of a pot only after a flop. The site does not play GTO for you.",
+    "GTO poker strategy uses game-theory equilibrium as a reference for choosing actions and frequencies. In a two-player zero-sum model, an equilibrium strategy protects against exploitation by the opponent. Real poker adds rake, imperfect implementation and sometimes multiple opponents. Exploitative play adjusts to a specific opponent’s mistakes; it can earn more when the read is right and lose more when it is wrong.",
   facts: [
-    "GTO is an unexploitable mix, not a promise that every hand wins.",
-    "Exploitative play prints more against a known leak and loses more if you guessed the leak wrong.",
-    "Solvers approximate equilibrium; they are not a night-one checklist.",
-    "A mixed strategy (sometimes bet, sometimes check) exists to keep opponents indifferent.",
-    "GTO does not cancel rake or variance, and it does not apply to this site’s PvP games.",
+    "A solver solution belongs to its specified ranges, stacks, bet sizes and rake model.",
+    "For a pot-sized river bet, a pure bluff-catcher needs 33.3% equity to call before fees.",
+    "A simplified pot-sized betting range balances one bluff for every two value combinations.",
+    "Heads-up zero-sum guarantees do not transfer unchanged to a six-player raked game.",
   ],
   sections: [
     {
       id: "what-gto-is",
-      title: "What GTO is trying to be",
-      body: `GTO stands for game-theory optimal. In poker talk it means: choose frequencies so a perfectly informed opponent cannot find a profitable deviation. You will still lose pots. You will still have downswings. You are aiming at a strategy that does not leak against someone who knows exactly what you do.
+      title: "Start with a defined decision",
+      body: `GTO is useful when the decision is specified: position, effective stacks, board, action history, ranges and available bet sizes. Change those inputs and the preferred strategy can change. A chart for deep heads-up cash play cannot simply be applied to a short-stacked tournament bubble.
 
-This [poker](/guides/topics/poker) page is for adults 18+. It will not teach you to run a solver, import a database, or lock a river node. If that is what you wanted, you want software documentation, not a cluster article.
-
-[How to play poker](/guides/how-to-play-poker) is the streets. [Texas holdem strategy](/guides/texas-holdem-strategy) is the practical levers. This page is the vocabulary that sits above those levers.
-
-PVPspinArena does not deal nodes. [Fairness](/fairness) verifies a hashed PvP result. That is not GTO.
-
-### Where the phrase came from
-
-Game theory studies choices when your payoff depends on someone else’s choice. Poker is that: hidden cards, sequential bets, a shared pot. “Optimal” here means equilibrium, not “best possible income against every human”. Against a human who folds too much, the income-maximising plan is to bluff more than the mix. That plan is exploitable if they adjust. GTO is the mix that still works if they do adjust. It is a floor, not a ceiling.
-
-People say “GTO” the way they say “quantum”: as seasoning. If the next sentence is not about frequencies, indifference, or a named node, they meant “I thought about it”. Thinking is good. The label is optional.
-
-A bet meant to fold out a better hand is [bluffing in poker](/guides/bluffing-in-poker), and a mixed strategy is one way to size that bet.`,
+Use [Texas Hold’em strategy](/guides/texas-holdem-strategy) for practical decisions and [poker pot odds](/guides/poker-pot-odds) for the price of a call. The [poker topic](/guides/topics/poker) connects those foundations.`,
     },
     {
       id: "compare-table",
-      title: "GTO versus exploitative, side by side",
-      body: `One table. That is the contrast.
+      title: "A correct pot-sized river example",
+      body: `Suppose the pot is $100 before the river bet. The bettor wagers $100 and the defender must call $100. After the call, the pot would be $300. The break-even equity is therefore $100 / $300 = 1/3, before rake.
 
-| | GTO-ish default | Exploitative default |
-| --- | --- | --- |
-| Goal | Do not be exploitable | Maximise EV versus *this* opponent |
-| Bluff frequency | Mixed so they are indifferent | More if they fold too much; less if they call too much |
-| Needs | A model of a balanced foe | A read (or a leak you have actually seen) |
-| Risk | Leaves money on the table versus fish | Gets punished if the read is wrong |
-| Tooling | Solvers, theory articles | HUD stats, notes, live tells |
+Assume the defender holds a pure bluff-catcher: it beats every bluff and loses to every value hand, with no ties. A betting range of ten value combinations and five bluffs contains one-third bluffs. Calling then wins $200 net one-third of the time and loses $100 two-thirds of the time: expected value is zero. Folding is also zero from that decision point. This is indifference in a deliberately simplified model.
 
-Neither column is a moral ranking. Against a player who folds every flop c-bet, a GTO mix that checks some strong hands and bluffs some air is slower money than “bet every flop”. Against a player who never folds, the same mix is better than bluffing them for sport.
-
-[Expected value](/guides/expected-value-gambling) is the scoreboard for both. GTO is a particular EV maximum: the one that works even in the worst case of being fully understood.`,
+Do not confuse that calculation with a pure bluff’s required fold rate. A $100 bluff into $100 wins $100 when it works and loses $100 when called; it needs more than 50% folds to profit. The caller’s equity threshold and the bluffer’s fold threshold answer different questions.`,
     },
     {
       id: "indifference",
-      title: "Indifference, in one idea",
-      body: `Equilibrium often makes the opponent *indifferent* between two actions. If your river bluff frequency is right, calling and folding have the same EV for them. They cannot pick a side that prints.
+      title: "When to depart from the baseline",
+      body: `If a player folds too much to a particular bet, extra bluffs may gain value. If they call too much, reducing bluffs and betting appropriate value hands can be better. Record the situation and sample behind the read; a handful of hands does not establish a stable frequency.
 
-You do not need a solver to understand the sentence. You do need it to compute a precise mix on a specific river with a specific range. This page will not compute that mix. If a streamer says “GTO is 32% bluffs here”, they are quoting a model with assumptions you cannot see: rake, stacks, and the ranges they fed the tool.
-
-### Why mixes feel fake
-
-Humans like “always” and “never”. Equilibrium likes “often” and “sometimes”. That is why GTO poker strategy sounds slippery. The slipperiness is the point. If you *always* bluff a missed flush, a good opponent calls you down with a wider set. If you *never* bluff it, they fold correctly every time.
-
-[Poker pot odds](/guides/poker-pot-odds) are what the caller uses to price that river. Your mix is trying to make both their call and their fold acceptable — not fun, acceptable.
-
-### Ranges have to be in the model
-
-A solver output is only as honest as the ranges you fed it. If you told the tool you never have junk on this river, it will bluff a different mix than if you arrive with every missed draw. Humans arrive with the ranges they actually played, not the ranges in a popular preflop chart. Copying a river frequency from a video while limping junk preflop is two strategies taped together. They will not add up.
-
-That is why this is not a solver tutorial. The button that says “lock node” will not fix a preflop leak. Fix the leak. Then, if you still care, look at a node.`,
+An exploit can become a weakness when the opponent adjusts. Revisit the evidence rather than treating one observed fold as a permanent characteristic. [Bluffing](/guides/bluffing-in-poker) requires both a plausible range and a price for the risk.`,
     },
     {
       id: "example",
-      title: "Worked example: a 70/30 teaching mix, not a solver output",
-      body: `This is the only numeric example on this page. It is a cartoon so you can see indifference, not a recipe for a real river.
+      title: "Use solver output as conditional analysis",
+      body: `A solver approximates a specified game. Review the input ranges, stack depth, rake, bet-size tree and convergence settings before copying a frequency. A small difference between two actions may support a simpler practical strategy; it does not make every similar-looking hand equivalent.
 
-Pot is $100. You bet $100 (pot-sized). Opponent must call $100 to win $200. Break-even call = 100/200 = 50% equity if they always win when they are good. Suppose when they call they beat your bluffs and lose to your value.
-
-If you arrive at this river with 10 value combos and you want them indifferent to calling with a bluff-catcher, a simple (and incomplete) teaching ratio is to pair value with bluffs so their call does not print. A pot-sized bet that needs 50% to be right is a different algebra from a half-pot bet. **Do not memorise 70/30 as GTO.** It is a label for “sometimes yes, sometimes no”.
-
-Imagine you decide, as a study habit, to fire this bet with all your value and with 30% of your missed draws (a 70/30 split of *the draw pile*, not of the whole range). Over 10 similar rivers you might bluff 3 and check 7 of those missed draws. A solver will give a different percent for a different tree. Your job as a human is to accept that the third bluff is not a betrayal of the seven checks.
-
-If you notice this opponent folds 80% of the time to that bet, exploitation says: bluff more than the mix. If they call 80%, exploitation says: bluff less, value more thinly. That override is not “leaving GTO because GTO is fake”. It is using GTO as the baseline and walking toward the leak. [How to win at poker](/guides/how-to-win-at-poker) still requires that the extra EV beat rake over a sample.`,
+The strongest familiar protection applies to two-player zero-sum games. Raked and multiway poker require more care: calling a strategy “GTO” does not establish a guaranteed profit against any group of opponents. Use [poker solver documentation](/guides/poker-solver) for the particular software and study away from play where room rules prohibit assistance.`,
     },
     {
       id: "what-amateurs-take",
-      title: "What to take away without a solver",
-      body: `### Useful
+      title: "Apply the actual fee and keep a study budget",
+      body: `PVPspinArena’s six-max No-Limit Hold’em uses a 5% pot fee only after a flop. That fee belongs in any analysis of [the poker table](/poker); a zero-rake example is a teaching model, not its net result. The site does not select a strategy for the player.
 
-- Do not pick a plan that is 100% obvious in both directions (never bluff a missed flush *and* never check a strong flush).
-- When you have no read, a boring, somewhat balanced default leaks less than a cartoon (always c-bet, never fold top pair).
-- Study *spots*, not “GTO as a personality”. One river node is enough homework for a week.
-
-### Not useful
-
-- Reciting “GTO” as a reason you called off a stack with seven-high.
-- Buying a software seat before you can price [pot odds](/guides/poker-pot-odds) on the turn.
-- Copying a colour chart from a different stack depth and rake.
-
-### Rake and node lock
-
-Solvers often assume a rake model. Your $0.05/$0.10 table may not match the node you watched on YouTube. A mix that is unexploitable pre-rake can still be a losing product after fees. Strategy is not a refund.
-
-### Exploitative loops
-
-If they adjust to your adjustment, you are in a loop. GTO is one way to step off the loop: return to a mix that does not care. Another way is to keep watching and keep moving. Both are allowed. The failure mode is to pick one exploit on Monday and run it until Friday after they already stopped folding. Frequency without observation is just a new leak.
-
-Live, observation is slower. Online, HUDs make some leaks obvious and invent others from tiny samples. Do not “exploit” a 20-hand fold-to-cbet of 80%. Do exploit a 500-hand fold-to-cbet of 80% if the pool is real. Sample size is part of GTO-versus-exploit, even if the solver never asked you for it.
-
-A mixed strategy is not a personality. [The 17-bracelet record](/guides/phil-hellmuth) is a tournament career, including a July 2026 runner-up finish, not a net worth.`,
-    },
-    {
-      id: "not-here",
-      title: "Where GTO does not apply",
-      body: `GTO poker strategy is for contested, multi-street games with hidden cards. It is not how you play [video poker](/guides/video-poker-paytables) or [Three Card Poker](/guides/three-card-poker-strategy). Those are house paytables. The “strategy” there is matching a chart to posted payouts so you lose the least.
-
-It is not how you play Purple on [Roulette](/roulette). There is no opponent range. There is about a 7.88% Purple or Silver edge after the win fee. [Kelly](/guides/kelly-criterion) will tell you the growth bet is empty.
-
-If someone sells “GTO guaranteed profit”, they are confusing a definition with a wage. Equilibrium is a defence. It is not a printing press.
-
-### Implementation error
-
-You will not hit 31.7% in your head. You will bet “often” or “rarely”. That is fine. Implementation error is why people use simpler defaults: c-bet most dry heads-up flops, check more multiway, bluff some missed draws and not all of them. Those defaults are GTO-shaped, not GTO-certified. They leak less than cartoons. They still leak. Pay rake on the leftover like everyone else.
-
-If you notice you never check a strong hand, you are unbalanced toward value and people will stop paying you. If you notice you never fold a pair, you are unbalanced toward calling and people will print bluffs. Those two sentences are the amateur version of the whole article. Use them at the table. Save the node lock for homework.
-
-If a training site sells “GTO for micros” as a personality, ask what rake model they used and whether the pool folds too much. A mix built for a 5% rake, tough pool will look timid in a 2% rake, loose pool. The label on the folder is not the table. Open the table first. Then decide whether you even need the folder tonight.`,
-    },
-    {
-      id: "summary",
-      title: "Summary: a baseline, then a read, then a budget",
-      body: `GTO poker strategy is an unexploitable mix. Exploitative strategy is a deliberate leak-hunt. Use the first when you have no read; use the second when you have a real one. Do not treat a solver screenshot as a personality. Do not treat either as a promise.
-
-If theory study is keeping you at tables you cannot afford, stop. Read [how to stop gambling](/guides/how-to-stop-gambling) and [gambling self-exclusion](/guides/gambling-self-exclusion). PVPspinArena is 18+ and runs six-max No-Limit Hold'em. Studying a solver does not change the 5% fee taken only after a flop.
-
-Remember the two-column table: balance when you have no read, attack when you have a real one. That is the whole amateur version of GTO poker strategy. Everything else is homework. Homework does not get to spend the rent. The budget does. If the folder is more exciting than the cap, close the folder. The mix will wait. The bills will not.
-
-Solvers sit on top of the same [poker math](/guides/poker-math). What those programs print, ranges and frequencies and EV, is [the output list from the vendor docs](/guides/poker-solver).
-
-A mixed check is not a tutorial in trapping. [Trapping with a made hand](/guides/slow-play-poker) is the practical version of checking strong, including when it gives a free card.`,
+GTO concepts concern decisions against opponents with hidden cards. Roulette and Coinflip have different outcome rules and no poker range to balance. Neither solver study nor a theoretical edge guarantees a session win. Set limits through [responsible gambling](/responsible-gambling) before cash play.`,
     },
   ],
   faqs: [
     {
-      q: "What does GTO mean in poker?",
-      a: "Game-theory optimal: a strategy mix that an opponent cannot profitably exploit even if they know your frequencies. It is a reference point, not a guaranteed win.",
+      q: "What does GTO mean?",
+      a: "Game-theory optimal. In poker it usually refers to an equilibrium-based strategy for a specified game model, including actions and mixed frequencies.",
     },
     {
-      q: "Is GTO better than exploitative play?",
-      a: "Against unknown or strong opponents, a balanced default leaks less. Against a clear leak, exploitation can earn more. Wrong reads get punished.",
+      q: "Why is the pot-sized call threshold 33.3%?",
+      a: "Calling $100 after a $100 bet into $100 creates a $300 final pot. The required equity before rake is 100/300, not 100/200.",
     },
     {
-      q: "Do I need a solver to use GTO poker strategy?",
-      a: "No. You need the idea of mixed frequencies and indifference. Solvers compute precise mixes; they are optional homework, not a requirement to sit.",
+      q: "Is GTO better than exploiting mistakes?",
+      a: "Equilibrium provides a reference. An accurate exploit can earn more against a specific mistake, while a wrong read can be costly.",
     },
     {
-      q: "Does GTO guarantee profit?",
-      a: "No. Rake, implementation error and variance remain. GTO is not a secret winning system.",
+      q: "Do I need a solver first?",
+      a: "Learn rules, ranges and pot odds first. A solver becomes useful when you can define its inputs and interpret conditional output.",
     },
     {
-      q: "Should beginners study GTO first?",
-      a: "No. Learn streets, rankings, pot odds and a tight filter first. GTO vocabulary helps after those are automatic.",
-    },
-    {
-      q: "Does PVPspinArena use GTO?",
-      a: "No. Six-max No-Limit Hold'em is on the site, and the site does not play a GTO strategy for you. P2P Slott, six-max poker, Jackpot, Coinflip, and Roulette have no multi-street range to balance.",
+      q: "Does GTO guarantee profit at six-max poker?",
+      a: "No. Multiway interaction, rake, implementation errors and variance prevent that blanket guarantee. A heads-up zero-sum result needs its own assumptions.",
     },
   ],
   sources: [
-    { label: "Wikipedia: Game theory", url: "https://en.wikipedia.org/wiki/Game_theory" },
-    { label: "Wikipedia: Nash equilibrium", url: "https://en.wikipedia.org/wiki/Nash_equilibrium" },
-    { label: "Wikipedia: Poker strategy", url: "https://en.wikipedia.org/wiki/Poker_strategy" },
+    {
+      label: "PokerStars Learn: introduction to GTO",
+      url: "https://www.pokerstars.com/poker/learn/lesson/introduction-to-game-theory-optimal-gto/",
+    },
   ],
   related: [
     "texas-holdem-strategy",
@@ -192,5 +100,5 @@ A mixed check is not a tutorial in trapping. [Trapping with a made hand](/guides
     "slow-play-poker",
     "phil-hellmuth",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

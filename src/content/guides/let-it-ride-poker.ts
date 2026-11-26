@@ -36,7 +36,7 @@ You place three equal bets in three spots. The dealer gives you three cards. The
 
 [Three Card Poker strategy](/guides/three-card-poker-strategy) is a different house game: three cards, a dealer hand, and a qualify rule. [Casino holdem](/guides/casino-hold-em) also uses a dealer hand. [Crazy 4 Poker](/guides/crazy-4-poker) plays four of five cards against the dealer. Let It Ride skips the dealer comparison and lets you pull two of the three bets back. If your five cards are not on the paytable, every bet still in action loses, even if the hand would have beaten a weak dealer somewhere else.
 
-This page is in [Casino games](/guides/topics/casino-games). Adults 18+ only. If the pull-back decisions start to feel like a chase, stop on [responsible gambling](/responsible-gambling) before the next three bets.
+Compare related tables in [Casino games](/guides/topics/casino-games). Adults 18+ only. If the pull-back decisions start to feel like a chase, stop on [responsible gambling](/responsible-gambling) before the next three bets.
 
 A single 52-card deck is the usual deal. Other players share the two community cards and keep their own hole cards. Their results do not pay you. The only decision that changes how much money faces the column is which bets you pull back.`,
     },
@@ -70,7 +70,7 @@ All three bets pay from the same hand. You do not have one circle for pairs and 
 
 You must decide bet 1 before any community card is turned. You must decide bet 2 before the last community card is turned. You cannot pull bet 3 after you dislike the river, and you cannot pull both removable bets at the first window. Each window belongs to one circle.
 
-A basic strategy for those two windows is published for each paytable. It is a list of three-card and four-card holdings, and this guide does not copy that chart. The shape of it is enough to stop the expensive habit: most three-card hands take the first bet back, a hand that already pays is the obvious let-it-ride, and long-shot draws are where people leave chips out that a chart would remove. The exact draws depend on the multiples in front of you. A chart for a bonus column is the wrong chart for a standard column.
+A basic strategy for those two windows is published for each paytable. It is a list of three-card and four-card holdings, and the correct holdings depend on those payouts. The shape of it is enough to stop the expensive habit: most three-card hands take the first bet back, a hand that already pays is the obvious let-it-ride, and long-shot draws are where people leave chips out that a chart would remove. The exact draws depend on the multiples in front of you. A chart for a bonus column is the wrong chart for a standard column.
 
 Letting every bet ride is not the name of the game turned into a plan. The name describes the option. Using it on hands that do not pay, and do not draw to the printed prices, is how a session spends the two bets the rules let you save.`,
     },
@@ -83,7 +83,7 @@ Letting every bet ride is not the name of the game turned into a plan. The name 
 
 On the widely published standard sheet, the minimum paying hand is a pair of tens or better. Nines or worse are a loss on that sheet. A pair of tens pays even money on each bet still out. Stronger hands pay higher posted multiples: two pair more than a pair, trips more than two pair, and a royal at the top of the column. Those middle multiples are not something to memorize from a video. They are on the felt, and rooms change them.
 
-Some layouts add a bonus column, a side bet, or a different price for a full house or a flush. A bonus that pays an extra chip on trips can look generous and still be a different total price. The word "standard" on a blog does not override the glass. If your column pays a pair of nines, or pays tens at a different rate, you are not on the sheet this page is describing.
+Some layouts add a bonus column, a side bet, or a different price for a full house or a flush. A bonus that pays an extra chip on trips can look generous and still be a different total price. The word "standard" on a blog does not override the glass. If your column pays a pair of nines, or pays tens at a different rate, the paytable differs from the example above.
 
 The paytable pays only the bets you did not pull. A royal with one bet left pays one royal. A royal with all three bets left pays three. That is why the pull-back decision and the paytable are one product.`,
     },
@@ -117,9 +117,9 @@ A king-high hand loses the bets that stayed. The paytable does not use a dealer 
 
 The deck is shuffled again under the house rules. Your three new hole cards are a new deal. A shared groan when a flush misses is not information about that deal.
 
-Adults 18+ only. This page explains a casino table game. It is not permission to play where you are underage or unlicensed, and it is not a tax opinion. If the pull-back feels impossible because you want every hand to be a royal, the chart will not survive the session. Leave while bet 3 is still unposted.
+Adults 18+ only. Let It Ride is a casino table game. It is not permission to play where you are underage or unlicensed, and it is not a tax opinion. If the pull-back feels impossible because you want every hand to be a royal, the chart will not survive the session. Leave while bet 3 is still unposted.
 
-PVPspinArena does not offer Let It Ride. The live games here are Coinflip, Roulette, P2P Slott, six-max poker, and Jackpot settled in US dollars. A paytable poker game is not hiding inside those products.`,
+A paytable poker game is not hiding inside those products.`,
     },
     {
       id: "keep",
@@ -155,12 +155,15 @@ Read the layout you are sitting at, then decide whether the pull-back is a game 
       a: "No. The option is the product. A chart for this paytable pulls most early bets back. Leaving junk out raises the cost above the published figure.",
     },
     {
-      q: "Does PVPspinArena offer Let It Ride?",
-      a: "No. This site offers Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker. The guide is for adults 18+ reading a house paytable game dealt elsewhere.",
+      q: "Do you play against the dealer's poker hand?",
+      a: "No. The main game settles the player's completed hand against a paytable; decisions concern which of the retractable bets to leave in action.",
     },
   ],
   sources: [
-    { label: "Wizard of Odds: Let It Ride", url: "https://wizardofodds.com/games/let-it-ride/" },
+    {
+      label: "Wizard of Odds: Let It Ride",
+      url: "https://wizardofodds.com/games/let-it-ride/",
+    },
     {
       label: "Wizard of Odds: house edge comparison",
       url: "https://wizardofodds.com/gambling/house-edge/",
@@ -171,5 +174,5 @@ Read the layout you are sitting at, then decide whether the pull-back is a game 
     },
   ],
   related: ["crazy-4-poker", "three-card-poker-strategy", "casino-hold-em", "poker-hand-rankings"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

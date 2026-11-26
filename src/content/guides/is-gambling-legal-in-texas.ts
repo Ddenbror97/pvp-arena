@@ -22,100 +22,43 @@ export const guide: Guide = {
     "Pari-mutuel horse racing is a separate licensed activity, not a casino floor.",
     "Some tribal facilities operate under federal Indian gaming law and have a long litigation history.",
     "A phone app that accepts a bet is not evidence that Texas licensed that bet.",
-    "Adults only. Many products use a higher age than 18. This page is not legal advice.",
+    "Adults only. Many products use a higher age than 18.",
   ],
   sections: [
     {
       id: "map",
       title: "What Texas actually authorizes",
-      body: `Is gambling legal in Texas is a product question. The state constitution and the Penal Code start from a narrow idea: most betting is prohibited, and the exceptions are written down. Those exceptions are the lottery, charitable bingo and raffles, and pari-mutuel wagering on horse races. They are not a general permission to open a slot floor, deal house-banked table games, or take a mobile sports bet from a Dallas apartment.
-
-A legal lottery ticket and an unlicensed online slot are different objects. This page is that map. It is not a poker-rules page.
-
-The [Foundations](/guides/topics/foundations) guides separate casino, sweepstakes, and sportsbook. The state line still decides the licence. This is not legal advice and not tax advice. Ask the regulator about legality and a tax professional about any filing.
-
-Worked example 1. You live in Houston and a friend says Texas “basically allows gambling now” because a bill was in the news last session. You open the friend’s app and it accepts a debit card. The charge is not a licence. Until you can name the Texas agency that licensed that operator for that product, you do not have a yes. Put the deposit off and read the agency page.`,
+      body: "Is gambling legal in Texas is a product question. The state constitution and the Penal Code start from a narrow idea: most betting is prohibited, and the exceptions are written down. Those exceptions are the lottery, charitable bingo and raffles, and pari-mutuel wagering on horse races. They are not a general permission to open a slot floor, deal house-banked table games, or take a mobile sports bet from a Dallas apartment.\n\nA legal lottery ticket and an unlicensed online slot are different objects. It is not a poker-rules page.\n\nThe [Foundations](/guides/topics/foundations) guides separate casino, sweepstakes, and sportsbook. The state line still decides the licence. This is not legal advice and not tax advice. Ask the regulator about legality and a tax professional about any filing.\n\nWorked example 1. You live in Houston and a friend says Texas “basically allows gambling now” because a bill was in the news last session. You open the friend’s app and it accepts a debit card. The charge is not a licence. Until you can name the Texas agency that licensed that operator for that product, you do not have a yes. Put the deposit off and read the agency page.",
     },
     {
       id: "tribal",
       title: "Tribal facilities are not a statewide casino law",
-      body: `Federal Indian gaming law can allow a tribe to offer gaming that state law does not offer to a commercial company on private land. In Texas that distinction matters. The Kickapoo Traditional Tribe has long run the Lucky Eagle facility in Eagle Pass. The Alabama-Coushatta and the Ysleta del Sur Pueblo (Tigua) have also offered gaming, and both have spent years in court with the state over what the federal Restoration Act allows.
-
-In 2022 the U.S. Supreme Court decided Ysleta del Sur Pueblo v. Texas. The opinion is about how that Restoration Act talks about gaming that Texas prohibits, and it uses the older difference between a state that bans a game and a state that regulates a game. It did not enact a commercial casino statute for Houston, Austin, or Dallas. It did not authorize a statewide sportsbook. Anyone who summarizes the case as “Texas legalized casinos” is skipping the holding.
-
-A tribal facility sits under that tribe’s operation, federal oversight, and whatever court order applies. It is not a Texas commercial licence you can carry home to an app.
-
-| Place | What people see | What it does not prove |
-| --- | --- | --- |
-| State lottery retailer | Scratch-offs and draw games | A casino licence |
-| Charity bingo hall | Regulated bingo | House-banked slots |
-| Horse-race track | Pari-mutuel pools | A mobile sportsbook |
-| Tribal facility | Games that facility offers | Statewide commercial casinos |
-| Phone app | A cashier that takes a card | A Texas licence |
-
-Read the row that matches the building or the app in front of you. Do not borrow permission from a different row.`,
+      body: "Federal Indian gaming law can allow a tribe to offer gaming that state law does not offer to a commercial company on private land. In Texas that distinction matters. The Kickapoo Traditional Tribe has long run the Lucky Eagle facility in Eagle Pass. The Alabama-Coushatta and the Ysleta del Sur Pueblo (Tigua) have also offered gaming, and both have spent years in court with the state over what the federal Restoration Act allows.\n\nIn 2022 the U.S. Supreme Court decided Ysleta del Sur Pueblo v. Texas. The opinion is about how that Restoration Act talks about gaming that Texas prohibits, and it uses the older difference between a state that bans a game and a state that regulates a game. It did not enact a commercial casino statute for Houston, Austin, or Dallas. It did not authorize a statewide sportsbook. Anyone who summarizes the case as “Texas legalized casinos” is skipping the holding.\n\nA tribal facility sits under that tribe’s operation, federal oversight, and whatever court order applies. It is not a Texas commercial licence you can carry home to an app.\n\n| Place | What people see | What it does not prove |\n| --- | --- | --- |\n| State lottery retailer | Scratch-offs and draw games | A casino licence |\n| Charity bingo hall | Regulated bingo | House-banked slots |\n| Horse-race track | Pari-mutuel pools | A mobile sportsbook |\n| Tribal facility | Games that facility offers | Statewide commercial casinos |\n| Phone app | A cashier that takes a card | A Texas licence |\n\nRead the row that matches the building or the app in front of you. Do not borrow permission from a different row.",
     },
     {
       id: "sports",
       title: "Sports betting has no statewide licence",
-      body: `Do not treat statewide sports betting as legal in Texas. Lawmakers have filed bills in more than one session. Filing a bill is not passing a bill, and passing a bill is not the same as a regulator posting a list of licensed apps. Until that list exists at an official Texas agency, a sportsbook that welcomes a Texas address is not a Texas-licensed book.
-
-[Where is sports betting legal](/guides/sports-betting-legal-states) explains the national patchwork after the 2018 decision that let states choose. Texas has not built that market. A neighbouring licence stops at the state line. An app that ignores the line is a warning, not a comfort.
-
-Daily fantasy, pick’em products, and event contracts can sit under different statutes than a moneyline. Read the product you are actually using. Age is its own gate. [Gambling age by state](/guides/gambling-age-us) is the overview: 18 and 21 both appear in American law, depending on the product. The Texas Lottery has historically sold tickets at 18. A future sportsbook, if one is ever authorized, could set a different age. Check the rule for the product, not a group chat.
-
-Worked example 2. You are in El Paso, a few minutes from a jurisdiction that really does license sportsbooks. Your phone still says Texas. A book licensed somewhere else does not become a Texas book because you can see the border. If the app lets the bet through, you still need the Texas authorization. Proximity is not a statute.`,
+      body: "Do not treat statewide sports betting as legal in Texas. Lawmakers have filed bills in more than one session. Filing a bill is not passing a bill, and passing a bill is not the same as a regulator posting a list of licensed apps. Until that list exists at an official Texas agency, a sportsbook that welcomes a Texas address is not a Texas-licensed book.\n\n[Where is sports betting legal](/guides/sports-betting-legal-states) explains the national patchwork after the 2018 decision that let states choose. Texas has not built that market. A neighbouring licence stops at the state line. An app that ignores the line is a warning, not a comfort.\n\nDaily fantasy, pick’em products, and event contracts can sit under different statutes than a moneyline. Read the product you are actually using. Age is its own gate. [Gambling age by state](/guides/gambling-age-us) is the overview: 18 and 21 both appear in American law, depending on the product. The Texas Lottery has historically sold tickets at 18. A future sportsbook, if one is ever authorized, could set a different age. Check the rule for the product, not a group chat.\n\nWorked example 2. You are in El Paso, a few minutes from a jurisdiction that really does license sportsbooks. Your phone still says Texas. A book licensed somewhere else does not become a Texas book because you can see the border. If the app lets the bet through, you still need the Texas authorization. Proximity is not a statute.",
     },
     {
       id: "lottery",
       title: "Lottery, bingo, and racing",
-      body: `The Texas Lottery Commission runs the state lottery and regulates charitable bingo. That is the agency most residents will actually touch. Retailers sell draw games and scratch tickets under lottery rules. Bingo occasions are licensed, and the charity, the hall, and the workers sit inside that system. A raffle for a volunteer fire department is not a template for a commercial sportsbook.
-
-Horse racing is the other long-standing carve-out. Licensed tracks can offer pari-mutuel pools. That is not a house-banked slot and not a single-game football bet. Read the Texas Racing Commission’s own materials rather than a coupon site.
-
-Texas criminal law has a narrow defense for gambling in a private place when no one takes a rake beyond personal winnings and the chances are equal. That defense is not a public card room and not a home game that pays the host. This page will not be your criminal lawyer.`,
+      body: "The Texas Lottery Commission runs the state lottery and regulates charitable bingo. That is the agency most residents will actually touch. Retailers sell draw games and scratch tickets under lottery rules. Bingo occasions are licensed, and the charity, the hall, and the workers sit inside that system. A raffle for a volunteer fire department is not a template for a commercial sportsbook.\n\nHorse racing is the other long-standing carve-out. Licensed tracks can offer pari-mutuel pools. That is not a house-banked slot and not a single-game football bet. Read the Texas Racing Commission’s own materials rather than a coupon site.\n\nTexas criminal law has a narrow defense for gambling in a private place when no one takes a rake beyond personal winnings and the chances are equal. That defense is not a public card room and not a home game that pays the host.",
     },
     {
       id: "online",
       title: "Online casinos, sweepstakes, and social sites",
-      body: `Cash online casinos, meaning slots and table games dealt for money by a remote operator, are not an authorized Texas product. [Is online casino legal](/guides/is-online-casino-legal) keeps the national version of that question. A sportsbook, a tribal floor, and a browser slot are three products. Texas has not licensed the third one.
-
-Sweepstakes sites often sell a play-money coin and give a promotional coin that can sometimes be redeemed. That theory is not a Texas licence. [Sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states) is national orientation, not a ruling that your site is lawful here. Read the current official source before you buy a coin package.
-
-A social game with no prize is a third thing, and it does not licence a redeemable-coin site. An offshore cashier in dollars or a stablecoin has not moved you out of Texas. A foreign badge can be a real document and still say nothing true about Austin.
-
-| Claim on the site | Question to ask | Who can answer |
-| --- | --- | --- |
-| “Legal in most states” | Is Texas on the operator’s own restricted list? | The terms, then the state |
-| “Sweepstakes, not gambling” | What can you redeem, and for what? | Official rules plus the state |
-| “Licensed” | Licensed by which government, for which game? | That government’s list |
-| “Crypto, so it’s fine” | Where is the player sitting? | Texas law, not the chain |
-| “Bill is about to pass” | Did it pass and get implemented? | The Legislature and the agency |
-
-Texas does not answer Oklahoma tribes. [The Oklahoma sports question](/guides/sports-betting-legal-oklahoma) stays out of this page's map.`,
+      body: "Cash online casinos, meaning slots and table games dealt for money by a remote operator, are not an authorized Texas product. [Is online casino legal](/guides/is-online-casino-legal) keeps the national version of that question. A sportsbook, a tribal floor, and a browser slot are three products. Texas has not licensed the third one.\n\nSweepstakes sites often sell a play-money coin and give a promotional coin that can sometimes be redeemed. That theory is not a Texas licence. [Sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states) is national orientation, not a ruling that your site is lawful here. Read the current official source before you buy a coin package.\n\nA social game with no prize is a third thing, and it does not licence a redeemable-coin site. An offshore cashier in dollars or a stablecoin has not moved you out of Texas. A foreign badge can be a real document and still say nothing true about Austin.\n\n| Claim on the site | Question to ask | Who can answer |\n| --- | --- | --- |\n| “Legal in most states” | Is Texas on the operator’s own restricted list? | The terms, then the state |\n| “Sweepstakes, not gambling” | What can you redeem, and for what? | Official rules plus the state |\n| “Licensed” | Licensed by which government, for which game? | That government’s list |\n| “Crypto, so it’s fine” | Where is the player sitting? | Texas law, not the chain |\n| “Bill is about to pass” | Did it pass and get implemented? | The Legislature and the agency |\n\nTexas does not answer Oklahoma tribes. Cross-border comparisons require a separate check of [Oklahoma sports betting](/guides/sports-betting-legal-oklahoma).",
     },
     {
       id: "check",
       title: "How to check before you deposit",
-      body: `Use a short checklist and stop if a step fails. The American Gaming Association publishes industry maps and research. Treat that site as a map, not a ruling. The ruling, if you need one for your own facts, is a lawyer’s job. The public source of what is authorized is the state.
-
-- Find the Texas Lottery Commission for lottery and charitable bingo questions, on its own site.
-- If the product is horse racing, find the Texas Racing Commission, not a track advertisement.
-- If the product is tribal, read the tribe’s own notices and the National Indian Gaming Commission, and do not generalize to the rest of the state.
-- If someone claims a new sportsbook or casino law, read the enrolled bill and the agency named to enforce it. A headline is not enrollment.
-- Match the company name in the app to a name on an official list. A similar logo is not a match.
-- If you cannot finish the list, do not deposit while you “figure it out later.”
-
-A screenshot of the official page helps your memory. It does not legalize a forbidden bet. Bills in a new session need a fresh read. This guide is not a live feed. A rumor is not a reason to deposit.`,
+      body: "Use a short checklist and stop if a step fails. The American Gaming Association publishes industry maps and research. Treat that site as a map, not a ruling. The ruling, if you need one for your own facts, is a lawyer’s job. The public source of what is authorized is the state.\n\n- Find the Texas Lottery Commission for lottery and charitable bingo questions, on its own site.\n- If the product is horse racing, find the Texas Racing Commission, not a track advertisement.\n- If the product is tribal, read the tribe’s own notices and the National Indian Gaming Commission, and do not generalize to the rest of the state.\n- If someone claims a new sportsbook or casino law, read the enrolled bill and the agency named to enforce it. A headline is not enrollment.\n- Match the company name in the app to a name on an official list. A similar logo is not a match.\n- If you cannot finish the list, do not deposit while you “figure it out later.”\n\nA screenshot of the official page helps your memory. It does not legalize a forbidden bet. Bills in a new session need a fresh read. A rumor is not a reason to deposit.",
     },
     {
       id: "play",
       title: "Age, help, and what this site is",
-      body: `You should be 18 or older to be here at all. Some Texas products, and many casino or sports products in other states, require 21. If your product’s age is higher than 18, the higher age is the one that matters. Confirm it on the official page for that product.
-
-Legal and healthy are different. A lottery ticket you can afford is still spending. An unlicensed app is a worse version of the same spending, because you may have no regulator to call if the cashier stalls. If gambling has stopped being entertainment, use [responsible gambling](/responsible-gambling) resources, including 1-800-GAMBLER in the United States. Getting help is not a legal opinion. It is a practical one.
-
-PVPspinArena is not a Texas casino and not a sportsbook. Hashed player-versus-player games do not change the Penal Code. Lottery, charitable bingo, and pari-mutuel racing are the ordinary legal products. Tribal facilities are not a statewide commercial market. Sports betting and cash online casinos are not licensed statewide.`,
+      body: "You should be 18 or older to be here at all. Some Texas products, and many casino or sports products in other states, require 21. If your product’s age is higher than 18, the higher age is the one that matters. Confirm it on the official page for that product.\n\nLegal and healthy are different. A lottery ticket you can afford is still spending. An unlicensed app is a worse version of the same spending, because you may have no regulator to call if the cashier stalls. If gambling has stopped being entertainment, use [responsible gambling](/responsible-gambling) resources, including 1-800-GAMBLER in the United States. Getting help is not a legal opinion. It is a practical one.\n\nPVPspinArena is not a Texas casino and not a sportsbook. Hashed player-versus-player games do not change the Penal Code. Lottery, charitable bingo, and pari-mutuel racing are the ordinary legal products. Tribal facilities are not a statewide commercial market. Sports betting and cash online casinos are not licensed statewide.",
     },
   ],
   faqs: [
@@ -170,5 +113,5 @@ PVPspinArena is not a Texas casino and not a sportsbook. Hashed player-versus-pl
     "sweepstakes-casino",
     "sports-betting-legal-oklahoma",
   ],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

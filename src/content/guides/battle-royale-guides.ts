@@ -133,7 +133,7 @@ For a tournament, check placement and elimination evidence, not only a screensho
       ],
       [
         "An entry checklist, including when to stay in free play",
-        `- Identify the exact game, organiser and contest; a search phrase is not a rulebook.
+        `- Identify the exact game, organiser and contest; read its actual rules.
 - Confirm age, location and account eligibility for that particular entry.
 - Read the fee, prize distribution, tie rules and refund conditions.
 - Establish whether the room is human-only, bot-filled or a mixed practice environment.
@@ -380,7 +380,7 @@ When mouse look is unavailable, click the arena after it appears and check the b
       ],
       [
         "A free BR session is different from a crypto entry",
-        `Search phrases such as battle royale io and battle royale games online primarily describe how somebody wants to play. They do not establish a reward system. Project Island currently offers free play, with no BR cash pot or withdrawable victory award.
+        `Browser access does not establish a cash prize or reward system. Project Island currently offers free play, with no BR cash pot or withdrawable victory award.
 
 Use [Battle Royale for money](/guides/battle-royale-for-money-hub) if your question is about cash tournaments, wagers or token rewards. Our separate 1v1 cash mode is described on its own product page. Its entry limits, fee and series rules do not carry across to the island merely because both games sit in the PvPStrike lobby.
 

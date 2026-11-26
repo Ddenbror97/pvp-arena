@@ -108,8 +108,7 @@ Continue until someone wins a round while holding a one-card layout. They win th
 
 A player on 4 cards uses Ace through 4. A drawn 5 is as dead as a king. The leader misses more draws, and players still on 10 hit more often. Unfinished layouts score nothing. Only a completed layout matters, and it shrinks that player by one card.
 
-Only the player to move can place cards, so two layouts cannot finish together. The first completed layout ends the round.
-`,
+Only the player to move can place cards, so two layouts cannot finish together. The first completed layout ends the round.`,
     },
     {
       id: "example",
@@ -164,8 +163,14 @@ See also [golf](/guides/golf-card-game-rules), [klondike solitaire](/guides/soli
     },
   ],
   sources: [
-    { label: "Pagat: Trash", url: "https://www.pagat.com/patience/trash.html" },
-    { label: "Pagat: children's card games", url: "https://www.pagat.com/class/" },
+    {
+      label: "Pagat: Trash",
+      url: "https://www.pagat.com/patience/trash.html",
+    },
+    {
+      label: "Pagat: children's card games",
+      url: "https://www.pagat.com/class/",
+    },
   ],
   related: [
     "golf-card-game-rules",
@@ -174,6 +179,6 @@ See also [golf](/guides/golf-card-game-rules), [klondike solitaire](/guides/soli
     "kings-corner-rules",
     "52-card-deck",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
   howTo: true,
 };

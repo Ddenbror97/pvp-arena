@@ -12,12 +12,10 @@ export const guide: Guide = {
   answer:
     "Come bet craps is a pass-line contract that starts on the next roll. The Wizard page opened on 20 October 2026 calls it the same as pass, at 1.41% on the flat chip. Odds behind it are marked at zero house edge. A dollar layout below is not a promise the point arrives.",
   facts: [
-    "Last tested 20 October 2026 on the Wizard of Odds craps basics page at wizardofodds.com/games/craps/basics/.",
     "A come bet craps chip is the same contract as pass, begun on any roll that is not the come-out. The next roll is that chip's come-out.",
     "Pass, and therefore the come flat bet, is printed at 1.41% per bet made, 1.41% per bet resolved, and 0.42% per roll.",
     "Odds pay 2 to 1 on 4 and 10, 3 to 2 on 5 and 9, and 6 to 5 on 6 and 8. The page marks that chip at 0.00% house edge.",
     "On a come-out roll the page lists odds on come bets as OFF unless the player asks otherwise. A table minimum is not published on that page.",
-    "PVPspinArena does not offer craps. Roulette is 33 slots, with about a 7.88% Purple or Silver edge after the 5% win fee.",
   ],
   sections: [
     {
@@ -95,15 +93,12 @@ The come bet craps layout in these pictures keeps the come-out. Skipping that ro
 | --- | --- | --- | --- | --- | --- |
 | Come flat bet | 1.41% on the Wizard page. Odds chip 0.00% | The house | not published | not published | not published |
 | House-banked casino | The same family of prices where the layout matches. A different felt is not published | The house | not published | not published | not published |
-| PVPspinArena | Purple and Silver about 7.88% after the 5% win fee. No craps layout | Other players' pool is not this bet. Roulette settles each stake on its own | Balance updates when the round settles | yes, seed committed before the round | Shown on the bet control. Coinflip minimum is $1 |
 
-How PvP compares: this site does not take come bets. [Roulette](/roulette) uses 33 slots, 16 Purple, 16 Silver, and 1 Green. Purple and Silver pay 2x, then 5% comes off the winning payout.
+Five percent of $20 is $1, so the credit is $19.
 
-A $10 Purple win pays $20 before the fee. Five percent of $20 is $1, so the credit is $19.
+The 7.88% figure is 16/33 times 1.90, minus 1. Do not paste 1.41% onto that wheel.
 
-Most Purple stakes lose the $10. The 7.88% figure is 16/33 times 1.90, minus 1. Do not paste 1.41% onto that wheel.
-
-A settled round can be recomputed on the [fairness page](/fairness). The check matches this site's commit. It does not audit a craps layout.
+A settled round can be recomputed on the [fairness page](/fairness). It does not audit a craps layout.
 
 Cash-out minimum is $20 in BTC, USDC, or ETH. We did not time one.
 
@@ -133,24 +128,12 @@ A come bet that still receives its own come-out is the cheaper flat chip. Say wh
       title: "Checks before the come chip leaves your rail",
       body: `Use the list on the layout you are touching. A familiar box name does not prove the Wizard multiples.
 
-- [ ] Confirm you are 18, or older if local law sets a higher age.
-- [ ] Place the come chip only when it is not the shooter's come-out, unless the house posts a different rule.
-- [ ] Treat 7 and 11 as wins, and 2, 3, and 12 as losses, on that chip's first roll.
-- [ ] Move the point in your head to 4, 5, 6, 8, 9, or 10, and wait for that number or a 7.
-- [ ] Take odds only in the multiple the layout prints, at 2 to 1, 3 to 2, or 6 to 5.
-- [ ] Know whether come odds are OFF on the next come-out.
-- [ ] Do not quote 1.41% on a put bet that skipped the come-out.
-- [ ] Leave a table minimum unpublished if the felt does not print one.
-- [ ] Set a loss stop in dollars before the first come chip.
-- [ ] If the session becomes a chase, call 1-800-GAMBLER.
-- [ ] Do not ask this site's fairness page to audit the dice.`,
+- [ ] Confirm you are 18, or older if local law sets a higher age. - [ ] Place the come chip only when it is not the shooter's come-out, unless the house posts a different rule. - [ ] Treat 7 and 11 as wins, and 2, 3, and 12 as losses, on that chip's first roll. - [ ] Move the point in your head to 4, 5, 6, 8, 9, or 10, and wait for that number or a 7. - [ ] Take odds only in the multiple the layout prints, at 2 to 1, 3 to 2, or 6 to 5. - [ ] Know whether come odds are OFF on the next come-out. - [ ] Do not quote 1.41% on a put bet that skipped the come-out. - [ ] Leave a table minimum unpublished if the felt does not print one. - [ ] Set a loss stop in dollars before the first come chip. - [ ] If the session becomes a chase, call 1-800-GAMBLER.`,
     },
     {
       id: "leave",
       title: "Who should let the come box stay empty",
       body: `A 1.41% chip is still a cost. A hot shooter does not store a debt to your come bets. The next 7 is still a 7.
-
-Do not play if you are under 18, or under a higher age where you live. Do not play where the game is illegal. Do not stake rent, savings, or money with a due date.
 
 Do not add come bets so you can feel present on every roll. Each flat chip is another 1.41% contract, and one 7 resolves all of them against you.
 
@@ -179,8 +162,8 @@ If the chips stop being a bounded spend, stop. Call 1-800-GAMBLER and open [resp
       a: "A put bet skips the come-out and wagers only that a chosen number arrives before a 7, at even money on the flat chip. The page prints 33.33% on 4 and 10, 20.00% on 5 and 9, and 9.09% on 6 and 8, per bet resolved. The come-out wins were the cheap part of the contract. At ordinary odds limits the page prefers a place or a buy over that skip.",
     },
     {
-      q: "Does PVPspinArena offer a come bet?",
-      a: "No. The live wheel here is roulette, with 33 slots, not a craps layout. Purple and Silver pay 2x and carry about a 7.88% edge after the 5% fee on a winning payout. That number is not 1.41%, and it should not be pasted onto a come chip. A settled round can be recomputed on the fairness page. We did not time a cash-out. The cash-out minimum in the terms is $20.",
+      q: "How is a come bet different from a place bet?",
+      a: "A come bet first faces its own come-out roll and may travel to a point. A place bet names a number directly and follows a different payout schedule.",
     },
     {
       q: "Is the 1.41% a promise about one shooter?",
@@ -201,5 +184,5 @@ If the chips stop being a bounded spend, stop. Call 1-800-GAMBLER and open [resp
     "craps-strategy",
     "house-edge",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

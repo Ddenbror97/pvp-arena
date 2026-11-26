@@ -34,7 +34,9 @@ It is not the same product as [coin flip for money](/guides/coin-flip-for-money)
 
 Penny pitching sits with other street and midway contests in the [Games of chance topic](/guides/topics/games-of-chance), next to [carnival games](/guides/carnival-games). The wall game is player versus player. The carnival plate is operator versus player. Do not price them as one thing.
 
-Agree the target, the throwing order, what happens on a leaner (a coin standing against the wall), and whether a coin that hits another coin is dead or still counts. Then throw. Adults staking more than pocket change should be 18+ or the local legal age.`,
+Agree the target, the throwing order, what happens on a leaner (a coin standing against the wall), and whether a coin that hits another coin is dead or still counts. Then throw. Adults staking more than pocket change should be 18+ or the local legal age.
+
+Norman Douglas's London Street Games records penny games as observed street culture. A historical account does not establish modern permission to take paid entries.`,
     },
     {
       id: "wall",
@@ -58,7 +60,7 @@ Four adults each pitch $1. The pot is $4. Distances from the wall: 4 cm, 9 cm, 1
 
 The last pitcher sees every rest position. They can aim to beat the current leader rather than to hug the wall in the abstract. If skill is real, last-to-throw is a seat with value. Rotate the first thrower each round, the way a card table rotates the deal. A "friendly" game that always lets the same person throw last is not friendly.
 
-With two equally skilled players and a rotated lead, results should cluster near 50/50 over many pots, the same shape as a fair [Coinflip](/coinflip) but with human variance in the throw. With a fixed last thrower who is also the better shot, the long-run share is not 50/50.
+With a fixed last thrower who is also the better shot, the long-run share is not 50/50.
 
 A useful check after 20 two-player pots: if one person has won 16 or more, either skill or order is showing, or you hit a lucky tail (a fair 50/50 has about a 0.6% chance of 16+ wins in 20, so it is uncommon but not impossible). Do not rewrite the rules mid-session to "fix" a streak. Rotate the lead and keep the line.`,
     },
@@ -107,13 +109,6 @@ If the group wants a pure 50/50 with no aiming, use a flip. If they want aiming 
 
 [Claw machines](/guides/claw-machine-tricks) are the arcade version of a skill story with a payout setting. Penny pitching among friends has no hidden claw strength. Carnival penny pitch does have a hidden difficulty: plate size and slope.`,
     },
-    {
-      id: "pvp",
-      title: "From a sidewalk pot to a hashed coin flip",
-      body: `A two-player wall pot with rotated leads and similar skill is close to even money, paid in the other person's coin. The dispute is always the same: who was closer, and did the last thrower get an extra look. A hashed [Coinflip](/coinflip) on PVPspinArena removes the tape measure. Two players, 50/50, winner takes the pot minus any fee shown before entry. Roulette on the same site is a 33-slot wheel that returns 32/33, about a 7.88% Purple or Silver edge after the win fee. Jackpot pays in proportion to your share of the pot. Settled rounds use committed seeds you can check on [fairness](/fairness).
-
-The sidewalk game needs daylight and an agreed stick. The hashed game needs a seed reveal. Both are optional. Both are 18+ when money moves. If a "friendly" pitch is already doubling the coin to get even, stop and use [responsible gambling](/responsible-gambling).`,
-    },
   ],
   faqs: [
     {
@@ -138,8 +133,18 @@ The sidewalk game needs daylight and an agreed stick. The hashed game needs a se
     },
   ],
   sources: [
-    { label: "Wikipedia: Pitch and toss", url: "https://en.wikipedia.org/wiki/Pitch_and_toss" },
-    { label: "Wikipedia: Two-up", url: "https://en.wikipedia.org/wiki/Two-up" },
+    {
+      label: "Norman Douglas: London Street Games, original text",
+      url: "https://gutenberg.net.au/ebooks03/0300281h.html",
+    },
+    {
+      label: "Wikipedia: Pitch and toss",
+      url: "https://en.wikipedia.org/wiki/Pitch_and_toss",
+    },
+    {
+      label: "Wikipedia: Two-up",
+      url: "https://en.wikipedia.org/wiki/Two-up",
+    },
     {
       label: "Encyclopaedia Britannica: gambling",
       url: "https://www.britannica.com/topic/gambling",
@@ -153,5 +158,5 @@ The sidewalk game needs daylight and an agreed stick. The hashed game needs a se
     "online-coin-flip-game",
     "plinko-board",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

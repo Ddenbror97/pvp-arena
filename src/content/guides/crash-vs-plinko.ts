@@ -37,7 +37,9 @@ Crash is one random multiplier draw per round; you win if the result reaches you
 
 Product pages: [crash gambling](/guides/crash-gambling) and [plinko gambling](/guides/plinko-gambling). Maths depth: [plinko odds](/guides/plinko-odds). This page is the side-by-side.
 
-Adults 18+ only. [Games and odds](/guides/topics/games-and-odds) collects originals pricing. [Foundations](/guides/topics/foundations) covers EV vocabulary if you are new to the multiply.`,
+Adults 18+ only. [Games and odds](/guides/topics/games-and-odds) collects originals pricing. [Foundations](/guides/topics/foundations) covers EV vocabulary if you are new to the multiply.
+
+The UK Gambling Commission distinguishes long-run return from a session’s result; changing volatility does not establish a favourable expected return.`,
     },
     {
       id: "crash-curve",
@@ -214,8 +216,15 @@ If you are new to originals, price plinko first because the bucket row is finite
       label: "Wikipedia: Binomial distribution",
       url: "https://en.wikipedia.org/wiki/Binomial_distribution",
     },
-    { label: "Wikipedia: Expected value", url: "https://en.wikipedia.org/wiki/Expected_value" },
+    {
+      label: "Wikipedia: Expected value",
+      url: "https://en.wikipedia.org/wiki/Expected_value",
+    },
+    {
+      label: "UK Gambling Commission: RTP and house edge",
+      url: "https://www.gamblingcommission.gov.uk/public-and-players/guide/return-to-player-how-much-gaming-machines-payout/",
+    },
   ],
   related: ["crash-gambling", "plinko-gambling", "plinko-odds", "house-edge"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

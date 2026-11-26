@@ -95,7 +95,7 @@ A fractional expected gold is an average across many people. In 100 independent 
     {
       id: "knife-odds",
       title: "CS2 knife odds: the 0.26% rare-special rate",
-      body: `**CS2 knife odds**, as people search them, are not a per-knife table. Official cases publish one gold line: **rare special items at 0.26%**. That line is knives and, in cases that contain them, gloves. The calculator’s last row is that rate.
+      body: `A rare-special-item probability is not a separate per-knife probability. Official cases publish one gold line: **rare special items at 0.26%**. That line is knives and, in cases that contain them, gloves. The calculator’s last row is that rate.
 
 ### Expected knives or gloves per batch
 
@@ -105,7 +105,7 @@ Using 0.26% exactly as 0.0026:
 - **Per 1,000 openings:** 1,000 × 0.0026 = **2.6** gold items on average.
 - **Average wait:** 1 / 0.0026 ≈ **385** openings per gold item.
 
-A case with several knives still pays that 0.26% for “any gold,” then picks among the gold pool. Wanting one named blade is a thinner slice of an already thin tier. This page will not pretend a Karambit is 0.26% by itself.
+A case with several knives still pays that 0.26% for “any gold,” then picks among the gold pool. Wanting one named blade is a thinner slice of an already thin tier. The rare-special-item category includes multiple possible outcomes; 0.26% cannot simply be assigned to a Karambit.
 
 If a case lists ten gold finishes at equal weight inside the tier, a single named knife is about 0.26% / 10 = **0.026%**, roughly 1 in 3,850 openings. That extra division is not on Valve’s published colour table; it is only true if the gold pool is actually equal. We do not publish per-knife tables here because Valve did not. Treat 0.26% as “any gold,” then be honest that your favourite finish is a slice.
 
@@ -157,7 +157,7 @@ Covert at 0.64% is the same shape with a shorter wait: about 1 in 156. In 50 ope
 
 If the site will not show the table, you do not have CS2 case odds. You have a mystery box.
 
-This guide will not re-teach deposits, keys or trade bots. Official mechanics stay on [CS:GO case opening](/guides/csgo-case-opening). Unverified overlays stay someone else’s problem.
+Keep item-transfer and payment steps separate from the probability calculation. Official mechanics stay on [CS:GO case opening](/guides/csgo-case-opening). Unverified overlays stay someone else’s problem.
 
 PVPspinArena is not a case site and not a Kick or Twitch house. Rounds you can check live on [Fairness](/fairness). That is a different question than a loot-box percentage, but it is the honest contrast if you came here from a skin lobby.`,
     },
@@ -218,7 +218,10 @@ Opening one case and betting cases against someone else are different products. 
       label: "PCGamesN: CS:GO loot box odds (2017)",
       url: "https://www.pcgamesn.com/counter-strike-global-offensive/csgo-case-odds",
     },
-    { label: "Counter-Strike 2 official site", url: "https://www.counter-strike.net/" },
+    {
+      label: "Counter-Strike 2 official site",
+      url: "https://www.counter-strike.net/",
+    },
   ],
   related: [
     "pvp-gambling",
@@ -226,7 +229,7 @@ Opening one case and betting cases against someone else are different products. 
     "csgo-trade-up-contract",
     "csgo-case-opening",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
   howTo: true,
   widget: "cs2-case-odds",
 };

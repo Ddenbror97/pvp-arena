@@ -30,7 +30,9 @@ Play clockwise if more than two people are in. For a 1v1, deal left then right, 
 
 The [52-card deck](/guides/52-card-deck) page is the inventory: 4 suits, 13 ranks, 52 cards. High card uses that inventory once. You do not need poker hand rankings. High card in poker is what remains when nobody made a pair. Here, the single card is the whole hand.
 
-Agree the stake before the shuffle. “A drink” and “twenty dollars” should not be clarified after the ace lands. Adults 18+ only if the stake is money. Kitchen-table bragging rights are a different evening from a pot.`,
+Agree the stake before the shuffle. “A drink” and “twenty dollars” should not be clarified after the ace lands. Adults 18+ only if the stake is money. Kitchen-table bragging rights are a different evening from a pot.
+
+Bicycle's War is an example of repeated rank comparisons with a separate tie procedure. A one-deal high-card contest needs its own agreed tie rule instead of silently importing War.`,
     },
     {
       id: "tie-rate-and-win-chance",
@@ -48,9 +50,8 @@ Nothing in the draw rewards memory or “feel.” The deck has no memory between
     {
       id: "compared-with-war-and-coinflip",
       title: "High card versus coinflip versus casino war",
-      body: `Three games get called a one-card contest. Only one of them is the high card game on this page.
+      body: `Three games get called a one-card contest. Their dealing and tie rules differ, so name the version before dealing.
 
-| | High card draw | Coinflip | Casino war |
 | --- | --- | --- | --- |
 | What you compare | One rank each | Two sides of one bit | Your card against the dealer |
 | Who funds the prize | The players, if it is a pot | The two players | The house paytable |
@@ -61,9 +62,7 @@ Nothing in the draw rewards memory or “feel.” The deck has no memory between
 
 [War card game rules](/guides/war-card-game-rules) describe the home game children play with the whole deck: each player flips, the higher card takes the pile, and a tie starts a war of face-down cards. That game can last many minutes and the pile sizes swing. It is not one high-card showdown for a posted stake.
 
-[Casino war](/guides/casino-war-game) is the house product. You and the dealer each get one card. A win pays even money. A tie is where the price hides: surrender half, or pay to go to war. The high card game between two friends has no dealer and no tie bet unless you add one. Adding a tie bet against a friend is how a fair draw grows a fee. Do not import the casino tie button into a kitchen without saying what it costs.
-
-A 1v1 money version that stays honest looks like a coinflip: equal stakes, higher card takes the net pot, ties split or replay, fee agreed in advance. [Coinflip](/coinflip) is that structure without the deck. PVPspinArena does not offer a high card table.`,
+[Casino war](/guides/casino-war-game) is the house product. You and the dealer each get one card. A win pays even money. A tie is where the price hides: surrender half, or pay to go to war. The high card game between two friends has no dealer and no tie bet unless you add one. Adding a tie bet against a friend is how a fair draw grows a fee. Do not import the casino tie button into a kitchen without saying what it costs.`,
     },
     {
       id: "worked-money-examples",
@@ -74,7 +73,7 @@ Example 2, an online room that takes a fee. Each player stakes 20. Pot is 40. Fe
 
 Label both as examples, not as a quote from a cashier. If a site will not show the fee before the deal, do not use the site. If a site deals the second card after it has seen your bet size and your first card, you are not in a random draw. You are in a story.
 
-Check a finished player-versus-player round on the [fairness](/fairness) page when you play a game this site actually runs. A high card claim in a chat log is not a fairness proof.`,
+A high card claim in a chat log is not a fairness proof.`,
     },
     {
       id: "house-rules-checklist",
@@ -143,11 +142,18 @@ This is not betting advice. Losing the stake is a normal outcome, close to half 
   ],
   sources: [
     {
+      label: "Bicycle: War rules for one-card rank comparison",
+      url: "https://bicyclecards.com/how-to-play/war",
+    },
+    {
       label: "Wikipedia: Standard 52-card deck",
       url: "https://en.wikipedia.org/wiki/Standard_52-card_deck",
     },
-    { label: "Wikipedia: War (card game)", url: "https://en.wikipedia.org/wiki/War_(card_game)" },
+    {
+      label: "Wikipedia: War (card game)",
+      url: "https://en.wikipedia.org/wiki/War_(card_game)",
+    },
   ],
   related: ["war-card-game-rules", "casino-war-game", "coin-flip-odds", "52-card-deck"],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

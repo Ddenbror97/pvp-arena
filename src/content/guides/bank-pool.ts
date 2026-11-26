@@ -48,9 +48,7 @@ This is stricter than a game that only asks you to name a pocket. The cushion li
       title: "Other games that live and die by a call",
       body: `Bank pool scores only a called bank. This site does not stake that race. The 8-ball payment table is [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other rule cards are [eight in one pocket](/guides/one-pocket-pool), [a called 10](/guides/10-ball-pool), and [shot vocabulary](/guides/pool-shots). The group is the [games of chance guides](/guides/topics/games-of-chance).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other rule cards are [eight in one pocket](/guides/one-pocket-pool), [a called 10](/guides/10-ball-pool), and [shot vocabulary](/guides/pool-shots). The group is the [games of chance guides](/guides/topics/games-of-chance).`,
     },
     {
       id: "extras",
@@ -64,7 +62,9 @@ A foul costs one point on its own. You can lose ground without anyone banking an
       title: "A one-point foul and a kitchen cue ball",
       body: `A scratch sends the incoming player to ball in hand above the head string. The cue ball stays in the kitchen, as it does after a one-pocket scratch, and it does not roam the table the way a standard 9-ball foul allows. From the kitchen you still have to hit the called ball first if you intend to score, and you still have to have called the cushions. The foul that produced the scratch has already cost a point.
 
-This site does not run bank pool for money. The race to five and the race to eight remain reading. The button on this site remains [8-ball](/guides/8-ball-pool-rules).`,
+This site does not run bank pool for money. The race to five and the race to eight remain reading. The button on this site remains [8-ball](/guides/8-ball-pool-rules).
+
+For money games, set [spending limits](/responsible-gambling) before dealing.`,
     },
   ],
   faqs: [
@@ -98,8 +98,11 @@ This site does not run bank pool for money. The race to five and the race to eig
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "one-pocket-pool", "10-ball-pool"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

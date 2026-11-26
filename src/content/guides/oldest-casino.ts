@@ -49,7 +49,9 @@ If a list does not say which definition it used, treat the ranking as marketing,
 
 ### Where the word comes from
 
-"Casino" comes from the Italian casa, house. A casino (or casin) in eighteenth-century Venice was a small private room or club where nobles met to talk, dine, flirt and gamble. Hundreds of these rooms existed at the height of the Republic. The word spread across Europe with the spa-town gambling halls of the nineteenth century and only later came to mean a large building full of tables and slot machines.`,
+"Casino" comes from the Italian casa, house. A casino (or casin) in eighteenth-century Venice was a small private room or club where nobles met to talk, dine, flirt and gamble. Hundreds of these rooms existed at the height of the Republic. The word spread across Europe with the spa-town gambling halls of the nineteenth century and only later came to mean a large building full of tables and slot machines.
+
+Casinò di Venezia traces its history to 1638 but says it moved to Ca' Vendramin Calergi in the 1950s. The age of an institution differs from the age of its present gaming location.`,
     },
     {
       id: "venice",
@@ -140,15 +142,6 @@ Macau’s Portuguese administration licensed gambling in the 1840s, making it on
 
 Crockford’s in London, opened by William Crockford in 1828, was a famous private club rather than a public casino in the modern sense. France’s spa towns and Paris clubs ran high-stakes rooms through the nineteenth century, then public casinos were restricted for long stretches. Those venues matter for social history, but they are not continuous public casinos in the Ridotto or Monte Carlo sense. When a travel list calls something “Europe’s oldest casino”, check whether it means a club, a spa hall or a licensed public room.`,
     },
-    {
-      id: "pvp",
-      title: "From the Ridotto to an on-chain round",
-      body: `The oldest casinos share a pattern: an authority allowed gambling so it could control it and take a share. The Ridotto’s bankers had a built-in edge, and the Blancs competed by publishing a smaller one. Modern players look for the same things: a fair game, a known edge and some way to trust the result.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Its roulette uses a 33-slot wheel with 16 Purple, 16 Silver and 1 Green slot. Purple and Silver pay 2x and Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. That is higher than Blanc’s 2.70% and is shown openly. The [roulette odds chart](/guides/roulette-odds-chart) compares it with European and American wheels.
-
-The trust model is different from the Ridotto’s. Instead of a patrician dealing with his face uncovered, each round’s result comes from committed seeds, and any settled round can be checked on [fairness](/fairness). Play is 18+ only, and help and limits are on [responsible gambling](/responsible-gambling). More casino history is in the [Casino knowledge topic](/guides/topics/casino-knowledge).`,
-    },
   ],
   faqs: [
     {
@@ -173,7 +166,14 @@ The trust model is different from the Ridotto’s. Instead of a patrician dealin
     },
   ],
   sources: [
-    { label: "Wikipedia: Ridotto", url: "https://en.wikipedia.org/wiki/Ridotto" },
+    {
+      label: "Casinò di Venezia: Ca' Vendramin Calergi history",
+      url: "https://casinodivenezia.it/en/venues/cavendramincalergi",
+    },
+    {
+      label: "Wikipedia: Ridotto",
+      url: "https://en.wikipedia.org/wiki/Ridotto",
+    },
     {
       label: "Wikipedia: Casino di Venezia",
       url: "https://en.wikipedia.org/wiki/Casino_di_Venezia",
@@ -182,7 +182,10 @@ The trust model is different from the Ridotto’s. Instead of a patrician dealin
       label: "Wikipedia: Monte Carlo Casino",
       url: "https://en.wikipedia.org/wiki/Monte_Carlo_Casino",
     },
-    { label: "Encyclopaedia Britannica: casino", url: "https://www.britannica.com/topic/casino" },
+    {
+      label: "Encyclopaedia Britannica: casino",
+      url: "https://www.britannica.com/topic/casino",
+    },
   ],
   related: [
     "history-of-gambling",
@@ -192,5 +195,5 @@ The trust model is different from the Ridotto’s. Instead of a patrician dealin
     "gamblers-fallacy",
     "biggest-casino-in-the-world",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

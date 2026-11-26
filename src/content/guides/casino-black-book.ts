@@ -103,7 +103,7 @@ Later names have included cheats and career criminals as well as the mid-century
 
 Nothing about the list helps a player find an edge. It does not reveal which tables are soft, and it does not describe how surveillance is wired. It tells you the state keeps a public exclusion roll, and that licensed casinos have to honour it. If you play, you are in a regulated room, under cameras, under a house edge the rules already state.
 
-If you want a game where the exclusion that matters is your own limit, set the limit first. PVPspinArena is 18+ only. Its [coinflip](/coinflip) game is a straight contest between two players, and the result is committed in seeds you can check after the round. That is a different institution from a 1960 Nevada booklet, and it is still gambling. Read the rules, stake what you can lose, and use the [Casino knowledge topic](/guides/topics/casino-knowledge) for the history around the list rather than for a way through it.
+If you want a game where the exclusion that matters is your own limit, set the limit first. That is a different institution from a 1960 Nevada booklet, and it is still gambling. Read the rules, stake what you can lose, and use the [Casino knowledge topic](/guides/topics/casino-knowledge) for the history around the list rather than for a way through it.
 
 The durable fact is simple. The casino black book is Nevada's List of Excluded Persons. Eleven men were in the first edition, on 29 March 1960. The people on it may not enter the casinos the regulation covers. Counting cards is not how you get there.
 
@@ -153,5 +153,5 @@ See also [the Riviera](/guides/riviera-casino).`,
     "is-card-counting-illegal",
     "history-of-gambling",
   ],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

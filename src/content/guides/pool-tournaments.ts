@@ -30,9 +30,7 @@ What lives here is a 1v1 8-ball rack. Two stakes, one pot, a 5% fee, a 95% credi
       title: "Events that have their own pages",
       body: `A tournament has a field and a purse. This site has not published either. A two-player stake is the match on [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other event notes are [the US Open search](/guides/us-open-pool), [the Mosconi note](/guides/mosconi-cup), and [league nights, not a bracket](/guides/apa-pool-league). The group is the [casino knowledge guides](/guides/topics/casino-knowledge).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other event notes are [the US Open search](/guides/us-open-pool), [the Mosconi note](/guides/mosconi-cup), and [league nights, not a bracket](/guides/apa-pool-league). The group is the [casino knowledge guides](/guides/topics/casino-knowledge).`,
     },
     {
       id: "what-we-will-not-print",
@@ -65,7 +63,9 @@ FargoRate is a different number, from wins and losses, and it is also not applie
       title: "What you can play while no bracket exists",
       body: `You can still play one opponent for a stake. A friend matches the same dollars. You cannot both sit on one account. Settlement is the replay under the physics id stored with that rack, on a 2.54 m by 1.27 m surface, with no random miss. Three timeouts forfeit. Cue upgrades are not sold. A make-on-the-break rate is not published, so a tournament side bet on the break 8 has no odds from this site to use.
 
-That is a full offer. It is smaller than a poster that says national championship. The smaller offer is the true one. When a bracket is real, the page can name the format, the fee, and the field without fiction. Until that day, the internal links go to the US Open, the Cup note, and the APA page so the famous events stay accurate, and the play button goes to a single rack.`,
+That is a full offer. It is smaller than a poster that says national championship. The smaller offer is the true one. When a bracket is real, the page can name the format, the fee, and the field without fiction. Until that day, the internal links go to the US Open, the Cup note, and the APA page so the famous events stay accurate, and the play button goes to a single rack.
+
+For a casino visit, plan [spending limits](/responsible-gambling) before arriving.`,
     },
   ],
   faqs: [
@@ -99,8 +99,11 @@ That is a full offer. It is smaller than a poster that says national championshi
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "us-open-pool", "mosconi-cup"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

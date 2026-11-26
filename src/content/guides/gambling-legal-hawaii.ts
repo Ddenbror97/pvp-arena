@@ -27,41 +27,22 @@ export const guide: Guide = {
     {
       id: "glance",
       title: "Hawaii at a glance",
-      body: `| Product | Legal in Hawaii? |
-| --- | --- |
-| Casinos | **No** |
-| Lottery | **No** |
-| Sports betting | **No** |
-| Online casino or poker | **No** |
-| Social gambling (no house cut) | Narrow exception |
-
-[Where sports betting is legal](/guides/sports-betting-legal-states) compares states, and [is online casino legal](/guides/is-online-casino-legal) lists the states that license online casinos.`,
+      body: "| Product | Legal in Hawaii? |\n| --- | --- |\n| Casinos | **No** |\n| Lottery | **No** |\n| Sports betting | **No** |\n| Online casino or poker | **No** |\n| Social gambling (no house cut) | Narrow exception |\n\n",
     },
     {
       id: "law",
       title: "What the law says",
-      body: `Hawaii's gambling offences are in part III of chapter 712 of the Hawaii Revised Statutes, starting with the [definitions in section 712-1220](https://data.capitol.hawaii.gov/hrscurrent/Vol14_Ch0701-0853/HRS0712/HRS_0712-1220.htm). The law targets promoting gambling and possessing gambling devices, and it provides a defence for social gambling among players where no one makes a profit other than as a player. Bills to create a lottery, a casino or sports betting have been introduced in the legislature but have not passed. There are no tribal casinos in Hawaii; the federal framework for tribal gaming is described by the [National Indian Gaming Commission](https://www.nigc.gov/).`,
+      body: "Hawaii's gambling offences are in part III of chapter 712 of the Hawaii Revised Statutes, starting with the [definitions in section 712-1220](https://data.capitol.hawaii.gov/hrscurrent/Vol14_Ch0701-0853/HRS0712/HRS_0712-1220.htm). The law targets promoting gambling and possessing gambling devices, and it provides a defence for social gambling among players where no one makes a profit other than as a player. Bills to create a lottery, a casino or sports betting have been introduced in the legislature but have not passed. There are no tribal casinos in Hawaii; the federal framework for tribal gaming is described by the [National Indian Gaming Commission](https://www.nigc.gov/).",
     },
     {
       id: "offshore",
-      title: "Offshore and sweepstakes sites",
-      body: `A real-money site that is not licensed in Hawaii offers no state protection if it withholds a withdrawal. Sweepstakes casinos rely on a promotional model; see [sweepstakes casino legal states](/guides/sweepstakes-casino-legal-states).
-
-### How to check an app is licensed
-
-1. Find the operator's name and licence number on its site.
-2. Look it up on the regulator's own list of licensees.
-3. Confirm the app checks your location: licensed apps only accept bets placed inside the state.
-4. Treat "licensed offshore" (Curaçao, Anjouan) as not licensed by the state; see [crypto casino licenses](/guides/crypto-casino-license).
-
-More in the [crypto casino basics topic](/guides/topics/foundations).`,
+      title: "Check the authority for this activity",
+      body: "Hawaii's social-gambling defence is narrower than 'private gambling is legal.' [HRS 712-1231](https://data.capitol.hawaii.gov/hrscurrent/Vol14_Ch0701-0853/HRS0712/HRS_0712-1231.htm) sets conditions and a specific affirmative defence. A website collecting fees or operating a public gambling business cannot establish that defence just by calling its games social.\n\nThere is no Hawaii online casino register to use as a shopping list. Compare the activity with the statute before relying on an offshore [casino licence](/guides/crypto-casino-license). [Foundations](/guides/topics/foundations) covers the wider licensing questions.",
     },
     {
       id: "tax",
       title: "Taxes and limits",
-      body: `Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).
-
-Adults only: 21 for licensed sportsbooks and casinos in most states, and the age set by each product's rules. This page summarises the law as reported on the date above; it is not legal advice, and bills can change it. PVPspinArena is not licensed by Hawaii. Check your own state's law and the site's [terms](/terms) before you play anywhere. If gambling stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Gambling winnings are taxable income for federal purposes; see [report gambling winnings](/guides/report-gambling-winnings).\n\nHawaii's lack of a licensed online market means a general '21+ casino' label does not authorize local play. PVPspinArena does not claim Hawaii licensing. Use [responsible gambling](/responsible-gambling) if a balance dispute is prompting further deposits.",
     },
   ],
   faqs: [
@@ -85,15 +66,25 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
   ],
   sources: [
     {
+      label: "Hawaii Revised Statutes — section 712-1231 social gambling",
+      url: "https://data.capitol.hawaii.gov/hrscurrent/Vol14_Ch0701-0853/HRS0712/HRS_0712-1231.htm",
+    },
+    {
       label: "Hawaii Revised Statutes §712-1220 (gambling definitions)",
       url: "https://data.capitol.hawaii.gov/hrscurrent/Vol14_Ch0701-0853/HRS0712/HRS_0712-1220.htm",
     },
-    { label: "National Indian Gaming Commission", url: "https://www.nigc.gov/" },
+    {
+      label: "National Indian Gaming Commission",
+      url: "https://www.nigc.gov/",
+    },
     {
       label: "IRS Topic 419: gambling income and losses",
       url: "https://www.irs.gov/taxtopics/tc419",
     },
-    { label: "National Council on Problem Gambling", url: "https://www.ncpgambling.org/" },
+    {
+      label: "National Council on Problem Gambling",
+      url: "https://www.ncpgambling.org/",
+    },
   ],
   related: [
     "online-gambling-legal-utah",
@@ -102,5 +93,5 @@ Adults only: 21 for licensed sportsbooks and casinos in most states, and the age
     "is-crypto-gambling-legal",
     "online-gambling-legal-nevada",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

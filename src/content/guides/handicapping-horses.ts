@@ -27,106 +27,22 @@ export const guide: Guide = {
     {
       id: "what",
       title: "What handicapping horses actually is",
-      body: `Handicapping, in horse racing, means assigning a chance — and then a price — to each runner. You are not picking a mascot. You are asking whether 4.00 (3/1) on the favourite is 40% implied plus margin, or a gift. The inputs are public: past performances, workouts, trainer and jockey, distance, surface, draw, going, weight. The output is a ranking you will throw away if the odds do not pay.
-
-This page is the live-race craft: speed, class, pace, form. Virtual or cartoon tracks paid in crypto are a different product with an RNG and an overround; that is [crypto horse racing betting](/guides/crypto-horse-racing-betting). Sportsbook holds on other sports are [how to win at sports betting](/guides/how-to-win-at-sports-betting). Both neighbours stay in their lanes.
-
-Racing is gambling. Adults only, 18+ or the local legal age. A form book does not create an edge by itself. The [horse racing topic](/guides/topics/horse-racing) has the bet types and odds pages. Even a careful line still faces a ten-horse sample. A well-made 30% shot still loses seven times in ten. That is not a broken figure; it is a small sample. Bankroll for the seven, or do not take the price.
-
-### The four words in the title
-
-- **Speed:** how fast, as a number you can compare across days.
-- **Class:** who they beat, and in what kind of race (maiden, claimer, allowance, stakes).
-- **Pace:** who was in front at the first call, and whether that shape helps a closer today.
-- **Form:** recent runs, layoffs, works, equipment, and whether the last figure was a peak or a stall.
-
-They disagree often. A high figure earned in a slow-pace claimer can bounce in a fast-pace stakes race. That disagreement is the job.`,
+      body: "Handicapping, in horse racing, means assigning a chance — and then a price — to each runner. You are not picking a mascot. You are asking whether 4.00 (3/1) on the favourite is 40% implied plus margin, or a gift. The inputs are public: past performances, workouts, trainer and jockey, distance, surface, draw, going, weight. The output is a ranking you will throw away if the odds do not pay.\n\nThis page is the live-race craft: speed, class, pace, form. Virtual or cartoon tracks paid in crypto are a different product with an RNG and an overround; that is [crypto horse racing betting](/guides/crypto-horse-racing-betting). Sportsbook holds on other sports are [how to win at sports betting](/guides/how-to-win-at-sports-betting). Both neighbours stay in their lanes.\n\nRacing is gambling. Adults only, 18+ or the local legal age. A form book does not create an edge by itself. The [horse racing topic](/guides/topics/horse-racing) has the bet types and odds pages. Even a careful line still faces a ten-horse sample. A well-made 30% shot still loses seven times in ten. That is not a broken figure; it is a small sample. Bankroll for the seven, or do not take the price.\n\n### The four words in the title\n\n- **Speed:** how fast, as a number you can compare across days.\n- **Class:** who they beat, and in what kind of race (maiden, claimer, allowance, stakes).\n- **Pace:** who was in front at the first call, and whether that shape helps a closer today.\n- **Form:** recent runs, layoffs, works, equipment, and whether the last figure was a peak or a stall.\n\nThey disagree often. A high figure earned in a slow-pace claimer can bounce in a fast-pace stakes race. That disagreement is the job.",
     },
     {
       id: "speed",
       title: "Speed figures: Beyer, variants and what they omit",
-      body: `A raw clocking is almost useless by itself. Six furlongs in 1:10.20 on a speed-favouring dirt is not the same race as 1:10.20 on a dull, drying track. A **speed figure** converts final time into a number that already includes:
-
-1. Distance (a parallel-time chart so a mile and a sprint can be compared).
-2. Surface and the **daily variant** (how fast or slow the whole card ran that day).
-
-Andrew Beyer described the US amateur method in *Picking Winners* (1975). The Daily Racing Form later hired the process; Beyer figures have appeared in DRF past performances since 1992. Wikipedia's Beyer page is the public summary: the figure tells you how fast the horse ran, not how fast it will run today. Beyer has said as much.
-
-### How to read the number
-
-On the Beyer scale, ordinary claiming races live well below the 90s. Serious stakes horses in the United States and Canada often print **100+**. A 120-something is a rare, rumoured-about afternoon, not a weekly par. Do not treat a 78 and an 81 as a different species; figure-making has noise, especially on short fields and odd distances.
-
-Europe's **Timeform** ratings are a cousin with a different zero and spread. A commonly repeated conversion is "subtract 12 to 14 points from Timeform to guess a Beyer." That is a rough translator for conversation, not a laboratory identity. Other brands (Equibase, Brisnet, TimeformUS) use their own methods; TimeformUS, unlike classic Beyer, folds pace into the number. **Do not mix scales in one sentence.**
-
-### What a final-time figure misses
-
-It does not say the horse went 22.1 and 45, then died. It does not say the horse was trapped four wide. It does not say the field was weak. Those are pace, trip and class. If you use the top figure as a "power rating" and bet it blindly, you are doing what Davidowitz reported in the mid-1970s: winning often enough to feel clever and still showing a small loss on the $2 window after the take. That 35% figure is a published claim from that era, not a live statistic for today's circuits.`,
+      body: 'A raw clocking is almost useless by itself. Six furlongs in 1:10.20 on a speed-favouring dirt is not the same race as 1:10.20 on a dull, drying track. A **speed figure** converts final time into a number that already includes:\n\n1. Distance (a parallel-time chart so a mile and a sprint can be compared).\n2. Surface and the **daily variant** (how fast or slow the whole card ran that day).\n\nAndrew Beyer described the US amateur method in *Picking Winners* (1975). The Daily Racing Form later hired the process; Beyer figures have appeared in DRF past performances since 1992. Wikipedia\'s Beyer page is the public summary: the figure tells you how fast the horse ran, not how fast it will run today. Beyer has said as much.\n\n### How to read the number\n\nOn the Beyer scale, ordinary claiming races live well below the 90s. Serious stakes horses in the United States and Canada often print **100+**. A 120-something is a rare, rumoured-about afternoon, not a weekly par. Do not treat a 78 and an 81 as a different species; figure-making has noise, especially on short fields and odd distances.\n\nEurope\'s **Timeform** ratings are a cousin with a different zero and spread. A commonly repeated conversion is "subtract 12 to 14 points from Timeform to guess a Beyer." That is a rough translator for conversation, not a laboratory identity. Other brands (Equibase, Brisnet, TimeformUS) use their own methods; TimeformUS, unlike classic Beyer, folds pace into the number. **Do not mix scales in one sentence.**\n\n### What a final-time figure misses\n\nIt does not say the horse went 22.1 and 45, then died. It does not say the horse was trapped four wide. It does not say the field was weak. Those are pace, trip and class. If you use the top figure as a "power rating" and bet it blindly, you are doing what Davidowitz reported in the mid-1970s: winning often enough to feel clever and still showing a small loss on the $2 window after the take. That 35% figure is a published claim from that era, not a live statistic for today\'s circuits.',
     },
     {
       id: "class-pace-form",
       title: "Class, pace and form, and when they overrule a figure",
-      body: `### Class
-
-North American condition ladders run, roughly: maiden special weight and maiden claimers, then claiming bands, optional claimers, allowances, and stakes (listed, then Grade 3, 2 and 1). A horse dropping from an allowance into a $16,000 claimer may be "class relief": easier rivals, same or better figure. A horse jumping from a cheap win into a graded stake may be "class up": the 92 Beyer was earned against softer fractions and weaker late pace.
-
-Class is not a moral ranking. It is a description of the company. A $10,000 claimer can run a faster final time than a sleepy stakes race on a different day; Beyer will say so. Your job is to ask whether that 10k figure survives a rise in class **and** a change in pace.
-
-### Pace
-
-Pace is the shape of the race. Two horses with a 88 Beyer are not equals if one earned it on an uncontested lead and the other earned it closing into a collapse. Pace figures (for example DRF's Moss figures) score the early and middle sections on a scale meant to sit next to the final-time number.
-
-A simple projected shape:
-
-- **Lone speed** in a field of closers: the leader gets a cheaper trip than the figure suggests.
-- **Four need-the-lead types** in a one-turn sprint: the early numbers cook, and a closer's last figure may **improve**.
-- **A rail-bias card:** inside speed is not the same animal as the same speed in lane six.
-
-If you skip pace, you will overbet last-out winners who stole soft fractions.
-
-### Form
-
-Form is the recent body of work: last three races, layoff length, works since a rest, blinkers on or off, a new trainer, a drop in weight, a move from turf to dirt. A horse that ran 94, then 82, then 79 is telling a different story from 79, 82, 94. The rising line might be fitness. The falling line might be a physical problem, or a rise in class, or a pair of wide trips.
-
-Workouts are clues, not times you can convert into Beyers. A bullet five-furlong work on a quiet morning can mean fitness or a fast maintenance strip. Read them against the trainer's habit, not as a hidden figure.
-
-### A four-factor card (worked sketch)
-
-Six-horse allowance, one mile dirt. You are not looking for a name. You are looking for a conflict.
-
-| Horse | Last Beyer | Class last out | Likely run style | Form note |
-| --- | --- | --- | --- | --- |
-| A | 91 | Stakes, beaten | Closer | Layoff 60 days, two works |
-| B | 88 | Allowance win | Speed | Clear lead last time |
-| C | 87 | Claimer win (rise) | Stalk | First vs winners of this quality |
-| D | 84 | Allowance | Speed | Needs the lead, draws inside |
-
-If B and D both go, A's 91 closing figure may be the one that **improves**, and C's 87 may be empty class. If D scratches and B is alone, B's 88 may be worth more than A's 91. The sheet is a set of arguments, not a verdict. The price decides whether any argument is a bet.`,
+      body: "### Class\n\nNorth American condition ladders run, roughly: maiden special weight and maiden claimers, then claiming bands, optional claimers, allowances, and stakes (listed, then Grade 3, 2 and 1). A horse dropping from an allowance into a $16,000 claimer may be \"class relief\": easier rivals, same or better figure. A horse jumping from a cheap win into a graded stake may be \"class up\": the 92 Beyer was earned against softer fractions and weaker late pace.\n\nClass is not a moral ranking. It is a description of the company. A $10,000 claimer can run a faster final time than a sleepy stakes race on a different day; Beyer will say so. Your job is to ask whether that 10k figure survives a rise in class **and** a change in pace.\n\n### Pace\n\nPace is the shape of the race. Two horses with a 88 Beyer are not equals if one earned it on an uncontested lead and the other earned it closing into a collapse. Pace figures (for example DRF's Moss figures) score the early and middle sections on a scale meant to sit next to the final-time number.\n\nA simple projected shape:\n\n- **Lone speed** in a field of closers: the leader gets a cheaper trip than the figure suggests.\n- **Four need-the-lead types** in a one-turn sprint: the early numbers cook, and a closer's last figure may **improve**.\n- **A rail-bias card:** inside speed is not the same animal as the same speed in lane six.\n\nIf you skip pace, you will overbet last-out winners who stole soft fractions.\n\n### Form\n\nForm is the recent body of work: last three races, layoff length, works since a rest, blinkers on or off, a new trainer, a drop in weight, a move from turf to dirt. A horse that ran 94, then 82, then 79 is telling a different story from 79, 82, 94. The rising line might be fitness. The falling line might be a physical problem, or a rise in class, or a pair of wide trips.\n\nWorkouts are clues, not times you can convert into Beyers. A bullet five-furlong work on a quiet morning can mean fitness or a fast maintenance strip. Read them against the trainer's habit, not as a hidden figure.\n\n### A four-factor card (worked sketch)\n\nSix-horse allowance, one mile dirt. You are not looking for a name. You are looking for a conflict.\n\n| Horse | Last Beyer | Class last out | Likely run style | Form note |\n| --- | --- | --- | --- | --- |\n| A | 91 | Stakes, beaten | Closer | Layoff 60 days, two works |\n| B | 88 | Allowance win | Speed | Clear lead last time |\n| C | 87 | Claimer win (rise) | Stalk | First vs winners of this quality |\n| D | 84 | Allowance | Speed | Needs the lead, draws inside |\n\nIf B and D both go, A's 91 closing figure may be the one that **improves**, and C's 87 may be empty class. If D scratches and B is alone, B's 88 may be worth more than A's 91. The sheet is a set of arguments, not a verdict. The price decides whether any argument is a bet.",
     },
     {
       id: "price",
       title: "From a line to a ticket: overround and passing",
-      body: `Handicapping without price is collecting baseball cards. Suppose you make B 35% to win. Fair decimal odds are 1 / 0.35 ≈ 2.86. If the tote shows 2.20, the public has already crushed the value; passing is the play. If it shows 4.00, you have a theoretical overlay **if your 35% is honest**.
-
-Books and totes do not pay fair odds. Win pools take a commission; fixed-odds books build an [overround](/guides/house-edge) so implied probabilities sum to more than 100%. A beautiful 91 Beyer at 1.50 is often a bad ticket. A 84 figure at 12.00 can be a good ticket if your pace story is real and the market is asleep.
-
-### Exotic bets multiply the take
-
-Exactas, trifectas and superfectas are still handicapping — they are just more ways to be right and more ways to pay the take. If you cannot state why the second horse finishes in front of the third, you do not have a trifecta opinion. You have a lottery slip.
-
-### Virtual tracks
-
-A lobby "race" that starts every 45 seconds with invented form lines is not handicapping. The generator already picked a weighted winner. Read [crypto horse racing betting](/guides/crypto-horse-racing-betting) and walk away from the silks.`,
-    },
-    {
-      id: "pvp",
-      title: "A priced opinion, and a hashed PvP round",
-      body: `Good handicapping is a budgeted opinion. You can be right about pace and still lose the photo. You can be wrong about class and still cash if the price was wide enough. The craft is repeating small, priced edges, not finding a horse that "cannot lose."
-
-PVPspinArena does not run a book on live racing. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. [Coinflip](/coinflip) is a 50/50. [Roulette](/roulette) is 33 slots, 16 Purple and 16 Silver at 2x, 1 Green at 14x, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee — a price you can write without a past-performance line. [Jackpot](/) sets win chance equal to your share of the pot. Seeds are committed; verify a settled round on [fairness](/fairness).
-
-The ticket itself, from win through exacta, is [how to bet on horse racing](/guides/how-to-bet-on-horse-racing). Speed figures stay on this page. If the next race is already a chase to recover the last exacta, stop. Use [responsible gambling](/responsible-gambling). Play is 18+ only.
-
-In the same cluster, see also [quick pick](/guides/quick-pick-lottery), [pull tabs](/guides/pull-tabs), and [lucky number](/guides/lucky-numbers-gambling).`,
+      body: 'Handicapping without price is collecting baseball cards. Suppose you make B 35% to win. Fair decimal odds are 1 / 0.35 ≈ 2.86. If the tote shows 2.20, the public has already crushed the value; passing is the play. If it shows 4.00, you have a theoretical overlay **if your 35% is honest**.\n\nBooks and totes do not pay fair odds. Win pools take a commission; fixed-odds books build an [overround](/guides/house-edge) so implied probabilities sum to more than 100%. A beautiful 91 Beyer at 1.50 is often a bad ticket. A 84 figure at 12.00 can be a good ticket if your pace story is real and the market is asleep.\n\n### Exotic bets multiply the take\n\nExactas, trifectas and superfectas are still handicapping — they are just more ways to be right and more ways to pay the take. If you cannot state why the second horse finishes in front of the third, you do not have a trifecta opinion. You have a lottery slip.\n\n### Virtual tracks\n\nA lobby "race" that starts every 45 seconds with invented form lines is not handicapping. The generator already picked a weighted winner. Read [crypto horse racing betting](/guides/crypto-horse-racing-betting) and walk away from the silks.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.',
     },
   ],
   faqs: [
@@ -180,5 +96,5 @@ In the same cluster, see also [quick pick](/guides/quick-pick-lottery), [pull ta
     "kentucky-derby-betting",
     "horse-racing-terms",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

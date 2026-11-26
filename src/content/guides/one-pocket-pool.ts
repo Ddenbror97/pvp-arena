@@ -49,9 +49,7 @@ The points you have already stored can be taken back by a foul. A foul costs one
       title: "Races that score in a different currency",
       body: `One pocket is a race to eight in a single pocket. This site does not stake it. The 8-ball match is [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other rule cards are [called banks](/guides/bank-pool), [continuous points](/guides/straight-pool), and [where a scratch leaves the cue ball](/guides/pool-scratch-rules). The group is the [games of chance guides](/guides/topics/games-of-chance).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other rule cards are [called banks](/guides/bank-pool), [continuous points](/guides/straight-pool), and [where a scratch leaves the cue ball](/guides/pool-scratch-rules). The group is the [games of chance guides](/guides/topics/games-of-chance).`,
     },
     {
       id: "kitchen",
@@ -65,7 +63,9 @@ The kitchen fence changes the safety you are allowed to answer with. You cannot 
       title: "Three fouls in a row lose the one-pocket rack",
       body: `Three fouls are a second way to lose, beside the race to eight. The count is consecutive. A legal shot in between clears it. The third foul hands the rack over without waiting for an eighth ball. Combined with the one-point foul, the game can swing on defence as much as on a made ball: each mistake spots something you already earned, or writes a marker, and a string of them ends the rack.
 
-This site does not run one pocket for money. The volume is modest. The rules are still specific, and they are not a simplified 8-ball. The cashier on this website remains 8-ball. If you want a foot-pocket race with a stake, take it to a room that posts the game. Nothing on this site will grow a second scoring pocket for you.`,
+This site does not run one pocket for money. The volume is modest. The rules are still specific, and they are not a simplified 8-ball. The cashier on this website remains 8-ball. If you want a foot-pocket race with a stake, take it to a room that posts the game. Nothing on this site will grow a second scoring pocket for you.
+
+For money games, set [spending limits](/responsible-gambling) before dealing.`,
     },
   ],
   faqs: [
@@ -99,8 +99,11 @@ This site does not run one pocket for money. The volume is modest. The rules are
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "bank-pool", "straight-pool"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

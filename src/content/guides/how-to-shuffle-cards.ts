@@ -40,7 +40,9 @@ A deck can look mixed and still carry patterns from the last hand. After a game 
 
 ### Measuring randomness
 
-Mathematicians measure how close a shuffled deck is to perfectly random with a number called **total variation distance**. It runs from 1, meaning the order is completely predictable in some respect, to 0, meaning perfectly random. The question "how many shuffles are enough?" becomes "how many shuffles until that distance is small?". This guide sits in the [Casino knowledge topic](/guides/topics/casino-knowledge).`,
+Mathematicians measure how close a shuffled deck is to perfectly random with a number called **total variation distance**. It runs from 1, meaning the order is completely predictable in some respect, to 0, meaning perfectly random. The question "how many shuffles are enough?" becomes "how many shuffles until that distance is small?". This guide sits in the [Casino knowledge topic](/guides/topics/casino-knowledge).
+
+Bayer and Diaconis analyze a mathematical model of riffle shuffling. The familiar seven-shuffle result concerns that model, not seven arbitrary movements of a deck.`,
     },
     {
       id: "riffle",
@@ -169,9 +171,7 @@ Advantage players have studied weak casino shuffles to follow clumps of high car
 - Keep the bottom card hidden while shuffling and dealing.
 - Replace cards once they are bent, marked or sticky.
 
-### How PVPspinArena handles randomness
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and has no cards to shuffle. Results come from a commit-reveal scheme: the server's seed is committed as a hash before the round and revealed after, so it cannot be changed once bets are in. Anyone can take a settled round and verify the result on the [fairness](/fairness) page. It is the digital version of letting a player cut the deck: a check you can perform yourself, rather than a procedure you must trust. Roulette's 33 slots pay 2x on Purple or Silver and 14x on Green, about a 7.88% Purple or Silver edge after the win fee. Play is 18+.
+Results come from a commit-reveal scheme: the server's seed is committed as a hash before the round and revealed after, so it cannot be changed once bets are in. Anyone can take a settled round and verify the result on the [fairness](/fairness) page. It is the digital version of letting a player cut the deck: a check you can perform yourself, rather than a procedure you must trust. Play is 18+.
 
 In the same cluster, see also [law of large numbers](/guides/law-of-large-numbers-gambling), [monty hall problem](/guides/monty-hall-problem), and [regression to the mean](/guides/regression-to-the-mean-gambling).`,
     },
@@ -199,7 +199,14 @@ In the same cluster, see also [law of large numbers](/guides/law-of-large-number
     },
   ],
   sources: [
-    { label: "Wikipedia: Shuffling", url: "https://en.wikipedia.org/wiki/Shuffling" },
+    {
+      label: "Bayer and Diaconis: Trailing the Dovetail Shuffle to its Lair, 1992",
+      url: "https://www.stat.berkeley.edu/users/aldous/157/Papers/bayer_diaconis.pdf",
+    },
+    {
+      label: "Wikipedia: Shuffling",
+      url: "https://en.wikipedia.org/wiki/Shuffling",
+    },
     {
       label: "Wikipedia: Gilbert–Shannon–Reeds model",
       url: "https://en.wikipedia.org/wiki/Gilbert%E2%80%93Shannon%E2%80%93Reeds_model",
@@ -219,5 +226,5 @@ In the same cluster, see also [law of large numbers](/guides/law-of-large-number
     "law-of-large-numbers-gambling",
     "regression-to-the-mean-gambling",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

@@ -41,7 +41,9 @@ The Rigveda, one of the oldest surviving religious texts, contains a hymn usuall
 
 Chinese sources mention games of chance and betting on animal fights from early dynasties. The popular claim that keno funded the Great Wall is a legend with no solid documentation, so treat it as folklore.
 
-Romans gambled constantly and legislated against it constantly. Dice games (alea) were formally restricted, with an exception during the Saturnalia festival. Enforcement was patchy. Suetonius reports that Augustus wrote cheerfully about losing at dice and that Claudius wrote a book on the game and had his carriage fitted so he could play while travelling. Julius Caesar’s line at the Rubicon, "alea iacta est" (the die is cast), shows how natural dice metaphors were to a Roman audience.`,
+Romans gambled constantly and legislated against it constantly. Dice games (alea) were formally restricted, with an exception during the Saturnalia festival. Enforcement was patchy. Suetonius reports that Augustus wrote cheerfully about losing at dice and that Claudius wrote a book on the game and had his carriage fitted so he could play while travelling. Julius Caesar’s line at the Rubicon, "alea iacta est" (the die is cast), shows how natural dice metaphors were to a Roman audience.
+
+The British Museum's Royal Game of Ur object record documents ancient board play and the use of throws. A surviving game board alone does not establish the amount or prevalence of ancient wagering.`,
     },
     {
       id: "cards-lotteries-maths",
@@ -120,9 +122,7 @@ Bitcoin launched in 2009, and on-chain dice games appeared within a few years. C
 
 More history is collected in the [Casino knowledge topic](/guides/topics/casino-knowledge), including [the history of poker](/guides/history-of-poker) and [gambling quotes](/guides/gambling-quotes).
 
-### Where PVPspinArena sits
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. In a sense it goes back to the oldest form of gambling, people betting against each other, with a modern record of fairness. Coinflip is a 50/50 between two players, and the winner takes the pot minus any fee shown before entry. Roulette uses a 33-slot wheel where Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee that the law of large numbers enforces as surely as it did at the Ridotto. Every result comes from committed seeds that you can check on [fairness](/fairness). Play is 18+ only, and limits and help are on [responsible gambling](/responsible-gambling).
+In a sense it goes back to the oldest form of gambling, people betting against each other, with a modern record of fairness. Every result comes from committed seeds that you can check on [fairness](/fairness). Play is 18+ only, and limits and help are on [responsible gambling](/responsible-gambling).
 
 See also [the history of dice](/guides/history-of-dice).`,
     },
@@ -151,12 +151,25 @@ See also [the history of dice](/guides/history-of-dice).`,
   ],
   sources: [
     {
+      label: "British Museum: Royal Game of Ur collection object",
+      url: "https://artsandculture.google.com/asset/the-royal-game-of-ur/MwE2MMZNSKiTwQ?hl=en",
+    },
+    {
       label: "Encyclopaedia Britannica: gambling",
       url: "https://www.britannica.com/topic/gambling",
     },
-    { label: "Wikipedia: Slot machine", url: "https://en.wikipedia.org/wiki/Slot_machine" },
-    { label: "Wikipedia: Blackjack", url: "https://en.wikipedia.org/wiki/Blackjack" },
-    { label: "Wikipedia: Ridotto", url: "https://en.wikipedia.org/wiki/Ridotto" },
+    {
+      label: "Wikipedia: Slot machine",
+      url: "https://en.wikipedia.org/wiki/Slot_machine",
+    },
+    {
+      label: "Wikipedia: Blackjack",
+      url: "https://en.wikipedia.org/wiki/Blackjack",
+    },
+    {
+      label: "Wikipedia: Ridotto",
+      url: "https://en.wikipedia.org/wiki/Ridotto",
+    },
   ],
   related: [
     "history-of-poker",
@@ -167,5 +180,5 @@ See also [the history of dice](/guides/history-of-dice).`,
     "law-of-large-numbers-gambling",
     "history-of-dice",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

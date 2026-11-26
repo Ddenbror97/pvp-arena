@@ -157,7 +157,7 @@ Do not move a cash-game size into a tournament because the nickname matches. The
       title: "Who should leave the extra chips in the rack",
       body: `A reraise can take a small pot or lose a larger one. The pages opened here do not owe you the first result.
 
-Do not play if you are under 18, or under a higher age where you live. Do not play where the game is illegal. Do not stake rent, savings, or money with a due date.
+Cash play requires the local minimum age, lawful access and an affordable budget.
 
 Do not reraise to get even with the previous hand. The deck does not store a debt to your seat.
 
@@ -216,5 +216,5 @@ The [terms](/terms) list the fee and the blind range for this site. They do not 
     "cash-game-poker",
     "poker-bankroll-management",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

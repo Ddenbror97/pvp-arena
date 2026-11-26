@@ -40,7 +40,9 @@ Players move in opposite directions, like two cars in facing lanes. You move fro
 
 That is 15 checkers. The **pip count**, the total number of steps needed to bear everything off, is 2×24 + 5×13 + 3×8 + 5×6 = 167 for each player at the start. Pip counts matter later, when a game turns into a pure race.
 
-Equipment is two pairs of dice (one pair per player), a dice cup each, and a doubling cube marked 2, 4, 8, 16, 32 and 64. Backgammon sits in the [Games of chance topic](/guides/topics/games-of-chance) because the dice decide every turn, but it rewards skill heavily over many games; the [skill-based gambling](/guides/skill-based-gambling) guide explains why that mix matters legally and financially.`,
+Equipment is two pairs of dice (one pair per player), a dice cup each, and a doubling cube marked 2, 4, 8, 16, 32 and 64. Backgammon sits in the [Games of chance topic](/guides/topics/games-of-chance) because the dice decide every turn, but it rewards skill heavily over many games; the [skill-based gambling](/guides/skill-based-gambling) guide explains why that mix matters legally and financially.
+
+The US Backgammon Federation explains moving, bearing off and cube scoring. Its international rules should be distinguished from local no-cube games.`,
     },
     {
       id: "moving",
@@ -157,15 +159,6 @@ Ignoring gammons and cube ownership, a take is correct when your winning chance 
 
 Regional games follow the same core. [Tavla](/guides/tavla), the Turkish form, uses the same board and setup but usually drops the cube and plays to a points target. Jumping on a checkerboard is a different game: [checkers](/guides/checkers-rules).`,
     },
-    {
-      id: "stakes",
-      title: "Stakes, dice luck and the PvP connection",
-      body: `Playing backgammon for money is legal in some places and restricted in others; check local law, and gambling is for adults 18+ or the local legal age. Sites, the doubling cube, and a posted stake are in [backgammon for money](/guides/backgammon-for-money). A per-point stake can escalate quickly: a gammon on a cube at 4 is 8 points. Agree a maximum cube value before playing if the stake matters to you.
-
-Short sessions are dominated by dice. A clearly stronger player may lose a 5-point match often, because one lucky 6-6 at the right moment swings a game. Over hundreds of games the skill edge shows. The [variance in gambling](/guides/variance-in-gambling) guide explains why small samples mislead in both directions.
-
-The opening roll is a clean example of fair chance: one die each, ties rerolled, so each player starts first exactly 50% of the time. That is the same structure as a [Coinflip](/coinflip) on PVPspinArena, where two players face a 50/50 and the winner takes the pot minus any fee shown before entry. The difference is that backgammon then adds hundreds of decisions, while a coin flip adds none. PVPspinArena results come from committed seeds you can check afterwards on [fairness](/fairness), which plays the role that a dice cup and a watching opponent play at a board. If stakes stop feeling like entertainment, use the tools on [responsible gambling](/responsible-gambling).`,
-    },
   ],
   faqs: [
     {
@@ -190,12 +183,22 @@ The opening roll is a clean example of fair chance: one die each, ties rerolled,
     },
   ],
   sources: [
-    { label: "Wikipedia: Backgammon", url: "https://en.wikipedia.org/wiki/Backgammon" },
+    {
+      label: "US Backgammon Federation: how to play",
+      url: "https://usbgf.org/backgammon-basics-how-to-play/",
+    },
+    {
+      label: "Wikipedia: Backgammon",
+      url: "https://en.wikipedia.org/wiki/Backgammon",
+    },
     {
       label: "Encyclopaedia Britannica: backgammon",
       url: "https://www.britannica.com/topic/backgammon",
     },
-    { label: "Wikipedia: Doubling cube", url: "https://en.wikipedia.org/wiki/Doubling_cube" },
+    {
+      label: "Wikipedia: Doubling cube",
+      url: "https://en.wikipedia.org/wiki/Doubling_cube",
+    },
   ],
   related: [
     "backgammon-strategy",
@@ -204,5 +207,5 @@ The opening roll is a clean example of fair chance: one die each, ties rerolled,
     "dice-roll-probability",
     "dominoes-rules",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

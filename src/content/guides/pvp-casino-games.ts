@@ -36,11 +36,7 @@ If a lobby page never states who funds the prize, treat the product as unclear u
 
 Write the pvp casino fee or edge in your notes before the first round. Write the maximum dollars you will risk. Write the time you will stop. If any of those three pvp casino lines is missing, you are improvising under adrenaline, and improvisation is how entertainment budgets become recovery plans. Adults 18+ only.
 
-A clearer pvp casino label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
-
-Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
-
-Streaks change mood, not probability. A fair coinflip does not owe you a win after five losses. A jackpot ticket does not become warmer because the pot looks large on screen. Re-read the fee after a win streak. Re-read the budget after a loss streak. Then follow the written stop time.`,
+A clearer pvp casino label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.`,
     },
     {
       id: "jackpot",
@@ -144,7 +140,6 @@ How it works on this site is summarised on [how it works](/how-it-works). Deposi
       a: "Fee, stake, seed commitment, and withdrawal path. Start with a small amount you can afford to lose. If the site asks for a seed phrase or an unlimited token approval, leave.",
     },
   ],
-
   sources: [
     {
       label: "National Council on Problem Gambling — Help & treatment",
@@ -156,5 +151,5 @@ How it works on this site is summarised on [how it works](/how-it-works). Deposi
     },
   ],
   related: ["pvp-gambling", "csgo-coinflip", "coin-flip-odds", "house-edge"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

@@ -31,7 +31,9 @@ export const guide: Guide = {
 
 The origin of the name is disputed. One common suggestion links it to the Arabic "az-zahr", often glossed as "the die". Another story, reported by the medieval chronicler William of Tyre, connects it to a castle called Hazart where the game was supposedly played during the Crusades. Neither is settled, so treat both as traditions rather than facts. What is well documented is that the English word "hazard", meaning risk, took its general sense from the game.
 
-Hazard is a two-dice game with a two-stage structure that will look familiar to anyone who has stood at a craps table. It belongs in the [Games of chance topic](/guides/topics/games-of-chance), and for the wider story of dice and gaming houses, see [history of gambling](/guides/history-of-gambling).`,
+Hazard is a two-dice game with a two-stage structure that will look familiar to anyone who has stood at a craps table. It belongs in the [Games of chance topic](/guides/topics/games-of-chance), and for the wider story of dice and gaming houses, see [history of gambling](/guides/history-of-gambling).
+
+Steinmetz's historical Hazard account lists main-dependent nicks and outs. In particular, 11 and 12 cannot be assigned one rule without knowing the main.`,
     },
     {
       id: "rules",
@@ -146,19 +148,6 @@ A separate three-dice banking game called grand hazard used a layout of bets on 
 
 If money is involved, hazard is an 18+ game (or your local legal age), and a small fixed stake keeps it a pastime.`,
     },
-    {
-      id: "pvp",
-      title: "Hazard's lesson for a hashed PvP round",
-      body: `Hazard shows how small rule choices set an edge. Letting the caster pick a main made the game nearly even; fixing the main and letting a house book both sides produced a permanent 1.41% edge on the pass line. Every modern game makes a similar choice, and it is worth knowing where each one lands.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott. [Coinflip](/coinflip) is the setter-and-caster idea in its simplest form: two players, 50/50, winner takes the pot minus any fee shown before entry. Jackpot pools many players' wagers, and your win chance equals your share of the pot. [Roulette](/roulette) is the house-style game: a 33-slot wheel where Purple and Silver pay 2x and Green pays 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
-
-In old gaming houses, players watched for loaded dice. Online, every result comes from seeds committed before the round, and any settled round can be checked on the [fairness](/fairness) page. That confirms the throw was honest; it does not change the maths. Keep stakes to what you can afford, and use the [responsible gambling](/responsible-gambling) page if play stops being a choice.
-
-In the same cluster, see also [farkle rules](/guides/farkle-rules) and [yahtzee rules](/guides/yahtzee-rules).
-
-See also [the history of dice](/guides/history-of-dice).`,
-    },
   ],
   faqs: [
     {
@@ -183,9 +172,22 @@ See also [the history of dice](/guides/history-of-dice).`,
     },
   ],
   sources: [
-    { label: "Wikipedia: Hazard (game)", url: "https://en.wikipedia.org/wiki/Hazard_(game)" },
-    { label: "Wikipedia: Craps", url: "https://en.wikipedia.org/wiki/Craps" },
-    { label: "Encyclopaedia Britannica: dice", url: "https://www.britannica.com/topic/dice" },
+    {
+      label: "Andrew Steinmetz: The Gaming Table, volume II, Hazard",
+      url: "https://www.gutenberg.org/files/531/531-h/531-h.htm",
+    },
+    {
+      label: "Wikipedia: Hazard (game)",
+      url: "https://en.wikipedia.org/wiki/Hazard_(game)",
+    },
+    {
+      label: "Wikipedia: Craps",
+      url: "https://en.wikipedia.org/wiki/Craps",
+    },
+    {
+      label: "Encyclopaedia Britannica: dice",
+      url: "https://www.britannica.com/topic/dice",
+    },
   ],
   related: [
     "craps-odds",
@@ -198,5 +200,5 @@ See also [the history of dice](/guides/history-of-dice).`,
     "yahtzee-rules",
     "history-of-dice",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

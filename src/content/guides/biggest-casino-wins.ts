@@ -48,7 +48,9 @@ Elmer Sherwin, a World War II veteran, reportedly won about $4.6 million on Mega
 
 Cynthia Jay-Brennan, a cocktail waitress, won about $34.9 million at the Desert Inn in January 2000. Weeks later she was in a car crash caused by a drunk driver; her sister was killed and she was left paralysed. Her story is often retold as a reminder that a jackpot changes finances, not fate.
 
-This page sits in the [Casino knowledge topic](/guides/topics/casino-knowledge).`,
+This page sits in the [Casino knowledge topic](/guides/topics/casino-knowledge).
+
+IGT's April 2025 award report names the game, property and payment amount for its examples. Record comparisons should use that level of detail and distinguish gross jackpots from net profit.`,
     },
     {
       id: "odds",
@@ -136,25 +138,6 @@ For every Megabucks winner there were tens of millions of spins that paid nothin
 
 The [law of large numbers](/guides/law-of-large-numbers-gambling) is the other half of the story: across all players, results converge on the house edge, and the record winner is a small, loud exception.`,
     },
-    {
-      id: "pvp",
-      title: "Big wins on PVPspinArena and how to think about them",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott settled in US dollars. Its largest single-round wins come from [Jackpot](/), where players add wagers to one pot and the winner takes the pot minus any fee shown before entry.
-
-### Why Jackpot odds are easy to read
-
-Your chance of winning a Jackpot round equals your share of the pot. If the pot is $1,000 and you put in $50, your chance is 50 ÷ 1,000 = **5%**. A small entry into a large pot is a long shot that pays a lot; a large share of a small pot is close to a coin flip that pays little. Nothing is hidden in a reel strip, and there is no network pooling spins from millions of strangers.
-
-### Checking the result
-
-Each round draws from committed seeds, and anyone can verify a settled round on the [fairness](/fairness) page. On Roulette the numbers are equally plain: Green pays 14x and comes up 1 time in 33. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
-
-### Keep the survivorship lesson
-
-A big Jackpot win is real, and so are the many small entries that did not win. Set a budget before playing, not after a big win or a loss. Play is 18+, and limit tools and support links are on the [responsible gambling](/responsible-gambling) page.
-
-In the same cluster, see also [is gambling a sin](/guides/is-gambling-a-sin), [gambling in islam](/guides/gambling-in-islam), and [casino royale poker](/guides/casino-royale-poker).`,
-    },
   ],
   faqs: [
     {
@@ -180,6 +163,10 @@ In the same cluster, see also [is gambling a sin](/guides/is-gambling-a-sin), [g
   ],
   sources: [
     {
+      label: "IGT: April 2025 million-dollar jackpot awards",
+      url: "https://www.igt.com/Explore%20IGT/News/News%20Room%20Details?Index=20250514007a",
+    },
+    {
       label: "Wikipedia: Excalibur Hotel and Casino",
       url: "https://en.wikipedia.org/wiki/Excalibur_Hotel_and_Casino",
     },
@@ -201,5 +188,5 @@ In the same cluster, see also [is gambling a sin](/guides/is-gambling-a-sin), [g
     "is-gambling-a-sin",
     "gambling-in-islam",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

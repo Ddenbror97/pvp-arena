@@ -36,7 +36,9 @@ The business model is simple. The operator pays wholesale for prizes, often a sm
 - **flat store or flat joint:** a game run to cheat, where the operator decides who wins;
 - **gaff:** a hidden control that lets the operator switch a game from hard to impossible.
 
-Most modern midway games sit between the first and the third: legitimately winnable, but tuned so wins are rarer than players expect. They belong in the [Games of chance topic](/guides/topics/games-of-chance) because the skill involved is small next to the design of the booth.`,
+Most modern midway games sit between the first and the third: legitimately winnable, but tuned so wins are rarer than players expect. They belong in the [Games of chance topic](/guides/topics/games-of-chance) because the skill involved is small next to the design of the booth.
+
+Washington's amusement-game definition requires material player skill, merchandise prizes and an outcome outside operator control. These are Washington requirements, not a universal permit for every fairground game.`,
     },
     {
       id: "physics",
@@ -113,7 +115,7 @@ Eighty dollars for a stuffed animal that may retail far lower is the whole point
 
 ### Guess-your-weight and similar
 
-The guesser needs to land within a stated margin. If they miss, you win a prize that usually costs less than your fee. The booth profits either way, which is why these games tend to be good-humoured rather than hard-sold.
+The guesser needs to land within a stated margin. The booth profits either way, which is why these games tend to be good-humoured rather than hard-sold.
 
 If you want the general method, [expected value](/guides/expected-value-gambling) and [house edge](/guides/house-edge) explain the same maths as it applies to casino games.`,
     },
@@ -139,15 +141,6 @@ Most people enjoy carnival games more once they think of them as paid entertainm
 
 The physical [Plinko board](/guides/plinko-board) is a useful comparison. It is a genuinely random device: pegs deflect the disc left or right unpredictably, and the result is governed by probability rather than an operator's hidden hand. Carnival games are usually the reverse: they look random or skill-based, but the booth's design sets the odds.`,
     },
-    {
-      id: "pvp",
-      title: "Stated odds versus hidden odds on PVPspinArena",
-      body: `The problem with most midway games is not that they have a margin. It is that you cannot see it. The rim is a little oval, the balloon a little soft, and you only find out by paying.
-
-PVPspinArena works the other way. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and the odds are published before you play. On [Roulette](/roulette), the 33-slot wheel has 16 Purple and 16 Silver slots paying 2x and 1 Green slot paying 14x, so Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee. [Coinflip](/coinflip) is a 50/50 between two players, with any fee shown before entry. Results come from committed seeds, and any settled round can be checked on the [fairness](/fairness) page.
-
-That does not make any of it a way to earn money. Like a carnival game, it is entertainment with a cost. Play only at 18+ (or your local legal age), set a limit in advance, and use the [responsible gambling](/responsible-gambling) tools if you need them.`,
-    },
   ],
   faqs: [
     {
@@ -172,8 +165,18 @@ That does not make any of it a way to earn money. Like a carnival game, it is en
     },
   ],
   sources: [
-    { label: "Wikipedia: Carnival game", url: "https://en.wikipedia.org/wiki/Carnival_game" },
-    { label: "Wikipedia: Ring toss", url: "https://en.wikipedia.org/wiki/Ring_toss" },
+    {
+      label: "Washington State Gambling Commission: amusement-game requirements",
+      url: "https://wsgc.wa.gov/licensing/apply-your-license/commercial-business-licenses/amusement-games-commercial",
+    },
+    {
+      label: "Wikipedia: Carnival game",
+      url: "https://en.wikipedia.org/wiki/Carnival_game",
+    },
+    {
+      label: "Wikipedia: Ring toss",
+      url: "https://en.wikipedia.org/wiki/Ring_toss",
+    },
     {
       label: "Encyclopaedia Britannica: basketball",
       url: "https://www.britannica.com/sports/basketball",
@@ -186,5 +189,5 @@ That does not make any of it a way to earn money. Like a carnival game, it is en
     "plinko-board",
     "expected-value-gambling",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

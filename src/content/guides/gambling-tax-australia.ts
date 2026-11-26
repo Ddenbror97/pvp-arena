@@ -27,71 +27,37 @@ export const guide: Guide = {
     {
       id: "scope",
       title: "Scope and disclaimer",
-      body: `This page outlines public ATO themes on gambling tax Australia. It is not a private ruling, not legal advice and not a method to evade tax. Confirm with current ATO pages and a registered tax agent.
-
-Adults 18+. This sits in [Foundations](/guides/topics/foundations), next to the general note on [crypto gambling taxes](/guides/crypto-gambling-taxes). Product primer: [what is a crypto casino](/guides/what-is-a-crypto-casino). Interactive-gambling access rules are a separate legal topic — do not mix them with tax characterisation.
-
-Harm first if needed: [responsible gambling](/responsible-gambling).
-`,
+      body: "It is not a private ruling, not legal advice and not a method to evade tax. Confirm with current ATO pages and a registered tax agent.\n\nAdults 18+. This sits in [Foundations](/guides/topics/foundations), next to the general note on [crypto gambling taxes](/guides/crypto-gambling-taxes). Product primer: [what is a crypto casino](/guides/what-is-a-crypto-casino). Interactive-gambling access rules are a separate legal topic — do not mix them with tax characterisation.\n\nHarm first if needed: [responsible gambling](/responsible-gambling).",
     },
     {
       id: "wins",
       title: "Ordinary wins versus business-like play",
-      body: `ATO educational materials have long explained that for many individuals, winnings from ordinary gambling or betting are not treated as assessable income, and losses are not deductible — while people who gamble in a business-like way can have different outcomes.
-
-Whether your pattern is “ordinary” or “business-like” is a facts question. Frequency, organisation, scale and profit-seeking systems matter in professional analyses. We will not apply that test to you from a distance.
-
-Do not invent a business structure on paper to manufacture deductions.
-`,
+      body: "ATO educational materials have long explained that for many individuals, winnings from ordinary gambling or betting are not treated as assessable income, and losses are not deductible — while people who gamble in a business-like way can have different outcomes.\n\nWhether your pattern is “ordinary” or “business-like” is a facts question. Frequency, organisation, scale and profit-seeking systems matter in professional analyses.\n\nDo not invent a business structure on paper to manufacture deductions.",
     },
     {
       id: "crypto",
       title: "Crypto and casino play can stack",
-      body: `You can have a gambling characterisation issue and a crypto capital-gains issue in the same month. Disposing of BTC, ETH or even moving between assets can engage ATO crypto guidance. Keep AUD values and txids.
-
-Playing in USDC on Base at PVPspinArena keeps unit-of-account noise lower while you use [Coinflip](/coinflip) or [Jackpot](/), but selling those tokens later still needs a conversation with an agent if amounts matter.
-
-See [how it works](/how-it-works) for product ledgers — not ATO forms.
-`,
+      body: "You can have a gambling characterisation issue and a crypto capital-gains issue in the same month. Disposing of BTC, ETH or even moving between assets can engage ATO crypto guidance. Keep AUD values and txids.\n\nPlaying in USDC on Base at PVPspinArena keeps unit-of-account noise lower while you use [Coinflip](/coinflip) or [Jackpot](/), but selling those tokens later still needs a conversation with an agent if amounts matter.\n\nSee [how it works](/how-it-works) for product ledgers — not ATO forms.",
     },
     {
       id: "records",
       title: "Records that still help",
-      body: `Even when a win may be non-assessable, records help you prove the story:
-
-- Date, site, amount in AUD.
-- Deposit and withdrawal txids.
-- Whether you later disposed of the token.
-
-[Online casino real money](/guides/online-casino-real-money) sessions should stay entertainment-sized. [House edge](/guides/house-edge) is why long volume is expensive before tax talk starts.
-`,
+      body: "Even when a win may be non-assessable, records help you prove the story:\n\n- Date, site, amount in AUD.\n- Deposit and withdrawal txids.\n- Whether you later disposed of the token.\n\n[Online casino real money](/guides/online-casino-real-money) sessions should stay entertainment-sized. [House edge](/guides/house-edge) is why long volume is expensive before tax talk starts.",
     },
     {
       id: "access",
       title: "Do not confuse tax with access law",
-      body: `Australian interactive gambling restrictions are about whether a service may be offered to you — see ACMA materials — not about whether a win would be taxable. Paying tax (or not) does not legalise a prohibited service.
-
-[Crypto casino license](/guides/crypto-casino-license) claims on offshore sites do not rewrite the Interactive Gambling Act. We will not help bypass blocks.
-`,
+      body: "Australian interactive gambling restrictions are about whether a service may be offered to you — see ACMA materials — not about whether a win would be taxable. Paying tax (or not) does not legalise a prohibited service.\n\n[Crypto casino license](/guides/crypto-casino-license) claims on offshore sites do not rewrite the Interactive Gambling Act.",
     },
     {
       id: "mistakes",
       title: "Common mistakes",
-      body: `- Importing US Form W-2G folklore into an Australian return.
-- Claiming ordinary gambling losses as deductions against salary.
-- Ignoring crypto disposals because “the casino win was tax-free.”
-- Trusting [fake casino sites](/guides/fake-casino-sites) that email fake ATO letters.
-
-Use [best crypto gambling sites](/guides/best-crypto-gambling-sites) for product diligence, not tax positions.
-`,
+      body: "- Importing US Form W-2G folklore into an Australian return.\n- Claiming ordinary gambling losses as deductions against salary.\n- Ignoring crypto disposals because “the casino win was tax-free.”\n- Trusting [fake casino sites](/guides/fake-casino-sites) that email fake ATO letters.\n\nUse [best crypto gambling sites](/guides/best-crypto-gambling-sites) for product diligence, not tax positions.",
     },
     {
       id: "next",
       title: "Next steps",
-      body: `Read the ATO gambling and crypto pages in the sources. Export wallets. Speak to a registered tax agent if amounts are material.
-
-If gambling pressure is the real issue, use [gambling self-exclusion](/guides/gambling-self-exclusion) before you optimise worksheets.
-`,
+      body: "Read the ATO gambling and crypto pages in the sources. Export wallets. Speak to a registered tax agent if amounts are material.\n\nIf gambling pressure is the real issue, use [gambling self-exclusion](/guides/gambling-self-exclusion) before you optimise worksheets.",
     },
   ],
   faqs: [
@@ -132,5 +98,5 @@ If gambling pressure is the real issue, use [gambling self-exclusion](/guides/ga
     "house-edge",
     "online-casino-real-money",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

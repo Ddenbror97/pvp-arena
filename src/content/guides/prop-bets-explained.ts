@@ -22,48 +22,27 @@ export const guide: Guide = {
     {
       id: "types",
       title: "Types of prop bets",
-      body: `- **Player props:** a player's statistics, such as points, rebounds, passing yards, strikeouts or anytime touchdown. See [first touchdown scorer bets](/guides/first-touchdown-scorer-bets) for one of the most popular.
-- **Game props:** events in the game that are not tied to one player: first team to score, total turnovers, will there be overtime, [both teams to score](/guides/both-teams-to-score) in soccer.
-- **Novelty or special props:** coin toss, length of the anthem, award winners. Many states do not allow these on regulated books.
-
-Props are offered for most major sports. [NFL betting](/guides/nfl-betting) and [NBA betting](/guides/nba-betting) have the deepest prop menus.`,
+      body: "- **Player props:** a player's statistics, such as points, rebounds, passing yards, strikeouts or anytime touchdown. See [first touchdown scorer bets](/guides/first-touchdown-scorer-bets) for one of the most popular.\n- **Game props:** events in the game that are not tied to one player: first team to score, total turnovers, will there be overtime, [both teams to score](/guides/both-teams-to-score) in soccer.\n- **Novelty or special props:** coin toss, length of the anthem, award winners. Many states do not allow these on regulated books.\n\nProps are offered for most major sports. [NFL betting](/guides/nfl-betting) and [NBA betting](/guides/nba-betting) have the deepest prop menus.",
     },
     {
       id: "pricing",
       title: "How prop lines are priced",
-      body: `Most player props are an over/under line with odds on each side, just like a game [over/under](/guides/over-under-betting).
-
-**Example.** A quarterback's passing yards prop is 245.5, over −110, under −110.
-
-- −110 means you stake $110 to win $100. The break-even probability is 110 ÷ 210 = **52.4%** on each side.
-- The two sides add up to 104.8%. The extra 4.8% is the book's margin on this market.
-
-Props on less-bet players are often priced at −115/−115 or worse, a bigger margin. Some props are "one-way" (only a yes price, such as anytime touchdown at +150), which hides the margin; [implied probability](/guides/implied-probability) turns +150 into 40% so you can compare it with your own estimate.
-
-The half-point (245.5) means no push is possible. Lines move as information arrives: an injury, a weather report, a change in role.`,
+      body: "Most player props are an over/under line with odds on each side, just like a game [over/under](/guides/over-under-betting).\n\n**Example.** A quarterback's passing yards prop is 245.5, over −110, under −110.\n\n- −110 means you stake $110 to win $100. The break-even probability is 110 ÷ 210 = **52.4%** on each side.\n- The two sides add up to 104.8%. The extra 4.8% is the book's margin on this market.\n\nProps on less-bet players are often priced at −115/−115 or worse, a bigger margin. Some props are \"one-way\" (only a yes price, such as anytime touchdown at +150), which hides the margin; [implied probability](/guides/implied-probability) turns +150 into 40% so you can compare it with your own estimate.\n\nThe half-point (245.5) means no push is possible. Lines move as information arrives: an injury, a weather report, a change in role.",
     },
     {
       id: "parlays",
       title: "Same game parlays and correlation",
-      body: `A same game parlay combines several props from one game, for example the quarterback over 245.5 passing yards and his top receiver over 70.5 receiving yards. Those outcomes are **correlated**: if one happens, the other becomes more likely. The book knows this and prices the parlay below what multiplying the individual odds would pay. Each extra leg also stacks another margin. [Parlay betting explained](/guides/parlay-betting-explained) shows how the margin compounds.`,
+      body: "A same game parlay combines several props from one game, for example the quarterback over 245.5 passing yards and his top receiver over 70.5 receiving yards. Those outcomes are **correlated**: if one happens, the other becomes more likely. The book knows this and prices the parlay below what multiplying the individual odds would pay. Each extra leg also stacks another margin. [Parlay betting explained](/guides/parlay-betting-explained) shows how the margin compounds.",
     },
     {
       id: "rules",
       title: "Rules, voids and college props",
-      body: `Read the settlement rules before you bet a prop:
-
-- **Did not play.** Many books void a player prop if the player does not take part; some settle it as a loss if he plays at all. The rule differs by book.
-- **Official stats.** Props settle on the official statistics, which can be corrected after the game.
-- **Overtime.** Most props include overtime unless the rule says otherwise.
-
-Several US states restrict props on college athletes because of harassment of players and integrity concerns. Ohio's regulator [banned player-specific prop bets on college sports in February 2024](https://spectrumnews1.com/oh/columbus/news/2024/02/23/player-specific-prop-bets-on-college-sports-no-longer-allowed-in-ohio) after a request from the NCAA, and other states have followed with their own limits. What a book offers you depends on the state you are in. The [sports betting topic](/guides/topics/sports-betting) has the state guides.`,
+      body: "Read the settlement rules before you bet a prop:\n\n- **Did not play.** Many books void a player prop if the player does not take part; some settle it as a loss if he plays at all. The rule differs by book.\n- **Official stats.** Props settle on the official statistics, which can be corrected after the game.\n- **Overtime.** Most props include overtime unless the rule says otherwise.\n\nSeveral US states restrict props on college athletes because of harassment of players and integrity concerns. Ohio's regulator [banned player-specific prop bets on college sports in February 2024](https://spectrumnews1.com/oh/columbus/news/2024/02/23/player-specific-prop-bets-on-college-sports-no-longer-allowed-in-ohio) after a request from the NCAA, and other states have followed with their own limits. What a book offers you depends on the state you are in. The [sports betting topic](/guides/topics/sports-betting) has the state guides.",
     },
     {
       id: "edge",
       title: "Is there an edge in props?",
-      body: `Props are the market where some bettors believe they can know more than the book: a role change, a matchup, a minutes limit. That can be true for a short time, and books respond by keeping prop limits low and moving lines quickly. Over many bets, a 52.4% break-even rate is hard to beat after the margin. Track results honestly with a [bet tracker](/guides/bet-tracker) before you believe a hot streak.
-
-Adults only, 21 in most US states with legal sportsbooks (18 in some places). This page explains how props are priced; it is not a pick or legal advice. PVPspinArena does not offer sports bets; its games and fees are on [how it works](/how-it-works). If betting stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Props are the market where some bettors believe they can know more than the book: a role change, a matchup, a minutes limit. That can be true for a short time, and books respond by keeping prop limits low and moving lines quickly. Over many bets, a 52.4% break-even rate is hard to beat after the margin. Track results honestly with a [bet tracker](/guides/bet-tracker) before you believe a hot streak.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.",
     },
   ],
   faqs: [
@@ -93,8 +72,14 @@ Adults only, 21 in most US states with legal sportsbooks (18 in some places). Th
       label: "Spectrum News: player-specific prop bets on college sports no longer allowed in Ohio",
       url: "https://spectrumnews1.com/oh/columbus/news/2024/02/23/player-specific-prop-bets-on-college-sports-no-longer-allowed-in-ohio",
     },
-    { label: "Wikipedia: proposition bet", url: "https://en.wikipedia.org/wiki/Proposition_bet" },
-    { label: "GambleAware", url: "https://www.gambleaware.org/" },
+    {
+      label: "Wikipedia: proposition bet",
+      url: "https://en.wikipedia.org/wiki/Proposition_bet",
+    },
+    {
+      label: "GambleAware",
+      url: "https://www.gambleaware.org/",
+    },
   ],
   related: [
     "first-touchdown-scorer-bets",
@@ -103,11 +88,5 @@ Adults only, 21 in most US states with legal sportsbooks (18 in some places). Th
     "implied-probability",
     "nfl-betting",
   ],
-  updated: "2026-11-18",
-  cta: {
-    title: "A price you can read in full",
-    text: "PVPspinArena's Roulette has 33 slots: 16 Purple and 16 Silver pay 2x, 1 Green pays 14x, with a 5% fee on wins.",
-    primary: { to: "/roulette", label: "Roulette" },
-    secondary: { to: "/guides/implied-probability", label: "Implied probability" },
-  },
+  updated: "2026-11-26",
 };

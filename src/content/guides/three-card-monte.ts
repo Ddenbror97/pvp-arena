@@ -28,7 +28,9 @@ It looks like a game of attention. It is not. It is the card version of the much
 
 Monte has a long history in the United States. Nineteenth-century accounts describe dealers working riverboats, railway cars and boomtowns, and Canada Bill Jones is the best-known dealer of that era, described in many gambling histories as a master of the throw. Much of what is told about him is anecdote, but his reputation shows how established the con was more than 150 years ago.
 
-This guide sits in the [Games of chance topic](/guides/topics/games-of-chance) because it looks like one. It is really a fraud, which is also why it belongs next to [fake casino sites](/guides/fake-casino-sites) in any conversation about scams.`,
+This guide sits in the [Games of chance topic](/guides/topics/games-of-chance) because it looks like one. It is really a fraud, which is also why it belongs next to [fake casino sites](/guides/fake-casino-sites) in any conversation about scams.
+
+The Gambling Commission uses the three-card trick as an example of a game fraudulently presented as chance. That explains why a fair one-in-three calculation is not a street-game guarantee.`,
     },
     {
       id: "sleight",
@@ -98,8 +100,6 @@ When a lookout calls, the box folds and everyone scatters. Your money leaves wit
 
 EV = (1/3 × +$20) + (2/3 × −$20) = −$6.67
 
-That is a 33.3% house edge on every bet, roughly five times the 7.88% Purple or Silver edge on a Purple or Silver bet at a 33-slot roulette wheel, and more than twelve times European roulette's 2.70%.
-
 | Payout on a correct pick | Honest win chance | Expected result per $20 bet |
 | --- | --- | --- |
 | 1 to 1 (even money) | 1/3 | −$6.67 |
@@ -153,9 +153,9 @@ Gambling on anything, honest or not, is for adults (18+ or your local legal age)
     {
       id: "pvp",
       title: "Why a checkable result is the opposite of monte",
-      body: `Monte works because the dealer knows the answer and you cannot check it. A provably fair round is designed to remove exactly that advantage. On PVPspinArena, results come from committed seeds using a commit-reveal scheme: a hash of the secret seed is published before the round, and the seed is revealed after settlement, so anyone can recompute the result on the [fairness](/fairness) page and confirm nothing changed mid-round.
+      body: `Monte works because the dealer knows the answer and you cannot check it. A provably fair round is designed to remove exactly that advantage.
 
-That does not make gambling profitable. [Roulette](/roulette) on PVPspinArena's 33-slot wheel returns 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee on average, about a 7.88% house edge on Purple or Silver after the 5% win fee, and [Coinflip](/coinflip) is a plain 50/50 between two players. The point is narrower: the odds are published, the edge is stated, and the result can be verified. Monte offers the reverse on all three counts. The [commit-reveal scheme](/guides/commit-reveal-scheme) guide explains the cryptography in plain terms.
+That does not make gambling profitable. The point is narrower: the odds are published, the edge is stated, and the result can be verified. Monte offers the reverse on all three counts. The [commit-reveal scheme](/guides/commit-reveal-scheme) guide explains the cryptography in plain terms.
 
 In the same cluster, see also [carnival games](/guides/carnival-games), [claw machine tricks](/guides/claw-machine-tricks), and [plinko board](/guides/plinko-board).
 
@@ -185,8 +185,18 @@ See also [marked cards](/guides/marked-cards).`,
     },
   ],
   sources: [
-    { label: "Wikipedia: Three-card Monte", url: "https://en.wikipedia.org/wiki/Three-card_Monte" },
-    { label: "Wikipedia: Shell game", url: "https://en.wikipedia.org/wiki/Shell_game" },
+    {
+      label: "UK Gambling Commission: games presented as chance and fraud",
+      url: "https://www.gamblingcommission.gov.uk/licensees-and-businesses/guide/is-a-prize-machine-a-gaming-machine",
+    },
+    {
+      label: "Wikipedia: Three-card Monte",
+      url: "https://en.wikipedia.org/wiki/Three-card_Monte",
+    },
+    {
+      label: "Wikipedia: Shell game",
+      url: "https://en.wikipedia.org/wiki/Shell_game",
+    },
     {
       label: "Wikipedia: Canada Bill Jones",
       url: "https://en.wikipedia.org/wiki/Canada_Bill_Jones",
@@ -201,5 +211,5 @@ See also [marked cards](/guides/marked-cards).`,
     "plinko-board",
     "marked-cards",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

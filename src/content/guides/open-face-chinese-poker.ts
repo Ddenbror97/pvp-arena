@@ -63,7 +63,7 @@ At the end, compare your top with their top, your middle with their middle, and 
 
 Sweeping all three rows may carry a bonus if your sheet says so. The sheet is the authority.
 
-This article will not pretend one app's bonus is global.
+Fantasyland and bonus conditions depend on the agreed variant.
 
 Bottom must be stronger than middle. Middle must be stronger than top.
 
@@ -155,7 +155,7 @@ Fantasyland, in apps that use it, is a special next hand awarded for a very stro
 
 If yours does not, do not play as if a fantasy draw will refund a foul. If yours does, write the entry condition and how many cards the fantasy hand receives.
 
-This page does not publish one official fantasy payout.
+Write the applicable Fantasyland and royalty rules down before play.
 
 Chasing royalties with early cards is how layouts foul on card eleven. Leave room in the middle for a hand that can legally sit under the bottom and over the top. A pair of kings on top feels clever until the middle is a pair of sixes and the bottom is two pair.
 
@@ -201,7 +201,7 @@ That settlement might be a flat number or the opponent's points. It is not one f
     },
     {
       q: "How do royalties work?",
-      a: "A royalty is an extra point award for a premium row, such as a high pair on the three-card top if your sheet lists it. The size of the award is whatever you wrote. This page does not print a universal royalty table.",
+      a: "A royalty is an extra point award for a premium row, such as a high pair on the three-card top if your sheet lists it. The size of the award is whatever you wrote. The royalty table depends on the agreed variant and must be checked before dealing.",
     },
     {
       q: "Is open face chinese strategy the same as Hold'em?",
@@ -233,8 +233,14 @@ Do not chase a top-row bonus that leaves the layout illegal. Keep score where bo
     },
   ],
   sources: [
-    { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
-    { label: "World Series of Poker", url: "https://www.wsop.com/" },
+    {
+      label: "Pagat — public card-game rules",
+      url: "https://www.pagat.com/",
+    },
+    {
+      label: "World Series of Poker",
+      url: "https://www.wsop.com/",
+    },
   ],
   related: [
     "how-to-play-poker",
@@ -243,5 +249,5 @@ Do not chase a top-row bonus that leaves the layout illegal. Keep score where bo
     "texas-holdem-rules",
     "slow-play-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

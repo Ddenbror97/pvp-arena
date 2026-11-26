@@ -35,7 +35,9 @@ That background is the reason his story travelled. Before 2003, World Series of 
 
 Real-money online poker had existed since the late 1990s, and by 2003 several sites were competing for players. PokerStars ran satellites: small tournaments whose prizes were seats in bigger events. A player could win a seat worth thousands of dollars for the price of a low entry, provided they beat a field of other qualifiers. That ladder is how Moneymaker reached Las Vegas.
 
-He was not the only online qualifier in the 2003 Main Event, but he was the one who won it. For how poker got from riverboats to that point, see the [history of poker](/guides/history-of-poker). For the wider cast of legendary players, the [famous gamblers overview](/guides/famous-gamblers) and the [casino knowledge topic hub](/guides/topics/casino-knowledge) collect them in one place.`,
+He was not the only online qualifier in the 2003 Main Event, but he was the one who won it. For how poker got from riverboats to that point, see the [history of poker](/guides/history-of-poker). For the wider cast of legendary players, the [famous gamblers overview](/guides/famous-gamblers) and the [casino knowledge topic hub](/guides/topics/casino-knowledge) collect them in one place.
+
+WSOP identifies Moneymaker's 2003 Main Event victory in its bracelet history. The win is a historical result, not an estimate of a qualifier's expected return.`,
     },
     {
       id: "run",
@@ -121,21 +123,6 @@ He was inducted into the Poker Hall of Fame in 2019. Induction rewards contribut
 
 The boom brought a huge influx of recreational players. That made poker more profitable for skilled players for several years, because the edge in poker comes from opponents' mistakes. As players studied more, especially after solver software spread, the average skill level rose and the easy profit shrank. For how that shift changed strategy, see [GTO poker strategy](/guides/gto-poker-strategy).`,
     },
-    {
-      id: "pvp",
-      title: "What the Moneymaker story means for PvP play",
-      body: `The part of the Moneymaker story that applies to any game is the arithmetic of long shots. A small stake with a huge possible prize is attractive, and the rare winner becomes the advert. The rest of the field pays for that prize.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and each one makes that arithmetic visible:
-
-- **Jackpot** at [/](/): players add wagers to one pot, and your win chance equals your share. A $10 entry in a $1,000 pot is a 1% chance at the pot minus any fee shown before entry, the same shape as a satellite.
-- **Coinflip**: two players, 50/50, winner takes the pot minus any fee shown before entry.
-- **Roulette**: a 33-slot wheel where Purple and Silver pay 2x and Green pays 14x, and Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
-
-Unlike poker, none of these involve decisions after entry. Results come from committed seeds, and any settled round can be verified on the [fairness](/fairness) page. That removes skill from the picture and leaves only probability and stake size. If a big win you watched is making a bigger entry feel sensible, that is survivor bias doing its work. Gambling is 18+; set limits first using the [responsible gambling](/responsible-gambling) tools.
-
-The 2026 championship results page prints a prize pool of $85,634,400 and a first prize of $10,000,000. [Those Event 82 figures](/guides/wsop-main-event) name Lucas Jumalon. The staff-fee split inside the buy-in stays unpublished.`,
-    },
   ],
   faqs: [
     {
@@ -164,7 +151,14 @@ The 2026 championship results page prints a prize pool of $85,634,400 and a firs
     },
   ],
   sources: [
-    { label: "Wikipedia: Chris Moneymaker", url: "https://en.wikipedia.org/wiki/Chris_Moneymaker" },
+    {
+      label: "WSOP: official bracelet history",
+      url: "https://www.wsop.com/about/bracelet-legacy/",
+    },
+    {
+      label: "Wikipedia: Chris Moneymaker",
+      url: "https://en.wikipedia.org/wiki/Chris_Moneymaker",
+    },
     {
       label: "Wikipedia: 2003 World Series of Poker",
       url: "https://en.wikipedia.org/wiki/2003_World_Series_of_Poker",
@@ -182,5 +176,5 @@ The 2026 championship results page prints a prize pool of $85,634,400 and a firs
     "how-to-win-at-poker",
     "history-of-poker",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

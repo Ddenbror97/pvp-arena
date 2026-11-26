@@ -28,7 +28,9 @@ That is different from betting on Call of Duty as a spectator sport. A sportsboo
 
 [Head-to-head betting](/guides/head-to-head-betting) is the phrase books use for one side against one other side. In a wager match the two sides are you and a stranger, and the “odds” are usually even money minus a fee. You are not shopping a moneyline. You are agreeing a rules card.
 
-[Skill-based gambling](/guides/skill-based-gambling) is the honest frame. A money match can reward better play over a long sample. One Search-and-Destroy map does not. Variance, spawns, and one lucky timing still swing a single stake. Calling it skill does not make the stake safe, and it does not make it legal everywhere. Adults 18+ only. This is not betting advice.`,
+[Skill-based gambling](/guides/skill-based-gambling) is the honest frame. A money match can reward better play over a long sample. One Search-and-Destroy map does not. Variance, spawns, and one lucky timing still swing a single stake. Calling it skill does not make the stake safe, and it does not make it legal everywhere. Adults 18+ only. This is not betting advice.
+
+Activision’s Mobile competition rules illustrate event-specific eligibility, team and dispute requirements. They do not authorise every third-party Call of Duty wager or apply unchanged to another title.`,
     },
     {
       id: "formats-and-fees",
@@ -105,7 +107,15 @@ Play for a stake you can lose on the next lobby. If the appeal is a fast even-mo
     {
       id: "where-this-site-fits",
       title: "Where a casino pot fits, and where it does not",
-      body: "A player-funded pot is the family resemblance between a COD wager and a PvP casino game. Both can lock two stakes and pay one winner minus a fee. The resemblance ends at the result. Call of Duty is a video game with rules, ping, and cheaters. A coinflip is a bit. A jackpot is a ticket share. You do not get better at a bit by warming up, and you do not prove a bit by arguing about recoil.\n\nUse COD wagers only when you want the match itself. Use a chance pot only when you want a result that does not depend on a lobby. Mixing the language — “it’s the same as a coinflip, I’m just better” — is how people skip the fee math in the previous section.\n\nIf you play with friends rather than strangers, you still need the rules card. Friendship is not escrow. [Bet with friends online](/guides/bet-with-friends-online) covers private wagers without pretending a group chat is a cashier. Read it before you stake a roommate.\n\nStop when it stops being a match you would have played for free. The moment the stake is the only reason to queue, you are no longer practicing. You are paying a fee for a mood. Adults only, and only money you can lose in one evening.\n\nThe [FPS money hub](/guides/fps-for-money-hub) shows the difference between pot, fee and net gain in a direct duel. The [tournament checklist](/guides/cs2-tournaments-for-money) covers bracket rules and evidence; those are separate questions from a Call of Duty loadout.",
+      body: `A player-funded pot is the family resemblance between a COD wager and a PvP casino game. Both can lock two stakes and pay one winner minus a fee. The resemblance ends at the result. Call of Duty is a video game with rules, ping, and cheaters. A coinflip is a bit. A jackpot is a ticket share. You do not get better at a bit by warming up, and you do not prove a bit by arguing about recoil.
+
+Use COD wagers only when you want the match itself. Use a chance pot only when you want a result that does not depend on a lobby. Mixing the language — “it’s the same as a coinflip, I’m just better” — is how people skip the fee math in the previous section.
+
+If you play with friends rather than strangers, you still need the rules card. Friendship is not escrow. [Bet with friends online](/guides/bet-with-friends-online) covers private wagers without pretending a group chat is a cashier. Read it before you stake a roommate.
+
+Stop when it stops being a match you would have played for free. The moment the stake is the only reason to queue, you are no longer practicing. You are paying a fee for a mood. Adults only, and only money you can lose in one evening.
+
+The [FPS money hub](/guides/fps-for-money-hub) shows the difference between pot, fee and net gain in a direct duel. The [tournament checklist](/guides/cs2-tournaments-for-money) covers bracket rules and evidence; those are separate questions from a Call of Duty loadout.`,
     },
   ],
   faqs: [
@@ -131,10 +141,17 @@ Play for a stake you can lose on the next lobby. If the appeal is a fast even-mo
     },
   ],
   sources: [
-    { label: "Wikipedia: Call of Duty", url: "https://en.wikipedia.org/wiki/Call_of_Duty" },
+    {
+      label: "Wikipedia: Call of Duty",
+      url: "https://en.wikipedia.org/wiki/Call_of_Duty",
+    },
     {
       label: "Wikipedia: Escrow",
       url: "https://en.wikipedia.org/wiki/Escrow",
+    },
+    {
+      label: "Activision: Call of Duty Mobile official competition rules",
+      url: "https://www.callofduty.com/mobile/esports/rules",
     },
   ],
   related: [
@@ -145,5 +162,5 @@ Play for a stake you can lose on the next lobby. If the appeal is a fast even-mo
     "fps-for-money-hub",
     "cs2-tournaments-for-money",
   ],
-  updated: "2026-10-31",
+  updated: "2026-11-26",
 };

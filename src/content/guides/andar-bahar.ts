@@ -12,12 +12,10 @@ export const guide: Guide = {
   answer:
     "Andar bahar is the Indian card game on two Evolution pages opened 20 October 2026. One page says you predict which side receives the joker. The multiplier version deals the joker first, then Andar, then Bahar, alternating. Neither page prints a house edge or the main-bet odds.",
   facts: [
-    "Last tested 20 October 2026 on the Ezugi overview, the multiplier-version studio page, and Evolution's 27 April 2022 launch note.",
     "The English andar bahar overview says the game came from India and names a ceiling of 120 times the stake. It does not print the deal order.",
     "The multiplier version deals the joker first. After bets close, cards go to Andar, then Bahar, alternating.",
     "That page names ten side-bet bands, from cards 1 to 5 through cards 46 to 49, and a 4,000x line on the last band.",
     "A house edge for andar bahar is not printed on any page we opened. The main-bet payoff is not printed either.",
-    "This site does not offer the card game. Purple and Silver are about a 7.88 percent edge after the 5 percent fee.",
   ],
   sections: [
     {
@@ -88,34 +86,9 @@ The English overview's age gate is 21 plus, and the page prints 800-GAMBLER. The
 Those are gates on two demo sites, not a statute for your state. [The single-zero layout](/guides/french-roulette) is a different game, and it does not fill this missing edge.`,
     },
     {
-      id: "pots",
-      title: "A dealt card beside a house shoe and a player wheel",
-      body: `The studio prices a guess against a paytable it did not fully print. A house can install another multiple. This site's wheel has a fee you can recompute from the rules here.
-
-Do not paste an andar bahar multiple onto the wheel. The 120-times line and the 4,000x line belong to the pages that printed them.
-
-| | Fee or edge | Who you play against | Payout speed | Provably fair | Minimum bet |
-| --- | --- | --- | --- | --- | --- |
-| This card game | not published on the pages we opened | the paytable | not published | not published | not published |
-| House-banked casino | inside that house's list; no percent is fixed here | the house | not published | not published | not published |
-| PVPspinArena | Purple and Silver are about a 7.88 percent edge after the 5 percent win fee | other players | balance updates when the round settles | yes, seed committed before the round | shown on the bet control |
-
-How PvP compares: the card game asks which side matches a joker. [Roulette](/roulette) asks which pocket a 33-slot wheel hits, with 16 Purple, 16 Silver, and 1 Green.
-
-Purple and Silver pay 2x, then 5 percent comes off that winning payout, so a hit keeps 1.90 times the stake. Sixteen divided by 33, times 1.90, minus 1, is about −0.0788.
-
-That is the 7.88 percent edge on those two pockets. Green pays 14x. This page does not quote a Green edge.
-
-A settled round can be checked on the [fairness page](/fairness). The check matches this site's commit. It does not audit a studio shoe.
-
-Balances are US dollars, funded with Bitcoin or with USDC or ETH on Base. Cash-out minimum is $20 in BTC, USDC, or ETH.
-
-We did not time a cash-out. The briefcase show is [the live game-show cabinet](/guides/deal-or-no-deal-live).`,
-    },
-    {
       id: "examples",
       title: "Three labeled pictures, none of them a dealt hand",
-      body: `None of these is an andar bahar result we played. The first two apply a ceiling printed on a page. The third uses a fee from this site.
+      body: `None of these is an andar bahar result we played. The first two apply a ceiling printed on a page.
 
 Example 1 — the 4,000x line. On a $1 side bet, 4,000 times the stake is $4,000. The studio page ties that figure to the cards 46 to 49 band, with random multipliers in the mix.
 
@@ -127,25 +100,14 @@ It is not a paytable row, and it is not a house edge.
 
 Example 3 — a player pot. Four $50 jackpot entries make a $200 pot. The fee is 5 percent, $10, so the winner receives $190.
 
-That $10 is this site's pot fee. It is not a commission from a card studio.`,
+It is not a commission from a card studio.`,
     },
     {
       id: "checks",
       title: "Checks before a joker table is treated as these pages",
       body: `A joker card on a felt does not prove either URL. Read the rules on the table you are at.
 
-- [ ] Confirm you are 18, or older if the site or the pit sets a higher age.
-- [ ] Confirm the game deals a joker and then two sides, not a slot and not a fan contest.
-- [ ] Accept Andar-first, then Bahar, only if the rules you opened say that.
-- [ ] Leave the main-bet payoff unpublished when the glass does not print it.
-- [ ] Leave the house edge unpublished when no page you opened prints it.
-- [ ] Do not move the 120-times line onto the multiplier version.
-- [ ] Do not move the 4,000x line onto the Ezugi overview.
-- [ ] Do not invent the missing side-bet multiples of five.
-- [ ] Do not treat a deck count as known. The pages do not print one.
-- [ ] Set a loss stop before the first stake.
-- [ ] If the hand becomes a chase, call 1-800-GAMBLER.
-- [ ] Recompute a round on this site's fairness page, and do not ask it to audit a studio.`,
+- [ ] Confirm you are 18, or older if the site or the pit sets a higher age. - [ ] Confirm the game deals a joker and then two sides, not a slot and not a fan contest. - [ ] Accept Andar-first, then Bahar, only if the rules you opened say that. - [ ] Leave the main-bet payoff unpublished when the glass does not print it. - [ ] Leave the house edge unpublished when no page you opened prints it. - [ ] Do not move the 120-times line onto the multiplier version. - [ ] Do not move the 4,000x line onto the Ezugi overview. - [ ] Do not invent the missing side-bet multiples of five. - [ ] Do not treat a deck count as known. The pages do not print one. - [ ] Set a loss stop before the first stake. - [ ] If the hand becomes a chase, call 1-800-GAMBLER.`,
     },
     {
       id: "limits",
@@ -156,7 +118,7 @@ Do not play if you are under 18, or under a higher age on the site you opened. D
 
 Do not play to get even. A run of misses is not a debt the next card owes you. [Why a cold run is not a credit](/guides/gamblers-fallacy) is the general point.
 
-This page is an editorial note, not a statute, and not a coupon. This site does not offer the card game.
+This page is an editorial note, not a statute, and not a coupon.
 
 If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
     },
@@ -183,8 +145,8 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
       a: "The multiplier page lists ten bands, starting with cards 1 to 5 and cards 6 to 10 and ending with cards 46 to 49. You are guessing how many cards follow the joker before a matching value. The page says the payouts are shown in multiples of five, except the last band. It does not list each multiple. The April 2022 note calls those bets optional.",
     },
     {
-      q: "Does this site deal the game?",
-      a: "No. The comparison here is roulette, a 33-pocket wheel with a 5 percent fee on a winning payout. Purple and Silver keep 1.90 times the stake on a win, and the long-run edge on those two is about 7.88 percent. The fairness page recomputes this site's commit. It does not audit a studio shoe, a joker, or a side-bet band.",
+      q: "Do multipliers describe the main bet's return?",
+      a: "No. A maximum multiplier is a possible award, not its probability or long-run return. Read the specific version's main-bet and side-bet rules separately.",
     },
   ],
   sources: [
@@ -209,5 +171,5 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     "gamblers-fallacy",
     "online-craps",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

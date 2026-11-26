@@ -30,7 +30,9 @@ People download these apps to bet with friends without chasing anyone in a group
 
 Adults 18+ only. An app in a store can still be illegal where you stand, or illegal to offer into your state. This is not legal advice. If the app never asks where you live, that is a gap in its process, not a gift.
 
-[Peer-to-peer gambling](/guides/peer-to-peer-gambling) explains player-funded casino pots. Read it when the “event” is a game the site runs, like a coin, rather than a match in the outside world. The hold is similar. The thing you are betting on is not.`,
+[Peer-to-peer gambling](/guides/peer-to-peer-gambling) explains player-funded casino pots. Read it when the “event” is a game the site runs, like a coin, rather than a match in the outside world. The hold is similar. The thing you are betting on is not.
+
+Betfair’s Exchange charges distinguish commission on net market winnings from other account charges. That is an operator example, not a universal fee for peer-betting apps.`,
     },
     {
       id: "how-matching-works",
@@ -141,8 +143,18 @@ If the stake would hurt, do not match it. The app will still be there. The other
     },
   ],
   sources: [
-    { label: "Wikipedia: Betting exchange", url: "https://en.wikipedia.org/wiki/Betting_exchange" },
-    { label: "Wikipedia: Bookmaker", url: "https://en.wikipedia.org/wiki/Bookmaker" },
+    {
+      label: "Wikipedia: Betting exchange",
+      url: "https://en.wikipedia.org/wiki/Betting_exchange",
+    },
+    {
+      label: "Wikipedia: Bookmaker",
+      url: "https://en.wikipedia.org/wiki/Bookmaker",
+    },
+    {
+      label: "Betfair: Exchange charges",
+      url: "https://support.betfair.com/app/answers/detail/betfair-charges/",
+    },
   ],
   related: [
     "peer-to-peer-sports-betting",
@@ -150,5 +162,5 @@ If the stake would hurt, do not match it. The app will still be there. The other
     "crypto-betting-app",
     "peer-to-peer-gambling",
   ],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

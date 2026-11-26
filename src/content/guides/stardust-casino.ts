@@ -50,7 +50,9 @@ The Stardust was designed as a mass-market property. Rooms were cheap and motel-
 | 2006–07 | Resort closes; tower is imploded |
 | 2021 | Resorts World Las Vegas opens on the site |
 
-The Lido was not a side act. For decades it was the reason mid-market tourists booked the Stardust instead of a neighbouring motel. A typical 1970s stay was a cheap room, a buffet, a few hours on slots or craps, and a ticket to the revue. That volume model is why the count rooms mattered: a small percentage taken off a huge coin flow added up faster than skimming a handful of high-limit tables.`,
+The Lido was not a side act. For decades it was the reason mid-market tourists booked the Stardust instead of a neighbouring motel. A typical 1970s stay was a cheap room, a buffet, a few hours on slots or craps, and a ticket to the revue. That volume model is why the count rooms mattered: a small percentage taken off a huge coin flow added up faster than skimming a handful of high-limit tables.
+
+UNLV's Stardust collection records the resort's 1958–2006 operation and preserves material on its architecture, entertainment and corporate history.`,
     },
     {
       id: "skim",
@@ -138,9 +140,9 @@ Its history is part of the longer story in [history of gambling](/guides/history
       title: "Trust, count rooms and verifiable results",
       body: `The Stardust skim worked because players had to trust the house’s books. The house edge itself was honest. The games paid what they said, and the [house edge](/guides/house-edge) did its work. What was hidden was where the money went after the count. Regulators caught it through audits, wiretaps and physical raids.
 
-Online games raise a different trust question: was the result itself fair? PVPspinArena answers that with public, checkable maths rather than a count room. It runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, settled in US dollars. Each round’s result comes from committed seeds using a commit-reveal scheme, and anyone can check a settled round on [fairness](/fairness). The [commit-reveal scheme](/guides/commit-reveal-scheme) guide explains how a hash locks in a result before bets close.
+Online games raise a different trust question: was the result itself fair? Each round’s result comes from committed seeds using a commit-reveal scheme, and anyone can check a settled round on [fairness](/fairness). The [commit-reveal scheme](/guides/commit-reveal-scheme) guide explains how a hash locks in a result before bets close.
 
-The edge is published too. Roulette’s 33-slot wheel returns 32/33 on Purple or Silver before the win fee, about a 7.88% edge after it, and 14/33 on Green, while Coinflip is a 50/50 between two players with the winner taking the pot minus any fee shown before entry. Play is 18+ only. More casino history is in the [Casino knowledge topic](/guides/topics/casino-knowledge).
+The edge is published too. Play is 18+ only. More casino history is in the [Casino knowledge topic](/guides/topics/casino-knowledge).
 
 See also [the Riviera](/guides/riviera-casino).`,
     },
@@ -169,6 +171,10 @@ See also [the Riviera](/guides/riviera-casino).`,
   ],
   sources: [
     {
+      label: "UNLV: Stardust Resort and Casino records",
+      url: "https://special.library.unlv.edu/ark%3A/62930/f1wt0f",
+    },
+    {
       label: "Wikipedia: Stardust Resort and Casino",
       url: "https://en.wikipedia.org/wiki/Stardust_Resort_and_Casino",
     },
@@ -190,5 +196,5 @@ See also [the Riviera](/guides/riviera-casino).`,
     "famous-gamblers",
     "riviera-casino",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

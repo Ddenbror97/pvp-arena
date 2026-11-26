@@ -27,50 +27,27 @@ export const guide: Guide = {
     {
       id: "how",
       title: "How a betting exchange works",
-      body: `On a bookmaker, the bookmaker sets the odds and takes the other side of your bet. On a betting exchange, other users take the other side. Each market shows two columns of prices: **back** (the best odds you can bet at) and **lay** (the best odds at which someone will let you take the bookmaker's side). Smarkets' help centre explains [what a betting exchange is](https://help.smarkets.com/hc/en-gb/articles/115001820389-What-is-a-betting-exchange) with a worked back bet.
-
-When you place a bet, the exchange looks for an opposite bet at the same or better odds. If one exists, your bet is **matched**. If not, your bet sits in the market as an offer until someone matches it or you cancel. Partly matched bets are common: $50 at your price may be matched while the other $50 waits.
-
-The exchange never cares who wins. It earns commission on the winnings, which is why prices on an exchange are often closer to the true odds than a bookmaker's. Because users trade with each other, the model belongs with [peer-to-peer sports betting](/guides/peer-to-peer-sports-betting).`,
+      body: "On a bookmaker, the bookmaker sets the odds and takes the other side of your bet. On a betting exchange, other users take the other side. Each market shows two columns of prices: **back** (the best odds you can bet at) and **lay** (the best odds at which someone will let you take the bookmaker's side). Smarkets' help centre explains [what a betting exchange is](https://help.smarkets.com/hc/en-gb/articles/115001820389-What-is-a-betting-exchange) with a worked back bet.\n\nWhen you place a bet, the exchange looks for an opposite bet at the same or better odds. If one exists, your bet is **matched**. If not, your bet sits in the market as an offer until someone matches it or you cancel. Partly matched bets are common: $50 at your price may be matched while the other $50 waits.\n\nThe exchange never cares who wins. It earns commission on the winnings, which is why prices on an exchange are often closer to the true odds than a bookmaker's. Because users trade with each other, the model belongs with [peer-to-peer sports betting](/guides/peer-to-peer-sports-betting).",
     },
     {
       id: "lay",
       title: "Laying and liability",
-      body: `To **lay** is to offer a bet to other users. If you lay a team at 4.00 for a $10 stake, you are saying it will not win. Someone backs it with your $10 offer:
-
-- If the team does **not** win, you win the backer's $10 stake (minus commission).
-- If the team **wins**, you pay the backer's profit: $10 × (4.00 − 1) = **$30**. That $30 is your **liability**, and the exchange holds it from your balance when the bet is matched.
-
-Laying short odds is cheap to fund and pays often; laying long odds risks a large liability for a small win. Smarkets shows [how lay liability is calculated](https://help.smarkets.com/hc/en-gb/articles/115003381865-How-to-calculate-the-liability-of-a-lay-bet). Laying is what makes [matched betting](/guides/matched-betting) and exchange [hedging](/guides/hedge-betting) possible.`,
+      body: "To **lay** is to offer a bet to other users. If you lay a team at 4.00 for a $10 stake, you are saying it will not win. Someone backs it with your $10 offer:\n\n- If the team does **not** win, you win the backer's $10 stake (minus commission).\n- If the team **wins**, you pay the backer's profit: $10 × (4.00 − 1) = **$30**. That $30 is your **liability**, and the exchange holds it from your balance when the bet is matched.\n\nLaying short odds is cheap to fund and pays often; laying long odds risks a large liability for a small win. Smarkets shows [how lay liability is calculated](https://help.smarkets.com/hc/en-gb/articles/115003381865-How-to-calculate-the-liability-of-a-lay-bet). Laying is what makes [matched betting](/guides/matched-betting) and exchange [hedging](/guides/hedge-betting) possible.",
     },
     {
       id: "commission",
       title: "How commission is charged",
-      body: `Exchanges charge a percentage of your **net winnings in a market**, not of each bet and not of losing bets. If you back and lay in the same market, only the overall profit is charged.
-
-**Example.** In one market you win $40 on one bet and lose $10 on another. Net market winnings: $30. At a 2% rate the commission is $0.60; you keep $29.40. Had you lost overall, you would pay no commission on that market.
-
-Rates differ by exchange and sometimes by customer or market. Smarkets publishes a [commission breakdown](https://help.smarkets.com/hc/en-gb/articles/212106009-Commission-breakdown); other exchanges publish their own. When you compare an exchange price with a bookmaker price, subtract commission first: decimal odds of 3.00 at 2% commission pay like about 2.96. [Line shopping](/guides/line-shopping) explains why that comparison matters.`,
+      body: "Exchanges charge a percentage of your **net winnings in a market**, not of each bet and not of losing bets. If you back and lay in the same market, only the overall profit is charged.\n\n**Example.** In one market you win $40 on one bet and lose $10 on another. Net market winnings: $30. At a 2% rate the commission is $0.60; you keep $29.40. Had you lost overall, you would pay no commission on that market.\n\nRates differ by exchange and sometimes by customer or market. Smarkets publishes a [commission breakdown](https://help.smarkets.com/hc/en-gb/articles/212106009-Commission-breakdown); other exchanges publish their own. When you compare an exchange price with a bookmaker price, subtract commission first: decimal odds of 3.00 at 2% commission pay like about 2.96. [Line shopping](/guides/line-shopping) explains why that comparison matters.",
     },
     {
       id: "vs",
       title: "Exchange versus bookmaker",
-      body: `| | Bookmaker | Betting exchange |
-| --- | --- | --- |
-| Who you bet against | The bookmaker | Other users |
-| How it earns | Margin built into odds | Commission on net winnings |
-| Lay bets | No | Yes |
-| Winning-account limits | Common | Not the business model, though terms still apply |
-| Liquidity | Always quotes a price | Depends on other users; big markets are deep, small ones thin |
-
-The exchange's weakness is liquidity: in a minor market there may be no one to match your bet at a fair price. Its strength is that a winning customer is not a problem for the exchange. The [sports betting topic](/guides/topics/sports-betting) covers the bookmaker side.`,
+      body: "| | Bookmaker | Betting exchange |\n| --- | --- | --- |\n| Who you bet against | The bookmaker | Other users |\n| How it earns | Margin built into odds | Commission on net winnings |\n| Lay bets | No | Yes |\n| Winning-account limits | Common | Not the business model, though terms still apply |\n| Liquidity | Always quotes a price | Depends on other users; big markets are deep, small ones thin |\n\nThe exchange's weakness is liquidity: in a minor market there may be no one to match your bet at a fair price. Its strength is that a winning customer is not a problem for the exchange. The [sports betting topic](/guides/topics/sports-betting) covers the bookmaker side.",
     },
     {
       id: "legal",
       title: "Where exchanges are allowed",
-      body: `Betting exchanges are licensed in some countries, such as Great Britain. In the United States, licensing is state by state, and many states that allow sportsbooks have not licensed an exchange model. Some US products call themselves exchanges or prediction markets under federal rules; [prediction markets and US law](/guides/prediction-market-legal-us) explains why that is a different legal question. Check your regulator before you deposit.
-
-Adults only, 18 or the higher age your law sets. This page explains how exchanges work; it is not legal advice. PVPspinArena is not an exchange; its games are explained on [how it works](/how-it-works). If betting stops being a fixed, affordable spend, stop and read [responsible gambling](/responsible-gambling).`,
+      body: "Betting exchanges are licensed in some countries, such as Great Britain. In the United States, licensing is state by state, and many states that allow sportsbooks have not licensed an exchange model. Some US products call themselves exchanges or prediction markets under federal rules; [prediction markets and US law](/guides/prediction-market-legal-us) explains why that is a different legal question. Check your regulator before you deposit.\n\nUse [responsible gambling tools](/responsible-gambling) to keep spending within an affordable limit.",
     },
   ],
   faqs: [
@@ -112,7 +89,10 @@ Adults only, 18 or the higher age your law sets. This page explains how exchange
       label: "Smarkets: commission breakdown",
       url: "https://help.smarkets.com/hc/en-gb/articles/212106009-Commission-breakdown",
     },
-    { label: "GambleAware", url: "https://www.gambleaware.org/" },
+    {
+      label: "GambleAware",
+      url: "https://www.gambleaware.org/",
+    },
   ],
   related: [
     "peer-to-peer-sports-betting",
@@ -121,11 +101,5 @@ Adults only, 18 or the higher age your law sets. This page explains how exchange
     "line-shopping",
     "novig-review",
   ],
-  updated: "2026-11-18",
-  cta: {
-    title: "Player against player, on one pot",
-    text: "PVPspinArena's Jackpot and Coinflip are peer-to-peer too: players' stakes form the pot and a published fee is the only cut.",
-    primary: { to: "/how-it-works", label: "How the games work" },
-    secondary: { to: "/guides/peer-to-peer-sports-betting", label: "Peer-to-peer sports betting" },
-  },
+  updated: "2026-11-26",
 };

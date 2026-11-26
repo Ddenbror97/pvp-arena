@@ -111,7 +111,7 @@ If eight-figure swings are the part of the legend that sounds like a how-to, the
     {
       id: "pvp",
       title: "A public price versus a private pit",
-      body: `PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with a posted price: [Jackpot](/) (win chance equals your pot share), [Coinflip](/coinflip) at 50/50, and [Roulette](/roulette) on 33 slots, 16 Purple, 16 Silver, 1 Green, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. There is no hidden whale letter and no cleared pit. Seeds are committed; a settled round is checkable on [fairness](/fairness).
+      body: `There is no hidden whale letter and no cleared pit. Seeds are committed; a settled round is checkable on [fairness](/fairness).
 
 That is closer to how ordinary players actually meet a casino than a 1995 MGM lockout is. Packer’s folklore is about personality and size. The maths that survives the folklore is the same maths as a $2 colour bet: the house percentage, if any, is paid on every dollar, and leaving after a win — his reported habit — only cuts the number of dollars. It does not flip the sign of the edge.
 
@@ -145,7 +145,10 @@ If you want cricket and television, read a Packer business biography. If you wan
     },
   ],
   sources: [
-    { label: "Wikipedia: Kerry Packer", url: "https://en.wikipedia.org/wiki/Kerry_Packer" },
+    {
+      label: "Wikipedia: Kerry Packer",
+      url: "https://en.wikipedia.org/wiki/Kerry_Packer",
+    },
     {
       label: "Los Angeles Times: The Highest High Roller (1996)",
       url: "https://www.latimes.com/archives/la-xpm-1996-02-18-tm-38473-story.html",
@@ -167,5 +170,5 @@ If you want cricket and television, read a Packer business biography. If you wan
     "las-vegas-history",
     "history-of-gambling",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

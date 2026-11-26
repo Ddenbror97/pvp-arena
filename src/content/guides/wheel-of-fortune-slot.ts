@@ -160,7 +160,7 @@ One Purple hit does not display the 7.88 percent edge. Most Purple stakes miss.`
       title: "Who should leave the wheel cabinet alone",
       body: `A session on any of these cabinets can end below the stake you brought. The anniversary page never prints a long-run return, so it cannot promise the ordinary hour ends ahead. A wide-area reset is a ceiling claim for one named build, not a plan.
 
-Do not play if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent, savings, or money that has a due date.
+Adults only where legal. Set a loss limit before play.
 
 Do not play to force a spin of the wheel. The page does not owe the next press a pointer. This file is an editorial note, not a statute, and not a coupon.
 

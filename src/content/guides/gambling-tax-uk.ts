@@ -22,40 +22,22 @@ export const guide: Guide = {
     {
       id: "punter",
       title: "What HMRC says about a punter",
-      body: `HMRC's Business Income Manual, BIM22015, is the page to open. It says the basic position is that betting and gambling, as such, do not constitute trading. It quotes Rowlatt J in Graham v Green: a bet is an agreement that one person pays another on an event. It also records that courts have not treated a mere punter as carrying on a business. The consequence HMRC states is direct: the punter is not taxable on the profits and receives no relief for the losses.
-
-That is the opposite of the US starting point described on [reporting gambling winnings](/guides/report-gambling-winnings). Do not copy an IRS habit onto a UK return.
-
-The same paragraph draws the line that people skip. An organised activity to make profits out of the gambling public will normally amount to trading. The bookmaker is the example HMRC gives. A person who only stakes is not that person. A person who is in substance running a book is a different question, and this page will not decide which one you are.
-
-This sits in [Foundations](/guides/topics/foundations) next to the other country notes. It is education, not advice. A tax adviser who can see your facts is the person who can apply the manual to you.`,
+      body: "HMRC's Business Income Manual, BIM22015, is the page to open. It says the basic position is that betting and gambling, as such, do not constitute trading. It quotes Rowlatt J in Graham v Green: a bet is an agreement that one person pays another on an event. It also records that courts have not treated a mere punter as carrying on a business. The consequence HMRC states is direct: the punter is not taxable on the profits and receives no relief for the losses.\n\nThat is the opposite of the US starting point described on [reporting gambling winnings](/guides/report-gambling-winnings). Do not copy an IRS habit onto a UK return.\n\nThe same paragraph draws the line that people skip. An organised activity to make profits out of the gambling public will normally amount to trading. The bookmaker is the example HMRC gives. A person who only stakes is not that person. Running a book is a different activity from ordinary betting and requires separate tax and licensing advice.\n\nThis sits in [Foundations](/guides/topics/foundations) next to the other country notes. It is education, not advice. A tax adviser who can see your facts is the person who can apply the manual to you.",
     },
     {
       id: "gains",
       title: "Winnings are not a capital gain either",
-      body: `Section 51 of the Taxation of Chargeable Gains Act 1992 declares that winnings from betting, including pool betting, or from lotteries or games with prizes, are not chargeable gains. No chargeable gain or allowable loss accrues on the disposal of rights to those winnings.
-
-Read that beside BIM22015, not instead of it. One section is about capital gains. The manual is about whether the activity is a trade for income tax. A casual punter is outside both, on the words of those texts. A business that lives off other people's stakes is the case the manual sends the other way.
-
-[Crypto gambling taxes](/guides/crypto-gambling-taxes) is where wallet records come in. A tax-free win can still leave a trail of transfers. Keeping the trail is not the same thing as owing income tax on the win.`,
+      body: "Section 51 of the Taxation of Chargeable Gains Act 1992 declares that winnings from betting, including pool betting, or from lotteries or games with prizes, are not chargeable gains. No chargeable gain or allowable loss accrues on the disposal of rights to those winnings.\n\nRead that beside BIM22015, not instead of it. One section is about capital gains. The manual is about whether the activity is a trade for income tax. A casual punter is outside both, on the words of those texts. A business that lives off other people's stakes is the case the manual sends the other way.\n\n[Crypto gambling taxes](/guides/crypto-gambling-taxes) is where wallet records come in. A tax-free win can still leave a trail of transfers. Keeping the trail is not the same thing as owing income tax on the win.",
     },
     {
       id: "duty",
       title: "Duty is the operator's bill",
-      body: `The Gambling Commission, answering a freedom-of-information request, said customer winnings in the UK are tax-free regardless of amount, and that tax is levied on the operator's gross gambling yield. GOV.UK's "Register for gambling tax" page is aimed at the business: General Betting Duty, Pool Betting Duty, or Remote Gaming Duty if you offer betting or gaming to people in the UK.
-
-If a site's support chat tells you to pay "your gambling tax" before a withdrawal, that sentence is not BIM22015. It is a reason to stop and check you are on the real domain. [Fake casino sites](/guides/fake-casino-sites) covers the shape of that trick.
-
-Adults 18+ only. Tax status does not make a stake safe. [Responsible gambling](/responsible-gambling) still applies when the money is needed for a bill.`,
+      body: 'The Gambling Commission, answering a freedom-of-information request, said customer winnings in the UK are tax-free regardless of amount, and that tax is levied on the operator\'s gross gambling yield. GOV.UK\'s "Register for gambling tax" page is aimed at the business: General Betting Duty, Pool Betting Duty, or Remote Gaming Duty if you offer betting or gaming to people in the UK.\n\nIf a site\'s support chat tells you to pay "your gambling tax" before a withdrawal, that sentence is not BIM22015. It is a reason to stop and check you are on the real domain. [Fake casino sites](/guides/fake-casino-sites) covers the shape of that trick.\n\nAdults 18+ only. Tax status does not make a stake safe. [Responsible gambling](/responsible-gambling) still applies when the money is needed for a bill.',
     },
     {
       id: "limits",
-      title: "What this page refuses to decide",
-      body: `It does not tell you whether your company, your syndicate, or your spread-bet account is a trade. BIM22015 points at a further page for spread-bet exceptions and says a spread-bet punter is not normally trading. "Not normally" is HMRC's phrase. Keep it.
-
-It does not cover residency, split years, or crypto that was already a capital asset before you staked it. Those are questions for current HMRC guidance and a qualified adviser.
-
-Country notes that are not this one: [Australian gambling tax](/guides/gambling-tax-australia) and [Canadian gambling winnings tax](/guides/gambling-winnings-tax-canada). Do not mix their rules into a UK return.`,
+      title: "When individual UK tax advice is needed",
+      body: 'It does not tell you whether your company, your syndicate, or your spread-bet account is a trade. BIM22015 points at a further page for spread-bet exceptions and says a spread-bet punter is not normally trading. "Not normally" is HMRC\'s phrase. Keep it.\n\nIt does not cover residency, split years, or crypto that was already a capital asset before you staked it. Those are questions for current HMRC guidance and a qualified adviser.\n\nCountry notes that are not this one: [Australian gambling tax](/guides/gambling-tax-australia) and [Canadian gambling winnings tax](/guides/gambling-winnings-tax-canada). Do not mix their rules into a UK return.',
     },
   ],
   faqs: [
@@ -104,5 +86,5 @@ Country notes that are not this one: [Australian gambling tax](/guides/gambling-
     "gambling-tax-australia",
     "gambling-winnings-tax-canada",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

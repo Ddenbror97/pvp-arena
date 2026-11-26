@@ -15,7 +15,7 @@ export const guide: Guide = {
     "Are skin changers bannable in CS2? Yes: they are cheats and a VAC risk. What they do, why Valve bans them, and what never to install.",
   h1: "Are skin changers bannable in CS2? Yes — they are cheats",
   answer:
-    "Are skin changers bannable CS2? Yes. A skin changer (or inventory changer) is cheat software: it tampers with the game client so you see finishes you do not own. Valve Anti-Cheat treats that class of program as a cheat. You can receive a VAC ban, wreck matchmaking trust, and still own none of the paint you faked. This page will not tell you where to get one or how to turn it on.",
+    "Are skin changers bannable CS2? Yes. A skin changer (or inventory changer) is cheat software: it tampers with the game client so you see finishes you do not own. Valve Anti-Cheat treats that class of program as a cheat. You can receive a VAC ban, wreck matchmaking trust, and still own none of the paint you faked. Use the legitimate inventory and supported client; a cosmetic claim does not remove cheat-software risk.",
   facts: [
     "Skin changers modify the live game client. That is cheat behavior, not a Steam workshop hat.",
     "VAC bans are game-integrity bans; they are separate from trade bans but both can ruin an account.",
@@ -35,7 +35,7 @@ PVPspinArena is [fairness](/fairness)-checked PvP settled in US dollars. We do n
 
 Want paint you can actually trade? Buy it on a real rail — [where to buy CS2 skins](/guides/where-to-buy-cs2-skins) — or equip what you already own.
 
-The ads around this keyword are aggressive because the customer is already willing to break a rule for a look. That is a perfect mark. The landing page promises “undetected,” then asks for a Discord join, a loader, and a disable-antivirus step. Each step is a filter for people who will not stop. VAC is one outcome. A stolen Steam session is the more common one. A ruined week of matchmaking is enough reason to skip even if you never lose an item.
+Ads for skin changers can combine account-risk promises with untrusted downloads. That is a perfect mark. The landing page promises “undetected,” then asks for a Discord join, a loader, and a disable-antivirus step. Each step is a filter for people who will not stop. VAC is one outcome. A stolen Steam session is the more common one. A ruined week of matchmaking is enough reason to skip even if you never lose an item.
 
 We will not debate whether a particular build is “visual only.” If it hooks the process, it is on the wrong side of VAC. If it does not hook the process, it cannot change what CS2 draws. There is no clever third category that this article is hiding.`,
     },
@@ -67,7 +67,7 @@ Valve can also apply other restrictions when an account looks compromised or whe
 - Sources, shop links, Discord names, or “safest” brands.
 - Bypass talk, spoof talk, or “VAC-proof” claims. Those claims are ads.
 
-If you already ran one, this page will not coach a cleanup beyond: stop using it, do not download a second tool that promises to “clear traces,” change passwords if you typed them into the tool, and use official Steam support only.
+If you already ran one: stop using it, do not download a second tool that promises to “clear traces,” change passwords if you typed them into the tool, and use official Steam support only.
 
 [Fake casino sites](/guides/fake-casino-sites) and skin-changer sites share a business model: you arrived for a feeling, they arrived for your session.`,
     },
@@ -110,7 +110,7 @@ PVPspinArena will never ask you to show a client-side cosmetic. Dollar stakes do
     {
       id: "social",
       title: "Clips, friends and the “everyone uses one” line",
-      body: `A friend who “only uses it in deathmatch” is still running unauthorized software in a VAC title. Casual modes are not a legal carve-out. Community servers with their own rules can still sit next to a VAC-secured process. This page will not map which playlist is “safer.” Safer is not installing it.
+      body: `A friend who “only uses it in deathmatch” is still running unauthorized software in a VAC title. Casual modes are not a legal carve-out. Community servers with their own rules can still sit next to a VAC-secured process. A different playlist is not evidence that an unauthorised client modification is permitted. Avoid the modification.
 
 Clips of fake inventories get views. They also get copycats and report waves. If you posted one, do not add a follow-up tutorial. You already advertised a cheat. Take the clip down if you can. Do not point people at a file.
 
@@ -182,7 +182,10 @@ Uninstall the junk. Keep the account. Play default if you have to. There is no s
       label: "Steam Subscriber Agreement",
       url: "https://store.steampowered.com/subscriber_agreement/",
     },
-    { label: "Counter-Strike 2 official site", url: "https://www.counter-strike.net/" },
+    {
+      label: "Counter-Strike 2 official site",
+      url: "https://www.counter-strike.net/",
+    },
   ],
   related: [
     "steam-trade-ban",
@@ -191,5 +194,5 @@ Uninstall the junk. Keep the account. Play default if you have to. There is no s
     "where-to-buy-cs2-skins",
     "steam-trade-hold",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

@@ -68,26 +68,10 @@ It does not walk solver steps, and this page will not add them. The [poker topic
     },
     {
       id: "fees",
-      title: "A free card has a price, and so does our flop fee",
-      body: `The free card is not free to the player who was ahead. It costs the bets you skipped and, sometimes, the pot.
+      title: "A free card has an opportunity cost",
+      body: `Checking a strong hand can sacrifice a value bet and allow an opponent to improve. Compare that risk with the chance they will bluff or call later.
 
-A card room may also rake. That rake is not published here.
-
-A house-banked casino does not charge a poker flop fee of the kind below, and its edge is not published here.
-
-On PVPspinArena you can practise this Hold'em choice at six-max No-Limit Hold'em. Nothing in the client forces you to slow play.
-
-The fee is 5% of the pot only after a flop, whether you bet the flop or checked it. We do not list a promo code for a trapping system.
-
-| | A slow-play choice | House-banked casino | PVPspinArena |
-| --- | --- | --- | --- |
-| What it is | checking a strong hand | not a poker trap | a choice inside Hold'em |
-| Opponent | another player | the house | another player |
-| Fee | room rake not published | not published | 5% of the pot only after a flop |
-| Promo code | none | not published | we do not list a promo code |
-| Balance | the cash game's chips | not published | US dollars from Bitcoin, or USDC or ETH on Base |
-
-[Cash game poker](/guides/cash-game-poker) is the stake language around the choice. A trap at 100 big blinds is a different risk from a trap when someone is already short.`,
+On PVPspinArena’s [six-max Hold’em table](/poker), the 5% pot fee applies after a flop whether you bet or check it. It changes the net return, rather than supplying a reason to trap.`,
     },
     {
       id: "dollars",
@@ -177,20 +161,10 @@ Six-max Hold'em on our site lets you practise the plain version: bet when called
     },
     {
       id: "closer",
-      title: "Mixed checks, named once, then ordinary Hold'em",
-      body: `How PvP compares: slow play is a Hold'em decision you can take to a real table. [Poker](/poker) is six-max No-Limit Hold'em, so the check and the bet both exist.
+      title: "Choose the action for the opponent and board",
+      body: `Bet when worse hands are likely to call. Consider checking when the opponent is likely to bluff and the board gives relatively few damaging free cards. Neither action is correct for every strong hand.
 
-[Fairness](/fairness) is how a committed seed can be reviewed after the hand. When that page includes a live block, settled play is what refreshes it.
-
-No sample hand from the lobby is copied into this article.
-
-[GTO poker strategy](/guides/gto-poker-strategy) is the only place this page sends you for mixed checks. Read the idea.
-
-Do not look for solver steps there or here. Big O, short deck, razz, 2-7, and open-face Chinese are not the games that lobby deals.
-
-Bet the strong hand when a worse hand can call. Check it when a bluff is the realistic way to get paid. Call the clock a clock, and call the trap a trap.
-
-Trapping hides a made hand. The opposite display is [the game that shows every card face up](/guides/open-face-chinese-poker), where placement, not a check, is the decision.`,
+[GTO principles](/guides/gto-poker-strategy) explain mixed actions; [open-face Chinese poker](/guides/open-face-chinese-poker) is a contrasting game where cards are exposed and placement is the decision.`,
     },
   ],
   faqs: [
@@ -234,8 +208,14 @@ Separate the idea from the clock. Review the hand you checked, including the val
     },
   ],
   sources: [
-    { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
-    { label: "World Series of Poker", url: "https://www.wsop.com/" },
+    {
+      label: "Pagat — public card-game rules",
+      url: "https://www.pagat.com/",
+    },
+    {
+      label: "World Series of Poker",
+      url: "https://www.wsop.com/",
+    },
   ],
   related: [
     "gto-poker-strategy",
@@ -244,5 +224,5 @@ Separate the idea from the clock. Review the hand you checked, including the val
     "cash-game-poker",
     "open-face-chinese-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

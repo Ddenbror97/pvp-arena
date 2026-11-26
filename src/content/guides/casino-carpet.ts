@@ -25,29 +25,6 @@ export const guide: Guide = {
   ],
   sections: [
     {
-      id: "why",
-      title: "Why casino carpets look the way they do",
-      body: `Walk into an older casino and the floor can look like fireworks, paisley and a 1970s hotel lobby at once. That look is not an accident, but the reasons are more ordinary than the legends suggest.
-
-### A floor that never closes
-
-A big resort casino can host thousands of people a day, every day of the year. There is no closing time when a crew can shampoo the whole floor or let it dry. Carpet has to be cleaned in patches while people walk around it, and it has to look acceptable between cleanings.
-
-### Hiding what gets dropped
-
-Drinks are carried everywhere on a casino floor, and in many venues they are served free to players. Food, ash and chewing gum follow. A plain carpet would show every mark within an hour. A dense multicoloured pattern hides a stain until the next spot-cleaning pass. In the decades when smoking was allowed on most gaming floors, patterns also hid small burns.
-
-### Durability and replacement
-
-Because floors are hard to close, casinos want carpet that lasts, and they want to be able to replace a damaged section without the patch being obvious. A busy repeating pattern makes a replaced strip harder to spot than a plain surface, where fading between old and new carpet shows clearly.
-
-### Sound and comfort
-
-Carpet also absorbs noise. A casino floor full of machines, music and conversation would be much louder over hard surfaces. Carpet makes long periods of standing or walking more comfortable too.
-
-This page belongs to the [Casino knowledge topic](/guides/topics/casino-knowledge), alongside guides to [casino surveillance](/guides/casino-surveillance) and the [casino dress code](/guides/casino-dress-code).`,
-    },
-    {
       id: "history",
       title: "A short design history",
       body: `Casino carpet design follows the history of the casinos themselves.
@@ -68,29 +45,9 @@ From the late 1990s onward, several major Las Vegas resorts moved toward brighte
 
 Casino carpets have become a small cultural phenomenon. Photographers have documented them in books and online collections, and some fans treat them as a kind of accidental folk art. When a casino is demolished, pieces of carpet sometimes end up in sales of memorabilia alongside chips and signs.
 
-The [casino chip values](/guides/casino-chip-values) guide notes how chips from closed casinos become collectibles in the same way.`,
-    },
-    {
-      id: "theories",
-      title: "Common theories about casino carpets",
-      body: `Most articles about casino carpet repeat a small set of claims. They differ a lot in how well supported they are.
+The [casino chip values](/guides/casino-chip-values) guide notes how chips from closed casinos become collectibles in the same way.
 
-| Claim | Status | Comment |
-| --- | --- | --- |
-| Patterns hide stains and wear | Well supported | Consistent with how facilities teams describe their choices |
-| Carpet reinforces the resort's theme | Well supported | Visible in design briefs and the carpets themselves |
-| Carpet marks walkways and zones | Well supported | Main aisles often use a different pattern from table pits |
-| Busy patterns keep eyes up on the games | Plausible, little evidence | Often attributed to designers; rarely measured |
-| Patterns are meant to disorient and trap players | Weak | Repeated widely; no strong published evidence |
-| Ugly carpet stops people from sitting on the floor | Anecdotal | A popular line, not a documented design rule |
-
-### Where the "disorientation" idea comes from
-
-The idea that casinos are designed to disorient visitors has roots in real design debates. Some influential casino design writing, most prominently Bill Friedman's book on designing casinos, argued for maze-like layouts, low ceilings and a floor packed with games close to the entrance. Other designers later favoured open, bright "playground" spaces. Neither school depended mainly on carpet. The leap from "casinos think carefully about layout" to "the carpet is engineered to confuse you" is not backed by published data.
-
-### What can be tested
-
-A pattern's effect on attention could in principle be measured with eye-tracking, and some academic work has studied how casino design affects players' mood and willingness to keep playing. That research looks mostly at layout, lighting and décor as a whole rather than carpet alone. The honest summary is that carpet is part of an environment designed to be comfortable to stay in, and the specific carpet-psychology claims are unproven.`,
+Shaw Contract's Red Hawk Casino Hotel project identifies custom broadloom and carpet tile products. It documents an actual flooring specification, not proof that a pattern compels gambling.`,
     },
     {
       id: "zoning",
@@ -140,23 +97,6 @@ Carpet is a minor part of that environment. Knowing about the design is still us
 
 If you notice you are staying longer or spending more than planned, the [responsible gambling](/responsible-gambling) page has tools and contacts. Gambling is for adults only, 18 or 21 depending on where you are.`,
     },
-    {
-      id: "online",
-      title: "No carpet, same maths",
-      body: `An online game has no floor to decorate, but the same design questions appear on screen: colour, animation, sound and how easy it is to start another round.
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott, and play is settled in US dollars. The environment is simple by design, and the odds are stated rather than hidden in the décor:
-
-- In [Roulette](/roulette), 16 Purple and 16 Silver slots pay 2x and one Green pays 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
-- In [Coinflip](/coinflip), two players take a fair 50/50, and the winner takes the pot minus any fee shown before entry.
-- In Jackpot, your chance equals your share of the pot.
-
-Every result comes from committed seeds, and any settled round can be verified on the fairness page. That transparency does not change the edge on Roulette or the variance of a flip, but it means you can check outcomes rather than trust the atmosphere.
-
-The practical lesson from casino carpet carries over: surroundings are built to be pleasant, and pleasant surroundings make it easy to lose track of time. Set a limit and a stop time before you begin. Treat the maths, not the mood, as the thing that decides how your session goes on average. Play is for adults 18 and over, and taking breaks is always part of playing well.
-
-See also [casino architecture](/guides/casino-architecture).`,
-    },
   ],
   faqs: [
     {
@@ -181,8 +121,18 @@ See also [casino architecture](/guides/casino-architecture).`,
     },
   ],
   sources: [
-    { label: "Wikipedia: Axminster carpet", url: "https://en.wikipedia.org/wiki/Axminster_carpet" },
-    { label: "Wikipedia: Casino", url: "https://en.wikipedia.org/wiki/Casino" },
+    {
+      label: "Shaw Contract: Red Hawk Casino Hotel flooring project",
+      url: "https://www.shawcontract.com/en-us/resources/red-hawk-casino-hotel",
+    },
+    {
+      label: "Wikipedia: Axminster carpet",
+      url: "https://en.wikipedia.org/wiki/Axminster_carpet",
+    },
+    {
+      label: "Wikipedia: Casino",
+      url: "https://en.wikipedia.org/wiki/Casino",
+    },
     {
       label: "Encyclopaedia Britannica: Las Vegas",
       url: "https://www.britannica.com/place/Las-Vegas-Nevada",
@@ -196,5 +146,5 @@ See also [casino architecture](/guides/casino-architecture).`,
     "las-vegas-history",
     "casino-architecture",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

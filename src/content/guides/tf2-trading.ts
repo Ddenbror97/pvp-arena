@@ -60,7 +60,7 @@ If a stranger’s math needs a fourth metal name, you are no longer on the wiki 
     {
       id: "keys",
       title: "Keys as a price unit that moves",
-      body: `The Mann Co. Supply Crate Key is an official tool. In the game it opens a crate. In community trading it became a price unit because traders would rather say “two keys” than argue about a heap of metal. That habit is real. The number of keys a hat “is” today is not a law, and this page will not print a key-to-dollar figure or a key-to-refined figure. Both move. The in-game store price, the Community Market price, and the peer-trade quote are three different conversations, and the Market one is also shrunk by fees described on the [Steam market fees](/guides/steam-market-fees) page.
+      body: `The Mann Co. Supply Crate Key is an official tool. In the game it opens a crate. In community trading it became a price unit because traders would rather say “two keys” than argue about a heap of metal. That habit is real. A hat’s key price and the key-to-refined exchange rate are market quotes; record the date and check the actual trade terms. Both move. The in-game store price, the Community Market price, and the peer-trade quote are three different conversations, and the Market one is also shrunk by fees described on the [Steam market fees](/guides/steam-market-fees) page.
 
 When you price an item, open a current community price list and read the range, not a single heroic number from a forum post last year. If the list shows a spread, the middle of the spread is still a quote, not a debt the other person owes you. A key you buy in the Mann Co. Store is a key. A key you receive in a player trade is the same item type only after it is actually in your backpack and the trade has finished. A screenshot of a key is not a key.
 
@@ -124,7 +124,7 @@ If you already sent items to a fake window, use Steam’s account-recovery tools
       title: "Keep a quote apart from a wager",
       body: `A trading quote answers what the community paid recently for a hat, a key, or a pile of metal. A wager answers who wins a pot. Those sentences use the same backpack and then diverge. Once an item is a chip on a third-party site, you have left pricing and entered gambling, including the Subscriber Agreement issues and the bot risk that the gambling guide already covers. Read that guide once, on purpose, and do not look for staking advice in the metal table above.
 
-If you only wanted the craft counts, you already have them: two weapons to a scrap, three scrap to a reclaimed, three reclaimed to a refined. If you wanted a live key price, go to a list that updates, because this article refuses to freeze one. If the items are sitting in a hold, read the hold guide and Steam’s FAQ before you promise them. If the account cannot trade at all, read the ban guide. If you are comparing a Market listing with a peer offer, subtract the fee in your head using the fees guide, then decide.
+If you only wanted the craft counts, you already have them: two weapons to a scrap, three scrap to a reclaimed, three reclaimed to a refined. Use a current listing or completed trade for the key price, then allow for fees and liquidity. If the items are sitting in a hold, read the hold guide and Steam’s FAQ before you promise them. If the account cannot trade at all, read the ban guide. If you are comparing a Market listing with a peer offer, subtract the fee in your head using the fees guide, then decide.
 
 ### A last pass
 
@@ -143,7 +143,7 @@ The [CS:GO heritage topic](/guides/topics/csgo-heritage) is the shelf these page
     },
     {
       q: "How many dollars is a Mann Co. key?",
-      a: "This page does not print a dollar price. Community quotes and the store price move, and the Community Market quote is also after fees. Check a current list.",
+      a: "A dollar conversion needs a dated key price and the applicable selling and withdrawal fees. Community quotes and the store price move, and the Community Market quote is also after fees. Check a current list.",
     },
     {
       q: "Why is my TF2 trade on hold?",
@@ -159,7 +159,10 @@ The [CS:GO heritage topic](/guides/topics/csgo-heritage) is the shelf these page
     },
   ],
   sources: [
-    { label: "Official TF2 Wiki: Crafting", url: "https://wiki.teamfortress.com/wiki/Crafting" },
+    {
+      label: "Official TF2 Wiki: Crafting",
+      url: "https://wiki.teamfortress.com/wiki/Crafting",
+    },
     {
       label: "Official TF2 Wiki: Mann Co. Supply Crate Key",
       url: "https://wiki.teamfortress.com/wiki/Mann_Co._Supply_Crate_Key",
@@ -170,5 +173,5 @@ The [CS:GO heritage topic](/guides/topics/csgo-heritage) is the shelf these page
     },
   ],
   related: ["tf2-gambling", "steam-trade-hold", "steam-trade-ban", "steam-market-fees"],
-  updated: "2026-09-29",
+  updated: "2026-11-26",
 };

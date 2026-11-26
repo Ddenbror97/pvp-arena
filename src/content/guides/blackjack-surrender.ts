@@ -88,7 +88,7 @@ Take hard 16 versus a dealer 10 on a multi-deck game that allows late surrender.
 
 If standing loses 77 cents per dollar on average for that cell, surrender at −50 cents is cheaper. If hitting loses 54 cents per dollar, surrender is still cheaper. Those cent figures are familiar teaching numbers from strategy books; a percent for that exact cell is not published on the New Jersey PDF.
 
-The [published decision grid](/guides/blackjack-basic-strategy) marks surrender on some 15s and 16s against 9, 10, and ace when the rule exists. This page does not reprint that grid. It explains the half-back contract the grid assumes.
+The [published decision grid](/guides/blackjack-basic-strategy) marks surrender on some 15s and 16s against 9, 10, and ace when the rule exists. Use the surrender row for the table’s exact rules and your hand composition. It explains the half-back contract the grid assumes.
 
 | Player hard total vs dealer 10 (surrender allowed) | Approx. cost of standing | Approx. cost of hitting | Cost of half-back exit |
 |---|---|---|---|
@@ -211,5 +211,5 @@ We did not open an account here. We did not time a withdrawal. Minimum bet on th
     "house-edge",
     "how-to-play-blackjack",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

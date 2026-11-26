@@ -150,7 +150,7 @@ Cash-out minimum here is $20 in BTC, USDC, or ETH. That minimum is not a jackpot
     {
       id: "limits",
       title: "Who should not play in order to hit the prize",
-      body: `Do not play for money if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent, savings, or money with a due date.
+      body: `Cash play requires the local minimum age, lawful access and an affordable budget.
 
 Do not take a seat because a poster shows a large number. The only large number on the glossary is a remark about some clubs, and it is not your balance. A room that does not publish a pool has not promised you one.
 
@@ -205,5 +205,5 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     "pineapple-poker",
     "poker-bankroll-management",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

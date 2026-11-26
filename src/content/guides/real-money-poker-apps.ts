@@ -16,7 +16,7 @@ export const guide: Guide = {
     "Real money poker apps split into player tables, club agents, and house games. Learn which one you are opening before you deposit.",
   h1: "Real money poker apps: play people, or play the house",
   answer:
-    "Real money poker apps are not one product. Some seats put you against other people and charge a fee to host the table. Some club apps let a person sell the chips and pay the cash-out. Some games use poker hand rankings and still pay you against the house. Name which app you opened before you care about strategy. This guide will not rank legal sites by country or invent a fee the cashier did not show you.",
+    "Real money poker apps are not one product. Some seats put you against other people and charge a fee to host the table. Some club apps let a person sell the chips and pay the cash-out. Some games use poker hand rankings and still pay you against the house. Name which app you opened before you care about strategy. Compare licensing, location eligibility and the room’s actual rake and withdrawal terms before depositing.",
   facts: [
     "Player-versus-player poker pays the winner from other players' bets, minus the posted fee.",
     "A club or agent app may show chips while a person, not the app company, owes the cash-out.",
@@ -36,9 +36,11 @@ In a club or agent app, the cards may be the same and the payer may not. You mig
 
 In a house game, the pay table is the opponent. You are not trying to fold out a person. You are taking a price the game posted, the way a slot posts a price. Hand rankings show up, and the decision is still you versus the listing.
 
-This [poker](/guides/topics/poker) guide is for adults 18 or older. The room page is the [ACR review](/guides/acr-poker-review). It is not legal advice. Which of these apps you may use for money depends on where you live and on each operator's terms. This page will not publish a legal map. If an app will not offer you a cashier in your location, believe the cashier.
+This [poker](/guides/topics/poker) guide is for adults 18 or older. The room page is the [ACR review](/guides/acr-poker-review). It is not legal advice. Which of these apps you may use for money depends on where you live and on each operator's terms. Confirm authorisation and eligibility for the specific room and jurisdiction. If an app will not offer you a cashier in your location, believe the cashier.
 
-Start with [how to play poker](/guides/how-to-play-poker) if the cards themselves are new. Then come back and label the app. Learning c-bets in a house game is studying for the wrong exam.`,
+Start with [how to play poker](/guides/how-to-play-poker) if the cards themselves are new. Then come back and label the app. Learning c-bets in a house game is studying for the wrong exam.
+
+PokerStars’ cash-game documentation is an example of room-specific table terms. Match blinds, buy-in and rake to the exact game; it does not establish availability in every jurisdiction.`,
     },
     {
       id: "pvp-rooms",
@@ -144,7 +146,7 @@ See also: [Stake poker](/guides/stake-poker).`,
     },
     {
       q: "Which app is legal where I live?",
-      a: "This guide does not say. Read each operator's terms and your local law. A crypto balance does not settle the legal question. This is not legal advice.",
+      a: "Check the current room terms and local official guidance for your location. Read each operator's terms and your local law. A crypto balance does not settle the legal question. This is not legal advice.",
     },
     {
       q: "Is PVPspinArena a real money poker app?",
@@ -152,9 +154,19 @@ See also: [Stake poker](/guides/stake-poker).`,
     },
   ],
   sources: [
-    { label: "Wikipedia — Poker", url: "https://en.wikipedia.org/wiki/Poker" },
-    { label: "Wikipedia — Online poker", url: "https://en.wikipedia.org/wiki/Online_poker" },
+    {
+      label: "Wikipedia — Poker",
+      url: "https://en.wikipedia.org/wiki/Poker",
+    },
+    {
+      label: "Wikipedia — Online poker",
+      url: "https://en.wikipedia.org/wiki/Online_poker",
+    },
+    {
+      label: "PokerStars: cash games and table information",
+      url: "https://www.pokerstars.com/help/articles/ring-explanations/14982/",
+    },
   ],
   related: ["acr-poker-review", "crypto-poker"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

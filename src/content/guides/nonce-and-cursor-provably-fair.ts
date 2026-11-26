@@ -43,7 +43,7 @@ Not every game uses a long-lived seed plus nonce. Player-vs-player rounds often 
 
 ### Nonce
 
-In cryptography a nonce is a number used once. In casino fairness docs it is almost always a non-negative integer that starts at zero or one when a seed pair is created and rises by one after each bet. When people search for **nonce provably fair**, this counter is what they mean.
+In cryptography a nonce is a number used once. In casino fairness docs it is almost always a non-negative integer that starts at zero or one when a seed pair is created and rises by one after each bet. The **nonce** identifies a bet within the seed pair; the cursor identifies additional output consumed by that bet.
 
 ### Cursor
 
@@ -246,7 +246,10 @@ Some brands bolt house games onto a PvP lobby. Those house tabs may still show n
       label: "NIST — SHA-256 in FIPS 180-4",
       url: "https://csrc.nist.gov/publications/detail/fips/180/4/final",
     },
-    { label: "IETF RFC 2104 — HMAC", url: "https://www.rfc-editor.org/rfc/rfc2104" },
+    {
+      label: "IETF RFC 2104 — HMAC",
+      url: "https://www.rfc-editor.org/rfc/rfc2104",
+    },
   ],
   related: [
     "server-seed-client-seed",
@@ -255,5 +258,5 @@ Some brands bolt house games onto a PvP lobby. Those house tabs may still show n
     "commit-reveal-scheme",
     "provably-fair-casino",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

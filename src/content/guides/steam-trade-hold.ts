@@ -15,7 +15,7 @@ export const guide: Guide = {
     "What a Steam trade hold is, why items wait up to 7 days, how it interacts with market listings, and why it is a poor chip for gambling.",
   h1: "Steam trade hold: why items sit and what you can do",
   answer:
-    "A Steam trade hold is Valve’s delay on items after a trade or, in related cases, a market listing, while Steam Guard and account checks finish. People search “steam trade hold 7 days” because the Mobile Authenticator must usually be on for seven full days before new trades skip the hold. Until then, Steam can park items for up to 15 days. The hold is anti-theft, not a shipping queue you can rush.",
+    "A Steam trade hold is Valve’s delay on items after a trade or, in related cases, a market listing, while Steam Guard and account checks finish. The seven-day timing matters because the Mobile Authenticator must usually be on for seven full days before new trades skip the hold. Until then, Steam can park items for up to 15 days. The hold is anti-theft, not a shipping queue you can rush.",
   facts: [
     "Steam’s help pages: trades started without a Mobile Authenticator that has been on for seven days can be held up to 15 days.",
     "Adding an authenticator does not shorten a hold that already started.",
@@ -210,5 +210,5 @@ If you play elsewhere with a token, there is still a delay: chain confirmation. 
     "cs2-operation",
     "steam-market-fees",
   ],
-  updated: "2026-09-26",
+  updated: "2026-11-26",
 };

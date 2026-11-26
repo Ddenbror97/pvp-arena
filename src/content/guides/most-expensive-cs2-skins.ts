@@ -27,7 +27,7 @@ export const guide: Guide = {
     {
       id: "records-vs-lists",
       title: "Record sales are not the price guide",
-      body: `People type “most expensive CS2 skin” and land on two different questions. This page answers the trophy question: which copies have changed hands for sums that make headlines, and why those copies are not the same item as a normal Field-Tested listing.
+      body: `Record prices and current asking prices answer different questions. This page answers the trophy question: which copies have changed hands for sums that make headlines, and why those copies are not the same item as a normal Field-Tested listing.
 
 The everyday question — what a playskin costs, how float moves a number, what a collection does to supply — belongs on [CS2 skin prices](/guides/cs2-skin-prices). That is the general price guide. Do not treat the ranked list below as a shopping list for a loadout.
 
@@ -147,9 +147,18 @@ You must be 18 or over to gamble. Treating record skins as an investment is stil
     },
   ],
   sources: [
-    { label: "Counter-Strike 2 official site", url: "https://www.counter-strike.net/" },
-    { label: "Steam Community Market", url: "https://steamcommunity.com/market/" },
-    { label: "Counter-Strike blog", url: "https://blog.counter-strike.net/" },
+    {
+      label: "Counter-Strike 2 official site",
+      url: "https://www.counter-strike.net/",
+    },
+    {
+      label: "Steam Community Market",
+      url: "https://steamcommunity.com/market/",
+    },
+    {
+      label: "Counter-Strike blog",
+      url: "https://blog.counter-strike.net/",
+    },
   ],
   related: [
     "pvp-gambling",
@@ -158,5 +167,5 @@ You must be 18 or over to gamble. Treating record skins as an investment is stil
     "case-hardened-blue-gem",
     "cs2-agents",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

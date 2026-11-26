@@ -30,7 +30,9 @@ His profile changed when gambling became his main content. From around 2020 onwa
 
 Trainwreck is not a gambler in the same sense as the card players and bettors in the [famous gamblers overview](/guides/famous-gamblers). His significance is as a broadcaster: he showed millions of viewers what high-stakes online casino play looks like, and he became a central figure in arguments about whether that should be shown at all. That puts him at the meeting point of casino culture and platform policy, which is why he sits in the [casino knowledge topic hub](/guides/topics/casino-knowledge).
 
-This page covers his career and the maths of what appears on his streams. Platform policy itself is covered in detail elsewhere: the [Twitch slots ban guide](/guides/twitch-slots-ban) explains Twitch's rules, and the [Kick gambling streamers guide](/guides/kick-gambling-streamers) covers the platform that followed.`,
+This page covers his career and the maths of what appears on his streams. Platform policy itself is covered in detail elsewhere: the [Twitch slots ban guide](/guides/twitch-slots-ban) explains Twitch's rules, and the [Kick gambling streamers guide](/guides/kick-gambling-streamers) covers the platform that followed.
+
+Twitch's own policy restricts links and affiliate codes for slots, roulette and dice sites and separately identifies prohibited gambling streams. Platform permission does not validate an operator's safety or a streamer's profit.`,
     },
     {
       id: "streams",
@@ -72,7 +74,17 @@ The details of the rule and later updates are on the [Twitch slots ban guide](/g
     {
       id: "kick",
       title: "Kick and the move off Twitch",
-      body: "Within months of Twitch's policy change, a new streaming platform, Kick, launched in late 2022. Kick has been widely reported as linked to Stake's founders, Ed Craven and Bijan Tehrani, and it allowed gambling content that Twitch had restricted.\n\nTrainwreck was one of Kick's most prominent early public figures. Coverage has described him variously as a partner, adviser or stakeholder; he has discussed his involvement on stream, and the exact nature of his role has been described differently in different reports. What is clear is that he was closely identified with the platform from its launch and that he streamed there.\n\n### Why it matters\n\nKick's launch changed the gambling-stream debate. Instead of a single dominant platform deciding what could be shown, streamers could move to a platform whose owners had links to a casino. That raised new questions about conflicts of interest: a streaming platform, its most visible streamers and a casino can share commercial ties, and viewers may not see where one ends and another begins.\n\n### Age and audience concerns\n\nThe criticism that recurs most across both platforms concerns age. Gambling is legal only for adults, usually 18+ or the local legal age, but live-streaming audiences include many younger viewers, and platforms largely rely on self-declared ages. Critics argue that showing casino play as everyday entertainment to a mixed-age audience normalises it before viewers can legally take part. That concern is set out in more detail in the guide to [underage gambling risks](/guides/underage-gambling-risks).",
+      body: `Within months of Twitch's policy change, a new streaming platform, Kick, launched in late 2022. Kick has been widely reported as linked to Stake's founders, Ed Craven and Bijan Tehrani, and it allowed gambling content that Twitch had restricted.
+
+Trainwreck was one of Kick's most prominent early public figures. Coverage has described him variously as a partner, adviser or stakeholder; he has discussed his involvement on stream, and the exact nature of his role has been described differently in different reports. What is clear is that he was closely identified with the platform from its launch and that he streamed there.
+
+### Why it matters
+
+Kick's launch changed the gambling-stream debate. Instead of a single dominant platform deciding what could be shown, streamers could move to a platform whose owners had links to a casino. That raised new questions about conflicts of interest: a streaming platform, its most visible streamers and a casino can share commercial ties, and viewers may not see where one ends and another begins.
+
+### Age and audience concerns
+
+The criticism that recurs most across both platforms concerns age. Gambling is legal only for adults, usually 18+ or the local legal age, but live-streaming audiences include many younger viewers, and platforms largely rely on self-declared ages. Critics argue that showing casino play as everyday entertainment to a mixed-age audience normalises it before viewers can legally take part. That concern is set out in more detail in the guide to [underage gambling risks](/guides/underage-gambling-risks).`,
     },
     {
       id: "maths",
@@ -103,23 +115,6 @@ A $500 spin means something very different depending on who places it. For a pla
 
 Highlights and clips show the biggest wins. The long stretches of losing spins that pay for them are rarely clipped. A viewer who judges the game by its clips is looking at the top of the distribution, not the average.`,
     },
-    {
-      id: "pvp",
-      title: "Watching versus playing, and the PvP link",
-      body: `The useful question after watching any gambling stream is not "could I win like that?" but "what does this game cost per dollar, and can I check it?"
-
-PVPspinArena runs Jackpot, Coinflip, house-banked Roulette, and P2P Slott with stated structures:
-
-- **Coinflip**: two players, 50/50. The winner takes the pot minus any fee shown before entry.
-- **Jackpot**: players add wagers to one pot, and your win chance equals your share.
-- **Roulette**: a 33-slot wheel, 16 Purple and 16 Silver slots paying 2x and 1 Green paying 14x. Purple and Silver return 32/33 and Green returns 14/33 before the 5% win fee.
-
-The same turnover maths applies. $1,000 wagered on [Roulette](/roulette) has an expected cost of about $66.70, no matter how the session feels. Results come from seeds committed before each round and revealed after settlement, so anyone can verify a settled round on the [fairness](/fairness) page. Players also earn XP and cosmetic rewards through Prestige; those are cosmetic and do not change the odds.
-
-A stream is entertainment built around someone else's money and someone else's highlights. If watching is pushing you toward bigger stakes than you planned, set limits first with the [responsible gambling](/responsible-gambling) tools. Gambling is 18+.
-
-In the same cluster, see also [phil ivey](/guides/phil-ivey) and [edward thorp](/guides/edward-thorp).`,
-    },
   ],
   faqs: [
     {
@@ -148,9 +143,22 @@ In the same cluster, see also [phil ivey](/guides/phil-ivey) and [edward thorp](
     },
   ],
   sources: [
-    { label: "Wikipedia: Trainwreckstv", url: "https://en.wikipedia.org/wiki/Trainwreckstv" },
-    { label: "Wikipedia: Twitch (service)", url: "https://en.wikipedia.org/wiki/Twitch_(service)" },
-    { label: "Wikipedia: Kick (service)", url: "https://en.wikipedia.org/wiki/Kick_(service)" },
+    {
+      label: "Twitch: prohibited gambling content policy",
+      url: "https://safety.twitch.tv/articles/en_US/Knowledge/Community-Guidelines",
+    },
+    {
+      label: "Wikipedia: Trainwreckstv",
+      url: "https://en.wikipedia.org/wiki/Trainwreckstv",
+    },
+    {
+      label: "Wikipedia: Twitch (service)",
+      url: "https://en.wikipedia.org/wiki/Twitch_(service)",
+    },
+    {
+      label: "Wikipedia: Kick (service)",
+      url: "https://en.wikipedia.org/wiki/Kick_(service)",
+    },
   ],
   related: [
     "kick-gambling-streamers",
@@ -160,5 +168,5 @@ In the same cluster, see also [phil ivey](/guides/phil-ivey) and [edward thorp](
     "phil-ivey",
     "edward-thorp",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

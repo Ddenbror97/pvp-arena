@@ -15,13 +15,13 @@ export const guide: Guide = {
     "How to judge the best sweepstakes casinos with a checklist: terms, playthrough, state blocks, redeem friction and red flags. Not a ranked brand list.",
   h1: "Best sweepstakes casinos: a checklist, not a ranking",
   answer:
-    "The best sweepstakes casinos are the ones that survive a checklist you can rerun today: readable official rules, a stated playthrough, a dated state list, a redeem path that is not chat-only, and an age gate. Ranking tables go stale and often follow affiliate payouts. This page names no winners. PVPspinArena is not a sweepstakes casino, so it is not on the list.",
+    "The best sweepstakes casinos are the ones that survive a checklist you can rerun today: readable official rules, a stated playthrough, a dated state list, a redeem path that is not chat-only, and an age gate. Ranking tables go stale and often follow affiliate payouts. This page names no winners.",
   facts: [
     "A ranked “top 10” is usually an affiliate order, not a player-safety order.",
     "Official rules, not a streamer’s code, decide whether Sweeps Coins can redeem.",
     "State availability moves. A brand that worked in your ZIP last quarter can fail this quarter.",
     "Playthrough, redeem floors and KYC timing belong on the scorecard before art and lobby speed.",
-    "PVPspinArena is a USDC and ETH PvP site. It does not belong on a sweepstakes ranking.",
+    "It does not belong on a sweepstakes ranking.",
   ],
   sections: [
     {
@@ -124,22 +124,11 @@ If both sites fail the state-list row, you do not pick a winner. You do not play
 - Guaranteed redeem rates. No honest lobby can promise that.
 - “We pay in crypto, no KYC, all states” on a sweepstakes landing page. That mash-up is a warning, not a feature. [Are online casinos rigged](/guides/are-online-casinos-rigged) covers the honesty question from another angle.
 
-PVPspinArena will fail this sweepstakes scorecard on purpose: it is the wrong product. There are no Gold Coins to score.
+There are no Gold Coins to score.
 
 A softer red flag is the “review” that never describes a redeem. Ten paragraphs of slot names and zero sentences about playthrough is an affiliate outline. You can still play those slots if the official rules pass. You should not let the review replace the rules.
 
 Another soft flag is a support agent who offers to “unlock redeem” if you buy a larger Gold Coin tier. That is a new purchase wearing a support costume. Score it as pressure, then leave. Honest friction is a documented review queue. Dishonest friction is a sales pitch after you already cleared the meter.`,
-    },
-    {
-      id: "not-this-site",
-      title: "Why this site is not on the list",
-      body: `PVPspinArena is player-versus-player Roulette, P2P Slott, six-max poker, Jackpot, and Coinflip with USDC or ETH on Base. It is not a sweepstakes casino. It does not sell Gold Coins. If you apply the eight points here, you should be comparing hashed pots, posted fees, and the [Fairness](/fairness) verifier — which is the [crypto checklist](/guides/best-crypto-gambling-sites), not this one.
-
-Do not treat a high crypto-checklist score as a sweepstakes recommendation. Do not treat a high sweepstakes score as a reason to send USDC. Two products. Two scorecards.
-
-If you finish the sweepstakes card at 2/8 and feel disappointed, that is the card working. The job is not to find a way to play tonight. The job is to refuse a lobby that cannot explain its own coins. There will always be another brand in the ad auction tomorrow. There will not always be the $40 you were about to put into Gold Coins.
-
-Keep the filled scorecard for 90 days. When a friend forwards a “best of 2026” list, compare it to your sheet instead of to the list’s stars. If the list cannot beat your notes on redeem and state, the list is entertainment.`,
     },
     {
       id: "summary",
@@ -180,8 +169,14 @@ You must be 18 or over. If shopping for a “best” lobby has become the sessio
       label: "FTC — Prize, sweepstakes and lottery scams",
       url: "https://www.ftc.gov/consumer-advice/money-credit/scams/prize-sweepstakes-lotteries",
     },
-    { label: "NCPG — Responsible gambling resources", url: "https://www.ncpgambling.org/" },
-    { label: "Washington State Attorney General", url: "https://www.atg.wa.gov/" },
+    {
+      label: "NCPG — Responsible gambling resources",
+      url: "https://www.ncpgambling.org/",
+    },
+    {
+      label: "Washington State Attorney General",
+      url: "https://www.atg.wa.gov/",
+    },
   ],
   related: [
     "sweepstakes-casino",
@@ -193,5 +188,5 @@ You must be 18 or over. If shopping for a “best” lobby has become the sessio
     "new-sweepstakes-casinos",
     "no-deposit-sweepstakes-casinos",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

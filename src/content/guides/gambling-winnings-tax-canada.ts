@@ -27,72 +27,37 @@ export const guide: Guide = {
     {
       id: "scope",
       title: "Scope and disclaimer",
-      body: `This page sketches public CRA themes around gambling tax Canada. It is not a ruling on your return, not legal advice and not a how-to minimize tax improperly. Read current CRA pages and speak to a qualified Canadian tax professional.
-
-Adults 18+. This sits in [Foundations](/guides/topics/foundations). For product context see [what is a crypto casino](/guides/what-is-a-crypto-casino). US readers should use [crypto gambling taxes](/guides/crypto-gambling-taxes) instead — different country, different agency.
-
-If play is harmful, tax season is not the priority — [responsible gambling](/responsible-gambling).
-`,
+      body: "It is not a ruling on your return, not legal advice and not a how-to minimize tax improperly. Read current CRA pages and speak to a qualified Canadian tax professional.\n\nAdults 18+. This sits in [Foundations](/guides/topics/foundations). For product context see [what is a crypto casino](/guides/what-is-a-crypto-casino). US readers should use [crypto gambling taxes](/guides/crypto-gambling-taxes) instead — different country, different agency.\n\nIf play is harmful, tax season is not the priority — [responsible gambling](/responsible-gambling).",
     },
     {
       id: "windfall",
       title: "Windfalls, hobbies and business-like play",
-      body: `CRA educational materials have long distinguished certain windfalls (for example some lottery prizes) from amounts earned in a business. Casual gambling that looks like entertainment can sit closer to the windfall/hobby conversation. Activity that looks organized, frequent and commercial can sit closer to business income.
-
-Your facts decide which story fits. Volume alone is not a DIY test you should run from a crypto Twitter thread. A professional looks at intention, frequency, record-keeping, financing and how you run the activity.
-
-We will not coach you to relabel a business as a hobby to change a result.
-`,
+      body: "CRA educational materials have long distinguished certain windfalls (for example some lottery prizes) from amounts earned in a business. Casual gambling that looks like entertainment can sit closer to the windfall/hobby conversation. Activity that looks organized, frequent and commercial can sit closer to business income.\n\nYour facts decide which story fits. Volume alone is not a DIY test you should run from a crypto Twitter thread. A professional looks at intention, frequency, record-keeping, financing and how you run the activity.",
     },
     {
       id: "crypto",
       title: "Crypto layers still exist",
-      body: `Even when a casino outcome is discussed as a windfall, converting crypto, trading tokens or disposing of digital assets can engage CRA crypto guidance. Keep txids and Canadian-dollar values when tokens move.
-
-Stablecoin play on a site like ours reduces price noise while you use [Jackpot](/) or [Roulette](/roulette), but withdrawals to a wallet you later swap can still be events to discuss with a preparer.
-
-See [how it works](/how-it-works) for how dollar balances appear on PVPspinArena — product docs, not a CRA form.
-`,
+      body: "Even when a casino outcome is discussed as a windfall, converting crypto, trading tokens or disposing of digital assets can engage CRA crypto guidance. Keep txids and Canadian-dollar values when tokens move.\n\nStablecoin play on a site like ours reduces price noise while you use [Jackpot](/) or [Roulette](/roulette), but withdrawals to a wallet you later swap can still be events to discuss with a preparer.\n\nSee [how it works](/how-it-works) for how dollar balances appear on PVPspinArena — product docs, not a CRA form.",
     },
     {
       id: "records",
       title: "Records worth keeping anyway",
-      body: `Whether a win is taxable or not, a clean diary helps you answer a professional quickly:
-
-- Dates and sites.
-- Deposit and withdrawal amounts in CAD equivalents.
-- Txids on the network you used.
-- Whether the session was entertainment-sized or business-like in how you ran it.
-
-[Online casino real money](/guides/online-casino-real-money) literacy still applies: only stake money you can afford to lose. [House edge](/guides/house-edge) explains expected cost without needing a tax angle.
-`,
+      body: "Whether a win is taxable or not, a clean diary helps you answer a professional quickly:\n\n- Dates and sites.\n- Deposit and withdrawal amounts in CAD equivalents.\n- Txids on the network you used.\n- Whether the session was entertainment-sized or business-like in how you ran it.\n\n[Online casino real money](/guides/online-casino-real-money) literacy still applies: only stake money you can afford to lose. [House edge](/guides/house-edge) explains expected cost without needing a tax angle.",
     },
     {
       id: "provinces",
       title: "Provincial gambling context is separate",
-      body: `Tax treatment is not the same question as whether an online casino may take you in your province. For access themes see high-level crypto casino Canada orientation elsewhere in this cluster when published — until then, use provincial regulator pages.
-
-Offshore seals do not decide CRA outcomes. [Crypto casino license](/guides/crypto-casino-license) is about operator claims, not your T1.
-`,
+      body: "Tax treatment is not the same question as whether an online casino may take you in your province. For access themes see high-level crypto casino Canada orientation elsewhere in this cluster when published — until then, use provincial regulator pages.\n\nOffshore seals do not decide CRA outcomes. [Crypto casino license](/guides/crypto-casino-license) is about operator claims, not your T1.",
     },
     {
       id: "mistakes",
       title: "Mistakes to avoid",
-      body: `- Copying US Schedule A logic onto a Canadian return.
-- Assuming “crypto” means untaxable.
-- Assuming every casino win is automatically tax-free without reading current CRA pages.
-- Inventing invoices to manufacture a business loss.
-- Ignoring exchange reports that already show disposals.
-
-[Fake casino sites](/guides/fake-casino-sites) also create fake “tax documents.” Only trust forms you understand with a professional.
-`,
+      body: "- Copying US Schedule A logic onto a Canadian return.\n- Assuming “crypto” means untaxable.\n- Assuming every casino win is automatically tax-free without reading current CRA pages.\n- Inventing invoices to manufacture a business loss.\n- Ignoring exchange reports that already show disposals.\n\n[Fake casino sites](/guides/fake-casino-sites) also create fake “tax documents.” Only trust forms you understand with a professional.",
     },
     {
       id: "next",
       title: "Next steps",
-      body: `Read the CRA windfalls and crypto guidance pages linked in sources. Export your ledger. Book a Canadian tax professional if the amounts matter.
-
-Use [best crypto gambling sites](/guides/best-crypto-gambling-sites) checklists for product risk, not for tax positions. Self-exclude if needed via [gambling self-exclusion](/guides/gambling-self-exclusion).`,
+      body: "Read the CRA windfalls and crypto guidance pages linked in sources. Export your ledger. Book a Canadian tax professional if the amounts matter.\n\nUse [best crypto gambling sites](/guides/best-crypto-gambling-sites) checklists for product risk, not for tax positions. Self-exclude if needed via [gambling self-exclusion](/guides/gambling-self-exclusion).",
     },
   ],
   faqs: [
@@ -133,5 +98,5 @@ Use [best crypto gambling sites](/guides/best-crypto-gambling-sites) checklists 
     "online-casino-real-money",
     "house-edge",
   ],
-  updated: "2026-11-18",
+  updated: "2026-11-26",
 };

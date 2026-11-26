@@ -47,7 +47,7 @@ Write the constraints down before the first pot. Five hole cards. Pot-limit bett
 
 Exactly two hole cards in every made hand. A low only when it qualifies. Different rooms spell the low qualifier and the kill or half-kill extras on a house card.
 
-If the card is silent, ask. This page does not invent a kill pot.
+If the card is silent, ask. A kill-pot rule applies only if the room explicitly adopts it.
 
 [Texas Hold'em rules](/guides/texas-holdem-rules) are the street order most guests already know: blinds, then flop, turn, and river. Big O borrows that order and changes the private hand.
 
@@ -65,24 +65,10 @@ The [poker topic](/guides/topics/poker) collects the four-card and Hold'em pages
     },
     {
       id: "fee-table",
-      title: "A fee column that belongs to Hold'em, not to Big O",
-      body: `Card rooms that spread Big O publish their own rake or time charge. That number is not published here. A house-banked casino game is a different product: you play against the house, and any edge on that product is not published here either.
+      title: "Fees and the risk of sharing only part of the pot",
+      body: `Big O rooms set their own rake or time charge. Read that fee with the game’s split-pot rules: a quartered low can return less than the amount you contributed even when you share a winning hand.
 
-We do not list a promo code for a Big O room, because this site is not that room's affiliate.
-
-PVPspinArena deals six-max No-Limit Hold'em. That Hold'em fee is 5%, and it applies only after a flop. A hand that ends before the flop pays no poker fee.
-
-Deposits are a US-dollar balance funded with Bitcoin, or with USDC or ETH on Base.
-
-| | Kitchen Big O | House-banked casino | PVPspinArena |
-| --- | --- | --- | --- |
-| Game on offer | five-card pot-limit Omaha if the host deals it | not published | six-max No-Limit Hold'em |
-| Opponent | the other players | the house | another player |
-| Fee | whatever the group wrote down, or zero | not published | 5% of the pot only after a flop |
-| Promo code | not a brand offer | not published | we do not list a promo code |
-| Funding | cash or chips the host assigned | not published | US dollars from Bitcoin, or USDC or ETH on Base |
-
-Open [poker](/poker) when you want the game that is actually in the lobby. Big O stays a rules lesson.`,
+PVPspinArena does not deal Big O. Its [poker table](/poker) is six-max No-Limit Hold’em with a 5% pot fee only after a flop; that fee does not describe a different room’s Big O game.`,
     },
     {
       id: "dollars",
@@ -99,7 +85,7 @@ The winner is credited $34.20. A different hand that folds out before any flop p
 
 Do not subtract $1.80 from the friends' game.
 
-The price of a call, once a bet is already in the middle, is [pot odds](/guides/poker-pot-odds). This page does not rebuild that fraction. In Big O the fraction is only useful after you know which two cards you are actually playing.`,
+The price of a call, once a bet is already in the middle, is [pot odds](/guides/poker-pot-odds). Include the call amount and the final pot, then consider whether you can win the high, low or both. In Big O the fraction is only useful after you know which two cards you are actually playing.`,
     },
     {
       id: "checklist",
@@ -142,31 +128,17 @@ Bet when your two cards are the nuts or a draw to them. Check your pride when th
     },
     {
       id: "legal",
-      title: "Adults, a home game, and a rule card",
-      body: `Only adults should sit. If the age where you live is higher than 18, the higher age applies. Nothing on this page is legal advice.
+      title: "Agree the variant and eligibility first",
+      body: `Meet the local minimum age and legal requirements before any money game. A private home game and operating a public cardroom can have different rules. Agree five-card dealing, the two-hole-card requirement, pot limit, low qualification and fees before starting.
 
-A kitchen game among friends is not a license to run a public cardroom, and this article will not explain how to charge strangers.
-
-Read the [responsible gambling](/responsible-gambling) notes before the session money comes out of a wallet you need for bills. Big O's variance makes a "one more buy-in" speech especially slippery. Set the stop before the first fan of five.
-
-If a local regulator treats even a social game as something you must not run, follow that rule. This page does not cite a statute and does not sort countries. The operator's terms, or your city's rules, outrank a blog.
-
-Keep the written card short: five cards, two of them, pot limit, eight-or-better if that is what you deal, and whether anyone takes a chip. Argue from the card, not from memory of a different Omaha.`,
+Use [responsible gambling](/responsible-gambling) to set an affordable loss and time limit.`,
     },
     {
       id: "closer",
-      title: "The Hold'em table you can open instead",
-      body: `PVPspinArena does not deal Big O, short-deck, razz, deuce-to-seven, or open-face Chinese. Say that once and then use the lobby that exists. [Poker](/poker) is six-max No-Limit Hold'em.
+      title: "Choose the correct two-card combination",
+      body: `Five hole cards create ten possible pairs, but each final hand still uses exactly two hole cards and three board cards. Study the high and low separately rather than treating every attractive draw as a scoop.
 
-[Fairness](/fairness) shows how a committed seed can be checked after the hand. The live block, when the page has one, updates from settled play. This article does not paste recent pots.
-
-How PvP compares: Big O is a five-card high-low puzzle you can study on paper. The site's poker is two hole cards, no limit, and a 5% fee only after the flop. [Crypto poker](/guides/crypto-poker) describes that fee in the wider room sense.
-
-[Cash game poker](/guides/cash-game-poker) is the ring-game money wrapper if you want stakes language before you sit.
-
-Learn the ten combinations. Then decide whether you want a game this lobby does not spread, or the six-max Hold'em it does.
-
-Five-card Omaha is not a short deck. [The 36-card hold'em variant](/guides/short-deck-poker) removes low cards instead of adding a fifth hole card.`,
+Compare [Omaha rules](/guides/omaha-poker-rules), [cash-game structure](/guides/cash-game-poker) and [short-deck poker](/guides/short-deck-poker); short deck changes the deck instead of adding a fifth hole card.`,
     },
   ],
   faqs: [
@@ -208,8 +180,14 @@ Do not treat a fan of five cards as five free chances. Only the legal pairs coun
     },
   ],
   sources: [
-    { label: "Pagat — public card-game rules", url: "https://www.pagat.com/" },
-    { label: "World Series of Poker", url: "https://www.wsop.com/" },
+    {
+      label: "Pagat — public card-game rules",
+      url: "https://www.pagat.com/",
+    },
+    {
+      label: "World Series of Poker",
+      url: "https://www.wsop.com/",
+    },
   ],
   related: [
     "omaha-poker-rules",
@@ -218,5 +196,5 @@ Do not treat a fan of five cards as five free chances. Only the legal pairs coun
     "cash-game-poker",
     "short-deck-poker",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

@@ -26,13 +26,15 @@ export const guide: Guide = {
 
 This is not a casino wheel. [Skill-based gambling](/guides/skill-based-gambling) draws the line: a game is skill-dominant when decisions change long-run results against other players. Chess can clear that bar over hundreds of games. It does not clear it for a single bullet game you played while tired. Marketing that says “skill” still has to show the fee and the cheating policy.
 
-“Best ways to win real cash” is the search phrase people use. The useful reading is narrower. The best structure is a rated pool, a visible rake, a draw rule, and a fair-play check you can survive. There is no best site on this page, and there is no method that turns a hobby into wages. If you need the money, you cannot afford the entry.
+Compare the actual contest rules. The best structure is a rated pool, a visible rake, a draw rule, and a fair-play check you can survive. There is no best site on this page, and there is no method that turns a hobby into wages. If you need the money, you cannot afford the entry.
 
 [8 ball pool for money](/guides/8-ball-pool-for-money) is the same entry-and-rake shape on a table. The pages for this site’s table are collected at [8 ball pool online](/guides/8-ball-pool-hub). The map of those shapes is [games that pay real money](/guides/games-that-pay-real-money).
 
 [Bet with friends online](/guides/bet-with-friends-online) covers a private stake between people who already know each other. Cash chess sites are for strangers, which is why escrow and engine checks exist. A friend who says “I’m not using a computer” is a different risk from a stranger who will not turn on a camera or a fair-play tool.
 
-Adults 18+ only. Whether a cash chess game is legal where you sit is not something a blog can settle. Some places treat it as a skill contest. Some treat any stake as gambling. The platform’s terms can ban real-money side bets even on a free server. Check before you play. This is not legal advice.`,
+Adults 18+ only. Whether a cash chess game is legal where you sit is not something a blog can settle. Some places treat it as a skill contest. Some treat any stake as gambling. The platform’s terms can ban real-money side bets even on a free server. Check before you play. This is not legal advice.
+
+FIDE’s online regulations address playing conditions and fair play. They are a chess rules reference, rather than approval of a particular cash-wager platform.`,
     },
     {
       id: "ratings-and-fees",
@@ -149,6 +151,10 @@ The fair version of a chance pot, if that is what you wanted instead, is a publi
       label: "Wikipedia: Cheating in chess",
       url: "https://en.wikipedia.org/wiki/Cheating_in_chess",
     },
+    {
+      label: "FIDE: online chess regulations",
+      url: "https://handbook.fide.com/chapter/OnlineChessRegulations",
+    },
   ],
   related: [
     "skill-based-gambling",
@@ -156,5 +162,5 @@ The fair version of a chance pot, if that is what you wanted instead, is a publi
     "peer-to-peer-gambling",
     "heads-up-poker-strategy",
   ],
-  updated: "2026-10-06",
+  updated: "2026-11-26",
 };

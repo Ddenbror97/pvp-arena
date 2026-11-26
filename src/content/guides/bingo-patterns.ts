@@ -31,7 +31,9 @@ There are two main card formats:
 
 75-ball halls use a huge variety of patterns because a square card lends itself to shapes and letters. 90-ball halls mostly play the same three-stage format every game.
 
-For the calling side of the game (how numbers are announced and checked), see [bingo caller](/guides/bingo-caller). For playing online with crypto, [crypto bingo](/guides/crypto-bingo) covers sites and RTP. This page sits in the [Games of chance topic](/guides/topics/games-of-chance).`,
+For the calling side of the game (how numbers are announced and checked), see [bingo caller](/guides/bingo-caller). For playing online with crypto, [crypto bingo](/guides/crypto-bingo) covers sites and RTP. This page sits in the [Games of chance topic](/guides/topics/games-of-chance).
+
+The Gambling Commission requires a clearly defined bingo endpoint. A caller must announce the winning pattern before the draw, rather than change it after seeing cards.`,
     },
     {
       id: "list",
@@ -159,15 +161,6 @@ Prize size should track difficulty. A blackout takes several times as many calls
 
 Bingo prizes, like [pull tabs](/guides/pull-tabs) and [quick pick](/guides/quick-pick-lottery) lottery tickets, return less than players pay in overall, because the organiser keeps part of the takings. Play for adults only, 18+ or the local legal age.`,
     },
-    {
-      id: "pvp",
-      title: "Patterns, pot shares and PvP rounds",
-      body: `Strip away the dauber and bingo is a shared pot. Everyone buys in, one random draw sequence decides the winner, and your chance is your share of the cards. The pattern just decides how long the draw takes.
-
-PVPspinArena runs the same idea without the waiting. In [Jackpot](/), players add wagers to one pot and your win chance equals your share of it: put in 5% of the pot and you win about 5% of the time. The winner takes the pot minus any fee shown before entry. [Coinflip](/coinflip) is the two-player case, a straight 50/50. [Roulette](/roulette) is a shared wheel of 33 slots where Purple and Silver pay 2x and Green pays 14x, returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee of every bet.
-
-Each result comes from committed seeds, so the draw is fixed before anyone joins, and any settled round can be checked on [fairness](/fairness). A bingo hall asks you to trust the blower; a hashed round lets you verify it. Play is settled in US dollars, and the [responsible gambling](/responsible-gambling) page has limits if games start running longer than you planned.`,
-    },
   ],
   faqs: [
     {
@@ -193,6 +186,10 @@ Each result comes from committed seeds, so the draw is fixed before anyone joins
   ],
   sources: [
     {
+      label: "UK Gambling Commission: fundamental principles of bingo",
+      url: "https://www.gamblingcommission.gov.uk/licensees-and-businesses/guide/page/fundamental-principles-of-bingo",
+    },
+    {
       label: "Wikipedia: Bingo (American version)",
       url: "https://en.wikipedia.org/wiki/Bingo_(American_version)",
     },
@@ -202,5 +199,5 @@ Each result comes from committed seeds, so the draw is fixed before anyone joins
     },
   ],
   related: ["bingo-caller", "crypto-bingo", "pull-tabs", "quick-pick-lottery", "keno-odds"],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

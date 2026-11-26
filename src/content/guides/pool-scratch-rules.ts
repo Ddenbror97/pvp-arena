@@ -52,9 +52,7 @@ This site's 8-ball uses a third sentence. A scratch while pocketing the 8 loses 
       title: "Where the cue ball rule is written next",
       body: `A scratch is a foul with a named cue-ball penalty. It is not the fee. The fee lives on [8 ball pool online](/guides/8-ball-pool-hub).
 
-The other rule cards are [the 8-ball card](/guides/8-ball-pool-rules), [9-ball fouls](/guides/9-ball-rules), and [a kitchen scratch](/guides/one-pocket-pool). The group is the [games of chance guides](/guides/topics/games-of-chance).
-
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+The other rule cards are [the 8-ball card](/guides/8-ball-pool-rules), [9-ball fouls](/guides/9-ball-rules), and [a kitchen scratch](/guides/one-pocket-pool). The group is the [games of chance guides](/guides/topics/games-of-chance).`,
     },
     {
       id: "break-scratch",
@@ -68,7 +66,9 @@ A WPA legal break keeps the rack alive. Spot the 8 and accept, or rebreak. A fou
       title: "Fouls that move the cue ball and fouls that end the rack",
       body: `A scratch that only hands over ball in hand is a foul. A scratch that ends the rack is a loss. This site draws that line at the 8. Ordinary fouls are ball in hand anywhere. The 8 with a scratch is the end. The shot clock is 30 seconds. Three timeouts forfeit the seat, which is another way to lose with the cue ball still on the cloth. The fee is 5% of the pot and the winner receives 95%. Stakes run from $1 to $50.
 
-The cashier still only runs this 8-ball. It does not run 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money, so a scratch rule from those games is reading material rather than a button. The narrower 8-ball questions sat at about 260 and about 110. The counts explain the traffic. They do not merge the three rooms into one rule.`,
+The cashier still only runs this 8-ball. It does not run 9-ball, 10-ball, straight pool, one-pocket, bank, cutthroat, or killer for money, so a scratch rule from those games is reading material rather than a button. The narrower 8-ball questions sat at about 260 and about 110. The counts explain the traffic. They do not merge the three rooms into one rule.
+
+For money games, set [spending limits](/responsible-gambling) before dealing.`,
     },
   ],
   faqs: [
@@ -102,8 +102,11 @@ The cashier still only runs this 8-ball. It does not run 9-ball, 10-ball, straig
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "8-ball-pool-rules", "one-pocket-pool"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

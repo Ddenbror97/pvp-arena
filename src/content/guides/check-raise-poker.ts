@@ -80,7 +80,7 @@ The raise to $60 adds $40 beyond the $20 call, which clears that minimum. A room
 
 The fraction above is the price next to a check raise. It is not a win rate from either sheet.
 
-[Equilibrium study](/guides/gto-poker-strategy) can price a line with ranges. This page does not. The 25% is chips, not a solver output.`,
+[Equilibrium study](/guides/gto-poker-strategy) can price a line with ranges. Use the actual call price and final pot rather than a universal percentage. The 25% is chips, not a solver output.`,
     },
     {
       id: "caps",
@@ -142,7 +142,7 @@ The helpline page prints 1-800-MY-RESET and says that line is not a crisis servi
     {
       id: "stop",
       title: "Who should not use the line to get even",
-      body: `Do not play if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent or money with a due date.
+      body: `Cash play requires the local minimum age, lawful access and an affordable budget.
 
 A raise after a check can take the pot, and it can lose a larger pot than a check-fold would have lost. The sheets permit the sequence in most games. They do not promise the result.
 
@@ -199,5 +199,5 @@ Cash-out minimum on this site is $20 in BTC, USDC, or ETH. If the hour stops bei
     "cash-game-poker",
     "poker-bankroll-management",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

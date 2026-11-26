@@ -152,11 +152,11 @@ One win does not reveal the 7.88% edge. Most Purple stakes lose.`,
       title: "Who should skip the fruit game",
       body: `A sizzling hot session can end below the stake you brought. Because RTP is unpublished on the sheets we opened, this note cannot tell you the long-run price of a spin. Volatility 3 is a numeral without a key, not a plan.
 
-Do not play if you are under 18, or under a higher local age. Do not play where the game is illegal. Do not stake rent, savings, or money that has a due date.
+Adults only where legal. Set a loss limit before play.
 
 Do not play to get even. The sheets do not owe the next spin a line hit. This page is an editorial note, not a statute reading, and not a coupon.
 
-PVPspinArena does not offer this title. If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
+This game is not offered here. [Help with gambling](/responsible-gambling) is available.`,
     },
   ],
   faqs: [

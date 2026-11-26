@@ -27,92 +27,22 @@ export const guide: Guide = {
     {
       id: "what-it-proves",
       title: "What a crypto casino license actually proves",
-      body: `A licence is a document. A regulator looked at an application, took money, and said a company may offer certain games from that place under those rules. That can include a registered entity, a named director, a complaints path, and — in stricter places — audits, bankroll checks and advertising limits.
-
-What it proves on a good day:
-
-- **Someone filed paperwork** in that jurisdiction.
-- **A number or seal exists** you can look up on the regulator's site, not only on the casino footer.
-- **There may be a dispute channel** that is not the casino's own chat.
-
-What it does not prove:
-
-- The RNG on *this* bet followed the published RTP.
-- The hot wallet can cover Friday's withdrawals.
-- You are allowed to play from your country.
-- The footer seal matches the live domain (seals get copied).
-- Taxes you owe. That is between you and your authority. This is not tax advice and not legal advice.
-
-This sits in [foundations](/guides/topics/foundations) with [fake casino sites](/guides/fake-casino-sites): a badge is a claim. Check the claim at the source.
-
-A licensed crypto casino is still a casino. Minus-EV games stay minus-EV.`,
+      body: "A licence is a document. A regulator looked at an application, took money, and said a company may offer certain games from that place under those rules. That can include a registered entity, a named director, a complaints path, and — in stricter places — audits, bankroll checks and advertising limits.\n\nWhat it proves on a good day:\n\n- **Someone filed paperwork** in that jurisdiction.\n- **A number or seal exists** you can look up on the regulator's site, not only on the casino footer.\n- **There may be a dispute channel** that is not the casino's own chat.\n\nWhat it does not prove:\n\n- The RNG on *this* bet followed the published RTP.\n- The hot wallet can cover Friday's withdrawals.\n- You are allowed to play from your country.\n- The footer seal matches the live domain (seals get copied).\n- Taxes you owe. That is between you and your authority. This is not tax advice and not legal advice.\n\nThis sits in [foundations](/guides/topics/foundations) with [fake casino sites](/guides/fake-casino-sites): a badge is a claim. Check the claim at the source.\n\nA licensed crypto casino is still a casino. Minus-EV games stay minus-EV.",
     },
     {
       id: "curacao-vs",
       title: "Curaçao versus Anjouan, Costa Rica and stricter papers",
-      body: `Offshore is a spectrum, not a synonym.
-
-### Curaçao
-
-For years "a Curaçao licence" often meant a sublicence under a master holder — a structure that was easy to market and hard for a player to enforce. Curaçao has been moving to a direct Curaçao Gaming Authority (CGA) regime under the Landsverordening op de kansspelen (LOK). The [CGA portal](https://portal.gamingcontrolcuracao.org/page/online-gaming-info) is where applications now go. The [Curaçao gambling license](/guides/curacao-gambling-license) guide is the deep dive. For this page, remember: old sublicence badges and new CGA numbers are not the same artefact. Look up the current record.
-
-### Anjouan license
-
-Anjouan (Comoros) sells a cheaper, faster offshore paper that many crypto brands use when they want a PDF and a number. Payment processors and game studios treat it as weaker than Malta or the UK. A footer that only says Anjouan is information, not comfort.
-
-### Costa Rica gambling license
-
-Costa Rica is widely used for companies that process data or hold software. It is not a UK-style remote-gambling licence. If the only claim is "Costa Rica corporation," you may be looking at a company registration, not a gaming permission. Ask which statute authorises *taking bets*.
-
-### Stricter regimes
-
-UK Gambling Commission, Malta Gaming Authority, Isle of Man, Gibraltar and similar shops are heavier: cheaper to fake on a graphic, harder to fake in a register. They still do not hash your roulette spin.
-
-Compare seals by opening the **regulator's** search, not the casino's PNG.
-
-Master-and-sublicence structures, where they still exist or linger in old footers, mean the company you sent coins to may not be the company the regulator last reviewed. If the seal names a holder you cannot match to the terms, you do not have a lookup. You have a sticker.`,
+      body: 'Offshore is a spectrum, not a synonym.\n\n### Curaçao\n\nFor years "a Curaçao licence" often meant a sublicence under a master holder — a structure that was easy to market and hard for a player to enforce. Curaçao has been moving to a direct Curaçao Gaming Authority (CGA) regime under the Landsverordening op de kansspelen (LOK). The [CGA portal](https://portal.gamingcontrolcuracao.org/page/online-gaming-info) is where applications now go. The [Curaçao gambling license](/guides/curacao-gambling-license) guide is the deep dive. Look up the current record.\n\n### Anjouan license\n\nAnjouan (Comoros) sells a cheaper, faster offshore paper that many crypto brands use when they want a PDF and a number. Payment processors and game studios treat it as weaker than Malta or the UK. A footer that only says Anjouan is information, not comfort.\n\n### Costa Rica gambling license\n\nCosta Rica is widely used for companies that process data or hold software. It is not a UK-style remote-gambling licence. If the only claim is "Costa Rica corporation," you may be looking at a company registration, not a gaming permission. Ask which statute authorises *taking bets*.\n\n### Stricter regimes\n\nUK Gambling Commission, Malta Gaming Authority, Isle of Man, Gibraltar and similar shops are heavier: cheaper to fake on a graphic, harder to fake in a register. They still do not hash your roulette spin.\n\nCompare seals by opening the **regulator\'s** search, not the casino\'s PNG.\n\nMaster-and-sublicence structures, where they still exist or linger in old footers, mean the company you sent coins to may not be the company the regulator last reviewed. If the seal names a holder you cannot match to the terms, you do not have a lookup. You have a sticker.',
     },
     {
       id: "complaints",
       title: "What a complaint can do — and what it cannot",
-      body: `Players talk about licences as insurance. Sometimes a regulator will lean on an operator over an unpaid withdrawal. Sometimes they will revoke a licence after a pattern of complaints. That is real, and it is slower and narrower than people hope.
-
-A complaint usually cannot:
-
-- Reverse a settled bet you now dislike.
-- Force a US hot wallet to refill if the money is gone.
-- Make an Anjouan or Curaçao paper override a geo-ban in your country.
-- Turn an opaque slot into a hashed one after the fact.
-- Recover funds from a clone domain that stole a real seal.
-
-A complaint can, in a functioning regime:
-
-- Create a paper trail the operator has to answer.
-- Feed a pattern that leads to conditions or revocation.
-- In stricter shops, trigger reviews of bankroll or advertising.
-
-UKGC-scale complaints are a different sport from emailing a generic Curaçao inbox. Do not import UK expectations onto a $50 crypto skin with an Anjouan number.
-
-If the site's only dispute path is a Telegram admin, you do not have a regulator relationship. You have a group chat. That is the [fake casino sites](/guides/fake-casino-sites) pattern even when a PNG says otherwise.
-
-This is not legal advice and not a promise that any named authority will act on your ticket. It is a map of what the paper is for.`,
+      body: "Players talk about licences as insurance. Sometimes a regulator will lean on an operator over an unpaid withdrawal. Sometimes they will revoke a licence after a pattern of complaints. That is real, and it is slower and narrower than people hope.\n\nA complaint usually cannot:\n\n- Reverse a settled bet you now dislike.\n- Force a US hot wallet to refill if the money is gone.\n- Make an Anjouan or Curaçao paper override a geo-ban in your country.\n- Turn an opaque slot into a hashed one after the fact.\n- Recover funds from a clone domain that stole a real seal.\n\nA complaint can, in a functioning regime:\n\n- Create a paper trail the operator has to answer.\n- Feed a pattern that leads to conditions or revocation.\n- In stricter shops, trigger reviews of bankroll or advertising.\n\nUKGC-scale complaints are a different sport from emailing a generic Curaçao inbox. Do not import UK expectations onto a $50 crypto skin with an Anjouan number.\n\nIf the site's only dispute path is a Telegram admin, you do not have a regulator relationship. You have a group chat. That is the [fake casino sites](/guides/fake-casino-sites) pattern even when a PNG says otherwise.\n\nThis is not legal advice and not a promise that any named authority will act on your ticket. It is a map of what the paper is for.",
     },
     {
       id: "worked-example",
       title: "Worked example: reading a footer in five minutes",
-      body: `You open a licensed crypto casino. Footer: "Licensed in Curaçao, licence 1234/JAZ."
-
-| Check | Pass looks like | Fail looks like |
-| --- | --- | --- |
-| Number on regulator site | Same company + domain | No record, or a different brand |
-| Company name | Matches terms and wallet entity | Terms say Ltd A, seal says Ltd B |
-| Domain list | This exact URL is listed | Seal is for a sister skin |
-| Product scope | Crypto / the games you play are in scope | Licence is sports only |
-| Complaints | Regulator form exists | "Contact us on Telegram" only |
-
-Five minutes is enough to catch a stolen PNG. It is not enough to prove solvency. If the lookup fails, you do not need a sixth minute. Leave.
-
-[Are online casinos rigged](/guides/are-online-casinos-rigged) covers the other half: even a real licence can sit on a site that still uses an opaque RNG.`,
+      body: 'You open a licensed crypto casino. Footer: "Licensed in Curaçao, licence 1234/JAZ."\n\n| Check | Pass looks like | Fail looks like |\n| --- | --- | --- |\n| Number on regulator site | Same company + domain | No record, or a different brand |\n| Company name | Matches terms and wallet entity | Terms say Ltd A, seal says Ltd B |\n| Domain list | This exact URL is listed | Seal is for a sister skin |\n| Product scope | Crypto / the games you play are in scope | Licence is sports only |\n| Complaints | Regulator form exists | "Contact us on Telegram" only |\n\nFive minutes is enough to catch a stolen PNG. It is not enough to prove solvency. If the lookup fails, you do not need a sixth minute. Leave.\n\n[Are online casinos rigged](/guides/are-online-casinos-rigged) covers the other half: even a real licence can sit on a site that still uses an opaque RNG.',
     },
     {
       id: "not-hashed",
@@ -122,17 +52,7 @@ Five minutes is enough to catch a stolen PNG. It is not enough to prove solvency
     {
       id: "player-duties",
       title: "What you still have to check — including your own country",
-      body: `The licence is about their permission *there*. Your permission is about *here*.
-
-1. **Look up the seal** on the regulator site.
-2. **Read whether your country is excluded** in their terms. Many offshore casinos ban the US, UK or both.
-3. **Do not treat crypto as a veil.** A blockchain deposit does not rewrite the statute where you sit.
-4. **Separate tax from licence.** Wins can be taxable where you live even if the site is offshore. Not tax advice.
-5. **Age.** 18+ or the higher local age. A licence does not admit minors.
-
-If you cannot legally play, a prettier CGA number does not help. I will not coach you around a geo-ban.
-
-Responsible tools should exist on a serious site. If the only 'protection' is a Twitter reply, that is also information.`,
+      body: "The licence is about their permission *there*. Your permission is about *here*.\n\n1. **Look up the seal** on the regulator site.\n2. **Read whether your country is excluded** in their terms. Many offshore casinos ban the US, UK or both.\n3. **Do not treat crypto as a veil.** A blockchain deposit does not rewrite the statute where you sit.\n4. **Separate tax from licence.** Wins can be taxable where you live even if the site is offshore. Not tax advice.\n5. **Age.** 18+ or the higher local age. A licence does not admit minors.\n\nIf you cannot legally play, a prettier CGA number does not help. I will not coach you around a geo-ban.\n\nResponsible tools should exist on a serious site. If the only 'protection' is a Twitter reply, that is also information.",
     },
     {
       id: "this-site",
@@ -194,5 +114,5 @@ Responsible tools should exist on a serious site. If the only 'protection' is a 
     "how-to-start-an-online-casino",
     "aml-gambling",
   ],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

@@ -12,12 +12,10 @@ export const guide: Guide = {
   answer:
     "Fan tan is Macau's 2004 button game, not a slot and not a sports contest. A dealer covers a random pile and counts by fours. Zero counts as four. Winning Fan keeps the stake plus three times the stake, and 5 percent of the prize goes to the bank. Each remainder's chance is not published.",
   facts: [
-    "Last tested 20 October 2026 on the Portuguese Fantan regulation at dicj.gov.mo and the Chinese text of the same dispatch.",
     "Despacho 58/2004, dated 12 May 2004, is the official fan tan rule. It replaced Portaria 211/80/M.",
     "Tools are a wood or plastic wand, buttons with holes, two metal domes, and a table with two to four glass boards.",
     "A remainder of zero is scored as four. Broken button pieces are left out of the count.",
     "Printed prizes sit on top of the stake. Five percent of the prize goes to the bank. A house-edge percent is not published.",
-    "This site does not offer the button game. Purple and Silver roulette are about a 7.88 percent edge after the 5 percent fee.",
   ],
   sections: [
     {
@@ -84,34 +82,9 @@ A minimum stake is not published, and neither is the speed of a count. Nothing o
 [The two-card drawing game](/guides/baccarat-rules) is a different banked game with its own drawing rules. [A table streamed with a dealer](/guides/live-dealer-casino) is the lobby category a studio version would sit in. Neither page supplies a button-game edge.`,
     },
     {
-      id: "pots",
-      title: "The button bank beside a house table and a player pot",
-      body: `The dispatch prices a chance against the bank. A house in another city can post another list. This site's wheel prices a stake against other players, and the fee is in the rules here.
-
-Do not paste a fan tan multiple onto the wheel. The three-times prize belongs to the 2004 text.
-
-| | Fee or edge | Who you play against | Payout speed | Provably fair | Minimum bet |
-| --- | --- | --- | --- | --- | --- |
-| Fan tan regulation | 5 percent of the printed prize; a full edge percent is not published | the bank | not published | not published | not published |
-| House-banked casino | inside that house's list; no percent is fixed here | the house | not published | not published | not published |
-| PVPspinArena | Purple and Silver are about a 7.88 percent edge after the 5 percent win fee | other players | balance updates when the round settles | yes, seed committed before the round | shown on the bet control |
-
-How PvP compares: the button count pays a prize from a regulation. [Roulette](/roulette) pays from a 33-pocket wheel, 16 Purple, 16 Silver, and 1 Green.
-
-Purple and Silver pay 2x, then 5 percent comes off that winning payout, so a hit keeps 1.90 times the stake. Sixteen divided by 33, times 1.90, minus 1, is about −0.0788.
-
-That is the 7.88 percent edge on those two pockets. Green pays 14x. This page does not quote a Green edge.
-
-A settled round can be checked on the [fairness page](/fairness). The check matches this site's commit. It does not audit a Macau table.
-
-Balances are US dollars, funded with Bitcoin or with USDC or ETH on Base. Cash-out minimum is $20 in BTC, USDC, or ETH.
-
-We did not time a cash-out. The joker-card deal is [the two-side card game](/guides/andar-bahar).`,
-    },
-    {
       id: "examples",
       title: "Three labeled pictures from printed multiples",
-      body: `These pictures are arithmetic on the dispatch, or a fee from this site. None of them is a fan tan result we watched.
+      body: `None of them is a fan tan result we watched.
 
 Example 1 — Fan on $20. The prize is three times the stake, $60, and 5 percent of that prize is $3.
 
@@ -121,27 +94,14 @@ Example 2 — Kuoc on $20. The prize is one time the stake, $20, and 5 percent o
 
 The player keeps the $20 stake and $19 of the prize, $39 in all. A push is a different case, and the text does not cut 5 percent from a returned stake.
 
-Example 3 — Purple payout. A $10 Purple stake that wins pays 2x, which is $20. Five percent of that payout is $1, so the player receives $19.
-
-One Purple win does not reveal the 7.88 percent edge. Most Purple stakes lose.`,
+Five percent of that payout is $1, so the player receives $19.`,
     },
     {
       id: "checks",
       title: "Checks before a button layout is treated as this dispatch",
       body: `A glass dome and a wand do not prove the 2004 prize list. Read the card on the table you are at.
 
-- [ ] Confirm you are 18, or older if the pit sets a higher age.
-- [ ] Confirm the game is buttons counted by fours, not a slot and not a fan contest.
-- [ ] Bets are closed when the bell rings, if this dispatch is the rule in use.
-- [ ] A remainder of zero is scored as four, if the card says so.
-- [ ] Fan is three times the stake plus the stake, only if the card prints that.
-- [ ] The 5 percent cut applies to the prize, not invented onto a push.
-- [ ] Leave the chance of each remainder unpublished when the card is silent.
-- [ ] Leave a studio pay list unpublished when you have not opened it.
-- [ ] Do not treat a streamed multiple as the 2004 prize.
-- [ ] Set a loss stop before the first stake.
-- [ ] If the count becomes a chase, call 1-800-GAMBLER.
-- [ ] Recompute a round on this site's fairness page, and do not ask it to audit a button table.`,
+- [ ] Confirm you are 18, or older if the pit sets a higher age. - [ ] Confirm the game is buttons counted by fours, not a slot and not a fan contest. - [ ] Bets are closed when the bell rings, if this dispatch is the rule in use. - [ ] A remainder of zero is scored as four, if the card says so. - [ ] Fan is three times the stake plus the stake, only if the card prints that. - [ ] The 5 percent cut applies to the prize, not invented onto a push. - [ ] Leave the chance of each remainder unpublished when the card is silent. - [ ] Leave a studio pay list unpublished when you have not opened it. - [ ] Do not treat a streamed multiple as the 2004 prize. - [ ] Set a loss stop before the first stake. - [ ] If the count becomes a chase, call 1-800-GAMBLER.`,
     },
     {
       id: "limits",
@@ -152,7 +112,7 @@ Do not play if you are under 18. The dispatch we opened does not print a minimum
 
 Do not stake rent, savings, or money with a due date. Do not play to get even. [Why a cold run is not a credit](/guides/gamblers-fallacy) is the general point.
 
-This page is an editorial note, not a statute reading for your city, and not a coupon. This site does not offer the button game.
+This page is an editorial note, not a statute reading for your city, and not a coupon.
 
 If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
     },
@@ -179,8 +139,8 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
       a: "No. The regulation says a final count of zero is scored as four. Bets that include four are settled as if four were the winning number. Bets that do not include four, and that are not in a push on some other term, are not given a prize by the text. The light on the board is for that number. Do not treat zero as a void count that returns every stake.",
     },
     {
-      q: "Does this site run the button game?",
-      a: "No. The comparison on this page is roulette, a 33-pocket wheel with a 5 percent fee on a winning payout. Purple and Silver keep 1.90 times the stake on a win, and the long-run edge on those two pockets is about 7.88 percent. The fairness page recomputes this site's commit. It does not audit a Macau count or a studio copy of the game.",
+      q: "Is commission the same thing as house edge?",
+      a: "No. Commission is charged on a specified payment. Expected loss also depends on win, loss and push probabilities and on which amount is returned.",
     },
   ],
   sources: [
@@ -201,5 +161,5 @@ If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible ga
     "craps-odds",
     "keno-odds",
   ],
-  updated: "2026-10-20",
+  updated: "2026-11-26",
 };

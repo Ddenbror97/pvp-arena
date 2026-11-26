@@ -172,7 +172,7 @@ Do not play if you are under 18, or under a higher local age. Do not play where 
 
 Do not play to get even. The sheet does not owe the next spin a scatter, and this page is an editorial note rather than a statute or a coupon.
 
-PVPspinArena does not offer this title. If play stops being a bounded spend, call 1-800-GAMBLER and open [responsible gambling](/responsible-gambling).`,
+This game is not offered here. [Help with gambling](/responsible-gambling) is available.`,
     },
   ],
   faqs: [

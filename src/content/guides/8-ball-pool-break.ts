@@ -10,7 +10,7 @@ export const guide: Guide = {
     "8 ball pool break on this table: the 8 wins if it drops and the cue ball stays up. A make-on-the-break rate is not published. The fee is 5% of the pot.",
   h1: "What an 8 ball pool break is allowed to win",
   answer:
-    "8 ball pool break, on this table, can end the rack: if the 8 falls and the cue ball stays on the table, that is a win. A scratch on that same break loses. A make-on-the-break rate is not published here, so this guide will not invent break-pot odds to fill the gap.",
+    "8 ball pool break, on this table, can end the rack: if the 8 falls and the cue ball stays on the table, that is a win. A scratch on that same break loses. No measured make-on-the-break rate is available; compare the rule outcome separately from a claimed probability.",
   facts: [
     "The opening break is played from the kitchen, behind the head string.",
     "Pocketing the 8 on the break wins unless the cue ball scratches.",
@@ -53,7 +53,7 @@ A make-on-the-break rate is not published here. Break-pot odds are not published
 
 The technique next to this is [pattern tips after the break](/guides/how-to-win-8-ball-pool), [the rules split](/guides/8-ball-pool-rules), and [where the cue ball should arrive](/guides/8-ball-pool-aim). The group is the [skill wagers guides](/guides/topics/skill-wagers).
 
-The match is [the 8-ball table](/8-ball-pool). A finished rack can be checked on the [fairness page](/fairness). Adults 18 and over only, and only where a stake is legal. Limits are on [responsible gambling](/responsible-gambling).`,
+Cash matches: eligible adults only; [limits and support](/responsible-gambling).`,
     },
     {
       id: "leave-after",
@@ -65,7 +65,7 @@ Play safe off the break when the 8 is already near their pocket and your first s
     {
       id: "cash-break",
       title: "Equal stakes on a 9-foot surface",
-      body: `The playing surface is 2.54 m by 1.27 m, the size of a 9-foot playing surface. Break speed that felt right on a 7-foot bar box will run long here. That is a feel issue, not a published formula for power. This page will not invent a tip position that guarantees a wing ball. Cue weight in the 18 to 21 ounce shop-talk range is not a WPA break specification, and this site does not sell the stick.
+      body: `The playing surface is 2.54 m by 1.27 m, the size of a 9-foot playing surface. Break speed that felt right on a 7-foot bar box will run long here. That is a feel issue, not a published formula for power. A tip position cannot guarantee a wing ball under every rack and stroke. Cue weight in the 18 to 21 ounce shop-talk range is not a WPA break specification, and this site does not sell the stick.
 
 Both players post $1, $2, $5, $10, $25, or $50. No FargoRate adjusts the break. No APA skill level shortens the rack. A fair money match is equal stakes. You call a pocket only when you shoot the 8. Ordinary balls may drop anywhere. Jump shots are not a button, and they are often illegal under bar rules anyway. Win the rack the rules name, or do not.`,
     },
@@ -77,7 +77,7 @@ Both players post $1, $2, $5, $10, $25, or $50. No FargoRate adjusts the break. 
     },
     {
       q: "What are the odds the break pots the 8?",
-      a: "This page does not know, and it will not invent them. A make-on-the-break rate is not published in the lobby. Any percentage you see in a chat is not a figure from this site.",
+      a: "A break-pot probability needs a defined rack, stroke and measured sample. A make-on-the-break rate is not published in the lobby. Any percentage you see in a chat is not a figure from this site.",
     },
     {
       q: "Where does the break start?",
@@ -89,7 +89,7 @@ Both players post $1, $2, $5, $10, $25, or $50. No FargoRate adjusts the break. 
     },
     {
       q: "Does a stronger cue change the break?",
-      a: "Cue upgrades are not sold here. A heavier stick from a shop does not change the shot the table replays, and this page will not rank brands. The physics id does not add a random miss on top of the hit you actually played.",
+      a: "Cue upgrades are not sold here. A shop cue’s weight does not alter the browser table’s recorded shot parameters. The physics id does not add a random miss on top of the hit you actually played.",
     },
     {
       q: "Is the break a separate bet?",
@@ -101,8 +101,11 @@ Both players post $1, $2, $5, $10, $25, or $50. No FargoRate adjusts the break. 
       label: "WPA Rules of Play, effective 21 October 2026 (PDF)",
       url: "https://wpapool.com/wp-content/uploads/2026/10/WPA-Rules-2026-10-21-211.pdf",
     },
-    { label: "WPA rules index", url: "https://wpapool.com/rules/" },
+    {
+      label: "WPA rules index",
+      url: "https://wpapool.com/rules/",
+    },
   ],
   related: ["8-ball-pool-hub", "how-to-win-8-ball-pool", "8-ball-pool-rules"],
-  updated: "2026-10-23",
+  updated: "2026-11-26",
 };

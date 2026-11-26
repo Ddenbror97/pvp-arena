@@ -34,17 +34,7 @@ Write the skill based gambling fee or edge in your notes before the first round.
 
 PVPspinArena runs Jackpot, Coinflip, Roulette, P2P Slott, and six-max poker, settled in US dollars, separate from skill based gambling. Jackpot and Coinflip take 5% of the pot. P2P Slott takes 10%. Roulette is house-banked. Poker takes 5% of a pot only after a flop. Prefer a small test withdrawal on a quiet day over a large first deposit during a hype spike. Prefer a domain you typed yourself over a DM link.
 
-A clearer skill based gambling label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.
-
-Verify the network before every deposit. Base is not Ethereum mainnet even when the address string looks identical. A mis-sent transfer is not “variance.” It is a routing mistake. Match the destination characters against the wallet page on the real site, then send a tiny probe amount first.
-
-Streaks change mood, not probability. A fair coinflip does not owe you a win after five losses. A jackpot ticket does not become warmer because the pot looks large on screen. Re-read the fee after a win streak. Re-read the budget after a loss streak. Then follow the written stop time.
-
-Clone domains and fake support accounts target duel keywords hard. Bookmark the real site. Refuse seed-phrase requests. Refuse unlimited token approvals for a simple deposit. Message signatures that only prove address control are normal. Spending approvals that can drain USDC later are not required for a plain transfer.
-
-Social pressure raises stakes faster than maths. Mute chats that bait “one more.” End the night with zero open IOUs if you bet with friends. Automated settlement exists so relationships do not become ledgers. If a friend cannot pay, stop betting with them rather than escalating.
-
-Long-run cost is the fee or the house edge. Short-run results are noise around that cost. Track dollars, not feelings. If you cannot explain the settlement rule in one sentence, do not deposit. If you can explain it and still cannot afford the loss, do not deposit either.`,
+A clearer skill based gambling label does not fix a compulsive loop. Only a hard stop does. If walking away feels impossible after a loss, open responsible play resources rather than another room. Keep play funds separate from rent money. A hot wallet that also holds savings is a single point of failure.`,
     },
     {
       id: "spectrum",
@@ -95,7 +85,13 @@ Then set a budget. [Gambling budget](/guides/gambling-budget) stays relevant eve
     {
       id: "pvp-chance",
       title: "PvP chance games on this site",
-      body: "Jackpot: tickets proportional to stake. No play choice after you join except stake size. Live on the [home page](/).\n\nCoinflip: 50/50 before fee. Live on [Coinflip](/coinflip). Heritage context in [CS:GO coinflip](/guides/csgo-coinflip).\n\nRoulette: house-banked colours on [Roulette](/roulette). Edge is published; it is not a skill ladder.\n\nFairness notes: [Fairness](/fairness). Product overview: [how it works](/how-it-works).",
+      body: `Jackpot: tickets proportional to stake. No play choice after you join except stake size. Live on the [home page](/).
+
+Coinflip: 50/50 before fee. Live on [Coinflip](/coinflip). Heritage context in [CS:GO coinflip](/guides/csgo-coinflip).
+
+Roulette: house-banked colours on [Roulette](/roulette). Edge is published; it is not a skill ladder.
+
+Fairness notes: [Fairness](/fairness). Product overview: [how it works](/how-it-works).`,
     },
     {
       id: "legal-marketing",
@@ -107,7 +103,11 @@ Do not use a skill label to justify underage play. Adults 18+ only on this site.
     {
       id: "harm",
       title: "Harm looks the same when money is at risk",
-      body: "Skill does not immunise anyone from addiction patterns. Hiding losses, borrowing to play, and irritability when interrupted are warning signs in poker rooms and coinflip lobbies alike. [Gambling addiction signs](/guides/gambling-addiction-signs) lists them. [Fake casino sites](/guides/fake-casino-sites) remains relevant if a “skill arena” is actually a phishing page.\n\nIf you need a break, take one before the next deposit.\n\nFor a concrete skill-match example, the [FPS money hub](/guides/fps-for-money-hub) separates opponent-funded pots from income. The [FPS integrity guide](/guides/cs2-anti-cheat) explains why server authority and a random-result fairness proof answer different questions.",
+      body: `Skill does not immunise anyone from addiction patterns. Hiding losses, borrowing to play, and irritability when interrupted are warning signs in poker rooms and coinflip lobbies alike. [Gambling addiction signs](/guides/gambling-addiction-signs) lists them. [Fake casino sites](/guides/fake-casino-sites) remains relevant if a “skill arena” is actually a phishing page.
+
+If you need a break, take one before the next deposit.
+
+For a concrete skill-match example, the [FPS money hub](/guides/fps-for-money-hub) separates opponent-funded pots from income. The [FPS integrity guide](/guides/cs2-anti-cheat) explains why server authority and a random-result fairness proof answer different questions.`,
     },
   ],
   faqs: [
@@ -150,5 +150,5 @@ Do not use a skill label to justify underage play. Adults 18+ only on this site.
     "fps-for-money-hub",
     "online-coin-flip-game",
   ],
-  updated: "2026-10-31",
+  updated: "2026-11-26",
 };

@@ -32,7 +32,9 @@ Three kinds of “right”:
 
 This page is the odds-and-accuracy list. The [Casino Royale poker](/guides/casino-royale-poker) guide owns Bond’s 2006 hold’em game in detail, including why a four-way all-in of monsters is a stacked rarity. The [Stardust casino](/guides/stardust-casino) page owns the real resort behind Scorsese’s Tangiers. Play is 18+; nothing below is a staking plan.
 
-A fourth test is **time**. A two-hour film can show eight hands. A working blackjack dealer deals 60–80 hands an hour to a full table. Any script that treats eight hands as a career is compressing variance into plot. That compression is why “the guy who always wins” looks plausible on a first viewing and thin on a second.`,
+A fourth test is **time**. A two-hour film can show eight hands. A working blackjack dealer deals 60–80 hands an hour to a full table. Any script that treats eight hands as a career is compressing variance into plot. That compression is why “the guy who always wins” looks plausible on a first viewing and thin on a second.
+
+The official Casino Royale synopsis identifies the Montenegro poker game as part of the fictional plot. A screenplay is evidence for a film's story, not for normal casino probabilities.`,
     },
     {
       id: "casino-ops",
@@ -118,15 +120,6 @@ Three recurring cheats, with numbers:
 
 A useful drill after any of these films: write the posted payout of the game you just watched, then write the probability. If the script never showed that pair of numbers, it was not teaching the game.`,
     },
-    {
-      id: "pvp",
-      title: "Why hashed rounds look nothing like a third act",
-      body: `A film freeze-frames the one hand that pays the story. A real wheel or a real hold’em session is hundreds of independent prices. PVPspinArena makes that dull truth visible: [Roulette](/roulette) is a 33-slot wheel, 16 Purple, 16 Silver, 1 Green, every bet returning 32/33 on Purple or Silver and 14/33 on Green before the 5% win fee. [Coinflip](/coinflip) is two players at 50/50. [Jackpot](/) win chance equals your share of the pot. Seeds are committed; you can verify a settled round on [fairness](/fairness) instead of trusting a narrator.
-
-That is closer to *California Split* than to *Ocean’s Eleven*. If a movie taught you that streaks are characters, the [gambler’s fallacy](/guides/gamblers-fallacy) page is the corrective. If it taught you that one heroic count beats six decks forever, the MIT and Rain Man notes above are the corrective.
-
-Use films as culture and as cautionary psychology. Use posted odds for money. Gambling is 18+, and if a chase scene felt like a documentary of your week, skip the sequel and open the [responsible gambling](/responsible-gambling) tools.`,
-    },
   ],
   faqs: [
     {
@@ -156,11 +149,21 @@ Use films as culture and as cautionary psychology. Use posted odds for money. Ga
   ],
   sources: [
     {
+      label: "EON: Casino Royale official film record",
+      url: "https://www.007.com/the-films/casino-royale",
+    },
+    {
       label: "Wikipedia: Casino (1995 film)",
       url: "https://en.wikipedia.org/wiki/Casino_(1995_film)",
     },
-    { label: "Wikipedia: 21 (2008 film)", url: "https://en.wikipedia.org/wiki/21_(2008_film)" },
-    { label: "Wikipedia: Owning Mahowny", url: "https://en.wikipedia.org/wiki/Owning_Mahowny" },
+    {
+      label: "Wikipedia: 21 (2008 film)",
+      url: "https://en.wikipedia.org/wiki/21_(2008_film)",
+    },
+    {
+      label: "Wikipedia: Owning Mahowny",
+      url: "https://en.wikipedia.org/wiki/Owning_Mahowny",
+    },
     {
       label: "Encyclopaedia Britannica: gambling",
       url: "https://www.britannica.com/topic/gambling",
@@ -174,5 +177,5 @@ Use films as culture and as cautionary psychology. Use posted odds for money. Ga
     "stu-ungar",
     "history-of-gambling",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

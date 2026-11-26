@@ -17,7 +17,6 @@ export const guide: Guide = {
     "Even money with no odds bet is about a 5.38% edge. That is the only edge this page states.",
     "Odds bets, place bets, and hardways are not priced here.",
     "The standard layout is a different contract. Its lesson is not rebuilt below.",
-    "PVPspinArena does not offer craps. Jackpot and Coinflip take 5% of the pot.",
   ],
   sections: [
     {
@@ -82,15 +81,13 @@ The crapless craps payout on that pass is even money when the decision wins. You
 
 The edge is in how often the decision wins, not in a short-pay sticker on the win itself. Odds bets that pay a different multiple are outside this quote. Their edge is not published here.
 
-A house-banked table and a peer pot do not share a fee schedule. Jackpot and Coinflip take 5% of the pot. Five percent of a pot is not 5.38% of a pass stake, and the two games do not resolve the same way.
+A house-banked table and a peer pot do not share a fee schedule. Five percent of a pot is not 5.38% of a pass stake, and the two games do not resolve the same way.
 
-How peer play compares: [coinflip](/coinflip) is a two-person pot with that 5% cut, and [fairness](/fairness) is where you can check a settled result. When the game page shows a live block, the block updates from settled play. No shooter log is copied into this guide.
+When the game page shows a live block, the block updates from settled play. No shooter log is copied into this guide.
 
 The account is a US-dollar balance funded with Bitcoin, or with USDC or ETH on Base.
 
-| Price | This even-money pass | House-banked casino | PVPspinArena |
 | --- | --- | --- | --- |
-| Edge or fee | about 5.38%, no odds | not published for other bets | 5% of a Jackpot or Coinflip pot |
 | Payout multiple on a win | even money | not published | winner receives the pot minus 5% |
 | Speed | not published | not published | balance updates when the round settles |
 | Promo code | we do not list a promo code | not published | we do not list a promo code |`,
@@ -112,7 +109,7 @@ The pot is $200. Five percent is $10.
 
 The winner receives $190. The $10 is a fee on a $200 pot among players. It is not the dice edge, and the $2.69 is not a peer fee.
 
-Coin example, different amount. Each side puts $13 on Coinflip.
+Coin example, different amount.
 
 The pot is $26. Five percent is $1.30.
 
@@ -202,8 +199,8 @@ A pass line that turns 2, 3, 11, and 12 into points is not the field. [The one-r
       a: "No. The figure is even money with no odds, and any chip behind the line has a price this page leaves unpublished. Read the layout before you take odds.",
     },
     {
-      q: "Can I shoot crapless craps on PVPspinArena?",
-      a: "No. Craps is not offered, and Jackpot and Coinflip take 5% of the pot between players. That fee is not the 5.38% edge on an even-money crapless pass with no odds.",
+      q: "Why does removing come-out losses not make the pass cheaper?",
+      a: "Because 11 also stops being an immediate win and the rare totals become difficult points. Price the whole sequence, not only the absence of an immediate loss.",
     },
   ],
   sources: [
@@ -213,5 +210,5 @@ A pass line that turns 2, 3, 11, and 12 into points is not the field. [The one-r
     },
   ],
   related: ["online-craps", "craps-odds", "craps-strategy", "sic-bo-online", "craps-field-bet"],
-  updated: "2026-10-21",
+  updated: "2026-11-26",
 };

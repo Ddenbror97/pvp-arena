@@ -19,7 +19,7 @@ export const guide: Guide = {
   facts: [
     "A server display is an operator-controlled record, not necessarily a wallet you control.",
     "An outcome verifier, operator identity and payout process answer different questions.",
-    "This guide contains no survey establishing how many bots are licensed or fraudulent.",
+    "No survey was conducted to estimate how many bots are licensed or fraudulent.",
   ],
   sections: [
     {
@@ -40,7 +40,7 @@ export const guide: Guide = {
     {
       id: "records",
       title: "Keep evidence that answers a particular dispute",
-      body: "Useful records include the exact terms and date, application identity, message or round identifier, commitment and reveal where provided, account statement and any completed transaction record. Keep these privately; never send a recovery phrase to a supposed moderator.\n\nAn impersonated support account or a request to install an unrelated verifier is a reason to stop and verify identity. This page recommends no bot and gives no prevalence estimate. PVPspinArena does not accept wagers through Discord. Use [responsible gambling](/responsible-gambling) for support with paid play.",
+      body: "Useful records include the exact terms and date, application identity, message or round identifier, commitment and reveal where provided, account statement and any completed transaction record. Keep these privately; never send a recovery phrase to a supposed moderator.\n\nAn impersonated support account or a request to install an unrelated verifier is a reason to stop and verify identity. PVPspinArena does not accept wagers through Discord. Use [responsible gambling](/responsible-gambling) for support with paid play.",
     },
   ],
   faqs: [
@@ -57,7 +57,7 @@ export const guide: Guide = {
       a: "No. Both require checks of operator identity, custody, terms and the evidence behind their claims.",
     },
     {
-      q: "Did this guide audit or test a named bot?",
+      q: "Was a named bot audited or tested?",
       a: "No. It explains evidence to assess, not a funded test, endorsement or statistical survey of bots.",
     },
   ],
@@ -77,5 +77,5 @@ export const guide: Guide = {
     "provably-fair-casino",
     "fake-casino-sites",
   ],
-  updated: "2026-11-15",
+  updated: "2026-11-26",
 };

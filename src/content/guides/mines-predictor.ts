@@ -38,7 +38,9 @@ A mines predictor usually comes in one of these forms:
 - **Scripts for Roblox gambling sites** and similar communities, often shared in video descriptions; see [Roblox gambling](/guides/roblox-gambling) for that context.
 - **“AI” predictors** that ask you to paste your server seed hash, client seed and nonce and return a pattern.
 
-The marketing is consistent: screenshots of big multipliers, testimonials, a countdown timer, and a link to a specific casino where the tool “works best”. Crash games get the same treatment, and the [crash game predictor page](/guides/crash-cashout-calculator) explains why the multiplier cannot be forecast either. The whole family sits in the [games and odds topic](/guides/topics/games-and-odds).`,
+The marketing is consistent: screenshots of big multipliers, testimonials, a countdown timer, and a link to a specific casino where the tool “works best”. Crash games get the same treatment, and the [crash game predictor page](/guides/crash-cashout-calculator) explains why the multiplier cannot be forecast either. The whole family sits in the [games and odds topic](/guides/topics/games-and-odds).
+
+Stake publishes how random values select Mines positions. This supports checking a revealed round for that implementation; it does not reveal hidden values for a future round.`,
     },
     {
       id: "why",
@@ -190,11 +192,21 @@ In the same cluster, see also [jetx](/guides/jetx-game).`,
     },
   ],
   sources: [
-    { label: "Wikipedia: SHA-2", url: "https://en.wikipedia.org/wiki/SHA-2" },
-    { label: "Wikipedia: HMAC", url: "https://en.wikipedia.org/wiki/HMAC" },
+    {
+      label: "Wikipedia: SHA-2",
+      url: "https://en.wikipedia.org/wiki/SHA-2",
+    },
+    {
+      label: "Wikipedia: HMAC",
+      url: "https://en.wikipedia.org/wiki/HMAC",
+    },
     {
       label: "Wikipedia: Hypergeometric distribution",
       url: "https://en.wikipedia.org/wiki/Hypergeometric_distribution",
+    },
+    {
+      label: "Stake: published game-event implementation",
+      url: "https://stake.com/provably-fair/game-events",
     },
   ],
   related: [
@@ -205,5 +217,5 @@ In the same cluster, see also [jetx](/guides/jetx-game).`,
     "spaceman-game",
     "telegram-casino-bot",
   ],
-  updated: "2026-09-27",
+  updated: "2026-11-26",
 };

@@ -64,7 +64,7 @@ Suppose you play enough in a week to unlock one drop and receive a currently act
     {
       id: "passes",
       title: "Operations, Armory and the “free” that was paid",
-      body: `Passes confuse this keyword. You redeem a skin and it feels like a drop. You already bought access.
+      body: `Passes can be mistaken for free drops. You redeem a skin and it feels like a drop. You already bought access.
 
 An operation is a dated season: missions, stars, collections that can go scarce when it ends. The Armory is a live shop you feed with stars. Both can put a finish in your inventory without a key. Both cost money up front and time after.
 
@@ -77,7 +77,7 @@ Prime on your own login is the honest ticket. A week of matches you already want
     {
       id: "scams",
       title: "“Free skin” sites are the warning",
-      body: `This is the section the keyword exists for.
+      body: `
 
 ### Patterns that steal accounts
 
@@ -127,7 +127,7 @@ Family machines: if a minor can click a “free skin” ad on the same browser y
     {
       id: "shared-pc",
       title: "Shared PCs, kids and the ad that follows Steam",
-      body: `The free-skin keyword is an advertising market. After you search it, the browser fills with download buttons, “claim your drop” pop-ups and YouTube pre-rolls that look like Valve. A shared family PC makes that worse: a younger sibling clicks the same ad on the account that holds the inventory.
+      body: `Free-skin ads are common. After you search it, the browser fills with download buttons, “claim your drop” pop-ups and YouTube pre-rolls that look like Valve. A shared family PC makes that worse: a younger sibling clicks the same ad on the account that holds the inventory.
 
 This site is 18+ for gambling. Paid loot and phishing do not check ID. If someone under 18 can reach Steam on the machine, turn off one-click Market buys, remove saved cards, and do not leave a cash-book session open. A “free knife” page does not care that the login is a parent’s.
 
@@ -138,7 +138,7 @@ This site is 18+ for gambling. Paid loot and phishing do not check ID. If someon
 - API keys get reviewed after any “giveaway” click, even a cancelled one.
 - Family View and OS-level site blockers exist for a reason. A lecture after a drained inventory is not a control.
 
-Trade-ups, sticker crafts and buying a $2 playskin are honest ways to change how a gun looks. They cost something. The lie in the keyword is that a stranger’s website can print a Covert for a captcha. Valve already has a drop track. If that track is too slow, the answer is patience or a purchase you can afford — not a generator.
+Trade-ups, sticker crafts and buying a $2 playskin are honest ways to change how a gun looks. They cost something. A stranger’s website cannot create a Covert for a captcha. Valve already has a drop track. If that track is too slow, the answer is patience or a purchase you can afford — not a generator.
 
 If you stream or clip your inventory, expect more targeted phishing. A public $2,000 grid is a shopping list for thieves. You do not owe viewers a live inspect of every new drop.
 
