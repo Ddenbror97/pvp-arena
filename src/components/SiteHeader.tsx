@@ -294,15 +294,27 @@ function TikTokMark() {
 
 export function SiteFooter({ className }: { className?: string }) {
   const qc = useQueryClient();
+  const footerLink =
+    "text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary";
   const socialLink =
-    "inline-flex min-h-9 items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
-  const footerLink = "text-sm text-muted-foreground transition-colors hover:text-primary";
+    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.035] text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary";
+  const socials = [
+    { label: "Discord", href: "https://discord.gg/yKktkxB7jW", icon: DiscordMark },
+    { label: "Reddit", href: "https://www.reddit.com/r/PvPSpinArena/", icon: RedditMark },
+    {
+      label: "Facebook",
+      href: "https://www.facebook.com/profile.php?id=61596384014389",
+      icon: FacebookMark,
+    },
+    { label: "Instagram", href: "https://www.instagram.com/pvpspinarena/", icon: InstagramMark },
+    { label: "TikTok", href: "https://www.tiktok.com/@pvpspinarena?lang=en", icon: TikTokMark },
+  ];
 
   return (
-    <footer className={cn("canvas mt-10 border-t border-border pb-20 lg:pb-0", className)}>
-      <div className="mx-auto max-w-none px-4 py-8 sm:px-6 lg:py-10">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[minmax(12rem,1.15fr)_repeat(3,minmax(0,1fr))]">
-          <div className="sm:col-span-2 lg:col-span-1">
+    <footer className={cn("canvas mt-8 border-t border-border pb-20 lg:pb-0", className)}>
+      <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-10">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-7 py-7 lg:grid-cols-[1.4fr_1fr_1fr_1.1fr] lg:py-8">
+          <div className="col-span-2 sm:col-span-1">
             <Link to="/" className="footer-wordmark inline-flex" aria-label="PVPspinArena home">
               <img
                 src={arenaLogo}
@@ -311,14 +323,16 @@ export function SiteFooter({ className }: { className?: string }) {
                 height={128}
                 loading="lazy"
                 decoding="async"
-                className="h-10 w-auto"
+                className="h-9 w-auto"
               />
             </Link>
-            <p className="mt-3 max-w-xs text-sm text-muted-foreground">
+            <p className="mt-2 max-w-[16rem] text-sm leading-relaxed text-muted-foreground">
               Where players play against players, real odds.
             </p>
-            <h2 className="mt-5 font-display text-sm text-foreground">Currency</h2>
-            <ul className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <ul
+              aria-label="Supported currencies"
+              className="mt-4 flex flex-wrap items-center gap-4"
+            >
               {(
                 [
                   ["BTC", "Bitcoin"],
@@ -337,73 +351,51 @@ export function SiteFooter({ className }: { className?: string }) {
             </ul>
           </div>
 
-          <div>
-            <h2 className="font-display text-sm text-foreground">Join our community</h2>
-            <div className="mt-3 flex flex-col items-start gap-1.5">
-              <a
-                href="https://discord.gg/yKktkxB7jW"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(socialLink, "bg-[#5865F2] hover:bg-[#4752C4]")}
-              >
-                <DiscordMark />
-                Join Discord
-              </a>
-              <a
-                href="https://www.reddit.com/r/PvPSpinArena/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(socialLink, "bg-[#FF4500] hover:bg-[#E03D00]")}
-              >
-                <RedditMark />
-                Join Reddit
-              </a>
-              <a
-                href="https://www.facebook.com/profile.php?id=61596384014389"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(socialLink, "bg-[#1877F2] hover:bg-[#1669D9]")}
-              >
-                <FacebookMark />
-                Facebook
-              </a>
-              <a
-                href="https://www.instagram.com/pvpspinarena/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  socialLink,
-                  "bg-gradient-to-r from-[#833AB4] via-[#C13584] to-[#E1306C] hover:brightness-110",
-                )}
-              >
-                <InstagramMark />
-                Instagram
-              </a>
-              <a
-                href="https://www.tiktok.com/@pvpspinarena?lang=en"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(socialLink, "bg-[#151515] ring-1 ring-white/20 hover:bg-[#292929]")}
-              >
-                <TikTokMark />
-                TikTok
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="font-display text-sm text-foreground">Contact information</h2>
-            <a
-              href="mailto:contact@pvpspinarena.com"
-              className="mt-3 inline-block break-words text-sm text-muted-foreground transition-colors hover:text-primary"
-            >
-              Contact@pvpspinarena.com
-            </a>
-          </div>
+          <nav aria-label="Explore">
+            <h2 className="font-display text-xs text-foreground">Explore</h2>
+            <ul className="mt-3 grid gap-2">
+              <li>
+                <Link to="/how-it-works" className={footerLink}>
+                  How it works
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className={footerLink}>
+                  About us
+                </Link>
+              </li>
+              <li>
+                <Link to="/fairness" className={footerLink}>
+                  Fairness
+                </Link>
+              </li>
+              <li>
+                <Link to="/fps-1v1" className={footerLink}>
+                  1v1 FPS for money
+                </Link>
+              </li>
+              <li>
+                <Link to="/guides" className={footerLink}>
+                  Guides
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/leaderboards"
+                  className={footerLink}
+                  onMouseEnter={() => warmRanks(qc)}
+                  onFocus={() => warmRanks(qc)}
+                  onTouchStart={() => warmRanks(qc)}
+                >
+                  Ranks
+                </Link>
+              </li>
+            </ul>
+          </nav>
 
           <nav aria-label="Legal">
-            <h2 className="font-display text-sm text-foreground">Legal</h2>
-            <ul className="mt-3 space-y-2">
+            <h2 className="font-display text-xs text-foreground">Legal</h2>
+            <ul className="mt-3 grid gap-2">
               <li>
                 <Link to="/terms" className={footerLink}>
                   Terms
@@ -426,59 +418,58 @@ export function SiteFooter({ className }: { className?: string }) {
               </li>
             </ul>
           </nav>
+
+          <div className="col-span-2 sm:col-span-1">
+            <h2 className="font-display text-xs text-foreground">Join our community</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {socials.map(({ label, href, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  title={label}
+                  className={socialLink}
+                >
+                  <Icon />
+                </a>
+              ))}
+            </div>
+            <a
+              href="mailto:contact@pvpspinarena.com"
+              className={cn(footerLink, "mt-4 inline-block break-all")}
+            >
+              contact@pvpspinarena.com
+            </a>
+          </div>
         </div>
-        <nav aria-label="Explore" className="mt-8 border-t border-border pt-6">
-          <h2 className="font-display text-sm text-foreground">Explore</h2>
-          <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-5">
-            <li>
-              <Link to="/how-it-works" className={footerLink}>
-                How it works
-              </Link>
-            </li>
-            <li>
-              <Link to="/about" className={footerLink}>
-                About
-              </Link>
-            </li>
-            <li>
-              <Link to="/fairness" className={footerLink}>
-                Fairness
-              </Link>
-            </li>
-            <li>
-              <Link to="/fps-1v1" className={footerLink}>
-                1v1 FPS for money
-              </Link>
-            </li>
-            <li>
-              <Link to="/guides" className={footerLink}>
-                Crypto casino guides
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/leaderboards"
-                className={footerLink}
-                onMouseEnter={() => warmRanks(qc)}
-                onFocus={() => warmRanks(qc)}
-                onTouchStart={() => warmRanks(qc)}
+
+        <nav aria-label="Guide topics" className="border-t border-border">
+          <details className="group">
+            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+              <span>Browse guide topics</span>
+              <span
+                aria-hidden="true"
+                className="text-xl font-light leading-none transition-transform group-open:rotate-45"
               >
-                Ranks
-              </Link>
-            </li>
-          </ul>
-        </nav>
-        <nav aria-label="Guide topics" className="mt-6 border-t border-border pt-6">
-          <h2 className="font-display text-sm text-foreground">Guide topics</h2>
-          <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-4 lg:grid-cols-6">
-            {TOPIC_NAV.map((t) => (
-              <li key={t.slug}>
-                <Link to="/guides/topics/$topic" params={{ topic: t.slug }} className={footerLink}>
-                  {t.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+                +
+              </span>
+            </summary>
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-3 pb-6 sm:grid-cols-3 lg:grid-cols-5">
+              {TOPIC_NAV.map((t) => (
+                <li key={t.slug}>
+                  <Link
+                    to="/guides/topics/$topic"
+                    params={{ topic: t.slug }}
+                    className={footerLink}
+                  >
+                    {t.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </details>
         </nav>
       </div>
     </footer>
