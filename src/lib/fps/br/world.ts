@@ -20,7 +20,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
  * revision has left behind in public/.
  */
 export const WORLD_ASSETS = {
-  revision: "bwfix-v1",
+  revision: "hosp-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -244,8 +244,13 @@ export const WORLD_ASSETS = {
   // (groundlift-v1: they fought it, "a door that flickers"); the keep's and the watchtower's
   // stair collision as ramps of 5 cm steps (stair_ramps.mjs + patch_collision.mjs: their 19 cm
   // treads jolted the body a riser a tick, "lagg in tight space and corners").
-  models: "/fps/br/models/models.bwfix-v1.json",
-  collision: "/fps/br/models/collision.bwfix-v1.json",
+  // hosp-v1 (2026-11-26, from bwfix-v1; owner's Central Hospital report: "items that stands
+  // in the air"): the vital signs monitor's stand gets a solid pole (add_pole.mjs pole-v1: its
+  // own was a sliver in LOD0 and gone in LOD1, the monitor hung over the floor on nothing). The
+  // layout's part (layout.ts): the wards' wall cupboard off the window, the tents down onto
+  // their stakes. Collision unchanged but for the tents' placement.
+  models: "/fps/br/models/models.hosp-v1.json",
+  collision: "/fps/br/models/collision.hosp-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

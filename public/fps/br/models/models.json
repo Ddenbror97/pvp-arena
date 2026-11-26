@@ -47975,8 +47975,8 @@
    ],
    "lods": [
     {
-     "file": "/fps/br/models/vitals-monitor.lod0.glb",
-     "tris": 426,
+     "file": "/fps/br/models/vitals-monitor.pole-v1.lod0.glb",
+     "tris": 446,
      "draws": 1,
      "textureMB": 0.33,
      "kB": 15,
@@ -47987,8 +47987,8 @@
      ]
     },
     {
-     "file": "/fps/br/models/vitals-monitor.lod1.glb",
-     "tris": 202,
+     "file": "/fps/br/models/vitals-monitor.pole-v1.lod1.glb",
+     "tris": 222,
      "draws": 1,
      "textureMB": 0,
      "kB": 3,
