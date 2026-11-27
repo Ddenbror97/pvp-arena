@@ -132,6 +132,76 @@ export class StaticWorld {
    * (each runs to its end), so one counter and one array serve them all.
    */
   private readonly scratch: { seen: Uint16Array; stamp: number };
+  /**
+   * The cells bodies are in, decoded: each one's solid boxes as plain floats (6 a box), lowest
+   * underside first (collision audit 2026-11-27: "movement becomes laggy … close to building
+   * geometry"). A hull's query read every box of its 4 m cell through `boxes.get` (a page and a
+   * palette look-up per coordinate) and a callback per box: all four storeys of a block for a
+   * body on its ground floor, the stair's 5 cm ramp slices among them, and a body pressed to a
+   * wall asks forty times a tick (stepBody's bisection and corner assist), the camera again
+   * every frame (frame-view.ts) and prediction again per pending input. Read from here the
+   * same boxes cost a tenth, and the ones that start over the hull's head are never reached.
+   *
+   * `slot`/`boxes` are the last cell asked for at each of HOT places (no look-up at all for a
+   * body that stays where it is); behind them two generations hold every cell decoded lately,
+   * so a hundred bodies on a server never decode each other's cells out (two cells that share
+   * a place cost a map look-up, not a decode). A generation that reaches HOT_BYTES retires the
+   * one before it: a cell still in use was moved to the new one when it was next asked for.
+   * The floats are the stored ones bit for bit (collision-coordinates.ts keeps float32), and
+   * the boxes never change after construction, so nothing here is ever stale. Shared by the
+   * world and its per-match views (doors.ts, panes.ts).
+   */
+  private readonly hot: {
+    slot: Int32Array;
+    boxes: Array<Float32Array | undefined>;
+    young: Map<number, Float32Array>;
+    old: Map<number, Float32Array>;
+    bytes: number;
+  };
+  private static readonly HOT = 1024;
+  /** Decoded boxes a generation holds (bytes): some thousand cells of town. */
+  private static readonly HOT_BYTES = 4 << 20;
+  private static readonly NONE = new Float32Array(0);
+
+  /** The decoded solid boxes of the cell at column c, row r (empty: none). */
+  private cellBoxes(c: number, r: number): Float32Array {
+    const s = this.slotOf(r * COLS + c);
+    if (s === undefined) return StaticWorld.NONE;
+    const hot = this.hot,
+      k = s & (StaticWorld.HOT - 1);
+    if (hot.slot[k] === s) return hot.boxes[k]!;
+    let out = hot.young.get(s);
+    if (!out) {
+      out = hot.old.get(s) ?? this.decodeCell(s);
+      if (hot.bytes + out.byteLength > StaticWorld.HOT_BYTES && hot.young.size) {
+        hot.old = hot.young;
+        hot.young = new Map();
+        hot.bytes = 0;
+      }
+      hot.young.set(s, out);
+      hot.bytes += out.byteLength;
+    }
+    hot.slot[k] = s;
+    hot.boxes[k] = out;
+    return out;
+  }
+
+  /** The solid boxes of the cell in slot s as floats, lowest underside first. */
+  private decodeCell(s: number): Float32Array {
+    const from = this.cellStart[s]!,
+      n = this.cellStart[s + 1]! - from;
+    // By underside (ties in the cell's own order: the result is the same on every machine).
+    const order = Array.from(this.cellItems.subarray(from, from + n));
+    const b = this.boxes;
+    order.sort((i, j) => b.get(i * 6 + 1) - b.get(j * 6 + 1) || i - j);
+    const out = new Float32Array(n * 6);
+    for (let q = 0; q < n; q++) {
+      const o = order[q]! * 6;
+      for (let v = 0; v < 6; v++) out[q * 6 + v] = b.get(o + v);
+    }
+    return out;
+  }
+
   /** A stamp for a new query (the stamps cleared and restarted when they run out). */
   private nextStamp() {
     const s = this.scratch;
@@ -189,6 +259,13 @@ export class StaticWorld {
     for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes.append(b[k]!);
     for (const p of placements) placeFlat(p, shotModels[p.model]);
     this.scratch = { seen: new Uint16Array(count), stamp: 0 };
+    this.hot = {
+      slot: new Int32Array(StaticWorld.HOT).fill(-1),
+      boxes: [],
+      young: new Map(),
+      old: new Map(),
+      bytes: 0,
+    };
     const eachCell = (visit: (key: number, box: number) => void) => {
       for (let i = 0; i < count; i++) {
         const o = i * 6;
@@ -305,20 +382,34 @@ export class StaticWorld {
    */
   blocked(x: number, y: number, z: number, height: number, radius: number): boolean {
     let hit = false;
-    const b = this.boxes;
-    this.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
-      if (hit) return;
-      const o = i * 6;
-      if (
-        x + radius > b.get(o) + 1e-7 &&
-        x - radius < b.get(o + 3) - 1e-7 &&
-        z + radius > b.get(o + 2) + 1e-7 &&
-        z - radius < b.get(o + 5) - 1e-7 &&
-        y + height > b.get(o + 1) + 1e-7 &&
-        y < b.get(o + 4) - 1e-7
-      )
-        hit = true;
-    });
+    const x0 = x - radius,
+      x1 = x + radius,
+      z0 = z - radius,
+      z1 = z + radius,
+      head = y + height;
+    const c0 = this.cellIndex(x0),
+      c1 = this.cellIndex(x1),
+      r0 = this.cellIndex(z0),
+      r1 = this.cellIndex(z1);
+    // (A box in two of the hull's cells is tested twice: the answer is the same.)
+    cells: for (let r = r0; r <= r1; r++)
+      for (let c = c0; c <= c1; c++) {
+        const b = this.cellBoxes(c, r);
+        for (let o = 0, n = b.length; o < n; o += 6) {
+          // Lowest underside first: this one and every later one starts over the head.
+          if (!(head > b[o + 1]! + 1e-7)) break;
+          if (
+            y < b[o + 4]! - 1e-7 &&
+            x1 > b[o]! + 1e-7 &&
+            x0 < b[o + 3]! - 1e-7 &&
+            z1 > b[o + 2]! + 1e-7 &&
+            z0 < b[o + 5]! - 1e-7
+          ) {
+            hit = true;
+            break cells;
+          }
+        }
+      }
     if (hit || !this.vegetation) return hit;
     forEachTrunkNear(this.vegetation, x, z, radius + 1, (tx, tz, r, h, ground) => {
       if (hit) return;
@@ -334,20 +425,33 @@ export class StaticWorld {
    */
   supportAt(x: number, z: number, radius: number, maxY: number): number {
     let top = this.hf.heightAt(x, z);
-    const b = this.boxes;
-    this.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
-      const o = i * 6;
-      const t = b.get(o + 4);
-      if (
-        t > top &&
-        t <= maxY + 1e-6 &&
-        x + radius > b.get(o) &&
-        x - radius < b.get(o + 3) &&
-        z + radius > b.get(o + 2) &&
-        z - radius < b.get(o + 5)
-      )
-        top = t;
-    });
+    const x0 = x - radius,
+      x1 = x + radius,
+      z0 = z - radius,
+      z1 = z + radius,
+      limit = maxY + 1e-6;
+    const c0 = this.cellIndex(x0),
+      c1 = this.cellIndex(x1),
+      r0 = this.cellIndex(z0),
+      r1 = this.cellIndex(z1);
+    for (let r = r0; r <= r1; r++)
+      for (let c = c0; c <= c1; c++) {
+        const b = this.cellBoxes(c, r);
+        for (let o = 0, n = b.length; o < n; o += 6) {
+          // Lowest underside first: a box that starts over the limit has its top over it too.
+          if (b[o + 1]! > limit) break;
+          const t = b[o + 4]!;
+          if (
+            t > top &&
+            t <= limit &&
+            x1 > b[o]! &&
+            x0 < b[o + 3]! &&
+            z1 > b[o + 2]! &&
+            z0 < b[o + 5]!
+          )
+            top = t;
+        }
+      }
     for (const d of this.decks) {
       if (x + radius < d.x0 || x - radius > d.x1 || z + radius < d.z0 || z - radius > d.z1)
         continue;

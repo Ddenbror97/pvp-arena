@@ -15,6 +15,8 @@
  * after them); 18: the ground on the asphalt as drawn (the runways and roadside lots now in the
  * world, the roads over the drawn ground) and vehicles resting on their tyres, both predicted
  * by the client; 19: the Southern Military Base's wall, new buildings and levelled flight line
- * (world garrison-v2, height.v6), predicted by the client.
+ * (world garrison-v2, height.v6), predicted by the client; 20: a body rounds an edge in its way
+ * within the tick and carries on (movement.ts, collision audit 2026-11-27), predicted by the
+ * client.
  */
-export const BR_RULESET_VERSION = 19;
+export const BR_RULESET_VERSION = 20;

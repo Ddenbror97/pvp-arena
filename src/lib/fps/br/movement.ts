@@ -100,9 +100,9 @@ const FOOT_SKIN = 1e-4;
 /**
  * A doorway or a narrow flight met off-centre: when the move along an axis is blocked by an
  * edge that a sideways shift of up to ASSIST (searched in ASSIST_STEP steps) would clear, the
- * body eases sideways toward that shift (at most 70 % of the move, and only what is left of the
- * tick's step: never faster than walking or running) and goes on, as a round body glances off
- * a corner. Smooths 0.8–1.0 m doorways (a 0.7 m hull), porch posts and the turns of stairs;
+ * body shifts sideways toward it (only by what is left of the tick's step: never faster than
+ * walking or running) and, once clear, goes on along the blocked axis with the rest of the
+ * step, as a round body glances off a corner. Smooths 0.8–1.0 m doorways (a 0.7 m hull), porch posts and the turns of stairs;
  * never lets the body through anything narrower than itself (the shift is under the hull's
  * width, so its start and end cover the way between).
  */
@@ -251,9 +251,9 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
       if (best) apply(best.x, best.z, best.to);
     }
     // An edge in the way (a door jamb, a newel post, the turn of a stair): the least sideways
-    // shift that would free the blocked move (the side the input leans to first) is eased
-    // toward, as a round body glances off a corner, within what is left of this tick's step
-    // (never faster than the input's speed).
+    // shift that would free the blocked move (the side the input leans to first) is taken, as
+    // a round body glances off a corner, within what is left of this tick's step (never faster
+    // than the input's speed).
     const stepLength = Math.hypot(dx, dz);
     for (const { axis, delta } of blockedAxes) {
       const left = stepLength - Math.hypot(p.x - x0, p.z - z0);
@@ -294,10 +294,35 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
             open[k] = false;
             continue;
           }
-          const a = Math.min(s, Math.max(ASSIST_STEP, Math.abs(delta) * 0.7), left);
+          // As far round it as the step still reaches, and once round it on along the blocked
+          // axis with what then remains: the step's length is spent on its way, none of it on
+          // standing. (It was eased at seven tenths of the pace and the tick ended there: two
+          // ticks without going at a 20 cm edge. A wall drawn at an angle stands as a staircase
+          // of boxes, an edge every 40–75 cm of it, and a sprint along Blackwater's keep and
+          // quay went, caught, went: collision audit 2026-11-27, owner: "a lot laggy running
+          // with the walls and corners … the building inside prison".)
+          const a = Math.min(s, left);
           const [ex, ez] = shifted(a * side);
           const to = attempt(ex, ez, a);
-          if (to) apply(ex, ez, to);
+          if (to) {
+            apply(ex, ez, to);
+            const gone = Math.abs(axis === "x" ? p.x - x0 : p.z - z0);
+            const rest = Math.min(Math.abs(delta) - gone, left - a);
+            if (a >= s - 1e-9 && rest > 1e-4) {
+              const f = rest / Math.abs(delta);
+              const on = (k: number) =>
+                axis === "x"
+                  ? ([clampEdge(p.x + delta * f * k), p.z] as const)
+                  : ([p.x, clampEdge(p.z + delta * f * k)] as const);
+              for (const k of [1, 0.5, 0.25]) {
+                const [gx, gz] = on(k);
+                const go = attempt(gx, gz, rest * k);
+                if (!go) continue;
+                apply(gx, gz, go);
+                break;
+              }
+            }
+          }
           done = true;
           break;
         }
