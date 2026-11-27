@@ -4399,15 +4399,16 @@ export function createBrArena(
         // zip-line's, the climbing rope's, the rappel's: the same distances and tilts, drawn
         // in and raised where a wall is in the way by the same search), on their view's
         // heading. The offset is damped as theirs is, so a wall's edge passing behind them
-        // slides the view in over a few frames instead of flicking it; where they are along
-        // the ground is eased a little too (a hop's swing out from the wall and back).
+        // slides the view in over a few frames instead of flicking it; on the rappel where
+        // they are along the ground is eased a little too (a hop's swing out from the wall
+        // and back; never on the zip-line, where 120 ms is 5 m of the ride).
         const { x, y, z } = watched.pos;
         const rappelling = watched.phase === "rappel",
           riding = watched.phase === "zip";
         const up = riding ? 1.6 : rappelling ? 1.15 : 1.25;
         const started = !watchChase.set;
         watchChase.set = true;
-        if (started) watchPivot.set(x, y + up, z);
+        if (started || !rappelling) watchPivot.set(x, y + up, z);
         else {
           const held = Math.exp(-dtMs / 120);
           watchPivot.set(x + (watchPivot.x - x) * held, y + up, z + (watchPivot.z - z) * held);
