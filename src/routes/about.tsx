@@ -32,7 +32,7 @@ import { seoHead, type Faq } from "@/components/seo/seo-head";
 const FAQS: Faq[] = [
   {
     q: "What is PVPspinArena?",
-    a: "PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. Our FPS games also include free bot Practice, Bomb Defusal training and 3D Browser Royale on the Project Island map. Cash Battle Royale is coming soon. Browser Royale currently has no cash entry or cash prize.",
+    a: "PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. Our FPS games offer free-to-play modes against real players and bots, plus optional cash 1v1 duels. Cash 5v5 and 3D Browser Royale on Project Island are coming soon. Browser Royale currently has no cash entry or cash prize.",
   },
   {
     q: "What does PVP mean on PVPspinArena?",
@@ -83,8 +83,8 @@ function AboutPage() {
         <p>
           PVPspinArena brings together PvPStrike browser FPS, 1v1 8-ball pool, six-max Hold'em
           poker, Jackpot, Coinflip, Roulette and P2P Slott. Our FPS games include 3D Browser Royale
-          on the Project Island map and free 5v5 Bomb Defusal. Try FPS Practice against a bot, or
-          review the rules and fee before choosing a cash game.
+          on the Project Island map and 5v5 Bomb Defusal. Choose free-to-play modes against real
+          players and bots or a real-cash 1v1 duel. Cash 5v5 and Browser Royale are coming soon.
         </p>
         <p>
           Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on the Base

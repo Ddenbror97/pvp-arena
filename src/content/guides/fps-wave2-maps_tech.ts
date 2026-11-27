@@ -706,7 +706,7 @@ Use a separate combat warm-up when returning to ordinary matches. Surf inputs an
 
 Hypothetical USD example A: a $1 entry from each player makes $2; PvPStrike's 5% combined-pot fee is $0.10, winner credit $1.90 and winner net change +$0.90. Hypothetical USD example B: $5 each makes $10; fee $0.50, credit $9.50 and net change +$4.50. The loser loses the entry, and these examples promise no earnings.
 
-Local practice against a bot is first to seven; cash series are best of thirteen. The published minimum stake is $1, but check the lobby for available entries. Cash requires age 18+ where permitted, not merely movement skill or access to a browser. Read the [FPS money hub](/guides/fps-for-money-hub) and [fairness explanation](/fairness). Server checks on inputs, hits and results do not guarantee immunity from cheating, and a surf record establishes no cash-match advantage.`,
+1v1 bot practice is first to seven; cash series are best of thirteen. The published minimum stake is $1, but check the lobby for available entries. Cash requires age 18+ where permitted, not merely movement skill or access to a browser. Read the [FPS money hub](/guides/fps-for-money-hub) and [fairness explanation](/fairness). Server checks on inputs, hits and results do not guarantee immunity from cheating, and a surf record establishes no cash-match advantage.`,
       ],
     ],
     faqs: [

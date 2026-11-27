@@ -642,7 +642,7 @@ If money is your actual reason for comparing games, use the [FPS money guide](/g
       ),
       section(
         "The separate PvPStrike option in two examples",
-        `[PvPStrike](/fps-1v1) is our separate CS-style browser shooter. Local practice against a bot is first to seven, best of thirteen; real-cash series are best of thirteen. Cash play is 18+ where permitted. Its published minimum is $1, with actual available entries shown in the lobby.
+        `[PvPStrike](/fps-1v1) is our separate CS-style browser shooter. Free-to-play modes let you face real players and bots. The 1v1 bot match is first to seven; cash 1v1 series are best of thirteen. Cash 5v5 and Browser Royale are coming soon. Cash play is 18+ where permitted. Its published minimum is $1, with actual available entries shown in the lobby.
 
 Hypothetical USD example A: $1 each forms a $2 pot. The 5% combined-pot FPS fee is $0.10. Winner credit is $1.90 and winner net is +$0.90 after their own entry.
 

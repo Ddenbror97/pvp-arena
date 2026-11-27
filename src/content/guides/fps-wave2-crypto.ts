@@ -147,7 +147,7 @@ Finally, distinguish ordinary disappointment from a financial recovery goal. Los
       ],
       [
         "A short contrast with entry-funded duels",
-        `In [PvPStrike](/fps-1v1), players enter a separate CS-style browser game; it is not Valve CS2 or Off The Grid. Local practice is first to seven against a bot, a best-of-thirteen format. Cash series use best of thirteen. There is no NFT requirement or reward token. The [CS2 duel guide](/guides/cs2-1v1-for-money) explains the separate native-game distinction.
+        `In [PvPStrike](/fps-1v1), players enter a separate CS-style browser game; it is not Valve CS2 or Off The Grid. 1v1 bot practice is first to seven, a best-of-thirteen format. Cash series use best of thirteen. There is no NFT requirement or reward token. The [CS2 duel guide](/guides/cs2-1v1-for-money) explains the separate native-game distinction.
 
 Hypothetical USD example A: two $1 entries form a $2 pot. The confirmed 5% combined-pot FPS fee is $0.10, leaving $1.90 winner credit and +$0.90 net after that winner's own entry. The loser loses $1.
 
