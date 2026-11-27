@@ -138,8 +138,9 @@ let lowPicture: Uint8ClampedArray | null = null;
  * lens. A dark red wash rising from the bottom and in from the sides, and over it splashes
  * and drops whose outlines come from layered noise (ragged blots, none of them round), many
  * and large at the bottom, fewer up the sides, a few along the top; deep red where a blot is
- * thick. The middle is erased from the picture itself (nothing at all inside CLEAR_CENTRE,
- * feathered out to nearly twice that), so nothing can lie over the aim.
+ * thick, softened as a thing too near to focus on. The middle is erased from the picture
+ * itself (nothing at all inside CLEAR_CENTRE, feathered out to nearly twice that), so nothing
+ * can lie over the aim.
  */
 export function lowHealthPicture(): Uint8ClampedArray {
   if (lowPicture) return lowPicture;
@@ -177,8 +178,8 @@ export function lowHealthPicture(): Uint8ClampedArray {
         // Splashes (they join into pools at the very bottom), drops, and a fine spatter:
         // more of each where the weight is high, none where it is not.
         const lift = 0.2 * weight;
-        const splash = smooth(0.62 - lift, 0.7 - lift, n1) * smooth(0.02, 0.2, weight),
-          drops = smooth(0.69 - lift * 0.6, 0.77 - lift * 0.6, n2) * smooth(0.04, 0.25, weight),
+        const splash = smooth(0.6 - lift, 0.72 - lift, n1) * smooth(0.02, 0.2, weight),
+          drops = smooth(0.68 - lift * 0.6, 0.79 - lift * 0.6, n2) * smooth(0.04, 0.25, weight),
           spatter = smooth(0.81 - lift * 0.4, 0.88 - lift * 0.4, n3) * smooth(0.06, 0.3, weight);
         const blood = Math.max(splash, drops * 0.95, spatter * 0.8);
         if (blood > 0) {
@@ -196,7 +197,26 @@ export function lowHealthPicture(): Uint8ClampedArray {
       data[o + 2] = b;
       data[o + 3] = Math.round(Math.min(1, a) * open * 255);
     }
-  return (lowPicture = data);
+  // Out of focus, as blood on a lens is: every pixel with its eight neighbours, twice. (The
+  // middle stays empty: it is cleared well beyond the blur's reach.)
+  const blurred = new Uint8ClampedArray(data.length);
+  let from: Uint8ClampedArray = data,
+    to: Uint8ClampedArray = blurred;
+  for (let pass = 0; pass < 2; pass++) {
+    for (let y = 0; y < LOW_H; y++)
+      for (let x = 0; x < LOW_W; x++)
+        for (let c = 0; c < 4; c++) {
+          let sum = 0;
+          for (let dy = -1; dy <= 1; dy++) {
+            const yy = Math.min(LOW_H - 1, Math.max(0, y + dy));
+            for (let dx = -1; dx <= 1; dx++)
+              sum += from[(yy * LOW_W + Math.min(LOW_W - 1, Math.max(0, x + dx))) * 4 + c]!;
+          }
+          to[(y * LOW_W + x) * 4 + c] = sum / 9;
+        }
+    [from, to] = [to, from];
+  }
+  return (lowPicture = from);
 }
 
 /**
