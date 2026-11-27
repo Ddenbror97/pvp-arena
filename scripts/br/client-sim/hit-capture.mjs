@@ -4,10 +4,11 @@
  * (the direction crescent, turned as you turn; the red edge flash), and your health is taken
  * under half and down (the blood at the bottom and the edges), then back up, then to nothing.
  *
- * Software WebGL draws a frame a second, and the mist lasts half of one. The page's clocks
- * (performance.now, Date.now, requestAnimationFrame, timers) are therefore run slow together
- * once the players are placed (`--slow`, default 0.04: a second of the match takes 25), so
- * the client, the in-page server and the effects stay in step and each frame can be caught.
+ * Software WebGL takes seconds over a frame and a screenshot, and the mist lasts half a second.
+ * The page's clocks (performance.now, Date.now, requestAnimationFrame, timers) are therefore
+ * run slow together once the players are placed, so the client, the in-page server and the
+ * effects stay in step and each frame can be caught: `--slow` for the mist (default 0.005: a
+ * second of the match takes 200), eight times that for the rest.
  *
  *   node scripts/br/client-sim/hit-capture.mjs [outDir] [--chromium=/path] [--size=960x540]
  */
@@ -22,7 +23,7 @@ const outDir = path.resolve(
   process.argv[2] && !process.argv[2].startsWith("--") ? process.argv[2] : "art/br/build/hit-sim",
 );
 const exe = process.argv.find((a) => a.startsWith("--chromium="))?.slice(11);
-const SLOW = Number(process.argv.find((a) => a.startsWith("--slow="))?.slice(7) ?? 0.04);
+const SLOW = Number(process.argv.find((a) => a.startsWith("--slow="))?.slice(7) ?? 0.005);
 const [W, H] = (process.argv.find((a) => a.startsWith("--size="))?.slice(7) ?? "960x540")
   .split("x")
   .map(Number);
@@ -178,32 +179,45 @@ check("no overlay at full health", (await overlay())?.shown === false, await ove
 await shot("1-before");
 
 // ---- slow from here
-pace = SLOW;
-await page.evaluate((p) => (globalThis.__pace = p), SLOW);
-await pass(120);
+const setPace = async (p) => {
+  pace = p;
+  await page.evaluate((v) => (globalThis.__pace = v), p);
+};
+await setPace(SLOW);
+await pass(60);
 const hp0 = (await status()).otherHp;
 await page.mouse.down({ button: "left" });
-await pass(60);
+await pass(50);
 await page.mouse.up({ button: "left" });
-// The shot, its hit record and the mist: a frame every 50–70 ms of the match for 0.8 s.
+// The shot, its hit record and the mist: a picture every 40 ms or so of the match (each takes
+// several real seconds), from the server taking the health until the cloud has gone.
 let mistAt = null;
-for (let i = 0; i < 12; i++) {
-  await pass(60);
+for (let i = 0; i < 40 && mistAt === null; i++) {
+  await pass(10);
+  if ((await status()).otherHp < hp0) mistAt = i;
+}
+for (let i = 0; i < 18; i++) {
   await shot(`2-mist-${String(i).padStart(2, "0")}`);
-  if (mistAt === null && (await status()).otherHp < hp0) mistAt = i;
+  await pass(15);
 }
 const hp1 = (await status()).otherHp;
 check("your shot hit (the server took the other player's health)", hp1 < hp0, { hp0, hp1 });
+await setPace(SLOW * 8);
 
 // ---- they shoot you: from ahead, then you turn a quarter right (they are on your left)
-await page.evaluate(() => window.sim.health?.(100, 100));
-await page.evaluate(() => window.sim.otherFire?.(true));
-let seen = null;
-for (let i = 0; i < 40 && !seen?.arcs.length; i++) {
-  await pass(40);
-  seen = await overlay();
-}
-await page.evaluate(() => window.sim.otherFire?.(false));
+/** A burst from the other player (two or three rounds), your health topped up after it. */
+const burst = async () => {
+  await page.evaluate(() => window.sim.health?.(100, 100));
+  await page.evaluate(() => window.sim.otherFire?.(true));
+  await pass(230);
+  await page.evaluate(() => window.sim.otherFire?.(false));
+  await pass(150);
+  const before = await page.evaluate(() => window.sim.health?.(null).mine);
+  return before;
+};
+let left = await burst();
+check("their burst hit you (the server took your health)", left < 100 && left > 0, { left });
+let seen = await overlay();
 check(
   "hit from ahead: a crescent at the top and the edge flash",
   seen?.arcs.length === 1 && Math.abs(seen.arcs[0].angle) < 25 && seen.flash > 0,
@@ -211,12 +225,11 @@ check(
 );
 await shot("3-hit-from-ahead");
 const yaw = (await status()).input?.yaw ?? 0;
+await page.evaluate(() => window.sim.health?.(100));
+await pass(1800);
 await page.evaluate((y) => window.sim.face?.(y - Math.PI / 2, -0.06), yaw);
-await pass(250);
-await page.evaluate(() => window.sim.otherFire?.(true));
-await pass(250);
-await page.evaluate(() => window.sim.otherFire?.(false));
-await pass(120);
+await pass(300);
+left = await burst();
 seen = await overlay();
 check(
   "turned a quarter right: the crescent is on the left",
@@ -224,7 +237,18 @@ check(
   seen,
 );
 await shot("4-hit-from-left");
+// The crescent stays on the shooter as you turn back to face them.
 await page.evaluate((y) => window.sim.face?.(y, -0.06), yaw);
+await pass(200);
+seen = await overlay();
+check(
+  "turned back: the same crescent has come round to the top",
+  seen?.arcs.length >= 1 && seen.arcs.every((a) => Math.abs(a.angle) < 25),
+  seen,
+);
+await shot("4b-turned-back");
+await page.evaluate(() => window.sim.health?.(100));
+await pass(2200);
 
 // ---- health
 const lows = {};
