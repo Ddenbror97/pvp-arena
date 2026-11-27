@@ -2722,8 +2722,10 @@ const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
  * Vehicle rows: [id, kind (0 sedan, 1 suv, 2 pickup, 3 bike), x, y, z, yaw, pitch, roll,
  * speed, health, max health, driver seat or −1, destroyed 0/1, condition (0 good, 1 used, 2 damaged),
  * steering wheel (−1…1), sideways slide (m/s), flat tyres (bits, vehicles.ts TYRES), vertical
- * speed (m/s), in the air 0/1, flooded 0/1]: the wheel, slide and vertical speed let the
- * driver's prediction resume a slide or a jump exactly where the server has it.
+ * speed (m/s), in the air 0/1, flooded 0/1, the suspension's travel (m, vehicles.ts
+ * VEHICLES.suspension)]: the wheel, slide, vertical speed and travel let the driver's prediction
+ * resume a slide, a jump or a bounce exactly where the server has it (the height to the mm), and
+ * the springs drawn on everyone's screen.
  */
 function vehicleRow(v: Vehicle) {
   const r = (n: number, k = 100) => Math.round(n * k) / k;
@@ -2731,7 +2733,7 @@ function vehicleRow(v: Vehicle) {
     v.id,
     VEHICLE_KINDS.indexOf(v.kind),
     r(v.x),
-    r(v.y),
+    r(v.y, 1000),
     r(v.z),
     r(v.yaw, 1000),
     r(v.pitch, 1000),
@@ -2748,6 +2750,7 @@ function vehicleRow(v: Vehicle) {
     r(v.vy ?? 0, 1000),
     v.air ? 1 : 0,
     v.drowned ? 1 : 0,
+    r(v.sus ?? 0, 1000),
   ];
 }
 

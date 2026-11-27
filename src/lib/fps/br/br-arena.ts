@@ -34,6 +34,8 @@ import { createSharpen, SHARPEN, sharpenWanted } from "./sharpen";
 import { createBrAudio, SPAS12_CUE_LEAD_MS } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
+import { STEP_RANGE_MAX, stepPace } from "./spatial-audio";
+import type { EngineSource } from "./vehicle-audio";
 import { brVisibleRows, brActorPriority, brRowRenderable, HeldRows } from "./remote-visibility";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
@@ -821,6 +823,9 @@ export function createBrArena(
   });
   const audio = createBrAudio(base);
   const strides = new BrStrides();
+  /** The camera's direction for the listener, and others' engines as heard (reused). */
+  const listenAt = new THREE.Vector3();
+  const engineSources: EngineSource[] = [];
 
   const resize = () => {
     const w = host.clientWidth || innerWidth,
@@ -946,6 +951,16 @@ export function createBrArena(
     doorsFx?.apply({ changes: [id * 2 + open] }, doorOpen);
   let solidView: StaticWorld | null = null;
   const solid = () => solidView ?? island!.island.solid;
+  // Placed sounds are muffled through the world (spatial-audio.ts): one ray from the camera as
+  // a sound starts, through the island as it stands (doors as they are), never continuously.
+  audio.setOccluder((ax, ay, az, bx, by, bz) => {
+    if (!island) return false;
+    const dx = bx - ax,
+      dy = by - ay,
+      dz = bz - az;
+    const len = Math.hypot(dx, dy, dz);
+    return len > 1 && solid().raycast(ax, ay, az, dx, dy, dz, len - 0.6, true) !== null;
+  });
   /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
   let car: Vehicle | null = null;
   /** The Island Airfield's aircraft: rows, your seat, the pilot's prediction and cameras. */
@@ -4624,19 +4639,37 @@ export function createBrArena(
         color: "#b9c4cc",
         detail: `Down the wall to the ground · ${Math.round(rappelDrop(rappelHere))} m`,
       };
-    audio.setListener(camera.position.x, camera.position.y, camera.position.z, yaw);
-    if (
-      strides.advance(
-        mySeat,
-        body.x,
-        body.y,
-        body.z,
-        body.phase === "ground" && body.grounded && !seatedMe() && !kit?.dead,
-        keys.has(binds.walk) || body.crouched || !!kit?.heal,
-        now,
-      )
-    )
-      audio.step(island.footstepSurface(body.x, body.y, body.z), null);
+    // The camera is the listener (first person, the vehicle's chase camera, spectating, the
+    // parachute): its place and the way it looks, pitch included.
+    camera.getWorldDirection(listenAt);
+    audio.setListener(
+      camera.position.x,
+      camera.position.y,
+      camera.position.z,
+      yaw,
+      listenAt.x,
+      listenAt.y,
+      listenAt.z,
+    );
+    // Others' engines (yours is your own sound), from the vehicles as drawn.
+    if (vehiclesFx)
+      audio.engines(engineSources, vehiclesFx.audible(engineSources, car?.id ?? -1), dtMs);
+    // Your own steps by your pace: crouched and walking quiet, a sprint the loudest.
+    const myStride = strides.advance(
+      mySeat,
+      body.x,
+      body.y,
+      body.z,
+      body.phase === "ground" && body.grounded && !seatedMe() && !kit?.dead,
+      false,
+      now,
+    );
+    if (myStride)
+      audio.step(
+        island.footstepSurface(body.x, body.y, body.z),
+        null,
+        keys.has(binds.walk) || !!kit?.heal ? "walk" : stepPace(myStride, body.crouched),
+      );
     // On a ladder: a metal step on every rung passed (yours from the climb, others' from where
     // their row puts them).
     // On the climbing rope: a boot on the rock at each foot's step up the face (twice a cycle
@@ -4699,13 +4732,22 @@ export function createBrArena(
       rappelAtBuf[2] = o.pos.z;
       rappelSound(o.seat, o.rappel, rappelAtBuf, o.pos.y);
     }
+    // Others' steps by their pace (spatial-audio.ts STEP_PACE: crouched to 9 m, walking 16,
+    // running 32, sprinting 42), from their rows: the server sends everyone within 45 m.
     for (const o of others) {
-      if (o.d > (o.soft ? (36 * PERK_EFFECT.stepRadius) ** 2 : 36 * 36)) continue;
+      const reach = o.soft ? PERK_EFFECT.stepRadius : 1;
+      if (o.d > (STEP_RANGE_MAX * reach) ** 2) continue;
       const grounded =
         o.phase === "ground" &&
         Math.abs(o.pos.y - solid().supportAt(o.pos.x, o.pos.z, 0.35, o.pos.y + 0.15)) < 0.15;
-      if (strides.advance(o.seat, o.pos.x, o.pos.y, o.pos.z, grounded, o.crouched, now))
-        audio.step(island.footstepSurface(o.pos.x, o.pos.y, o.pos.z), [o.pos.x, o.pos.y, o.pos.z]);
+      const stride = strides.advance(o.seat, o.pos.x, o.pos.y, o.pos.z, grounded, false, now);
+      if (stride)
+        audio.step(
+          island.footstepSurface(o.pos.x, o.pos.y, o.pos.z),
+          [o.pos.x, o.pos.y, o.pos.z],
+          stepPace(stride, o.crouched),
+          reach,
+        );
     }
     renderer.getDrawingBufferSize(drawSize);
     setGroundFootprint(camera, drawSize.x, drawSize.y);
