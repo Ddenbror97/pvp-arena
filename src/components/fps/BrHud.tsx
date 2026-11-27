@@ -380,11 +380,10 @@ type Kill = {
   self: boolean;
 };
 
-/** Notifications (pickups, refusals), the kill feed and the damage direction. */
+/** Notifications (pickups, refusals) and the kill feed. (Damage: damage-feedback.ts.) */
 export function useBrFeed() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [kills, setKills] = useState<Kill[]>([]);
-  const [hurt, setHurt] = useState<{ at: number; from: number } | null>(null);
   const [hit, setHit] = useState<{ at: number; head: boolean; kill: boolean } | null>(null);
   const [out, setOut] = useState<string | null>(null);
   const id = useRef(0);
@@ -420,11 +419,10 @@ export function useBrFeed() {
           self: e.self,
         },
       ]);
-    else if (e.kind === "hurt") setHurt({ at: now, from: e.from });
     else if (e.kind === "hit") setHit({ at: now, head: e.head, kill: e.kill });
     else if (e.kind === "eliminated") setOut(e.by);
   };
-  return { toasts, kills, hurt, hit, out, onFeed };
+  return { toasts, kills, hit, out, onFeed };
 }
 
 export function BrFeedView({ feed }: { feed: ReturnType<typeof useBrFeed> }) {
@@ -451,13 +449,6 @@ export function BrFeedView({ feed }: { feed: ReturnType<typeof useBrFeed> }) {
           </div>
         ))}
       </div>
-      {feed.hurt && now - feed.hurt.at < 900 && (
-        <div
-          className="br-hurt"
-          style={{ transform: `translate(-50%, -50%) rotate(${-feed.hurt.from}rad)` }}
-          aria-hidden
-        />
-      )}
     </>
   );
 }

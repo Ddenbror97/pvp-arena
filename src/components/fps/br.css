@@ -159,22 +159,6 @@
 .br-killfeed .mine {
   box-shadow: inset 2px 0 0 #e2574c;
 }
-.br-hurt {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  border-top: 5px solid rgba(226, 70, 60, 0.75);
-  pointer-events: none;
-  animation: br-fade 0.9s ease-out forwards;
-}
-@keyframes br-fade {
-  to {
-    opacity: 0;
-  }
-}
 /* Scope: dark surround with a round lens; magnified view behind it. */
 /* Riding a lift (lifts.ts): the cab's doors are shut; the floor display over a dimmed view. */
 /* Riding a lift (owner, 2026-11-13: "remove the window … less window, more modern"): no
