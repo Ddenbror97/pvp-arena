@@ -151,12 +151,13 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
       // plinths proud of the walls (plinth-v2), or with their window reveals lit as the wall
       // (reveal-v1), 2026-11-24: the same triangles. And (2026-11-25) the Blackwater fixes:
       // the chapel's ground faces lifted (groundlift-v1, the same triangles) and the cell
-      // houses' walls carried into the ground (footing-v1, more triangles).
+      // houses' walls carried into the ground (footing-v1, more triangles). And (2026-11-27)
+      // faces added where buildings were left open (gaps-v1, more triangles).
       for (const [i, l] of m.lods.slice(0, -1).entries()) {
         const was = before.models[id]!.lods[i]!;
         if (/\.(zfix-v21|plinth-v2|reveal-v1|groundlift-v1)\.lod\d\.glb$/.test(l.file))
           expect(l.tris, id).toBe(was.tris);
-        else if (/\.(footing-v1|well-v1)\.lod\d\.glb$/.test(l.file))
+        else if (/\.(footing-v1|well-v1|gaps-v1)\.lod\d\.glb$/.test(l.file))
           expect(l.tris, id).toBeGreaterThan(was.tris);
         // The lift shaft cut out of the lobbies' floors and the pool decks (shaft-v1): the
         // floors split round it, a few more triangles.
