@@ -39,7 +39,7 @@ import {
 } from "./combat";
 import { GRENADES } from "../grenades/rules";
 import { AIRDROP, airdropContents, planAirdrops, type Airdrop } from "./airdrops";
-import { botThink, newBotMind, type BotMind } from "./bots";
+import { botDriveHeading, botThink, newBotMind, type BotMind } from "./bots";
 import {
   GAS_EXPOSURE,
   LEGACY_ZONE_PHASES,
@@ -816,7 +816,36 @@ export function stepBrMatch(
   for (const s of state.seats) {
     if (s.dead) continue;
     if (s.vehicle !== undefined) {
-      if (s.bot) leaveVehicle(state, s, world);
+      if (s.bot) {
+        const v = state.vehicles[s.vehicle];
+        if (!v || v.driver !== s.seat) {
+          delete s.vehicle;
+          s.body.crouched = false;
+          continue;
+        }
+        const mind = state.minds[s.seat]!;
+        const goal = zone.next;
+        const arrived = Math.hypot(v.x - goal.x, v.z - goal.z) <= goal.r * 0.85;
+        const heading = arrived ? null : botDriveHeading(mind, v, goal, island, meta, now);
+        const brake = heading === null;
+        if (Math.abs(v.speed) > 2) delete mind.slowSince;
+        else mind.slowSince ??= now;
+        const stalled = now - (mind.slowSince ?? now) > 4000;
+        if ((arrived || stalled) && Math.abs(v.speed) < 3 && leaveVehicle(state, s, world)) {
+          delete mind.slowSince;
+          mind.skipRideUntil = now + 15000;
+        } else {
+          const difference = v.yaw - (heading ?? v.yaw);
+          const turn = Math.atan2(Math.sin(difference), Math.cos(difference));
+          botInputs.set(s.seat, {
+            seq: 0,
+            jump: brake,
+            yaw: v.yaw,
+            forward: brake || v.speed > (Math.abs(turn) > 0.65 ? 8 : 23) ? 0 : 1,
+            strafe: Math.max(-1, Math.min(1, turn * 2)),
+          });
+        }
+      }
       continue; // driven below
     }
     if (s.cockpit !== undefined) {
@@ -841,6 +870,7 @@ export function stepBrMatch(
         !!s.hands.heal,
         now,
         alive,
+        state.vehicles,
       );
       human = { seq: 0, ...think.input };
       botInputs.set(s.seat, human);
@@ -873,7 +903,7 @@ export function stepBrMatch(
       if (damage > 0) nadeDamage(state, world, s, s, damage, "fall");
     }
   }
-  stepVehicles(state, island, world, meta, inputs, now, dtMs);
+  stepVehicles(state, island, world, meta, inputs, botInputs, now, dtMs);
   stepFlight(state, island, world, meta, inputs, now, dtMs);
   botDoors(state, world);
   state.history.record(now, state.seats);
@@ -1668,6 +1698,7 @@ function stepVehicles(
   world: StaticWorld,
   meta: WorldMeta,
   inputs: ReadonlyMap<number, BrInput>,
+  botInputs: ReadonlyMap<number, BrInput>,
   now: number,
   dtMs: number,
 ) {
@@ -1679,7 +1710,8 @@ function stepVehicles(
     if (v.driver < 0 && v.speed === 0 && !v.slip && !v.air && !v.vy) continue;
     // A tick without the driver's input (network jitter) keeps the last one for a moment,
     // as the client predicted, instead of braking.
-    let input = driver && v.driver >= 0 ? (inputs.get(driver.seat) ?? null) : null;
+    let input =
+      driver && v.driver >= 0 ? ((driver.bot ? botInputs : inputs).get(driver.seat) ?? null) : null;
     if (input) heldInputs.set(v.id, { input, at: now });
     else if (driver && v.driver >= 0) {
       const held = heldInputs.get(v.id);
