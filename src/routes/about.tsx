@@ -32,7 +32,7 @@ import { seoHead, type Faq } from "@/components/seo/seo-head";
 const FAQS: Faq[] = [
   {
     q: "What is PVPspinArena?",
-    a: "PVPspinArena has seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. Our FPS games also include free bot Practice, Bomb Defusal training and 3D Browser Royale on the Project Island map. Cash Battle Royale is coming soon. Browser Royale currently has no cash entry or cash prize.",
+    a: "PVPspinArena offers Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. Our FPS games also include free bot Practice, Bomb Defusal training and 3D Browser Royale on the Project Island map. Cash Battle Royale is coming soon. Browser Royale currently has no cash entry or cash prize.",
   },
   {
     q: "What does PVP mean on PVPspinArena?",
@@ -44,7 +44,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "What games are available?",
-    a: "Seven games are available: Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, 1v1 8-ball pool and PvPStrike. Pool follows the published shot rules. PvPStrike offers best-of-thirteen human cash matches and free first-to-seven bot Practice. Both pool and FPS charge 5% of a winning cash-match pot. Free Practice, Bomb Defusal training and Browser Royale have no cash stake or payout.",
+    a: "Available games include Jackpot, Coinflip, Roulette, P2P Slott, six-max No-Limit Texas Hold'em, 1v1 8-ball pool and PvPStrike. Pool follows the published shot rules. PvPStrike offers best-of-thirteen human cash matches and free first-to-seven bot Practice. Both pool and FPS charge 5% of a winning cash-match pot. Free Practice, Bomb Defusal training and Browser Royale have no cash stake or payout.",
   },
   {
     q: "How is PVPspinArena inspired by the CS:GO betting era?",
@@ -81,10 +81,10 @@ function AboutPage() {
         secondary={{ to: "/how-it-works", label: "Learn how it works" }}
       >
         <p>
-          PVPspinArena brings together seven games: PvPStrike browser FPS, 1v1 8-ball pool, six-max
-          Hold'em poker, Jackpot, Coinflip, Roulette and P2P Slott. Our FPS games include Browser
-          Royale on the Project Island map and free Bomb Defusal training. Try FPS Practice against
-          a bot, or review the rules and fee before choosing a cash game.
+          PVPspinArena brings together PvPStrike browser FPS, 1v1 8-ball pool, six-max Hold'em
+          poker, Jackpot, Coinflip, Roulette and P2P Slott. Our FPS games include 3D Browser Royale
+          on the Project Island map and free 5v5 Bomb Defusal. Try FPS Practice against a bot, or
+          review the rules and fee before choosing a cash game.
         </p>
         <p>
           Balances are shown in US dollars and funded with Bitcoin, or with USDC or ETH on the Base
@@ -133,7 +133,10 @@ function AboutPage() {
             <p>The browser shows the result. It does not file the winner or the payout.</p>
           </SeoCard>
           <SeoCard icon={<Wallet className="h-5 w-5" />} title="One USD balance" accent="rival">
-            <p>Fund with Bitcoin, or with USDC or ETH on Base. Play and withdraw in US dollars.</p>
+            <p>
+              Fund with Bitcoin, or with USDC or ETH on Base. Balances are displayed in dollars;
+              withdrawals are sent in the selected digital asset.
+            </p>
           </SeoCard>
         </SeoGrid>
       </SeoSection>
@@ -289,12 +292,12 @@ function AboutPage() {
       <SeoSection
         id="games"
         eyebrow="The games"
-        title="Seven games, one balance"
+        title="Free play and cash games"
         intro={
           <p>
             Cash games use the same wallet balance. Draws commit a seed, pool follows the shots, and
             PvPStrike validates gameplay on the match server. Its free Practice, Bomb Defusal
-            training and Browser Royale modes pay no cash prize.
+            training and 3D Browser Royale pay no cash prize.
           </p>
         }
       >
@@ -356,23 +359,19 @@ function AboutPage() {
             to="/"
             cta="Open PvPStrike"
           >
-            Play best-of-thirteen cash duels against another person or free bot Practice across the
-            aim-map rotation. Cash wins pay the combined pot after a 5% fee. Bomb Defusal training
-            and Browser Royale are currently free, with no cash prize. Cash Battle Royale is coming
-            soon; launch details have not been announced.
-            <span className="mt-3 block">
-              <Link to="/fps-br" className="text-primary hover:underline">
-                Open Browser Royale
-              </Link>
-              {" · "}
-              <Link
-                to="/guides/$slug"
-                params={{ slug: "browser-battle-royale" }}
-                className="text-primary hover:underline"
-              >
-                Browser battle royale guide
-              </Link>
-            </span>
+            Play best-of-thirteen cash duels against another person or practise free against a bot.
+            Cash wins pay the combined pot after a 5% fee. PvPStrike also offers free 5v5 Bomb
+            Defusal, where teams plant or defuse the bomb. Cash 5v5 is coming soon.
+          </GameCard>
+          <GameCard
+            icon={<Globe className="h-5 w-5" />}
+            name="Browser Royale"
+            to="/guides/browser-battle-royale"
+            cta="Explore Browser Royale"
+          >
+            Our free 3D browser battle royale takes place on the Project Island map. Parachute in,
+            collect equipment and survive the shrinking safe zone. Rooms hold up to 100 players and
+            bots. Desktop mouse and keyboard are required. Cash Battle Royale is coming soon.
           </GameCard>
         </SeoGrid>
       </SeoSection>
@@ -437,8 +436,8 @@ function AboutPage() {
         <SeoGrid cols={4}>
           <SeoCard icon={<Wallet className="h-5 w-5" />} title="Digital wallet infrastructure">
             <p>
-              You link a wallet you control and deposit from it; deposits are matched to your
-              verified address.
+              USDC and ETH deposits on Base are matched to your linked wallet. Bitcoin deposits use
+              a payment invoice created in the wallet.
             </p>
           </SeoCard>
           <SeoCard
@@ -497,20 +496,20 @@ function AboutPage() {
               reconciled at any time.
             </p>
           </SeoCard>
-          <SeoCard title="Deposits come from wallets you prove you own" accent="rival">
+          <SeoCard title="Deposit instructions depend on the asset" accent="rival">
             <p>
-              Before a deposit is credited, the sending address must be a wallet you verified by
-              signing a message. That links on-chain money to the right account without asking for
-              personal banking details, and it stops funds from an unknown sender being credited to
-              the wrong player.
+              For USDC and ETH on Base, link your wallet by signing a message, then deposit from
+              that address. For Bitcoin, enter an amount in the wallet and use Get Bitcoin address
+              to create an invoice. Follow the network and confirmation instructions shown for your
+              selected asset.
             </p>
           </SeoCard>
           <SeoCard title="The animation follows the result, never the reverse">
             <p>
               By the time a wheel starts spinning or a coin starts flipping, the outcome is already
-              stored. Every viewer's screen is timed from the same server clock, so everyone
-              watching sees the same result land at the same moment — whether they joined the round
-              or are just watching.
+              stored. Every viewer's screen is timed from the same server clock, so viewers follow
+              the same result from the server timeline. Network and device performance can affect
+              when updates appear on each screen.
             </p>
           </SeoCard>
         </SeoGrid>
@@ -550,6 +549,20 @@ function AboutPage() {
         </SeoGrid>
       </SeoSection>
 
+      <SeoSection id="contact" eyebrow="Contact" title="Questions about the platform?">
+        <p>
+          Email{" "}
+          <a href="mailto:contact@pvpspinarena.com" className="text-primary hover:underline">
+            contact@pvpspinarena.com
+          </a>{" "}
+          for account or game questions. Include the game or transaction reference when relevant.
+          Never send a private key, seed phrase or sign-in code.
+        </p>
+        <div className="mt-4">
+          <SeoLink to="/editorial">How our guides are researched and maintained</SeoLink>
+        </div>
+      </SeoSection>
+
       <SeoFaq faqs={FAQS} />
 
       <p className="text-center text-sm text-muted-foreground">
@@ -563,7 +576,7 @@ function AboutPage() {
         </Link>
         , or browse all{" "}
         <Link to="/guides" className="text-primary hover:underline">
-          crypto casino guides
+          game and payment guides
         </Link>
         .
       </p>

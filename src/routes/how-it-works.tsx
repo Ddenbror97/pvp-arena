@@ -83,7 +83,7 @@ const FAQS: Faq[] = [
   },
 ];
 
-const TITLE = "How PVPspinArena Works | PVP Crypto Casino Games";
+const TITLE = "How PVPspinArena Works | FPS, Wallet and Game Rules";
 const DESC =
   "Learn how Browser Royale, PvPStrike duels, pool, poker and casino games work: free modes, cash entries, fees, settlement and verification.";
 
@@ -102,10 +102,10 @@ export const Route = createFileRoute("/how-it-works")({
 const JOURNEY = [
   ["Access your account", "Sign in with a 6-digit email code."],
   ["Cash games only", "Fund your wallet for cash entries. Free modes need no deposit."],
-  ["Choose a game", "PvPStrike, 8-ball, poker, Jackpot, Coinflip, Roulette or Slott."],
+  ["Choose a game", "PvPStrike, Browser Royale, pool, poker or a casino game."],
   ["Review the rules", "Wager, chance, multipliers and any fee."],
   ["Create or join", "Enter a pot, match a flip, bet or take a seat."],
-  ["Game resolves", "A draw, the cards, or the shots settle the round."],
+  ["Game resolves", "Follow the round result, match score or survival placement."],
   ["Review", "Check the game's verification or recorded match result."],
 ];
 
@@ -132,6 +132,18 @@ function HowItWorksPage() {
         </p>
       </SeoHero>
 
+      <nav
+        aria-label="On this page"
+        className="flex flex-wrap gap-x-5 gap-y-3 text-sm text-primary"
+      >
+        <a href="#account">Account</a>
+        <a href="#wallet">Wallet</a>
+        <a href="#fps-duels">1v1 duels</a>
+        <a href="#bomb-defusal">5v5 Bomb Defusal</a>
+        <a href="#browser-royale">Browser Royale</a>
+        <a href="#games">All game rules</a>
+        <a href="#verify">Verification</a>
+      </nav>
       <section aria-labelledby="journey-h">
         <h2 id="journey-h" className="sr-only">
           The player journey
@@ -176,9 +188,10 @@ function HowItWorksPage() {
         </p>
         <ul className="list-disc space-y-1 pl-5">
           <li>
-            <strong>Bitcoin:</strong> on the wallet page, choose Bitcoin and send the on-chain
-            amount on the invoice. It is credited in US dollars after the confirmations shown there.
-            Cash out to a Bitcoin address that starts with bc1. Lightning payments are not accepted.
+            <strong>Bitcoin:</strong> on the wallet page, choose Bitcoin, enter a dollar amount and
+            select Get Bitcoin address. Send the exact on-chain amount shown on the invoice. It is
+            credited in US dollars after the confirmations shown there. Cash out to a Bitcoin
+            address that starts with bc1. Lightning payments are not accepted.
           </li>
           <li>
             <strong>USDC and ETH:</strong> on the wallet page, connect MetaMask or Coinbase Wallet
@@ -261,10 +274,20 @@ function HowItWorksPage() {
             icon={<Swords className="h-5 w-5" />}
             name="PvPStrike FPS"
             to="/"
-            tag="1v1 · Bomb Defusal · Battle Royale"
+            tag="1v1 duels · 5v5 Bomb Defusal"
           >
-            Human cash duels, free first-to-seven bot Practice, Bomb Defusal training and free
-            Browser Royale. Cash duel rules do not apply to Battle Royale.
+            Play a human cash duel, practise against a bot or join free 5v5 Bomb Defusal. Desktop
+            mouse and keyboard are required. Cash 5v5 is coming soon.
+          </GameTile>
+          <GameTile
+            icon={<Target className="h-5 w-5" />}
+            name="Browser Royale"
+            to="/guides/browser-battle-royale"
+            tag="3D battle royale · Project Island"
+          >
+            Parachute in, find equipment and survive the closing zone. Free desktop play is
+            available now, with bots filling empty seats up to 100 participants. Cash play is coming
+            soon.
           </GameTile>
         </SeoGrid>
       </SeoSection>
@@ -510,38 +533,40 @@ function HowItWorksPage() {
             <SeoLink to="/8-ball-pool">Open the 8-ball lobby</SeoLink>
             <SeoLink to="/pool/practice">Practise pool against a bot</SeoLink>
           </SeoCard>
-          <SeoCard icon={<Swords className="h-5 w-5" />} title="PvPStrike FPS">
-            <ol className="list-decimal space-y-1 pl-5">
-              <li>
-                <strong>Practice:</strong> free bot match, first to seven round wins.
-              </li>
-              <li>
-                <strong>Cash:</strong> two humans match entries; best of thirteen.
-              </li>
-              <li>
-                <strong>Play:</strong> desktop mouse and keyboard, across the aim-map rotation.
-                Anti-Terrorists carry an M4A1-S; Terrorists carry an AK-47.
-              </li>
-              <li>
-                <strong>Rounds:</strong> eliminate the opponent or have more health when the
-                60-second clock ends. Three drawn rounds cancel the match.
-              </li>
-              <li>
-                <strong>Halftime:</strong> a five-second break, then sides and spawn positions
-                switch. Both modes swap after round six. Scores stay with each player.
-              </li>
-              <li>
-                <strong>Settlement:</strong> cash winner receives the pot after a 5% fee. Practice
-                has no stake, fee or payout.
-              </li>
-              <li>
-                <strong>Waiting:</strong> browse the site while waiting for a human and use the Join
-                now alert when matched. Offline waiting rooms are cancelled and refunded.
-              </li>
-            </ol>
-            <SeoLink to="/">Open PvPStrike and Practice</SeoLink>
-            <SeoLink to="/fps-1v1">1v1 rules, fees and public results</SeoLink>
-          </SeoCard>
+          <div id="fps-duels" className="scroll-mt-24">
+            <SeoCard icon={<Swords className="h-5 w-5" />} title="PvPStrike 1v1 duels">
+              <ol className="list-decimal space-y-1 pl-5">
+                <li>
+                  <strong>Practice:</strong> free bot match, first to seven round wins.
+                </li>
+                <li>
+                  <strong>Cash:</strong> two humans match entries; best of thirteen.
+                </li>
+                <li>
+                  <strong>Play:</strong> desktop mouse and keyboard, across the aim-map rotation.
+                  Anti-Terrorists carry an M4A1-S; Terrorists carry an AK-47.
+                </li>
+                <li>
+                  <strong>Rounds:</strong> eliminate the opponent or have more health when the
+                  60-second clock ends. Three drawn rounds cancel the match.
+                </li>
+                <li>
+                  <strong>Halftime:</strong> a five-second break, then sides and spawn positions
+                  switch. Both modes swap after round six. Scores stay with each player.
+                </li>
+                <li>
+                  <strong>Settlement:</strong> cash winner receives the pot after a 5% fee. Practice
+                  has no stake, fee or payout.
+                </li>
+                <li>
+                  <strong>Waiting:</strong> browse the site while waiting for a human and use the
+                  Join now alert when matched. Offline waiting rooms are cancelled and refunded.
+                </li>
+              </ol>
+              <SeoLink to="/">Open PvPStrike and Practice</SeoLink>
+              <SeoLink to="/fps-1v1">1v1 rules, fees and public results</SeoLink>
+            </SeoCard>
+          </div>
           <div id="bomb-defusal" className="scroll-mt-24">
             <SeoCard icon={<Target className="h-5 w-5" />} title="5v5 Bomb Defusal">
               <p>
@@ -557,32 +582,39 @@ function HowItWorksPage() {
               <SeoLink to="/">Compare PvPStrike modes</SeoLink>
             </SeoCard>
           </div>
-          <SeoCard icon={<Target className="h-5 w-5" />} title="Browser Royale · 3D battle royale">
-            <ol className="list-decimal space-y-1 pl-5">
-              <li>
-                Sign in and choose Browser Royale from the PvPStrike lobby. No deposit is needed.
-              </li>
-              <li>Enter warm-up, then choose where to leave the plane and steer your parachute.</li>
-              <li>
-                Find weapons, ammunition and protection in buildings. Move with the shrinking safe
-                zone.
-              </li>
-              <li>
-                Survive against a mix of players and bots filling up to 100 seats. This is not a
-                100-human guarantee.
-              </li>
-              <li>
-                Cash Battle Royale is coming soon. There is currently no cash BR entry or cash
-                prize, and no launch date, price or prize schedule has been announced.
-                Best-of-thirteen rounds and the 1v1 pot fee do not apply.
-              </li>
-            </ol>
-            <SeoLink to="/fps-br">Open Browser Royale</SeoLink>
-            <SeoLink to="/guides/browser-battle-royale">
-              Browser battle royale: controls and access
-            </SeoLink>
-            <SeoLink to="/guides/battle-royale-for-money-hub">How cash BR formats differ</SeoLink>
-          </SeoCard>
+          <div id="browser-royale" className="scroll-mt-24">
+            <SeoCard
+              icon={<Target className="h-5 w-5" />}
+              title="Browser Royale · 3D battle royale"
+            >
+              <ol className="list-decimal space-y-1 pl-5">
+                <li>
+                  Sign in and choose Browser Royale from the PvPStrike lobby. No deposit is needed.
+                </li>
+                <li>
+                  Enter warm-up, then choose where to leave the plane and steer your parachute.
+                </li>
+                <li>
+                  Find weapons, ammunition and protection in buildings. Move with the shrinking safe
+                  zone.
+                </li>
+                <li>
+                  Survive against a mix of players and bots filling up to 100 seats. This is not a
+                  100-human guarantee.
+                </li>
+                <li>
+                  Cash Battle Royale is coming soon. There is currently no cash BR entry or cash
+                  prize, and no launch date, price or prize schedule has been announced.
+                  Best-of-thirteen rounds and the 1v1 pot fee do not apply.
+                </li>
+              </ol>
+              <SeoLink to="/fps-br">Open Browser Royale</SeoLink>
+              <SeoLink to="/guides/browser-battle-royale">
+                Browser battle royale: controls and access
+              </SeoLink>
+              <SeoLink to="/guides/battle-royale-for-money-hub">How cash BR formats differ</SeoLink>
+            </SeoCard>
+          </div>
         </SeoGrid>
       </SeoSection>
 
@@ -755,8 +787,8 @@ function HowItWorksPage() {
           Built around game integrity
         </h2>
         <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">
-          The rules below are the principles the platform is built on. They describe what the system
-          guarantees, not how its internals are configured.
+          The platform validates gameplay and cash settlement on the server. Your game history and
+          available verification tools let you review completed results.
         </p>
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[
@@ -911,7 +943,7 @@ function HowItWorksPage() {
       </p>
       <SeoCta
         title="Ready to play a round?"
-        text="Pick a game, check the committed hash and watch the result land live."
+        text="Choose free practice or a cash game, review its rules and follow your result."
         primary={{ to: "/", label: "Explore games" }}
         secondary={{ to: "/about", label: "About PVPspinArena" }}
       />
