@@ -1,6 +1,5 @@
 import {
   Fragment,
-  startTransition,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -24,8 +23,6 @@ import { cn } from "@/lib/utils";
 
 export { ChatMessageRow };
 
-/** Rows rendered in the navigation commit; the rest follow in a background transition. */
-const FIRST_COMMIT_ROWS = 16;
 const noopSubscribe = () => () => {};
 
 export function GameChat({
@@ -57,13 +54,6 @@ export function GameChat({
     () => true,
     () => false,
   );
-  const [windowed, setWindowed] = useState(clientMount);
-  useEffect(() => {
-    if (!windowed) return;
-    const t = setTimeout(() => startTransition(() => setWindowed(false)), 0);
-    return () => clearTimeout(t);
-  }, [windowed]);
-  const shown = windowed ? messages.slice(-FIRST_COMMIT_ROWS) : messages;
   const identities = usePrestigeIdentities(messages.map((m) => m.user_id));
   const send = useServerFn(sendChatMessage);
   const [text, setText] = useState("");
@@ -71,45 +61,26 @@ export function GameChat({
   const [error, setError] = useState<string | null>(null);
   const [unseen, setUnseen] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
   const atBottom = useRef(true);
   const prevLast = useRef<string | undefined>(undefined);
-  const prevFirst = useRef<string | undefined>(undefined);
   const prevHeight = useRef(0);
 
   useLayoutEffect(() => {
     const el = listRef.current;
     if (!el) return;
-    const first = shown[0]?.id;
-    const last = shown[shown.length - 1]?.id;
-    if (first !== prevFirst.current && last === prevLast.current && prevHeight.current) {
-      // Older page prepended: keep the reader's position.
-      el.scrollTop += el.scrollHeight - prevHeight.current;
-    } else if (last !== prevLast.current) {
-      if (atBottom.current) el.scrollTop = el.scrollHeight;
-      else if (prevLast.current) setUnseen(true);
-    } else if (atBottom.current) {
-      el.scrollTop = el.scrollHeight;
+    const last = messages.at(-1)?.id;
+    // The log starts at its bottom edge in CSS, even before hydration. Older
+    // pages grow upward; only a new message below the reader needs compensation.
+    if (last !== prevLast.current) {
+      if (atBottom.current) el.scrollTop = 0;
+      else if (prevLast.current) {
+        el.scrollTop -= el.scrollHeight - prevHeight.current;
+        setUnseen(true);
+      }
     }
-    prevFirst.current = first;
     prevLast.current = last;
     prevHeight.current = el.scrollHeight;
-  }, [shown]);
-
-  // Rows and the composer keep a constant box. This only follows a real new line.
-  useLayoutEffect(() => {
-    const el = listRef.current;
-    const content = contentRef.current;
-    if (!el || !content) return;
-    const pin = () => {
-      if (atBottom.current) el.scrollTop = el.scrollHeight;
-    };
-    const ro = new ResizeObserver(pin);
-    ro.observe(content);
-    ro.observe(el);
-    pin();
-    return () => ro.disconnect();
-  }, []);
+  }, [messages]);
 
   useEffect(() => {
     if (!error) return;
@@ -120,15 +91,15 @@ export function GameChat({
   const onScroll = () => {
     const el = listRef.current;
     if (!el) return;
-    atBottom.current =
-      el.scrollHeight - el.scrollTop - el.clientHeight < CHAT_CONFIG.stickToBottomPx;
+    atBottom.current = -el.scrollTop < CHAT_CONFIG.stickToBottomPx;
     if (atBottom.current) setUnseen(false);
     prevHeight.current = el.scrollHeight;
-    if (el.scrollTop < 40 && hasMore && !loadingOlder && !windowed) void loadOlder();
+    if (el.scrollHeight - el.clientHeight + el.scrollTop < 40 && hasMore && !loadingOlder)
+      void loadOlder();
   };
   const jump = () => {
     const el = listRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (el) el.scrollTop = 0;
     atBottom.current = true;
     setUnseen(false);
   };
@@ -215,9 +186,9 @@ export function GameChat({
             ref={listRef}
             data-chat-log=""
             onScroll={onScroll}
-            className="no-scrollbar absolute inset-0 overflow-y-auto [overflow-anchor:none]"
+            className="no-scrollbar absolute inset-0 flex flex-col-reverse overflow-y-auto [font-family:system-ui,sans-serif] [overflow-anchor:none]"
           >
-            <div ref={contentRef}>
+            <div className="shrink-0">
               {/* Reserved top strip: constant height so "Start of chat" / "Loading..."
                     never appear late and push the messages down. */}
               <div
@@ -257,8 +228,8 @@ export function GameChat({
                 </p>
               )}
               <ul className="pb-1">
-                {shown.map((m, index) => {
-                  const prev = shown[index - 1];
+                {messages.map((m, index) => {
+                  const prev = messages[index - 1];
                   const newDay =
                     !prev || chatDayKey(prev.created_at, false) !== chatDayKey(m.created_at, false);
                   return (
@@ -277,7 +248,7 @@ export function GameChat({
                         mine={m.user_id === userId}
                         identity={identities.get(m.user_id)}
                         localTime={clientMount}
-                        priority={index >= shown.length - 8}
+                        priority={index >= messages.length - 8}
                         continued={!newDay && continuesPlayerTurn(prev, m, false)}
                       />
                     </Fragment>
@@ -333,11 +304,6 @@ export function GameChat({
           )}
         </div>
       </div>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `(function(){var el=document.getElementById(${JSON.stringify(logId)});if(!el)return;void el.offsetHeight;el.scrollTop=el.scrollHeight;})();`,
-        }}
-      />
     </section>
   );
 }
