@@ -284,7 +284,7 @@ export function createDamageFeedback(
   let writes = 0,
     shown = false,
     lowNow = 0,
-    lowShown = -1,
+    lowShown = 0,
     lowScale = -1,
     flashNow = 0,
     flashShown = 0,

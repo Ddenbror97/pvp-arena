@@ -159,6 +159,15 @@ declare global {
       otherLoadout?: (guns: [string | null, string | null], active: number) => void;
       /** Gun checks: turn the other player by `by` rad (seen from the side). */
       otherTurn?: (by: number) => void;
+      /**
+       * Hit-effects check (hit-capture.mjs): the other player `ahead` m in front of you and
+       * `right` m to your right, facing you, each of you with an AK-47, standing still.
+       */
+      fightSetup?: (ahead?: number, right?: number) => void;
+      /** Hit-effects check: the other player holds the trigger, aimed at your chest (or lets go). */
+      otherFire?: (on: boolean) => void;
+      /** Hit-effects check: your health and the other player's, on the server (null: as it is). */
+      health?: (mine: number | null, theirs?: number | null) => { mine: number; theirs: number };
       otherGun?: (item: string) => void;
       /** Spot checks (spot-capture.mjs): stand the local player at world (x, y, z), the other
        * player 60 m away; no input mirrored. `y` omitted: on whatever is under (x, z) below
@@ -780,6 +789,49 @@ const ready = (async () => {
   };
   window.sim.otherTurn = (by) => {
     state.seats[other]!.yaw += by;
+  };
+  window.sim.fightSetup = (ahead = 6, right = 0) => {
+    window.sim.knifeSetup!(false);
+    const b = state.seats[me]!.body,
+      o = state.seats[other]!;
+    const yaw = lastInput?.yaw ?? 0;
+    // (Forward is (−sin yaw, −cos yaw); right of it (cos yaw, −sin yaw).)
+    o.body.x = b.x - Math.sin(yaw) * ahead + Math.cos(yaw) * right;
+    o.body.z = b.z - Math.cos(yaw) * ahead - Math.sin(yaw) * right;
+    o.body.y = world.supportAt(o.body.x, o.body.z, 0.35, hf.heightAt(o.body.x, o.body.z) + 0.5);
+    o.yaw = Math.atan2(-(b.x - o.body.x), -(b.z - o.body.z));
+    window.sim.giveGun!("ak47");
+    window.sim.otherHold!("ak47");
+  };
+  window.sim.otherFire = (on) => {
+    const b = state.seats[me]!.body,
+      o = state.seats[other]!.body;
+    mirroring = false;
+    const d = Math.hypot(b.x - o.x, b.z - o.z);
+    mirror = on
+      ? {
+          seq: 1,
+          forward: 0,
+          strafe: 0,
+          yaw: Math.atan2(-(b.x - o.x), -(b.z - o.z)),
+          // (From their eyes to your chest.)
+          pitch: Math.atan2(b.y + 1.2 - (o.y + 1.6), d),
+          fire: true,
+        }
+      : null;
+  };
+  window.sim.health = (mine, theirs = null) => {
+    const a = state.seats[me]!,
+      o = state.seats[other]!;
+    if (mine !== null) {
+      a.kit.hp = mine;
+      a.kitVersion++;
+    }
+    if (theirs !== null) {
+      o.kit.hp = theirs;
+      o.kitVersion++;
+    }
+    return { mine: a.kit.hp, theirs: o.kit.hp };
   };
   window.sim.toGas = () => {
     const b = state.seats[me]!.body;
