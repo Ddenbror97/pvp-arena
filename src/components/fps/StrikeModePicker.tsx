@@ -10,7 +10,7 @@ const MODES = [
   {
     id: "battle",
     artwork: battleArtwork,
-    name: "Battle Royale",
+    name: "Browser Royale",
     icon: Crown,
   },
   {

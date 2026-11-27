@@ -12,7 +12,10 @@ export function BrAccessGate({ children }: { children: ReactNode }) {
   return (
     <section className="mx-auto flex min-h-[65vh] max-w-xl flex-col items-center justify-center gap-4 p-8 text-center">
       <h1 className="text-3xl font-bold">Battle Royale</h1>
-      <p>Sign in to drop onto Project Island with up to 99 other players.</p>
+      <p>
+        Sign in to play Browser Royale on Project Island. Up to 100 participants, with bots filling
+        empty seats.
+      </p>
       <Link to="/auth" className="strike-primary">
         Sign in
       </Link>

@@ -523,7 +523,7 @@ export function BrMatch() {
           onRetry={error && retry ? retry : undefined}
           retryLabel={retryLabel}
           mapName="Project Island"
-          modeName="Battle royale"
+          modeName="Browser Royale"
           image={BR_LOADING_IMAGE}
         />
       )}

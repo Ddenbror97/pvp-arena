@@ -655,7 +655,7 @@ export function DuelLobby() {
                       <button type="button" className="strike-create-mode" disabled>
                         <Crown aria-hidden />
                         <span className="strike-create-mode-copy">
-                          <strong>Battle Royale</strong>
+                          <strong>Browser Royale</strong>
                           <small>Project Island</small>
                         </span>
                         <span className="strike-create-mode-status">Coming soon</span>
@@ -843,7 +843,7 @@ export function DuelLobby() {
                 <div className="strike-practice">
                   <Crown className="strike-practice-icon" aria-hidden />
                   <div className="strike-practice-copy">
-                    <h3>Battle Royale</h3>
+                    <h3>Browser Royale</h3>
                     <p>Drop in and survive</p>
                   </div>
                   {desktop === true && brAccess.data === true ? (
