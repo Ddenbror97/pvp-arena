@@ -19,6 +19,7 @@ import {
   useBrFeed,
 } from "../../../src/components/fps/BrHud";
 import { TacticalMap } from "../../../src/components/fps/TacticalMap";
+import { DEFAULT_STRIKE_SETTINGS } from "../../../src/lib/fps/settings";
 import { sim } from "./entry";
 
 type Overlay = "map" | "inventory" | null;
@@ -50,7 +51,7 @@ function Harness() {
   if (!hud) return null;
   return (
     <>
-      <BrCentre hud={hud} hit={feed.hit} />
+      <BrCentre hud={hud} hit={feed.hit} crosshair={DEFAULT_STRIKE_SETTINGS} />
       <BrStatus hud={hud} />
       <BrFeedView feed={feed} />
       {hud.myPhase !== "plane" && (

@@ -7,8 +7,12 @@
  */
 import * as THREE from "three";
 import { createCharacter } from "@/lib/fps/character";
-import { createDamageFeedback, type DamageFeedback } from "@/lib/fps/damage-feedback";
-import { FLESH_PARTICLES } from "@/lib/fps/flesh-mist";
+import {
+  createDamageFeedback,
+  lowHealthPicture,
+  type DamageFeedback,
+} from "@/lib/fps/damage-feedback";
+import { FLESH_PARTICLES, mistAtlas } from "@/lib/fps/flesh-mist";
 import { createImpactEffects } from "@/lib/fps/impacts";
 import { createWeaponKit } from "@/lib/fps/weapon";
 // (Resolved by capture.mjs to the earlier module.)
@@ -54,6 +58,13 @@ actor.root.position.set(0, 0, 0);
 // (The character faces −z at yaw 0: turned to face the shooter at +z.)
 actor.root.rotation.y = Math.PI;
 
+// (The two pictures are computed once, when a game's renderer is made: timed here, cold.)
+let clockAt = performance.now();
+mistAtlas();
+const atlasMs = performance.now() - clockAt;
+clockAt = performance.now();
+lowHealthPicture();
+const lowPictureMs = performance.now() - clockAt;
 const impacts = createImpactEffects(scene);
 const before = createBloodBefore(scene);
 let feedback: DamageFeedback | null = null;
@@ -197,6 +208,8 @@ const api = {
     out.frameBeforeMs = least.before;
     out.frameAfterMs = least.after;
     out.particlesPerHit = FLESH_PARTICLES;
+    out.atlasMs = atlasMs;
+    out.lowPictureMs = lowPictureMs;
     out.geometries = renderer.info.memory.geometries;
     out.textures = renderer.info.memory.textures;
     return out;
