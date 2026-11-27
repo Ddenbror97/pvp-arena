@@ -527,6 +527,18 @@ export type BrArenaControls = {
     fullActors: number;
     standIns: number;
     renderer: unknown;
+    /** Spectating: the watched seat as drawn this frame (null: not spectating). */
+    watch: {
+      seat: number;
+      pov: boolean;
+      phase: string | null;
+      pos: [number, number, number] | null;
+      yaw: number;
+      vehicle: number;
+      vehiclePos: [number, number, number] | null;
+      vehicleYaw: number;
+      aircraft: [number, number, number] | null;
+    } | null;
     /** The view camera and your own character's root (diagnostics). */
     view?: {
       camera: unknown;
@@ -1077,6 +1089,8 @@ export function createBrArena(
     povPitch = 0,
     povKnife = false;
   const povMoved = { x: 0, z: 0, speed: 0 };
+  /** The aircraft as drawn this frame (debug()). */
+  let debugPlane: { x: number; y: number; z: number } | null = null;
   let predictedShots = 0,
     lastShotAt = -1e9;
   /** The AWP's own scope was up last frame (its zoom clicks). */
@@ -2906,6 +2920,7 @@ export function createBrArena(
     // The aircraft: the pilot's prediction, or everyone else's interpolation on the same clock.
     const plane3d = flight.sample(t, accumulator, dtMs);
     aircraftFx?.update(plane3d, dtMs, camera.position, now);
+    debugPlane = plane3d;
     if (plane3d)
       // (The stall horn sounds only inside; one shared object, no garbage each frame.)
       planeSound.stallWarn = flight.seat !== null && !plane3d.grounded && aero(plane3d).warn;
@@ -5075,6 +5090,25 @@ export function createBrArena(
         /** The renderer and scene themselves, for diagnostics (scripts/br/leak-check). */
         renderer: renderer as unknown,
         scene: scene as unknown,
+        // Spectating (scripts/br/client-sim/spectate-lab.mjs): whom, where their row is drawn
+        // this frame, and the vehicle or aircraft they sit in as drawn.
+        watch: (() => {
+          const seat = kit?.dead ? latest?.watch?.seat : undefined;
+          const w = seat !== undefined ? others.find((o) => o.seat === seat) : undefined;
+          if (seat === undefined) return null;
+          const v = w && w.vehicle >= 0 ? vehiclesFx?.drawn(w.vehicle) : undefined;
+          return {
+            seat,
+            pov: povSeat === seat,
+            phase: w?.phase ?? null,
+            pos: w ? [w.pos.x, w.pos.y, w.pos.z] : null,
+            yaw: w?.yaw ?? 0,
+            vehicle: w?.vehicle ?? -1,
+            vehiclePos: v ? [v.position.x, v.position.y, v.position.z] : null,
+            vehicleYaw: v ? v.rotation.y : 0,
+            aircraft: debugPlane ? [debugPlane.x, debugPlane.y, debugPlane.z] : null,
+          };
+        })(),
         view: {
           camera: camera as unknown,
           me: me.root as unknown,

@@ -419,6 +419,10 @@ export function createVehicleRenderer(
         }
       }
     },
+    /** A vehicle as it is drawn this frame (after update): its object, or undefined. */
+    drawn(id: number): THREE.Object3D | undefined {
+      return shown.get(id)?.object;
+    },
     /** The latest server row for a vehicle (prompts, the HUD, prediction resets). */
     row(id: number) {
       return shown.get(id)?.b;
