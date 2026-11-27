@@ -1031,50 +1031,61 @@ export function DuelLobby() {
             </div>
           </section>
         )}
-        <section className="strike-rules" id="strike-rules">
-          <div>
-            <span className="strike-kicker">KNOW YOUR MATCH</span>
-            <h2>Your aim. Your result.</h2>
+        <section className="strike-rules" id="strike-rules" aria-labelledby="strike-rules-title">
+          <div className="strike-rules-heading">
+            <div>
+              <span className="strike-kicker">1V1 · THE ESSENTIALS</span>
+              <h2 id="strike-rules-title">Your aim. Your result.</h2>
+            </div>
+            <a href="/fps-1v1" className="strike-rules-link">
+              Full rules &amp; fees <ArrowRight size={14} aria-hidden="true" />
+            </a>
           </div>
           <div className="strike-rule-grid">
             <article>
-              <Trophy />
-              <h3>Win the rounds</h3>
-              <p>
-                Best of 13 is first to seven, with sides switching after round six. A round lasts 60
-                seconds; higher health wins at timeout. Three drawn rounds cancel the match.
-              </p>
+              <Trophy aria-hidden="true" />
+              <div>
+                <h3>First to 7</h3>
+                <p>Best of 13. Sides switch after round six. Each round lasts 60 seconds.</p>
+              </div>
             </article>
             <article>
-              <ShieldCheck />
-              <h3>Control your recoil</h3>
-              <p>
-                Anti-Terrorists carry a suppressed M4A1-S, Terrorists an AK-47. Both rifles are full
-                auto with identical damage: tap or fire short bursts to recover faster. Head hits
-                deal 34 damage, chest 34, stomach 30 and legs 20. Three landed headshots eliminate
-                at full health. The server controls ammunition, hits and results.
-              </p>
+              <ShieldCheck aria-hidden="true" />
+              <div>
+                <h3>Make every burst count</h3>
+                <p>
+                  AK-47 or M4A1-S. Fire short bursts to control recoil. The server verifies hits.
+                </p>
+              </div>
             </article>
             <article>
-              <Users />
-              <h3>Room to reconnect</h3>
-              <p>
-                Ready up within 60 seconds. A disconnect allows 30 seconds to reconnect. Both absent
-                or an interrupted server cancels for a refund.
-              </p>
+              <Users aria-hidden="true" />
+              <div>
+                <h3>30 seconds to reconnect</h3>
+                <p>Connection dropped? Rejoin within 30 seconds to keep playing.</p>
+              </div>
             </article>
           </div>
+          <div className="strike-rules-bottom">
+            <details className="strike-rules-more">
+              <summary>More rules</summary>
+              <p>
+                Ready up within 60 seconds. Higher health wins at timeout. Three drawn rounds cancel
+                the match. If both players are absent or the server is interrupted, the match is
+                cancelled for a refund.
+              </p>
+            </details>
+            <nav aria-label="Game information" className="strike-rules-resources">
+              <a href="/guides/topics/fps-and-aim">FPS &amp; aim guides</a>
+              <a href="/fps/models/ATTRIBUTION.md" target="_blank" rel="noreferrer">
+                Asset credits
+              </a>
+            </nav>
+          </div>
+          <p className="strike-rules-eligibility">
+            Adults only · Desktop mouse and keyboard required
+          </p>
         </section>
-        <p className="strike-fineprint">
-          <a href="/fps-1v1">PvPStrike rules, fees and public results</a> ·{" "}
-          <a href="/guides/topics/fps-and-aim">FPS and aim guides</a>
-        </p>
-        <p className="strike-fineprint">
-          Adults only. Desktop mouse and keyboard required.{" "}
-          <a href="/fps/models/ATTRIBUTION.md" target="_blank" rel="noreferrer">
-            3D asset credits
-          </a>
-        </p>
       </div>
     </div>
   );
