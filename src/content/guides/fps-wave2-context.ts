@@ -5,7 +5,7 @@ export const FPS_WAVE2_CONTEXT: Record<string, GuideSection> = {
   "fps-for-money-hub": {
     id: "battle-royale-money-formats",
     title: "Battle royale has different entry and scoring formats",
-    body: `A duel's fee and round rules do not describe a survival tournament. Read [battle royale for money](/guides/battle-royale-for-money-hub) to separate tournament entries, wagers and token rewards. Cash Battle Royale is coming soon to PVPspinArena. Our Browser Royale mode is currently free and has no cash prize; [browser battle royale](/guides/browser-battle-royale) explains that gameplay format.
+    body: `A duel's fee and round rules do not describe a survival tournament. Read [battle royale for money](/guides/battle-royale-for-money-hub) to separate tournament entries, wagers and token rewards. Cash Battle Royale is coming soon to PVPspinArena. Our 3D Browser Royale game is currently free and has no cash prize; [browser battle royale](/guides/browser-battle-royale) explains that gameplay format.
 
 Our [1v1 FPS page](/fps-1v1) covers the cash duel's own rules and fee. [5v5 Bomb Defusal practice](/how-it-works#bomb-defusal) is a separate team mode with no entry fee or cash prize. Choose the mode before comparing payments.`,
   },

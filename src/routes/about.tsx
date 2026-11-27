@@ -32,7 +32,7 @@ import { seoHead, type Faq } from "@/components/seo/seo-head";
 const FAQS: Faq[] = [
   {
     q: "What is PVPspinArena?",
-    a: "PVPspinArena has seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. Our FPS games also include free bot Practice, Bomb Defusal training and Browser Royale on the Project Island map. Cash Battle Royale is coming soon. Browser Royale currently has no cash entry or cash prize.",
+    a: "PVPspinArena has seven games: Jackpot, Coinflip, Roulette, P2P Slott, six-max Texas Hold'em poker, 1v1 8-ball pool and PvPStrike, our browser FPS. Cash games use one US-dollar balance funded with Bitcoin, or USDC or ETH on Base. Random draws use committed seeds; pool follows the shots and rules; PvPStrike is decided by an authoritative match server. Our FPS games also include free bot Practice, Bomb Defusal training and 3D Browser Royale on the Project Island map. Cash Battle Royale is coming soon. Browser Royale currently has no cash entry or cash prize.",
   },
   {
     q: "What does PVP mean on PVPspinArena?",

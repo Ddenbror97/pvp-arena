@@ -41,8 +41,8 @@ function article(draft: Draft): Guide {
     sections: draft.sections.map(([title, body], i) => ({ id: `section-${i + 1}`, title, body })),
     cta: {
       title: "Try Browser Royale without a cash entry",
-      text: "Cash Battle Royale is coming soon to PVPspinArena. Play free Browser Royale now; cash 1v1 duels remain a separate mode.",
-      primary: { to: "/fps-br", label: "Open Battle Royale" },
+      text: "Cash Battle Royale is coming soon to PVPspinArena. Play free 3D Browser Royale now; cash 1v1 duels remain a separate mode.",
+      primary: { to: "/fps-br", label: "Play Browser Royale" },
       secondary: {
         to:
           draft.slug === "battle-royale-for-money-hub"
@@ -70,7 +70,7 @@ export const BATTLE_ROYALE_GUIDES: Guide[] = [
       "Cash Battle Royale is coming soon to PVPspinArena. Compare entry formats, fees and payouts, and try free Browser Royale while launch details are pending.",
     h1: "Battle royale for money: what pays, and what you risk",
     answer:
-      "Battle royale for money can mean entering a cash tournament, making a player wager, betting on somebody else's match or earning a token. Those are different products. Cash Battle Royale is coming soon to PVPspinArena. Browser Royale, our browser Battle Royale on the Project Island map, is currently free; cash entries and cash prizes are not live yet. PvPStrike cash 1v1 duels are a separate mode; their fee is not a Battle Royale fee.",
+      "Battle royale for money can mean entering a cash tournament, making a player wager, betting on somebody else's match or earning a token. Those are different products. Cash Battle Royale is coming soon to PVPspinArena. Browser Royale, our 3D browser Battle Royale on the Project Island map, is currently free; cash entries and cash prizes are not live yet. PvPStrike cash 1v1 duels are a separate mode; their fee is not a Battle Royale fee.",
     facts: [
       "A free battle royale match and a cash tournament have different entry and payout terms.",
       "Browser Royale fills up to 100 seats with humans and bots; that is not a 100-person cash pot.",
@@ -616,7 +616,7 @@ On PVPspinArena, the [graphics guide](/fps-graphics-guide) helps identify which 
       ],
       [
         "Browser Royale as an alternative, with the differences stated",
-        `Browser Royale is our separate first-person Battle Royale in a desktop browser. It uses a plane route, parachute insertion, equipment collection, vehicles and a shrinking playable area. Its rooms target 100 total participants, with bots filling seats not taken by humans. Those are product facts, not a claim to reproduce PUBG's mechanics or human matchmaking population.
+        `Browser Royale is our separate first-person 3D Battle Royale in a desktop browser. It uses a plane route, parachute insertion, equipment collection, vehicles and a shrinking playable area. Its rooms target 100 total participants, with bots filling seats not taken by humans. Those are product facts, not a claim to reproduce PUBG's mechanics or human matchmaking population.
 
 Enter through the [PvPStrike lobby](/) and choose Browser Royale. Use free play to test loading, mouse capture and movement. The current Browser Royale mode has no cash entry, no BR platform fee and no victory credit to withdraw.
 

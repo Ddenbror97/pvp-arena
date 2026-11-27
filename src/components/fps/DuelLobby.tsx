@@ -1034,47 +1034,60 @@ export function DuelLobby() {
         <section className="strike-rules" id="strike-rules" aria-labelledby="strike-rules-title">
           <div className="strike-rules-heading">
             <div>
-              <span className="strike-kicker">1V1 · THE ESSENTIALS</span>
-              <h2 id="strike-rules-title">Your aim. Your result.</h2>
+              <h2 id="strike-rules-title">Play browser FPS games with no download</h2>
             </div>
-            <a href="/fps-1v1" className="strike-rules-link">
-              Full rules &amp; fees <ArrowRight size={14} aria-hidden="true" />
+            <a href="/how-it-works" className="strike-rules-link">
+              How it works <ArrowRight size={14} aria-hidden="true" />
             </a>
           </div>
+          <p className="strike-rules-intro">
+            Play PvPStrike in your browser with 1v1 duels and 5v5 Bomb Defusal, or explore Project
+            Island in Browser Royale, our 3D battle royale. Practise against bots, join team
+            matches, or enter a human cash duel. Browser Royale and 5v5 are currently free to play,
+            with cash formats coming soon. You’ll need a desktop computer, mouse and keyboard.
+          </p>
           <div className="strike-rule-grid">
             <article>
               <Trophy aria-hidden="true" />
               <div>
-                <h3>First to 7</h3>
-                <p>Best of 13. Sides switch after round six. Each round lasts 60 seconds.</p>
+                <h3>1v1 Duel</h3>
+                <p>
+                  Practise against a bot or face another player in a cash duel. First to seven round
+                  wins takes the match.
+                </p>
+                <a className="strike-rules-link" href="/fps-1v1">
+                  1v1 rules &amp; fees
+                </a>
               </div>
             </article>
             <article>
               <ShieldCheck aria-hidden="true" />
               <div>
-                <h3>Make every burst count</h3>
+                <h3>5v5 Bomb Defusal</h3>
                 <p>
-                  AK-47 or M4A1-S. Fire short bursts to control recoil. The server verifies hits.
+                  Plant, defend or defuse the bomb in five-player teams. Bots fill empty places.
+                  Free practice is available now.
                 </p>
+                <a className="strike-rules-link" href="/how-it-works#bomb-defusal">
+                  How 5v5 works
+                </a>
               </div>
             </article>
             <article>
               <Users aria-hidden="true" />
               <div>
-                <h3>30 seconds to reconnect</h3>
-                <p>Connection dropped? Rejoin within 30 seconds to keep playing.</p>
+                <h3>Browser Royale</h3>
+                <p>
+                  Explore a 3D island, find equipment and survive the closing zone. Rooms hold up to
+                  100 players and bots.
+                </p>
+                <a className="strike-rules-link" href="/guides/browser-battle-royale">
+                  Browser Royale guide
+                </a>
               </div>
             </article>
           </div>
           <div className="strike-rules-bottom">
-            <details className="strike-rules-more">
-              <summary>More rules</summary>
-              <p>
-                Ready up within 60 seconds. Higher health wins at timeout. Three drawn rounds cancel
-                the match. If both players are absent or the server is interrupted, the match is
-                cancelled for a refund.
-              </p>
-            </details>
             <nav aria-label="Game information" className="strike-rules-resources">
               <a href="/guides/topics/fps-and-aim">FPS &amp; aim guides</a>
               <a href="/fps/models/ATTRIBUTION.md" target="_blank" rel="noreferrer">

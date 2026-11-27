@@ -557,7 +557,7 @@ function HowItWorksPage() {
               <SeoLink to="/">Compare PvPStrike modes</SeoLink>
             </SeoCard>
           </div>
-          <SeoCard icon={<Target className="h-5 w-5" />} title="Browser Royale">
+          <SeoCard icon={<Target className="h-5 w-5" />} title="Browser Royale · 3D battle royale">
             <ol className="list-decimal space-y-1 pl-5">
               <li>
                 Sign in and choose Browser Royale from the PvPStrike lobby. No deposit is needed.
