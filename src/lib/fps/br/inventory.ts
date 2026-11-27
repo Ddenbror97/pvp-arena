@@ -421,6 +421,31 @@ export function dropFromBag(l: Loadout, index: number, qty?: number): Outcome {
 }
 
 /**
+ * An attachment dragged from the ground onto a weapon card (owner, 2026-11-27: "drag their loot
+ * eq silencer to the AK47 and it lands in the silencer spot"): it goes straight into that gun's
+ * matching slot, whatever tile of the card it was dropped on. What was fitted there goes into the
+ * bag, or beside the player when the bag is full. Anything else is an ordinary pickUp.
+ */
+export function pickUpOnto(l: Loadout, w: Loose, gun: GunSlot): Outcome {
+  const d = def(w.item);
+  if (d.category !== "optic" && d.category !== "muzzle" && d.category !== "magazine")
+    return pickUp(l, w);
+  if (l.hp <= 0) return fail("You are down");
+  const g = l.guns[gun];
+  if (!g) return fail("No gun in that slot");
+  if (!fitsGun(g.item, w.item)) return fail(`${d.name} does not fit the ${ITEMS[g.item].name}`);
+  const key = attachmentKey(d.category);
+  const old = g[key] ?? null;
+  g[key] = w.item;
+  if (!old) return done();
+  if (freeSlots(l) > 0) {
+    l.bag.push({ item: old, qty: 1 });
+    return done();
+  }
+  return done([{ item: old, qty: 1 }]);
+}
+
+/**
  * Equip a bag item. Helmet/vest swap with what is worn (the old piece takes the bag slot);
  * a plate goes into `target` plate slot 0–2 (the old plate takes the bag slot); optics and
  * muzzle items go onto gun `target` 0–2 where they fit (the old one takes the bag slot).

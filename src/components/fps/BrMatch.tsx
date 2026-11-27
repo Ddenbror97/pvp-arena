@@ -34,11 +34,13 @@ import {
   BrFlight,
   BrAirdropAlert,
   BrCentre,
+  BrCounters,
   BrEnd,
   BrFeedView,
   BrGasFx,
   BrInventory,
   BrLobbyCard,
+  BrPhaseBanner,
   BrStatus,
   BrTablet,
   BrTopStatus,
@@ -549,6 +551,13 @@ export function BrMatch() {
             </div>
           )}
           <BrFeedView feed={feed} />
+          {hud.phase !== "waiting" && hud.phase !== "starting" && (
+            <BrCounters
+              alive={hud.alive}
+              kills={hud.kit?.kills ?? 0}
+              aboard={hud.phase === "plane" ? hud.aboard : null}
+            />
+          )}
           {hud.myPhase !== "plane" && (
             <BrZone
               hud={hud}
@@ -663,7 +672,7 @@ export function BrMatch() {
           hud.phase !== "waiting" &&
           hud.phase !== "starting" &&
           !(hud.phase === "active" || (hud.phase === "plane" && hud.myPhase !== "plane")) && (
-            <div className="br-banner">{banner(hud)}</div>
+            <BrPhaseBanner hud={hud} />
           )}
       </header>
       {hud &&
@@ -686,18 +695,6 @@ export function BrMatch() {
       )}
     </div>
   );
-}
-
-function banner(h: BrHud) {
-  if (h.phase === "waiting") return "Waiting for players";
-  if (h.phase === "starting") return `Take-off in ${Math.ceil(h.countdown ?? 0)}`;
-  if (h.phase === "plane" && h.myPhase === "plane")
-    return h.jumpOpen
-      ? `Jump! ${Math.ceil(h.countdown ?? 0)} s left · ${h.aboard} aboard`
-      : `Doors open in ${Math.ceil(h.countdown ?? 0)}`;
-  if (h.phase === "plane") return `${h.aboard} still aboard`;
-  if (h.phase === "ending" || h.phase === "completed") return "Match over";
-  return h.alive !== null ? `${h.alive} alive` : "Battle royale";
 }
 
 function hint(h: BrHud, b: BrBinds) {
