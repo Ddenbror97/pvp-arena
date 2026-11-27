@@ -59,7 +59,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "How does PvPStrike FPS work?",
-    a: "PvPStrike is a desktop browser shooter with several modes. Cash Battle Royale is coming soon. Browser Royale and Bomb Defusal training are currently free, with no cash entry or cash prize. Cash matches are human-only: best of thirteen is first to seven wins. Anti-Terrorist and Terrorist sides switch after round six in 1v1. Free bot Practice is first to seven, with a side switch after round six. Halftime lasts five seconds. A cash winner receives the combined pot after a 5% fee; Practice has no stake or payout.",
+    a: "PvPStrike is a desktop browser shooter with several modes. Free-to-play FPS modes include real players and bots, depending on the mode. Players can choose cash 1v1 duels. Cash 5v5 and Browser Royale are coming soon. Cash matches are human-only: best of thirteen is first to seven wins. Anti-Terrorist and Terrorist sides switch after round six in 1v1. Free bot Practice is first to seven, with a side switch after round six. Halftime lasts five seconds. A cash winner receives the combined pot after a 5% fee; Practice has no stake or payout.",
   },
   {
     q: "How are game outcomes determined?",
@@ -120,10 +120,10 @@ function HowItWorksPage() {
         secondary={{ to: "/about", label: "About PVPspinArena" }}
       >
         <p>
-          Choose PvPStrike FPS, 8-ball pool, poker, Jackpot, Coinflip, Roulette or P2P Slott. Cash
-          games use one US-dollar balance funded with digital assets. Free FPS and pool Practice let
-          you play a bot without a deposit or cash stake. Browser Royale and Bomb Defusal training
-          also need no cash entry and pay no cash prize.
+          Choose free-to-play FPS modes against real players and bots, or play a 1v1 duel for real
+          cash. Free play needs no deposit or cash stake. Cash 5v5 and Browser Royale are coming
+          soon. You can also play pool, poker, Jackpot, Coinflip, Roulette or P2P Slott. Cash games
+          share a US-dollar balance funded with digital assets.
         </p>
         <p>
           Review the rules and fee before entering. Random games use seed verification; pool follows
@@ -276,7 +276,7 @@ function HowItWorksPage() {
             to="/"
             tag="1v1 duels · 5v5 Bomb Defusal"
           >
-            Play a human cash duel, practise against a bot or join free 5v5 Bomb Defusal. Desktop
+            Choose a cash 1v1 duel or free-to-play modes against real players and bots. Desktop
             mouse and keyboard are required. Cash 5v5 is coming soon.
           </GameTile>
           <GameTile

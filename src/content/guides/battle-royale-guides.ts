@@ -41,7 +41,7 @@ function article(draft: Draft): Guide {
     sections: draft.sections.map(([title, body], i) => ({ id: `section-${i + 1}`, title, body })),
     cta: {
       title: "Try Browser Royale without a cash entry",
-      text: "Cash Battle Royale is coming soon to PVPspinArena. Play free 3D Browser Royale now; cash 1v1 duels remain a separate mode.",
+      text: "Cash Battle Royale is coming soon to PVPspinArena. Play free 3D Browser Royale against real players and bots. Cash 1v1 duels are available; cash 5v5 and Browser Royale are coming soon.",
       primary: { to: "/fps-br", label: "Play Browser Royale" },
       secondary: {
         to:

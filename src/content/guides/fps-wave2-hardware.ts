@@ -280,7 +280,7 @@ For game-specific follow-through, the [CS2 aim training guide](/guides/cs2-aim-t
       ],
       [
         "Use browser practice as a controlled destination",
-        `A hardware setting can be checked in [PvPStrike](/fps-1v1), but it is a separate CS-style browser game, not Valve CS2. Its local practice match is first to seven against a bot, a best-of-thirteen format. Keep the environment unpaid while comparing inputs. The [browser FPS guide](/guides/browser-fps-games) owns the broader access comparison; this reference table does not rank the games by sensor performance.
+        `A hardware setting can be checked in [PvPStrike](/fps-1v1), but it is a separate CS-style browser game, not Valve CS2. Its 1v1 bot practice match is first to seven, a best-of-thirteen format. Keep the environment unpaid while comparing inputs. The [browser FPS guide](/guides/browser-fps-games) owns the broader access comparison; this reference table does not rank the games by sensor performance.
 
 | Observation | Check first | Keep unchanged during the check |
 | --- | --- | --- |
@@ -452,7 +452,7 @@ If no single change explains the behavior, summarize what remains. A useful supp
 
 Use [CS2 aim training](/guides/cs2-aim-training) to separate a mechanical drill from a performance diagnostic, and the [FPS and aim topic](/guides/topics/fps-and-aim) for related concepts. A drill score can vary with familiarity, concentration and target layout. It should not be used as the sole latency instrument. Keep technical observations and skill observations distinct.
 
-For [PvPStrike](/fps-1v1), local practice is first to seven against a bot, while cash series are best of thirteen. It is a separate CS-style browser game. Server validation of inputs, hits and results does not promise cheating immunity or erase network delay. The [fairness page](/fairness) describes the product boundary rather than a hardware certification.`,
+For [PvPStrike](/fps-1v1), 1v1 bot practice is first to seven, while cash series are best of thirteen. It is a separate CS-style browser game. Server validation of inputs, hits and results does not promise cheating immunity or erase network delay. The [fairness page](/fairness) describes the product boundary rather than a hardware certification.`,
       ],
       [
         "If the next step involves an entry fee",
@@ -613,7 +613,7 @@ No current product prices or model rankings are supplied here. They change and w
         "Carry the setup into the game you actually practice",
         `A monitor mode can be checked in native CS2 practice or an authorized browser environment, but the games remain different. [CS2 aim training](/guides/cs2-aim-training) addresses native practice structure. [Browser FPS games](/guides/browser-fps-games) covers access choices. The [FPS and aim topic](/guides/topics/fps-and-aim) helps connect those decisions without treating a panel specification as a game recommendation.
 
-[PvPStrike](/fps-1v1) is an independent CS-style browser game, not Valve CS2. Its local practice is first to seven against a bot. Use it only as a practical control check, not a standardized display benchmark or proof that a new monitor will earn money. Server validation of inputs, hits and results does not guarantee immunity from cheating; see [fairness](/fairness).
+[PvPStrike](/fps-1v1) is an independent CS-style browser game, not Valve CS2. Its 1v1 bot practice is first to seven. Use it only as a practical control check, not a standardized display benchmark or proof that a new monitor will earn money. Server validation of inputs, hits and results does not guarantee immunity from cheating; see [fairness](/fairness).
 
 Cash play is 18+ where permitted, with best-of-thirteen series and a 5% combined-pot fee. Check the lobby for entries despite the published $1 minimum. Hypothetical USD example: $1 each yields $1.90 winner credit and $0.90 net. Hypothetical USD example: $5 each yields $9.50 credit and $4.50 net. Net subtracts the winner's own entry; a loss costs the entry, and withdrawal is separate.
 
@@ -928,7 +928,7 @@ If the difference is unclear, keep the simpler supported design. A reticle can b
         "Keep the reticle in its proper role",
         `Crosshair placement and target selection still require practice. A well-chosen reference can make placement easier to see, but it cannot decide which angle to clear or when to stop moving. [CS2 aim training](/guides/cs2-aim-training) covers a practice framework, and [counter-strafing](/guides/counter-strafing) addresses stopping and firing as a separate question. Neither requires pretending a graphic is an aim assistant.
 
-Use the [FPS and aim topic](/guides/topics/fps-and-aim) to connect those skills, and [browser FPS games](/guides/browser-fps-games) for access context. [PvPStrike](/fps-1v1) is a separate CS-style browser game, not Valve CS2. Its local practice is first to seven against a bot. Do not assume another title's crosshair permissions or native settings apply to this independent game.
+Use the [FPS and aim topic](/guides/topics/fps-and-aim) to connect those skills, and [browser FPS games](/guides/browser-fps-games) for access context. [PvPStrike](/fps-1v1) is a separate CS-style browser game, not Valve CS2. Its 1v1 bot practice is first to seven. Do not assume another title's crosshair permissions or native settings apply to this independent game.
 
 PvPStrike validates inputs, hits and results on the server without promising cheating immunity; see [fairness](/fairness). Cash play is 18+ where permitted, using best-of-thirteen series and a 5% combined-pot fee. The published minimum is $1, but check actual lobby entries.
 
@@ -1088,7 +1088,7 @@ Browser convenience can be useful, but background tabs, focus and performance sh
       ],
       [
         "Separate practice from cash-entry decisions",
-        `For [browser FPS options](/guides/browser-fps-games), distinguish training from independent games. [PvPStrike](/fps-1v1) is a separate CS-style browser shooter, not Valorant or Valve CS2. Local practice is first to seven against a bot; cash series are best of thirteen. Server validation of inputs, hits and results does not promise cheating immunity; see [fairness](/fairness).
+        `For [browser FPS options](/guides/browser-fps-games), distinguish training from independent games. [PvPStrike](/fps-1v1) is a separate CS-style browser shooter, not Valorant or Valve CS2. 1v1 bot practice is first to seven; cash series are best of thirteen. Server validation of inputs, hits and results does not promise cheating immunity; see [fairness](/fairness).
 
 Cash play is 18+ where permitted. The published minimum is $1, but consult actual lobby entries. The fee is 5% of the combined pot. Hypothetical USD example: $1 each yields $1.90 winner credit and $0.90 net after the winner's entry. Hypothetical USD example: $5 each yields $9.50 credit and $4.50 net. A loss costs the entry; credit and withdrawal are separate.
 
