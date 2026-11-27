@@ -33,10 +33,10 @@ function render(source, start, seconds, filters, output) {
 }
 render(
   "shells-hitting-ground.mp3",
-  3.765,
-  0.4,
-  "highpass=f=250,afade=t=in:d=0.003,afade=t=out:st=0.25:d=0.15,volume=4",
-  "casing-ground-v1.wav",
+  19.62,
+  2.08,
+  "highpass=f=250,volume='3.2+2.8*min(t/0.55,1)':eval=frame,afade=t=in:d=0.002,afade=t=out:st=1.94:d=0.14",
+  "casing-ground-v2.wav",
 );
 render(
   "sniper-bolt.mp3",
