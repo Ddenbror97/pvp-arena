@@ -28,7 +28,7 @@ export function ArenaLoadingScreen({
   return (
     <section
       className="duel-loading-screen"
-      aria-label="Preparing PvPStrike match"
+      aria-label={`Preparing ${modeName || "PvPStrike"} match`}
       aria-busy={percent < 100}
     >
       {image && (

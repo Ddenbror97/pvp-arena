@@ -40,8 +40,8 @@ function article(draft: Draft): Guide {
     updated: draft.updated ?? "2026-11-11",
     sections: draft.sections.map(([title, body], i) => ({ id: `section-${i + 1}`, title, body })),
     cta: {
-      title: "Try Project Island without a cash entry",
-      text: "Cash Battle Royale is coming soon to PVPspinArena. Play free Project Island now; cash 1v1 duels remain a separate mode.",
+      title: "Try Browser Royale without a cash entry",
+      text: "Cash Battle Royale is coming soon to PVPspinArena. Play free Browser Royale now; cash 1v1 duels remain a separate mode.",
       primary: { to: "/fps-br", label: "Open Battle Royale" },
       secondary: {
         to:
@@ -67,13 +67,13 @@ export const BATTLE_ROYALE_GUIDES: Guide[] = [
     ],
     title: "Battle Royale for Money: Coming Soon to PvPStrike",
     description:
-      "Cash Battle Royale is coming soon to PVPspinArena. Compare entry formats, fees and payouts, and try free Project Island while launch details are pending.",
+      "Cash Battle Royale is coming soon to PVPspinArena. Compare entry formats, fees and payouts, and try free Browser Royale while launch details are pending.",
     h1: "Battle royale for money: what pays, and what you risk",
     answer:
-      "Battle royale for money can mean entering a cash tournament, making a player wager, betting on somebody else's match or earning a token. Those are different products. Cash Battle Royale is coming soon to PVPspinArena. Project Island, our browser Battle Royale, is currently free; cash entries and cash prizes are not live yet. PvPStrike cash 1v1 duels are a separate mode; their fee is not a Battle Royale fee.",
+      "Battle royale for money can mean entering a cash tournament, making a player wager, betting on somebody else's match or earning a token. Those are different products. Cash Battle Royale is coming soon to PVPspinArena. Browser Royale, our browser Battle Royale on the Project Island map, is currently free; cash entries and cash prizes are not live yet. PvPStrike cash 1v1 duels are a separate mode; their fee is not a Battle Royale fee.",
     facts: [
       "A free battle royale match and a cash tournament have different entry and payout terms.",
-      "Project Island fills up to 100 seats with humans and bots; that is not a 100-person cash pot.",
+      "Browser Royale fills up to 100 seats with humans and bots; that is not a 100-person cash pot.",
       "Cash Battle Royale is coming soon; its launch date, stakes, prize schedule and fee are not announced.",
       "Tokens, cosmetic items, account credits and completed withdrawals are different outcomes.",
     ],
@@ -86,7 +86,7 @@ export const BATTLE_ROYALE_GUIDES: Guide[] = [
 | Player wager | Agreed match conditions between participants | Opponent, evidence, permitted format and dispute process |
 | Esports betting | A market on other people's performance | Operator terms, market settlement and local eligibility |
 | Token reward | A project's reward and redemption system | Token rights, liquidity, costs and withdrawal conditions |
-| Free Project Island | Survival in our browser BR | Controls and gameplay rules; there is no cash prize |
+| Free Browser Royale | Survival in our browser BR | Controls and gameplay rules; there is no cash prize |
 
 Searches such as **PUBG for money** and **Warzone wager** do not identify one universal service. A tournament organiser, a betting operator and a game publisher can be three different businesses. A logo or account-link button does not establish that the publisher approves a particular contest. Verify the organiser through the game's official competition information and read the actual event rules.
 
@@ -96,22 +96,22 @@ For the broader FPS category, use [FPS games for money](/guides/fps-for-money-hu
         "Cash Battle Royale is coming soon: what can you play now?",
         `| PvPStrike mode | Cash entry now? | Opponents and objective |
 | --- | --- | --- |
-| Project Island Battle Royale | Coming soon; free play available now | Humans and bot-filled seats; survive the island |
+| Browser Royale Battle Royale | Coming soon; free play available now | Humans and bot-filled seats; survive the island |
 | Solo aim Practice | No | One player against an arena bot |
 | Bomb Defusal Practice | No | Teams with bots filling seats; plant or defuse |
 | Cash 1v1 aim duel | Eligible accounts only | Human opponent; win the series under the published rules |
 
 The [PvPStrike lobby](/) separates these modes. The cash entry and 5% pot fee described on our 1v1 product page belong to **1v1 duels**. Cash Battle Royale is coming soon, but its entry amounts, prizes, fee and launch date have not been announced. Those details will be published before cash entry opens; the 1v1 fee must not be assumed to apply to BR. Free BR results also cannot be presented as paid-match settlements.
 
-To see the format first, open [Project Island](/fps-br). It has a plane route, a parachute insertion, equipment to collect and a shrinking safe area. The room targets 100 total seats, with bots filling empty positions. A full room therefore does not prove that 100 humans joined. The [browser Battle Royale guide](/guides/browser-battle-royale) explains access and controls without assuming a wager.`,
+To see the format first, open [Browser Royale](/fps-br). It has a plane route, a parachute insertion, equipment to collect and a shrinking safe area. The room targets 100 total seats, with bots filling empty positions. A full room therefore does not prove that 100 humans joined. The [browser Battle Royale guide](/guides/browser-battle-royale) explains access and controls without assuming a wager.`,
       ],
       [
         "Read the prize calculation before the entry button",
         `A useful cash BR rulebook specifies the number of paid entries, any guaranteed prize funding, the fee, the finish positions that receive money and how a tied score is resolved. The headline prize is not necessarily your net gain. Your own entry is part of the cost of entering, even when the advertised winner payout includes it.
 
-**Hypothetical example 1, not a Project Island offer:** 20 entrants paying $5 contribute a $100 gross pool. If the organiser has not disclosed its fee and prize distribution, the winner's payment cannot be calculated from that headline. The $100 is a gross pool, not a guaranteed $100 profit.
+**Hypothetical example 1, not a Browser Royale offer:** 20 entrants paying $5 contribute a $100 gross pool. If the organiser has not disclosed its fee and prize distribution, the winner's payment cannot be calculated from that headline. The $100 is a gross pool, not a guaranteed $100 profit.
 
-**Hypothetical example 2, not a Project Island offer:** 100 entrants paying $1 also contribute $100. The same gross pool says nothing about how many positions get paid, whether eliminations matter or whether teams split a prize. More entrants do not make two contests financially equivalent, and skill differences mean you should not assume each entrant has the same winning probability.
+**Hypothetical example 2, not a Browser Royale offer:** 100 entrants paying $1 also contribute $100. The same gross pool says nothing about how many positions get paid, whether eliminations matter or whether teams split a prize. More entrants do not make two contests financially equivalent, and skill differences mean you should not assume each entrant has the same winning probability.
 
 Before comparing entries, calculate the result under the **published** fee and prize table. Include repeated entry costs and any relevant payment costs. If one of those figures is missing, mark the comparison incomplete instead of borrowing a fee from another mode or operator.`,
       ],
@@ -121,7 +121,7 @@ Before comparing entries, calculate the result under the **published** fee and p
 
 An NFT battle royale adds another question: what does owning the item actually permit? Check whether it is usable in the current game, transferable under the terms and redeemable at all. Do not price an entry by assuming an advertised token value will still be available when you sell.
 
-Our [crypto FPS guide](/guides/crypto-fps-game) separates funding, token ownership and gameplay. The [withdrawal guide](/guides/crypto-casino-withdrawals) explains why an account credit and an on-chain payout are distinct steps. Project Island does not require a token purchase, and there is no BR cash payout to withdraw from its current free mode.`,
+Our [crypto FPS guide](/guides/crypto-fps-game) separates funding, token ownership and gameplay. The [withdrawal guide](/guides/crypto-casino-withdrawals) explains why an account credit and an on-chain payout are distinct steps. Browser Royale does not require a token purchase, and there is no BR cash payout to withdraw from its current free mode.`,
       ],
       [
         "Fairness questions that matter in a survival match",
@@ -148,11 +148,11 @@ If your actual goal is finding a game to play, start with [Battle Royale games b
     faqs: [
       {
         q: "Can you play battle royale for real money?",
-        a: "Some organisers run cash competitions, and some services offer wagers or betting markets. Check the specific organiser, terms and eligibility. Cash Battle Royale is coming soon to PVPspinArena. Project Island is free to play now; cash BR entries and prizes have not launched.",
+        a: "Some organisers run cash competitions, and some services offer wagers or betting markets. Check the specific organiser, terms and eligibility. Cash Battle Royale is coming soon to PVPspinArena. Browser Royale is free to play now; cash BR entries and prizes have not launched.",
       },
       {
         q: "Where can I play Battle Royale for cash on PVPspinArena?",
-        a: "Cash Battle Royale is coming soon to PVPspinArena. You can play Project Island for free now; cash BR entries are not open yet. No launch date, entry price or prize schedule has been announced. Human cash 1v1 aim duels remain available separately.",
+        a: "Cash Battle Royale is coming soon to PVPspinArena. You can play Browser Royale for free now; cash BR entries are not open yet. No launch date, entry price or prize schedule has been announced. Human cash 1v1 aim duels remain available separately.",
       },
       {
         q: "Is a battle royale cash match skill or gambling?",
@@ -160,15 +160,15 @@ If your actual goal is finding a game to play, start with [Battle Royale games b
       },
       {
         q: "Does a crypto battle royale require an NFT?",
-        a: "No. Crypto can describe funding, rewards or asset ownership, which are separate choices. Project Island does not require buying an NFT or game token.",
+        a: "No. Crypto can describe funding, rewards or asset ownership, which are separate choices. Browser Royale does not require buying an NFT or game token.",
       },
       {
-        q: "What fee does Project Island take from a cash pot?",
+        q: "What fee does Browser Royale take from a cash pot?",
         a: "Cash Battle Royale is coming soon, but there is no live cash BR pot or announced BR fee yet. The 5% fee on PvPStrike's cash 1v1 page must not be copied onto Battle Royale.",
       },
       {
         q: "Does winning free Battle Royale create a withdrawable balance?",
-        a: "No. A free Project Island victory is a game result, not a cash credit, token award or blockchain payout.",
+        a: "No. A free Browser Royale victory is a game result, not a cash credit, token award or blockchain payout.",
       },
     ],
     sources: [
@@ -204,7 +204,7 @@ If your actual goal is finding a game to play, start with [Battle Royale games b
     facts: [
       "Browser-native rendering and cloud-streamed gaming use different device and network resources.",
       "A top-down 2D game tests different visual tracking from a first-person 3D island.",
-      "Project Island is our free browser BR; bots fill seats left empty by humans.",
+      "Browser Royale is our free browser BR; bots fill seats left empty by humans.",
       "An installed game's storage requirement changes with updates; a fixed download-size ranking ages quickly.",
     ],
     sections: [
@@ -217,7 +217,7 @@ If your actual goal is finding a game to play, start with [Battle Royale games b
 | Apex Legends | Installed team-oriented shooter | EA's game page and official stores |
 | ZombsRoyale | Top-down 2D browser BR | zombsroyale.io |
 | Suroi | 2D browser survival shooter | suroi.io |
-| Project Island | First-person 3D browser BR on PVPspinArena | PvPStrike lobby, Battle Royale entry |
+| Browser Royale | First-person 3D browser BR on PVPspinArena | PvPStrike lobby, Battle Royale entry |
 
 These are different experiences, not a performance league table. We have not benchmarked every game on the same machine. Current modes, platform support and account requirements should be checked at each publisher's entry point before installing or signing in.
 
@@ -251,11 +251,11 @@ For general access troubleshooting, use [shooting games and permitted access](/g
 
 PUBG's publisher describes a free Basic account and a separate Plus upgrade. ZombsRoyale's terms distinguish virtual items from cash value. Those are useful examples of why an entry price and a reward economy must be read separately. Check the live publisher pages for the specific purchase you are considering, rather than treating this shortlist as a store catalogue.
 
-Our [Battle Royale for money hub](/guides/battle-royale-for-money-hub) separates tournaments, wagers, esports betting and token rewards. Cash Battle Royale is coming soon to PVPspinArena. Until that launches, Project Island belongs in the free-play comparison; cash entries and prizes are not live.`,
+Our [Battle Royale for money hub](/guides/battle-royale-for-money-hub) separates tournaments, wagers, esports betting and token rewards. Cash Battle Royale is coming soon to PVPspinArena. Until that launches, Browser Royale belongs in the free-play comparison; cash entries and prizes are not live.`,
       ],
       [
-        "Project Island's actual browser format",
-        `Project Island is accessed through the [PvPStrike lobby](/) or its [Battle Royale entry](/fps-br). It is our own game, not a PUBG client, Fortnite mode or Apex server. It uses desktop mouse-and-keyboard controls and a first-person 3D world, with a plane route and parachute insertion before on-foot survival.
+        "Browser Royale's actual browser format",
+        `Browser Royale is accessed through the [PvPStrike lobby](/) or its [Battle Royale entry](/fps-br). It is our own game, not a PUBG client, Fortnite mode or Apex server. It uses desktop mouse-and-keyboard controls and a first-person 3D world, with a plane route and parachute insertion before on-foot survival.
 
 The room targets 100 total participants and fills empty seats with bots. That gives a different matchmaking experience from waiting for 100 humans; it is important if your priority is a human-only competitive field. The island has towns and other named locations, vehicles, equipment to collect and a gas-zone schedule. A configured full-zone schedule is not a promise that you will survive for the whole session.
 
@@ -275,11 +275,11 @@ Do not treat a search-volume list as an ordered list of quality. A large brand m
     faqs: [
       {
         q: "What are the best battle royale games?",
-        a: "The best fit depends on camera, device, access route and solo or team preference. This page compares installed games such as PUBG, Fortnite and Apex with browser options such as ZombsRoyale, Suroi and Project Island; it is not a universal performance ranking.",
+        a: "The best fit depends on camera, device, access route and solo or team preference. This page compares installed games such as PUBG, Fortnite and Apex with browser options such as ZombsRoyale, Suroi and Browser Royale; it is not a universal performance ranking.",
       },
       {
         q: "Which Battle Royale games are free?",
-        a: "Several titles provide free standard play, with optional purchases or separate access tiers. Check the publisher's current terms. Project Island's current mode has no cash entry or payout.",
+        a: "Several titles provide free standard play, with optional purchases or separate access tiers. Check the publisher's current terms. Browser Royale's current mode has no cash entry or payout.",
       },
       {
         q: "Can I play a Battle Royale without downloading a client?",
@@ -290,12 +290,12 @@ Do not treat a search-volume list as an ordered list of quality. A large brand m
         a: "Requirements differ. A 2D game and a large 3D island create different workloads. Test actual play on your machine; neither a no-download label nor a game's popularity is an FPS guarantee.",
       },
       {
-        q: "Are all Project Island opponents human?",
+        q: "Are all Browser Royale opponents human?",
         a: "No. Its 100-seat rooms can include bots filling positions not occupied by humans. A full participant count should not be described as a full human lobby.",
       },
       {
         q: "Can ordinary BR wins earn cash?",
-        a: "Not automatically. Cash competitions require their own published terms. Project Island's free mode does not credit a cash prize, and in-game items in other titles should not be assumed to be redeemable money.",
+        a: "Not automatically. Cash competitions require their own published terms. Browser Royale's free mode does not credit a cash prize, and in-game items in other titles should not be assumed to be redeemable money.",
       },
     ],
     sources: [
@@ -305,7 +305,7 @@ Do not treat a search-volume list as an ordered list of quality. A large brand m
       zombs,
       suroi,
       zombsTerms,
-      { label: "Project Island: current browser entry", url: "https://pvpspinarena.com/fps-br" },
+      { label: "Browser Royale: current browser entry", url: "https://pvpspinarena.com/fps-br" },
     ],
     related: [
       "browser-battle-royale",
@@ -321,14 +321,14 @@ Do not treat a search-volume list as an ordered list of quality. A large brand m
     secondary: ["battle royale games online", "battle royale io", "no download battle royale"],
     title: "Browser Battle Royale: Free Games Without a Client",
     description:
-      "Find a browser battle royale by camera, controls and device needs. Compare native web play with cloud streaming and learn how Project Island actually works.",
+      "Find a browser battle royale by camera, controls and device needs. Compare native web play with cloud streaming and learn how Browser Royale actually works.",
     h1: "Browser battle royale: choose a game that actually runs on the web",
     answer:
-      "A browser battle royale runs a survival match from a web page. A browser-native game renders on your computer; a cloud service streams an installed game from another machine. Project Island is our free, browser-native 3D BR. ZombsRoyale and Suroi offer a different, top-down 2D approach. None of those descriptions promises access on every network.",
+      "A browser battle royale runs a survival match from a web page. A browser-native game renders on your computer; a cloud service streams an installed game from another machine. Browser Royale is our free, browser-native 3D BR, played on the Project Island map. ZombsRoyale and Suroi offer a different, top-down 2D approach. None of those descriptions promises access on every network.",
     facts: [
       "No separate game-client installation does not mean no data download or graphics workload.",
-      "Project Island uses mouse and keyboard, a plane insertion and 100 total human/bot seats.",
-      "Cash Battle Royale is coming soon; Project Island is currently free, without a cash entry or prize.",
+      "Browser Royale uses mouse and keyboard, a plane insertion and 100 total human/bot seats.",
+      "Cash Battle Royale is coming soon; Browser Royale is currently free, without a cash entry or prize.",
       "Cloud streaming needs a supported game catalogue and service account, not just an HTML page.",
     ],
     sections: [
@@ -346,15 +346,15 @@ For the full category rather than web access alone, see [Battle Royale games](/g
       ],
       [
         "Three starting points with different viewpoints",
-        `Project Island is a first-person 3D island on PVPspinArena. Enter through the [PvPStrike lobby](/), choose Battle Royale and sign in when asked. The game prepares its map and equipment before showing the live room. Browser assets still have to arrive, so a first visit and a cached return can have different loading times.
+        `Browser Royale is a first-person 3D battle royale on PVPspinArena, set on the Project Island map. Enter through the [PvPStrike lobby](/), choose Browser Royale and sign in when asked. The game prepares its map and equipment before showing the live room. Browser assets still have to arrive, so a first visit and a cached return can have different loading times.
 
 ZombsRoyale's official site is a top-down 2D entry. Its published instructions describe keyboard movement, mouse firing and interaction with doors or loot. Suroi is another browser-based 2D survival game with its own controls and modes. Do not assume that a key binding or strategy from one transfers unchanged to the other.
 
 The [ZombsRoyale guide](/guides/zombs-royale-unblocked) covers that game's access problem in detail. If you are comparing ordinary arena shooters rather than survival games, [browser FPS games](/guides/browser-fps-games) keeps those shorter match formats separate.`,
       ],
       [
-        "Your first Project Island match",
-        `Project Island begins with a warm-up and plane route. You choose an insertion, move under the parachute, then collect equipment and stay inside the changing playable area. Empty positions are filled by bots, up to 100 participants in total. This is useful to know before treating a busy room as evidence of human matchmaking demand.
+        "Your first Browser Royale match",
+        `Browser Royale begins with a warm-up and plane route. You choose an insertion, move under the parachute, then collect equipment and stay inside the changing playable area. Empty positions are filled by bots, up to 100 participants in total. This is useful to know before treating a busy room as evidence of human matchmaking demand.
 
 The default desktop controls include:
 
@@ -374,13 +374,13 @@ Bindings can be changed in the game's settings. Under the parachute the mouse no
         "Diagnose the correct kind of browser problem",
         `A failed page load, a low frame rate and a delayed server update are different failures. If the game never reaches the room, note the message and whether loading progressed. If it renders but movement is uneven, test while moving through a populated area. If the picture is smooth but actions arrive late, note connection interruptions rather than assuming a texture setting will change the route to the server.
 
-For Project Island, Esc settings expose graphics quality and view distance. F3 can show the renderer's GPU and performance information. Use the [graphics-card guide](/fps-graphics-guide) to identify which GPU your browser is actually using; selecting High does not physically switch graphics cards or guarantee that the machine can sustain it.
+For Browser Royale, Esc settings expose graphics quality and view distance. F3 can show the renderer's GPU and performance information. Use the [graphics-card guide](/fps-graphics-guide) to identify which GPU your browser is actually using; selecting High does not physically switch graphics cards or guarantee that the machine can sustain it.
 
 When mouse look is unavailable, click the arena after it appears and check the browser's focus. Esc releases mouse capture. If the browser or an embedded frame cannot grant capture, changing weapon sensitivity will not repair that limitation. Test on a supported desktop browser before drawing conclusions from a narrow embedded preview. Our [input-lag guide](/guides/input-lag) explains another part of the local control-to-display path.`,
       ],
       [
         "A free BR session is different from a crypto entry",
-        `Browser access does not establish a cash prize or reward system. Project Island currently offers free play, with no BR cash pot or withdrawable victory award.
+        `Browser access does not establish a cash prize or reward system. Browser Royale currently offers free play, with no BR cash pot or withdrawable victory award.
 
 Use [Battle Royale for money](/guides/battle-royale-for-money-hub) if your question is about cash tournaments, wagers or token rewards. Our separate 1v1 cash mode is described on its own product page. Its entry limits, fee and series rules do not carry across to the island merely because both games sit in the PvPStrike lobby.
 
@@ -401,14 +401,14 @@ For a managed school or work device, an accessible page is not permission to use
     faqs: [
       {
         q: "What is the best browser battle royale?",
-        a: "Choose by the experience you want. Project Island is a first-person 3D island; ZombsRoyale and Suroi are top-down 2D options. This guide does not claim a shared hardware benchmark or rank every game by server quality.",
+        a: "Choose by the experience you want. Browser Royale is a first-person 3D island; ZombsRoyale and Suroi are top-down 2D options. This guide does not claim a shared hardware benchmark or rank every game by server quality.",
       },
       {
         q: "Does a browser Battle Royale need a download?",
         a: "A native browser game does not require a separately installed game client, but it still downloads assets into the browser and renders them on your hardware. Cloud streaming is a different access model.",
       },
       {
-        q: "Can I play Project Island for crypto?",
+        q: "Can I play Browser Royale for crypto?",
         a: "Cash Battle Royale is coming soon to PVPspinArena. The island mode is currently free, with no live cash entry or token prize. PvPStrike's cash 1v1 duels are a separate product.",
       },
       {
@@ -427,7 +427,7 @@ For a managed school or work device, an accessible page is not permission to use
     sources: [
       zombs,
       suroi,
-      { label: "Project Island: browser game entry", url: "https://pvpspinarena.com/fps-br" },
+      { label: "Browser Royale: browser game entry", url: "https://pvpspinarena.com/fps-br" },
       {
         label: "PvPStrike: graphics-card help",
         url: "https://pvpspinarena.com/fps-graphics-guide",
@@ -498,13 +498,13 @@ The top-down view makes tracking nearby movement different from clearing a first
 
 This matters when a third-party page combines an unblocked-game link with a reward or wagering advertisement. The advertisement is not evidence that the official game pays a withdrawable prize. Check which business is making the offer and which terms actually govern it.
 
-The [Battle Royale money-format guide](/guides/battle-royale-for-money-hub) distinguishes cash competitions from virtual rewards. Project Island's own browser mode also remains free; the existence of separate cash 1v1 duels on PVPspinArena does not turn either browser BR into a paid contest.`,
+The [Battle Royale money-format guide](/guides/battle-royale-for-money-hub) distinguishes cash competitions from virtual rewards. Browser Royale's own browser mode also remains free; the existence of separate cash 1v1 duels on PVPspinArena does not turn either browser BR into a paid contest.`,
       ],
       [
         "Alternatives depend on what you wanted from the game",
-        `For another top-down browser survival game, investigate Suroi through its official site. It is its own project, not a replacement login page for ZombsRoyale. If you wanted a first-person island instead, Project Island offers that on PVPspinArena through the [Battle Royale entry](/fps-br).
+        `For another top-down browser survival game, investigate Suroi through its official site. It is its own project, not a replacement login page for ZombsRoyale. If you wanted a first-person island instead, Browser Royale offers that on PVPspinArena through the [Battle Royale entry](/fps-br).
 
-The differences matter more than a shared last-player-standing label. Project Island has a plane insertion, mouse-look camera and bot-filled seats up to 100 total participants. A top-down game's control habits do not transfer directly to a 3D parachute or a scoped view. Neither option is a way to access the other game's account or items.
+The differences matter more than a shared last-player-standing label. Browser Royale has a plane insertion, mouse-look camera and bot-filled seats up to 100 total participants. A top-down game's control habits do not transfer directly to a 3D parachute or a scoped view. Neither option is a way to access the other game's account or items.
 
 Compare [Battle Royale game formats](/guides/battle-royale-games) before switching. If your real goal was the installed PUBG title, [PUBG access](/guides/pubg-unblocked) explains why an independent browser shooter is not PUBG running on the web.`,
       ],
@@ -543,7 +543,7 @@ For further comparisons, use the [FPS and aim topic hub](/guides/topics/fps-and-
       },
       {
         q: "What are genuine browser alternatives?",
-        a: "Suroi is a separate top-down browser game. Project Island is our first-person 3D browser BR with bot-filled seats and no cash entry. Their accounts, controls and gameplay should be evaluated separately.",
+        a: "Suroi is a separate top-down browser game. Browser Royale is our first-person 3D browser BR with bot-filled seats and no cash entry. Their accounts, controls and gameplay should be evaluated separately.",
       },
     ],
     sources: [zombs, zombsTerms, suroi],
@@ -568,7 +568,7 @@ For further comparisons, use the [FPS and aim topic hub](/guides/topics/fps-and-
       "PUBG's publisher describes free Basic access and a separate Plus upgrade.",
       "A cloud stream can appear in a browser without being a browser-native game.",
       "PUBG Lite and PUBG Mobile labels do not prove that a page hosts an official desktop browser edition.",
-      "Project Island is an independent browser alternative, not PUBG and not a shared account service.",
+      "Browser Royale is an independent browser alternative, not PUBG and not a shared account service.",
     ],
     sections: [
       [
@@ -615,10 +615,10 @@ Changing the game does not change a network owner's policy. Similarly, switching
 On PVPspinArena, the [graphics guide](/fps-graphics-guide) helps identify which GPU the browser is using for our own shooter. Those controls are specific to our game; they are not PUBG launch options or a way to alter another service's requirements.`,
       ],
       [
-        "Project Island as an alternative, with the differences stated",
-        `Project Island is our separate first-person Battle Royale in a desktop browser. It uses a plane route, parachute insertion, equipment collection, vehicles and a shrinking playable area. Its rooms target 100 total participants, with bots filling seats not taken by humans. Those are product facts, not a claim to reproduce PUBG's mechanics or human matchmaking population.
+        "Browser Royale as an alternative, with the differences stated",
+        `Browser Royale is our separate first-person Battle Royale in a desktop browser. It uses a plane route, parachute insertion, equipment collection, vehicles and a shrinking playable area. Its rooms target 100 total participants, with bots filling seats not taken by humans. Those are product facts, not a claim to reproduce PUBG's mechanics or human matchmaking population.
 
-Enter through the [PvPStrike lobby](/) and choose Battle Royale. Use free play to test loading, mouse capture and movement. The current Project Island mode has no cash entry, no BR platform fee and no victory credit to withdraw.
+Enter through the [PvPStrike lobby](/) and choose Browser Royale. Use free play to test loading, mouse capture and movement. The current Browser Royale mode has no cash entry, no BR platform fee and no victory credit to withdraw.
 
 The plan for a browser session should therefore be explicit: play PUBG through a verified supported route, or choose a different browser game because that is the experience you want. Calling the alternative PUBG would give the wrong expectation about its weapons, map, recoil, accounts and competition rules.`,
       ],
@@ -649,11 +649,11 @@ Before using any new access route, verify the title and domain, check the requir
         a: "This guide does not provide bypass instructions. Follow the device and network owner's rules and ask about approved access. A different domain does not create permission.",
       },
       {
-        q: "Is Project Island connected to my PUBG account?",
-        a: "No. Project Island is PVPspinArena's independent browser BR. It has its own gameplay and account system, and does not carry PUBG progress, items or credentials.",
+        q: "Is Browser Royale connected to my PUBG account?",
+        a: "No. Browser Royale is PVPspinArena's independent browser BR. It has its own gameplay and account system, and does not carry PUBG progress, items or credentials.",
       },
       {
-        q: "Does Project Island let me play PUBG for money?",
+        q: "Does Browser Royale let me play PUBG for money?",
         a: "No. It is a different game and its Battle Royale mode is currently free, with no cash prize. PvPStrike's cash 1v1 duels are a separate mode, not PUBG tournaments.",
       },
     ],

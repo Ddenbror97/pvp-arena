@@ -7,7 +7,12 @@ import { FairPlayNotice } from "@/components/fps/FairPlayNotice";
 export const Route = createFileRoute("/fps-br")({
   head: () => ({
     meta: [
-      { title: "Battle Royale Practice | PvPStrike" },
+      { title: "Browser Royale | Project Island Battle Royale" },
+      {
+        name: "description",
+        content:
+          "Play Browser Royale on Project Island: free browser battle royale with a plane drop, loot and a closing zone. Desktop mouse and keyboard required.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

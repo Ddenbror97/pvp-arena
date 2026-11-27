@@ -107,7 +107,7 @@ export function SiteHeader({ className }: { className?: string }) {
             onFocus={() => warmStrikePages(router, qc, userId)}
             onTouchStart={() => warmStrikePages(router, qc, userId)}
           >
-            FPS Duel
+            PvPStrike
           </Link>
           <Link
             to="/jackpot"
@@ -500,7 +500,7 @@ export function MobileTabBar({ className }: { className?: string }) {
         onTouchStart={() => warmStrikePages(router, qc, userId)}
       >
         <Crosshair className="h-5 w-5" />
-        FPS Duel
+        PvPStrike
       </Link>
       <Link
         to="/jackpot"

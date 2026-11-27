@@ -23,7 +23,7 @@ const MODES = [
     slug: "browser-fps-games",
   },
   {
-    name: "Battle Royale",
+    name: "Browser Royale",
     tag: "Project Island",
     image: battleArtwork,
     text: "Drop in, find your gear and survive the closing zone.",
@@ -56,7 +56,7 @@ export function FpsMobileLanding() {
           <p className="fps-mobile-lead">
             1v1 duels. 5v5 tactics.
             <br />
-            Battle Royale.
+            Browser Royale.
           </p>
           <div className="fps-mobile-device">
             <Monitor size={23} aria-hidden />

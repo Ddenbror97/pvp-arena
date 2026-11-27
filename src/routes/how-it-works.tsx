@@ -59,7 +59,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "How does PvPStrike FPS work?",
-    a: "PvPStrike is a desktop browser shooter with several modes. Cash Battle Royale is coming soon. Project Island Battle Royale and Bomb Defusal training are currently free, with no cash entry or cash prize. Cash matches are human-only: best of thirteen is first to seven wins. Anti-Terrorist and Terrorist sides switch after round six in 1v1. Free bot Practice is first to seven, with a side switch after round six. Halftime lasts five seconds. A cash winner receives the combined pot after a 5% fee; Practice has no stake or payout.",
+    a: "PvPStrike is a desktop browser shooter with several modes. Cash Battle Royale is coming soon. Browser Royale and Bomb Defusal training are currently free, with no cash entry or cash prize. Cash matches are human-only: best of thirteen is first to seven wins. Anti-Terrorist and Terrorist sides switch after round six in 1v1. Free bot Practice is first to seven, with a side switch after round six. Halftime lasts five seconds. A cash winner receives the combined pot after a 5% fee; Practice has no stake or payout.",
   },
   {
     q: "How are game outcomes determined?",
@@ -79,13 +79,13 @@ const FAQS: Faq[] = [
   },
   {
     q: "What is the house fee?",
-    a: "Jackpot and Coinflip take 5% of the settled pot; Roulette takes 5% of each winning payout. P2P Slott takes 10% of the players' pot on a win; a draw refunds stakes, while a bomb ends the match with both stakes kept by the house. Poker takes 5% only when a flop is dealt. Pool and PvPStrike take 5% of a winning cash-match pot. FPS Practice, Bomb Defusal training and Project Island Battle Royale have no cash entry or cash prize. Refund and waiting-room rules differ by game; check Terms before entering.",
+    a: "Jackpot and Coinflip take 5% of the settled pot; Roulette takes 5% of each winning payout. P2P Slott takes 10% of the players' pot on a win; a draw refunds stakes, while a bomb ends the match with both stakes kept by the house. Poker takes 5% only when a flop is dealt. Pool and PvPStrike take 5% of a winning cash-match pot. FPS Practice, Bomb Defusal training and Browser Royale have no cash entry or cash prize. Refund and waiting-room rules differ by game; check Terms before entering.",
   },
 ];
 
 const TITLE = "How PVPspinArena Works | PVP Crypto Casino Games";
 const DESC =
-  "Learn how Project Island battle royale, PvPStrike duels, pool, poker and casino games work: free modes, cash entries, fees, settlement and verification.";
+  "Learn how Browser Royale, PvPStrike duels, pool, poker and casino games work: free modes, cash entries, fees, settlement and verification.";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
@@ -122,8 +122,8 @@ function HowItWorksPage() {
         <p>
           Choose PvPStrike FPS, 8-ball pool, poker, Jackpot, Coinflip, Roulette or P2P Slott. Cash
           games use one US-dollar balance funded with digital assets. Free FPS and pool Practice let
-          you play a bot without a deposit or cash stake. Project Island Battle Royale and Bomb
-          Defusal training also need no cash entry and pay no cash prize.
+          you play a bot without a deposit or cash stake. Browser Royale and Bomb Defusal training
+          also need no cash entry and pay no cash prize.
         </p>
         <p>
           Review the rules and fee before entering. Random games use seed verification; pool follows
@@ -264,7 +264,7 @@ function HowItWorksPage() {
             tag="1v1 · Bomb Defusal · Battle Royale"
           >
             Human cash duels, free first-to-seven bot Practice, Bomb Defusal training and free
-            Project Island Battle Royale. Cash duel rules do not apply to Battle Royale.
+            Browser Royale. Cash duel rules do not apply to Battle Royale.
           </GameTile>
         </SeoGrid>
       </SeoSection>
@@ -315,7 +315,7 @@ function HowItWorksPage() {
           <strong>Pool and FPS.</strong> Pool follows alternating shots and foul rules. PvPStrike
           uses server-validated movement and shooting. In 1v1, rounds are won by elimination or
           higher health at timeout. Cash games require matching entries. Free FPS Practice uses a
-          bot and does not change your wallet balance. Project Island uses a survival format instead
+          bot and does not change your wallet balance. Browser Royale uses a survival format instead
           of duel rounds, and has no cash entry or cash prize.
         </p>
         <p>
@@ -557,10 +557,10 @@ function HowItWorksPage() {
               <SeoLink to="/">Compare PvPStrike modes</SeoLink>
             </SeoCard>
           </div>
-          <SeoCard icon={<Target className="h-5 w-5" />} title="Project Island Battle Royale">
+          <SeoCard icon={<Target className="h-5 w-5" />} title="Browser Royale">
             <ol className="list-decimal space-y-1 pl-5">
               <li>
-                Sign in and choose Battle Royale from the PvPStrike lobby. No deposit is needed.
+                Sign in and choose Browser Royale from the PvPStrike lobby. No deposit is needed.
               </li>
               <li>Enter warm-up, then choose where to leave the plane and steer your parachute.</li>
               <li>
@@ -577,7 +577,7 @@ function HowItWorksPage() {
                 Best-of-thirteen rounds and the 1v1 pot fee do not apply.
               </li>
             </ol>
-            <SeoLink to="/fps-br">Open Project Island</SeoLink>
+            <SeoLink to="/fps-br">Open Browser Royale</SeoLink>
             <SeoLink to="/guides/browser-battle-royale">
               Browser battle royale: controls and access
             </SeoLink>

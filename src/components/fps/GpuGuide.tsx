@@ -82,7 +82,7 @@ export function GpuGuidePage() {
         </Link>
         <h1 className="gpu-guide-title">Play PvPStrike on your graphics card</h1>
         <p className="gpu-guide-lead">
-          PvPStrike&apos;s 1v1 Duel, Defuse the Bomb and Battle Royale run in your browser on your
+          PvPStrike 1v1 Duel, Defuse the Bomb and Browser Royale run in your browser on your
           computer&apos;s graphics. Laptops with two graphics chips give browsers the weaker,
           built-in one by default, and the game then lowers its quality to keep the frame rate.
           Switch your browser to the dedicated NVIDIA or AMD card once and every match looks sharper

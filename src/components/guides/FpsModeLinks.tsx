@@ -56,14 +56,14 @@ export function FpsModeLinks({ preferred = "duel" }: { preferred?: FpsMode }) {
               params={{ slug: "browser-battle-royale" }}
               className="hover:text-primary"
             >
-              Battle Royale
+              Browser Royale
             </Link>
           </h3>
           <p className="mt-2 text-sm text-muted-foreground">
             Drop into Project Island. Cash mode coming soon.
           </p>
           <Link to="/fps-br" preload="intent" className={play}>
-            Play Battle Royale
+            Play Browser Royale
           </Link>
           <div>
             <Link to="/guides/$slug" params={{ slug: "browser-battle-royale" }} className={learn}>
