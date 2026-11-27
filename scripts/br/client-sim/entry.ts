@@ -261,6 +261,7 @@ const ready = (async () => {
   let clock = 0,
     lastSnap = 0;
   let lastView: BrView | null = null;
+  let pendingCombat: typeof state.combat = [];
   setInterval(() => {
     const input = queue.shift();
     if (input && mirroring) mirror = { ...input, yaw: input.yaw + 0.3 };
@@ -300,8 +301,14 @@ const ready = (async () => {
     // ?immortal=1: long checks (the climbing rope at software WebGL's pace) outlast the zone;
     // both players are kept alive in the gas.
     if (params.get("immortal")) for (const seat of [me, other]) state.seats[seat]!.kit.hp = 100;
+    // As the room does (workers/fps/br.ts pendingCombat): a view carries every event since the
+    // last one, not only the events of the step it is built after. (Snapshots go out about
+    // every second step here, so a shot's hit was lost half the time.)
+    pendingCombat.push(...state.combat);
     if (performance.now() - lastSnap >= SNAPSHOT_INTERVAL_MS) {
       lastSnap = performance.now();
+      state.combat = pendingCombat;
+      pendingCombat = [];
       lastView = brViewFor(state, world, sight, me, clock, sync) as unknown as BrView;
       arena.snapshot(lastView);
     }
