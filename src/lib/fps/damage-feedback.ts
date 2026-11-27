@@ -197,23 +197,27 @@ export function lowHealthPicture(): Uint8ClampedArray {
       data[o + 2] = b;
       data[o + 3] = Math.round(Math.min(1, a) * open * 255);
     }
-  // Out of focus, as blood on a lens is: every pixel with its eight neighbours, twice. (The
-  // middle stays empty: it is cleared well beyond the blur's reach.)
-  const blurred = new Uint8ClampedArray(data.length);
+  // Out of focus, as blood on a lens is: every pixel with its neighbours, across then down,
+  // twice over. (The middle stays empty: it is cleared well beyond the blur's reach.)
+  const other = new Uint8ClampedArray(data.length);
   let from: Uint8ClampedArray = data,
-    to: Uint8ClampedArray = blurred;
-  for (let pass = 0; pass < 2; pass++) {
+    to: Uint8ClampedArray = other;
+  const row = LOW_W * 4;
+  for (let pass = 0; pass < 4; pass++) {
+    // (Even passes across, odd passes down; the edges repeat their own pixel.)
+    const step = pass % 2 ? row : 4;
     for (let y = 0; y < LOW_H; y++)
-      for (let x = 0; x < LOW_W; x++)
-        for (let c = 0; c < 4; c++) {
-          let sum = 0;
-          for (let dy = -1; dy <= 1; dy++) {
-            const yy = Math.min(LOW_H - 1, Math.max(0, y + dy));
-            for (let dx = -1; dx <= 1; dx++)
-              sum += from[(yy * LOW_W + Math.min(LOW_W - 1, Math.max(0, x + dx))) * 4 + c]!;
-          }
-          to[(y * LOW_W + x) * 4 + c] = sum / 9;
-        }
+      for (let x = 0; x < LOW_W; x++) {
+        const o = y * row + x * 4;
+        const first = pass % 2 ? y === 0 : x === 0,
+          last = pass % 2 ? y === LOW_H - 1 : x === LOW_W - 1;
+        const a = first ? o : o - step,
+          b = last ? o : o + step;
+        to[o] = (from[a]! + from[o]! + from[b]!) / 3;
+        to[o + 1] = (from[a + 1]! + from[o + 1]! + from[b + 1]!) / 3;
+        to[o + 2] = (from[a + 2]! + from[o + 2]! + from[b + 2]!) / 3;
+        to[o + 3] = (from[a + 3]! + from[o + 3]! + from[b + 3]!) / 3;
+      }
     [from, to] = [to, from];
   }
   return (lowPicture = from);
