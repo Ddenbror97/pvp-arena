@@ -98,6 +98,8 @@ declare global {
         } | null,
       ) => void;
       pump?: () => void;
+      /** Spectator lab: the connection's delay changes by `ms` from now on. */
+      netShift?: (ms: number) => void;
       otherActLog?: () => string[];
       /** Spectator lab: the other player's input each tick (null: as before). */
       otherScript?: (fn: ((tick: number) => Partial<BrInput> | null) | null) => void;
@@ -407,6 +409,9 @@ const ready = (async () => {
       last: 0,
       queue: [],
     };
+  };
+  window.sim.netShift = (ms) => {
+    if (net) net.latencyMs += ms;
   };
   window.sim.otherScript = (fn) => {
     mirroring = false;

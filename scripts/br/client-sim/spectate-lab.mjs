@@ -20,6 +20,10 @@
  *   subjPx     px   RMS frame-to-frame jump of the watched body (or their vehicle) on screen,
  *                   beyond its smooth motion (720p, 75° view); subjPxMax the worst frame
  *   lagMs      ms   how far behind the match the watched body is drawn
+ *   viewJump   m    the camera's largest step at a change of view of the same player (their
+ *                   eyes ↔ a vehicle's view), beyond its pace; viewTurn the largest turn (°)
+ *   changes / teleports / stray   changes of the watched player, camera steps over 3 m, and
+ *                   frames the camera was over 60 m from the player it was watching
  *   frameMs    ms   the frame callbacks' own time (mean / p95)
  */
 import { build } from "esbuild";
@@ -46,7 +50,7 @@ const NETS = {
   wifi: { latencyMs: 60, jitterMs: 45, spikeEvery: 40, spikeMs: 140 },
   mobile: { latencyMs: 110, jitterMs: 80, spikeEvery: 25, spikeMs: 220 },
 };
-const nets = arg("net", "lan,cable,wifi,mobile").split(",");
+const nets = arg("net", "lan,wifi,mobile").split(",");
 const only = arg("only")?.split(",");
 
 const js = (
@@ -175,6 +179,7 @@ await page.evaluate(
     let third = null;
     /** The runway: where the aircraft is parked and the way it points. */
     let field = { x: 0, z: 0, yaw: 0 };
+    let parked = null;
     const along = (d, side = 0) => ({
       x: field.x - Math.sin(field.yaw) * d + Math.cos(field.yaw) * side,
       z: field.z - Math.cos(field.yaw) * d - Math.sin(field.yaw) * side,
@@ -201,6 +206,7 @@ await page.evaluate(
         const fx = -2 * (a.qx * a.qz + a.qw * a.qy),
           fz = -(1 - 2 * (a.qx * a.qx + a.qy * a.qy));
         field = { x: a.x, z: a.z, yaw: Math.atan2(-fx, -fz) };
+        parked = { x: a.x, y: a.y, z: a.z, qx: a.qx, qy: a.qy, qz: a.qz, qw: a.qw };
         lab.reset();
         if (!draw) window.__noDraw = true;
         sim.net({ hz: 15, manual: true });
@@ -220,9 +226,21 @@ await page.evaluate(
           delete other.vehicle;
         }
         if (other.cockpit !== undefined) {
-          if (state.aircraft) state.aircraft.pilot = state.aircraft.passenger = -1;
+          const a = state.aircraft;
+          a.pilot = a.passenger = -1;
+          Object.assign(a, parked, {
+            vx: 0,
+            vy: 0,
+            vz: 0,
+            wx: 0,
+            wy: 0,
+            wz: 0,
+            engine: "off",
+            throttle: 0,
+          });
           delete other.cockpit;
         }
+        if (state.phase !== "active") throw new Error(`the match is ${state.phase}`);
         other.dead = false;
         other.kit.hp = 100;
         me.dead = false;
@@ -230,13 +248,14 @@ await page.evaluate(
         delete me.spectate;
         const p = along(-30, 25);
         stand(other.body, p.x, p.z);
-        const q = along(-60, 60);
+        const q = along(-200, 200);
         stand(me.body, q.x, q.z);
         if (third) {
           third.dead = false;
           third.kit.hp = 100;
-          const r = along(900, 300);
-          stand(third.body, r.x, r.z);
+          // Out of sight of everyone here (the island's middle): their row is not sent until
+          // they are the one watched.
+          stand(third.body, 60, 60);
         }
       },
       keepAlive() {
@@ -351,8 +370,8 @@ await page.evaluate(
           const a = state.aircraft;
           const fx = -Math.sin(field.yaw),
             fz = -Math.cos(field.yaw);
-          Object.assign(a, {
-            y: hf.heightAt(a.x, a.z) + 260,
+          Object.assign(a, parked, {
+            y: parked.y + 420,
             vx: fx * 52,
             vy: 0,
             vz: fz * 52,
@@ -365,16 +384,22 @@ await page.evaluate(
             pilot: other.seat,
             health: a.maxHealth,
             destroyed: false,
+            grounded: false,
           });
           other.cockpit = 0;
-          sim.otherScript((tick) => ({
-            thr: 1,
-            elev: 0.12 + 0.1 * Math.sin(tick * 0.02),
-            ail: 0.35 * Math.sin(tick * 0.012),
-            rud: 0,
-            flaps: 0,
-            yaw: field.yaw,
-          }));
+          sim.otherScript((tick) => {
+            // Gentle S-turns, level; pulled up well before any ground.
+            const low = a.y - hf.heightAt(a.x, a.z) < 200;
+            a.health = a.maxHealth;
+            return {
+              thr: 1,
+              elev: low ? 0.6 : 0.04 + 0.05 * Math.sin(tick * 0.02),
+              ail: low ? 0 : 0.22 * Math.sin(tick * 0.012),
+              rud: 0,
+              flaps: 0,
+              yaw: field.yaw,
+            };
+          });
         },
         parachute() {
           const b = other.body;
@@ -405,8 +430,19 @@ await page.evaluate(
           await wait(400);
           sim.rappelOther();
           await wait(900);
-          // Down in hops: S held on and off.
-          sim.otherScript((tick) => ({ forward: tick % 90 < 14 ? -1 : 0, yaw: 0 }));
+          // Down in hops: W held on and off.
+          // (Their view faces the wall, as the rope's own camera settles: yaw + π of the stand.)
+          sim.otherScript((tick) => ({ forward: tick % 90 < 14 ? 1 : 0, yaw: Math.PI }));
+        },
+        /** The connection's delay rises by 40 ms two seconds into the measurement. */
+        latency() {
+          const y0 = field.yaw;
+          let from = -1;
+          sim.otherScript((tick) => {
+            if (from < 0) from = tick;
+            if (tick - from === Math.round(30 * 4.5)) sim.netShift(40);
+            return { forward: 1, sprint: true, yaw: y0 + 0.5 * Math.sin(tick * 0.02) };
+          });
         },
         switching() {
           const y0 = field.yaw;
@@ -420,7 +456,12 @@ await page.evaluate(
       async run(name, net, seconds, hz) {
         lab.reset();
         sim.net({ hz, seed: 7, manual: true, ...net });
-        await wait(600);
+        // The client's clock keeps its least-delayed packet for five seconds and a spectator's
+        // delay its arrival gaps for eight: the connection before this one is out of both
+        // after this. (What a change of latency does mid-match is the `latency` scenario.)
+        const key = JSON.stringify([net, hz]);
+        await wait(key === lab.net ? 600 : 16000);
+        lab.net = key;
         await lab.scenarios[name]();
         const dbg = [
           other.body.phase,
@@ -471,6 +512,19 @@ await page.evaluate(
               w && w.pos ? w.pos[0] : NaN,
               w && w.pos ? w.pos[1] : NaN,
               w && w.pos ? w.pos[2] : NaN,
+              // How they are seen: 1 their eyes, 2 a vehicle's view, 3 the aircraft's, 4 the
+              // air's, 5 from behind, 0 not drawn.
+              !w || !w.pos
+                ? 0
+                : w.pov
+                  ? 1
+                  : w.vehicle >= 0
+                    ? 2
+                    : w.vehicle <= -2
+                      ? 3
+                      : w.phase === "parachute" || w.phase === "freefall"
+                        ? 4
+                        : 5,
             ]);
             if (performance.now() < end) requestAnimationFrame(rec);
             else done();
@@ -536,7 +590,7 @@ function measure({ frames, frameMs }, switching) {
   // (A change of the watched player is a cut: the frames around it are not a camera fault.)
   const cut = frames.map((f, i) => {
     for (let k = Math.max(1, i - 2); k <= Math.min(n - 1, i + 2); k++)
-      if (frames[k][15] !== frames[k - 1][15] || frames[k][16] !== frames[k - 1][16]) return true;
+      if (frames[k][15] !== frames[k - 1][15] || frames[k][20] !== frames[k - 1][20]) return true;
     return false;
   });
   let back = 0,
@@ -591,6 +645,26 @@ function measure({ frames, frameMs }, switching) {
       px.push((Math.hypot(jx, jy) / depth) * FOCAL);
     }
   }
+  // A change of view of the same player (into a vehicle, out of it): what the camera did in
+  // the frames about it, beyond its pace. Another player: how many cuts each change took, and
+  // the frames the camera was nowhere near the player it was watching.
+  let viewJump = 0,
+    viewTurn = 0,
+    changes = 0,
+    teleports = 0,
+    stray = 0;
+  for (let i = 1; i < n; i++) {
+    const same = frames[i][15] === frames[i - 1][15];
+    if (!same) changes++;
+    if (len(step[i]) > 3 + (2 * pace[i] * dt[i]) / 1000) teleports++;
+    if (frames[i][15] >= 0 && Math.hypot(P[i][0] - frames[i][12], P[i][2] - frames[i][14]) > 60)
+      stray++;
+    if (same && frames[i][20] !== frames[i - 1][20] && frames[i][20] && frames[i - 1][20])
+      for (let k = Math.max(1, i - 1); k <= Math.min(n - 1, i + 1); k++) {
+        viewJump = Math.max(viewJump, len(step[k]) - (pace[k] * dt[k]) / 1000);
+        viewTurn = Math.max(viewTurn, turn[k]);
+      }
+  }
   // How far behind the match the watched body is drawn: where on the true path it is.
   const truth = [];
   for (const f of frames)
@@ -640,6 +714,8 @@ function measure({ frames, frameMs }, switching) {
     subjPx: r(rms(px)),
     subjPxMax: r(Math.max(0, ...px), 1),
     lagMs: r(median(lags), 0),
+    ...(viewJump || viewTurn ? { viewJump: r(viewJump), viewTurn: r(viewTurn, 1) } : {}),
+    ...(changes ? { changes, teleports, stray } : {}),
     frameMs: r(frameMs.reduce((a, b) => a + b, 0) / Math.max(1, frameMs.length)),
     frameP95: r(sorted[Math.floor(sorted.length * 0.95)] ?? 0),
   };
@@ -647,9 +723,10 @@ function measure({ frames, frameMs }, switching) {
 
 const names = await page.evaluate(() => Object.keys(window.lab.scenarios));
 const results = {};
-for (const name of names) {
-  if (only && !only.includes(name)) continue;
-  for (const net of nets) {
+// (One connection after the other: a change of connection takes the client a while to settle.)
+for (const net of nets) {
+  for (const name of names) {
+    if (only && !only.includes(name)) continue;
     const rec = await page.evaluate(
       ([name, net, seconds, hz]) => window.lab.run(name, net, seconds, hz),
       [name, NETS[net], SECONDS, HZ],

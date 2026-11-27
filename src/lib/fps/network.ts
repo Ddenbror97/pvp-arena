@@ -21,6 +21,14 @@ export class PlaybackDelay {
     private readonly min = MIN_PLAYBACK_MS,
     private readonly max = REMOTE_DELAY_MS,
     private readonly start = REMOTE_DELAY_MS,
+    /**
+     * The share of recent arrival gaps the delay covers (the 95th percentile for a player:
+     * the odd late packet freezes the others for a moment instead of everyone being drawn
+     * later all the time). A spectator's covers them all: BrRemoteTimeline.
+     */
+    private readonly quantile = 0.95,
+    /** Arrival gaps remembered (64: four seconds of the battle royale's snapshots). */
+    private readonly remembered = 64,
   ) {
     this.delay = this.target = start;
   }
@@ -29,12 +37,12 @@ export class PlaybackDelay {
       const gap = receivedAt - this.previous;
       if (gap > 0) {
         this.samples.push(Math.max(0, poseAge) + gap + 16);
-        if (this.samples.length > 64) this.samples.shift();
+        if (this.samples.length > this.remembered) this.samples.shift();
         if (this.samples.length >= 20) {
           const sorted = [...this.samples].sort((a, b) => a - b);
           this.target = Math.max(
             this.min,
-            Math.min(this.max, sorted[Math.ceil(sorted.length * 0.95) - 1]!),
+            Math.min(this.max, sorted[Math.ceil(sorted.length * this.quantile) - 1]!),
           );
         }
       }
