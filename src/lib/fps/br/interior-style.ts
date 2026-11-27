@@ -319,3 +319,133 @@ export function applyInteriorStyle(material: THREE.MeshStandardMaterial, kind: I
     `${key.call(material)}|br-interior-v2-${floors ? "f" : "w"}-${kind}`;
   material.needsUpdate = true;
 }
+
+/**
+ * Floors with a finish (owner, 2026-11-27: "add klinkers och golv saknas. leta efter fler
+ * lägeheter som saknar" — the apartment blocks' stairwells, corridors and stairs, and the
+ * towers' flats, had plain flat floors). Materials "Floor finish: <kind>"
+ * (art/blender/br/floor_finish.mjs) are drawn with a pattern over the triangles' own colour:
+ * klinker (ceramic floor tiles, a colour and size per building), tiles (small bathroom tiles),
+ * planks, marble slabs, carpet and decking. No textures, no extra draws.
+ */
+export const FLOOR_FINISH = "Floor finish: ";
+export type FloorFinish = "klinker" | "tiles" | "planks" | "marble" | "carpet" | "deck";
+const FINISHES = new Set<FloorFinish>(["klinker", "tiles", "planks", "marble", "carpet", "deck"]);
+/** Klinker colours (sRGB), picked per building. */
+const KLINKER = [
+  [0.72, 0.42, 0.3], // terracotta
+  [0.62, 0.62, 0.6], // grey
+  [0.82, 0.76, 0.64], // beige
+  [0.34, 0.34, 0.35], // anthracite
+  [0.88, 0.87, 0.84], // off-white
+  [0.74, 0.62, 0.48], // sand
+];
+const finished = new WeakSet<THREE.Material>();
+
+/** The finish a material is named for, or null. */
+export function floorFinishOf(material: THREE.Material): FloorFinish | null {
+  if (!material.name.startsWith(FLOOR_FINISH)) return null;
+  const kind = material.name.slice(FLOOR_FINISH.length) as FloorFinish;
+  return FINISHES.has(kind) ? kind : null;
+}
+
+/** Patch a floor-finish material (once, before its first use). */
+export function applyFloorFinish(material: THREE.MeshStandardMaterial) {
+  const kind = floorFinishOf(material);
+  if (!kind || finished.has(material)) return;
+  finished.add(material);
+  material.vertexColors = true;
+  const previous = material.onBeforeCompile;
+  // The grout, seam or gap line of width w (m) at the edges of cells `size` apart, antialiased.
+  const pattern: Record<FloorFinish, string> = {
+    klinker: `
+            float size = s.y < 0.6 ? 0.3 : 0.2;
+            vec2 t = uv / size;
+            vec2 cell = floor(t);
+            base = brKlinker(floor(s.z * ${KLINKER.length}.0)) * (0.92 + 0.1 * brFfHash(cell));
+            float g = brFfLine(t, 0.012 / size);
+            col = mix(base, pow(vec3(0.42, 0.41, 0.39), vec3(2.2)), g);`,
+    tiles: `
+            vec2 t = uv / 0.15;
+            float g = brFfLine(t, 0.004 / 0.15);
+            col = mix(base * (0.95 + 0.06 * brFfHash(floor(t))), base * 1.12 + 0.02, g);`,
+    planks: `
+            float row = floor(uv.y / 0.17);
+            float u = uv.x + brFfHash(vec2(row, 3.1)) * 4.0;
+            float seg = floor(u / 1.35);
+            float shade = 0.84 + 0.26 * brFfHash(vec2(row, seg));
+            float grain = 0.95 + 0.05 * sin(u * 37.0 + brFfHash(vec2(row, seg + 7.0)) * 6.0);
+            float g = max(brFfLine(vec2(0.5, uv.y / 0.17), 0.004 / 0.17), brFfLine(vec2(u / 1.35, 0.5), 0.003 / 1.35));
+            col = mix(base * shade * grain, base * 0.45, g);`,
+    marble: `
+            vec2 t = uv / 0.8;
+            float vein = smoothstep(0.92, 1.0, sin((uv.x + 0.6 * uv.y) * 3.1 + 2.0 * sin(uv.y * 1.7 + brFfHash(floor(t)) * 6.0)));
+            float g = brFfLine(t, 0.003 / 0.8);
+            col = mix(base * (0.96 + 0.05 * brFfHash(floor(t))) * (1.0 - 0.12 * vein), base * 0.7, g);`,
+    carpet: `
+            col = base * (0.9 + 0.1 * brFfHash(floor(uv * 40.0)));`,
+    deck: `
+            float row = floor(uv.y / 0.14);
+            float g = brFfLine(vec2(0.5, uv.y / 0.14), 0.008 / 0.14);
+            col = mix(base * (0.86 + 0.22 * brFfHash(vec2(row, floor((uv.x + row * 0.7) / 2.4)))), base * 0.3, g);`,
+  };
+  material.onBeforeCompile = (shader, renderer) => {
+    previous?.call(material, shader, renderer);
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vBrFfWorld;\nvarying vec4 vBrFfSeed;")
+      .replace(
+        "#include <project_vertex>",
+        `#include <project_vertex>
+        {
+          vec4 w = vec4(transformed, 1.0);
+          vec4 o = vec4(0.0, 0.0, 0.0, 1.0);
+          #ifdef USE_INSTANCING
+            w = instanceMatrix * w;
+            o = instanceMatrix * o;
+          #endif
+          vBrFfWorld = (modelMatrix * w).xyz;
+          vec2 c = floor((modelMatrix * o).xz);
+          vBrFfSeed = fract(sin(vec4(dot(c, vec2(12.9898, 78.233)), dot(c, vec2(39.346, 11.135)), dot(c, vec2(73.156, 52.235)), dot(c, vec2(27.42, 91.71)))) * 43758.5453);
+        }`,
+      );
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+        varying vec3 vBrFfWorld;
+        varying vec4 vBrFfSeed;
+        ${glslList("brKlinker", KLINKER)}
+        float brFfHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        // 1 on a line of half-width w (in cells) at the cells' edges, antialiased.
+        float brFfLine(vec2 t, float w) {
+          vec2 f = abs(fract(t + 0.5) - 0.5);
+          vec2 aa = fwidth(t);
+          vec2 l = 1.0 - smoothstep(vec2(w), vec2(w) + aa, f);
+          // Lines finer than a pixel fade to their share of the cell.
+          vec2 fade = clamp(1.0 - aa * 2.0, 0.0, 1.0);
+          return max(l.x * fade.x, l.y * fade.y);
+        }`,
+      )
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        {
+          vec3 n = normalize(cross(dFdx(vBrFfWorld), dFdy(vBrFfWorld)));
+          vec4 s = vBrFfSeed;
+          vec3 base = diffuseColor.rgb;
+          vec3 col = base;
+          vec2 uv = s.x < 0.5 ? vBrFfWorld.xz : vBrFfWorld.zx;
+          if (abs(n.y) > 0.7) {${pattern[kind]}
+          } else {
+            // Stair risers and slab edges: the floor's colour, a little darker.
+            ${kind === "klinker" ? "base = brKlinker(floor(s.z * " + KLINKER.length + ".0));" : ""}
+            col = base * 0.86;
+          }
+          diffuseColor.rgb = col;
+        }`,
+      );
+  };
+  const key = material.customProgramCacheKey;
+  material.customProgramCacheKey = () => `${key.call(material)}|br-floor-finish-v1-${kind}`;
+  material.needsUpdate = true;
+}

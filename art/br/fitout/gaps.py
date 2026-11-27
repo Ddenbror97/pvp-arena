@@ -196,8 +196,19 @@ INNER = [0.84, 0.81, 0.75]
 why = "apartment: the stairwell door's slit past the corridor wall"
 for y in (0.0, 3.2, 6.4, 9.6):
     b = [-6.7, y, -4.05, -6.55, y + 2.2, -4.0]
-    add_part("apartment", {"prim": "apartment", "box": b, "faces": ["x0", "x1", "z0"], "tint": INNER, "why": why}, [0])
+    add_part("apartment", {"prim": "Interior walls and ceiling", "box": b, "faces": ["x0", "x1", "z0"], "why": why}, [0])
     add_boxes("apartment", [b], why)
+
+# The balconies' railing (z 7.3…7.4, solid to 1 m, the kit's dark `rail`): from the flats its
+# inside read as a black wall (owner, 2026-11-27: "stair/inside balcony wall"). Its inside face
+# rendered like the walls, 1 cm in front of the metal.
+why = "apartment: the balconies' parapet, its inside face rendered"
+for y in (3.2, 6.4, 9.6):
+    add_part(
+        "apartment",
+        {"prim": "apartment", "quad": vquad((-6.4, 7.29), (10.0, 7.29), y, y + 1.0, (0, -1)), "tint": [0.93, 0.92, 0.89], "why": why},
+        [0, 1],
+    )
 
 # ------------------------------------------------------------------------------ Blackwater keep
 # build_blackwater.mjs's numbers (keep(): a stadium, straight half-length HL, the ends half

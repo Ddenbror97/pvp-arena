@@ -115,13 +115,14 @@ describe("the buildings' windows are breakable glass", () => {
           /\.(zfix-v21|reveal-v1)\.lod\d\.glb$/.test((l as { file: string }).file);
         // (Or one with faces added where it was left open, gaps-v1, 2026-11-27: the townhouse's
         // window its stair crossed walled up, panes and all; the apartments' slit by the
-        // stairwell door: more triangles, the other windows where they were.)
+        // stairwell door: more triangles, the other windows where they were. Or its floors moved
+        // to their finishes, floor_finish.mjs: the same triangles.)
         const patched = (l: unknown) => /\.gaps-v1\.lod\d\.glb$/.test((l as { file: string }).file);
         for (const [i, l] of now.lods.entries())
           if (lifted(l))
             expect((l as { tris: number }).tris, id).toBe((was.lods[i] as { tris: number }).tris);
           else if (patched(l))
-            expect((l as { tris: number }).tris, id).toBeGreaterThan(
+            expect((l as { tris: number }).tris, id).toBeGreaterThanOrEqual(
               (was.lods[i] as { tris: number }).tris,
             );
         const kept = now.lods.map((l) => !l.farFacade && !lifted(l) && !patched(l));
