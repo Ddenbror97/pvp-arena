@@ -26,7 +26,7 @@ const MODES = [
     name: "Browser Royale",
     tag: "Project Island",
     image: battleArtwork,
-    text: "Drop in, find your gear and survive the closing zone.",
+    text: "Explore Project Island in 3D, find your gear and survive the closing zone.",
     to: "/guides/$slug",
     slug: "browser-battle-royale",
   },
