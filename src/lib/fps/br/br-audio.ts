@@ -106,7 +106,7 @@ const FILES: Record<
   awpZoomIn: "awp-zoom-in-v1.wav",
   awpZoomOut: "awp-zoom-out-v1.wav",
   bolt: "awp-bolt-v2.wav",
-  casing: "casing-ground-v1.wav",
+  casing: "casing-ground-v2.wav",
   // A car, bike or the aircraft blowing up: the owner's recording (2026-11-18,
   // "vichele_explode_sound.mp3", ATTRIBUTION.md). Grenades keep their own.
   boom: "br-vehicle-explode-v1.mp3",

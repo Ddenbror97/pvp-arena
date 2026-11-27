@@ -55,7 +55,7 @@ const SAMPLES = {
   /** AWP: the owner-supplied shot; recorded bolt cycle; magazine handling from build-awp-audio.mjs. */
   awpShot: "awp-shot-v2.wav",
   awpBolt: "awp-bolt-v2.wav",
-  casing: "casing-ground-v1.wav",
+  casing: "casing-ground-v2.wav",
   awpReload: "awp-reload-tactical-v4.wav",
   awpReloadEmpty: "awp-reload-empty-v5.wav",
   awpZoomIn: "awp-zoom-in-v1.wav",
