@@ -11,6 +11,7 @@
  * second of the match takes 200), eight times that for the rest.
  *
  *   node scripts/br/client-sim/hit-capture.mjs [outDir] [--chromium=/path] [--size=960x540]
+ *        [--only=mist,hits,health] (default: all three, about 25 minutes)
  */
 import { build } from "esbuild";
 import http from "node:http";
@@ -24,6 +25,11 @@ const outDir = path.resolve(
 );
 const exe = process.argv.find((a) => a.startsWith("--chromium="))?.slice(11);
 const SLOW = Number(process.argv.find((a) => a.startsWith("--slow="))?.slice(7) ?? 0.005);
+const only = process.argv
+  .find((a) => a.startsWith("--only="))
+  ?.slice(7)
+  .split(",");
+const run = (part) => !only || only.includes(part);
 const [W, H] = (process.argv.find((a) => a.startsWith("--size="))?.slice(7) ?? "960x540")
   .split("x")
   .map(Number);
@@ -183,25 +189,27 @@ const setPace = async (p) => {
   pace = p;
   await page.evaluate((v) => (globalThis.__pace = v), p);
 };
-await setPace(SLOW);
-await pass(60);
-const hp0 = (await status()).otherHp;
-await page.mouse.down({ button: "left" });
-await pass(50);
-await page.mouse.up({ button: "left" });
-// The shot, its hit record and the mist: a picture every 40 ms or so of the match (each takes
-// several real seconds), from the server taking the health until the cloud has gone.
 let mistAt = null;
-for (let i = 0; i < 40 && mistAt === null; i++) {
-  await pass(10);
-  if ((await status()).otherHp < hp0) mistAt = i;
+if (run("mist")) {
+  await setPace(SLOW);
+  await pass(60);
+  const hp0 = (await status()).otherHp;
+  await page.mouse.down({ button: "left" });
+  await pass(50);
+  await page.mouse.up({ button: "left" });
+  // The shot, its hit record and the mist: a picture every 40 ms or so of the match (each takes
+  // several real seconds), from the server taking the health until the cloud has gone.
+  for (let i = 0; i < 40 && mistAt === null; i++) {
+    await pass(10);
+    if ((await status()).otherHp < hp0) mistAt = i;
+  }
+  for (let i = 0; i < 18; i++) {
+    await shot(`2-mist-${String(i).padStart(2, "0")}`);
+    await pass(15);
+  }
+  const hp1 = (await status()).otherHp;
+  check("your shot hit (the server took the other player's health)", hp1 < hp0, { hp0, hp1 });
 }
-for (let i = 0; i < 18; i++) {
-  await shot(`2-mist-${String(i).padStart(2, "0")}`);
-  await pass(15);
-}
-const hp1 = (await status()).otherHp;
-check("your shot hit (the server took the other player's health)", hp1 < hp0, { hp0, hp1 });
 await setPace(SLOW * 8);
 
 // ---- they shoot you: from ahead, then you turn a quarter right (they are on your left)
@@ -215,40 +223,44 @@ const burst = async () => {
   const before = await page.evaluate(() => window.sim.health?.(null).mine);
   return before;
 };
-let left = await burst();
-check("their burst hit you (the server took your health)", left < 100 && left > 0, { left });
-let seen = await overlay();
-check(
-  "hit from ahead: a crescent at the top and the edge flash",
-  seen?.arcs.length === 1 && Math.abs(seen.arcs[0].angle) < 25 && seen.flash > 0,
-  seen,
-);
-await shot("3-hit-from-ahead");
-const yaw = (await status()).input?.yaw ?? 0;
-await page.evaluate(() => window.sim.health?.(100));
-await pass(1800);
-await page.evaluate((y) => window.sim.face?.(y - Math.PI / 2, -0.06), yaw);
-await pass(300);
-left = await burst();
-seen = await overlay();
-check(
-  "turned a quarter right: the crescent is on the left",
-  seen?.arcs.length >= 1 && seen.arcs.every((a) => a.angle < -60 && a.angle > -120),
-  seen,
-);
-await shot("4-hit-from-left");
-// The crescent stays on the shooter as you turn back to face them.
-await page.evaluate((y) => window.sim.face?.(y, -0.06), yaw);
-await pass(200);
-seen = await overlay();
-check(
-  "turned back: the same crescent has come round to the top",
-  seen?.arcs.length >= 1 && seen.arcs.every((a) => Math.abs(a.angle) < 25),
-  seen,
-);
-await shot("4b-turned-back");
-await page.evaluate(() => window.sim.health?.(100));
-await pass(2200);
+let left = 100,
+  seen = null;
+if (run("hits")) {
+  left = await burst();
+  check("their burst hit you (the server took your health)", left < 100 && left > 0, { left });
+  seen = await overlay();
+  check(
+    "hit from ahead: a crescent at the top and the edge flash",
+    seen?.arcs.length === 1 && Math.abs(seen.arcs[0].angle) < 25 && seen.flash > 0,
+    seen,
+  );
+  await shot("3-hit-from-ahead");
+  const yaw = (await status()).input?.yaw ?? 0;
+  await page.evaluate(() => window.sim.health?.(100));
+  await pass(1800);
+  await page.evaluate((y) => window.sim.face?.(y - Math.PI / 2, -0.06), yaw);
+  await pass(300);
+  left = await burst();
+  seen = await overlay();
+  check(
+    "turned a quarter right: the crescent is on the left",
+    seen?.arcs.length >= 1 && seen.arcs.every((a) => a.angle < -60 && a.angle > -120),
+    seen,
+  );
+  await shot("4-hit-from-left");
+  // The crescent stays on the shooter as you turn back to face them.
+  await page.evaluate((y) => window.sim.face?.(y, -0.06), yaw);
+  await pass(200);
+  seen = await overlay();
+  check(
+    "turned back: the same crescent has come round to the top",
+    seen?.arcs.length >= 1 && seen.arcs.every((a) => Math.abs(a.angle) < 25),
+    seen,
+  );
+  await shot("4b-turned-back");
+  await page.evaluate(() => window.sim.health?.(100));
+  await pass(2200);
+}
 
 // ---- health
 const lows = {};
@@ -270,8 +282,17 @@ check("healed: the overlay is gone", seen?.low === 0 && seen.shown === false, se
 await shot("6-healed");
 await page.evaluate(() => window.sim.health?.(12));
 await pass(1500);
-await page.evaluate(() => window.sim.die?.());
-await pass(600);
+seen = await overlay();
+check("at 12 health the blood is at its strongest", seen?.low > 0.9 && seen.shown, seen);
+// Eliminated by the other player's next round (the server's own path, as in a match).
+await page.evaluate(() => window.sim.otherFire?.(true));
+await pass(450);
+await page.evaluate(() => window.sim.otherFire?.(false));
+await pass(400);
+check(
+  "the server eliminated you",
+  (await page.evaluate(() => window.sim.health?.(null).mine)) <= 0,
+);
 seen = await overlay();
 check(
   "eliminated: everything cleared",
