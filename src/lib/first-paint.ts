@@ -285,17 +285,22 @@ async function buildJackpotPaint(deadline: number): Promise<JackpotPaint> {
 export async function loadJackpotPaint(): Promise<JackpotPaint> {
   if (inBrowser) {
     const at = Date.now();
-    const round = await cap(peekShownRound(), at + JACKPOT_BROWSER_ROUND_MS);
-    if (!round) return EMPTY_JACKPOT;
-    const identities = await identitiesFor(
-      round.players.map((p) => p.user_id),
-      at + JACKPOT_BROWSER_WAIT_MS,
-    );
+    // Seed chat before the route mounts on a first client navigation too.
+    // Keep the reads parallel so chat never waits behind the round request.
+    const [round, chat] = await Promise.all([
+      cap(peekShownRound(), at + JACKPOT_BROWSER_ROUND_MS),
+      cap(fetchChatPage(SHARED_CHAT_ROOM), at + JACKPOT_BROWSER_WAIT_MS),
+    ]);
+    const ids = [
+      ...(round?.players ?? []).map((p) => p.user_id),
+      ...(chat ?? []).map((m) => m.user_id),
+    ];
+    const identities = await identitiesFor(ids, at + JACKPOT_BROWSER_WAIT_MS);
     return {
-      game: fresh(round.game, at),
-      players: fresh(round.players, at),
+      game: fresh(round?.game, at),
+      players: fresh(round?.players, at),
       recent: null,
-      chat: null,
+      chat: fresh(chat, at),
       identities,
     };
   }
