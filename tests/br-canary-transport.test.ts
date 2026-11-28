@@ -88,7 +88,8 @@ describe("canary transport safety boundaries", () => {
     expect(brRowRenderable(original)).toBe(true); // No shared frame mutation across viewers.
     const steps = new BrStrides();
     expect(steps.advance(1, hidden[1]!, 0, hidden[3]!, true, false, 0)).toBe(false);
-    expect(steps.advance(1, hidden[1]! + 2, 0, hidden[3]!, true, false, 200)).toBe(true);
+    // (A step returns the stride's speed, for its pace: spatial-audio.ts.)
+    expect(steps.advance(1, hidden[1]! + 2, 0, hidden[3]!, true, false, 200)).toBeGreaterThan(0);
     Object.assign(state.seats[0]!.body, { x: 30 });
     const revealed = brViewFor(
       state,

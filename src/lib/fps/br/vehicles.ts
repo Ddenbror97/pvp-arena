@@ -212,18 +212,6 @@ export const VEHICLES = {
    */
   air: {
     gravity: 12,
-    /** Below this speed (m/s) it keeps to the ground, except off a ledge (`ledge` m). */
-    minSpeed: 7,
-    /**
-     * The suspension keeps the wheels down while the ground falls away from them at up to this
-     * (m/s across the slope ahead): the facets of the hillside, a dip in the road. Faster (a
-     * crest or a bump taken at speed, a ramp's lip) it flies. (2.5 at first, with a 0.08 m
-     * rise asked of a single 33 ms step, which almost nothing but a ramp with a drop behind
-     * it gave: "still dont leave the ground … glued to the ground", 2026-11-24. Now: a jump
-     * about every 10 s at 30 m/s on the island's roads and hills, half of them 0.7 m or more.)
-     */
-    suspension: 1,
-    ledge: 0.5,
     /** Air control (rad/s at full key): yaw from the steering, the nose up from S. */
     yawRate: 1.6,
     pitchRate: 0.8,
@@ -237,6 +225,32 @@ export const VEHICLES = {
     /** Share of the speed a landing scrubs off at full mismatch. */
     scrub: 0.35,
   },
+  /**
+   * Suspension (owner, 2026-11-27: "cars and motorcycles currently feel stuck to the ground when
+   * driving over bumps, hills and jumps … improve suspension compression, rebound, damping and
+   * wheel-ground contact … remove unnatural snapping, ground sticking and jittery movement").
+   * Before, the body was set on the ground under the tyres every tick: it followed each facet
+   * of the ground at once (a 3–5 g jolt on the ground at speed, measured by
+   * scripts/br/drive-sim/suspension-sweep.mjs), and left it only past a threshold of its own.
+   * Now the body rides on a spring and a damper over the wheels' contact with the ground:
+   * `droop` m of travel down (the wheels hang off a crest), `compress` up (a landing, a kerb),
+   * a spring that carries the body's weight at rest and none at full droop (so the ground can
+   * pull it down no faster than gravity: past that it flies, the physical rule), and damping
+   * (`damping`: share of critical) against the ground's own rise and fall. The body leans to its
+   * new slope at `settle` (1/s) rather than at once. A light body (extended springs) grips and
+   * drives less: over a crest at speed the tyres go light. The bike is softer and travels further.
+   */
+  /** The damping of the springs' rebound, as a share of their compression damping. */
+  reboundShare: 0.15,
+  suspension: {
+    sedan: { droop: 0.14, compress: 0.17, damping: 0.55, settle: 11 },
+    suv: { droop: 0.2, compress: 0.23, damping: 0.45, settle: 9 },
+    pickup: { droop: 0.22, compress: 0.25, damping: 0.45, settle: 8.5 },
+    bike: { droop: 0.18, compress: 0.24, damping: 0.5, settle: 13 },
+  } satisfies Record<
+    VehicleKind,
+    { droop: number; compress: number; damping: number; settle: number }
+  >,
   /**
    * Water (owner, 2026-11-23: "fix so drivble cars/bike cannot drive thro water, it should
    * just zink"). Shallow water (a ford) slows a vehicle by its depth; at its `wade` depth
@@ -323,8 +337,13 @@ export type Vehicle = {
    * with the ground (speed · sin pitch), which it leaves the ground with (VEHICLES.air).
    */
   vy?: number;
-  /** In the air (VEHICLES.air). */
+  /** In the air (VEHICLES.air): the wheels off the ground (`sus` past the droop). */
   air?: boolean;
+  /**
+   * The suspension's travel (m, VEHICLES.suspension): the body this far above its rest over the
+   * wheels' contact with the ground (+: the wheels hang down, −: the springs are compressed).
+   */
+  sus?: number;
   /** Flooded (VEHICLES.water): it does not drive again, and sinks to the bottom. */
   drowned?: boolean;
 };
@@ -758,6 +777,11 @@ export function stepVehicle(
     (0.6 + 0.4 * Math.max(0.25, v.health / v.maxHealth)) *
     (rough ? 1 - (1 - s.offroad) * 0.35 : 1);
   const H = VEHICLES.handling;
+  // The tyres' load (VEHICLES.suspension): full at rest or compressed, lighter as the springs
+  // extend (over a crest at speed), none in the air.
+  const load = air
+    ? 0
+    : Math.max(0.35, Math.min(1, 1 - (v.sus ?? 0) / VEHICLES.suspension[v.kind].droop));
   const throttle = input ? Math.max(-1, Math.min(1, input.forward || 0)) : 0;
   const steerKey = input ? Math.max(-1, Math.min(1, input.strafe || 0)) : 0;
   // The wheel follows the key (quicker back to centre than out): no instant full lock.
@@ -783,6 +807,7 @@ export function stepVehicle(
     v.speed +=
       (v.speed < 0 ? s.brake : s.accel * (1 - Math.max(0, v.speed) / top) * traction) *
       throttle *
+      load *
       dt;
   else if (throttle < 0)
     v.speed -= (v.speed > 0.3 ? s.brake : s.accel * 0.6 * traction) * -throttle * dt;
@@ -824,7 +849,8 @@ export function stepVehicle(
     ? A.slideDecay
     : (handbrake ? H.handbrakeGrip : s.bike ? H.bikeGrip : H.grip) *
       (rough ? s.offroad : 1) *
-      (1 - flats * TYRES.gripLoss);
+      (1 - flats * TYRES.gripLoss) *
+      load;
   slip *= Math.exp(-grip * dt);
   if (Math.abs(slip) < 0.01) slip = 0;
   // Grip turns part of a caught slide's energy into scrub (it never adds speed). (In the air
@@ -922,25 +948,73 @@ export function stepVehicle(
   v.z = Math.round(v.z * 1000) / 1000;
   v.y = Math.round(v.y * 1000) / 1000;
   v.vy = Math.round((v.vy ?? 0) * 1000) / 1000;
+  v.sus = Math.round((v.sus ?? 0) * 1000) / 1000;
+  // (As the rows carry them: the driver's prediction resumes from exactly these.)
+  v.pitch = Math.round(v.pitch * 1000) / 1000;
+  v.roll = Math.round(v.roll * 1000) / 1000;
   v.yaw = Math.atan2(Math.sin(v.yaw), Math.cos(v.yaw));
   return impact;
 }
 
+/** The ground under a vehicle (settleTilt's plane), reused: a step allocates nothing for it. */
+const under = { kind: "sedan" } as Vehicle;
+
 /**
- * The body's height and tilt after a step's move: on the ground it follows the ground, leaving
- * it where the ground falls away faster than gravity can follow; in the air it flies and lands
- * (VEHICLES.air). Returns a landing's impact speed (0 if none), for damage as a crash.
+ * The body's height and tilt after a step's move (VEHICLES.suspension, VEHICLES.air): the body
+ * rides on its springs over the ground under the tyres; where the ground falls away faster
+ * than the springs can follow (they carry nothing at full droop: the body falls at gravity)
+ * the wheels leave it and the vehicle flies, and it lands on its springs. Returns a landing's
+ * impact speed (0 if none), for damage as a crash.
  */
 function vertical(world: StaticWorld, v: Vehicle, input: DriveInput | null, dt: number) {
   const A = VEHICLES.air;
+  const S = VEHICLES.suspension[v.kind];
   const s = spec(v.kind);
   const g = A.gravity;
-  if (v.air) {
-    const vy = (v.vy ?? 0) - g * dt;
-    const y = v.y + ((v.vy ?? 0) + vy) * 0.5 * dt;
-    // The ground under it (settled as if it stood there).
-    const ground = { ...v, y };
-    settleTilt(world, ground);
+  if (!(dt > 0)) return 0;
+  // The ground under the tyres here: its height (at rest the body's), pitch and roll.
+  Object.assign(under, v);
+  settleTilt(world, under);
+  const ground = under.y;
+  const wasAir = !!v.air;
+  const e0 = v.sus ?? 0;
+  // The ground's own rise under the moving wheels (m/s): along the slope it is on, not the
+  // step's difference (a kerb would give one tick of 10 m/s and throw the car up).
+  const rise = v.speed * Math.sin(under.pitch);
+  let vy = v.vy ?? 0;
+  if (!wasAir && e0 <= S.droop) {
+    // On the springs: weight carried at rest (a = 0 at e = 0), none at full droop; damping
+    // against the ground's rise. The ground cannot pull the body down faster than gravity.
+    // Rebound (the body rising off the ground, the springs extending) is damped lightly: the
+    // body keeps the momentum a crest or a ramp's lip gives it, and the vehicle gets its air.
+    const k = g / S.droop,
+      c = 2 * S.damping * Math.sqrt(k) * (vy > rise ? VEHICLES.reboundShare : 1);
+    const a = Math.max(-g, -k * e0 - c * (vy - rise));
+    vy += a * dt;
+  } else vy -= g * dt;
+  let y = v.y + vy * dt;
+  let e = y - ground;
+  let impact = 0;
+  if (e < -S.compress) {
+    // Bottomed out (a hard landing, a steep rise taken fast): the bump stops take the rest.
+    y = ground - S.compress;
+    e = -S.compress;
+    if (vy < rise) vy = rise;
+  }
+  const air = e > S.droop;
+  if (wasAir && !air) {
+    // Touchdown: the speed into the ground, across its slope (down a hillside at speed it is
+    // the hill's own fall, and lands softly), and the nose's mismatch with the slope (it
+    // scrubs speed). The springs take the rest of the landing over the next ticks.
+    const into = v.speed * Math.sin(under.pitch) - (v.vy ?? 0) * Math.cos(under.pitch);
+    const mismatch = Math.abs(v.pitch - under.pitch);
+    const safe = s.bike ? A.safeLandBike : A.safeLand;
+    const hard = Math.max(0, into - safe);
+    v.speed *= 1 - A.scrub * Math.min(1, mismatch / 1.2);
+    // As an impact past the crash threshold (crashDamage).
+    if (hard > 0) impact = VEHICLES.crash.threshold + hard * 1.3;
+  }
+  if (air) {
     // The nose follows the flight path, lagging it (a car lands on its wheels, not its nose).
     // S lifts it a little (a nose-heavy landing off a big jump is the driver's to soften); W,
     // which every driver holds over a jump, does nothing to it.
@@ -949,55 +1023,24 @@ function vertical(world: StaticWorld, v: Vehicle, input: DriveInput | null, dt: 
     v.pitch += (path - v.pitch) * (1 - Math.exp(-A.noseFollow * dt)) + back * A.pitchRate * dt;
     v.pitch = Math.max(-1.1, Math.min(1.1, v.pitch));
     v.roll *= Math.exp(-2 * dt);
-    if (y > ground.y) {
-      v.y = y;
-      v.vy = vy;
-      return 0;
-    }
-    // Landing: the speed into the ground, across its slope (down a hillside at speed it is
-    // the hill's own fall, and lands softly), and the nose's mismatch with the slope (it
-    // scrubs speed).
-    const into = v.speed * Math.sin(ground.pitch) - vy * Math.cos(ground.pitch);
-    const mismatch = Math.abs(v.pitch - ground.pitch);
-    v.y = ground.y;
-    v.pitch = ground.pitch;
-    v.roll = ground.roll;
-    v.air = false;
-    v.vy = v.speed * Math.sin(v.pitch);
-    const safe = s.bike ? A.safeLandBike : A.safeLand;
-    const hard = Math.max(0, into - safe);
-    v.speed *= 1 - A.scrub * Math.min(1, mismatch / 1.2);
-    // As an impact past the crash threshold (crashDamage).
-    return hard > 0 ? VEHICLES.crash.threshold + hard * 1.3 : 0;
+  } else {
+    // On the wheels: the body leans to the ground's slope over a few ticks (the springs at each
+    // corner), not at once; a landing's nose-up settles the same way.
+    const ease = 1 - Math.exp(-S.settle * dt);
+    v.pitch += (under.pitch - v.pitch) * ease;
+    v.roll += (under.roll - v.roll) * ease;
   }
-  // On the ground: rising and falling with it at speed · sin(pitch).
-  const was = v.y,
-    rate = v.vy ?? 0,
-    pitch = v.pitch,
-    roll = v.roll;
-  settleTilt(world, v);
-  const ballistic = was + rate * dt - 0.5 * g * dt * dt;
-  // (Above the ground at all: one step's parting is centimetres; the speed decides.)
-  const off = ballistic - v.y;
-  // How fast it would part from the ground ahead, across that ground's slope: the suspension
-  // takes up to `suspension` of it (a kink in a hillside, a dip in the road), past that it flies.
-  const parting = rate * Math.cos(v.pitch) - v.speed * Math.sin(v.pitch);
-  if (
-    off > 0 &&
-    ((Math.abs(v.speed) >= A.minSpeed && parting > A.suspension) || was - v.y > A.ledge)
-  ) {
-    // Off a crest, a ramp's lip or a ledge: airborne with the speed it rose at.
-    v.y = ballistic;
-    v.vy = rate - g * dt;
-    v.pitch = pitch;
-    v.roll = roll;
-    v.air = true;
-    return 0;
+  // At rest on the springs: settled (a parked vehicle is not stepped again).
+  if (!air && Math.abs(e) < 0.002 && Math.abs(vy - rise) < 0.02 && Math.abs(v.speed) < 0.05) {
+    vy = 0;
+    e = 0;
+    y = ground;
   }
-  // (Down a small step at a crawl: it settles, a little at a time.)
-  if (v.y < was - 0.5) v.y = was - Math.min(was - v.y, 9.8 * dt * 2);
-  v.vy = v.speed * Math.sin(v.pitch);
-  return 0;
+  v.y = y;
+  v.vy = vy;
+  v.sus = e;
+  v.air = air;
+  return impact;
 }
 
 /** A flooded vehicle (VEHICLES.water): it slows to a stop and sinks to the bottom. */

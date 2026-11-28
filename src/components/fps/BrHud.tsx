@@ -1,5 +1,5 @@
 import { SpectatorCard } from "./SpectatorCard";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import type { BrAct } from "@/lib/fps/br/actions";
 import type { BrFeed, BrHud, BrKillWeapon, BrNearby, BrPrompt } from "@/lib/fps/br/br-arena";
 import { GunGlyph, WeaponIcon } from "./WeaponIcon";
@@ -20,6 +20,13 @@ import {
 } from "@/lib/fps/br/items";
 import { BR_RULES, type BrKitView } from "@/lib/fps/br/match";
 import { PERKS } from "@/lib/fps/br/perks";
+import { CONFIRM_MS, nextConfirm, type KillConfirm } from "@/lib/fps/br/kill-confirm";
+import {
+  dropAction,
+  equipTarget,
+  type InvDrag,
+  type InvDropTarget,
+} from "@/lib/fps/br/inventory-drop";
 
 /**
  * Battle royale HUD and inventory (LOOT-SPEC §12–17): survival status, hotbar, ammunition,
@@ -379,18 +386,19 @@ type Kill = {
   weapon: BrKillWeapon;
   self: boolean;
 };
-
-/** Notifications (pickups, refusals), the kill feed and the damage direction. */
+/** Notifications (pickups, refusals) and the kill feed. (Damage: damage-feedback.ts.) */
 export function useBrFeed() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [kills, setKills] = useState<Kill[]>([]);
-  const [hurt, setHurt] = useState<{ at: number; from: number } | null>(null);
   const [hit, setHit] = useState<{ at: number; head: boolean; kill: boolean } | null>(null);
   const [out, setOut] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState<KillConfirm | null>(null);
+  const confirmed = useRef(new Set<number>());
   const id = useRef(0);
   useEffect(() => {
     const t = setInterval(() => {
       const now = performance.now();
+      setConfirm((c) => (c && now - c.at > CONFIRM_MS ? null : c));
       setToasts((ts) =>
         ts.some((x) => now - x.at > 2600) ? ts.filter((x) => now - x.at <= 2600) : ts,
       );
@@ -420,11 +428,12 @@ export function useBrFeed() {
           self: e.self,
         },
       ]);
-    else if (e.kind === "hurt") setHurt({ at: now, from: e.from });
+    else if (e.kind === "confirm")
+      setConfirm((c) => nextConfirm(c, confirmed.current, e, now) ?? c);
     else if (e.kind === "hit") setHit({ at: now, head: e.head, kill: e.kill });
     else if (e.kind === "eliminated") setOut(e.by);
   };
-  return { toasts, kills, hurt, hit, out, onFeed };
+  return { toasts, kills, hit, out, confirm, onFeed };
 }
 
 export function BrFeedView({ feed }: { feed: ReturnType<typeof useBrFeed> }) {
@@ -451,16 +460,46 @@ export function BrFeedView({ feed }: { feed: ReturnType<typeof useBrFeed> }) {
           </div>
         ))}
       </div>
-      {feed.hurt && now - feed.hurt.at < 900 && (
-        <div
-          className="br-hurt"
-          style={{ transform: `translate(-50%, -50%) rotate(${-feed.hurt.from}rad)` }}
-          aria-hidden
-        />
-      )}
+      <BrKillConfirm confirm={feed.confirm} />
     </>
   );
 }
+
+/**
+ * The KILLED confirmation (owner, 2026-11-27: "a prominent blood-red KILLED confirmation ... the
+ * eliminated player's name and the distance of the kill in meters ... a clean, short animation
+ * that feels rewarding without obstructing gameplay"): below the crosshair, out of the line of
+ * fire. A blood-red KILLED, the name, the weapon and the distance from the server's elimination
+ * event, and the streak when kills come close together. One element; its entrance and exit are
+ * one CSS animation (opacity and transform), restarted by the victim's seat as its key.
+ */
+export const BrKillConfirm = memo(function BrKillConfirm({
+  confirm,
+}: {
+  confirm: KillConfirm | null;
+}) {
+  if (!confirm) return null;
+  return (
+    <div className="br-kc" key={confirm.seat} role="status" aria-live="assertive">
+      <div className="br-kc-head">
+        <i className="br-kc-mark" aria-hidden />
+        <b>KILLED</b>
+        {confirm.streak > 1 && <span className="br-kc-streak">×{confirm.streak}</span>}
+      </div>
+      <div className="br-kc-line">
+        <span className="br-kc-name">{confirm.victim}</span>
+        <span className="br-kc-meta">
+          <KillIcon weapon={confirm.weapon} />
+          {confirm.m !== null && (
+            <span className="br-kc-dist">
+              <b>{confirm.m}</b> m
+            </span>
+          )}
+        </span>
+      </div>
+    </div>
+  );
+});
 
 /** The kill feed's weapon: the arena's silhouettes, plus the gas and vehicles. */
 function KillIcon({ weapon }: { weapon: BrKillWeapon }) {
@@ -498,11 +537,103 @@ function KillIcon({ weapon }: { weapon: BrKillWeapon }) {
   return <WeaponIcon weapon={weapon} />;
 }
 
+/** The counters' glyphs: the transport aircraft, a kill, a player standing. */
+function CounterIcon({ kind }: { kind: "plane" | "kill" | "alive" }) {
+  const d = {
+    plane:
+      "M21 14.5v-2L13.5 8V3.5a1.5 1.5 0 0 0-3 0V8L3 12.5v2l7.5-2.4V18l-2 1.5V21l3.5-1 3.5 1v-1.5l-2-1.5v-5.9l7.5 2.4Z",
+    kill: "M12 2a8 8 0 0 0-8 8c0 2.6 1.2 4.9 3 6.3V20a1 1 0 0 0 1 1h1.5v-2h1v2h3v-2h1v2H16a1 1 0 0 0 1-1v-3.7a8 8 0 0 0 3-6.3 8 8 0 0 0-8-8Zm-3.5 7.2a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6Zm7 0a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6ZM12 13l1.3 2.4h-2.6L12 13Z",
+    alive:
+      "M12 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7ZM5 20.5v-2.2c0-2.8 3.1-5.3 7-5.3s7 2.5 7 5.3v2.2a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1Z",
+  }[kind];
+  return (
+    <svg className="br-ctr-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d={d} fill="currentColor" />
+    </svg>
+  );
+}
+
+/**
+ * Top right, over the minimap (owner, 2026-11-27: "redesign the players-alive counter and the
+ * number of players remaining inside the transport airplane ... add the player's current kill
+ * count beside the players-alive counter"): figures and labels on the world, no panel behind
+ * them, the text's own shadow for any background. The aircraft's count while the plane is
+ * flying, then your kills (the server's count in your kit) and the players alive. Memoised on
+ * the three numbers: a view that changes none of them does not render it.
+ */
+export const BrCounters = memo(function BrCounters({
+  alive,
+  kills,
+  aboard,
+}: {
+  alive: number | null;
+  kills: number;
+  /** In the transport aircraft while it flies (null: it has gone). */
+  aboard: number | null;
+}) {
+  return (
+    <div className="br-counters" role="status" aria-live="off">
+      {aboard !== null && (
+        <div className="br-ctr plane" aria-label={`${aboard} in the aircraft`}>
+          <CounterIcon kind="plane" />
+          <b>{aboard}</b>
+          <span>Aboard</span>
+        </div>
+      )}
+      <div className="br-ctr kills" aria-label={`${kills} killed`}>
+        <CounterIcon kind="kill" />
+        <b key={kills} className={kills > 0 ? "bump" : ""}>
+          {kills}
+        </b>
+        <span>Killed</span>
+      </div>
+      <div className="br-ctr alive" aria-label={`${alive ?? "unknown"} alive`}>
+        <CounterIcon kind="alive" />
+        <b>{alive ?? "—"}</b>
+        <span>Alive</span>
+      </div>
+    </div>
+  );
+});
+
+/**
+ * The phase's line at the top (waiting, take-off, the doors, the jump, the end of the match):
+ * the words over the world, no box (owner, 2026-11-27: "remove unnecessarily large dark
+ * background windows"); the aircraft's count is in BrCounters.
+ */
+export function BrPhaseBanner({ hud }: { hud: BrHud }) {
+  const n = Math.ceil(hud.countdown ?? 0);
+  const [label, figure, unit] =
+    hud.phase === "waiting"
+      ? ["Waiting for players", null, null]
+      : hud.phase === "starting"
+        ? ["Take-off in", n, "s"]
+        : hud.phase === "plane" && hud.myPhase === "plane"
+          ? hud.jumpOpen
+            ? ["Jump now", n, "s left"]
+            : ["Doors open in", n, "s"]
+          : hud.phase === "ending" || hud.phase === "completed"
+            ? ["Match over", null, null]
+            : [hud.alive !== null ? `${hud.alive} alive` : "Battle royale", null, null];
+  const urgent = hud.phase === "plane" && hud.jumpOpen && n <= 5;
+  return (
+    <div className={`br-phase ${hud.jumpOpen && hud.phase === "plane" ? "jump" : ""}`}>
+      <span>{label}</span>
+      {figure !== null && (
+        <b className={urgent ? "urgent" : ""}>
+          {figure}
+          <small>{unit}</small>
+        </b>
+      )}
+    </div>
+  );
+}
+
 const BEARINGS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] as const;
 /**
  * Top centre: the compass strip (where you look, the waypoint's bearing and distance) and the
- * match status: "32 ALIVE | ZONE 3 | 0:42" with the zone's state, and short notices when the
- * next zone is marked, the gas advances, the final circle starts (owner's spec §6, §8).
+ * match status: "ZONE 3 | 0:42" with the zone's state (the players alive are in BrCounters),
+ * and short notices when the next zone is marked, the gas advances, the final circle starts (owner's spec §6, §8).
  */
 export function BrTopStatus({ hud }: { hud: BrHud }) {
   const z = hud.zone;
@@ -560,10 +691,7 @@ export function BrTopStatus({ hud }: { hud: BrHud }) {
       </div>
       {z && (
         <div className={`br-matchbar ${state?.cls ?? ""}`}>
-          <span>
-            <b>{hud.alive ?? "—"}</b> ALIVE
-          </span>
-          <i />
+          {/* Players alive: top right with your kills (BrCounters). */}
           <span>{final ? "FINAL" : `ZONE ${z.phase}`}</span>
           <i />
           <span className="mono">{z.left !== null ? clock(z.left) : "—"}</span>
@@ -852,10 +980,6 @@ const SLOT_LABEL: Record<EquipSlot, string> = {
   mag2: "Magazine",
 };
 
-type Drag =
-  | { kind: "bag"; index: number }
-  | { kind: "equip"; slot: EquipSlot }
-  | { kind: "near"; id: number };
 const CATEGORIES: Array<[string, string, (c: string) => boolean]> = [
   ["all", "All", () => true],
   ["ammo", "Ammo", (c) => c === "ammo"],
@@ -865,30 +989,6 @@ const CATEGORIES: Array<[string, string, (c: string) => boolean]> = [
   ["att", "Attachments", (c) => c === "optic" || c === "muzzle" || c === "magazine"],
   ["other", "Other", (c) => c === "backpack" || c === "tablet"],
 ];
-/** Where a bag item goes when equipped (null: it cannot be equipped). */
-function equipTarget(kit: BrKitView, item: string, slot?: EquipSlot): number | null {
-  const c = def(item).category;
-  if (c === "helmet" || c === "vest") return slot === undefined || slot === c ? 0 : null;
-  if (c === "plate") {
-    if (slot?.startsWith("plate")) return +slot.slice(5);
-    const free = kit.plates.findIndex((p) => !p);
-    return slot === undefined ? Math.max(0, free) : null;
-  }
-  if (c === "optic" || c === "muzzle" || c === "magazine") {
-    // Only onto a gun it fits (the Desert Eagle takes a red dot, the magazine, nothing else).
-    const onto = (i: number) => {
-      const g = kit.guns[i as 0 | 1 | 2];
-      return g && fitsGun(g.item, item as ItemId) ? i : null;
-    };
-    if (slot?.startsWith(c === "magazine" ? "mag" : c)) return onto(+slot.slice(-1));
-    if (slot === "gun0" || slot === "gun1" || slot === "gun2") return onto(+slot.slice(-1));
-    if (slot !== undefined) return null;
-    for (const i of [kit.active, 0, 1, 2]) if (i >= 0 && onto(i) !== null) return i;
-    return null;
-  }
-  return null;
-}
-
 /** The inventory icon of an item (scripts/br/icons renders them from the game's models). */
 function ItemIcon({ id, ghost = false }: { id: string; ghost?: boolean }) {
   return (
@@ -986,7 +1086,7 @@ export function BrInventory({
   const [sel, setSel] = useState<Selection>(null);
   const [filter, setFilter] = useState("all");
   const [over, setOver] = useState<string | null>(null);
-  const drag = useRef<Drag | null>(null);
+  const drag = useRef<InvDrag | null>(null);
   const picked =
     sel?.kind === "bag"
       ? (kit.bag[sel.index] ?? null)
@@ -996,38 +1096,12 @@ export function BrInventory({
   useEffect(() => {
     if (sel && !picked) setSel(null);
   }, [sel, picked]);
-  const dropOn = (target: "bag" | "near" | EquipSlot) => {
+  const dropOn = (target: InvDropTarget) => {
     const d = drag.current;
     drag.current = null;
     setOver(null);
-    if (!d) return;
-    if (d.kind === "near" && target !== "near") act({ act: "pickup", id: d.id });
-    else if (d.kind === "bag" && target === "near") act({ act: "dropBag", index: d.index });
-    else if (d.kind === "bag" && target !== "bag" && target !== "near") {
-      const t = equipTarget(kit, kit.bag[d.index]?.item ?? "", target);
-      if (t !== null) act({ act: "equip", index: d.index, target: t });
-    } else if (d.kind === "equip" && target === "near") act({ act: "dropEquip", slot: d.slot });
-    else if (d.kind === "equip" && target !== "bag" && target !== d.slot) {
-      // Between equipment slots: swap the main guns, move an attachment or plate. An
-      // attachment dropped on another gun's card goes to that gun's matching slot.
-      // A gun dropped on another gun's attachment tile means that gun.
-      const gunDrag = d.slot.startsWith("gun");
-      const onGun = /^(gun|optic|muzzle|mag)\d$/.test(target);
-      const to = (
-        gunDrag && onGun
-          ? `gun${target.slice(-1)}`
-          : !gunDrag && target.startsWith("gun")
-            ? `${d.slot.replace(/\d$/, "")}${target.slice(-1)}`
-            : target
-      ) as EquipSlot;
-      if (to !== d.slot && to in GHOST) act({ act: "move", slot: d.slot, to });
-    } else if (
-      d.kind === "equip" &&
-      target === "bag" &&
-      !d.slot.startsWith("gun") &&
-      d.slot !== "backpack"
-    )
-      act({ act: "unequip", slot: d.slot });
+    const a = d ? dropAction(kit, nearby, d, target) : null;
+    if (a) act(a);
   };
   // Handlers stop at the innermost target, so an attachment tile wins over its weapon card.
   const zone = (target: "bag" | "near" | EquipSlot) => ({
@@ -1043,7 +1117,7 @@ export function BrInventory({
       dropOn(target);
     },
   });
-  const start = (d: Drag) => (e: React.DragEvent) => {
+  const start = (d: InvDrag) => (e: React.DragEvent) => {
     e.stopPropagation();
     drag.current = d;
     e.dataTransfer.effectAllowed = "move";

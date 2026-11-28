@@ -113,11 +113,20 @@ describe("the buildings' windows are breakable glass", () => {
         // reveal-v1, 2026-11-24: the same triangles in the same places, new normals.)
         const lifted = (l: unknown) =>
           /\.(zfix-v21|reveal-v1)\.lod\d\.glb$/.test((l as { file: string }).file);
+        // (Or one with faces added where it was left open, gaps-v1, 2026-11-27: the townhouse's
+        // window its stair crossed walled up, panes and all; the apartments' slit by the
+        // stairwell door: more triangles, the other windows where they were. Or its floors moved
+        // to their finishes, floor_finish.mjs: the same triangles.)
+        const patched = (l: unknown) => /\.gaps-v1\.lod\d\.glb$/.test((l as { file: string }).file);
         for (const [i, l] of now.lods.entries())
           if (lifted(l))
             expect((l as { tris: number }).tris, id).toBe((was.lods[i] as { tris: number }).tris);
-        const kept = now.lods.map((l) => !l.farFacade && !lifted(l));
-        expect(kept[0] || lifted(now.lods[0]), id).toBe(true);
+          else if (patched(l))
+            expect((l as { tris: number }).tris, id).toBeGreaterThanOrEqual(
+              (was.lods[i] as { tris: number }).tris,
+            );
+        const kept = now.lods.map((l) => !l.farFacade && !lifted(l) && !patched(l));
+        expect(kept[0] || lifted(now.lods[0]) || patched(now.lods[0]), id).toBe(true);
         expect({ ...now, lods: now.lods.filter((_, i) => kept[i]) }, id).toEqual({
           ...was,
           lods: was.lods.filter((_, i) => kept[i]),
@@ -148,9 +157,9 @@ describe("the buildings' windows are breakable glass", () => {
       expect(ids).toContain(id);
     for (const id of ids) {
       // (Or that file with its last overlapping faces lifted apart, zfix-v21, or with its window
-      // reveals lit as the wall, reveal-v1.)
+      // reveals lit as the wall, reveal-v1, or with faces added where it was left open, gaps-v1.)
       expect(manifest.models[id]!.lods[0]!.file).toMatch(
-        new RegExp(`\\.(${cuts[id] ?? cut}|zfix-v21|reveal-v1)\\.lod0\\.`),
+        new RegExp(`\\.(${cuts[id] ?? cut}|zfix-v21|reveal-v1|gaps-v1)\\.lod0\\.`),
       );
       for (const [x0, x1, z0, z1, y0, y1] of models[id]!) {
         // Upright slabs, thin one way.

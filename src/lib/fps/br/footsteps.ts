@@ -7,11 +7,23 @@ import type { Placement } from "./layout";
 import { turnBox, type CollisionData } from "./static-world";
 import type { WorldMeta } from "./world";
 
-/** Distance-driven strides, independent of render FPS; reconnects/jumps never replay steps. */
+/**
+ * Distance-driven strides, independent of render FPS; reconnects/jumps never replay steps.
+ * A step returns the body's speed (m/s, smoothed over its last strides) for the step's pace
+ * (spatial-audio.ts stepPace); no step returns false.
+ */
 export class BrStrides {
   private tracks = new Map<
     number,
-    { x: number; y: number; z: number; at: number; movedAt: number; distance: number }
+    {
+      x: number;
+      y: number;
+      z: number;
+      at: number;
+      movedAt: number;
+      distance: number;
+      speed: number;
+    }
   >();
   advance(
     id: number,
@@ -21,10 +33,10 @@ export class BrStrides {
     grounded: boolean,
     quiet: boolean,
     now: number,
-  ) {
+  ): number | false {
     const old = this.tracks.get(id);
     if (!old) {
-      this.tracks.set(id, { x, y, z, at: now, movedAt: now, distance: 0 });
+      this.tracks.set(id, { x, y, z, at: now, movedAt: now, distance: 0, speed: 0 });
       return false;
     }
     const distance = Math.hypot(x - old.x, z - old.z),
@@ -52,14 +64,17 @@ export class BrStrides {
     old.y = y;
     old.z = z;
     old.movedAt = now;
-    if (movementGap > 0 && (distance / movementGap) * 1000 < 2.4) {
+    const speed = movementGap > 0 ? (distance / movementGap) * 1000 : 0;
+    // (A crouched walk is 2.4 m/s, a walk 2.25: anything slower is shuffling, not a stride.)
+    if (speed < 2) {
       old.distance = 0;
       return false;
     }
+    old.speed = old.speed ? old.speed + (Math.min(12, speed) - old.speed) * 0.3 : speed;
     old.distance += distance;
     if (old.distance < 1.8) return false;
     old.distance %= 1.8;
-    return true;
+    return Math.max(0.01, old.speed);
   }
 }
 

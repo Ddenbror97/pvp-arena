@@ -953,6 +953,7 @@ export function stepBrMatch(
   }
   perkEvents(state, now);
   settle(state, now);
+  stampKillDistances(state);
   if ((state.phase as BrPhase) === "ending" || (state.phase as BrPhase) === "completed")
     state.projectiles.clear();
   // Everyone off the plane and down: the match is live.
@@ -2690,6 +2691,23 @@ export class BrSeatSync {
 }
 
 /**
+ * The kill confirmation's distance (owner, 2026-11-27: "the distance of the kill in meters ...
+ * from authoritative game events"): on every elimination by another player this tick (a shot,
+ * the Karambit, a grenade, a vehicle), the straight line from the killer to the victim in whole
+ * metres, from the server's own positions as the step ends. The gas, a fall and a player's own
+ * grenade get none.
+ */
+export function stampKillDistances(state: BrMatchState) {
+  for (const e of state.combat) {
+    if (e.type !== "elim" || e.by === e.seat || e.m !== undefined) continue;
+    const by = state.seats[e.by]?.body,
+      victim = state.seats[e.seat]?.body;
+    if (!by || !victim) continue;
+    e.m = Math.round(Math.hypot(by.x - victim.x, by.y - victim.y, by.z - victim.z));
+  }
+}
+
+/**
  * The combat events a player should not wait up to a snapshot interval (67 ms) for: their own
  * hits and the hits on them, and their own eliminations (netcode audit 2026-11-11). By seat;
  * the room sends each list at once and the next view leaves those events out (BrSeatSync.early).
@@ -2722,8 +2740,10 @@ const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
  * Vehicle rows: [id, kind (0 sedan, 1 suv, 2 pickup, 3 bike), x, y, z, yaw, pitch, roll,
  * speed, health, max health, driver seat or −1, destroyed 0/1, condition (0 good, 1 used, 2 damaged),
  * steering wheel (−1…1), sideways slide (m/s), flat tyres (bits, vehicles.ts TYRES), vertical
- * speed (m/s), in the air 0/1, flooded 0/1]: the wheel, slide and vertical speed let the
- * driver's prediction resume a slide or a jump exactly where the server has it.
+ * speed (m/s), in the air 0/1, flooded 0/1, the suspension's travel (m, vehicles.ts
+ * VEHICLES.suspension)]: the wheel, slide, vertical speed and travel let the driver's prediction
+ * resume a slide, a jump or a bounce exactly where the server has it (the height to the mm), and
+ * the springs drawn on everyone's screen.
  */
 function vehicleRow(v: Vehicle) {
   const r = (n: number, k = 100) => Math.round(n * k) / k;
@@ -2731,7 +2751,7 @@ function vehicleRow(v: Vehicle) {
     v.id,
     VEHICLE_KINDS.indexOf(v.kind),
     r(v.x),
-    r(v.y),
+    r(v.y, 1000),
     r(v.z),
     r(v.yaw, 1000),
     r(v.pitch, 1000),
@@ -2748,6 +2768,7 @@ function vehicleRow(v: Vehicle) {
     r(v.vy ?? 0, 1000),
     v.air ? 1 : 0,
     v.drowned ? 1 : 0,
+    r(v.sus ?? 0, 1000),
   ];
 }
 

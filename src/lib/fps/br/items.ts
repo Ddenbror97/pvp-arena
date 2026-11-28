@@ -78,7 +78,13 @@ export type WeaponDef = Base & {
   hipSpreadDeg: number;
   adsSpreadDeg: number;
   adsSettleMs: number;
-  /** Shot heard within this range (direction cue; PLAN §6.4). */
+  /**
+   * Shot heard within this range (direction cue; PLAN §6.4): the server sends the shot this far,
+   * and the sound fades out over its last third (spatial-audio.ts). By class (owner, 2026-11-27:
+   * "appropriate audible distances for different weapon categories"): the Desert Eagle 130 (was
+   * 170, further than the rifles), MP5 110, SPAS-12 160 (was 190), AK-47 and M4 180 (were 140),
+   * Hunting Rifle 240, AWP 300.
+   */
   hearM: number;
   /**
    * A shotgun: this many pellets a shell (each does `damage`), thrown in a cone of this
@@ -201,7 +207,7 @@ export const ITEMS = {
     adsSpreadDeg: 0.08,
     adsSettleMs: 180,
     rangeM: 350,
-    hearM: 140,
+    hearM: 180,
   },
   m4: {
     name: "M4",
@@ -232,7 +238,7 @@ export const ITEMS = {
     rangeM: 350,
     // In the battle royale the M4 is unsuppressed by default (owner, 2026-11-03): the
     // suppressor is the Silencer attachment, as for every gun.
-    hearM: 140,
+    hearM: 180,
   },
   awp: {
     name: "AWP",
@@ -369,7 +375,7 @@ export const ITEMS = {
     adsSpreadDeg: 0.07,
     adsSettleMs: 160,
     rangeM: 200,
-    hearM: 170,
+    hearM: 130,
   },
   "ammo-rifle": {
     name: "Rifle ammo",
@@ -677,7 +683,7 @@ export const ITEMS = {
     adsSpreadDeg: 0.25,
     adsSettleMs: 170,
     rangeM: 70,
-    hearM: 190,
+    hearM: 160,
   },
   "ammo-12g": {
     name: "12 gauge shells",

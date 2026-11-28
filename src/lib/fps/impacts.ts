@@ -1,6 +1,16 @@
 import * as THREE from "three";
 import type { Vector } from "./collision";
+import {
+  FLESH_MS,
+  MIST_ATLAS,
+  fleshBurst,
+  mistAtlas,
+  type FleshHit,
+  type FleshParticle,
+} from "./flesh-mist";
 import { decalDepthOffset } from "./maps/depth-layers";
+
+export { anchorHit, type FleshHit } from "./flesh-mist";
 
 /**
  * Bullet impacts on the world, for all three games (owner, 2026-11-25: "when players shooting
@@ -17,15 +27,22 @@ import { decalDepthOffset } from "./maps/depth-layers";
  *  - Water: rings running out from where the bullet went in (a light crest, a dark trough
  *    behind it, two of them) and a thin spout of droplets that falls back.
  *
+ *  - Bodies (owner, 2026-11-27: "a larger red mist/splash particle effect when a shot
+ *    successfully hits another character", all three games): `flesh` throws the blood cloud of
+ *    flesh-mist.ts, a splash at the wound, ragged billows that swell and are torn apart in
+ *    about half a second, and drops. It is drawn from the same particle pool as the debris
+ *    (no draw call or buffer of its own; one small texture, its pictures), so the three games
+ *    show the same effect.
+ *
  * Fixed pools: continuous automatic fire never allocates. Holes, particles and rings each draw
  * in one call per kind, and nothing draws when nothing is live.
  */
 export type ImpactSurface = "concrete" | "metal" | "wood" | "ground" | "water";
 export type ImpactHit = { point: Vector; normal: Vector; surface: ImpactSurface | string };
-
 const KINDS = ["concrete", "wood", "metal", "ground"] as const;
 type MarkKind = (typeof KINDS)[number];
-const PARTICLES = 384,
+/** (384 until the bodies' mist joined the pool: a burst is 21 particles, a shotgun's 49.) */
+const PARTICLES = 512,
   RIPPLES = 32,
   /** Rings' life (s). */
   RIPPLE_S = 1.3;
@@ -320,24 +337,33 @@ export function createImpactEffects(scene: THREE.Scene, options: ImpactOptions =
   const dot = dotTexture();
   const positions = new Float32Array(PARTICLES * 3).fill(1e5),
     colors = new Float32Array(PARTICLES * 3),
-    alphas = new Float32Array(PARTICLES),
-    sizes = new Float32Array(PARTICLES);
+    // (Per particle and frame: its alpha, and how far through its life it is, 0–1.)
+    alphas = new Float32Array(PARTICLES * 2),
+    sizes = new Float32Array(PARTICLES),
+    // Per particle, set when it is thrown: the least size on screen (px of an 800-line
+    // screen), the pull toward the eye (m), which of the mist's pictures + 1 (0: the round
+    // sprite), and the picture's angle. Zero for the debris; the bodies' mist sets them.
+    fleshes = new Float32Array(PARTICLES * 4);
   const velocity = new Float32Array(PARTICLES * 3),
     birth = new Float64Array(PARTICLES),
     life = new Float32Array(PARTICLES),
     drag = new Float32Array(PARTICLES),
     fall = new Float32Array(PARTICLES),
     grow = new Float32Array(PARTICLES),
-    base = new Float32Array(PARTICLES);
+    base = new Float32Array(PARTICLES),
+    size0 = new Float32Array(PARTICLES),
+    mist = new Uint8Array(PARTICLES);
   const geometry = new THREE.BufferGeometry();
   const posAttr = new THREE.BufferAttribute(positions, 3).setUsage(THREE.DynamicDrawUsage),
     colAttr = new THREE.BufferAttribute(colors, 3).setUsage(THREE.DynamicDrawUsage),
-    alphaAttr = new THREE.BufferAttribute(alphas, 1).setUsage(THREE.DynamicDrawUsage),
-    sizeAttr = new THREE.BufferAttribute(sizes, 1).setUsage(THREE.DynamicDrawUsage);
+    alphaAttr = new THREE.BufferAttribute(alphas, 2).setUsage(THREE.DynamicDrawUsage),
+    sizeAttr = new THREE.BufferAttribute(sizes, 1).setUsage(THREE.DynamicDrawUsage),
+    fleshAttr = new THREE.BufferAttribute(fleshes, 4).setUsage(THREE.DynamicDrawUsage);
   geometry.setAttribute("position", posAttr);
   geometry.setAttribute("color", colAttr);
   geometry.setAttribute("aAlpha", alphaAttr);
   geometry.setAttribute("aSize", sizeAttr);
+  geometry.setAttribute("aFlesh", fleshAttr);
   const pointsMaterial = new THREE.PointsMaterial({
     size: 1,
     map: dot,
@@ -345,21 +371,82 @@ export function createImpactEffects(scene: THREE.Scene, options: ImpactOptions =
     transparent: true,
     depthWrite: false,
   });
+  // The mist's pictures (flesh-mist.ts): density in R, shade in G.
+  const mistMap = new THREE.DataTexture(mistAtlas(), MIST_ATLAS, MIST_ATLAS, THREE.RGBAFormat);
+  mistMap.minFilter = THREE.LinearMipmapLinearFilter;
+  mistMap.magFilter = THREE.LinearFilter;
+  mistMap.generateMipmaps = true;
+  mistMap.needsUpdate = true;
   pointsMaterial.onBeforeCompile = (shader) => {
+    shader.uniforms["uMist"] = { value: mistMap };
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
         `#include <common>
-        attribute float aAlpha;
+        attribute vec2 aAlpha;
         attribute float aSize;
-        varying float vAlpha;`,
+        attribute vec4 aFlesh;
+        varying float vAlpha;
+        varying vec4 vMist;`,
       )
-      .replace("gl_PointSize = size;", "gl_PointSize = size * aSize; vAlpha = aAlpha;");
+      .replace("gl_PointSize = size;", "gl_PointSize = size * aSize; vAlpha = aAlpha.x;")
+      .replace(
+        "#include <logdepthbuf_vertex>",
+        // Sizes follow the lens (three's point size ignores the field of view: through a
+        // scope the debris stayed its unscoped size); unchanged at the games' 70–75°.
+        // (scale: half the drawing buffer's height.) A far hit's mist keeps a few pixels; a
+        // puff at arm's length never covers more than 0.4 of the screen's height, and thins
+        // to nothing as it reaches the lens, so a point-blank hit does not blind the shooter.
+        // The mist's depth is taken toward the eye along its own line of sight (the wound is
+        // on the skin: half of each puff would be inside the body), its place unmoved.
+        // vMist: the picture + 1 (0: the round sprite), its angle now (each turns its own
+        // way, up to a third of a turn over its life), how far through its life it is, and
+        // the picture's mip level for its size on screen (chosen here: the fragment shader
+        // samples inside a branch, where the sampler's own choice is undefined).
+        `gl_PointSize *= projectionMatrix[1][1] * 0.7332;
+        gl_PointSize = min(max(gl_PointSize, aFlesh.x * scale / 400.0), scale * 0.8);
+        vAlpha *= smoothstep(0.2, 0.75, -mvPosition.z);
+        vMist = vec4(
+          aFlesh.z,
+          aFlesh.w + (fract(aFlesh.w * 7.31) - 0.5) * 4.2 * aAlpha.y,
+          aAlpha.y,
+          max(0.0, log2(${(MIST_ATLAS / 2).toFixed(1)} / max(gl_PointSize, 1.0))));
+        if (aFlesh.y > 0.0) {
+          float eyeDistance = max(length(mvPosition.xyz), 0.001);
+          gl_Position = projectionMatrix
+            * vec4(mvPosition.xyz * max(0.4, 1.0 - aFlesh.y / eyeDistance), 1.0);
+        }
+        #include <logdepthbuf_vertex>`,
+      );
     shader.fragmentShader = shader.fragmentShader
       .replace(
         "#include <common>",
         `#include <common>
-        varying float vAlpha;`,
+        uniform sampler2D uMist;
+        varying float vAlpha;
+        varying vec4 vMist;`,
+      )
+      .replace(
+        "#include <map_particle_fragment>",
+        // The mist: its picture, turned; the density it needs to show rises over its life
+        // (the thin parts go first: it is torn into strands, it does not fade as a whole),
+        // and the shade deepens the folds and lifts the thin, lit parts toward orange.
+        `#include <map_particle_fragment>
+        if (vMist.x > 0.5) {
+          vec2 q = gl_PointCoord - 0.5;
+          float mc = cos(vMist.y), ms = sin(vMist.y);
+          q = vec2(mc * q.x - ms * q.y, ms * q.x + mc * q.y);
+          float cell = vMist.x - 1.0;
+          vec2 mistUv = (clamp(q + 0.5, 0.004, 0.996) + vec2(mod(cell, 2.0), floor(cell * 0.5))) * 0.5;
+          vec4 m = textureLod(uMist, mistUv, vMist.w);
+          float worn = vMist.z * vMist.z * 0.7;
+          // (In place of the round sprite's alpha, which every particle has just taken.)
+          diffuseColor = vec4(diffuse, opacity * smoothstep(worn, worn + 0.48, m.r));
+          // (Lit from above: the sprite's upper side a little brighter.)
+          float lit = m.g * (1.08 - 0.5 * gl_PointCoord.y);
+          diffuseColor.rgb *= 0.4 + 1.0 * lit * lit;
+          diffuseColor.rgb += vec3(0.06, 0.018, 0.0) * smoothstep(0.6, 1.0, lit) * (1.0 - vMist.z);
+        }`,
       )
       .replace(
         "#include <color_fragment>",
@@ -367,7 +454,7 @@ export function createImpactEffects(scene: THREE.Scene, options: ImpactOptions =
         diffuseColor.a *= vAlpha;`,
       );
   };
-  pointsMaterial.customProgramCacheKey = () => "impact-points";
+  pointsMaterial.customProgramCacheKey = () => "impact-points-2";
   const points = new THREE.Points(geometry, pointsMaterial);
   points.name = "impact-particles";
   points.frustumCulled = false;
@@ -462,7 +549,19 @@ export function createImpactEffects(scene: THREE.Scene, options: ImpactOptions =
     vy: number,
     vz: number,
     color: readonly number[],
-    o: { life: number; size: number; alpha: number; drag?: number; fall?: number; grow?: number },
+    o: {
+      life: number;
+      size: number;
+      alpha: number;
+      drag?: number;
+      fall?: number;
+      grow?: number;
+      /** The mist's picture + 1 and its angle (flesh-mist.ts); 0: a round sprite. */
+      cell?: number;
+      turn?: number;
+      minPx?: number;
+      pull?: number;
+    },
   ) => {
     const i = particle++ % PARTICLES,
       j = i * 3;
@@ -477,13 +576,25 @@ export function createImpactEffects(scene: THREE.Scene, options: ImpactOptions =
     colors[j + 2] = color[2]!;
     birth[i] = now;
     life[i] = o.life;
-    sizes[i] = o.size;
+    sizes[i] = size0[i] = o.size;
     base[i] = o.alpha;
-    alphas[i] = o.alpha;
+    alphas[i * 2] = o.alpha;
+    alphas[i * 2 + 1] = 0;
     drag[i] = o.drag ?? 0;
     fall[i] = o.fall ?? 9.8;
     grow[i] = o.grow ?? 0;
+    const cell = o.cell ?? 0,
+      f = i * 4;
+    mist[i] = cell ? 1 : 0;
+    if (cell || fleshes[f] || fleshes[f + 1] || fleshes[f + 2] || o.minPx || o.pull) {
+      fleshes[f] = o.minPx ?? 0;
+      fleshes[f + 1] = o.pull ?? 0;
+      fleshes[f + 2] = cell;
+      fleshes[f + 3] = o.turn ?? 0;
+      fleshAttr.needsUpdate = true;
+    }
   };
+  const burst: FleshParticle[] = [];
   const rand = (a: number) => (Math.random() - 0.5) * 2 * a;
 
   return {
@@ -617,6 +728,20 @@ export function createImpactEffects(scene: THREE.Scene, options: ImpactOptions =
         });
       }
     },
+    /**
+     * A confirmed hit on a body: the red mist, the burst at the wound and the drops (see
+     * `fleshBurst`). Cosmetic: the server's hit record says where; nothing here decides damage.
+     */
+    flesh(hit: FleshHit, now: number) {
+      activeUntil = Math.max(activeUntil, now + FLESH_MS);
+      points.visible = true;
+      const { x, y, z } = hit.point;
+      const count = fleshBurst(hit, Math.random, burst);
+      for (let i = 0; i < count; i++) {
+        const q = burst[i]!;
+        spawn(now, x + q.o[0], y + q.o[1], z + q.o[2], q.v[0], q.v[1], q.v[2], q.color, q);
+      }
+    },
     update(dt: number, now: number) {
       if (!points.visible) return;
       if (now >= activeUntil && !ringCount) {
@@ -639,8 +764,17 @@ export function createImpactEffects(scene: THREE.Scene, options: ImpactOptions =
         for (let c = 0; c < 3; c++)
           positions[j + c] = positions[j + c]! + velocity[j + c]! * seconds;
         const t = age / life[i]!;
-        alphas[i] = base[i]! * (1 - t * t);
-        if (grow[i]) sizes[i] = sizes[i]! * (1 + grow[i]! * seconds);
+        alphas[i * 2 + 1] = t;
+        if (mist[i]) {
+          // Mist: swelling fast and then slowly; it wears away in the shader (its life, t),
+          // and only its last third fades as a whole.
+          const u = 1 - t;
+          alphas[i * 2] = base[i]! * Math.min(1, u * 3);
+          sizes[i] = size0[i]! * (1 + grow[i]! * (1 - u * u * u));
+        } else {
+          alphas[i * 2] = base[i]! * (1 - t * t);
+          if (grow[i]) sizes[i] = sizes[i]! * (1 + grow[i]! * seconds);
+        }
       }
       posAttr.needsUpdate =
         colAttr.needsUpdate =
@@ -696,6 +830,7 @@ export function createImpactEffects(scene: THREE.Scene, options: ImpactOptions =
       geometry.dispose();
       pointsMaterial.dispose();
       dot.dispose();
+      mistMap.dispose();
       ringGeometry.dispose();
       ringMaterial.dispose();
     },

@@ -34,6 +34,8 @@ import { createSharpen, SHARPEN, sharpenWanted } from "./sharpen";
 import { createBrAudio, SPAS12_CUE_LEAD_MS } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
+import { STEP_RANGE_MAX, stepPace } from "./spatial-audio";
+import type { EngineSource } from "./vehicle-audio";
 import { brVisibleRows, brActorPriority, brRowRenderable, HeldRows } from "./remote-visibility";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
@@ -174,7 +176,8 @@ import { gridRefAt, MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
 import { createCharacter, type CarryGun } from "../character";
 import { SWIM_EYE } from "../swim-stroke";
 import { createSwimSplash } from "./swim-splash";
-import { createImpactEffects } from "../impacts";
+import { createDamageFeedback } from "../damage-feedback";
+import { anchorHit, createImpactEffects } from "../impacts";
 import { pullDepth } from "./depth-bias";
 
 /** The guns worn on the back (the Desert Eagle has the thigh holster). */
@@ -435,7 +438,6 @@ export type BrMapState = {
 export type BrFeed =
   | { kind: "toast"; text: string; tone: "ok" | "warn" }
   | { kind: "hit"; head: boolean; kill: boolean }
-  | { kind: "hurt"; from: number }
   | {
       kind: "kill";
       text: string;
@@ -445,7 +447,14 @@ export type BrFeed =
       victim: string;
       weapon: BrKillWeapon;
       self: boolean;
+      /** Killer to victim (m) from the server's elimination event; null: none (gas, a fall). */
+      m: number | null;
     }
+  /**
+   * The local player eliminated another (the KILLED confirmation): once per victim seat, from
+   * the server's elimination event (its name, weapon and distance).
+   */
+  | { kind: "confirm"; seat: number; victim: string; weapon: BrKillWeapon; m: number | null }
   | { kind: "eliminated"; by: string };
 
 /**
@@ -742,6 +751,11 @@ export function createBrArena(
   };
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
+  // Being shot, on your own screen (damage-feedback.ts): the direction crescents, the red edge
+  // flash and the low-health blood, in a layer over the canvas and under the HUD.
+  const damageFx = createDamageFeedback(host, {
+    reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
   // The adaptive resolution (render-budget.ts): lowered only where the GPU is the bottleneck.
   // The low tier keeps its 720p unless the game would fall under 30 fps (LOW_TIER_SLOW_MS).
   const budget = new BrRenderBudget({
@@ -821,6 +835,9 @@ export function createBrArena(
   });
   const audio = createBrAudio(base);
   const strides = new BrStrides();
+  /** The camera's direction for the listener, and others' engines as heard (reused). */
+  const listenAt = new THREE.Vector3();
+  const engineSources: EngineSource[] = [];
 
   const resize = () => {
     const w = host.clientWidth || innerWidth,
@@ -946,6 +963,16 @@ export function createBrArena(
     doorsFx?.apply({ changes: [id * 2 + open] }, doorOpen);
   let solidView: StaticWorld | null = null;
   const solid = () => solidView ?? island!.island.solid;
+  // Placed sounds are muffled through the world (spatial-audio.ts): one ray from the camera as
+  // a sound starts, through the island as it stands (doors as they are), never continuously.
+  audio.setOccluder((ax, ay, az, bx, by, bz) => {
+    if (!island) return false;
+    const dx = bx - ax,
+      dy = by - ay,
+      dz = bz - az;
+    const len = Math.hypot(dx, dy, dz);
+    return len > 1 && solid().raycast(ax, ay, az, dx, dy, dz, len - 0.6, true) !== null;
+  });
   /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
   let car: Vehicle | null = null;
   /** The Island Airfield's aircraft: rows, your seat, the pilot's prediction and cameras. */
@@ -1416,6 +1443,8 @@ export function createBrArena(
   const deathAt = new Map<number, number>();
   /** When the server said each seat was eliminated (the elim event), for deathAt below. */
   const killedAt = new Map<number, number>();
+  /** The seats whose elimination the feed has already told (each is told once). */
+  const elimSeen = new Set<number>();
   /**
    * Another rider's time into their ride: from where they are on the cable (the views carry
    * positions, not ride clocks), or, still on the deck taking hold, from when we first saw it
@@ -2224,6 +2253,19 @@ export function createBrArena(
     swimFromZ = 0;
   /** Who hit this player, and when (ms, local). */
   const hitMeAt = new Map<number, number>();
+  /** The last hit or hurt event on this player (ms, local): health lost without one is the gas. */
+  let damageEventAt = -Infinity;
+  /** Victims that already had their mist in this batch (a shotgun's pellets land together). */
+  const mistGiven = new Set<number>();
+  const woundAt = { x: 0, y: 0, z: 0 },
+    woundHit = {
+      point: woundAt,
+      direction: { x: 0, y: 0, z: 0 },
+      zone: "chest" as string,
+      light: false,
+    },
+    damageFrom = { key: 0, x: 0, z: 0 },
+    lookDir = new THREE.Vector3();
   function onCombat(view: BrView, now: number) {
     // Shooters that hit this player in this batch: their shots sound as damage, not near misses.
     // (A hit can arrive ahead of its shot now, in a `br-fast` message: remembered briefly.)
@@ -2237,6 +2279,7 @@ export function createBrArena(
       if (now - at > 400) hitMeAt.delete(seat);
       else hitMeBy.add(seat);
     }
+    mistGiven.clear();
     let ownHitShown = false;
     const ownHitHead = (view.combat ?? []).some(
       (e) => e.type === "hit" && e.seat === mySeat && e.zone === "head",
@@ -2322,10 +2365,46 @@ export function createBrArena(
           feed({ kind: "hit", head: ownHitHead, kill: false });
         }
         if (e.victim === mySeat) {
+          // Where it came from (the shooter's place now; the crescent is turned to the camera
+          // every frame) and what took it: the helmet or the vest, or the body.
           const src = latest?.players.find((r) => r[0] === e.seat);
-          const from = src ? Math.atan2(-(src[1]! - body.x), -(src[3]! - body.z)) - yaw : 0;
-          feed({ kind: "hurt", from });
+          const armoured =
+            e.broke.length > 0 ||
+            (e.zone === "head"
+              ? !!kit?.helmet
+              : e.zone !== "legs" && (!!kit?.vest || !!kit?.plates.some(Boolean)));
+          damageEventAt = now;
+          if (src) {
+            damageFrom.key = e.seat;
+            damageFrom.x = src[1]!;
+            damageFrom.z = src[3]!;
+          }
+          damageFx.hit(src ? damageFrom : null, e.damage, armoured, now);
           if (e.broke.length) audio.armourBreak();
+        } else if (e.victim !== povSeat) {
+          // The red mist on a body in view (impacts.ts `flesh`): never the one the camera is
+          // in. On the body as it is drawn, carried on the way the bullet went (from the
+          // shooter: your own eye, or their head as last drawn).
+          const seen = others.find((o) => o.seat === e.victim);
+          woundAt.x = e.point[0];
+          woundAt.y = e.point[1];
+          woundAt.z = e.point[2];
+          anchorHit(woundAt, seen?.pos, woundAt);
+          const by = e.seat === mySeat ? null : others.find((o) => o.seat === e.seat);
+          const d = woundHit.direction;
+          if (e.seat === mySeat) {
+            d.x = woundAt.x - camera.position.x;
+            d.y = woundAt.y - camera.position.y;
+            d.z = woundAt.z - camera.position.z;
+          } else if (by) {
+            d.x = woundAt.x - by.pos.x;
+            d.y = woundAt.y - (by.pos.y + 1.5);
+            d.z = woundAt.z - by.pos.z;
+          } else d.x = d.y = d.z = 0;
+          woundHit.zone = e.zone;
+          woundHit.light = mistGiven.has(e.victim);
+          mistGiven.add(e.victim);
+          impacts.flesh(woundHit, performance.now());
         }
         continue;
       }
@@ -2345,11 +2424,18 @@ export function createBrArena(
         continue;
       }
       if (e.type === "hurt") {
-        if (e.victim === mySeat) feed({ kind: "hurt", from: 0 });
-        else if (e.seat === mySeat) feed({ kind: "hit", head: false, kill: false });
+        // (A blast, a fire, a fall, a vehicle: the edge flash, no direction.)
+        if (e.victim === mySeat) {
+          damageEventAt = now;
+          damageFx.hit(null, e.damage, false, now);
+        } else if (e.seat === mySeat) feed({ kind: "hit", head: false, kill: false });
         continue;
       }
       if (e.type === "elim") {
+        // Once per victim: a seat is eliminated once a match, and the same event can arrive
+        // twice (the fast path and a view, a reconnect replaying a tick).
+        if (elimSeen.has(e.seat)) continue;
+        elimSeen.add(e.seat);
         // The kill feed's row: who, with what, whom (gas and self-eliminations told apart).
         const weapon: BrKillWeapon =
           e.gun === "m4a1s"
@@ -2377,8 +2463,11 @@ export function createBrArena(
           weapon,
           self: e.by === e.seat && e.gun !== "gas" && e.gun !== "fall",
           mine: e.by === mySeat || e.seat === mySeat,
+          m: e.m ?? null,
         });
         if (e.by === mySeat) feed({ kind: "hit", head: false, kill: true });
+        if (e.by === mySeat && e.seat !== mySeat)
+          feed({ kind: "confirm", seat: e.seat, victim: e.name ?? "?", weapon, m: e.m ?? null });
         if (e.seat === mySeat)
           feed({ kind: "eliminated", by: e.gun === "fall" ? "a fall" : (e.byName ?? "?") });
         killedAt.set(e.seat, now);
@@ -2400,6 +2489,7 @@ export function createBrArena(
       if (r) yaw = Math.atan2(-r.dir[0], -r.dir[1]);
       pitch = -0.3;
     }
+    if (view.you.seat !== mySeat) damageFx.reset();
     mySeat = view.you.seat;
     const previousGun = kit?.guns[kit.active]?.item;
     latest = view;
@@ -2421,6 +2511,11 @@ export function createBrArena(
       const before = kit;
       kit = view.kit;
       predictedShots = 0;
+      // Health lost with no hit or blast reported for it (the gas, drowning): the edge flash.
+      // Back from the dead (a new match on this page): nothing of the last one stays.
+      if (before && !before.dead && kit.hp < before.hp && now - damageEventAt > 300)
+        damageFx.hit(null, before.hp - kit.hp, false, now);
+      if (before?.dead && !kit.dead) damageFx.reset();
       // Reload sound when a reload starts; heal done chime.
       const g = activeGun();
       // Broken off before its end (a switch, a drop): the reload's sound stops too.
@@ -4624,19 +4719,37 @@ export function createBrArena(
         color: "#b9c4cc",
         detail: `Down the wall to the ground · ${Math.round(rappelDrop(rappelHere))} m`,
       };
-    audio.setListener(camera.position.x, camera.position.y, camera.position.z, yaw);
-    if (
-      strides.advance(
-        mySeat,
-        body.x,
-        body.y,
-        body.z,
-        body.phase === "ground" && body.grounded && !seatedMe() && !kit?.dead,
-        keys.has(binds.walk) || body.crouched || !!kit?.heal,
-        now,
-      )
-    )
-      audio.step(island.footstepSurface(body.x, body.y, body.z), null);
+    // The camera is the listener (first person, the vehicle's chase camera, spectating, the
+    // parachute): its place and the way it looks, pitch included.
+    camera.getWorldDirection(listenAt);
+    audio.setListener(
+      camera.position.x,
+      camera.position.y,
+      camera.position.z,
+      yaw,
+      listenAt.x,
+      listenAt.y,
+      listenAt.z,
+    );
+    // Others' engines (yours is your own sound), from the vehicles as drawn.
+    if (vehiclesFx)
+      audio.engines(engineSources, vehiclesFx.audible(engineSources, car?.id ?? -1), dtMs);
+    // Your own steps by your pace: crouched and walking quiet, a sprint the loudest.
+    const myStride = strides.advance(
+      mySeat,
+      body.x,
+      body.y,
+      body.z,
+      body.phase === "ground" && body.grounded && !seatedMe() && !kit?.dead,
+      false,
+      now,
+    );
+    if (myStride)
+      audio.step(
+        island.footstepSurface(body.x, body.y, body.z),
+        null,
+        keys.has(binds.walk) || !!kit?.heal ? "walk" : stepPace(myStride, body.crouched),
+      );
     // On a ladder: a metal step on every rung passed (yours from the climb, others' from where
     // their row puts them).
     // On the climbing rope: a boot on the rock at each foot's step up the face (twice a cycle
@@ -4699,13 +4812,22 @@ export function createBrArena(
       rappelAtBuf[2] = o.pos.z;
       rappelSound(o.seat, o.rappel, rappelAtBuf, o.pos.y);
     }
+    // Others' steps by their pace (spatial-audio.ts STEP_PACE: crouched to 9 m, walking 16,
+    // running 32, sprinting 42), from their rows: the server sends everyone within 45 m.
     for (const o of others) {
-      if (o.d > (o.soft ? (36 * PERK_EFFECT.stepRadius) ** 2 : 36 * 36)) continue;
+      const reach = o.soft ? PERK_EFFECT.stepRadius : 1;
+      if (o.d > (STEP_RANGE_MAX * reach) ** 2) continue;
       const grounded =
         o.phase === "ground" &&
         Math.abs(o.pos.y - solid().supportAt(o.pos.x, o.pos.z, 0.35, o.pos.y + 0.15)) < 0.15;
-      if (strides.advance(o.seat, o.pos.x, o.pos.y, o.pos.z, grounded, o.crouched, now))
-        audio.step(island.footstepSurface(o.pos.x, o.pos.y, o.pos.z), [o.pos.x, o.pos.y, o.pos.z]);
+      const stride = strides.advance(o.seat, o.pos.x, o.pos.y, o.pos.z, grounded, false, now);
+      if (stride)
+        audio.step(
+          island.footstepSurface(o.pos.x, o.pos.y, o.pos.z),
+          [o.pos.x, o.pos.y, o.pos.z],
+          stepPace(stride, o.crouched),
+          reach,
+        );
     }
     renderer.getDrawingBufferSize(drawSize);
     setGroundFootprint(camera, drawSize.x, drawSize.y);
@@ -4713,6 +4835,17 @@ export function createBrArena(
     island.warm(renderer);
     updateSceneRoots(scene, island.root);
     gunBatch.update();
+    // Your own damage feedback, turned to the camera as it is this frame; none while
+    // eliminated (watching another player) or before there is a kit.
+    camera.getWorldDirection(lookDir);
+    damageFx.update(
+      now,
+      camera.position.x,
+      camera.position.z,
+      lookDir.x,
+      lookDir.z,
+      kit && !kit.dead ? kit.hp / 100 : null,
+    );
     gpu.begin();
     renderer.render(scene, camera);
     // The scene pass's counts (the viewmodel, portrait and present passes reset renderer.info).
@@ -5102,6 +5235,7 @@ export function createBrArena(
       const lookup = litLookup(renderer, scene);
       mapBuild?.dispose();
       impacts.dispose();
+      damageFx.dispose();
       if (mapBlobUrl) URL.revokeObjectURL(mapBlobUrl);
       removeEventListener("keydown", keyDown);
       removeEventListener("keyup", keyUp);
