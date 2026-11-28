@@ -165,11 +165,18 @@ function meet(
  * The walls as prisms (SLANT floats each), in the model's frame. Where two walls of the same
  * height and thickness share an end (the segments of the keep's rounded ends, a tank's ring)
  * the two are mitred, so the outside of the bend is closed and the inside has no step: a body
- * slides from one onto the next. Elsewhere the end is square, as drawn.
+ * slides from one onto the next. So, against `partners` (straight walls of boxes, from
+ * `straightPartners`), where a slanted wall runs into one: the keep's curved ends into its
+ * straight sides, where the square end stood 4 cm proud of the bend's outside. Elsewhere the
+ * end is square, as drawn.
  */
-export function slantPrisms(walls: readonly SlantWall[]): Float64Array {
+export function slantPrisms(
+  walls: readonly SlantWall[],
+  partners: readonly SlantWall[] = [],
+): Float64Array {
   const out = new Float64Array(walls.length * SLANT);
-  const dir = walls.map((w) => {
+  const all = [...walls, ...partners];
+  const dir = all.map((w) => {
     const l = Math.sqrt((w.bx - w.ax) ** 2 + (w.bz - w.az) ** 2);
     return [(w.bx - w.ax) / l, (w.bz - w.az) / l] as const;
   });
@@ -185,9 +192,9 @@ export function slantPrisms(walls: readonly SlantWall[]): Float64Array {
     const fx = w.ax - uz * side * w.half,
       fz = w.az + ux * side * w.half;
     const square = at ? len : 0;
-    for (let m = 0; m < walls.length; m++) {
+    for (let m = 0; m < all.length; m++) {
       if (m === k) continue;
-      const o = walls[m]!;
+      const o = all[m]!;
       if (!near(o.y0, w.y0) || !near(o.y1, w.y1) || Math.abs(o.half - w.half) > 0.01) continue;
       const [vx, vz] = dir[m]!;
       // In line (a wall carried on past a hole): nothing to mitre.
@@ -237,6 +244,36 @@ export function slantPrisms(walls: readonly SlantWall[]): Float64Array {
         w.y1,
         w.half * 2,
       );
+  }
+  return out;
+}
+
+/**
+ * The model's straight walls of boxes a slanted wall may meet end on (slantPrisms' partners):
+ * boxes not of a staircase, of a slanted wall's height and thickness, at least a metre long,
+ * as centre lines along their length.
+ */
+export function straightPartners(
+  boxes: readonly (readonly number[])[],
+  used: Uint8Array,
+  walls: readonly SlantWall[],
+): SlantWall[] {
+  const out: SlantWall[] = [];
+  if (!walls.length) return out;
+  for (let i = 0; i < boxes.length; i++) {
+    if (used[i]) continue;
+    const [x0, y0, z0, x1, y1, z1] = boxes[i]! as [number, number, number, number, number, number];
+    const w = x1 - x0,
+      d = z1 - z0,
+      half = Math.min(w, d) / 2;
+    if (Math.max(w, d) < 1) continue;
+    if (!walls.some((s) => near(s.y0, y0) && near(s.y1, y1) && Math.abs(s.half - half) <= 0.01))
+      continue;
+    out.push(
+      w > d
+        ? { ax: x0, az: (z0 + z1) / 2, bx: x1, bz: (z0 + z1) / 2, half, y0, y1 }
+        : { ax: (x0 + x1) / 2, az: z0, bx: (x0 + x1) / 2, bz: z1, half, y0, y1 },
+    );
   }
   return out;
 }

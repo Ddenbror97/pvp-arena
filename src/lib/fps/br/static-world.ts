@@ -16,6 +16,7 @@ import {
   S_Y1,
   SLANT,
   slantPrisms,
+  straightPartners,
 } from "./slants";
 import { forEachTrunkNear, type VegetationWorld } from "./vegetation";
 import { WORLD_HALF } from "./world";
@@ -278,8 +279,9 @@ export class StaticWorld {
     for (const p of placements) {
       let f = found.get(p.model);
       if (!f) {
-        const { walls: w, used } = findSlants(collision.models[p.model]!);
-        f = { used, prisms: slantPrisms(w) };
+        const boxes = collision.models[p.model]!;
+        const { walls: w, used } = findSlants(boxes);
+        f = { used, prisms: slantPrisms(w, straightPartners(boxes, used, w)) };
         found.set(p.model, f);
       }
       walls += f.prisms.length / SLANT;
