@@ -6,7 +6,7 @@ import { GUIDE_GAME_DATA } from "@/lib/game-snapshot/snapshot";
 describe("first-party SEO data provenance", () => {
   it("labels the BR schedule as configuration, not recorded activity", () => {
     const html = renderToStaticMarkup(<PracticeRuleData slug="browser-battle-royale" />);
-    expect(html).toContain("27:30");
+    expect(html).toContain("35:00");
     expect(html).toContain("excluding warm-up");
     expect(html).toContain("not observed completion times or cash results");
     expect(html).not.toContain("Recent settled");

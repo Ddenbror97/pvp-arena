@@ -14,8 +14,14 @@ import type { CollisionData } from "./static-world";
  *    not the ceiling (a roofless ruin's rooms, a castle's courts); open spots are those or any
  *    floor up on the model (a ruin's terraces, a tower's top, a wall walk), by a wall, never the
  *    plain ground round it; tops spots are the open ones, reached from any floor 2 m up as well
- *    (a fort's wall walks). The broader sheltered mode
- *    is retained for door inference only. Spots are kept at least `spacing` apart.
+ *    (a fort's wall walks); roof spots are a building's own roof tops a player walks up to
+ *    (the flood from the ground and the doors, by stairs: no ladder, no jump), at least 2 m up
+ *    with open sky over them, on a flat stretch by a parapet or a stair head. The broader
+ *    sheltered mode is retained for door inference only. Spots are kept at least `spacing` apart.
+ * 4. With `upper` > 0 (2026-11-28, owner: "add loot to accessible second floors and upper
+ *    floors"), a model with several storeys gets `upper` more spots for each storey over the
+ *    first, and the picks go round the storeys in turn (the hash order within each), so a tall
+ *    building's upper floors hold their share instead of what the hash happened to leave them.
  *
  * Deterministic (no randomness): per-match variety comes from which spots spawn and what
  * (loot.ts). Results are memoised per model.
@@ -23,7 +29,7 @@ import type { CollisionData } from "./static-world";
 export type Spot = { x: number; y: number; z: number };
 // Door inference needs the original broad sheltered-space topology, including porches.
 // Loot uses the stricter indoor room classification instead.
-type SpotMode = "indoor" | "walled" | "open" | "tops" | "sheltered" | "beside";
+type SpotMode = "indoor" | "walled" | "open" | "tops" | "sheltered" | "beside" | "roof";
 
 /** A roof alone also covers porches. Require a room around the point, not just an eave. */
 export function indoorLootPoint(
@@ -149,25 +155,36 @@ export function modelSpots(
   mode: SpotMode,
   spacing: number,
   limit: number,
+  upper = 0,
 ): Spot[] {
   let cache = caches.get(collision);
   if (!cache) caches.set(collision, (cache = new Map()));
-  const key = `${model}:${mode}:${spacing}:${limit}`;
+  const key = `${model}:${mode}:${spacing}:${limit}:${upper}`;
   const hit = cache.get(key);
   if (hit) return hit;
   const boxes = collision.models[model] ?? [];
-  const spots = boxes.length ? find(boxes, mode, spacing, limit, collision.entrances?.[model]) : [];
+  const spots = boxes.length
+    ? find(boxes, mode, spacing, limit, collision.entrances?.[model], upper)
+    : [];
   cache.set(key, spots);
   return spots;
 }
 
-function find(
+/** How a flood starts and what blocks it: rooms (indoor, walled, roof), open, tops, bare. */
+type FloodKind = "rooms" | "open" | "tops" | "bare";
+let lastFlood: {
+  boxes: number[][];
+  kind: FloodKind;
+  entrances: NonNullable<CollisionData["entrances"]>[string];
+  flood: ReturnType<typeof flood>;
+} | null = null;
+
+/** Steps 1 and 2: the model's columns, their standable levels and the floors a player reaches. */
+function flood(
   boxes: number[][],
-  mode: SpotMode,
-  spacing: number,
-  limit: number,
-  entrances: NonNullable<CollisionData["entrances"]>[string] = [],
-): Spot[] {
+  kind: FloodKind,
+  entrances: NonNullable<CollisionData["entrances"]>[string],
+) {
   let x0 = Infinity,
     z0 = Infinity,
     x1 = -Infinity,
@@ -200,7 +217,7 @@ function find(
   }
   // (Open: a box the hull would step up on is no obstacle, so the 5 cm steps of the ruins'
   // ramps, a few under one 0.5 m column, read as a slope a player walks up.)
-  const open = mode === "open" || mode === "tops";
+  const open = kind === "open" || kind === "tops";
   const over = open ? STEP_HEIGHT : 0.01;
   const clearAt = (c: number, y: number) => {
     const s = spans[c]!;
@@ -235,7 +252,7 @@ function find(
     }
   // Tops: also from every floor 2 m up or more (a fort's towers and walls are reached along the
   // wall walks, from the next piece: never from their own foot).
-  if (mode === "tops")
+  if (kind === "tops")
     for (let c = 0; c < levels.length; c++)
       for (let li = 0; li < levels[c]!.length; li++)
         if (levels[c]![li]! >= 2 && !seen.has(node(c, li))) {
@@ -245,7 +262,7 @@ function find(
   // Authored doors/stairs have been walked with the real player hull. A half-metre
   // loot grid can miss a narrow stair tread, leaving an otherwise reachable room empty.
   // Start its interior flood just inside those verified portals as well.
-  for (const d of mode === "indoor" || mode === "walled" || open ? entrances : []) {
+  for (const d of kind !== "bare" ? entrances : []) {
     for (
       let k = Math.max(0, Math.floor((d.z - 1.2 - z0) / CELL));
       k <= Math.min(nz - 1, Math.floor((d.z + 1.2 - z0) / CELL));
@@ -293,6 +310,30 @@ function find(
       }
     }
   }
+  return { x0, z0, nx, nz, spans, levels, seen, clearAt };
+}
+
+function find(
+  boxes: number[][],
+  mode: SpotMode,
+  spacing: number,
+  limit: number,
+  entrances: NonNullable<CollisionData["entrances"]>[string] = [],
+  upper = 0,
+): Spot[] {
+  const kind: FloodKind =
+    mode === "open" || mode === "tops"
+      ? mode
+      : mode === "indoor" || mode === "walled" || mode === "roof"
+        ? "rooms"
+        : "bare";
+  // The model's roof tops are found from the same flood as its rooms (placementSpots asks for
+  // both in turn): the last flood is kept, one model's, not every model's.
+  if (lastFlood?.boxes !== boxes || lastFlood.kind !== kind || lastFlood.entrances !== entrances)
+    lastFlood = { boxes, kind, entrances, flood: flood(boxes, kind, entrances) };
+  const { x0, z0, nx, nz, spans, levels, seen } = lastFlood.flood;
+  const roof = mode === "roof";
+  const open = mode === "open" || mode === "tops";
   // Candidate spots.
   const wallAt = (c: number, y: number) => {
     const s = spans[c]!;
@@ -319,6 +360,24 @@ function find(
     // the rails beside flights solid again, access-v13, their treads read as "by a wall").
     if (onFlight(levels, c, nx, y)) continue;
     const inside = roofed(c, y);
+    if (roof) {
+      // A roof top: 2 m up, open sky, every neighbour the same flat floor or a wall (not a
+      // pitched roof's steps, not the lip of an edge).
+      if (y < 2 || inside) continue;
+      const flat = [c + 1, c - 1, c + nx, c - nx].every(
+        (n) => wallAt(n, y) || (levels[n] ?? []).some((t) => Math.abs(t - y) < 0.05),
+      );
+      if (!flat) continue;
+      cands.push({
+        x: +(x0 + (i + 0.5) * CELL).toFixed(2),
+        y: +y.toFixed(3),
+        z: +(z0 + (k + 0.5) * CELL).toFixed(2),
+        score:
+          (Math.imul((i * 73856093) ^ (k * 19349663) ^ (li * 83492791), 2654435761) >>> 0) /
+          2 ** 32,
+      });
+      continue;
+    }
     if (mode === "walled" || open ? false : mode !== "beside" ? !inside : inside || y > 0.05)
       continue;
     const x = +(x0 + (i + 0.5) * CELL).toFixed(2),
@@ -335,11 +394,46 @@ function find(
   }
   cands.sort((a, b) => a.score - b.score);
   const out: Spot[] = [];
+  const room = (s: Spot) =>
+    !out.some((o) => Math.hypot(o.x - s.x, o.z - s.z) < spacing && Math.abs(o.y - s.y) < 2);
+  const floors = upper > 0 ? storeys(cands) : [];
+  if (floors.length < 2) {
+    for (const s of cands) {
+      if (out.length >= limit) break;
+      if (room(s)) out.push({ x: s.x, y: s.y, z: s.z });
+    }
+    return out;
+  }
+  // Round the storeys in turn, each in its own hash order.
+  const total = limit + upper * (floors.length - 1);
+  const next = floors.map(() => 0);
+  for (let more = true; more && out.length < total;) {
+    more = false;
+    for (let f = 0; f < floors.length && out.length < total; f++) {
+      const list = floors[f]!;
+      while (next[f]! < list.length) {
+        const s = list[next[f]!++]!;
+        if (!room(s)) continue;
+        out.push({ x: s.x, y: s.y, z: s.z });
+        more = true;
+        break;
+      }
+      if (next[f]! < list.length) more = true;
+    }
+  }
+  return out;
+}
+
+/** The candidates by storey (a storey: floors within 1.6 m over its lowest), in their order. */
+function storeys<T extends Spot>(cands: readonly T[]): T[][] {
+  const ys = [...new Set(cands.map((s) => s.y))].sort((a, b) => a - b);
+  const starts: number[] = [];
+  for (const y of ys) if (!starts.length || y - starts[starts.length - 1]! > 1.6) starts.push(y);
+  const out: T[][] = starts.map(() => []);
   for (const s of cands) {
-    if (out.length >= limit) break;
-    if (out.some((o) => Math.hypot(o.x - s.x, o.z - s.z) < spacing && Math.abs(o.y - s.y) < 2))
-      continue;
-    out.push({ x: s.x, y: s.y, z: s.z });
+    let f = starts.length - 1;
+    while (f > 0 && starts[f]! > s.y) f--;
+    out[f]!.push(s);
   }
   return out;
 }

@@ -8,10 +8,10 @@ import { WORLD_HALF, type WorldMeta } from "./world";
  * Radii are fractions of the reference radius (half the 10 km island, ZONE_REF_RADIUS), not area
  * shares or multiplicative factors. The zone clock starts at the plane's take-off, so phase 1's
  * wait also covers the flight (50 s) and the longest glide (≈ 3.5 min from the last exit):
- * the first gas moves 6 minutes after take-off, when everyone has landed and looted a
- * little. Rotation budget: a circle's centre may move at most `ZONE_SHIFT` × (R − r) from the
- * last, so the farthest point of the old circle is at most (1 + ZONE_SHIFT) × (R − r) from the
- * new edge; every phase gives wait + shrink ≥ that distance at a sprint (7.5 m/s) — see
+ * the first gas moves 8 minutes after take-off, when everyone has landed and looted. Rotation
+ * budget: a circle's centre may move at most `ZONE_SHIFT` × (R − r) from the last, so the
+ * farthest point of the old circle is at most (1 + ZONE_SHIFT) × (R − r) from the new edge;
+ * every phase gives wait + shrink ≥ that distance at a sprint (7.5 m/s) — see
  * tests/br-zone.test.ts "rotation budget".
  *
  * Presets: the room always fills 100 seats with bots (BR_RULES.seats), so a match always has a
@@ -32,11 +32,21 @@ export type ZonePhase = {
 export const ZONE_REF_RADIUS = WORLD_HALF;
 
 export const ZONE_PRESETS = {
-  /** 100 seats (every live match): 27m30 from take-off, 28m30 including warm-up. */
+  /**
+   * 100 seats (every live match): 35m from take-off, 36m including warm-up (2026-11-28, owner:
+   * "increase the total match duration by 6-10 minutes … the first safe zone by 30 % … more
+   * time to land, explore, loot and prepare … the final stages do not become unnecessarily
+   * slow"; was 27m30: 360/180 → 0.65, 120/150 → 0.45, 105/120 → 0.29, then as below). The first
+   * circle 30 % wider (0.65 → 0.845) and its gas two and a half minutes later (8 min after
+   * take-off); a phase to 0.6 between it and the old second circle; the third (0.42) as the old
+   * second was; from the 0.28 circle on the old table's last five phases unchanged (radii,
+   * waits, shrinks, damage), so the end game is as long as it was.
+   */
   full: [
-    { wait: 360, shrink: 180, radius: 0.65, dps: 1 },
-    { wait: 120, shrink: 150, radius: 0.45, dps: 2 },
-    { wait: 105, shrink: 120, radius: 0.29, dps: 3 },
+    { wait: 480, shrink: 210, radius: 0.845, dps: 1 },
+    { wait: 150, shrink: 150, radius: 0.6, dps: 1.5 },
+    { wait: 130, shrink: 140, radius: 0.42, dps: 2 },
+    { wait: 105, shrink: 120, radius: 0.28, dps: 3 },
     { wait: 85, shrink: 95, radius: 0.18, dps: 5 },
     { wait: 70, shrink: 75, radius: 0.1, dps: 7 },
     { wait: 55, shrink: 60, radius: 0.05, dps: 10 },
@@ -88,8 +98,12 @@ export const LEGACY_ZONE_PHASES: readonly ZonePhase[] = [
   { wait: 30, shrink: 45, radius: 0.02, dps: 14 },
   { wait: 20, shrink: 60, radius: 0, dps: 18 },
 ];
-/** The first circle covers the whole island. */
-export const ZONE_START_RADIUS = Math.ceil(WORLD_HALF * Math.SQRT2) + 100;
+/**
+ * The first circle covers the whole island, and wide enough that the first safe circle's centre
+ * can be drawn as far out as before it grew 30 % (2026-11-28: 7,172 → 8,072 m; the endings
+ * spread over the island as they did). Beyond the island's corners it is sea.
+ */
+export const ZONE_START_RADIUS = Math.ceil(WORLD_HALF * Math.SQRT2) + 1000;
 /** Half side of the square the first circle's centre is drawn from (m). */
 export let ZONE_FIRST_REACH = 3900;
 /** Test hook for tuning the reach (audit scripts). */
@@ -247,7 +261,10 @@ export function planZone(
       if (r > 0 && r <= 1500) {
         const g = ground(x, z, r);
         if (strict && (g.dry < 0.55 || g.walk < 0.45)) continue;
-        if (!first && riverTrap(prev.x, prev.z, x, z, Math.max(500, prev.r))) continue;
+        // (A bridge within the last circle's radius, and never further than 2 km: the 0.42 circle
+        // of 2026-11-28 reaches 2.1 km.)
+        if (!first && riverTrap(prev.x, prev.z, x, z, Math.min(2000, Math.max(500, prev.r))))
+          continue;
       }
       if (r === 0 || r < 120) {
         // The last circles: the very centre walkable and open.

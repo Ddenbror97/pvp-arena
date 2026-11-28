@@ -262,8 +262,18 @@ put("residential", "indoor", 6, [
 put("city", "indoor", 8, ["customs-house", "harbour-office"]);
 put("warehouse", "indoor", 10, ["fish-market"]);
 put("warehouse", "indoor", 16, ["port-warehouse"]);
-// (The older roadside and town buildings that hold none, the motels, the burger joint, the
-// showroom, stay empty: the match checkpoint's 1.5 MB has no room for them.)
+// The older roadside and town buildings that held none (2026-11-28, owner: "some buildings
+// currently contain no loot"; the match checkpoint stores its loot in chunks since 2026-11-24,
+// so its old 1.5 MB no longer keeps them empty): the motels' rooms, the diner, the showroom,
+// the gas station's shop, the car wash's bays and the conservatory; the parking deck's levels
+// (open: no ceiling on its top deck).
+put("residential", "indoor", 8, ["roadside-motel"]);
+put("residential", "indoor", 5, ["modular-motel"]);
+put("residential", "indoor", 4, ["conservatory"]);
+put("city", "indoor", 6, ["burger-joint", "car-showroom"]);
+put("city", "indoor", 4, ["roadside-gas"]);
+put("warehouse", "indoor", 6, ["car-wash"]);
+put("city", "open", 8, ["parking-deck"]);
 put("military", "walled", 4, ["lighthouse"]);
 put("military", "indoor", 2, ["bridge-guardtower"]);
 // Initial ground loot belongs inside buildings. Vehicles and outdoor props must not
@@ -274,6 +284,21 @@ export const LOOT = {
   density: { residential: 0.8, city: 0.8, warehouse: 0.75, military: 0.8, vehicle: 0.45 },
   /** At least this many pickups when a building has enough valid indoor positions. */
   minimumPerBuilding: 2,
+  /**
+   * More spots for each storey over a building's first (loot-spots.ts `upper`; owner 2026-11-28:
+   * "add loot to accessible second floors and upper floors"): a model's `max` was for the whole
+   * building, so a five-storey block's floors shared what a house's two did.
+   */
+  upperPerStorey: 1,
+  /**
+   * Roof tops a player walks up to (loot-spots.ts "roof"; owner 2026-11-28: "add loot to
+   * accessible rooftops"): this many spots per building, one more for every `roofPer` of its
+   * `max`, each holding loot `roofDensity` as often as a room's spot does (a roof is a bonus
+   * worth the climb, not a second floor).
+   */
+  roofSpots: 1,
+  roofPer: 16,
+  roofDensity: 0.5,
   /**
    * Per-location scaling of the spot density (LOOT-SPEC §2.1). The grid towns hold hundreds of
    * buildings each (concept-map density), so each of their spots holds loot less often: the
@@ -432,8 +457,9 @@ export const LOOT = {
     "scope-6x": 1.6,
     "sight-red": 0.7,
     "flash-hider": 0.7,
-    // Raised again 2026-11-13 (owner: "add more awp … spawns cross the map to be found").
-    awp: 1.0,
+    // Raised again 2026-11-13 (owner: "add more awp … spawns cross the map to be found");
+    // 0.82 since the 2026-11-28 +12 % loot, so the match keeps about the same ≈ 71 AWPs.
+    awp: 0.82,
     // The Hunting Rifle (2026-11-13: "a less rare sniper"): a rare-tier gun at 0.6, still about
     // one and a half times as often as the AWP after the AWP's raise above.
     hunting: 0.6,
@@ -517,6 +543,9 @@ function settle(world: StaticWorld, meta: WorldMeta, x: number, y: number, z: nu
   const ground = world.hf.heightAt(x, z);
   const top = world.supportAt(x, z, 0.15, Math.max(y, ground) + 0.4);
   if (top < y - 0.6) return null; // nothing under it (an edge): skip
+  // The item's own middle on that floor, not just the edge of its disc (2026-11-28 loot audit:
+  // ≈ 120 items a match hung over a stair's edge, a sill or a gap between two boxes).
+  if (top - world.supportAt(x, z, 0.05, top + 0.05) > 0.08) return null;
   if (world.blocked(x, top + 0.05, z, 0.4, 0.15)) return null;
   const water = waterSurface(meta, ground, x, z);
   if (water !== null && top < water + 0.05) return null;
@@ -528,7 +557,8 @@ function settle(world: StaticWorld, meta: WorldMeta, x: number, y: number, z: nu
  * seed → a different arrangement over the same valid spots.
  */
 /** Loot spots per placement of the island (the placements live as long as the island). */
-const spotsOf = new WeakMap<Placement, Array<{ x: number; y: number; z: number }>>();
+type LootSpot = { x: number; y: number; z: number; roof?: true };
+const spotsOf = new WeakMap<Placement, LootSpot[]>();
 
 /** The spot still lies in its room in the world (indoor: walls and a ceiling; walled: walls). */
 function roomPoint(
@@ -554,15 +584,43 @@ function placementSpots(
   let found = spotsOf.get(p);
   if (!found) {
     found = [];
-    for (const s of modelSpots(collision, p.model, info.mode, LOOT.spacing, info.max)) {
-      const [dx, dz] = turnPoint(s.x, s.z, p.turn);
-      const x = +(p.x + dx).toFixed(2),
-        z = +(p.z + dz).toFixed(2);
-      const y = settle(world, meta, x, p.y + s.y, z);
-      if (y === null) continue;
-      if (!roomPoint(info.mode, collision, p.model, s.x, y - p.y, s.z)) continue;
-      found.push({ x, y, z });
-    }
+    const rooms = modelSpots(
+      collision,
+      p.model,
+      info.mode,
+      LOOT.spacing,
+      info.max,
+      LOOT.upperPerStorey,
+    );
+    const roofs =
+      info.mode === "indoor"
+        ? modelSpots(
+            collision,
+            p.model,
+            "roof",
+            LOOT.spacing,
+            LOOT.roofSpots + Math.floor(info.max / LOOT.roofPer),
+          )
+        : [];
+    for (const [list, roof] of [
+      [rooms, false],
+      [roofs, true],
+    ] as const)
+      for (const s of list) {
+        const [dx, dz] = turnPoint(s.x, s.z, p.turn);
+        const x = +(p.x + dx).toFixed(2),
+          z = +(p.z + dz).toFixed(2);
+        const y = settle(world, meta, x, p.y + s.y, z);
+        if (y === null) continue;
+        if (roof) {
+          // Open sky over it in the world too (no neighbour's floor or a tower over it).
+          if (world.raycast(x, y + 0.3, z, 0, 1, 0, 30)) continue;
+          found.push({ x, y, z, roof: true });
+          continue;
+        }
+        if (!roomPoint(info.mode, collision, p.model, s.x, y - p.y, s.z)) continue;
+        found.push({ x, y, z });
+      }
     spotsOf.set(p, found);
   }
   return found;
@@ -632,10 +690,12 @@ export function rollLoot(
       const j = Math.floor(random() * (i + 1));
       [candidates[i], candidates[j]] = [candidates[j]!, candidates[i]!];
     }
-    const minimum = Math.min(LOOT.minimumPerBuilding, candidates.length);
+    // The guaranteed pickups are indoors (the rooms' spots: a roof top is a bonus).
+    let rooms = 0;
     for (let index = 0; index < candidates.length; index++) {
-      if (index >= minimum && random() >= density) continue;
-      const { x, y, z } = candidates[index]!;
+      const { x, y, z, roof } = candidates[index]!;
+      const sure = !roof && rooms++ < LOOT.minimumPerBuilding;
+      if (!sure && random() >= (roof ? density * LOOT.roofDensity : density)) continue;
       const cats = { ...LOOT.categories[info.cls] } as Record<Category, number>;
       if (catMult) for (const [c, m] of Object.entries(catMult)) cats[c as Category] *= m!;
       if (found.length >= LOOT.big.spots)
@@ -646,7 +706,7 @@ export function rollLoot(
         (id) => (counts.get(id) ?? 0) < (LOOT.caps[id] ?? Infinity),
       );
       if (!choices.length) {
-        if (index < minimum) add({ item: "ammo-rifle", qty: 30 }, x, y, z);
+        if (sure) add({ item: "ammo-rifle", qty: 30 }, x, y, z);
         continue;
       }
       const weights: Partial<Record<ItemId, number>> = {};
@@ -671,7 +731,7 @@ export function rollLoot(
         if (
           ay !== null &&
           Math.abs(ay - y) < 0.3 &&
-          roomPoint(info.mode, collision, p.model, lx, ay - p.y, lz)
+          roomPoint(roof ? "open" : info.mode, collision, p.model, lx, ay - p.y, lz)
         )
           add({ item: w.ammo, qty: LOOT.companionAmmo[w.ammo] ?? 30 }, ax, ay, az);
       } else if ("durability" in d) add({ item, qty: 1, durability: d.durability }, x, y, z);
@@ -753,3 +813,5 @@ export function lootSummary(items: readonly WorldItem[]) {
 }
 
 export const lootClassOf = (model: string) => MODEL_CLASS[model]?.cls ?? null;
+/** A model's loot class, spot mode and spot cap (audits and tests), or null. */
+export const lootInfoOf = (model: string) => MODEL_CLASS[model] ?? null;

@@ -149,7 +149,8 @@ describe("Project Island match (Phase 2 core)", () => {
           ).toBeUndefined();
         const view = brViewFor(state, world, sight, seat, state.planeAt + durationMs, sync);
         expect(view.route).toBeUndefined();
-        expect(view.zone).toMatchObject({ nx: state.zone.circles[1]!.x, until: 420_000 });
+        // Take-off (60 s) + the first wait (8 min since 2026-11-28; 6 min before).
+        expect(view.zone).toMatchObject({ nx: state.zone.circles[1]!.x, until: 540_000 });
       }
     }
   });
@@ -189,7 +190,10 @@ describe("Project Island match (Phase 2 core)", () => {
       [1_205_000, 1_250_000],
       [1_270_000, 1_330_000],
     ]);
-    expect(restored.zone.circles).toEqual(state.zone.circles);
+    // The legacy table's eight phases (the live table has nine since 2026-11-28): the same
+    // whole-island start, then its own circles.
+    expect(restored.zone.circles).toHaveLength(9);
+    expect(restored.zone.circles[0]).toEqual(state.zone.circles[0]);
     const again = restoreBrMatch(
       meta,
       heightAt,

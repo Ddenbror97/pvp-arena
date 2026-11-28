@@ -106,8 +106,15 @@ test("small enterable town homes start with at least two indoor pickups at every
       const world = new StaticWorld(hf, [p], collision, null);
       for (let seed = 0; seed < 20; seed++) {
         const items = rollLoot(seed, [p], collision, world, meta);
-        expect(items.length, `${model}/${turn}/${seed}`).toBeGreaterThanOrEqual(2);
+        // Indoors, or (since 2026-11-28) on the roof top its stairs reach: 2 m up, open sky.
+        const roof = (item: (typeof items)[number]) =>
+          item.y >= 2 && !world.raycast(item.x, item.y + 0.3, item.z, 0, 1, 0, 30);
+        expect(
+          items.filter((i) => !roof(i)).length,
+          `${model}/${turn}/${seed}`,
+        ).toBeGreaterThanOrEqual(2);
         for (const item of items) {
+          if (roof(item)) continue;
           const [x, z] = turnPoint(item.x, item.z, (4 - turn) % 4);
           expect(indoorLootPoint(collision, model, x, item.y, z)).toBe(true);
         }

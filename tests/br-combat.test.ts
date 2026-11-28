@@ -101,6 +101,10 @@ describe("battle royale combat", () => {
     target.body.z = me.body.z - Math.cos(yaw) * 50;
     target.body.y = world.supportAt(target.body.x, target.body.z, 0.35, 1e4);
     target.kit.hp = 10000;
+    // Nobody else crosses the 50 m line during the ten taps (43 s): the bots run for the
+    // circle, whose side of the runway depends on the zone plan (2026-11-28: a bot walked
+    // through the line once the first circle grew).
+    for (const s of state.seats.slice(2)) s.dead = true;
     pickUp(me.kit, { item, qty: 1, mag: 30, optic });
     const pitch = Math.atan2(target.body.y - me.body.y - 0.43, 50);
     for (let i = 0; i < 8; i++) tick(state, { yaw, pitch, aim: true });

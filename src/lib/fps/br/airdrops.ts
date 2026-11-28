@@ -9,7 +9,7 @@ import type { ZonePlan } from "./zone";
  * high-tier loot laid out around it when it lands. Three a match (owner, 2026-11-13: "the 1st
  * airdrop drops directly when first circle have been revealed … 3 air drops per game"): the
  * first three minutes after the first circle is revealed (the plane's route flown), then at the start of zone
- * phases 3 and 5. Everyone is warned `warnMs` before a crate appears; a landed crate smokes green
+ * phases 4 and 6. Everyone is warned `warnMs` before a crate appears; a landed crate smokes green
  * until someone takes something from it. The loot is inside the crate (owner, 2026-11-14): E
  * opens it, and the inventory lists what is left in it to take. Rare items (AWP, level-3 armour, 6× scope, the Tactical
  * Tablet) are what makes a drop worth the risk (PERKS-RESEARCH: rewards follow risk).
@@ -20,7 +20,9 @@ export const AIRDROP = {
    * When the drops come: 0 is the first circle's reveal; otherwise the zone phase (1-based)
    * whose start brings one. Each falls inside the circle that phase closes to.
    */
-  phases: [0, 3, 5] as const,
+  // (Phases 4 and 6 since 2026-11-28: the zone gained a phase, and these are still the drops
+  // into the 0.28 and 0.10 circles that 3 and 5 were.)
+  phases: [0, 4, 6] as const,
   /**
    * The first drop comes this long after the first circle's reveal (owner, 2026-11-13: "wait 3
    * minutes longer for first airdrop to come").
