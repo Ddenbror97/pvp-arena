@@ -315,16 +315,27 @@ describe("battle royale combat", () => {
     // This verifies armour, not hipfire randomness: settle the iron sights first.
     for (let i = 0; i < 8; i++) tick(state, { yaw, pitch, aim: true });
     let shots = 0,
-      elim = false;
+      elim = false,
+      distance: number | undefined;
     for (let i = 0; i < 400 && !elim; i++) {
       const tap = i % 12 === 0;
       for (const e of tick(state, { yaw, pitch, aim: true, fire: tap })) {
         if (e.type === "shot") shots++;
         if (e.type === "hit") hits.push(e.damage);
-        if (e.type === "elim") elim = true;
+        if (e.type === "elim") {
+          elim = true;
+          distance = e.m;
+        }
       }
     }
     expect(elim).toBe(true);
+    // The kill confirmation's distance is the server's, stamped on the elimination itself.
+    expect(distance).toBe(
+      Math.round(
+        Math.hypot(me.body.x - them.body.x, me.body.y - them.body.y, me.body.z - them.body.z),
+      ),
+    );
+    expect(distance).toBeGreaterThan(0);
     // Chest 40 less the level-1 vest's 20 % = 32 per hit: 4 hits for 100 health.
     expect(hits[0]).toBe(32);
     expect(hits.length).toBe(4);

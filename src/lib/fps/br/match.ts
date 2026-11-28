@@ -953,6 +953,7 @@ export function stepBrMatch(
   }
   perkEvents(state, now);
   settle(state, now);
+  stampKillDistances(state);
   if ((state.phase as BrPhase) === "ending" || (state.phase as BrPhase) === "completed")
     state.projectiles.clear();
   // Everyone off the plane and down: the match is live.
@@ -2687,6 +2688,23 @@ export class BrSeatSync {
   /** Tracker: the tick the footprints were last sent on, and whether any were. */
   tracksTick = -1e9;
   tracksShown = false;
+}
+
+/**
+ * The kill confirmation's distance (owner, 2026-11-27: "the distance of the kill in meters ...
+ * from authoritative game events"): on every elimination by another player this tick (a shot,
+ * the Karambit, a grenade, a vehicle), the straight line from the killer to the victim in whole
+ * metres, from the server's own positions as the step ends. The gas, a fall and a player's own
+ * grenade get none.
+ */
+export function stampKillDistances(state: BrMatchState) {
+  for (const e of state.combat) {
+    if (e.type !== "elim" || e.by === e.seat || e.m !== undefined) continue;
+    const by = state.seats[e.by]?.body,
+      victim = state.seats[e.seat]?.body;
+    if (!by || !victim) continue;
+    e.m = Math.round(Math.hypot(by.x - victim.x, by.y - victim.y, by.z - victim.z));
+  }
 }
 
 /**

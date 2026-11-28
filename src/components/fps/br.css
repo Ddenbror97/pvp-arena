@@ -3282,3 +3282,506 @@ button.br-inv-cell:hover {
     animation: none;
   }
 }
+
+/* =====================================================================================
+ * HUD refresh (owner, 2026-11-27: "modern, minimalistic, tactical and premium ... lighter, more
+ * transparent backgrounds ... the gameplay environment partially visible behind the inventory").
+ * No backdrop filters: the world shows through a plain gradient, and text carries its own
+ * shadow so it reads on snow, sky and night alike. Overrides the rules above (same selectors).
+ * ===================================================================================== */
+.br-game {
+  --hud-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 0, 0, 0.45);
+  --hud-blood: #e0172e;
+  --hud-blood-deep: #8e0b1b;
+}
+
+/* ---- top right: aircraft, kills, players alive */
+.br-counters {
+  position: absolute;
+  top: 12px;
+  right: var(--hud-edge);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 4px 6px 26px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, rgba(6, 8, 10, 0.34) 26px);
+  color: var(--hud-text);
+  text-shadow: var(--hud-shadow);
+  pointer-events: none;
+}
+.br-ctr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.br-ctr b {
+  min-width: 1.1ch;
+  font: 800 23px/1 var(--hud-font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  text-align: right;
+}
+.br-ctr span {
+  font: 700 10.5px/1 var(--hud-font);
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: rgba(238, 242, 244, 0.72);
+}
+.br-ctr-icon {
+  width: 15px;
+  height: 15px;
+  opacity: 0.8;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.85));
+}
+.br-ctr.kills .br-ctr-icon {
+  color: var(--hud-blood);
+  opacity: 1;
+}
+.br-ctr.plane .br-ctr-icon {
+  color: #ffd440;
+  opacity: 1;
+}
+/* A kill: the figure kicks once, red to white. */
+.br-ctr b.bump {
+  animation: br-ctr-bump 520ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@keyframes br-ctr-bump {
+  0% {
+    color: var(--hud-blood);
+    transform: scale(1.35);
+  }
+  100% {
+    color: inherit;
+    transform: none;
+  }
+}
+
+/* ---- top centre: the zone bar, lighter; the phase line without its box */
+.br-matchbar {
+  padding: 3px 12px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(6, 8, 10, 0.34) 14px,
+    rgba(6, 8, 10, 0.34) calc(100% - 14px),
+    transparent
+  );
+  text-shadow: var(--hud-shadow);
+}
+.br-phase {
+  position: absolute;
+  left: 50%;
+  top: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--hud-text);
+  text-shadow: var(--hud-shadow);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.br-phase span {
+  font: 800 13px/1 var(--hud-font);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.br-phase b {
+  font: 800 30px/1 var(--hud-font);
+  font-variant-numeric: tabular-nums;
+}
+.br-phase b small {
+  margin-left: 3px;
+  font: 700 12px/1 var(--hud-font);
+  letter-spacing: 0.08em;
+  color: rgba(238, 242, 244, 0.72);
+}
+.br-phase.jump span {
+  color: #ffd440;
+}
+.br-phase b.urgent {
+  color: #ff6a4d;
+}
+.br-game .duel-hud-top {
+  background: linear-gradient(rgba(6, 8, 10, 0.32), transparent);
+}
+
+/* ---- the KILLED confirmation, under the crosshair */
+.br-kc {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 92px);
+  z-index: 4;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  color: #fff;
+  text-shadow: var(--hud-shadow);
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: br-kc 2600ms ease-out both;
+}
+/* A soft shade behind the words for bright grass and snow: one gradient, no filter. */
+.br-kc::before {
+  content: "";
+  position: absolute;
+  inset: -14px -60px;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.34), transparent);
+}
+.br-kc-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.br-kc-head b {
+  font: 900 30px/1 var(--hud-font);
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;
+  color: var(--hud-blood);
+  text-shadow:
+    0 1px 0 var(--hud-blood-deep),
+    0 2px 3px rgba(0, 0, 0, 0.9),
+    0 0 18px rgba(224, 23, 46, 0.35);
+}
+/* The blood-red rule under the word, drawn out from the middle. */
+.br-kc-mark {
+  position: absolute;
+  left: -18px;
+  right: -18px;
+  bottom: -7px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--hud-blood) 20%,
+    var(--hud-blood) 80%,
+    transparent
+  );
+  transform-origin: center;
+  animation: br-kc-mark 2600ms ease-out both;
+}
+.br-kc-streak {
+  font: 800 15px/1 var(--hud-font);
+  color: #fff;
+}
+.br-kc-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  font: 700 15px/1 var(--hud-font);
+}
+.br-kc-name {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.br-kc-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(238, 242, 244, 0.78);
+  font-weight: 600;
+  font-size: 13px;
+}
+.br-kc-meta .bomb-weapon-icon,
+.br-kc-meta .br-kill-icon,
+.br-kc-meta svg {
+  width: 38px;
+  height: 14px;
+  opacity: 0.9;
+}
+.br-kc-meta .br-kill-icon {
+  width: 16px;
+}
+.br-kc-dist b {
+  color: #fff;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+@keyframes br-kc {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px) scale(0.94);
+  }
+  7% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.03);
+  }
+  12% {
+    transform: translateX(-50%);
+  }
+  82% {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px);
+  }
+}
+@keyframes br-kc-mark {
+  0% {
+    transform: scaleX(0);
+  }
+  14%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+/* ---- inventory (B): the world behind one gradient, the panels open, the items on glass */
+.br-inventory-layer {
+  background: linear-gradient(
+    90deg,
+    rgba(5, 7, 9, 0.7) 0%,
+    rgba(5, 7, 9, 0.46) 30%,
+    rgba(5, 7, 9, 0.28) 52%,
+    rgba(5, 7, 9, 0.46) 74%,
+    rgba(5, 7, 9, 0.58) 100%
+  );
+  /* Fade the scrim out above the bottom HUD (health, hotbar, ammo stay bright). A mask, not a
+     filter: no backdrop sampling. */
+  mask-image: linear-gradient(#000 0%, #000 74%, transparent 90%);
+  animation: br-fadein var(--hud-fast) ease-out;
+}
+.br-inventory {
+  /* Dark-tinted glass: reads on snow and sky as well as on asphalt (a white tint washes out). */
+  --inv-cell:
+    linear-gradient(rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03)), rgba(8, 11, 14, 0.4);
+  --inv-cell-hi:
+    linear-gradient(rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.07)), rgba(8, 11, 14, 0.44);
+  --inv-line: rgba(255, 255, 255, 0.13);
+  --inv-faint: rgba(255, 255, 255, 0.07);
+  --inv-sel: #8bdc63;
+  --inv-tab: #79d2ff;
+  top: 78px;
+  max-height: calc(100% - 190px);
+  gap: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+}
+.br-inv-panel {
+  gap: 12px;
+  padding: 4px 16px 8px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.br-inv-panel + .br-inv-panel {
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+.br-inv-panel.over {
+  border-color: transparent;
+  background: linear-gradient(rgba(139, 220, 99, 0.08), rgba(139, 220, 99, 0.02));
+  box-shadow: inset 0 0 0 1px rgba(139, 220, 99, 0.55);
+  border-radius: 6px;
+}
+.br-inventory h3 {
+  gap: 10px;
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--inv-line);
+  font: 800 21px/1 var(--hud-font);
+  letter-spacing: 0.06em;
+}
+.br-inventory h3 svg {
+  width: 17px;
+  height: 17px;
+  opacity: 0.7;
+}
+.br-inv-sub {
+  color: rgba(238, 242, 244, 0.7);
+  font: 700 10.5px/1 var(--hud-font);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.br-inv-note {
+  color: rgba(238, 242, 244, 0.62);
+}
+.br-inv-icon {
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55));
+}
+.br-inv-icon.ghost {
+  opacity: 0.16;
+}
+.br-inventory .br-bar {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Nearby rows and bag cells: translucent tiles, a rarity edge on the left. */
+.br-inv-row,
+.br-inv-cell,
+.br-inv-tile,
+.br-inv-gun,
+.br-inv-q {
+  border: 1px solid var(--inv-faint);
+  box-shadow: inset 2px 0 0 var(--rar, transparent);
+}
+.br-inv-row {
+  border-radius: 4px;
+  min-height: 48px;
+}
+.br-inv-row:hover,
+button.br-inv-cell:hover,
+.br-inv-tile:hover,
+.br-inv-gun:hover {
+  background: var(--inv-cell-hi);
+  border-color: rgba(255, 255, 255, 0.26);
+}
+.br-inv-row-text b {
+  font-size: 12.5px;
+}
+.br-inv-row-text b::after {
+  display: none;
+}
+.br-inv-row em,
+.br-inv-cell em {
+  color: #fff;
+}
+.br-inv-cell {
+  border-radius: 4px;
+}
+.br-inv-cell b {
+  font-size: 11.5px;
+}
+.br-inv-cell.empty {
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(8, 11, 14, 0.16);
+  box-shadow: none;
+}
+.br-inv-cell.sel,
+.br-inv-tile.sel,
+.br-inv-gun.sel {
+  border-color: var(--inv-sel);
+  box-shadow:
+    inset 2px 0 0 var(--rar, transparent),
+    0 0 0 1px var(--inv-sel);
+  background: rgba(139, 220, 99, 0.12);
+}
+.br-inv-tile.over,
+.br-inv-gun.over {
+  border-color: var(--inv-sel);
+  background: rgba(139, 220, 99, 0.14);
+}
+.br-inv-tile,
+.br-inv-att .br-inv-tile {
+  border-radius: 4px;
+}
+.br-inv-gun {
+  border-radius: 4px;
+  box-shadow: none;
+}
+.br-inv-gun.on {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: inset 2px 0 0 var(--inv-sel);
+}
+.br-inv-gun header b {
+  overflow: hidden;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.br-inv-mag {
+  white-space: nowrap;
+}
+/* The card keeps its column: the name ellipsizes rather than pushing the card out of the panel. */
+.br-inv-guns,
+.br-inv-gun,
+.br-inv-gun header,
+.br-inv-gun header b {
+  min-width: 0;
+}
+/* Four bag columns as before the refresh (the open panels have less inner width). */
+.br-inv-grid {
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+}
+.br-inv-q {
+  border-radius: 4px;
+  box-shadow: none;
+}
+.br-inv-cap {
+  font-size: 11px;
+}
+.br-inv-cap b {
+  font-size: 15px;
+}
+/* Category filters: words on the line, the chosen one underlined. */
+.br-inv-tabs {
+  gap: 2px 14px;
+}
+.br-inv-tabs button {
+  padding: 4px 0 5px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: rgba(238, 242, 244, 0.62);
+  font: 700 10.5px/1 var(--hud-font);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: inset 0 -2px 0 transparent;
+}
+.br-inv-tabs button.on {
+  border: 0;
+  background: none;
+  color: #fff;
+  box-shadow: inset 0 -2px 0 var(--inv-tab);
+}
+.br-inv-detail {
+  padding: 12px;
+  border: 1px solid var(--inv-faint);
+  border-radius: 4px;
+  background: rgba(6, 8, 10, 0.38);
+}
+.br-inv-thumb.big {
+  border-radius: 4px;
+}
+.br-inv-actions button {
+  border-radius: 3px;
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+}
+.br-inv-actions button:hover {
+  border-color: var(--inv-sel);
+  background: rgba(139, 220, 99, 0.16);
+}
+.br-inv-figure img {
+  max-height: 300px;
+}
+
+@media (max-width: 1440px) {
+  .br-inv-panel {
+    padding: 4px 11px 8px;
+  }
+  .br-inventory h3 {
+    font-size: 19px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .br-kc {
+    animation-name: br-kc-still;
+  }
+  .br-kc-mark,
+  .br-ctr b.bump {
+    animation: none;
+  }
+}
+@keyframes br-kc-still {
+  0%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
