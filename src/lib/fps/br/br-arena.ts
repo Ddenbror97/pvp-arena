@@ -445,7 +445,14 @@ export type BrFeed =
       victim: string;
       weapon: BrKillWeapon;
       self: boolean;
+      /** Killer to victim (m) from the server's elimination event; null: none (gas, a fall). */
+      m: number | null;
     }
+  /**
+   * The local player eliminated another (the KILLED confirmation): once per victim seat, from
+   * the server's elimination event (its name, weapon and distance).
+   */
+  | { kind: "confirm"; seat: number; victim: string; weapon: BrKillWeapon; m: number | null }
   | { kind: "eliminated"; by: string };
 
 /**
@@ -1416,6 +1423,8 @@ export function createBrArena(
   const deathAt = new Map<number, number>();
   /** When the server said each seat was eliminated (the elim event), for deathAt below. */
   const killedAt = new Map<number, number>();
+  /** The seats whose elimination the feed has already told (each is told once). */
+  const elimSeen = new Set<number>();
   /**
    * Another rider's time into their ride: from where they are on the cable (the views carry
    * positions, not ride clocks), or, still on the deck taking hold, from when we first saw it
@@ -2350,6 +2359,10 @@ export function createBrArena(
         continue;
       }
       if (e.type === "elim") {
+        // Once per victim: a seat is eliminated once a match, and the same event can arrive
+        // twice (the fast path and a view, a reconnect replaying a tick).
+        if (elimSeen.has(e.seat)) continue;
+        elimSeen.add(e.seat);
         // The kill feed's row: who, with what, whom (gas and self-eliminations told apart).
         const weapon: BrKillWeapon =
           e.gun === "m4a1s"
@@ -2377,8 +2390,11 @@ export function createBrArena(
           weapon,
           self: e.by === e.seat && e.gun !== "gas" && e.gun !== "fall",
           mine: e.by === mySeat || e.seat === mySeat,
+          m: e.m ?? null,
         });
         if (e.by === mySeat) feed({ kind: "hit", head: false, kill: true });
+        if (e.by === mySeat && e.seat !== mySeat)
+          feed({ kind: "confirm", seat: e.seat, victim: e.name ?? "?", weapon, m: e.m ?? null });
         if (e.seat === mySeat)
           feed({ kind: "eliminated", by: e.gun === "fall" ? "a fall" : (e.byName ?? "?") });
         killedAt.set(e.seat, now);
