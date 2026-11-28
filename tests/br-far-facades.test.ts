@@ -157,13 +157,14 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
       // plinths proud of the walls (plinth-v2), or with their window reveals lit as the wall
       // (reveal-v1), 2026-11-24: the same triangles. And (2026-11-25) the Blackwater fixes:
       // the chapel's ground faces lifted (groundlift-v1, the same triangles) and the cell
-      // houses' walls carried into the ground (footing-v1, more triangles). And (2026-11-27)
+      // houses' walls carried into the ground (footing-v1, more triangles; footing-v2,
+      // 2026-11-28, is its mid LOD with the atlas's texture coordinates kept). And (2026-11-27)
       // faces added where buildings were left open (gaps-v1).
       for (const [i, l] of m.lods.slice(0, -1).entries()) {
         const was = before.models[id]!.lods[i]!;
         if (/\.(zfix-v21|plinth-v2|reveal-v1|groundlift-v1)\.lod\d\.glb$/.test(l.file))
           expect(l.tris, id).toBe(was.tris);
-        else if (/\.(footing-v1|well-v1)\.lod\d\.glb$/.test(l.file))
+        else if (/\.(footing-v[12]|well-v1)\.lod\d\.glb$/.test(l.file))
           expect(l.tris, id).toBeGreaterThan(was.tris);
         // (gaps-v1: faces added where a building was left open, or its floors moved to their
         // finishes: as many triangles or more.)
