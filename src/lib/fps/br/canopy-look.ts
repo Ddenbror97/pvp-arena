@@ -10,6 +10,7 @@ export class CanopyLook {
   private offsetYaw = 0;
   private offsetPitch = 0;
   private keyboardTurning = false;
+  private readonly out = { yaw: 0, pitch: 0 };
 
   point(heading: number, pitch: number) {
     this.course = angle(heading);
@@ -56,9 +57,9 @@ export class CanopyLook {
       this.offsetYaw *= k;
       this.offsetPitch *= k;
     }
-    return {
-      yaw: angle(this.course + this.offsetYaw),
-      pitch: clampPitch(this.pitch + this.offsetPitch),
-    };
+    // (Into one kept object: this runs every frame under the canopy.)
+    this.out.yaw = angle(this.course + this.offsetYaw);
+    this.out.pitch = clampPitch(this.pitch + this.offsetPitch);
+    return this.out;
   }
 }

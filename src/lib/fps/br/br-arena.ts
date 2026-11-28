@@ -34,6 +34,8 @@ import { createSharpen, SHARPEN, sharpenWanted } from "./sharpen";
 import { createBrAudio, SPAS12_CUE_LEAD_MS } from "./br-audio";
 import { CanopyLook } from "./canopy-look";
 import { BrStrides } from "./footsteps";
+import { STEP_RANGE_MAX, stepPace } from "./spatial-audio";
+import type { EngineSource } from "./vehicle-audio";
 import { brVisibleRows, brActorPriority, brRowRenderable, HeldRows } from "./remote-visibility";
 import { createBrViewmodel } from "./br-viewmodel";
 import type { ShotEvent } from "./combat";
@@ -143,7 +145,14 @@ import {
 import { createLiftRenderer } from "./lift-renderer";
 import { paneOwners, withPanes } from "./panes";
 import { createPaneRenderer } from "./pane-renderer";
-import { spec, stepVehicle, vehicleGap, VEHICLES, type Vehicle } from "./vehicles";
+import {
+  spec,
+  stepVehicle,
+  vehicleGap,
+  VEHICLES,
+  type Vehicle,
+  type VehicleKind,
+} from "./vehicles";
 import type { NadeEvent } from "./match";
 import { AircraftClient, boardable, flightHud, type FlightHud } from "./aircraft-client";
 import { createAircraftRenderer } from "./aircraft-renderer";
@@ -174,7 +183,8 @@ import { gridRefAt, MAP_SIZE, tacticalMapBuilder } from "./tactical-map";
 import { createCharacter, type CarryGun } from "../character";
 import { SWIM_EYE } from "../swim-stroke";
 import { createSwimSplash } from "./swim-splash";
-import { createImpactEffects } from "../impacts";
+import { createDamageFeedback } from "../damage-feedback";
+import { anchorHit, createImpactEffects } from "../impacts";
 import { pullDepth } from "./depth-bias";
 
 /** The guns worn on the back (the Desert Eagle has the thigh holster). */
@@ -435,7 +445,6 @@ export type BrMapState = {
 export type BrFeed =
   | { kind: "toast"; text: string; tone: "ok" | "warn" }
   | { kind: "hit"; head: boolean; kill: boolean }
-  | { kind: "hurt"; from: number }
   | {
       kind: "kill";
       text: string;
@@ -445,7 +454,14 @@ export type BrFeed =
       victim: string;
       weapon: BrKillWeapon;
       self: boolean;
+      /** Killer to victim (m) from the server's elimination event; null: none (gas, a fall). */
+      m: number | null;
     }
+  /**
+   * The local player eliminated another (the KILLED confirmation): once per victim seat, from
+   * the server's elimination event (its name, weapon and distance).
+   */
+  | { kind: "confirm"; seat: number; victim: string; weapon: BrKillWeapon; m: number | null }
   | { kind: "eliminated"; by: string };
 
 /**
@@ -514,6 +530,10 @@ export type BrArenaControls = {
     /** Which way the camera faces (unit vector). */
     facing: [number, number, number];
     shown: [number, number, number];
+    /** Your own figure and canopy as drawn, and your view's heading (parachute-lab.mjs). */
+    figure: THREE.Object3D;
+    canopy: THREE.Object3D | null;
+    yaw: number;
     pending: number;
     loot: number;
     geometries: number;
@@ -527,6 +547,18 @@ export type BrArenaControls = {
     fullActors: number;
     standIns: number;
     renderer: unknown;
+    /** Spectating: the watched seat as drawn this frame (null: not spectating). */
+    watch: {
+      seat: number;
+      pov: boolean;
+      phase: string | null;
+      pos: [number, number, number] | null;
+      yaw: number;
+      vehicle: number;
+      vehiclePos: [number, number, number] | null;
+      vehicleYaw: number;
+      aircraft: [number, number, number] | null;
+    } | null;
     /** The view camera and your own character's root (diagnostics). */
     view?: {
       camera: unknown;
@@ -568,8 +600,21 @@ const FP_LIFT = 1;
 const CHARACTERS = 16;
 const MAX_PLAYERS = 100;
 const BASE_FOV = 75;
-/** Phases a watched player is seen from their own eyes (the rest: the chase view). */
-const POV_PHASES = new Set(["ground", "swim", "ladder", "zip", "lift", "rappel"]);
+/**
+ * Spectating: a change of view of the same player (into a vehicle, out of it, off the ground)
+ * is eased over this long, and their view's heading and pitch follow the snapshots' with this
+ * time constant (ms).
+ */
+const WATCH_BLEND_MS = 380;
+const WATCH_VIEW_MS = 35;
+/**
+ * Phases a watched player is seen from their own eyes: the ones they see from their own eyes
+ * themselves. On the zip-line, a climbing rope and a rope down a wall their own view is from
+ * behind (owner's specs), and from their eyes a spectator rode a line with no hands, no handle
+ * and no trolley, looking wherever the rider's camera pointed (spectator audit 2026-11-27):
+ * those are watched from behind too, the body, the trolley and the rope in the picture.
+ */
+const POV_PHASES = new Set(["ground", "swim", "ladder", "lift"]);
 
 function detailOf(item: {
   item: ItemId;
@@ -742,6 +787,11 @@ export function createBrArena(
   };
   renderer.domElement.style.cssText = "display:block;width:100%;height:100%";
   host.appendChild(renderer.domElement);
+  // Being shot, on your own screen (damage-feedback.ts): the direction crescents, the red edge
+  // flash and the low-health blood, in a layer over the canvas and under the HUD.
+  const damageFx = createDamageFeedback(host, {
+    reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
   // The adaptive resolution (render-budget.ts): lowered only where the GPU is the bottleneck.
   // The low tier keeps its 720p unless the game would fall under 30 fps (LOW_TIER_SLOW_MS).
   const budget = new BrRenderBudget({
@@ -821,6 +871,9 @@ export function createBrArena(
   });
   const audio = createBrAudio(base);
   const strides = new BrStrides();
+  /** The camera's direction for the listener, and others' engines as heard (reused). */
+  const listenAt = new THREE.Vector3();
+  const engineSources: EngineSource[] = [];
 
   const resize = () => {
     const w = host.clientWidth || innerWidth,
@@ -946,6 +999,16 @@ export function createBrArena(
     doorsFx?.apply({ changes: [id * 2 + open] }, doorOpen);
   let solidView: StaticWorld | null = null;
   const solid = () => solidView ?? island!.island.solid;
+  // Placed sounds are muffled through the world (spatial-audio.ts): one ray from the camera as
+  // a sound starts, through the island as it stands (doors as they are), never continuously.
+  audio.setOccluder((ax, ay, az, bx, by, bz) => {
+    if (!island) return false;
+    const dx = bx - ax,
+      dy = by - ay,
+      dz = bz - az;
+    const len = Math.hypot(dx, dy, dz);
+    return len > 1 && solid().raycast(ax, ay, az, dx, dy, dz, len - 0.6, true) !== null;
+  });
   /** The vehicle you drive, predicted like your body (vehicles.ts runs here too). */
   let car: Vehicle | null = null;
   /** The Island Airfield's aircraft: rows, your seat, the pilot's prediction and cameras. */
@@ -976,6 +1039,32 @@ export function createBrArena(
   const pending: Array<{ seq: number; input: DropInput; clock: number }> = [];
   /** Visual offset after a correction, decayed toward zero (no camera pops). */
   const correction = new THREE.Vector3();
+  /** In the air a correction up to this far is eased, not snapped (reconcile). */
+  const AIR_EASED_M = 90;
+  /**
+   * How much later than you send it the room applies an input, on its own clock as this client
+   * reads it (a round trip and the wait for a tick): the least of the last snapshots' "your
+   * input `seq` was in by now" against when that input was made. NaN before the first.
+   */
+  const inputLag = { samples: [] as number[], ms: NaN };
+  /**
+   * Out of the drop plane: how far along its track the room lets you go beyond where you
+   * pressed (the plane flies 225 m/s for that input lag: 20 to 45 m). The prediction leaves
+   * the plane there too, so the first snapshot after the jump has nothing to move, and you are
+   * drawn from the door to it over a quarter of a second, as the plane's speed carrying you on
+   * while the canopy opens. Kept while the jump's input may still be replayed.
+   */
+  const exitCarry = { x: 0, z: 0, set: false };
+  /** One step of your own prediction on foot or in the air (live, and replayed in reconcile). */
+  const stepOwn = (input: DropInput, planeMs: number) => {
+    const aboard = body.phase === "plane";
+    const change = stepDrop(solid(), island!.meta, route!, body, input, planeMs, TICK_MS);
+    if (aboard && change === "parachute" && exitCarry.set) {
+      body.x += exitCarry.x;
+      body.z += exitCarry.z;
+    }
+    return aboard && change === "parachute";
+  };
   /** Where you and your vehicle are drawn this frame, between the 30 Hz steps (frame-view.ts). */
   const frameView = new BrFrameView();
   const vehicleView = new BrVehicleView();
@@ -1000,7 +1089,12 @@ export function createBrArena(
     eyePy = 0,
     eyeAt = -1e9;
   /** Other players' rows per snapshot, stamped with the snapshot's server time (lag.ts). */
-  const buffer: Array<{ at: number; rows: Map<number, number[]> }> = [];
+  const buffer: Array<{
+    at: number;
+    rows: Map<number, number[]>;
+    watchSeat: number;
+    watchPitch: number;
+  }> = [];
   const remoteTimeline = new BrRemoteTimeline();
   const heldRows = new HeldRows();
   let yaw = 0,
@@ -1077,6 +1171,30 @@ export function createBrArena(
     povPitch = 0,
     povKnife = false;
   const povMoved = { x: 0, z: 0, speed: 0 };
+  /** Where the watched body was drawn last frame (the eased change of view is taken from it). */
+  const watchAnchor = new THREE.Vector3();
+  /** The watched player's view pitch at the moment drawn (the buffer's, between snapshots). */
+  let watchPitchAt = 0;
+  /**
+   * The spectator's camera (spectator audit 2026-11-27): whom it shows and how (their eyes, a
+   * vehicle's chase view, the aircraft's, the air's), where it was last frame against the
+   * watched body, and the change of view being eased (`blend` 1 → 0).
+   */
+  const watchCam = {
+    seat: -1,
+    mode: "" as "" | "pov" | "car" | "plane" | "air" | "body",
+    pos: new THREE.Vector3(),
+    quat: new THREE.Quaternion(),
+    fromOffset: new THREE.Vector3(),
+    fromQuat: new THREE.Quaternion(),
+    blend: 0,
+    /** Their view's heading and pitch, eased a little (the rows are 15 a second). */
+    yaw: 0,
+    pitch: 0,
+    set: false,
+  };
+  /** The aircraft as drawn this frame (debug()). */
+  let debugPlane: { x: number; y: number; z: number } | null = null;
   let predictedShots = 0,
     lastShotAt = -1e9;
   /** The AWP's own scope was up last frame (its zoom clicks). */
@@ -1323,16 +1441,85 @@ export function createBrArena(
   const canopyLook = new CanopyLook();
   const chuteHarness = new THREE.Vector3();
   let previousCanopyHeading: number | null = null;
+  /** The canopy's heading as drawn last frame (null: not flying). */
+  let drawnHeading: number | null = null;
   const flightHeading = () =>
     Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
   const syncCanopyLook = () => canopyLook.sync(body.phase === "parachute", flightHeading(), pitch);
+  /**
+   * An orbit camera's offset from its pivot, into `out` (the climbing rope's and the rappel's
+   * cameras, and a spectator's view of someone on a line or a rope): `dist` out behind the
+   * view and `tilt` up, drawn in (by `shrink` a step, to `least`) until clear of walls and the
+   * ground, then raised (by `liftBy` to `most`, `lifts` times) where there is no room.
+   */
+  const orbitOffset = (
+    out: THREE.Vector3,
+    pivot: { x: number; y: number; z: number },
+    viewYaw: number,
+    tilt: number,
+    dist: number,
+    least: number,
+    shrink: number,
+    lifts: number,
+    liftBy: number,
+    most: number,
+  ) => {
+    const world = solid();
+    for (let lift = 0; lift < lifts; lift++) {
+      for (let r = dist; r >= least; r *= shrink) {
+        out.set(
+          Math.sin(viewYaw) * Math.cos(tilt) * r,
+          Math.sin(tilt) * r,
+          Math.cos(viewYaw) * Math.cos(tilt) * r,
+        );
+        const x = pivot.x + out.x,
+          y = pivot.y + out.y,
+          z = pivot.z + out.z;
+        if (y > world.hf.heightAt(x, z) + 0.6 && !world.blocked(x, y - 0.25, z, 0.5, 0.25))
+          return out;
+      }
+      // No room at this height: higher, over whatever is behind.
+      tilt = Math.min(most, tilt + liftBy);
+    }
+    return out;
+  };
+  /** A spectator's orbit round someone on a line or a rope: the pivot (eased) and the offset. */
+  const watchPivot = new THREE.Vector3(),
+    watchOrbit = new THREE.Vector3(),
+    watchWant = new THREE.Vector3();
   /** The chase camera's offset from the pilot (damped). */
-  const chaseCam = new THREE.Vector3();
-  let chaseCamSet = false;
-  // The vehicle camera: the free look's hold, and its height over rough ground.
-  const chaseLook = new BrChaseLook(),
-    chaseHeight = new BrFollowHeight(),
-    chaseLift = new BrFollowHeight(140, 4);
+  const newChaseRig = () => ({
+    cam: new THREE.Vector3(),
+    set: false,
+    height: new BrFollowHeight(),
+    lift: new BrFollowHeight(140, 4),
+  });
+  type ChaseRig = ReturnType<typeof newChaseRig>;
+  /** Yours, and the one a spectator's view of a driver or a flier uses (the same cameras). */
+  const myChase = newChaseRig(),
+    watchChase = newChaseRig();
+  const chaseLook = new BrChaseLook();
+  /**
+   * Your own view from one frame to the next (parachute audit 2026-11-27): which it is (the
+   * drop plane's, the aircraft's, behind the canopy, hanging under it, your eyes), where the
+   * camera was, and a change of view being eased (`blend` 1 → 0 over `ms`). Out of the plane
+   * the camera was cut from 70 m behind it to 10 m behind you, bailing out of the aircraft from
+   * its chase view to yours, and on touching down from behind you into your head, each in one
+   * frame.
+   */
+  const ownView = {
+    kind: "" as "" | "plane" | "flight" | "air" | "hang" | "foot",
+    set: false,
+    pos: new THREE.Vector3(),
+    /** How far the camera moved last frame (a change of view carries on from it). */
+    step: new THREE.Vector3(),
+    quat: new THREE.Quaternion(),
+    fromOffset: new THREE.Vector3(),
+    fromQuat: new THREE.Quaternion(),
+    blend: 0,
+    ms: 1,
+  };
+  const OWN_VIEW_MS = { exit: 600, land: 300, eye: 260 } as const;
   let chuteFirstPerson = false,
     bank = 0,
     chutePitch = 0,
@@ -1416,6 +1603,8 @@ export function createBrArena(
   const deathAt = new Map<number, number>();
   /** When the server said each seat was eliminated (the elim event), for deathAt below. */
   const killedAt = new Map<number, number>();
+  /** The seats whose elimination the feed has already told (each is told once). */
+  const elimSeen = new Set<number>();
   /**
    * Another rider's time into their ride: from where they are on the cable (the views carry
    * positions, not ride clocks), or, still on the deck taking hold, from when we first saw it
@@ -1478,14 +1667,17 @@ export function createBrArena(
     trackFx = createTrackerRenderer(scene);
     void renderer.compileAsync(trackFx.mesh, camera, scene).catch(() => {});
     // The aircraft is solid to you on foot (as on the server); seated, your own prediction and
-    // chase camera fly without it.
+    // chase camera fly without it, and so does a spectator's view of its pilot (the camera's
+    // way out of walls met the aircraft itself, where the room has it by now, and jumped in
+    // to 3.5 m and out again whenever a late snapshot put that on the one drawn).
     solidView = withAircraft(
       withDoors(
         withPanes(island.island.solid, island.island.panes, paneFx.broken),
         island.island.doors,
         doorOpen,
       ),
-      () => (flight.seat === null ? flight.server : null),
+      () =>
+        flight.seat === null && !(watchCam.set && watchCam.mode === "plane") ? flight.server : null,
     );
     doorsFx = createDoorRenderer(scene, island.island.doors, island.doorLook);
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
@@ -1698,20 +1890,24 @@ export function createBrArena(
   const looker = new MouseResampler();
   const onMouse = (e: MouseEvent) => {
     if (!locked() || inventoryOpen) return;
-    syncCanopyLook();
-    if (canopyLook.active) {
-      looker.reset();
-      canopyLook.mouse(e.movementX, e.movementY, sensitivity);
-      return;
-    }
+    // Under the canopy too (parachute audit 2026-11-27): its view was turned by each report
+    // as it came, so a 125 Hz mouse against a 60 or 144 Hz screen turned it by none, one or
+    // two reports a frame ("stiff, jittery … when looking around while gliding").
     looker.push(e.movementX, e.movementY, e.timeStamp);
-    chaseLook.moved();
+    syncCanopyLook();
+    if (!canopyLook.active) chaseLook.moved();
   };
   /** Turn the view by this frame's share of the mouse's movement. */
   const applyLook = (now: number) => {
     const { dx, dy } = looker.take(now);
     if (!dx && !dy) return;
-    if (!locked() || inventoryOpen || canopyLook.active) return looker.reset();
+    if (!locked() || inventoryOpen) return looker.reset();
+    syncCanopyLook();
+    if (canopyLook.active) {
+      // The canopy's course (or, right button held, the free look round it).
+      canopyLook.mouse(dx, dy, sensitivity);
+      return;
+    }
     if (flight.seat !== null) {
       // In the aircraft: the stick (the pilot) or the free look (Alt, or the passenger's).
       if (flight.seat === 1) flight.look.held = true;
@@ -1990,7 +2186,8 @@ export function createBrArena(
     const f = Number(keys.has(binds.forward)) - Number(keys.has(binds.back)),
       s = Number(keys.has(binds.right)) - Number(keys.has(binds.left));
     syncCanopyLook();
-    canopyLook.keyboard(flightHeading(), s !== 0);
+    // (The heading as last drawn: letting go of A/D holds the course the view shows.)
+    canopyLook.keyboard(drawnHeading ?? flightHeading(), s !== 0);
     const edge = (code: string) => {
       const had = edges.has(code);
       edges.delete(code);
@@ -2224,6 +2421,19 @@ export function createBrArena(
     swimFromZ = 0;
   /** Who hit this player, and when (ms, local). */
   const hitMeAt = new Map<number, number>();
+  /** The last hit or hurt event on this player (ms, local): health lost without one is the gas. */
+  let damageEventAt = -Infinity;
+  /** Victims that already had their mist in this batch (a shotgun's pellets land together). */
+  const mistGiven = new Set<number>();
+  const woundAt = { x: 0, y: 0, z: 0 },
+    woundHit = {
+      point: woundAt,
+      direction: { x: 0, y: 0, z: 0 },
+      zone: "chest" as string,
+      light: false,
+    },
+    damageFrom = { key: 0, x: 0, z: 0 },
+    lookDir = new THREE.Vector3();
   function onCombat(view: BrView, now: number) {
     // Shooters that hit this player in this batch: their shots sound as damage, not near misses.
     // (A hit can arrive ahead of its shot now, in a `br-fast` message: remembered briefly.)
@@ -2237,6 +2447,7 @@ export function createBrArena(
       if (now - at > 400) hitMeAt.delete(seat);
       else hitMeBy.add(seat);
     }
+    mistGiven.clear();
     let ownHitShown = false;
     const ownHitHead = (view.combat ?? []).some(
       (e) => e.type === "hit" && e.seat === mySeat && e.zone === "head",
@@ -2322,10 +2533,46 @@ export function createBrArena(
           feed({ kind: "hit", head: ownHitHead, kill: false });
         }
         if (e.victim === mySeat) {
+          // Where it came from (the shooter's place now; the crescent is turned to the camera
+          // every frame) and what took it: the helmet or the vest, or the body.
           const src = latest?.players.find((r) => r[0] === e.seat);
-          const from = src ? Math.atan2(-(src[1]! - body.x), -(src[3]! - body.z)) - yaw : 0;
-          feed({ kind: "hurt", from });
+          const armoured =
+            e.broke.length > 0 ||
+            (e.zone === "head"
+              ? !!kit?.helmet
+              : e.zone !== "legs" && (!!kit?.vest || !!kit?.plates.some(Boolean)));
+          damageEventAt = now;
+          if (src) {
+            damageFrom.key = e.seat;
+            damageFrom.x = src[1]!;
+            damageFrom.z = src[3]!;
+          }
+          damageFx.hit(src ? damageFrom : null, e.damage, armoured, now);
           if (e.broke.length) audio.armourBreak();
+        } else if (e.victim !== povSeat) {
+          // The red mist on a body in view (impacts.ts `flesh`): never the one the camera is
+          // in. On the body as it is drawn, carried on the way the bullet went (from the
+          // shooter: your own eye, or their head as last drawn).
+          const seen = others.find((o) => o.seat === e.victim);
+          woundAt.x = e.point[0];
+          woundAt.y = e.point[1];
+          woundAt.z = e.point[2];
+          anchorHit(woundAt, seen?.pos, woundAt);
+          const by = e.seat === mySeat ? null : others.find((o) => o.seat === e.seat);
+          const d = woundHit.direction;
+          if (e.seat === mySeat) {
+            d.x = woundAt.x - camera.position.x;
+            d.y = woundAt.y - camera.position.y;
+            d.z = woundAt.z - camera.position.z;
+          } else if (by) {
+            d.x = woundAt.x - by.pos.x;
+            d.y = woundAt.y - (by.pos.y + 1.5);
+            d.z = woundAt.z - by.pos.z;
+          } else d.x = d.y = d.z = 0;
+          woundHit.zone = e.zone;
+          woundHit.light = mistGiven.has(e.victim);
+          mistGiven.add(e.victim);
+          impacts.flesh(woundHit, performance.now());
         }
         continue;
       }
@@ -2345,11 +2592,18 @@ export function createBrArena(
         continue;
       }
       if (e.type === "hurt") {
-        if (e.victim === mySeat) feed({ kind: "hurt", from: 0 });
-        else if (e.seat === mySeat) feed({ kind: "hit", head: false, kill: false });
+        // (A blast, a fire, a fall, a vehicle: the edge flash, no direction.)
+        if (e.victim === mySeat) {
+          damageEventAt = now;
+          damageFx.hit(null, e.damage, false, now);
+        } else if (e.seat === mySeat) feed({ kind: "hit", head: false, kill: false });
         continue;
       }
       if (e.type === "elim") {
+        // Once per victim: a seat is eliminated once a match, and the same event can arrive
+        // twice (the fast path and a view, a reconnect replaying a tick).
+        if (elimSeen.has(e.seat)) continue;
+        elimSeen.add(e.seat);
         // The kill feed's row: who, with what, whom (gas and self-eliminations told apart).
         const weapon: BrKillWeapon =
           e.gun === "m4a1s"
@@ -2377,8 +2631,11 @@ export function createBrArena(
           weapon,
           self: e.by === e.seat && e.gun !== "gas" && e.gun !== "fall",
           mine: e.by === mySeat || e.seat === mySeat,
+          m: e.m ?? null,
         });
         if (e.by === mySeat) feed({ kind: "hit", head: false, kill: true });
+        if (e.by === mySeat && e.seat !== mySeat)
+          feed({ kind: "confirm", seat: e.seat, victim: e.name ?? "?", weapon, m: e.m ?? null });
         if (e.seat === mySeat)
           feed({ kind: "eliminated", by: e.gun === "fall" ? "a fall" : (e.byName ?? "?") });
         killedAt.set(e.seat, now);
@@ -2400,6 +2657,7 @@ export function createBrArena(
       if (r) yaw = Math.atan2(-r.dir[0], -r.dir[1]);
       pitch = -0.3;
     }
+    if (view.you.seat !== mySeat) damageFx.reset();
     mySeat = view.you.seat;
     const previousGun = kit?.guns[kit.active]?.item;
     latest = view;
@@ -2421,6 +2679,11 @@ export function createBrArena(
       const before = kit;
       kit = view.kit;
       predictedShots = 0;
+      // Health lost with no hit or blast reported for it (the gas, drowning): the edge flash.
+      // Back from the dead (a new match on this page): nothing of the last one stays.
+      if (before && !before.dead && kit.hp < before.hp && now - damageEventAt > 300)
+        damageFx.hit(null, before.hp - kit.hp, false, now);
+      if (before?.dead && !kit.dead) damageFx.reset();
       // Reload sound when a reload starts; heal done chime.
       const g = activeGun();
       // Broken off before its end (a switch, a drop): the reload's sound stops too.
@@ -2453,7 +2716,7 @@ export function createBrArena(
       if (before?.heal && !kit.heal && kit.hp > before.hp) audio.healed();
     }
     loot?.apply(view.loot);
-    vehiclesFx?.apply(view.vehicles, now);
+    vehiclesFx?.apply(view.vehicles, view.tick * TICK_MS);
     {
       const was = flight.seat;
       flight.apply(view.aircraft, view.flying, view.tick * TICK_MS);
@@ -2526,7 +2789,13 @@ export function createBrArena(
     // On the server's clock: a late packet takes its own place in the motion.
     if (view.tick * TICK_MS < (buffer.at(-1)?.at ?? -Infinity) - 2000) buffer.length = 0;
     if (remoteTimeline.observe(view.tick * TICK_MS, now)) {
-      buffer.push({ at: view.tick * TICK_MS, rows });
+      buffer.push({
+        at: view.tick * TICK_MS,
+        rows,
+        // (The watched player's view with their row: drawn at the same moment of theirs.)
+        watchSeat: view.watch?.seat ?? -1,
+        watchPitch: view.watch?.pitch ?? 0,
+      });
       while (buffer.length > 30) buffer.shift();
     }
     // (A door request never answered within two seconds is forgotten: the server's doors rule.)
@@ -2563,7 +2832,17 @@ export function createBrArena(
     else delete body.rappel;
     if (y.lift) body.lift = { ...y.lift };
     else delete body.lift;
+    for (const p of pending) {
+      if (p.seq > y.seq) break;
+      if (p.seq !== y.seq) continue;
+      // (This input was in by this snapshot: at most a snapshot's interval before it.)
+      inputLag.samples.push(view.tick * TICK_MS - p.clock);
+      if (inputLag.samples.length > 32) inputLag.samples.shift();
+      inputLag.ms = Math.max(0, Math.min(400, Math.min(...inputLag.samples)));
+    }
     while (pending.length && pending[0]!.seq <= y.seq) pending.shift();
+    // (Out of the plane for the room too: nothing left to replay the jump for.)
+    if (y.phase !== "plane") exitCarry.set = false;
     if (flight.seat !== null && island) {
       // Flying: the pilot replays the unacknowledged inputs on the server's aircraft.
       flight.reconcile(solid(), island.meta, pending as never);
@@ -2586,15 +2865,7 @@ export function createBrArena(
         // Inputs sent before a door request met that door as it was.
         for (const g of doorGuesses)
           if (g.id >= 0) doorOpen[g.id] = p.seq <= g.seq ? g.was : g.was ? 0 : 1;
-        stepDrop(
-          solid(),
-          island.meta,
-          route!,
-          body,
-          healingInput(p.input),
-          p.clock - view.phaseAt,
-          TICK_MS,
-        );
+        stepOwn(healingInput(p.input), p.clock - view.phaseAt);
       }
     for (const g of doorGuesses) if (g.id >= 0) doorOpen[g.id] = g.was ? 0 : 1;
     const jump = before.distanceTo(new THREE.Vector3(body.x, body.y, body.z));
@@ -2605,8 +2876,15 @@ export function createBrArena(
     // is: the ride is a function of its clock, so the view and the cab stay together (owner,
     // 2026-11-14: "when arriving at the top floor, the floor in the elevator shifts": the eased
     // offset moved the eye against the cab's floor, most of all as the ride ended).
+    // In the air a larger one is eased too (parachute audit 2026-11-27). Out of the drop plane
+    // the room lets you go a round trip and a tick later than you pressed, and the plane flies
+    // 225 m/s: the first snapshot after the jump put you, your canopy and the camera 20 to
+    // 45 m further along its track in one frame. Eased, it is the plane's speed carrying you
+    // on for a moment as the canopy opens.
+    const flying = body.phase === "parachute" || body.phase === "freefall";
     if (wasRiding || body.phase === "lift") correction.set(0, 0, 0);
-    else if (jump < 3) correction.add(before.sub(new THREE.Vector3(body.x, body.y, body.z)));
+    else if (jump < 3 || (flying && jump < AIR_EASED_M))
+      correction.add(before.sub(new THREE.Vector3(body.x, body.y, body.z)));
     else correction.set(0, 0, 0);
   }
   /** Items within pickup reach of the eye and in sight: a crate's contents first, then the nearest. */
@@ -2687,6 +2965,85 @@ export function createBrArena(
   const presentedRows = new Map<number, number[]>();
   const actorForward = new THREE.Vector3();
   const horizontalAxis = new THREE.Vector3(1, 0, 0);
+  /**
+   * The chase camera above and behind a vehicle as it is drawn this frame (owner, 2026-11-08:
+   * "not FPS while driving", "camera angle above the car and bike"): `viewYaw` swings it round
+   * the vehicle and `viewPitch` tilts it, within limits; it pulls back a little with the speed.
+   * Yours when you drive, and a spectator's view of a driver (their view's heading and pitch).
+   */
+  function vehicleChase(
+    rig: ChaseRig,
+    v: { x: number; y: number; z: number; kind: VehicleKind; speed: number },
+    viewYaw: number,
+    viewPitch: number,
+    dtMs: number,
+  ) {
+    const s = spec(v.kind);
+    const fast = Math.min(1, Math.abs(v.speed) / s.maxSpeed);
+    const dist = (s.bike ? 4.3 : 5.4 + 0.2 * (s.length - 4.5)) + (s.bike ? 1 : 1.4) * fast;
+    // Pitch below the horizon: 0.36 rad looks down on the roof; the mouse adds or takes some.
+    const tilt = Math.max(0.14, Math.min(0.8, 0.36 - viewPitch * 0.5));
+    const ox = Math.sin(viewYaw) * Math.cos(tilt) * dist,
+      oz = Math.cos(viewYaw) * Math.cos(tilt) * dist,
+      oy = Math.sin(tilt) * dist;
+    if (!rig.set) {
+      rig.cam.set(ox, oy, oz);
+      rig.height.reset();
+      rig.lift.reset();
+    }
+    rig.set = true;
+    rig.cam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 70));
+    // The height the view turns about follows the vehicle's smoothly: the vehicle rides every
+    // change of the ground's slope, the view does not (frame-view.ts BrFollowHeight).
+    const pivotY = rig.height.sample(v.y + (s.bike ? 1.1 : s.height * 0.75), dtMs);
+    const cx = v.x + rig.cam.x,
+      cz = v.z + rig.cam.z;
+    // Kept above the ground behind the vehicle (a bank, a hillside): lifted smoothly too.
+    const ground = solid().hf.heightAt(cx, cz);
+    const lift = rig.lift.sample(Math.max(0, ground + 1 - (pivotY + rig.cam.y)), dtMs);
+    camera.position.set(cx, Math.max(pivotY + rig.cam.y + lift, ground + 0.4), cz);
+    // Aim just ahead of the vehicle so the road in front is in view.
+    camera.lookAt(v.x - Math.sin(viewYaw) * 2.5, pivotY, v.z - Math.cos(viewYaw) * 2.5);
+  }
+  /**
+   * Behind and above someone in the air (owner's parachute spec §4): the view orbits the pilot
+   * (it never steers), the whole canopy and the ground below in view; pulled back while the
+   * canopy opens (`opening` 1 → 0), damped, never into the ground. The view's pitch is held
+   * between looking well down and a little up, so the camera never sits inside the canopy.
+   * Yours in the air, and a spectator's view of a flier.
+   */
+  function airChase(
+    rig: ChaseRig,
+    px: number,
+    py: number,
+    pz: number,
+    viewYaw: number,
+    viewPitch: number,
+    heading: number,
+    opening: number,
+    diving: number,
+    roll: number,
+    dtMs: number,
+  ) {
+    const dist = 6.4 + 3.5 * opening + 0.9 * diving;
+    const camPitch = Math.max(-0.75, Math.min(0.3, viewPitch)) - 0.14 - 0.22 * diving;
+    const lead = 2.2 * diving;
+    const pivotY = py + 2.5 - 1.2 * diving;
+    // The offset from the pilot is what is damped (no snapping), not the camera's place in
+    // the world: the camera moves with them at any speed, only its orbit eases.
+    const ox = Math.sin(viewYaw) * Math.cos(camPitch) * dist,
+      oz = Math.cos(viewYaw) * Math.cos(camPitch) * dist,
+      oy = 2.5 - Math.sin(camPitch) * dist;
+    if (!rig.set) rig.cam.set(ox, oy, oz);
+    rig.set = true;
+    rig.cam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 90));
+    const cx = px + rig.cam.x,
+      cz = pz + rig.cam.z;
+    camera.position.set(cx, Math.max(py + rig.cam.y, solid().hf.heightAt(cx, cz) + 1.2), cz);
+    camera.lookAt(px - Math.sin(heading) * lead, pivotY, pz - Math.cos(heading) * lead);
+    // A little roll with the canopy's bank.
+    camera.rotateZ(roll * 0.5);
+  }
   function frame(now: number) {
     if (disposed) return;
     requestAnimationFrame(frame);
@@ -2751,16 +3108,23 @@ export function createBrArena(
         (latest.phase !== "waiting" && latest.phase !== "starting") ||
         body.phase === "ground" ||
         body.phase === "swim"
-      )
-        stepDrop(
-          solid(),
-          island.meta,
-          route,
-          body,
-          healingInput(input),
-          clock - latest.phaseAt,
-          TICK_MS,
-        );
+      ) {
+        const planeMs = clock - latest.phaseAt;
+        if (body.phase === "plane" && Number.isFinite(inputLag.ms)) {
+          // (Not at the route's end: everyone left aboard is let go at that one place.)
+          const lagMs = Math.min(inputLag.ms, Math.max(0, routeMs(route) - planeMs));
+          const [ax, , az] = planeAt(route, planeMs),
+            [bx, , bz] = planeAt(route, planeMs + lagMs);
+          exitCarry.x = bx - ax;
+          exitCarry.z = bz - az;
+          exitCarry.set = true;
+          if (stepOwn(healingInput(input), planeMs)) {
+            // Drawn from the door: the view glides the carry (reconcile's eased correction).
+            correction.x -= exitCarry.x;
+            correction.z -= exitCarry.z;
+          } else exitCarry.set = false;
+        } else stepOwn(healingInput(input), planeMs);
+      }
     }
     audio.setParachuteOpen(body.phase === "parachute" && !kit?.dead);
     // Swimming: the water loop, louder with the stroke (horizontal speed this frame).
@@ -2862,7 +3226,8 @@ export function createBrArena(
     if ((fireHeld || predictTap || aimHeld || predictStab) && !inventoryOpen && locked())
       predictKnife(server, fireHeld || predictTap ? "slash" : "stab");
     predictTap = predictStab = false;
-    correction.multiplyScalar(Math.exp(-dtMs / 90));
+    // (A large one, only ever kept in the air, over a quarter of a second, not a tenth.)
+    correction.multiplyScalar(Math.exp(-dtMs / (correction.lengthSq() > 9 ? 240 : 90)));
     if (context.lost) return;
 
     // The plane, from the shared route and the server clock.
@@ -2897,15 +3262,17 @@ export function createBrArena(
           dtMs,
         )
       : null;
-    // Vehicles first: drivers are sat in them as they are drawn this frame.
-    vehiclesFx?.update(now, carPose, dtMs, camera.position);
+    // Others, interpolated on the server's clock, behind it by this connection's delay (a
+    // spectator's covers every recent gap: nothing is aimed by that picture).
+    const t = remoteTimeline.sample(now, dtMs, !!kit?.dead);
+    // Vehicles first, on that clock too: drivers are sat in them as they are drawn this frame.
+    vehiclesFx?.update(now, carPose, dtMs, camera.position, t);
     paneFx?.update(dtMs);
     trackFx?.update(now);
-    // Others, interpolated on the server's clock, behind it by this connection's delay.
-    const t = remoteTimeline.sample(now, dtMs);
     // The aircraft: the pilot's prediction, or everyone else's interpolation on the same clock.
     const plane3d = flight.sample(t, accumulator, dtMs);
     aircraftFx?.update(plane3d, dtMs, camera.position, now);
+    debugPlane = plane3d;
     if (plane3d)
       // (The stall horn sounds only inside; one shared object, no garbage each frame.)
       planeSound.stallWarn = flight.seat !== null && !plane3d.grounded && aero(plane3d).warn;
@@ -2928,6 +3295,12 @@ export function createBrArena(
     camera.getWorldDirection(actorForward);
     if (a && b) {
       const k = b.at > a.at ? Math.min(1, Math.max(0, (t - a.at) / (b.at - a.at))) : 1;
+      // The watched player's pitch at that moment (it used to be the newest snapshot's, a
+      // playback delay ahead of their heading and their place).
+      watchPitchAt =
+        a.watchSeat === b.watchSeat
+          ? a.watchPitch + (b.watchPitch - a.watchPitch) * k
+          : b.watchPitch;
       brVisibleRows(a, b, t, presentedRows);
       for (const [seat, rb] of presentedRows) {
         const ra = a.rows.get(seat) ?? rb;
@@ -3015,7 +3388,17 @@ export function createBrArena(
     {
       const seat = kit?.dead ? latest?.watch?.seat : undefined;
       const w = seat !== undefined ? others.find((o) => o.seat === seat) : undefined;
-      if (w && w.vehicle === -1 && POV_PHASES.has(w.phase)) {
+      if (
+        w &&
+        w.vehicle === -1 &&
+        POV_PHASES.has(w.phase) &&
+        // (A ladder's rungs are climbed in first person, a rope from behind.)
+        !(
+          w.phase === "ladder" &&
+          island &&
+          climbAt(island.hf, w.pos.x, w.pos.y, w.pos.z)?.ladder.rope
+        )
+      ) {
         povSeat = w.seat;
         // Swimming: their arms stay drawn, stroking in front of the camera.
         w.occluded = w.phase !== "swim";
@@ -3065,7 +3448,11 @@ export function createBrArena(
         let turnNow = 0;
         if (Math.hypot(dx, dz) > 0.05 && sec > 0) {
           const target = Math.atan2(-dx, -dz);
-          const d = Math.atan2(Math.sin(target - tr.h), Math.cos(target - tr.h)) * 0.15;
+          // (By the time passed, not by the frame: 0.15 of the way a frame turned a canopy
+          // 2.4 times as fast at 144 fps as at 60.)
+          const d =
+            Math.atan2(Math.sin(target - tr.h), Math.cos(target - tr.h)) *
+            (1 - Math.exp(-dtMs / 103));
           tr.h += d;
           turnNow = d / sec;
         }
@@ -3386,7 +3773,19 @@ export function createBrArena(
       py = viewPose.y,
       pz = viewPose.z;
     syncCanopyLook();
+    const underCanopy = body.phase === "parachute";
+    // The way the canopy flies, as drawn this frame: from the body stepped on to now (the
+    // part of a step the view is ahead by), not the one of the last whole step. That one
+    // turns 30 times a second, so the wing, the pilot under it and, steering with A/D, the
+    // camera behind them turned in steps of 2.7° on a screen drawing 60 to 144 frames
+    // (parachute audit 2026-11-27).
+    const flown = viewPose.body.phase === "parachute" ? viewPose.body : body;
+    const flying = underCanopy && Math.hypot(flown.vx, flown.vz) > 0.5;
+    const flownHeading = flying ? Math.atan2(-flown.vx, -flown.vz) : 0;
+    drawnHeading = flying ? flownHeading : null;
     if (canopyLook.active) {
+      if (flying && keys.has(binds.left) !== keys.has(binds.right))
+        canopyLook.keyboard(flownHeading, true);
       const view = canopyLook.view(dtMs);
       yaw = view.yaw;
       pitch = view.pitch;
@@ -3394,10 +3793,8 @@ export function createBrArena(
     const fx = -Math.sin(yaw) * Math.cos(pitch),
       fy = Math.sin(pitch),
       fz = -Math.cos(yaw) * Math.cos(pitch);
-    const underCanopy = body.phase === "parachute";
     // The canopy (and the body under it) faces where it flies, not where you look.
-    const chuteHeading =
-      underCanopy && Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
+    const chuteHeading = flying ? flownHeading : yaw;
     if (underCanopy && myDeployAt < 0) myDeployAt = now;
     if (!underCanopy && myDeployAt >= 0) {
       // Touched down: the canopy collapses where you landed.
@@ -3806,7 +4203,7 @@ export function createBrArena(
       camera.lookAt(c.lookX, c.lookY, c.lookZ);
       // The head turns where the view looks (others see it), the shots stay off.
       yaw = c.yaw;
-      chaseCamSet = false;
+      myChase.set = false;
     } else if (car && carPose) {
       // Driving (owner, 2026-11-08: "not FPS while driving", "camera angle above the car and
       // bike"): always third person, a chase camera above and behind looking down on the
@@ -3814,32 +4211,7 @@ export function createBrArena(
       // it settles back behind while you move and pulls back a little with the speed.
       // (It stays where the mouse put it for a moment first: frame-view.ts BrChaseLook.)
       yaw = chaseLook.step(yaw, carPose.yaw, Math.abs(carPose.speed) > 2, dtMs);
-      const s = spec(carPose.kind);
-      const fast = Math.min(1, Math.abs(carPose.speed) / s.maxSpeed);
-      const dist = (s.bike ? 4.3 : 5.4 + 0.2 * (s.length - 4.5)) + (s.bike ? 1 : 1.4) * fast;
-      // Pitch below the horizon: 0.36 rad looks down on the roof; the mouse adds or takes some.
-      const tilt = Math.max(0.14, Math.min(0.8, 0.36 - pitch * 0.5));
-      const ox = Math.sin(yaw) * Math.cos(tilt) * dist,
-        oz = Math.cos(yaw) * Math.cos(tilt) * dist,
-        oy = Math.sin(tilt) * dist;
-      if (!chaseCamSet) {
-        chaseCam.set(ox, oy, oz);
-        chaseHeight.reset();
-        chaseLift.reset();
-      }
-      chaseCamSet = true;
-      chaseCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 70));
-      // The height the view turns about follows the vehicle's smoothly: the vehicle rides every
-      // change of the ground's slope, the view does not (frame-view.ts BrFollowHeight).
-      const pivotY = chaseHeight.sample(carPose.y + (s.bike ? 1.1 : s.height * 0.75), dtMs);
-      const cx = carPose.x + chaseCam.x,
-        cz = carPose.z + chaseCam.z;
-      // Kept above the ground behind the vehicle (a bank, a hillside): lifted smoothly too.
-      const ground = solid().hf.heightAt(cx, cz);
-      const lift = chaseLift.sample(Math.max(0, ground + 1 - (pivotY + chaseCam.y)), dtMs);
-      camera.position.set(cx, Math.max(pivotY + chaseCam.y + lift, ground + 0.4), cz);
-      // Aim just ahead of the vehicle so the road in front is in view.
-      camera.lookAt(carPose.x - Math.sin(yaw) * 2.5, pivotY, carPose.z - Math.cos(yaw) * 2.5);
+      vehicleChase(myChase, carPose, yaw, pitch, dtMs);
     } else if (body.phase === "plane" && plane.visible) {
       camera.position.set(
         plane.position.x - fx * 70,
@@ -3861,26 +4233,9 @@ export function createBrArena(
       // further back, its aim led ahead along the way the pilot and wing swing, so you see the
       // pilot, the whole wing out in front and the ground coming up.
       const diving = underCanopy ? Math.max(0, Math.min(1, mySwing.angle / DIVE_SWING)) : 0;
-      const dist = 6.4 + 3.5 * opening + 0.9 * diving;
-      const camPitch = Math.max(-0.75, Math.min(0.3, pitch)) - 0.14 - 0.22 * diving;
-      const lead = 2.2 * diving;
-      const pivotY = py + 2.5 - 1.2 * diving;
-      // The offset from the pilot is what is damped (no snapping), not the camera's place in
-      // the world: the camera moves with you at any speed, only its orbit eases.
-      const ox = Math.sin(yaw) * Math.cos(camPitch) * dist,
-        oz = Math.cos(yaw) * Math.cos(camPitch) * dist,
-        oy = 2.5 - Math.sin(camPitch) * dist;
-      if (!chaseCamSet) chaseCam.set(ox, oy, oz);
-      chaseCamSet = true;
-      chaseCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 90));
-      const cx = px + chaseCam.x,
-        cz = pz + chaseCam.z;
-      camera.position.set(cx, Math.max(py + chaseCam.y, solid().hf.heightAt(cx, cz) + 1.2), cz);
-      camera.lookAt(px - Math.sin(chuteHeading) * lead, pivotY, pz - Math.cos(chuteHeading) * lead);
-      // A little roll with the canopy's bank.
-      camera.rotateZ(bank * 0.5);
+      airChase(myChase, px, py, pz, yaw, pitch, chuteHeading, opening, diving, bank, dtMs);
     } else {
-      chaseCamSet = false;
+      myChase.set = false;
       const seen = viewPose.body;
       const eyeTarget = seen.phase === "swim" ? SWIM_EYE : seen.crouched ? 0.95 : 1.6;
       // Into and out of the water the server moves the body between the bottom and the surface
@@ -3913,6 +4268,59 @@ export function createBrArena(
       );
       const recoil = aimRecoil.sample(server, dtMs);
       camera.rotation.set(clampPitch(pitch + recoil.pitch), yaw + recoil.yaw, 0, "YXZ");
+    }
+    {
+      // A change of your own view in the drop is eased, never cut: out of the plane (the
+      // camera swings in from behind the plane to behind you while the canopy opens), the
+      // touchdown (from behind you into your eyes) and the C key under the canopy.
+      const kind = kit?.dead
+        ? ""
+        : flight.seat !== null
+          ? "flight"
+          : car
+            ? ""
+            : body.phase === "plane" && plane.visible
+              ? "plane"
+              : canopyFp
+                ? "hang"
+                : airborne
+                  ? "air"
+                  : "foot";
+      if (kind !== ownView.kind) {
+        const was = ownView.kind;
+        const ms =
+          !ownView.set || !kind || !was
+            ? 0
+            : (was === "plane" || was === "flight") && (kind === "air" || kind === "hang")
+              ? OWN_VIEW_MS.exit
+              : (was === "air" || was === "hang") && kind === "foot"
+                ? OWN_VIEW_MS.land
+                : (was === "air" && kind === "hang") || (was === "hang" && kind === "air")
+                  ? OWN_VIEW_MS.eye
+                  : 0;
+        ownView.kind = kind;
+        ownView.blend = ms ? 1 : 0;
+        ownView.ms = ms || 1;
+        if (ms) {
+          // From where the camera would have been this frame (on at last frame's pace),
+          // against your body as it is now: nothing steps, whatever the old view hung on
+          // (the plane, the aircraft as predicted, your body).
+          ownView.fromOffset.copy(ownView.pos).add(ownView.step).sub(shown);
+          ownView.fromQuat.copy(ownView.quat);
+        }
+      }
+      if (ownView.blend > 0) {
+        ownView.blend = Math.max(0, ownView.blend - dtMs / ownView.ms);
+        const k = ownView.blend * ownView.blend * (3 - 2 * ownView.blend);
+        forward.copy(ownView.fromOffset).add(shown);
+        camera.position.lerp(forward, k);
+        camera.quaternion.slerp(ownView.fromQuat, k);
+      }
+      if (ownView.set && kind) ownView.step.copy(camera.position).sub(ownView.pos);
+      else ownView.step.set(0, 0, 0);
+      ownView.set = !!kind;
+      ownView.pos.copy(camera.position);
+      ownView.quat.copy(camera.quaternion);
     }
     if (zipBlend > 0 && !seatedMe()) {
       // The zip-line's elevated follow view (owner's spec §5): above and behind the rider, looking
@@ -3977,27 +4385,13 @@ export function createBrArena(
       // Pivot at the chest: up the rope's line from the feet (or upright, stepping on or off).
       ropeUp.copy(me.root.quaternion);
       ropePivot.set(0, 1.25, 0.05).applyQuaternion(ropeUp).add(shown);
-      const dist = 3.9;
-      let tilt = Math.max(-0.3, Math.min(1.38, 0.62 - pitch * 0.9));
-      let ox = 0,
-        oy = 0,
-        oz = 0;
-      const clear = (x: number, y: number, z: number) =>
-        y > solid().hf.heightAt(x, z) + 0.6 && !solid().blocked(x, y - 0.25, z, 0.5, 0.25);
-      search: for (let lift = 0; lift < 6; lift++) {
-        for (let r = dist; r >= 1.2; r *= 0.82) {
-          ox = Math.sin(yaw) * Math.cos(tilt) * r;
-          oy = Math.sin(tilt) * r;
-          oz = Math.cos(yaw) * Math.cos(tilt) * r;
-          if (clear(ropePivot.x + ox, ropePivot.y + oy, ropePivot.z + oz)) break search;
-        }
-        // No room at this height (the rock in front): higher, where the face lies back.
-        tilt = Math.min(1.38, tilt + 0.18);
-      }
+      // (No room at a height, the rock in front: higher, where the face lies back.)
+      const tilt = Math.max(-0.3, Math.min(1.38, 0.62 - pitch * 0.9));
+      orbitOffset(forward, ropePivot, yaw, tilt, 3.9, 1.2, 0.82, 6, 0.18, 1.38);
       // The offset is damped (from your eye on taking hold: the view pulls out of your head).
       if (!ropeCamSet) ropeCam.set(0, 0.35, 0);
       ropeCamSet = true;
-      ropeCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 140));
+      ropeCam.lerp(forward, 1 - Math.exp(-dtMs / 140));
       const cx = ropePivot.x + ropeCam.x,
         cz = ropePivot.z + ropeCam.z;
       camera.position.set(
@@ -4021,29 +4415,14 @@ export function createBrArena(
       ropeFpPos.copy(camera.position);
       ropeFpQ.copy(camera.quaternion);
       ropePivot.set(shown.x, shown.y + 1.15, shown.z);
-      const dist = 3.9;
-      let tilt = Math.max(0.12, Math.min(1.42, 0.9 - pitch * 0.9));
-      let ox = 0,
-        oy = 0,
-        oz = 0;
-      const clear = (x: number, y: number, z: number) =>
-        y > solid().hf.heightAt(x, z) + 0.6 && !solid().blocked(x, y - 0.25, z, 0.5, 0.25);
-      search: for (let lift = 0; lift < 5; lift++) {
-        for (let r = dist; r >= 1.4; r *= 0.84) {
-          ox = Math.sin(yaw) * Math.cos(tilt) * r;
-          oy = Math.sin(tilt) * r;
-          oz = Math.cos(yaw) * Math.cos(tilt) * r;
-          if (clear(ropePivot.x + ox, ropePivot.y + oy, ropePivot.z + oz)) break search;
-        }
-        // No room at this height: higher, over whatever is behind you.
-        tilt = Math.min(1.42, tilt + 0.16);
-      }
+      const tilt = Math.max(0.12, Math.min(1.42, 0.9 - pitch * 0.9));
+      orbitOffset(forward, ropePivot, yaw, tilt, 3.9, 1.4, 0.84, 5, 0.16, 1.42);
       if (!rappelCamSet) {
         rappelCam.set(0, 0.45, 0);
         rappelLook.copy(ropePivot);
       }
       rappelCamSet = true;
-      rappelCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 150));
+      rappelCam.lerp(forward, 1 - Math.exp(-dtMs / 150));
       // The point looked at is the body itself, frame for frame, down the wall and along it
       // (as on the climbing rope: nothing trails). Only a hop's swing out from the wall is
       // eased, so the body is seen leaving the wall and meeting it and the view does not
@@ -4182,30 +4561,163 @@ export function createBrArena(
     const watchSeat = kit?.dead ? latest.watch?.seat : undefined;
     const watched = watchSeat !== undefined ? others.find((o) => o.seat === watchSeat) : undefined;
     const pov = watched && watched.seat === povSeat ? watched : null;
-    if (pov) {
-      const eyeH = pov.phase === "swim" ? SWIM_EYE : 1.6 - (1.6 - 0.95) * pov.stance;
-      const bob =
-        pov.phase === "swim" ? (actors.find((s) => s.seat === pov.seat)?.actor.swimBob ?? 0) : 0;
-      camera.position.set(pov.pos.x, pov.pos.y + eyeH + bob, pov.pos.z);
-      const target = latest.watch?.pitch ?? 0;
-      povPitch += (target - povPitch) * (1 - Math.exp(-Math.min(100, dtMs) / 60));
-      camera.rotation.set(povPitch, pov.yaw, 0, "YXZ");
-      // How fast they move (the gun's walk and sprint), from where they were last frame.
-      const sp = Math.hypot(pov.pos.x - povMoved.x, pov.pos.z - povMoved.z) / Math.max(1, dtMs);
-      povMoved.speed += (sp * 1000 - povMoved.speed) * (1 - Math.exp(-Math.min(100, dtMs) / 120));
-      povMoved.x = pov.pos.x;
-      povMoved.z = pov.pos.z;
-    } else if (watched) {
-      camera.position.set(
-        watched.pos.x + Math.sin(watched.yaw) * 4,
-        watched.pos.y + 2.4,
-        watched.pos.z + Math.cos(watched.yaw) * 4,
-      );
-      camera.lookAt(
-        watched.pos.x - Math.sin(watched.yaw) * 6,
-        watched.pos.y + 1.4,
-        watched.pos.z - Math.cos(watched.yaw) * 6,
-      );
+    if (watchSeat === undefined) watchCam.set = false;
+    else if (!watched || watched.phase === "dead") {
+      // Not drawn yet (the snapshot that named them is newer than the moment drawn), or just
+      // eliminated: the view stays where it was instead of showing your own body for a moment.
+      if (watchCam.set) {
+        camera.position.copy(watchCam.pos);
+        camera.quaternion.copy(watchCam.quat);
+      }
+    } else {
+      const fresh = !watchCam.set || watchCam.seat !== watched.seat;
+      // Their view's heading and pitch, as drawn at this moment of theirs: eased over a couple
+      // of frames, so a turn does not change its speed in steps at each snapshot.
+      const ease = fresh ? 1 : 1 - Math.exp(-Math.min(100, dtMs) / WATCH_VIEW_MS);
+      watchCam.yaw +=
+        Math.atan2(Math.sin(watched.yaw - watchCam.yaw), Math.cos(watched.yaw - watchCam.yaw)) *
+        ease;
+      watchCam.pitch += (watchPitchAt - watchCam.pitch) * ease;
+      povPitch = watchCam.pitch;
+      const driven = watched.vehicle >= 0 ? vehiclesFx?.pose(watched.vehicle) : undefined;
+      const flown = watched.vehicle <= -2 ? plane3d : null;
+      const flying = watched.phase === "freefall" || watched.phase === "parachute";
+      const mode = pov ? "pov" : driven ? "car" : flown ? "plane" : flying ? "air" : "body";
+      if (fresh || mode !== watchCam.mode) {
+        // Another view of them (into a car, out of it, off the ground): eased from the last
+        // one, both taken against their body. Another player: a cut.
+        watchCam.blend = fresh ? 0 : 1;
+        watchCam.fromOffset.copy(watchCam.pos).sub(watchAnchor);
+        watchCam.fromQuat.copy(watchCam.quat);
+        watchChase.set = false;
+        if (fresh) flight.resetChase();
+      }
+      watchCam.seat = watched.seat;
+      watchCam.mode = mode;
+      watchCam.set = true;
+      if (pov) {
+        const eyeH = pov.phase === "swim" ? SWIM_EYE : 1.6 - (1.6 - 0.95) * pov.stance;
+        const bob =
+          pov.phase === "swim" ? (actors.find((s) => s.seat === pov.seat)?.actor.swimBob ?? 0) : 0;
+        camera.position.set(pov.pos.x, pov.pos.y + eyeH + bob, pov.pos.z);
+        camera.rotation.set(watchCam.pitch, watchCam.yaw, 0, "YXZ");
+        // How fast they move (the gun's walk and sprint), from where they were last frame.
+        const sp = Math.hypot(pov.pos.x - povMoved.x, pov.pos.z - povMoved.z) / Math.max(1, dtMs);
+        povMoved.speed += (sp * 1000 - povMoved.speed) * (1 - Math.exp(-Math.min(100, dtMs) / 120));
+        povMoved.x = pov.pos.x;
+        povMoved.z = pov.pos.z;
+      } else if (driven) {
+        // The driver's own view: the chase camera about the vehicle as it is drawn (it was a
+        // fixed arm from the driver's row, drawn at another moment than the vehicle).
+        vehicleChase(watchChase, driven, watchCam.yaw, watchCam.pitch, dtMs);
+      } else if (flown) {
+        const c = flight.chase(solid(), flown, dtMs);
+        camera.position.set(c.x, c.y, c.z);
+        camera.lookAt(c.lookX, c.lookY, c.lookZ);
+      } else if (flying) {
+        // As the flier sees it: behind and above, the canopy as it is drawn for them.
+        const tr = chuteTrack.get(watched.seat);
+        const under = watched.phase === "parachute" && tr?.flying;
+        airChase(
+          watchChase,
+          watched.pos.x,
+          watched.pos.y,
+          watched.pos.z,
+          watchCam.yaw,
+          watchCam.pitch,
+          under ? tr.h : watchCam.yaw,
+          under ? Math.max(0, 1 - (now - tr.since) / (DEPLOY_S * 1000)) : 0,
+          under ? Math.max(0, Math.min(1, tr.swing.angle / DIVE_SWING)) : 0,
+          under ? tr.roll : 0,
+          dtMs,
+        );
+      } else {
+        // On a line or a rope (and anything else): the orbit their own view of it is (the
+        // zip-line's, the climbing rope's, the rappel's: the same distances and tilts, drawn
+        // in and raised where a wall is in the way by the same search), on their view's
+        // heading. The offset is damped as theirs is, so a wall's edge passing behind them
+        // slides the view in over a few frames instead of flicking it; on the rappel where
+        // they are along the ground is eased a little too (a hop's swing out from the wall
+        // and back; never on the zip-line, where 120 ms is 5 m of the ride).
+        const { x, y, z } = watched.pos;
+        const rappelling = watched.phase === "rappel",
+          riding = watched.phase === "zip";
+        const up = riding ? 1.6 : rappelling ? 1.15 : 1.25;
+        const started = !watchChase.set;
+        watchChase.set = true;
+        if (started || !rappelling) watchPivot.set(x, y + up, z);
+        else {
+          const held = Math.exp(-dtMs / 120);
+          watchPivot.set(x + (watchPivot.x - x) * held, y + up, z + (watchPivot.z - z) * held);
+        }
+        const p = watchCam.pitch;
+        if (riding)
+          orbitOffset(
+            watchWant,
+            watchPivot,
+            watchCam.yaw,
+            Math.max(0.12, Math.min(1.05, 0.5 - p * 0.7)),
+            4.4,
+            1.2,
+            0.78,
+            2,
+            0.16,
+            1.05,
+          );
+        else if (rappelling)
+          orbitOffset(
+            watchWant,
+            watchPivot,
+            watchCam.yaw,
+            Math.max(0.12, Math.min(1.42, 0.9 - p * 0.9)),
+            3.9,
+            1.4,
+            0.84,
+            5,
+            0.16,
+            1.42,
+          );
+        else
+          orbitOffset(
+            watchWant,
+            watchPivot,
+            watchCam.yaw,
+            Math.max(-0.3, Math.min(1.38, 0.62 - p * 0.9)),
+            3.9,
+            1.2,
+            0.82,
+            6,
+            0.18,
+            1.38,
+          );
+        if (started) watchOrbit.copy(watchWant);
+        else watchOrbit.lerp(watchWant, 1 - Math.exp(-dtMs / 150));
+        const cx = watchPivot.x + watchOrbit.x,
+          cz = watchPivot.z + watchOrbit.z;
+        camera.position.set(
+          cx,
+          Math.max(watchPivot.y + watchOrbit.y, solid().hf.heightAt(cx, cz) + 0.6),
+          cz,
+        );
+        if (riding)
+          // Down past the rider to the line ahead.
+          camera.lookAt(
+            watchPivot.x - Math.sin(watchCam.yaw) * 3.5,
+            y + 0.9,
+            watchPivot.z - Math.cos(watchCam.yaw) * 3.5,
+          );
+        else camera.lookAt(watchPivot.x, watchPivot.y + (rappelling ? -0.55 : 0.2), watchPivot.z);
+      }
+      if (watchCam.blend > 0) {
+        watchCam.blend = Math.max(0, watchCam.blend - dtMs / WATCH_BLEND_MS);
+        const k = watchCam.blend * watchCam.blend * (3 - 2 * watchCam.blend);
+        forward.copy(watchCam.fromOffset).add(watched.pos);
+        camera.position.lerp(forward, k);
+        camera.quaternion.slerp(watchCam.fromQuat, k);
+      }
+      watchAnchor.copy(watched.pos);
+      watchCam.pos.copy(camera.position);
+      watchCam.quat.copy(camera.quaternion);
     }
     // First-person gun, aim and zoom (lowered while a grenade is in hand). Spectating in first
     // person: the watched player's gun, their aim and their reload.
@@ -4624,19 +5136,37 @@ export function createBrArena(
         color: "#b9c4cc",
         detail: `Down the wall to the ground · ${Math.round(rappelDrop(rappelHere))} m`,
       };
-    audio.setListener(camera.position.x, camera.position.y, camera.position.z, yaw);
-    if (
-      strides.advance(
-        mySeat,
-        body.x,
-        body.y,
-        body.z,
-        body.phase === "ground" && body.grounded && !seatedMe() && !kit?.dead,
-        keys.has(binds.walk) || body.crouched || !!kit?.heal,
-        now,
-      )
-    )
-      audio.step(island.footstepSurface(body.x, body.y, body.z), null);
+    // The camera is the listener (first person, the vehicle's chase camera, spectating, the
+    // parachute): its place and the way it looks, pitch included.
+    camera.getWorldDirection(listenAt);
+    audio.setListener(
+      camera.position.x,
+      camera.position.y,
+      camera.position.z,
+      yaw,
+      listenAt.x,
+      listenAt.y,
+      listenAt.z,
+    );
+    // Others' engines (yours is your own sound), from the vehicles as drawn.
+    if (vehiclesFx)
+      audio.engines(engineSources, vehiclesFx.audible(engineSources, car?.id ?? -1), dtMs);
+    // Your own steps by your pace: crouched and walking quiet, a sprint the loudest.
+    const myStride = strides.advance(
+      mySeat,
+      body.x,
+      body.y,
+      body.z,
+      body.phase === "ground" && body.grounded && !seatedMe() && !kit?.dead,
+      false,
+      now,
+    );
+    if (myStride)
+      audio.step(
+        island.footstepSurface(body.x, body.y, body.z),
+        null,
+        keys.has(binds.walk) || !!kit?.heal ? "walk" : stepPace(myStride, body.crouched),
+      );
     // On a ladder: a metal step on every rung passed (yours from the climb, others' from where
     // their row puts them).
     // On the climbing rope: a boot on the rock at each foot's step up the face (twice a cycle
@@ -4699,13 +5229,22 @@ export function createBrArena(
       rappelAtBuf[2] = o.pos.z;
       rappelSound(o.seat, o.rappel, rappelAtBuf, o.pos.y);
     }
+    // Others' steps by their pace (spatial-audio.ts STEP_PACE: crouched to 9 m, walking 16,
+    // running 32, sprinting 42), from their rows: the server sends everyone within 45 m.
     for (const o of others) {
-      if (o.d > (o.soft ? (36 * PERK_EFFECT.stepRadius) ** 2 : 36 * 36)) continue;
+      const reach = o.soft ? PERK_EFFECT.stepRadius : 1;
+      if (o.d > (STEP_RANGE_MAX * reach) ** 2) continue;
       const grounded =
         o.phase === "ground" &&
         Math.abs(o.pos.y - solid().supportAt(o.pos.x, o.pos.z, 0.35, o.pos.y + 0.15)) < 0.15;
-      if (strides.advance(o.seat, o.pos.x, o.pos.y, o.pos.z, grounded, o.crouched, now))
-        audio.step(island.footstepSurface(o.pos.x, o.pos.y, o.pos.z), [o.pos.x, o.pos.y, o.pos.z]);
+      const stride = strides.advance(o.seat, o.pos.x, o.pos.y, o.pos.z, grounded, false, now);
+      if (stride)
+        audio.step(
+          island.footstepSurface(o.pos.x, o.pos.y, o.pos.z),
+          [o.pos.x, o.pos.y, o.pos.z],
+          stepPace(stride, o.crouched),
+          reach,
+        );
     }
     renderer.getDrawingBufferSize(drawSize);
     setGroundFootprint(camera, drawSize.x, drawSize.y);
@@ -4713,6 +5252,17 @@ export function createBrArena(
     island.warm(renderer);
     updateSceneRoots(scene, island.root);
     gunBatch.update();
+    // Your own damage feedback, turned to the camera as it is this frame; none while
+    // eliminated (watching another player) or before there is a kit.
+    camera.getWorldDirection(lookDir);
+    damageFx.update(
+      now,
+      camera.position.x,
+      camera.position.z,
+      lookDir.x,
+      lookDir.z,
+      kit && !kit.dead ? kit.hp / 100 : null,
+    );
     gpu.begin();
     renderer.render(scene, camera);
     // The scene pass's counts (the viewmodel, portrait and present passes reset renderer.info).
@@ -5052,6 +5602,10 @@ export function createBrArena(
         camera: [camera.position.x, camera.position.y, camera.position.z],
         facing: camera.getWorldDirection(new THREE.Vector3()).toArray() as [number, number, number],
         shown: [shown.x, shown.y, shown.z],
+        /** Your own figure and canopy as drawn (parachute-lab.mjs), and the view's heading. */
+        figure: me.root,
+        canopy: myCanopy?.root ?? null,
+        yaw,
         pending: pending.length,
         loot: loot?.items.size ?? 0,
         calls: drawn.calls,
@@ -5075,6 +5629,25 @@ export function createBrArena(
         /** The renderer and scene themselves, for diagnostics (scripts/br/leak-check). */
         renderer: renderer as unknown,
         scene: scene as unknown,
+        // Spectating (scripts/br/client-sim/spectate-lab.mjs): whom, where their row is drawn
+        // this frame, and the vehicle or aircraft they sit in as drawn.
+        watch: (() => {
+          const seat = kit?.dead ? latest?.watch?.seat : undefined;
+          const w = seat !== undefined ? others.find((o) => o.seat === seat) : undefined;
+          if (seat === undefined) return null;
+          const v = w && w.vehicle >= 0 ? vehiclesFx?.drawn(w.vehicle) : undefined;
+          return {
+            seat,
+            pov: povSeat === seat,
+            phase: w?.phase ?? null,
+            pos: w ? [w.pos.x, w.pos.y, w.pos.z] : null,
+            yaw: w?.yaw ?? 0,
+            vehicle: w?.vehicle ?? -1,
+            vehiclePos: v ? [v.position.x, v.position.y, v.position.z] : null,
+            vehicleYaw: v ? v.rotation.y : 0,
+            aircraft: debugPlane ? [debugPlane.x, debugPlane.y, debugPlane.z] : null,
+          };
+        })(),
         view: {
           camera: camera as unknown,
           me: me.root as unknown,
@@ -5102,6 +5675,7 @@ export function createBrArena(
       const lookup = litLookup(renderer, scene);
       mapBuild?.dispose();
       impacts.dispose();
+      damageFx.dispose();
       if (mapBlobUrl) URL.revokeObjectURL(mapBlobUrl);
       removeEventListener("keydown", keyDown);
       removeEventListener("keyup", keyUp);

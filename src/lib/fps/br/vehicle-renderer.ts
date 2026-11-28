@@ -1,7 +1,10 @@
 import * as THREE from "three";
+
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { ModelManifest } from "./props-renderer";
-import { spec, type Vehicle, type VehicleKind } from "./vehicles";
+import type { EngineSource } from "./vehicle-audio";
+import { spec, VEHICLES, type Vehicle, type VehicleKind } from "./vehicles";
+import { VehicleRows } from "./vehicle-rows";
 
 /**
  * Vehicles on screen: the drivable models (public/fps/br/models/vehicles.glb: a sedan, a 4x4,
@@ -201,13 +204,18 @@ export function createVehicleRenderer(
       // The stand-ins stay.
     });
   const ready = Promise.all([stand, drivable]);
+  const posed = { x: 0, y: 0, z: 0, kind: "sedan" as VehicleKind, speed: 0 };
+  /** The room's time of the newest snapshot applied. */
+  let lastAt = -Infinity;
   type Shown = {
     object: THREE.Object3D;
     kind: VehicleKind;
-    a: number[];
+    /** The speed it is drawn with this frame (m/s). */
+    drawnSpeed: number;
+    /** The newest row (prompts, prediction resets, the bar). */
     b: number[];
-    at: number;
-    prevAt: number;
+    /** Its rows on the room's clock (vehicle-rows.ts): see `apply`. */
+    rows: VehicleRows;
     wrecked: boolean;
     /** Presentation: wheel roll angle, last speed, and the body's spring (pitch, roll). */
     spin: number;
@@ -307,6 +315,12 @@ export function createVehicleRenderer(
     dtMs: number,
     /** Flat tyres (vehicles.ts TYRES bits): that wheel sits on its rim. */
     flat = 0,
+    /**
+     * The suspension's travel (m, vehicles.ts VEHICLES.suspension: + the body above its rest).
+     * The object is drawn at the body's height; the wheels stay on the ground, hanging down off
+     * a crest and in the air, pushed up into the arches on a landing.
+     */
+    sus = 0,
   ) {
     const dt = Math.min(0.1, Math.max(0.001, dtMs / 1000));
     if (s.wrecked) return;
@@ -317,15 +331,17 @@ export function createVehicleRenderer(
     const yawRate = Math.atan2(Math.sin(yaw - s.lastYaw), Math.cos(yaw - s.lastYaw)) / dt;
     s.lastSpeed = speed;
     s.lastYaw = yaw;
-    // Targets: nose up while accelerating, down while braking; lean out of the turn.
-    const soft = sp.bike ? 0 : 1;
-    const pitchTarget = THREE.MathUtils.clamp(accel * 0.006, -0.05, 0.04) * soft;
+    // Targets: nose up while accelerating, down while braking; lean out of the turn. The soft
+    // off-roaders (more travel) pitch and roll further than the low sedan.
+    const S = VEHICLES.suspension[s.kind];
+    const soft = sp.bike ? 0 : S.droop / VEHICLES.suspension.sedan.droop;
+    const pitchTarget = THREE.MathUtils.clamp(accel * 0.007 * soft, -0.065, 0.05);
     const lateral = speed * yawRate + slip * 2;
     // (+z roll lifts the right side.) Turning left (yaw rising, `lateral` > 0) a car's body
     // rolls out to the right; a bike leans into the turn, further.
     const rollTarget = sp.bike
       ? THREE.MathUtils.clamp(lateral * 0.045, -0.5, 0.5)
-      : THREE.MathUtils.clamp(-lateral * 0.006, -0.07, 0.07);
+      : THREE.MathUtils.clamp(-lateral * 0.006 * soft, -0.09, 0.09);
     const k = 70,
       c = 2 * 0.55 * Math.sqrt(k);
     s.spv += (k * (pitchTarget - s.sp) - c * s.spv) * dt;
@@ -343,6 +359,7 @@ export function createVehicleRenderer(
       body.position.y = Math.abs(s.sp) * 0.3 + Math.abs(s.sr) * 0.4;
     }
     const lock = (sp.steer / (1 + Math.abs(speed) / (sp.bike ? 9 : 14))) * steer;
+    const travel = THREE.MathUtils.clamp(sus, -S.compress, S.droop);
     for (const w of s.object.children) {
       if (!w.name.startsWith("wheel-")) continue;
       const front = /-(FL|FR|F)$/.test(w.name);
@@ -360,8 +377,9 @@ export function createVehicleRenderer(
                 : 4;
       const baseY = (w.userData["baseY"] ??= w.position.y) as number;
       const down = flat & bit;
-      // A burst tyre: the wheel drops onto its rim (the corner of the car sags with it).
-      w.position.y = baseY - (down ? r * 0.28 : 0);
+      // A burst tyre: the wheel drops onto its rim (the corner of the car sags with it). The
+      // springs: the wheel keeps to the ground as the body rises and falls over it.
+      w.position.y = baseY - (down ? r * 0.28 : 0) - travel;
     }
   }
   const place = (o: THREE.Object3D, r: number[]) => {
@@ -370,8 +388,23 @@ export function createVehicleRenderer(
   };
   return {
     ready,
-    /** Rows from the server (vehicles that changed, entered or left range). */
-    apply(update: { rows: number[][]; gone: number[] } | undefined, now: number) {
+    /**
+     * Rows from the server (vehicles that changed, entered or left range), taken at the room's
+     * time `at` (the snapshot's tick). Call it for every snapshot, with or without rows: a
+     * vehicle is only sent when it changed, so one that was not in the snapshot before stood
+     * as it was until then (it is not gliding there from wherever it was last sent).
+     *
+     * They are drawn on the same clock as the players (lag.ts BrRemoteTimeline), `update`'s
+     * `t`: vehicle-rows.ts.
+     */
+    apply(update: { rows: number[][]; gone: number[] } | undefined, at: number) {
+      const before = lastAt;
+      if (at > lastAt) lastAt = at;
+      else if (at < lastAt - 2000) {
+        // A restarted room: its clock is back at the start.
+        for (const s of shown.values()) s.rows.rows.length = 0;
+        lastAt = at;
+      }
       if (!update) return;
       for (const id of update.gone) {
         const s = shown.get(id);
@@ -388,10 +421,9 @@ export function createVehicleRenderer(
           s = {
             object,
             kind,
-            a: r,
+            drawnSpeed: r[8] ?? 0,
             b: r,
-            at: now,
-            prevAt: now,
+            rows: new VehicleRows(),
             wrecked: false,
             spin: 0,
             lastSpeed: r[8] ?? 0,
@@ -405,12 +437,9 @@ export function createVehicleRenderer(
             lights: lightBar(object),
           };
           shown.set(r[0]!, s);
-        } else {
-          s.a = s.b;
-          s.prevAt = s.at;
-          s.b = r;
-          s.at = now;
         }
+        s.rows.push(at, r, before);
+        s.b = r;
         if (r[12] === 1 && !s.wrecked) {
           s.wrecked = true;
           s.object.traverse((o) => {
@@ -419,6 +448,24 @@ export function createVehicleRenderer(
         }
       }
     },
+    /**
+     * A vehicle as it is drawn this frame (after update), for a camera that follows it (a
+     * spectator's): one object, valid until the next call.
+     */
+    pose(id: number) {
+      const s = shown.get(id);
+      if (!s || s.wrecked) return undefined;
+      posed.x = s.object.position.x;
+      posed.y = s.object.position.y;
+      posed.z = s.object.position.z;
+      posed.kind = s.kind;
+      posed.speed = s.drawnSpeed;
+      return posed;
+    },
+    /** A vehicle as it is drawn this frame (after update): its object, or undefined. */
+    drawn(id: number): THREE.Object3D | undefined {
+      return shown.get(id)?.object;
+    },
     /** The latest server row for a vehicle (prompts, the HUD, prediction resets). */
     row(id: number) {
       return shown.get(id)?.b;
@@ -426,8 +473,11 @@ export function createVehicleRenderer(
     rows() {
       return [...shown.values()].map((s) => s.b);
     },
-    /** Interpolate others; `mine` (predicted) is placed directly. */
-    update(now: number, mine: Vehicle | null, dtMs = 16, eye?: THREE.Vector3) {
+    /**
+     * Others at the room's time `t` (the players' playback clock), between their rows;
+     * `mine` (predicted) is placed directly.
+     */
+    update(now: number, mine: Vehicle | null, dtMs = 16, eye?: THREE.Vector3, t = Infinity) {
       const updateBar = (id: number, s: Shown) => {
         // The bar over a damaged vehicle (not your own: the speedometer shows it).
         const b0 = s.b;
@@ -454,17 +504,25 @@ export function createVehicleRenderer(
         if (mine && id === mine.id) {
           s.object.position.set(mine.x, mine.y, mine.z);
           s.object.rotation.set(mine.pitch, mine.yaw, mine.roll, "YXZ");
-          animate(s, mine.speed, mine.yaw, mine.steer ?? 0, mine.slip ?? 0, dtMs, mine.flat ?? 0);
+          animate(
+            s,
+            mine.speed,
+            mine.yaw,
+            mine.steer ?? 0,
+            mine.slip ?? 0,
+            dtMs,
+            mine.flat ?? 0,
+            mine.sus ?? 0,
+          );
+          s.drawnSpeed = mine.speed;
           flash(s, true, now);
           updateBar(id, s);
           continue;
         }
-        // One update behind: glide from the previous row to the latest over their interval.
-        const span = Math.max(1, s.at - s.prevAt);
-        const k = Math.min(1, Math.max(0, (now - s.at) / span));
-        const a = s.a,
-          b = s.b;
-        const lerp = (i: number) => a[i]! + (b[i]! - a[i]!) * Math.min(1, k);
+        // Between the two rows about `t` (vehicle-rows.ts).
+        if (!s.rows.sample(t)) continue;
+        const { a, b, k } = s.rows;
+        const lerp = (i: number) => a[i]! + (b[i]! - a[i]!) * k;
         const dy = Math.atan2(Math.sin(b[5]! - a[5]!), Math.cos(b[5]! - a[5]!));
         place(s.object, [
           b[0]!,
@@ -472,11 +530,21 @@ export function createVehicleRenderer(
           lerp(2),
           lerp(3),
           lerp(4),
-          a[5]! + dy * Math.min(1, k),
+          a[5]! + dy * k,
           lerp(6),
           lerp(7),
         ]);
-        animate(s, lerp(8), a[5]! + dy * Math.min(1, k), b[14] ?? 0, lerp(15), dtMs, b[16] ?? 0);
+        s.drawnSpeed = lerp(8);
+        animate(
+          s,
+          s.drawnSpeed,
+          a[5]! + dy * k,
+          b[14] ?? 0,
+          lerp(15),
+          dtMs,
+          b[16] ?? 0,
+          a[20] === undefined || b[20] === undefined ? 0 : lerp(20),
+        );
         flash(s, (b[11] ?? -1) >= 0, now);
         updateBar(id, s);
       }
@@ -527,6 +595,37 @@ export function createVehicleRenderer(
         handR,
       };
     },
+    /**
+     * The vehicles shown, as their engines are heard (vehicle-audio.ts createRemoteEngines):
+     * where each is drawn this frame (call after update), its speed and whether its engine runs
+     * (a driver, not wrecked or flooded). `skip` is the one you drive (its own sound). Fills
+     * `out` (objects reused frame to frame) and returns how many.
+     */
+    audible(out: EngineSource[], skip: number): number {
+      let n = 0;
+      for (const [id, s] of shown) {
+        if (id === skip) continue;
+        const b = s.b;
+        const e = (out[n] ??= {
+          id: 0,
+          kind: "sedan",
+          x: 0,
+          y: 0,
+          z: 0,
+          speed: 0,
+          running: false,
+        });
+        e.id = id;
+        e.kind = s.kind;
+        e.x = s.object.position.x;
+        e.y = s.object.position.y + 0.6;
+        e.z = s.object.position.z;
+        e.speed = s.lastSpeed;
+        e.running = (b[11] ?? -1) >= 0 && b[12] !== 1 && b[19] !== 1 && !s.wrecked;
+        n++;
+      }
+      return n;
+    },
     /** Rows as vehicles (for prediction collisions with others). */
     asVehicles(): Vehicle[] {
       return [...shown.values()].map(({ b }) => ({
@@ -550,6 +649,7 @@ export function createVehicleRenderer(
         vy: b[17] ?? 0,
         air: b[18] === 1,
         drowned: b[19] === 1,
+        sus: b[20] ?? 0,
       }));
     },
     dispose() {

@@ -38,6 +38,7 @@ import {
   type RappelState,
 } from "../../../src/lib/fps/br/rappel";
 import { SNAPSHOT_INTERVAL_MS } from "../../../src/lib/fps/network";
+import { BrInputQueue } from "../../../workers/fps/br-input";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 
 declare global {
@@ -78,6 +79,37 @@ declare global {
       face?: (yaw: number, pitch: number) => void;
       /** Swim check only: you are eliminated and watch the other player (first person). */
       die?: () => void;
+      /**
+       * Spectator lab (spectate-lab.mjs): the match runs on a steady clock (catching up after a
+       * slow frame, as a room does not wait for a client) and its snapshots reach the client
+       * through this connection: `hz` snapshots a second, each `latencyMs` late plus a random
+       * `jitterMs` (uniform), one in `spikeEvery` held `spikeMs` more (a retransmission); in
+       * order, as on a WebSocket (a late one holds the next back). null: back to the direct feed.
+       */
+      net?: (
+        o: {
+          hz?: number;
+          latencyMs?: number;
+          jitterMs?: number;
+          spikeEvery?: number;
+          spikeMs?: number;
+          seed?: number;
+          /** The caller pumps the match itself (sim.pump, once a frame of its own clock). */
+          manual?: boolean;
+        } | null,
+      ) => void;
+      pump?: () => void;
+      /** Spectator lab: the connection's delay changes by `ms` from now on. */
+      netShift?: (ms: number) => void;
+      otherActLog?: () => string[];
+      /** Spectator lab: the other player's input each tick (null: as before). */
+      otherScript?: (fn: ((tick: number) => Partial<BrInput> | null) | null) => void;
+      /** Spectator lab: an act of the other player's (enter, exit, zip, ladder…). */
+      otherAct?: (a: BrAct) => void;
+      /** Spectator lab: you are eliminated and watch `seat` (default: the other player). */
+      spectate?: (seat?: number) => void;
+      /** Spectator lab: the match's clock (ms) and the wall clock it started at. */
+      clock?: () => { clock: number; t0: number };
       /** Profiling: `count` more players on the ground in view (see the definition). */
       crowd?: (count?: number) => number;
       /**
@@ -159,6 +191,15 @@ declare global {
       otherLoadout?: (guns: [string | null, string | null], active: number) => void;
       /** Gun checks: turn the other player by `by` rad (seen from the side). */
       otherTurn?: (by: number) => void;
+      /**
+       * Hit-effects check (hit-capture.mjs): the other player `ahead` m in front of you and
+       * `right` m to your right, facing you, each of you with an AK-47, standing still.
+       */
+      fightSetup?: (ahead?: number, right?: number) => void;
+      /** Hit-effects check: the other player holds the trigger, aimed at your chest (or lets go). */
+      otherFire?: (on: boolean) => void;
+      /** Hit-effects check: your health and the other player's, on the server (null: as it is). */
+      health?: (mine: number | null, theirs?: number | null) => { mine: number; theirs: number };
       otherGun?: (item: string) => void;
       /** Spot checks (spot-capture.mjs): stand the local player at world (x, y, z), the other
        * player 60 m away; no input mirrored. `y` omitted: on whatever is under (x, z) below
@@ -225,6 +266,13 @@ const ready = (async () => {
   const me = seatHuman(state, "local", "Me");
   const other = seatHuman(state, "remote", "Buddy");
   const queue: BrInput[] = [];
+  /**
+   * Over a lab's connection (net): the room's own input queue (workers/fps/br-input.ts), which
+   * drains a backlog. The plain queue above keeps one for good once it has one (a slow start
+   * leaves eight inputs, 267 ms: every key then acts a quarter of a second late, and the
+   * prediction is corrected by that much at every change of phase).
+   */
+  const roomQueue = new BrInputQueue();
   const actQueue: BrAct[] = [];
   let mirror: BrInput | null = null;
   let mirroring = true;
@@ -244,6 +292,7 @@ const ready = (async () => {
     lastInput = input;
     queue.push(input);
     while (queue.length > 8) queue.shift();
+    roomQueue.push(input, performance.now());
   });
   await arena.ready;
   const sight = new BrSight();
@@ -252,14 +301,39 @@ const ready = (async () => {
   let clock = 0,
     lastSnap = 0;
   let lastView: BrView | null = null;
-  setInterval(() => {
-    const input = queue.shift();
+  let pendingCombat: typeof state.combat = [];
+  type Net = {
+    every: number;
+    latencyMs: number;
+    jitterMs: number;
+    spikeEvery: number;
+    spikeMs: number;
+    rand: () => number;
+    manual: boolean;
+    t0: number;
+    last: number;
+    queue: Array<{ at: number; view: BrView }>;
+  };
+  let net: Net | null = null;
+  /** The other player's acts as the match answered them (the spectator lab's scenarios). */
+  const otherActLog: string[] = [],
+    actSeen = new WeakSet<object>();
+  window.sim.otherActLog = () => otherActLog.splice(0);
+  let otherScript: ((tick: number) => Partial<BrInput> | null) | null = null;
+  const step = () => {
+    const mine = queue.shift();
+    const input = net ? roomQueue.take(clock, performance.now()) : mine;
     if (input && mirroring) mirror = { ...input, yaw: input.yaw + 0.3 };
     // (Swim check: the other player swims a circle, so every side of the stroke comes past.)
     if (orbit && mirror) mirror = { ...mirror, yaw: mirror.yaw + (orbit * TICK_MS) / 1000 };
     const inputs = new Map<number, BrInput>();
     if (input) inputs.set(me, input);
     if (mirror) inputs.set(other, mirror);
+    if (otherScript) {
+      const scripted = otherScript(state.tick);
+      if (scripted)
+        inputs.set(other, { seq: state.tick + 1, forward: 0, strafe: 0, yaw: 0, ...scripted });
+    }
     clock += TICK_MS;
     const acts = new Map<number, BrAct[]>();
     if (actQueue.length) acts.set(me, actQueue.splice(0, 4));
@@ -267,6 +341,11 @@ const ready = (async () => {
     const held = state.seats[me]!.body;
     if (zipHold !== null && held.phase === "zip" && held.zip) held.zip.ms = zipHold - TICK_MS;
     stepBrMatch(state, world, meta, inputs, clock, TICK_MS, acts);
+    for (const e of state.combat)
+      if (e.type === "act" && e.seat === other && !actSeen.has(e)) {
+        actSeen.add(e);
+        otherActLog.push(`${e.act}:${e.ok ? "ok" : (e.reason ?? "no")}`);
+      }
     if (rappelHold) {
       const hb = state.seats[rappelHold.who === "me" ? me : other]!.body;
       const st = hb.phase === "rappel" ? hb.rappel : undefined;
@@ -291,12 +370,83 @@ const ready = (async () => {
     // ?immortal=1: long checks (the climbing rope at software WebGL's pace) outlast the zone;
     // both players are kept alive in the gas.
     if (params.get("immortal")) for (const seat of [me, other]) state.seats[seat]!.kit.hp = 100;
-    if (performance.now() - lastSnap >= SNAPSHOT_INTERVAL_MS) {
+    // As the room does (workers/fps/br.ts pendingCombat): a view carries every event since the
+    // last one, not only the events of the step it is built after. (Snapshots go out about
+    // every second step here, so a shot's hit was lost half the time.)
+    pendingCombat.push(...state.combat);
+    if (net) {
+      // The lab's connection: every `every` ticks, delivered late and in order.
+      if (state.tick % net.every === 0) {
+        state.combat = pendingCombat;
+        pendingCombat = [];
+        lastView = brViewFor(state, world, sight, me, clock, sync) as unknown as BrView;
+        const sent = net.t0 + clock;
+        let late = net.latencyMs + net.rand() * net.jitterMs;
+        if (net.spikeEvery > 0 && net.rand() < 1 / net.spikeEvery) late += net.spikeMs;
+        net.last = Math.max(net.last, sent + late);
+        net.queue.push({ at: net.last, view: lastView });
+      }
+    } else if (performance.now() - lastSnap >= SNAPSHOT_INTERVAL_MS) {
       lastSnap = performance.now();
+      state.combat = pendingCombat;
+      pendingCombat = [];
       lastView = brViewFor(state, world, sight, me, clock, sync) as unknown as BrView;
       arena.snapshot(lastView);
     }
-  }, TICK_MS);
+  };
+  // A room keeps its own time: after a slow frame here the match catches up, and what was
+  // due on the connection is delivered.
+  const pump = () => {
+    if (!net) return;
+    const wall = performance.now();
+    let guard = 0;
+    while (net.t0 + clock + TICK_MS <= wall && guard++ < 30) step();
+    if (guard >= 30) net.t0 = wall - clock;
+    while (net.queue.length && net.queue[0]!.at <= wall) arena.snapshot(net.queue.shift()!.view);
+  };
+  window.sim.pump = pump;
+  setInterval(() => {
+    if (net && !net.manual) pump();
+  }, 4);
+  let direct = setInterval(step, TICK_MS);
+  window.sim.net = (o) => {
+    clearInterval(direct);
+    if (!o) {
+      net = null;
+      direct = setInterval(step, TICK_MS);
+      return;
+    }
+    // (mulberry32: the same connection for the runs compared.)
+    let a = (o.seed ?? 1) >>> 0;
+    const rand = () => {
+      a = (a + 0x6d2b79f5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    net = {
+      every: Math.max(1, Math.round(1000 / TICK_MS / (o.hz ?? 15))),
+      latencyMs: o.latencyMs ?? 0,
+      jitterMs: o.jitterMs ?? 0,
+      spikeEvery: o.spikeEvery ?? 0,
+      spikeMs: o.spikeMs ?? 0,
+      rand,
+      manual: !!o.manual,
+      t0: performance.now() - clock,
+      last: 0,
+      queue: [],
+    };
+  };
+  window.sim.netShift = (ms) => {
+    if (net) net.latencyMs += ms;
+  };
+  window.sim.otherScript = (fn) => {
+    mirroring = false;
+    mirror = null;
+    otherScript = fn;
+  };
+  window.sim.clock = () => ({ clock, t0: net?.t0 ?? performance.now() - clock });
   window.sim.toLoot = () => {
     const b = state.seats[me]!.body;
     let best: { x: number; y: number; z: number } | null = null,
@@ -415,6 +565,14 @@ const ready = (async () => {
     s.kit.hp = 0;
     s.dead = true;
   };
+  window.sim.spectate = (seat = other) => {
+    const s = state.seats[me]!;
+    s.kit.hp = 0;
+    s.dead = true;
+    s.spectate = seat;
+    s.kitVersion++;
+  };
+  window.sim.otherAct = (a) => void otherActs.push(a);
   window.sim.knifeSetup = (behind = false) => {
     const b = state.seats[me]!.body,
       o = state.seats[other]!;
@@ -780,6 +938,49 @@ const ready = (async () => {
   };
   window.sim.otherTurn = (by) => {
     state.seats[other]!.yaw += by;
+  };
+  window.sim.fightSetup = (ahead = 6, right = 0) => {
+    window.sim.knifeSetup!(false);
+    const b = state.seats[me]!.body,
+      o = state.seats[other]!;
+    const yaw = lastInput?.yaw ?? 0;
+    // (Forward is (−sin yaw, −cos yaw); right of it (cos yaw, −sin yaw).)
+    o.body.x = b.x - Math.sin(yaw) * ahead + Math.cos(yaw) * right;
+    o.body.z = b.z - Math.cos(yaw) * ahead - Math.sin(yaw) * right;
+    o.body.y = world.supportAt(o.body.x, o.body.z, 0.35, hf.heightAt(o.body.x, o.body.z) + 0.5);
+    o.yaw = Math.atan2(-(b.x - o.body.x), -(b.z - o.body.z));
+    window.sim.giveGun!("ak47");
+    window.sim.otherHold!("ak47");
+  };
+  window.sim.otherFire = (on) => {
+    const b = state.seats[me]!.body,
+      o = state.seats[other]!.body;
+    mirroring = false;
+    const d = Math.hypot(b.x - o.x, b.z - o.z);
+    mirror = on
+      ? {
+          seq: 1,
+          forward: 0,
+          strafe: 0,
+          yaw: Math.atan2(-(b.x - o.x), -(b.z - o.z)),
+          // (From their eyes to your chest.)
+          pitch: Math.atan2(b.y + 1.2 - (o.y + 1.6), d),
+          fire: true,
+        }
+      : null;
+  };
+  window.sim.health = (mine, theirs = null) => {
+    const a = state.seats[me]!,
+      o = state.seats[other]!;
+    if (mine !== null) {
+      a.kit.hp = mine;
+      a.kitVersion++;
+    }
+    if (theirs !== null) {
+      o.kit.hp = theirs;
+      o.kitVersion++;
+    }
+    return { mine: a.kit.hp, theirs: o.kit.hp };
   };
   window.sim.toGas = () => {
     const b = state.seats[me]!.body;

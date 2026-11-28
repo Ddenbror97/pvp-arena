@@ -1862,12 +1862,12 @@ export function createCharacter(
             -box + Math.max(0, -r.z),
             box - Math.max(0, r.z),
           );
-        } else
-          target.set(
-            sign * 0.105 + swing * travelX * 0.65,
-            0.12 + lift + (motion.airborne ? 0.1 : 0),
-            swing * travelZ,
-          );
+        } else if (motion.airborne)
+          // In the air with nothing overhead (let go of a rope; a fall before a canopy): the
+          // legs hang, knees a little bent, an easy sway. Never the stride: it swings with
+          // the speed, and a fall's speed made it a sprint in mid-air (owner, 2026-11-27).
+          target.set(sign * 0.12, 0.2, -0.05 + Math.sin(now / 900 + (sign > 0 ? 0 : 1.7)) * 0.03);
+        else target.set(sign * 0.105 + swing * travelX * 0.65, 0.12 + lift, swing * travelZ);
         root.localToWorld(target);
         // Sat: knees up and a little out (a rider's knees grip the tank, out to the side).
         if (motion.seated) bend.set(sign * 0.35, 1, -0.8);

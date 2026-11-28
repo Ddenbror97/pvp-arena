@@ -173,7 +173,10 @@ describe("vehicles", () => {
     for (let i = 0; i < 60; i++) step(state, { forward: 1, strafe: 1, jump: i > 40 });
     const view = brViewFor(state, world, new BrSight(), 0, t, new BrSeatSync());
     const row = view.vehicles!.rows.find((r) => r[0] === v.id)!;
-    expect(row).toHaveLength(20);
+    expect(row).toHaveLength(21);
+    // The height to the mm and the suspension's travel: the prediction resumes a bounce.
+    expect(row[3]).toBeCloseTo(v.y, 3);
+    expect(row[20]).toBeCloseTo(v.sus ?? 0, 3);
     expect(row[14]).toBeCloseTo(v.steer ?? 0, 2);
     expect(row[15]).toBeCloseTo(v.slip ?? 0, 2);
     expect(Math.abs(row[15]!)).toBeGreaterThan(0);

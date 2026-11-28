@@ -18,7 +18,7 @@ import { createKarambitViewmodel, KARAMBIT_VIEWMODEL_REST } from "../karambit-vi
 import type { KarambitControls } from "../karambit-animator";
 import { createBloodEffects } from "../blood-effects";
 import { HANDLING, decay, frameDelta } from "../handling";
-import { createImpactEffects } from "../impacts";
+import { anchorHit, createImpactEffects } from "../impacts";
 import { decalDepthOffset } from "../maps/depth-layers";
 import { createWeaponKit } from "../weapon";
 import {
@@ -275,7 +275,8 @@ export function mountBombArena(
     if (object instanceof THREE.Mesh) object.matrixAutoUpdate = false;
   });
   const impacts = createImpactEffects(scene);
-  const blood = createBloodEffects(scene, map);
+  const blood = createBloodEffects(scene, map, impacts);
+  const woundAt = { x: 0, y: 0, z: 0 };
   const weaponKit = createWeaponKit();
   // Five operators per side (Police "A" with the M4, Terrorists "B" with the AK). A slot always
   // uses the same body of its side (slot % 5), so halftime only changes which pool draws it.
@@ -1655,7 +1656,6 @@ export function mountBombArena(
     crosshair?.style.setProperty("--duel-spread", `${spread}px`);
     crosshair?.classList.toggle("is-reloading", reloadLeft > 0);
     impacts.update(dt, now);
-    blood.update(dt, now);
     if (!alive && grenades.up) {
       grenades.putAway();
       weapon = "rifle";
@@ -1879,7 +1879,16 @@ export function mountBombArena(
           ev.point &&
           ev.direction &&
           ev.nade !== "fire"
-        )
+        ) {
+          // The mist is for a body in view: never the one the camera is in (yours, or the
+          // teammate you watch through), and on the body as it is drawn (a little behind
+          // the server).
+          const victim = ev.victim,
+            mine = next.players[next.you],
+            inLens =
+              victim === next.you ||
+              (victim !== undefined && !mine?.alive && next.spectating === victim),
+            seen = victim !== undefined && !inLens ? remotes[victim] : undefined;
           blood.emit(
             {
               victim: "A" as Seat,
@@ -1889,7 +1898,12 @@ export function mountBombArena(
               direction: ev.direction,
             },
             performance.now(),
+            {
+              mist: !inLens,
+              at: seen?.drawn ? anchorHit(ev.point, seen.pose, woundAt) : undefined,
+            },
           );
+        }
         if (
           (ev.type === "hit" || ev.type === "headshot") &&
           ev.slot === next.you &&

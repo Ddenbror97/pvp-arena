@@ -471,6 +471,12 @@ export class AircraftClient {
     return out;
   }
 
+  /** The chase camera starts behind the aircraft again (a spectator's view of another). */
+  resetChase() {
+    this.camHeading = NaN;
+    this.look.yaw = this.look.pitch = 0;
+  }
+
   /**
    * The chase camera for the aircraft `a` (this frame's): its place and the point it looks at.
    * It trails the heading and part of the nose's pitch (damped), never the bank (the horizon
