@@ -38,6 +38,7 @@ import {
   type RappelState,
 } from "../../../src/lib/fps/br/rappel";
 import { SNAPSHOT_INTERVAL_MS } from "../../../src/lib/fps/network";
+import { BrInputQueue } from "../../../workers/fps/br-input";
 import { TICK_MS } from "../../../src/lib/fps/simulation";
 
 declare global {
@@ -256,6 +257,13 @@ const ready = (async () => {
   const me = seatHuman(state, "local", "Me");
   const other = seatHuman(state, "remote", "Buddy");
   const queue: BrInput[] = [];
+  /**
+   * Over a lab's connection (net): the room's own input queue (workers/fps/br-input.ts), which
+   * drains a backlog. The plain queue above keeps one for good once it has one (a slow start
+   * leaves eight inputs, 267 ms: every key then acts a quarter of a second late, and the
+   * prediction is corrected by that much at every change of phase).
+   */
+  const roomQueue = new BrInputQueue();
   const actQueue: BrAct[] = [];
   let mirror: BrInput | null = null;
   let mirroring = true;
@@ -275,6 +283,7 @@ const ready = (async () => {
     lastInput = input;
     queue.push(input);
     while (queue.length > 8) queue.shift();
+    roomQueue.push(input, performance.now());
   });
   await arena.ready;
   const sight = new BrSight();
@@ -302,7 +311,8 @@ const ready = (async () => {
   window.sim.otherActLog = () => otherActLog.splice(0);
   let otherScript: ((tick: number) => Partial<BrInput> | null) | null = null;
   const step = () => {
-    const input = queue.shift();
+    const mine = queue.shift();
+    const input = net ? roomQueue.take(clock, performance.now()) : mine;
     if (input && mirroring) mirror = { ...input, yaw: input.yaw + 0.3 };
     // (Swim check: the other player swims a circle, so every side of the stroke comes past.)
     if (orbit && mirror) mirror = { ...mirror, yaw: mirror.yaw + (orbit * TICK_MS) / 1000 };

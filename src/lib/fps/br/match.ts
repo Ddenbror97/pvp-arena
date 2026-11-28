@@ -1,6 +1,7 @@
 import { dropBotInput, planDropBots, type DropBot } from "./drop-bots";
 import { BR_OCCLUDED } from "./remote-visibility";
 import {
+  DROP,
   newDropBody,
   planeRoute,
   routeMs,
@@ -1767,8 +1768,8 @@ function placeOccupant(a: Aircraft, s: BrSeat) {
 
 /**
  * Get out (E): on the ground below walking speed beside the door, in the water into it, in the
- * air at least EXIT.bailAgl over the ground with the parachute (a freefall that opens on its
- * own, drop.ts); anything else is unsafe and refused. Returns the refusal (null: out).
+ * air at least EXIT.bailAgl over the ground with the parachute (open at once, as on leaving the
+ * drop plane); anything else is unsafe and refused. Returns the refusal (null: out).
  */
 function leaveAircraft(
   state: BrMatchState,
@@ -1808,14 +1809,19 @@ function leaveAircraft(
     return "No room to get out";
   }
   if (!down && heightAboveGround(world, a) >= EXIT.bailAgl) {
-    // Bail out: off the wing's edge with the aircraft's own speed, into a freefall that
-    // opens the parachute (drop.ts autoDeployAgl).
+    // Bail out: off the wing's edge with the aircraft's own speed, under the canopy at once,
+    // as on leaving the drop plane (owner, 2026-11-27: "the parachute sometimes fails to
+    // deploy immediately, causing the character to appear to run in mid-air": above
+    // DROP.autoDeployAgl this was a freefall, which has neither a canopy nor a pose of its
+    // own, down to 300 m over the ground). The opening canopy brakes the fall and the
+    // aircraft's speed (drop.ts vertEase, ease).
     const p = bailSpot(a, seat);
+    const sink = Math.max(DROP.parachute.exitDown, Math.min(DROP.parachute.diveDown, -a.vy));
     clearCockpit(state, s);
-    Object.assign(b, { x: p.x, y: p.y, z: p.z, vx: a.vx, vz: a.vz, velocityY: Math.min(0, a.vy) });
-    b.phase = "freefall";
+    Object.assign(b, { x: p.x, y: p.y, z: p.z, vx: a.vx, vz: a.vz, velocityY: -sink });
+    b.phase = "parachute";
     b.grounded = false;
-    state.events.push({ seat: s.seat, phase: "freefall" });
+    state.events.push({ seat: s.seat, phase: "parachute" });
     return null;
   }
   return down ? "Slow down to get out" : "Exit unsafe";

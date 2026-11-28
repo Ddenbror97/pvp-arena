@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { AIRCRAFT, attitude, toWorld, type Aircraft } from "@/lib/fps/br/aircraft";
 import { aircraftSpawn, insideAircraft, withAircraft } from "@/lib/fps/br/aircraft-world";
 import { validateBrAct } from "@/lib/fps/br/actions";
+import { DROP } from "@/lib/fps/br/drop";
 import { takeoffPilot } from "@/lib/fps/br/flight-harness";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
@@ -248,14 +249,28 @@ describe("BR aircraft in the match", () => {
     // The occupants ride their seats (others see them in the cockpit).
     const rider = state.seats[1]!.body;
     expect(Math.hypot(rider.x - a.x, rider.y - a.y, rider.z - a.z)).toBeLessThan(1);
-    // Over 60 m: out with the parachute, the aircraft's way.
+    // Over 60 m: out with the parachute, the aircraft's way. However high (here well over
+    // the height a freefall used to open at: owner, 2026-11-27, "the parachute sometimes fails
+    // to deploy immediately, causing the character to appear to run in mid-air"), the canopy
+    // is open in that same step and stays open: no step of the fall is a freefall.
+    a.y += DROP.autoDeployAgl + 250;
+    const speed = Math.hypot(a.vx, a.vz);
     const ev = step(state, new Map([[0, { thr: 1 }]]), new Map([[1, [{ act: "exit" }]]]));
     expect(actResult(ev, 1)?.ok).toBe(true);
-    expect(["freefall", "parachute"]).toContain(rider.phase);
+    expect(rider.phase).toBe("parachute");
+    expect(rider.y - hf.heightAt(rider.x, rider.z)).toBeGreaterThan(DROP.autoDeployAgl + 200);
     expect(state.seats[1]!.cockpit).toBeUndefined();
     expect(a.passenger).toBe(-1);
-    for (let i = 0; i < 3; i++) step(state, new Map([[0, { thr: 1 }]]));
-    expect(rider.phase).toBe("parachute");
+    // Off with the aircraft's own speed, falling as out of the drop plane's door; the opening
+    // canopy brakes both to its glide within a few seconds.
+    expect(Math.hypot(rider.vx, rider.vz)).toBeGreaterThan(speed * 0.8);
+    expect(-rider.velocityY).toBeGreaterThanOrEqual(DROP.parachute.exitDown - 1);
+    for (let i = 0; i < 30 * 4; i++) {
+      step(state, new Map([[0, { thr: 1 }]]));
+      expect(rider.phase).toBe("parachute");
+    }
+    expect(Math.hypot(rider.vx, rider.vz)).toBeLessThan(DROP.parachute.glideForward + 1);
+    expect(-rider.velocityY).toBeLessThan(DROP.parachute.brakeDown + 1);
     // The view: the aircraft goes out with every change, the pilot learns their seat.
     const sync = new BrSeatSync();
     const view = brViewFor(state, world, new BrSight(), 0, t, sync);
