@@ -145,7 +145,14 @@ import {
 import { createLiftRenderer } from "./lift-renderer";
 import { paneOwners, withPanes } from "./panes";
 import { createPaneRenderer } from "./pane-renderer";
-import { spec, stepVehicle, vehicleGap, VEHICLES, type Vehicle } from "./vehicles";
+import {
+  spec,
+  stepVehicle,
+  vehicleGap,
+  VEHICLES,
+  type Vehicle,
+  type VehicleKind,
+} from "./vehicles";
 import type { NadeEvent } from "./match";
 import { AircraftClient, boardable, flightHud, type FlightHud } from "./aircraft-client";
 import { createAircraftRenderer } from "./aircraft-renderer";
@@ -536,6 +543,18 @@ export type BrArenaControls = {
     fullActors: number;
     standIns: number;
     renderer: unknown;
+    /** Spectating: the watched seat as drawn this frame (null: not spectating). */
+    watch: {
+      seat: number;
+      pov: boolean;
+      phase: string | null;
+      pos: [number, number, number] | null;
+      yaw: number;
+      vehicle: number;
+      vehiclePos: [number, number, number] | null;
+      vehicleYaw: number;
+      aircraft: [number, number, number] | null;
+    } | null;
     /** The view camera and your own character's root (diagnostics). */
     view?: {
       camera: unknown;
@@ -577,8 +596,21 @@ const FP_LIFT = 1;
 const CHARACTERS = 16;
 const MAX_PLAYERS = 100;
 const BASE_FOV = 75;
-/** Phases a watched player is seen from their own eyes (the rest: the chase view). */
-const POV_PHASES = new Set(["ground", "swim", "ladder", "zip", "lift", "rappel"]);
+/**
+ * Spectating: a change of view of the same player (into a vehicle, out of it, off the ground)
+ * is eased over this long, and their view's heading and pitch follow the snapshots' with this
+ * time constant (ms).
+ */
+const WATCH_BLEND_MS = 380;
+const WATCH_VIEW_MS = 35;
+/**
+ * Phases a watched player is seen from their own eyes: the ones they see from their own eyes
+ * themselves. On the zip-line, a climbing rope and a rope down a wall their own view is from
+ * behind (owner's specs), and from their eyes a spectator rode a line with no hands, no handle
+ * and no trolley, looking wherever the rider's camera pointed (spectator audit 2026-11-27):
+ * those are watched from behind too, the body, the trolley and the rope in the picture.
+ */
+const POV_PHASES = new Set(["ground", "swim", "ladder", "lift"]);
 
 function detailOf(item: {
   item: ItemId;
@@ -1027,7 +1059,12 @@ export function createBrArena(
     eyePy = 0,
     eyeAt = -1e9;
   /** Other players' rows per snapshot, stamped with the snapshot's server time (lag.ts). */
-  const buffer: Array<{ at: number; rows: Map<number, number[]> }> = [];
+  const buffer: Array<{
+    at: number;
+    rows: Map<number, number[]>;
+    watchSeat: number;
+    watchPitch: number;
+  }> = [];
   const remoteTimeline = new BrRemoteTimeline();
   const heldRows = new HeldRows();
   let yaw = 0,
@@ -1104,6 +1141,30 @@ export function createBrArena(
     povPitch = 0,
     povKnife = false;
   const povMoved = { x: 0, z: 0, speed: 0 };
+  /** Where the watched body was drawn last frame (the eased change of view is taken from it). */
+  const watchAnchor = new THREE.Vector3();
+  /** The watched player's view pitch at the moment drawn (the buffer's, between snapshots). */
+  let watchPitchAt = 0;
+  /**
+   * The spectator's camera (spectator audit 2026-11-27): whom it shows and how (their eyes, a
+   * vehicle's chase view, the aircraft's, the air's), where it was last frame against the
+   * watched body, and the change of view being eased (`blend` 1 → 0).
+   */
+  const watchCam = {
+    seat: -1,
+    mode: "" as "" | "pov" | "car" | "plane" | "air" | "body",
+    pos: new THREE.Vector3(),
+    quat: new THREE.Quaternion(),
+    fromOffset: new THREE.Vector3(),
+    fromQuat: new THREE.Quaternion(),
+    blend: 0,
+    /** Their view's heading and pitch, eased a little (the rows are 15 a second). */
+    yaw: 0,
+    pitch: 0,
+    set: false,
+  };
+  /** The aircraft as drawn this frame (debug()). */
+  let debugPlane: { x: number; y: number; z: number } | null = null;
   let predictedShots = 0,
     lastShotAt = -1e9;
   /** The AWP's own scope was up last frame (its zoom clicks). */
@@ -1353,13 +1414,59 @@ export function createBrArena(
   const flightHeading = () =>
     Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
   const syncCanopyLook = () => canopyLook.sync(body.phase === "parachute", flightHeading(), pitch);
+  /**
+   * An orbit camera's offset from its pivot, into `out` (the climbing rope's and the rappel's
+   * cameras, and a spectator's view of someone on a line or a rope): `dist` out behind the
+   * view and `tilt` up, drawn in (by `shrink` a step, to `least`) until clear of walls and the
+   * ground, then raised (by `liftBy` to `most`, `lifts` times) where there is no room.
+   */
+  const orbitOffset = (
+    out: THREE.Vector3,
+    pivot: { x: number; y: number; z: number },
+    viewYaw: number,
+    tilt: number,
+    dist: number,
+    least: number,
+    shrink: number,
+    lifts: number,
+    liftBy: number,
+    most: number,
+  ) => {
+    const world = solid();
+    for (let lift = 0; lift < lifts; lift++) {
+      for (let r = dist; r >= least; r *= shrink) {
+        out.set(
+          Math.sin(viewYaw) * Math.cos(tilt) * r,
+          Math.sin(tilt) * r,
+          Math.cos(viewYaw) * Math.cos(tilt) * r,
+        );
+        const x = pivot.x + out.x,
+          y = pivot.y + out.y,
+          z = pivot.z + out.z;
+        if (y > world.hf.heightAt(x, z) + 0.6 && !world.blocked(x, y - 0.25, z, 0.5, 0.25))
+          return out;
+      }
+      // No room at this height: higher, over whatever is behind.
+      tilt = Math.min(most, tilt + liftBy);
+    }
+    return out;
+  };
+  /** A spectator's orbit round someone on a line or a rope: the pivot (eased) and the offset. */
+  const watchPivot = new THREE.Vector3(),
+    watchOrbit = new THREE.Vector3(),
+    watchWant = new THREE.Vector3();
   /** The chase camera's offset from the pilot (damped). */
-  const chaseCam = new THREE.Vector3();
-  let chaseCamSet = false;
-  // The vehicle camera: the free look's hold, and its height over rough ground.
-  const chaseLook = new BrChaseLook(),
-    chaseHeight = new BrFollowHeight(),
-    chaseLift = new BrFollowHeight(140, 4);
+  const newChaseRig = () => ({
+    cam: new THREE.Vector3(),
+    set: false,
+    height: new BrFollowHeight(),
+    lift: new BrFollowHeight(140, 4),
+  });
+  type ChaseRig = ReturnType<typeof newChaseRig>;
+  /** Yours, and the one a spectator's view of a driver or a flier uses (the same cameras). */
+  const myChase = newChaseRig(),
+    watchChase = newChaseRig();
+  const chaseLook = new BrChaseLook();
   let chuteFirstPerson = false,
     bank = 0,
     chutePitch = 0,
@@ -1507,14 +1614,17 @@ export function createBrArena(
     trackFx = createTrackerRenderer(scene);
     void renderer.compileAsync(trackFx.mesh, camera, scene).catch(() => {});
     // The aircraft is solid to you on foot (as on the server); seated, your own prediction and
-    // chase camera fly without it.
+    // chase camera fly without it, and so does a spectator's view of its pilot (the camera's
+    // way out of walls met the aircraft itself, where the room has it by now, and jumped in
+    // to 3.5 m and out again whenever a late snapshot put that on the one drawn).
     solidView = withAircraft(
       withDoors(
         withPanes(island.island.solid, island.island.panes, paneFx.broken),
         island.island.doors,
         doorOpen,
       ),
-      () => (flight.seat === null ? flight.server : null),
+      () =>
+        flight.seat === null && !(watchCam.set && watchCam.mode === "plane") ? flight.server : null,
     );
     doorsFx = createDoorRenderer(scene, island.island.doors, island.doorLook);
     zipFx = createZiplineRenderer(scene, (x, z) => island!.hf.heightAt(x, z));
@@ -2548,7 +2658,7 @@ export function createBrArena(
       if (before?.heal && !kit.heal && kit.hp > before.hp) audio.healed();
     }
     loot?.apply(view.loot);
-    vehiclesFx?.apply(view.vehicles, now);
+    vehiclesFx?.apply(view.vehicles, view.tick * TICK_MS);
     {
       const was = flight.seat;
       flight.apply(view.aircraft, view.flying, view.tick * TICK_MS);
@@ -2621,7 +2731,13 @@ export function createBrArena(
     // On the server's clock: a late packet takes its own place in the motion.
     if (view.tick * TICK_MS < (buffer.at(-1)?.at ?? -Infinity) - 2000) buffer.length = 0;
     if (remoteTimeline.observe(view.tick * TICK_MS, now)) {
-      buffer.push({ at: view.tick * TICK_MS, rows });
+      buffer.push({
+        at: view.tick * TICK_MS,
+        rows,
+        // (The watched player's view with their row: drawn at the same moment of theirs.)
+        watchSeat: view.watch?.seat ?? -1,
+        watchPitch: view.watch?.pitch ?? 0,
+      });
       while (buffer.length > 30) buffer.shift();
     }
     // (A door request never answered within two seconds is forgotten: the server's doors rule.)
@@ -2782,6 +2898,85 @@ export function createBrArena(
   const presentedRows = new Map<number, number[]>();
   const actorForward = new THREE.Vector3();
   const horizontalAxis = new THREE.Vector3(1, 0, 0);
+  /**
+   * The chase camera above and behind a vehicle as it is drawn this frame (owner, 2026-11-08:
+   * "not FPS while driving", "camera angle above the car and bike"): `viewYaw` swings it round
+   * the vehicle and `viewPitch` tilts it, within limits; it pulls back a little with the speed.
+   * Yours when you drive, and a spectator's view of a driver (their view's heading and pitch).
+   */
+  function vehicleChase(
+    rig: ChaseRig,
+    v: { x: number; y: number; z: number; kind: VehicleKind; speed: number },
+    viewYaw: number,
+    viewPitch: number,
+    dtMs: number,
+  ) {
+    const s = spec(v.kind);
+    const fast = Math.min(1, Math.abs(v.speed) / s.maxSpeed);
+    const dist = (s.bike ? 4.3 : 5.4 + 0.2 * (s.length - 4.5)) + (s.bike ? 1 : 1.4) * fast;
+    // Pitch below the horizon: 0.36 rad looks down on the roof; the mouse adds or takes some.
+    const tilt = Math.max(0.14, Math.min(0.8, 0.36 - viewPitch * 0.5));
+    const ox = Math.sin(viewYaw) * Math.cos(tilt) * dist,
+      oz = Math.cos(viewYaw) * Math.cos(tilt) * dist,
+      oy = Math.sin(tilt) * dist;
+    if (!rig.set) {
+      rig.cam.set(ox, oy, oz);
+      rig.height.reset();
+      rig.lift.reset();
+    }
+    rig.set = true;
+    rig.cam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 70));
+    // The height the view turns about follows the vehicle's smoothly: the vehicle rides every
+    // change of the ground's slope, the view does not (frame-view.ts BrFollowHeight).
+    const pivotY = rig.height.sample(v.y + (s.bike ? 1.1 : s.height * 0.75), dtMs);
+    const cx = v.x + rig.cam.x,
+      cz = v.z + rig.cam.z;
+    // Kept above the ground behind the vehicle (a bank, a hillside): lifted smoothly too.
+    const ground = solid().hf.heightAt(cx, cz);
+    const lift = rig.lift.sample(Math.max(0, ground + 1 - (pivotY + rig.cam.y)), dtMs);
+    camera.position.set(cx, Math.max(pivotY + rig.cam.y + lift, ground + 0.4), cz);
+    // Aim just ahead of the vehicle so the road in front is in view.
+    camera.lookAt(v.x - Math.sin(viewYaw) * 2.5, pivotY, v.z - Math.cos(viewYaw) * 2.5);
+  }
+  /**
+   * Behind and above someone in the air (owner's parachute spec §4): the view orbits the pilot
+   * (it never steers), the whole canopy and the ground below in view; pulled back while the
+   * canopy opens (`opening` 1 → 0), damped, never into the ground. The view's pitch is held
+   * between looking well down and a little up, so the camera never sits inside the canopy.
+   * Yours in the air, and a spectator's view of a flier.
+   */
+  function airChase(
+    rig: ChaseRig,
+    px: number,
+    py: number,
+    pz: number,
+    viewYaw: number,
+    viewPitch: number,
+    heading: number,
+    opening: number,
+    diving: number,
+    roll: number,
+    dtMs: number,
+  ) {
+    const dist = 6.4 + 3.5 * opening + 0.9 * diving;
+    const camPitch = Math.max(-0.75, Math.min(0.3, viewPitch)) - 0.14 - 0.22 * diving;
+    const lead = 2.2 * diving;
+    const pivotY = py + 2.5 - 1.2 * diving;
+    // The offset from the pilot is what is damped (no snapping), not the camera's place in
+    // the world: the camera moves with them at any speed, only its orbit eases.
+    const ox = Math.sin(viewYaw) * Math.cos(camPitch) * dist,
+      oz = Math.cos(viewYaw) * Math.cos(camPitch) * dist,
+      oy = 2.5 - Math.sin(camPitch) * dist;
+    if (!rig.set) rig.cam.set(ox, oy, oz);
+    rig.set = true;
+    rig.cam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 90));
+    const cx = px + rig.cam.x,
+      cz = pz + rig.cam.z;
+    camera.position.set(cx, Math.max(py + rig.cam.y, solid().hf.heightAt(cx, cz) + 1.2), cz);
+    camera.lookAt(px - Math.sin(heading) * lead, pivotY, pz - Math.cos(heading) * lead);
+    // A little roll with the canopy's bank.
+    camera.rotateZ(roll * 0.5);
+  }
   function frame(now: number) {
     if (disposed) return;
     requestAnimationFrame(frame);
@@ -2992,15 +3187,17 @@ export function createBrArena(
           dtMs,
         )
       : null;
-    // Vehicles first: drivers are sat in them as they are drawn this frame.
-    vehiclesFx?.update(now, carPose, dtMs, camera.position);
+    // Others, interpolated on the server's clock, behind it by this connection's delay (a
+    // spectator's covers every recent gap: nothing is aimed by that picture).
+    const t = remoteTimeline.sample(now, dtMs, !!kit?.dead);
+    // Vehicles first, on that clock too: drivers are sat in them as they are drawn this frame.
+    vehiclesFx?.update(now, carPose, dtMs, camera.position, t);
     paneFx?.update(dtMs);
     trackFx?.update(now);
-    // Others, interpolated on the server's clock, behind it by this connection's delay.
-    const t = remoteTimeline.sample(now, dtMs);
     // The aircraft: the pilot's prediction, or everyone else's interpolation on the same clock.
     const plane3d = flight.sample(t, accumulator, dtMs);
     aircraftFx?.update(plane3d, dtMs, camera.position, now);
+    debugPlane = plane3d;
     if (plane3d)
       // (The stall horn sounds only inside; one shared object, no garbage each frame.)
       planeSound.stallWarn = flight.seat !== null && !plane3d.grounded && aero(plane3d).warn;
@@ -3023,6 +3220,12 @@ export function createBrArena(
     camera.getWorldDirection(actorForward);
     if (a && b) {
       const k = b.at > a.at ? Math.min(1, Math.max(0, (t - a.at) / (b.at - a.at))) : 1;
+      // The watched player's pitch at that moment (it used to be the newest snapshot's, a
+      // playback delay ahead of their heading and their place).
+      watchPitchAt =
+        a.watchSeat === b.watchSeat
+          ? a.watchPitch + (b.watchPitch - a.watchPitch) * k
+          : b.watchPitch;
       brVisibleRows(a, b, t, presentedRows);
       for (const [seat, rb] of presentedRows) {
         const ra = a.rows.get(seat) ?? rb;
@@ -3110,7 +3313,17 @@ export function createBrArena(
     {
       const seat = kit?.dead ? latest?.watch?.seat : undefined;
       const w = seat !== undefined ? others.find((o) => o.seat === seat) : undefined;
-      if (w && w.vehicle === -1 && POV_PHASES.has(w.phase)) {
+      if (
+        w &&
+        w.vehicle === -1 &&
+        POV_PHASES.has(w.phase) &&
+        // (A ladder's rungs are climbed in first person, a rope from behind.)
+        !(
+          w.phase === "ladder" &&
+          island &&
+          climbAt(island.hf, w.pos.x, w.pos.y, w.pos.z)?.ladder.rope
+        )
+      ) {
         povSeat = w.seat;
         // Swimming: their arms stay drawn, stroking in front of the camera.
         w.occluded = w.phase !== "swim";
@@ -3901,7 +4114,7 @@ export function createBrArena(
       camera.lookAt(c.lookX, c.lookY, c.lookZ);
       // The head turns where the view looks (others see it), the shots stay off.
       yaw = c.yaw;
-      chaseCamSet = false;
+      myChase.set = false;
     } else if (car && carPose) {
       // Driving (owner, 2026-11-08: "not FPS while driving", "camera angle above the car and
       // bike"): always third person, a chase camera above and behind looking down on the
@@ -3909,32 +4122,7 @@ export function createBrArena(
       // it settles back behind while you move and pulls back a little with the speed.
       // (It stays where the mouse put it for a moment first: frame-view.ts BrChaseLook.)
       yaw = chaseLook.step(yaw, carPose.yaw, Math.abs(carPose.speed) > 2, dtMs);
-      const s = spec(carPose.kind);
-      const fast = Math.min(1, Math.abs(carPose.speed) / s.maxSpeed);
-      const dist = (s.bike ? 4.3 : 5.4 + 0.2 * (s.length - 4.5)) + (s.bike ? 1 : 1.4) * fast;
-      // Pitch below the horizon: 0.36 rad looks down on the roof; the mouse adds or takes some.
-      const tilt = Math.max(0.14, Math.min(0.8, 0.36 - pitch * 0.5));
-      const ox = Math.sin(yaw) * Math.cos(tilt) * dist,
-        oz = Math.cos(yaw) * Math.cos(tilt) * dist,
-        oy = Math.sin(tilt) * dist;
-      if (!chaseCamSet) {
-        chaseCam.set(ox, oy, oz);
-        chaseHeight.reset();
-        chaseLift.reset();
-      }
-      chaseCamSet = true;
-      chaseCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 70));
-      // The height the view turns about follows the vehicle's smoothly: the vehicle rides every
-      // change of the ground's slope, the view does not (frame-view.ts BrFollowHeight).
-      const pivotY = chaseHeight.sample(carPose.y + (s.bike ? 1.1 : s.height * 0.75), dtMs);
-      const cx = carPose.x + chaseCam.x,
-        cz = carPose.z + chaseCam.z;
-      // Kept above the ground behind the vehicle (a bank, a hillside): lifted smoothly too.
-      const ground = solid().hf.heightAt(cx, cz);
-      const lift = chaseLift.sample(Math.max(0, ground + 1 - (pivotY + chaseCam.y)), dtMs);
-      camera.position.set(cx, Math.max(pivotY + chaseCam.y + lift, ground + 0.4), cz);
-      // Aim just ahead of the vehicle so the road in front is in view.
-      camera.lookAt(carPose.x - Math.sin(yaw) * 2.5, pivotY, carPose.z - Math.cos(yaw) * 2.5);
+      vehicleChase(myChase, carPose, yaw, pitch, dtMs);
     } else if (body.phase === "plane" && plane.visible) {
       camera.position.set(
         plane.position.x - fx * 70,
@@ -3956,26 +4144,9 @@ export function createBrArena(
       // further back, its aim led ahead along the way the pilot and wing swing, so you see the
       // pilot, the whole wing out in front and the ground coming up.
       const diving = underCanopy ? Math.max(0, Math.min(1, mySwing.angle / DIVE_SWING)) : 0;
-      const dist = 6.4 + 3.5 * opening + 0.9 * diving;
-      const camPitch = Math.max(-0.75, Math.min(0.3, pitch)) - 0.14 - 0.22 * diving;
-      const lead = 2.2 * diving;
-      const pivotY = py + 2.5 - 1.2 * diving;
-      // The offset from the pilot is what is damped (no snapping), not the camera's place in
-      // the world: the camera moves with you at any speed, only its orbit eases.
-      const ox = Math.sin(yaw) * Math.cos(camPitch) * dist,
-        oz = Math.cos(yaw) * Math.cos(camPitch) * dist,
-        oy = 2.5 - Math.sin(camPitch) * dist;
-      if (!chaseCamSet) chaseCam.set(ox, oy, oz);
-      chaseCamSet = true;
-      chaseCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 90));
-      const cx = px + chaseCam.x,
-        cz = pz + chaseCam.z;
-      camera.position.set(cx, Math.max(py + chaseCam.y, solid().hf.heightAt(cx, cz) + 1.2), cz);
-      camera.lookAt(px - Math.sin(chuteHeading) * lead, pivotY, pz - Math.cos(chuteHeading) * lead);
-      // A little roll with the canopy's bank.
-      camera.rotateZ(bank * 0.5);
+      airChase(myChase, px, py, pz, yaw, pitch, chuteHeading, opening, diving, bank, dtMs);
     } else {
-      chaseCamSet = false;
+      myChase.set = false;
       const seen = viewPose.body;
       const eyeTarget = seen.phase === "swim" ? SWIM_EYE : seen.crouched ? 0.95 : 1.6;
       // Into and out of the water the server moves the body between the bottom and the surface
@@ -4072,27 +4243,13 @@ export function createBrArena(
       // Pivot at the chest: up the rope's line from the feet (or upright, stepping on or off).
       ropeUp.copy(me.root.quaternion);
       ropePivot.set(0, 1.25, 0.05).applyQuaternion(ropeUp).add(shown);
-      const dist = 3.9;
-      let tilt = Math.max(-0.3, Math.min(1.38, 0.62 - pitch * 0.9));
-      let ox = 0,
-        oy = 0,
-        oz = 0;
-      const clear = (x: number, y: number, z: number) =>
-        y > solid().hf.heightAt(x, z) + 0.6 && !solid().blocked(x, y - 0.25, z, 0.5, 0.25);
-      search: for (let lift = 0; lift < 6; lift++) {
-        for (let r = dist; r >= 1.2; r *= 0.82) {
-          ox = Math.sin(yaw) * Math.cos(tilt) * r;
-          oy = Math.sin(tilt) * r;
-          oz = Math.cos(yaw) * Math.cos(tilt) * r;
-          if (clear(ropePivot.x + ox, ropePivot.y + oy, ropePivot.z + oz)) break search;
-        }
-        // No room at this height (the rock in front): higher, where the face lies back.
-        tilt = Math.min(1.38, tilt + 0.18);
-      }
+      // (No room at a height, the rock in front: higher, where the face lies back.)
+      const tilt = Math.max(-0.3, Math.min(1.38, 0.62 - pitch * 0.9));
+      orbitOffset(forward, ropePivot, yaw, tilt, 3.9, 1.2, 0.82, 6, 0.18, 1.38);
       // The offset is damped (from your eye on taking hold: the view pulls out of your head).
       if (!ropeCamSet) ropeCam.set(0, 0.35, 0);
       ropeCamSet = true;
-      ropeCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 140));
+      ropeCam.lerp(forward, 1 - Math.exp(-dtMs / 140));
       const cx = ropePivot.x + ropeCam.x,
         cz = ropePivot.z + ropeCam.z;
       camera.position.set(
@@ -4116,29 +4273,14 @@ export function createBrArena(
       ropeFpPos.copy(camera.position);
       ropeFpQ.copy(camera.quaternion);
       ropePivot.set(shown.x, shown.y + 1.15, shown.z);
-      const dist = 3.9;
-      let tilt = Math.max(0.12, Math.min(1.42, 0.9 - pitch * 0.9));
-      let ox = 0,
-        oy = 0,
-        oz = 0;
-      const clear = (x: number, y: number, z: number) =>
-        y > solid().hf.heightAt(x, z) + 0.6 && !solid().blocked(x, y - 0.25, z, 0.5, 0.25);
-      search: for (let lift = 0; lift < 5; lift++) {
-        for (let r = dist; r >= 1.4; r *= 0.84) {
-          ox = Math.sin(yaw) * Math.cos(tilt) * r;
-          oy = Math.sin(tilt) * r;
-          oz = Math.cos(yaw) * Math.cos(tilt) * r;
-          if (clear(ropePivot.x + ox, ropePivot.y + oy, ropePivot.z + oz)) break search;
-        }
-        // No room at this height: higher, over whatever is behind you.
-        tilt = Math.min(1.42, tilt + 0.16);
-      }
+      const tilt = Math.max(0.12, Math.min(1.42, 0.9 - pitch * 0.9));
+      orbitOffset(forward, ropePivot, yaw, tilt, 3.9, 1.4, 0.84, 5, 0.16, 1.42);
       if (!rappelCamSet) {
         rappelCam.set(0, 0.45, 0);
         rappelLook.copy(ropePivot);
       }
       rappelCamSet = true;
-      rappelCam.lerp(forward.set(ox, oy, oz), 1 - Math.exp(-dtMs / 150));
+      rappelCam.lerp(forward, 1 - Math.exp(-dtMs / 150));
       // The point looked at is the body itself, frame for frame, down the wall and along it
       // (as on the climbing rope: nothing trails). Only a hop's swing out from the wall is
       // eased, so the body is seen leaving the wall and meeting it and the view does not
@@ -4277,30 +4419,163 @@ export function createBrArena(
     const watchSeat = kit?.dead ? latest.watch?.seat : undefined;
     const watched = watchSeat !== undefined ? others.find((o) => o.seat === watchSeat) : undefined;
     const pov = watched && watched.seat === povSeat ? watched : null;
-    if (pov) {
-      const eyeH = pov.phase === "swim" ? SWIM_EYE : 1.6 - (1.6 - 0.95) * pov.stance;
-      const bob =
-        pov.phase === "swim" ? (actors.find((s) => s.seat === pov.seat)?.actor.swimBob ?? 0) : 0;
-      camera.position.set(pov.pos.x, pov.pos.y + eyeH + bob, pov.pos.z);
-      const target = latest.watch?.pitch ?? 0;
-      povPitch += (target - povPitch) * (1 - Math.exp(-Math.min(100, dtMs) / 60));
-      camera.rotation.set(povPitch, pov.yaw, 0, "YXZ");
-      // How fast they move (the gun's walk and sprint), from where they were last frame.
-      const sp = Math.hypot(pov.pos.x - povMoved.x, pov.pos.z - povMoved.z) / Math.max(1, dtMs);
-      povMoved.speed += (sp * 1000 - povMoved.speed) * (1 - Math.exp(-Math.min(100, dtMs) / 120));
-      povMoved.x = pov.pos.x;
-      povMoved.z = pov.pos.z;
-    } else if (watched) {
-      camera.position.set(
-        watched.pos.x + Math.sin(watched.yaw) * 4,
-        watched.pos.y + 2.4,
-        watched.pos.z + Math.cos(watched.yaw) * 4,
-      );
-      camera.lookAt(
-        watched.pos.x - Math.sin(watched.yaw) * 6,
-        watched.pos.y + 1.4,
-        watched.pos.z - Math.cos(watched.yaw) * 6,
-      );
+    if (watchSeat === undefined) watchCam.set = false;
+    else if (!watched || watched.phase === "dead") {
+      // Not drawn yet (the snapshot that named them is newer than the moment drawn), or just
+      // eliminated: the view stays where it was instead of showing your own body for a moment.
+      if (watchCam.set) {
+        camera.position.copy(watchCam.pos);
+        camera.quaternion.copy(watchCam.quat);
+      }
+    } else {
+      const fresh = !watchCam.set || watchCam.seat !== watched.seat;
+      // Their view's heading and pitch, as drawn at this moment of theirs: eased over a couple
+      // of frames, so a turn does not change its speed in steps at each snapshot.
+      const ease = fresh ? 1 : 1 - Math.exp(-Math.min(100, dtMs) / WATCH_VIEW_MS);
+      watchCam.yaw +=
+        Math.atan2(Math.sin(watched.yaw - watchCam.yaw), Math.cos(watched.yaw - watchCam.yaw)) *
+        ease;
+      watchCam.pitch += (watchPitchAt - watchCam.pitch) * ease;
+      povPitch = watchCam.pitch;
+      const driven = watched.vehicle >= 0 ? vehiclesFx?.pose(watched.vehicle) : undefined;
+      const flown = watched.vehicle <= -2 ? plane3d : null;
+      const flying = watched.phase === "freefall" || watched.phase === "parachute";
+      const mode = pov ? "pov" : driven ? "car" : flown ? "plane" : flying ? "air" : "body";
+      if (fresh || mode !== watchCam.mode) {
+        // Another view of them (into a car, out of it, off the ground): eased from the last
+        // one, both taken against their body. Another player: a cut.
+        watchCam.blend = fresh ? 0 : 1;
+        watchCam.fromOffset.copy(watchCam.pos).sub(watchAnchor);
+        watchCam.fromQuat.copy(watchCam.quat);
+        watchChase.set = false;
+        if (fresh) flight.resetChase();
+      }
+      watchCam.seat = watched.seat;
+      watchCam.mode = mode;
+      watchCam.set = true;
+      if (pov) {
+        const eyeH = pov.phase === "swim" ? SWIM_EYE : 1.6 - (1.6 - 0.95) * pov.stance;
+        const bob =
+          pov.phase === "swim" ? (actors.find((s) => s.seat === pov.seat)?.actor.swimBob ?? 0) : 0;
+        camera.position.set(pov.pos.x, pov.pos.y + eyeH + bob, pov.pos.z);
+        camera.rotation.set(watchCam.pitch, watchCam.yaw, 0, "YXZ");
+        // How fast they move (the gun's walk and sprint), from where they were last frame.
+        const sp = Math.hypot(pov.pos.x - povMoved.x, pov.pos.z - povMoved.z) / Math.max(1, dtMs);
+        povMoved.speed += (sp * 1000 - povMoved.speed) * (1 - Math.exp(-Math.min(100, dtMs) / 120));
+        povMoved.x = pov.pos.x;
+        povMoved.z = pov.pos.z;
+      } else if (driven) {
+        // The driver's own view: the chase camera about the vehicle as it is drawn (it was a
+        // fixed arm from the driver's row, drawn at another moment than the vehicle).
+        vehicleChase(watchChase, driven, watchCam.yaw, watchCam.pitch, dtMs);
+      } else if (flown) {
+        const c = flight.chase(solid(), flown, dtMs);
+        camera.position.set(c.x, c.y, c.z);
+        camera.lookAt(c.lookX, c.lookY, c.lookZ);
+      } else if (flying) {
+        // As the flier sees it: behind and above, the canopy as it is drawn for them.
+        const tr = chuteTrack.get(watched.seat);
+        const under = watched.phase === "parachute" && tr?.flying;
+        airChase(
+          watchChase,
+          watched.pos.x,
+          watched.pos.y,
+          watched.pos.z,
+          watchCam.yaw,
+          watchCam.pitch,
+          under ? tr.h : watchCam.yaw,
+          under ? Math.max(0, 1 - (now - tr.since) / (DEPLOY_S * 1000)) : 0,
+          under ? Math.max(0, Math.min(1, tr.swing.angle / DIVE_SWING)) : 0,
+          under ? tr.roll : 0,
+          dtMs,
+        );
+      } else {
+        // On a line or a rope (and anything else): the orbit their own view of it is (the
+        // zip-line's, the climbing rope's, the rappel's: the same distances and tilts, drawn
+        // in and raised where a wall is in the way by the same search), on their view's
+        // heading. The offset is damped as theirs is, so a wall's edge passing behind them
+        // slides the view in over a few frames instead of flicking it; on the rappel where
+        // they are along the ground is eased a little too (a hop's swing out from the wall
+        // and back; never on the zip-line, where 120 ms is 5 m of the ride).
+        const { x, y, z } = watched.pos;
+        const rappelling = watched.phase === "rappel",
+          riding = watched.phase === "zip";
+        const up = riding ? 1.6 : rappelling ? 1.15 : 1.25;
+        const started = !watchChase.set;
+        watchChase.set = true;
+        if (started || !rappelling) watchPivot.set(x, y + up, z);
+        else {
+          const held = Math.exp(-dtMs / 120);
+          watchPivot.set(x + (watchPivot.x - x) * held, y + up, z + (watchPivot.z - z) * held);
+        }
+        const p = watchCam.pitch;
+        if (riding)
+          orbitOffset(
+            watchWant,
+            watchPivot,
+            watchCam.yaw,
+            Math.max(0.12, Math.min(1.05, 0.5 - p * 0.7)),
+            4.4,
+            1.2,
+            0.78,
+            2,
+            0.16,
+            1.05,
+          );
+        else if (rappelling)
+          orbitOffset(
+            watchWant,
+            watchPivot,
+            watchCam.yaw,
+            Math.max(0.12, Math.min(1.42, 0.9 - p * 0.9)),
+            3.9,
+            1.4,
+            0.84,
+            5,
+            0.16,
+            1.42,
+          );
+        else
+          orbitOffset(
+            watchWant,
+            watchPivot,
+            watchCam.yaw,
+            Math.max(-0.3, Math.min(1.38, 0.62 - p * 0.9)),
+            3.9,
+            1.2,
+            0.82,
+            6,
+            0.18,
+            1.38,
+          );
+        if (started) watchOrbit.copy(watchWant);
+        else watchOrbit.lerp(watchWant, 1 - Math.exp(-dtMs / 150));
+        const cx = watchPivot.x + watchOrbit.x,
+          cz = watchPivot.z + watchOrbit.z;
+        camera.position.set(
+          cx,
+          Math.max(watchPivot.y + watchOrbit.y, solid().hf.heightAt(cx, cz) + 0.6),
+          cz,
+        );
+        if (riding)
+          // Down past the rider to the line ahead.
+          camera.lookAt(
+            watchPivot.x - Math.sin(watchCam.yaw) * 3.5,
+            y + 0.9,
+            watchPivot.z - Math.cos(watchCam.yaw) * 3.5,
+          );
+        else camera.lookAt(watchPivot.x, watchPivot.y + (rappelling ? -0.55 : 0.2), watchPivot.z);
+      }
+      if (watchCam.blend > 0) {
+        watchCam.blend = Math.max(0, watchCam.blend - dtMs / WATCH_BLEND_MS);
+        const k = watchCam.blend * watchCam.blend * (3 - 2 * watchCam.blend);
+        forward.copy(watchCam.fromOffset).add(watched.pos);
+        camera.position.lerp(forward, k);
+        camera.quaternion.slerp(watchCam.fromQuat, k);
+      }
+      watchAnchor.copy(watched.pos);
+      watchCam.pos.copy(camera.position);
+      watchCam.quat.copy(camera.quaternion);
     }
     // First-person gun, aim and zoom (lowered while a grenade is in hand). Spectating in first
     // person: the watched player's gun, their aim and their reload.
@@ -5208,6 +5483,25 @@ export function createBrArena(
         /** The renderer and scene themselves, for diagnostics (scripts/br/leak-check). */
         renderer: renderer as unknown,
         scene: scene as unknown,
+        // Spectating (scripts/br/client-sim/spectate-lab.mjs): whom, where their row is drawn
+        // this frame, and the vehicle or aircraft they sit in as drawn.
+        watch: (() => {
+          const seat = kit?.dead ? latest?.watch?.seat : undefined;
+          const w = seat !== undefined ? others.find((o) => o.seat === seat) : undefined;
+          if (seat === undefined) return null;
+          const v = w && w.vehicle >= 0 ? vehiclesFx?.drawn(w.vehicle) : undefined;
+          return {
+            seat,
+            pov: povSeat === seat,
+            phase: w?.phase ?? null,
+            pos: w ? [w.pos.x, w.pos.y, w.pos.z] : null,
+            yaw: w?.yaw ?? 0,
+            vehicle: w?.vehicle ?? -1,
+            vehiclePos: v ? [v.position.x, v.position.y, v.position.z] : null,
+            vehicleYaw: v ? v.rotation.y : 0,
+            aircraft: debugPlane ? [debugPlane.x, debugPlane.y, debugPlane.z] : null,
+          };
+        })(),
         view: {
           camera: camera as unknown,
           me: me.root as unknown,
