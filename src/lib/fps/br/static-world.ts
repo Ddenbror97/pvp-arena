@@ -223,13 +223,16 @@ export class StaticWorld {
   private decodeCell(s: number): Float32Array {
     const from = this.cellStart[s]!,
       n = this.cellStart[s + 1]! - from;
-    // By underside (ties in the cell's own order: the result is the same on every machine).
+    // By the lower of its two heights (its underside; a few boxes in the data are upside down,
+    // top under underside, and the old queries took them as they are), ties in the cell's own
+    // order: the result is the same on every machine.
     // (Not a slanted wall's staircase: its prism is tested instead.)
     const order = Array.from(this.cellItems.subarray(from, from + n)).filter(
       (i) => !this.slantBox[i],
     );
     const b = this.boxes;
-    order.sort((i, j) => b.get(i * 6 + 1) - b.get(j * 6 + 1) || i - j);
+    const low = (i: number) => Math.min(b.get(i * 6 + 1), b.get(i * 6 + 4));
+    order.sort((i, j) => low(i) - low(j) || i - j);
     const out = new Float32Array(order.length * 6);
     for (let q = 0; q < order.length; q++) {
       const o = order[q]! * 6;
@@ -544,8 +547,8 @@ export class StaticWorld {
       for (let c = c0; c <= c1; c++) {
         const b = this.cellBoxes(c, r);
         for (let o = 0, n = b.length; o < n; o += 6) {
-          // Lowest underside first: this one and every later one starts over the head.
-          if (!(head > b[o + 1]! + 1e-7)) break;
+          // Lowest first: this one and every later one is wholly over the head.
+          if (!(head > Math.min(b[o + 1]!, b[o + 4]!) + 1e-7)) break;
           if (
             y < b[o + 4]! - 1e-7 &&
             x1 > b[o]! + 1e-7 &&
@@ -597,8 +600,8 @@ export class StaticWorld {
       for (let c = c0; c <= c1; c++) {
         const b = this.cellBoxes(c, r);
         for (let o = 0, n = b.length; o < n; o += 6) {
-          // Lowest underside first: a box that starts over the limit has its top over it too.
-          if (b[o + 1]! > limit) break;
+          // Lowest first: a box wholly over the limit has its top over it too.
+          if (Math.min(b[o + 1]!, b[o + 4]!) > limit) break;
           const t = b[o + 4]!;
           if (
             t > top &&
