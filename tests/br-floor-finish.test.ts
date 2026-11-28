@@ -16,9 +16,15 @@ function glbJson(file: string) {
 describe("floors with a finish (owner, 2026-11-27: klinker in the apartments)", () => {
   it("names the finishes it draws, and nothing else", () => {
     for (const kind of ["klinker", "tiles", "planks", "marble", "carpet", "deck"])
-      expect(floorFinishOf(new THREE.MeshStandardMaterial({ name: `Floor finish: ${kind}` }))).toBe(kind);
-    expect(floorFinishOf(new THREE.MeshStandardMaterial({ name: "Floor finish: lava" }))).toBe(null);
-    expect(floorFinishOf(new THREE.MeshStandardMaterial({ name: "Access floor and steps" }))).toBe(null);
+      expect(floorFinishOf(new THREE.MeshStandardMaterial({ name: `Floor finish: ${kind}` }))).toBe(
+        kind,
+      );
+    expect(floorFinishOf(new THREE.MeshStandardMaterial({ name: "Floor finish: lava" }))).toBe(
+      null,
+    );
+    expect(floorFinishOf(new THREE.MeshStandardMaterial({ name: "Access floor and steps" }))).toBe(
+      null,
+    );
   });
 
   it("patches the shader once: the pattern over the floor's own colour", () => {

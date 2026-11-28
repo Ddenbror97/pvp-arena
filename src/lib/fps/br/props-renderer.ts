@@ -3,7 +3,12 @@ import { dropDuplicateFaces } from "./duplicate-faces";
 import { buildBatches } from "./props-batch";
 import { sharpenMaterials, worldAnisotropy, worldTextureScale } from "./texture-quality";
 import { createBuildingDetail, DETAIL_CLASSES } from "./building-detail";
-import { applyFloorFinish, applyInteriorStyle, floorFinishOf, INTERIOR_STYLE } from "./interior-style";
+import {
+  applyFloorFinish,
+  applyInteriorStyle,
+  floorFinishOf,
+  INTERIOR_STYLE,
+} from "./interior-style";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { Placement } from "./layout";
 import {

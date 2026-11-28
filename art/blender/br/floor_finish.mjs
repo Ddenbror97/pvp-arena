@@ -41,11 +41,17 @@ function slicePrimitive(doc, prim, W, planes) {
     // The plane x|z = value in world → in the node's space (scale/translate only, no turn here).
     const p = [0, 0, 0];
     p[axis] = value;
-    return [0, 1, 2].map((r) => inv[r] * p[0] + inv[4 + r] * p[1] + inv[8 + r] * p[2] + inv[12 + r])[axis];
+    return [0, 1, 2].map(
+      (r) => inv[r] * p[0] + inv[4 + r] * p[1] + inv[8 + r] * p[2] + inv[12 + r],
+    )[axis];
   };
   let tris = [];
   for (let t = 0; t < pos.getCount(); t += 3)
-    tris.push([t, t + 1, t + 2].map((i) => Object.fromEntries(sems.map((s) => [s, prim.getAttribute(s).getElement(i, [])]))));
+    tris.push(
+      [t, t + 1, t + 2].map((i) =>
+        Object.fromEntries(sems.map((s) => [s, prim.getAttribute(s).getElement(i, [])])),
+      ),
+    );
   for (const [axis, value] of planes) {
     const v = local(axis, value);
     const next = [];
@@ -58,12 +64,16 @@ function slicePrimitive(doc, prim, W, planes) {
       for (const side of [1, -1]) {
         const poly = [];
         for (let i = 0; i < 3; i++) {
-          const a = tri[i], b = tri[(i + 1) % 3];
-          const da = d[i] * side, db = d[(i + 1) % 3] * side;
+          const a = tri[i],
+            b = tri[(i + 1) % 3];
+          const da = d[i] * side,
+            db = d[(i + 1) % 3] * side;
           if (da >= 0) poly.push(a);
           if ((da > 0 && db < 0) || (da < 0 && db > 0)) {
             const f = da / (da - db);
-            poly.push(Object.fromEntries(sems.map((s) => [s, a[s].map((x, k) => x + (b[s][k] - x) * f)])));
+            poly.push(
+              Object.fromEntries(sems.map((s) => [s, a[s].map((x, k) => x + (b[s][k] - x) * f)])),
+            );
           }
         }
         for (let k = 1; k + 1 < poly.length; k++) next.push([poly[0], poly[k], poly[k + 1]]);
@@ -82,11 +92,20 @@ function slicePrimitive(doc, prim, W, planes) {
 function invert(m) {
   // Affine inverse of a column-major 4×4 (no shear).
   const a = [m[0], m[1], m[2], m[4], m[5], m[6], m[8], m[9], m[10]];
-  const det = a[0] * (a[4] * a[8] - a[5] * a[7]) - a[3] * (a[1] * a[8] - a[2] * a[7]) + a[6] * (a[1] * a[5] - a[2] * a[4]);
+  const det =
+    a[0] * (a[4] * a[8] - a[5] * a[7]) -
+    a[3] * (a[1] * a[8] - a[2] * a[7]) +
+    a[6] * (a[1] * a[5] - a[2] * a[4]);
   const i = [
-    (a[4] * a[8] - a[5] * a[7]) / det, (a[2] * a[7] - a[1] * a[8]) / det, (a[1] * a[5] - a[2] * a[4]) / det,
-    (a[5] * a[6] - a[3] * a[8]) / det, (a[0] * a[8] - a[2] * a[6]) / det, (a[2] * a[3] - a[0] * a[5]) / det,
-    (a[3] * a[7] - a[4] * a[6]) / det, (a[1] * a[6] - a[0] * a[7]) / det, (a[0] * a[4] - a[1] * a[3]) / det,
+    (a[4] * a[8] - a[5] * a[7]) / det,
+    (a[2] * a[7] - a[1] * a[8]) / det,
+    (a[1] * a[5] - a[2] * a[4]) / det,
+    (a[5] * a[6] - a[3] * a[8]) / det,
+    (a[0] * a[8] - a[2] * a[6]) / det,
+    (a[2] * a[3] - a[0] * a[5]) / det,
+    (a[3] * a[7] - a[4] * a[6]) / det,
+    (a[1] * a[6] - a[0] * a[7]) / det,
+    (a[0] * a[4] - a[1] * a[3]) / det,
   ];
   const t = [m[12], m[13], m[14]];
   const it = [0, 1, 2].map((r) => -(i[r] * t[0] + i[3 + r] * t[1] + i[6 + r] * t[2]));
@@ -103,7 +122,11 @@ async function finish(src, out, rules) {
     if (!materials.has(name))
       materials.set(
         name,
-        doc.createMaterial(name).setBaseColorFactor([1, 1, 1, 1]).setRoughnessFactor(0.75).setMetallicFactor(0),
+        doc
+          .createMaterial(name)
+          .setBaseColorFactor([1, 1, 1, 1])
+          .setRoughnessFactor(0.75)
+          .setMetallicFactor(0),
       );
     return materials.get(name);
   };
@@ -112,7 +135,8 @@ async function finish(src, out, rules) {
     const mesh = node.getMesh();
     if (!mesh) continue;
     const W = node.getWorldMatrix();
-    const world = (p) => [0, 1, 2].map((r) => W[r] * p[0] + W[4 + r] * p[1] + W[8 + r] * p[2] + W[12 + r]);
+    const world = (p) =>
+      [0, 1, 2].map((r) => W[r] * p[0] + W[4 + r] * p[1] + W[8 + r] * p[2] + W[12 + r]);
     for (const prim of mesh.listPrimitives()) {
       const name = prim.getMaterial()?.getName() ?? "";
       if (name.startsWith("Floor finish: ")) continue;
@@ -121,7 +145,16 @@ async function finish(src, out, rules) {
       const mine = rules.filter((r) => !r.prim || r.prim === name);
       if (!mine.length || !pos) continue;
       // Triangles across a rule's box edge are split there first (a floor is one big polygon).
-      const planes = mine.flatMap((r) => (r.box ? [[0, r.box[0]], [0, r.box[3]], [2, r.box[2]], [2, r.box[5]]] : []));
+      const planes = mine.flatMap((r) =>
+        r.box
+          ? [
+              [0, r.box[0]],
+              [0, r.box[3]],
+              [2, r.box[2]],
+              [2, r.box[5]],
+            ]
+          : [],
+      );
       if (planes.length) slicePrimitive(doc, prim, W, planes);
       const count = pos.getCount();
       const groups = new Map(); // rule index → vertex ids
@@ -130,7 +163,11 @@ async function finish(src, out, rules) {
         const P = [t, t + 1, t + 2].map((i) => world(pos.getElement(i, [])));
         const e1 = P[1].map((v, k) => v - P[0][k]),
           e2 = P[2].map((v, k) => v - P[0][k]);
-        const n = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
+        const n = [
+          e1[1] * e2[2] - e1[2] * e2[1],
+          e1[2] * e2[0] - e1[0] * e2[2],
+          e1[0] * e2[1] - e1[1] * e2[0],
+        ];
         const l = Math.hypot(...n) || 1;
         const up = n[1] / l > 0.7,
           notDown = n[1] / l > -0.7;
@@ -141,7 +178,12 @@ async function finish(src, out, rules) {
             (rule.up === false ? notDown : up) &&
             (!rule.colour || (c && near(c, rule.colour))) &&
             (!rule.box ||
-              (ctr[0] >= rule.box[0] && ctr[0] <= rule.box[3] && ctr[1] >= rule.box[1] && ctr[1] <= rule.box[4] && ctr[2] >= rule.box[2] && ctr[2] <= rule.box[5])),
+              (ctr[0] >= rule.box[0] &&
+                ctr[0] <= rule.box[3] &&
+                ctr[1] >= rule.box[1] &&
+                ctr[1] <= rule.box[4] &&
+                ctr[2] >= rule.box[2] &&
+                ctr[2] <= rule.box[5])),
         );
         if (r < 0) keep.push(t, t + 1, t + 2);
         else {
@@ -160,9 +202,13 @@ async function finish(src, out, rules) {
           verts.forEach((v, j) => {
             a.getElement(v, e);
             for (let k = 0; k < size; k++) arr[j * size + k] = e[k];
-            if (sem === "COLOR_0" && recolour) for (let k = 0; k < 3; k++) arr[j * size + k] = recolour[k];
+            if (sem === "COLOR_0" && recolour)
+              for (let k = 0; k < 3; k++) arr[j * size + k] = recolour[k];
           });
-          p.setAttribute(sem, doc.createAccessor().setType(a.getType()).setArray(arr).setBuffer(pos.getBuffer()));
+          p.setAttribute(
+            sem,
+            doc.createAccessor().setType(a.getType()).setArray(arr).setBuffer(pos.getBuffer()),
+          );
         }
         return p;
       };
@@ -171,9 +217,12 @@ async function finish(src, out, rules) {
         let p = make(verts, material(rule.kind), rule.recolour);
         // A white floor primitive without vertex colours: give it the rule's colour.
         if (!prim.getAttribute("COLOR_0") && rule.recolour) {
-          const arr = new Float32Array((verts.length) * 3);
+          const arr = new Float32Array(verts.length * 3);
           for (let j = 0; j < verts.length; j++) arr.set(rule.recolour, j * 3);
-          p.setAttribute("COLOR_0", doc.createAccessor().setType("VEC3").setArray(arr).setBuffer(pos.getBuffer()));
+          p.setAttribute(
+            "COLOR_0",
+            doc.createAccessor().setType("VEC3").setArray(arr).setBuffer(pos.getBuffer()),
+          );
         }
         mesh.addPrimitive(p);
         moved[rule.kind] = (moved[rule.kind] ?? 0) + verts.length / 3;
@@ -188,7 +237,10 @@ async function finish(src, out, rules) {
   return { moved, draws: root.listMeshes().reduce((s, m) => s + m.listPrimitives().length, 0) };
 }
 
-const manifests = editedManifests().map((f) => [f, JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"))]);
+const manifests = editedManifests().map((f) => [
+  f,
+  JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")),
+]);
 const done = new Map();
 for (const [id, model] of Object.entries(spec.models)) {
   const entry = manifests[0][1].models[id];

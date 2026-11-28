@@ -96,12 +96,42 @@ function polygons(part) {
   if (part.box) {
     const [x0, y0, z0, x1, y1, z1] = part.box;
     const all = {
-      x0: [[x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0]],
-      x1: [[x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1]],
-      y0: [[x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1]],
-      y1: [[x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [x0, y1, z0]],
-      z0: [[x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0]],
-      z1: [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]],
+      x0: [
+        [x0, y0, z0],
+        [x0, y0, z1],
+        [x0, y1, z1],
+        [x0, y1, z0],
+      ],
+      x1: [
+        [x1, y0, z1],
+        [x1, y0, z0],
+        [x1, y1, z0],
+        [x1, y1, z1],
+      ],
+      y0: [
+        [x0, y0, z0],
+        [x1, y0, z0],
+        [x1, y0, z1],
+        [x0, y0, z1],
+      ],
+      y1: [
+        [x0, y1, z1],
+        [x1, y1, z1],
+        [x1, y1, z0],
+        [x0, y1, z0],
+      ],
+      z0: [
+        [x1, y0, z0],
+        [x0, y0, z0],
+        [x0, y1, z0],
+        [x1, y1, z0],
+      ],
+      z1: [
+        [x0, y0, z1],
+        [x1, y0, z1],
+        [x1, y1, z1],
+        [x0, y1, z1],
+      ],
     };
     return (part.faces ?? Object.keys(all)).map((f) => all[f]);
   }
@@ -209,14 +239,17 @@ async function patch(src, out, model) {
       : doc
           .getRoot()
           .listNodes()
-          .flatMap((node) => (node.getMesh()?.listPrimitives() ?? []).map((prim) => ({ node, prim })));
+          .flatMap((node) =>
+            (node.getMesh()?.listPrimitives() ?? []).map((prim) => ({ node, prim })),
+          );
     for (const { node, prim } of targets) {
       const inv = invert(node.getWorldMatrix());
       const a = apply(inv, c.box.slice(0, 3)),
         b = apply(inv, c.box.slice(3));
       const box = [0, 1, 2].map((k) => Math.min(a[k], b[k]));
       box.push(...[0, 1, 2].map((k) => Math.max(a[k], b[k])));
-      const before = (prim.getIndices()?.getCount() ?? prim.getAttribute("POSITION").getCount()) / 3;
+      const before =
+        (prim.getIndices()?.getCount() ?? prim.getAttribute("POSITION").getCount()) / 3;
       cutPrimitive(doc, prim, [box], false);
       cut += before - prim.getAttribute("POSITION").getCount() / 3;
     }
@@ -246,8 +279,7 @@ async function patch(src, out, model) {
         const ln = unit(sub(apply(inv, normal), apply(inv, [0, 0, 0])));
         for (const q of face) {
           const at = attributes(prim, t, q, ln, part.tint, part.uvTile, normal);
-          for (const s of sems)
-            extra[s].push(...(s === "POSITION" ? apply(inv, q) : at[s]));
+          for (const s of sems) extra[s].push(...(s === "POSITION" ? apply(inv, q) : at[s]));
         }
         for (let k = 1; k + 1 < face.length; k++) newIdx.push(next, next + k, next + k + 1);
         next += face.length;
@@ -262,7 +294,13 @@ async function patch(src, out, model) {
     const idx = prim.getIndices();
     const oldIdx = idx ? Array.from(idx.getArray()) : Array.from({ length: count }, (_, i) => i);
     if (idx) idx.setArray(new Uint32Array([...oldIdx, ...newIdx]));
-    else prim.setIndices(doc.createAccessor().setType("SCALAR").setArray(new Uint32Array([...oldIdx, ...newIdx])));
+    else
+      prim.setIndices(
+        doc
+          .createAccessor()
+          .setType("SCALAR")
+          .setArray(new Uint32Array([...oldIdx, ...newIdx])),
+      );
   }
   await doc.transform(prune(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
   await io.write(path.join("public", out), doc);
@@ -281,14 +319,17 @@ for (const [id, model] of Object.entries(spec.models)) {
     const src = entry.lods[level].file;
     const out = `/fps/br/models/${id}.${spec.tag}.lod${level}.glb`;
     // Run once per tag: a second run would patch its own output again.
-    if (src === out) throw new Error(`${id} lod${level}: already ${spec.tag} (run on fresh manifests)`);
+    if (src === out)
+      throw new Error(`${id} lod${level}: already ${spec.tag} (run on fresh manifests)`);
     const lodModel = {
       parts: (model.parts ?? []).filter((p) => (p.lods ?? model.lods ?? [0, 1]).includes(level)),
       cuts: (model.cuts ?? []).filter((c) => (c.lods ?? model.lods ?? [0, 1]).includes(level)),
     };
     const r = await patch(src, out, lodModel);
     done.set(src, { out, added: r.added - r.cut });
-    console.log(`${id} lod${level}: +${r.added} triangles, ${-r.cut >= 0 ? "+" : "−"}${Math.abs(r.cut)} from cuts → ${out}`);
+    console.log(
+      `${id} lod${level}: +${r.added} triangles, ${-r.cut >= 0 ? "+" : "−"}${Math.abs(r.cut)} from cuts → ${out}`,
+    );
   }
 }
 for (const [file, manifest] of manifests) {

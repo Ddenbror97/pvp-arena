@@ -392,7 +392,10 @@ export function applyFloorFinish(material: THREE.MeshStandardMaterial) {
   material.onBeforeCompile = (shader, renderer) => {
     previous?.call(material, shader, renderer);
     shader.vertexShader = shader.vertexShader
-      .replace("#include <common>", "#include <common>\nvarying vec3 vBrFfWorld;\nvarying vec4 vBrFfSeed;")
+      .replace(
+        "#include <common>",
+        "#include <common>\nvarying vec3 vBrFfWorld;\nvarying vec4 vBrFfSeed;",
+      )
       .replace(
         "#include <project_vertex>",
         `#include <project_vertex>
