@@ -20,7 +20,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
  * revision has left behind in public/.
  */
 export const WORLD_ASSETS = {
-  revision: "hosp-v1",
+  revision: "gaps-v1",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -249,8 +249,16 @@ export const WORLD_ASSETS = {
   // own was a sliver in LOD0 and gone in LOD1, the monitor hung over the floor on nothing). The
   // layout's part (layout.ts): the wards' wall cupboard off the window, the tents down onto
   // their stakes. Collision unchanged but for the tents' placement.
-  models: "/fps/br/models/models.hosp-v1.json",
-  collision: "/fps/br/models/collision.hosp-v1.json",
+  // gaps-v1 (2026-11-27, from hosp-v1; owner's report "buildings that is incompleted built.
+  // prison, some single buildings", art/br/fitout/gaps.py + patch_parts.mjs): the townhouse's
+  // west window the stair crosses walled up; the strip mall's roof stair walled outside and at
+  // the back; the shed's inner doorway's collision fitted to its wall (0.58 m → 0.88 m); the
+  // long wooden house's floor carried out to its walls; the apartments' stairwell door's slit
+  // past the corridor wall closed; the Blackwater keep's slot under the roof's courtyard
+  // parapet closed, its rounded ends' merlons every 2 m and their openings' ends drawn; the
+  // quay's walk carried over the yard's dip into the moat.
+  models: "/fps/br/models/models.gaps-v1.json",
+  collision: "/fps/br/models/collision.gaps-v1.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

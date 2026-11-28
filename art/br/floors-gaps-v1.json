@@ -1,0 +1,1175 @@
+{
+ "tag": "gaps-v1",
+ "models": {
+  "apartment": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "klinker",
+     "prim": "Access floor and steps",
+     "box": [
+      -9.8,
+      -0.5,
+      -5.8,
+      -6.55,
+      13,
+      5.8
+     ],
+     "recolour": [
+      0.75,
+      0.72,
+      0.68
+     ],
+     "why": "the stairwell's floors"
+    },
+    {
+     "kind": "klinker",
+     "prim": "Access floor and steps",
+     "box": [
+      -6.7,
+      -0.5,
+      -5.8,
+      9.8,
+      13,
+      -4.05
+     ],
+     "recolour": [
+      0.75,
+      0.72,
+      0.68
+     ],
+     "why": "the corridor's floors"
+    },
+    {
+     "kind": "klinker",
+     "prim": "apartment",
+     "colour": [
+      0.6,
+      0.6,
+      0.58
+     ],
+     "up": false,
+     "box": [
+      -9.8,
+      -0.5,
+      -6,
+      -6.5,
+      13,
+      6
+     ],
+     "recolour": [
+      0.75,
+      0.72,
+      0.68
+     ],
+     "why": "the stairs, treads and risers"
+    },
+    {
+     "kind": "klinker",
+     "prim": "apartment",
+     "colour": [
+      0.93,
+      0.92,
+      0.89
+     ],
+     "box": [
+      -6.45,
+      2.5,
+      6.0,
+      11.45,
+      12.5,
+      7.45
+     ],
+     "recolour": [
+      0.75,
+      0.72,
+      0.68
+     ],
+     "why": "the balconies' floors"
+    }
+   ]
+  },
+  "condo-lobby": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "condo-lobby",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "condo-lobby",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "condo-lobby",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "condo-lobby",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "condo-lobby",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "condo-lobby",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  },
+  "condo-floor": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "condo-floor",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "condo-floor",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "condo-floor",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "condo-floor",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "condo-floor",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "condo-floor",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  },
+  "condo-roof-b": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "condo-roof-b",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "condo-roof-b",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "condo-roof-b",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "condo-roof-b",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "condo-roof-b",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "condo-roof-b",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  },
+  "condo-club": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "condo-club",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "condo-club",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "condo-club",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "condo-club",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "condo-club",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "condo-club",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  },
+  "brick-lobby": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "brick-lobby",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "brick-lobby",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "brick-lobby",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "brick-lobby",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "brick-lobby",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "brick-lobby",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  },
+  "brick-floor": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "brick-floor",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "brick-floor",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "brick-floor",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "brick-floor",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "brick-floor",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "brick-floor",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  },
+  "brick-roof-b": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "brick-roof-b",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "brick-roof-b",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "brick-roof-b",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "brick-roof-b",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "brick-roof-b",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "brick-roof-b",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  },
+  "office-lobby": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "office-lobby",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "office-lobby",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "office-lobby",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "office-lobby",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "office-lobby",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "office-lobby",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  },
+  "office-floor": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "office-floor",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "office-floor",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "office-floor",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "office-floor",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "office-floor",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "office-floor",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  },
+  "office-roof-b": {
+   "lods": [
+    0
+   ],
+   "rules": [
+    {
+     "kind": "planks",
+     "prim": "office-roof-b",
+     "colour": [
+      0.55,
+      0.4,
+      0.27
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the oak floors"
+    },
+    {
+     "kind": "tiles",
+     "prim": "office-roof-b",
+     "colour": [
+      0.74,
+      0.75,
+      0.76
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the tile floors"
+    },
+    {
+     "kind": "carpet",
+     "prim": "office-roof-b",
+     "colour": [
+      0.36,
+      0.33,
+      0.31
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the carpet floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "office-roof-b",
+     "colour": [
+      0.88,
+      0.87,
+      0.84
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the marble floors"
+    },
+    {
+     "kind": "deck",
+     "prim": "office-roof-b",
+     "colour": [
+      0.56,
+      0.45,
+      0.34
+     ],
+     "box": [
+      -40,
+      -0.5,
+      -40,
+      40,
+      0.9,
+      40
+     ],
+     "why": "the deck floors"
+    },
+    {
+     "kind": "marble",
+     "prim": "office-roof-b",
+     "colour": [
+      0.72,
+      0.71,
+      0.69
+     ],
+     "up": false,
+     "why": "the stairs, stone"
+    }
+   ]
+  }
+ }
+}
