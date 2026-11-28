@@ -109,6 +109,8 @@ const FOOT_SKIN = 1e-4;
 const ASSIST = 0.3;
 const ASSIST_STEP = 0.03;
 /** Hull height above the feet (eye plus head room, as in 1v1). */
+/** Scratch for StaticWorld.slantFaces (three floats a face, up to four). */
+const FACES = new Float64Array(12);
 const hullHeight = (crouched: boolean) => (crouched ? CROUCH_EYE_HEIGHT : EYE_HEIGHT) + 0.2;
 const EDGE = WORLD_HALF - 2;
 
@@ -218,9 +220,62 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
     };
     const x0 = p.x,
       z0 = p.z;
+    const stepLength = Math.hypot(dx, dz);
+    // A slanted wall in the way (slants.ts: Blackwater's keep and quay, the round tanks and
+    // towers): up to its face and the rest of the step along it, as along any wall. The per-axis
+    // moves below are exact for walls along x or z and for nothing else: at a wall at 45° they
+    // took a body along x one tick and along z the next, and on a wall's staircase of boxes
+    // into every notch (collision audit 2026-11-27, owner: "the building inside prison").
+    let slid = false;
+    if (!input.plain && world.slantCount && stepLength > 0) {
+      const ex = clampEdge(p.x + dx),
+        ez = clampEdge(p.z + dz);
+      if (!attempt(ex, ez, stepLength)) {
+        const faces = world.slantFaces(ex, p.y + FOOT_SKIN, ez, height, r, FACES);
+        for (let k = 0; k < faces && !slid; k++) {
+          const nx = FACES[k * 3]!,
+            nz = FACES[k * 3 + 1]!,
+            plane = FACES[k * 3 + 2]!;
+          const into = dx * nx + dz * nz;
+          if (!(into < 0)) continue;
+          // Into the face by the gap there is now, no further; along it by all the step has.
+          const gap = Math.max(0, p.x * nx + p.z * nz - r * (Math.abs(nx) + Math.abs(nz)) - plane);
+          const cut = into + Math.min(gap, -into);
+          // (A face the whole step stays short of is not what stopped it.)
+          if (!(cut < 0)) continue;
+          const mx = dx - nx * cut,
+            mz = dz - nz * cut;
+          const moveLength = Math.hypot(mx, mz);
+          // Pressed square into it (a doorway's jamb beside, perhaps): the corner assist's case.
+          if (moveLength < stepLength * 0.05) continue;
+          const at = (f: number) => [clampEdge(p.x + mx * f), clampEdge(p.z + mz * f)] as const;
+          let to = attempt(...at(1), moveLength),
+            f = 1;
+          // Something else further on (the next wall of a corner, a box): as far as it lets.
+          if (!to) {
+            let lo = 0,
+              hi = 1;
+            for (let b = 0; b < 5; b++) {
+              const mid = (lo + hi) / 2;
+              const t = attempt(...at(mid), moveLength * mid);
+              if (t) {
+                lo = mid;
+                to = t;
+              } else hi = mid;
+            }
+            f = lo;
+          }
+          if (to && f > 0) {
+            const [ax, az] = at(f);
+            apply(ax, az, to);
+            slid = true;
+          }
+        }
+      }
+    }
     /** Axes whose move an obstacle cut short (for the corner assist below). */
     const blockedAxes: Array<{ axis: "x" | "z"; delta: number }> = [];
-    for (const axis of ["x", "z"] as const) {
+    for (const axis of slid ? [] : (["x", "z"] as const)) {
       const delta = axis === "x" ? dx : dz;
       if (delta === 0) continue;
       const along = (f: number) =>
@@ -254,7 +309,6 @@ export function stepBody(world: StaticWorld, p: BrBody, input: BrMoveInput | nul
     // shift that would free the blocked move (the side the input leans to first) is taken, as
     // a round body glances off a corner, within what is left of this tick's step (never faster
     // than the input's speed).
-    const stepLength = Math.hypot(dx, dz);
     for (const { axis, delta } of blockedAxes) {
       const left = stepLength - Math.hypot(p.x - x0, p.z - z0);
       if (left < ASSIST_STEP / 2) break;

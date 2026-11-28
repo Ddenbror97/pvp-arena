@@ -221,14 +221,29 @@ describe("Project Island drop: plane, freefall, parachute, landing", () => {
     );
     expect(changes).toEqual(["parachute", "swim"]);
     expect(b.y).toBe(0);
-    // Swim south (+z: yaw π) to the island shore.
-    const out = until(
-      route,
-      b,
-      (q) => q.phase === "ground",
-      { forward: 1, strafe: 0, yaw: Math.PI },
-      900,
-    );
+    // Swim south (+z: yaw π) to the island shore, round what stands in the water as a player
+    // does (a boulder off the shore here: swimming went through it before the collision audit
+    // of 2026-11-27, drop.ts swimAgainst).
+    const out: string[] = [];
+    let ms = 60_000,
+      round = 0;
+    for (let t = 0; t < (900 * 1000) / TICK_MS && b.phase !== "ground"; t++) {
+      const x0 = b.x,
+        z0 = b.z;
+      const c = stepDrop(
+        world,
+        meta,
+        route,
+        b,
+        { forward: 1, strafe: round > 0 ? 1 : 0, yaw: Math.PI },
+        ms,
+        TICK_MS,
+      );
+      if (c) out.push(c);
+      ms += TICK_MS;
+      if (round > 0) round--;
+      else if (Math.hypot(b.x - x0, b.z - z0) < 1e-3) round = 60;
+    }
     expect(out).toEqual(["ground"]);
     expect(hf.heightAt(b.x, b.z)).toBeGreaterThan(-DROP.wadeDepth - 0.01);
   });

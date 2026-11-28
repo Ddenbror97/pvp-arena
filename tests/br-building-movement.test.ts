@@ -8,14 +8,38 @@
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { withDoors, type DoorSet } from "@/lib/fps/br/doors";
-import { newDropBody, stepDrop, type DropInput, type Route } from "@/lib/fps/br/drop";
+import {
+  newDropBody,
+  stepDrop,
+  SWIM_DEEP,
+  SWIM_HEAD,
+  waterSurface,
+  type DropInput,
+  type Route,
+} from "@/lib/fps/br/drop";
 import { BrFrameView } from "@/lib/fps/br/frame-view";
+import { brNadeAdvance } from "@/lib/fps/br/grenades";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import { stepBody, type BrBody } from "@/lib/fps/br/movement";
 import { withPanes } from "@/lib/fps/br/panes";
-import type { CollisionData, StaticWorld } from "@/lib/fps/br/static-world";
+import {
+  prismOverlaps,
+  prismUnder,
+  S_CORNERS,
+  S_NORMALS,
+  S_PLANES,
+  S_Y0,
+  S_Y1,
+  SLANT,
+} from "@/lib/fps/br/slants";
+import {
+  blockerDistance,
+  hitNormal,
+  type CollisionData,
+  type StaticWorld,
+} from "@/lib/fps/br/static-world";
 import { WORLD_ASSETS, type WorldMeta } from "@/lib/fps/br/world";
 import { EYE_HEIGHT, PLAYER_RADIUS } from "@/lib/fps/map";
 import { MOVE_SPEED, TICK_MS } from "@/lib/fps/simulation";
@@ -32,6 +56,7 @@ const route: Route = { a: [0, 0], b: [1, 0], dir: [1, 0], length: 1 };
 const HULL = EYE_HEIGHT + 0.2;
 
 let solid: StaticWorld, world: StaticWorld;
+let layoutOf: (model: string) => { x: number; y: number; z: number };
 /** The first doorway of every building model that has one. */
 let doors: DoorSet["doors"];
 beforeAll(async () => {
@@ -39,6 +64,7 @@ beforeAll(async () => {
   const cover = await decodeLandCover(buffer(`public${WORLD_ASSETS.landcover}`));
   const isl = buildIsland(hf, cover, meta, collision);
   solid = isl.solid;
+  layoutOf = (model) => isl.layout.find((p) => p.model === model)!;
   world = withPanes(
     withDoors(solid, isl.doors, new Uint8Array(isl.doors.doors.length).fill(1)),
     isl.panes,
@@ -68,9 +94,14 @@ describe("a hull's queries in buildings", () => {
       roadTop: { value: null },
     }) as StaticWorld;
     const b = solid.boxes;
+    // (A slanted wall's staircase stands for nothing: its prism does, tested over all of them.)
+    const walls = solid.slants;
     const blocked = (x: number, y: number, z: number, height: number, radius: number) => {
       let hit = false;
+      for (let o = 0; o < walls.length && !hit; o += SLANT)
+        hit = prismOverlaps(walls, o, x, y, z, height, radius);
       solid.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
+        if (solid.isSlantBox(i)) return;
         const o = i * 6;
         if (
           x + radius > b.get(o) + 1e-7 &&
@@ -86,7 +117,12 @@ describe("a hull's queries in buildings", () => {
     };
     const support = (x: number, z: number, radius: number, maxY: number) => {
       let top = solid.hf.heightAt(x, z);
+      for (let o = 0; o < walls.length; o += SLANT) {
+        const t = walls[o + S_Y1]!;
+        if (t > top && t <= maxY + 1e-6 && prismUnder(walls, o, x, z, radius)) top = t;
+      }
       solid.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
+        if (solid.isSlantBox(i)) return;
         const o = i * 6;
         const t = b.get(o + 4);
         if (
@@ -122,6 +158,19 @@ describe("a hull's queries in buildings", () => {
         if (bare.supportAt(x, z, radius, y + 0.35) !== support(x, z, radius, y + 0.35)) wrong++;
         if (bare.supportAt(x, z, radius, 1e4) !== support(x, z, radius, 1e4)) wrong++;
         if (want) hits++;
+        asked++;
+      }
+    // And round every slanted wall, on its levels (the rebuilt walls' own neighbourhoods).
+    for (let o = 0; o < walls.length; o += SLANT)
+      for (let n = 0; n < 24; n++) {
+        const cx = (walls[o + S_CORNERS]! + walls[o + S_CORNERS + 4]!) / 2,
+          cz = (walls[o + S_CORNERS + 1]! + walls[o + S_CORNERS + 5]!) / 2;
+        const x = cx + (random() - 0.5) * 6,
+          z = cz + (random() - 0.5) * 6,
+          y = walls[o + S_Y0]! + random() * (walls[o + S_Y1]! - walls[o + S_Y0]! + 2) - 1,
+          radius = n % 5 ? PLAYER_RADIUS : 0.05;
+        if (bare.blocked(x, y, z, HULL, radius) !== blocked(x, y, z, HULL, radius)) wrong++;
+        if (bare.supportAt(x, z, radius, y + 0.35) !== support(x, z, radius, y + 0.35)) wrong++;
         asked++;
       }
     expect(asked).toBeGreaterThan(20_000);
@@ -386,5 +435,223 @@ describe("a wall drawn at an angle (a staircase of boxes)", () => {
     expect(Math.hypot(b.x - x, b.z - z)).toBeGreaterThan(11);
     expect(caught).toBe(0);
     expect(least).toBeGreaterThan(0.05);
+  });
+});
+
+describe("slanted walls, rebuilt from their staircases (slants.ts)", () => {
+  it("stand where they are drawn, and stop sight and shots at their faces", () => {
+    // Blackwater's keep (432) and quay (12), East Works' tanks, the fortress's round towers.
+    expect(solid.slantCount).toBeGreaterThan(450);
+    const s = solid.slants;
+    let rays = 0,
+      faces = 0;
+    for (let w = 0; w < solid.slantCount; w++) {
+      const o = w * SLANT,
+        y = (s[o + S_Y0]! + s[o + S_Y1]!) / 2;
+      // The long faces (edges 0 and 2), a quarter, half and three quarters along.
+      for (const e of [0, 2]) {
+        const ax = s[o + S_CORNERS + e * 2]!,
+          az = s[o + S_CORNERS + e * 2 + 1]!,
+          bx = s[o + S_CORNERS + ((e + 1) & 3) * 2]!,
+          bz = s[o + S_CORNERS + ((e + 1) & 3) * 2 + 1]!;
+        const nx = s[o + S_NORMALS + e * 2]!,
+          nz = s[o + S_NORMALS + e * 2 + 1]!;
+        for (const f of [0.25, 0.5, 0.75]) {
+          const px = ax + (bx - ax) * f,
+            pz = az + (bz - az) * f;
+          // A hull touching the face from outside stands; a centimetre into it does not.
+          const rr = PLAYER_RADIUS * (Math.abs(nx) + Math.abs(nz));
+          expect(
+            prismOverlaps(
+              s,
+              o,
+              px + nx * (rr + 0.002),
+              y - 0.5,
+              pz + nz * (rr + 0.002),
+              1,
+              PLAYER_RADIUS,
+            ),
+          ).toBe(false);
+          expect(
+            prismOverlaps(
+              s,
+              o,
+              px + nx * (rr - 0.01),
+              y - 0.5,
+              pz + nz * (rr - 0.01),
+              1,
+              PLAYER_RADIUS,
+            ),
+          ).toBe(true);
+          // A look at it from 1.5 m stops at the face, with the face's normal.
+          const hit = world.raycast(px + nx * 1.5, y, pz + nz * 1.5, -nx, 0, -nz, 3);
+          rays++;
+          if (hit?.kind !== "box" || hit.box !== solid.boxCount + w) continue;
+          faces++;
+          expect(hit.distance).toBeCloseTo(1.5, 4);
+          const [hx, hy, hz] = hitNormal(world, hit, px, y, pz);
+          expect(hx * nx + hz * nz).toBeCloseTo(1, 6);
+          expect(hy).toBe(0);
+          expect(
+            blockerDistance(
+              world,
+              hit.box,
+              undefined,
+              px + nx * 1.5,
+              y,
+              pz + nz * 1.5,
+              -nx,
+              0,
+              -nz,
+            ),
+          ).toBeCloseTo(1.5, 6);
+        }
+      }
+    }
+    // (The rest look at another wall first: the next one round a bend, a floor, a pier.)
+    expect(faces).toBeGreaterThan(rays * 0.5);
+  });
+
+  it("are slid along: no tick caught, at the speed the face leaves the step", () => {
+    // Sprinting at the keep's 45° walls (its rounded ends): along x into one, along z into
+    // another. On the staircase the body crept for up to a second and lurched a box along.
+    const poi = meta.pois.find((p) => p.id === "blackwater-prison")!;
+    for (const [gx, gy, gz, h] of [
+      [-8.8, 9.2, -20.8, 8],
+      [-86.8, 13.8, -14.8, 12],
+    ] as const) {
+      const yaw = heading(h);
+      const b = stand({ x: poi.x + gx, z: poi.z + gz, y0: poi.padHeight! + gy });
+      const moves: number[] = [];
+      // (A second along it: then the next wall of the bend.)
+      for (let i = 0; i < 30; i++) {
+        const x0 = b.x,
+          z0 = b.z;
+        stepBody(world, b, { forward: 1, strafe: 0, yaw, jump: false, sprint: true }, TICK_MS);
+        moves.push(Math.hypot(b.x - x0, b.z - z0));
+      }
+      // At the wall by the eighth tick; then every tick the same, the step's share along it.
+      const along = moves.slice(8);
+      const least = Math.min(...along),
+        most = Math.max(...along);
+      expect(least, `${gx}, ${gz}`).toBeGreaterThan(0.15);
+      expect(most - least, `${gx}, ${gz}`).toBeLessThan(0.002);
+    }
+  });
+
+  it("are bounced off by grenades at their faces", () => {
+    // A grenade thrown flat at the middle of every keep wall face it can reach from 2 m: it
+    // comes back off the face (mirrored in its normal), never inside the wall.
+    const s = solid.slants;
+    let thrown = 0;
+    for (let w = 0; w < solid.slantCount && thrown < 200; w++) {
+      const o = w * SLANT;
+      if (s[o + S_Y1]! - s[o + S_Y0]! < 3) continue;
+      const nx = s[o + S_NORMALS]!,
+        nz = s[o + S_NORMALS + 1]!;
+      const px = (s[o + S_CORNERS]! + s[o + S_CORNERS + 2]!) / 2,
+        pz = (s[o + S_CORNERS + 1]! + s[o + S_CORNERS + 3]!) / 2,
+        y = s[o + S_Y0]! + 1.5;
+      const hit = world.raycast(px + nx * 2, y, pz + nz * 2, -nx, 0, -nz, 2.5);
+      if (hit?.kind !== "box" || hit.box !== solid.boxCount + w) continue;
+      const g = {
+        x: px + nx * 2,
+        y,
+        z: pz + nz * 2,
+        vx: -nx * 12,
+        vy: 0,
+        vz: -nz * 12,
+        n: 0,
+        rest: false,
+      };
+      const impacts: number[] = [];
+      // (Steps of 1/128 s: 2 m at 12 m/s and back.)
+      for (let k = 0; k < 40; k++) {
+        brNadeAdvance(g, world, 1, (i) => impacts.push(i.t));
+        const plane = s[o + S_PLANES]!;
+        expect(g.x * nx + g.z * nz).toBeGreaterThan(plane);
+      }
+      expect(impacts.length).toBeGreaterThan(0);
+      // Off the face and back the way it came (mirrored: the normal part reversed).
+      expect(g.vx * nx + g.vz * nz).toBeGreaterThan(0);
+      thrown++;
+    }
+    expect(thrown).toBeGreaterThan(50);
+  });
+});
+
+describe("swimming against what stands in the water (Blackwater's moat)", () => {
+  const moat = () => meta.waterBodies.find((w) => w.id === "blackwater-moat")!;
+
+  it("goes along the quay and the keep, never into them, and is never put on the bed", () => {
+    // Swimming took no notice of the world: through the quay and the keep's foundations, under
+    // the keep's floor, and where the water's rectangle ends inside a wall, onto the bed inside
+    // it and back, five times a second (43,016 ticks inside, 1,190 such drops on this grid).
+    const w = moat(),
+      [x0, z0, x1, z1] = w.bounds;
+    let swims = 0,
+      inside = 0,
+      bed = 0;
+    for (let x = x0 + 4; x < x1; x += 8)
+      for (let z = z0 + 4; z < z1; z += 8) {
+        const ground = world.hf.heightAt(x, z);
+        if (waterSurface(meta, ground, x, z) === null || w.level - ground <= 1.5) continue;
+        if (world.blocked(x, w.level - SWIM_DEEP, z, SWIM_DEEP + SWIM_HEAD, PLAYER_RADIUS))
+          continue;
+        for (let h = 0; h < 16; h += 2) {
+          const input = { forward: 1, strafe: 0, yaw: heading(h), jump: false, sprint: true };
+          const b = Object.assign(newDropBody(), { x, y: w.level, z, phase: "swim" as const });
+          for (let i = 0; i < 180; i++) {
+            const was = b.phase;
+            stepDrop(world, meta, route, b, input, 0, TICK_MS);
+            if (
+              b.phase === "swim" &&
+              world.blocked(b.x, b.y - SWIM_DEEP, b.z, SWIM_DEEP + SWIM_HEAD, PLAYER_RADIUS)
+            )
+              inside++;
+            // Out of the water under the surface, inside a wall: the bed.
+            if (
+              was === "swim" &&
+              b.phase === "ground" &&
+              world.blocked(b.x, b.y + 1e-4, b.z, HULL, PLAYER_RADIUS)
+            )
+              bed++;
+          }
+          swims++;
+        }
+      }
+    expect(swims).toBeGreaterThan(1000);
+    expect(inside).toBe(0);
+    expect(bed).toBe(0);
+  }, 120_000);
+
+  it("gets out on each of the quay's four flights of steps", () => {
+    // The flights run down the quay's face into the water (build_blackwater.mjs quay): swum at
+    // from 2 m off their low ends, a swimmer steps onto the first tread and walks up them.
+    const keep = layoutOf("bw-quay");
+    let out = 0;
+    for (const s of [1, -1])
+      for (const dir of [1, -1]) {
+        const x = keep.x + dir * 16,
+          z = keep.z + s * 42.75;
+        const yaw = dir > 0 ? Math.PI / 2 : -Math.PI / 2;
+        const b = Object.assign(newDropBody(), { x, y: moat().level, z, phase: "swim" as const });
+        let top = -Infinity;
+        for (let i = 0; i < 45; i++) {
+          stepDrop(
+            world,
+            meta,
+            route,
+            b,
+            { forward: 1, strafe: 0, yaw, jump: false, sprint: true },
+            0,
+            TICK_MS,
+          );
+          if (b.phase === "ground") top = Math.max(top, b.y);
+        }
+        // Up the flight to the yard (3 m over the water).
+        if (top > moat().level + 2.8) out++;
+      }
+    expect(out).toBe(4);
   });
 });
