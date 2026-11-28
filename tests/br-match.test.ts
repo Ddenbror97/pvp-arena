@@ -80,10 +80,24 @@ describe("Project Island match (Phase 2 core)", () => {
     expect(walking.acts).toContainEqual({ act: "pickup", id: gun.id });
     expect(walking.input.forward).toBe(1);
     expect(Math.sin(walking.input.yaw)).toBeGreaterThan(0.9);
-    // If it made no progress, its next movement must try a different heading.
+    // If it made no progress, its next movement must try a different heading (it looks where
+    // it has got to every two seconds: 2026-11-28).
     const direct = walking.input.yaw;
-    const detour = decide(2100);
+    decide(2100);
+    const detour = decide(4200);
     expect(Math.cos(detour.input.yaw - direct)).toBeLessThan(0.1);
+    // Still there: the same way again for longer, and after three tries the other way.
+    const side = Math.sin(detour.input.yaw - direct);
+    const sides: number[] = [];
+    for (let t = 4200, n = 2; n <= 4; n++) {
+      // Past the detour (1.5 s a try, growing), then two looks without progress.
+      t += 1500 * Math.min(4, n - 1) + 2100;
+      decide(t);
+      t += 2100;
+      sides.push(Math.sin(decide(t).input.yaw - direct));
+    }
+    expect(Math.sign(sides[0]!)).toBe(Math.sign(side));
+    expect(Math.sign(sides[2]!)).toBe(-Math.sign(side));
   });
 
   it("shares only the selected spectator's public profile and equipped gun after elimination", () => {

@@ -47,6 +47,8 @@ export async function simulate(seeds: number[], maxMin = 40) {
     const tickMs: number[] = [];
     const still = new Map<number, { x: number; z: number; since: number }>();
     let stuck = 0;
+    const stuckAt: Record<string, number> = {},
+      stuckWhy: Record<string, number> = {};
     let lateGame: unknown = null;
     const duels: Record<string, number> = {};
     let nadeCarriers = -1;
@@ -103,6 +105,25 @@ export async function simulate(seeds: number[], maxMin = 40) {
             still.set(s.seat, { x: s.body.x, z: s.body.z, since: now });
           } else if (now - p.since > 30_000) {
             stuck++;
+            // Where, and what it was after (post-development audit, 2026-11-28).
+            const it = m.goalItem !== null ? state.loot.items.get(m.goalItem) : undefined;
+            let model = "",
+              best = 30;
+            for (const q of island.layout) {
+              const d = Math.hypot(q.x - s.body.x, q.z - s.body.z);
+              if (d < best && (collision.models[q.model]?.length ?? 0) > 6) {
+                best = d;
+                model = q.model;
+              }
+            }
+            const why = it
+              ? Math.abs(it.y - s.body.y) > 1.2
+                ? "loot on another level"
+                : "loot on its level"
+              : "going to the circle";
+            const key = `${why} | ${model || "open ground"}`;
+            stuckAt[key] = (stuckAt[key] ?? 0) + 1;
+            stuckWhy[why] = (stuckWhy[why] ?? 0) + 1;
             still.set(s.seat, { x: s.body.x, z: s.body.z, since: now });
           }
         }
@@ -194,6 +215,12 @@ export async function simulate(seeds: number[], maxMin = 40) {
       accuracy: shots ? Math.round((hits / shots) * 1000) / 10 : 0,
       nades,
       stuck,
+      stuckWhy,
+      stuckAt: Object.fromEntries(
+        Object.entries(stuckAt)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 25),
+      ),
       lateGame,
       duels,
       nadeCarriers,
