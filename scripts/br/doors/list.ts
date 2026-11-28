@@ -118,6 +118,25 @@ const STYLE: Record<string, string> = {
   "car-showroom": "shop",
   "car-wash": "shop",
   conservatory: "plank",
+  // The rebuilt towns' houses (2026-11-27, build_towns.mjs; the rest take the house door): glazed
+  // doors on the shops, steel on Millhaven's works and loft blocks, boards on the log and barn houses.
+  "ns-corner-store": "shop",
+  "ns-main-street": "shop",
+  "mh-corner-tavern": "shop",
+  "rw-mercantile": "shop",
+  "cr-desert-modern": "shop",
+  "mh-sawtooth-works": "metal",
+  "mh-container-flats": "metal",
+  "mh-garage-flats": "metal",
+  "mh-mill-lofts": "metal",
+  "mh-block-flats": "metal",
+  "rw-log-house": "plank",
+  "rw-timber-lodge": "plank",
+  "rw-boathouse": "plank",
+  "rw-cabin-duplex": "plank",
+  "rw-mill-row": "plank",
+  "cr-barn-lofts": "plank",
+  "cr-feed-store": "plank",
 };
 /**
  * Doors that open the other way from the rule above (by index in the model's door list). The

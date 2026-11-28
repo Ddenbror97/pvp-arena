@@ -135,7 +135,10 @@ describe("Project Island models", () => {
     // 2026-11-23; 191 buildings' far LODs with texture coordinates and their views' mean
     // colours for the far atlas, ~0.7 MB over the flat ones they replace, 2026-11-23; the
     // Southern Military Base's wall and its five new buildings, ~1.3 MB with their far LODs on
-    // the far atlas again, 2026-11-23).
-    expect(total / 1024).toBeLessThan(98.5);
+    // the far atlas again, 2026-11-23; Northstar Town, Millhaven, Crossroads and Riverwood
+    // rebuilt: 48 houses modelled in Blender, two to four storeys with stairs and roof tops, in
+    // place of the downloaded one-storey houses on their streets, ~6.7 MB, and the far atlas laid
+    // out again with them, ~0.1 MB, 2026-11-27).
+    expect(total / 1024).toBeLessThan(104.5);
   });
 });

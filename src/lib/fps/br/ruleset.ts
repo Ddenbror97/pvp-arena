@@ -20,6 +20,7 @@
  * the mm), predicted by the driver's client; and the collision audit, all predicted by the
  * client: a body rounds an edge in its way within the tick and carries on, slanted walls are the
  * walls drawn (slants.ts) and slid along (movement.ts), and a swimmer meets what stands in the
- * water and gets out onto steps (drop.ts).
+ * water and gets out onto steps (drop.ts); 21: the four first towns rebuilt with 48
+ * multi-storey houses (world towns-v4), predicted by the client.
  */
-export const BR_RULESET_VERSION = 20;
+export const BR_RULESET_VERSION = 21;

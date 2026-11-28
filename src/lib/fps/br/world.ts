@@ -20,7 +20,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
  * revision has left behind in public/.
  */
 export const WORLD_ASSETS = {
-  revision: "gaps-v1",
+  revision: "towns-v4",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -257,8 +257,22 @@ export const WORLD_ASSETS = {
   // past the corridor wall closed; the Blackwater keep's slot under the roof's courtyard
   // parapet closed, its rounded ends' merlons every 2 m and their openings' ends drawn; the
   // quay's walk carried over the yard's dip into the moat.
-  models: "/fps/br/models/models.gaps-v1.json",
-  collision: "/fps/br/models/collision.gaps-v1.json",
+  // towns-v1/v2/v3 (2026-11-27, from hosp-v1; owner: "re-build 4 major citys … i dont want to
+  // have the sketch houses … build 12 diffrent apartment/houses for each nighberhood with
+  // multible floors and roof topps"; "build in blender in the cloud"): Northstar, Millhaven,
+  // Crossroads and Riverwood rebuilt with 48 houses modelled in Blender (art/blender/br/towns,
+  // build_towns.mjs: two to four storeys, a stair to every one and a roof top on every house,
+  // twelve designs a town in its own architecture) in place of the downloaded one-storey
+  // houses, shops and bungalows on their street grids. towns-v1: the models (add_models.mjs),
+  // their coplanar faces lifted (zfix-v22); towns-v2: their windows breakable panes
+  // (glass_panes.mjs) and their bullet fill (fill_collision.mjs); towns-v3: the far atlas laid
+  // out again with them on it (build_facades.mjs --far, far-facades-v3: 244 buildings on
+  // 4096 × 1872). Collision payload 24.7 MiB (23.4 before; budget 26: their walls collide as
+  // bands, not per window).
+  // towns-v4 (2026-11-27): gaps-v1 and towns-v3 together (no building changed by both; the
+  // manifests merged model by model).
+  models: "/fps/br/models/models.towns-v4.json",
+  collision: "/fps/br/models/collision.towns-v4.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */
@@ -266,8 +280,10 @@ export const DOOR_ASSETS = {
   // v25 (2026-11-17): v24 with the coastal towns' 13 houses' doors (build_coast.mjs).
   // v26 (2026-11-17): v25 with East Works' 13 new doors (build_works.mjs).
   // v27 (2026-11-23): v26 with the Southern Military Base's 14 new doors (build_garrison.mjs).
-  meta: "/fps/br/models/doors.v27.json",
-  atlas: "/fps/br/models/doors.v27.webp",
+  // v28 (2026-11-27): v27 with the rebuilt towns' 196 doors (build_towns.mjs), drawn in four
+  // styles and sharing four tiles (256 rows more).
+  meta: "/fps/br/models/doors.v28.json",
+  atlas: "/fps/br/models/doors.v28.webp",
 } as const;
 
 /** Refuse a partially deployed/cached pair instead of drawing a different world than physics. */

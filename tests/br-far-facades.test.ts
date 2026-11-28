@@ -32,7 +32,7 @@ const manifest = JSON.parse(fs.readFileSync(pub(WORLD_ASSETS.models), "utf8")) a
   models: Record<string, Entry>;
 };
 const layout = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), "art/br/far-facades-v2.json"), "utf8"),
+  fs.readFileSync(path.join(process.cwd(), "art/br/far-facades-v3.json"), "utf8"),
 ) as {
   width: number;
   height: number;
@@ -131,8 +131,14 @@ describe("buildings' far LODs on an atlas of their own (2026-11-23)", () => {
         "utf8",
       ),
     ) as Record<string, { models: Record<string, Entry> }>;
+    // (And the rebuilt towns' 48 houses, towns-v2, 2026-11-27: far-facades-v3 laid the atlas out
+    // again with them on it.)
     const before = {
-      models: { ...kept["garrison-v2"]!.models, ...kept["vehicles-v1"]!.models },
+      models: {
+        ...kept["garrison-v2"]!.models,
+        ...kept["vehicles-v1"]!.models,
+        ...kept["towns-v2"]!.models,
+      },
     };
     for (const [id, m] of far) {
       const lod = m.lods.at(-1)!;

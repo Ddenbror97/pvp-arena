@@ -45,8 +45,19 @@ export const MATERIALS = {
   // Generated (make_works_textures.py, 2026-11-17): East Works' yard concrete and asphalt.
   yard: { tex: "yard", tile: 8, rough: 0.92 },
   asphalt: { tex: "asphalt", tile: 6, rough: 0.95 },
+  // Generated (make_town_textures.py, 2026-11-27): the rebuilt first towns' brick, lap siding,
+  // board-and-batten, asphalt shingles and stucco.
+  brick: { tex: "brick", tile: 1.8, rough: 0.9 },
+  brickpale: { tex: "brickpale", tile: 1.8, rough: 0.9 },
+  siding: { tex: "siding", tile: 2.4, rough: 0.8 },
+  batten: { tex: "batten", tile: 2.4, rough: 0.82 },
+  shingle: { tex: "shingle", tile: 1.68, rough: 0.92 },
+  stucco: { tex: "stucco", tile: 2.4, rough: 0.9 },
   paint: { tex: null, rough: 0.85 },
   glass: { tex: null, rough: 0.15, glass: true },
+  // Rooms the game paints per placement (interior-style.ts): the material's name is the hook.
+  int: { tex: null, rough: 0.9, name: "Interior walls and ceiling" },
+  flo: { tex: null, rough: 0.8, name: "Access floor and steps" },
 };
 
 const r3 = (v) => +v.toFixed(3);
@@ -415,7 +426,7 @@ export async function writeTexturedGlb(
     if (!g.pos.length) continue;
     const spec = MATERIALS[m] ?? MATERIALS.paint;
     const mat = doc
-      .createMaterial(`${name}-${m}`)
+      .createMaterial(spec.name ?? `${name}-${m}`)
       .setBaseColorFactor(spec.glass ? [0.62, 0.74, 0.8, 0.3] : [1, 1, 1, 1])
       .setRoughnessFactor(spec.rough ?? 0.9)
       .setMetallicFactor(spec.metal ?? 0);

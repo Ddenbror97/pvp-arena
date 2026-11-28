@@ -5,7 +5,7 @@
  *   1. list.ts: the doors, their openings and where each one's picture comes from;
  *   2. page.ts in Chromium: the painted door photographed off the untouched import (or a drawn
  *      door for procedural buildings), and the wall's depth either side of the opening;
- *   3. here: packed into one atlas (public/fps/br/models/doors.v27.webp) with doors.v27.json.
+ *   3. here: packed into one atlas (public/fps/br/models/doors.v28.webp) with doors.v28.json.
  *
  *   node scripts/br/doors/bake.mjs [--chromium=/path/to/chrome]
  *
@@ -18,6 +18,7 @@
  */
 import { build } from "esbuild";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
@@ -128,8 +129,19 @@ for (const job of jobs) {
 await browser.close();
 server.close();
 
+// Doors that bake the same picture (a drawn door's procedural buildings, a house's several
+// doors) share one tile (the rebuilt towns, 2026-11-27: their 196 doors would have run the atlas
+// past WebP's 16,383 rows).
+const uniq = new Map();
+for (const t of tiles) {
+  const key = `${t.w}x${t.h}:${createHash("sha1").update(t.data).digest("hex")}`;
+  const u = uniq.get(key);
+  if (u) t.same = u;
+  else uniq.set(key, t);
+}
+const packed = tiles.filter((t) => !t.same);
 // Shelf packing, tallest first, each tile padded by repeating its edge texels.
-tiles.sort((a, b) => b.h - a.h);
+packed.sort((a, b) => b.h - a.h);
 const base = baseMeta ?? { atlas: [ATLAS_W, 0], models: {} };
 if (!KEEP) for (const id of ONLY ?? []) delete base.models[id];
 let x = 0,
@@ -138,7 +150,7 @@ let x = 0,
     .flat()
     .reduce((m, v) => (v ? Math.max(m, v.rect[1] + v.rect[3] + PAD) : m), 0),
   shelf = 0;
-for (const t of tiles) {
+for (const t of packed) {
   if (x + t.w + 2 * PAD > ATLAS_W) {
     x = 0;
     y += shelf;
@@ -149,6 +161,11 @@ for (const t of tiles) {
   x += t.w + 2 * PAD;
   shelf = Math.max(shelf, t.h + 2 * PAD);
 }
+for (const t of tiles)
+  if (t.same) {
+    t.ax = t.same.ax;
+    t.ay = t.same.ay;
+  }
 // Rounded up to 256 rows, not the next power of two (WebGL2 mips any size): the motel's doors
 // ran 166 rows past 4096, and doubling the atlas to 8192 for them would have doubled its memory.
 const H = Math.max(base.atlas[1], Math.ceil((y + shelf) / 256) * 256);
@@ -161,7 +178,7 @@ if (BASE) {
   if (info.width !== ATLAS_W) throw new Error("base atlas width");
   data.copy(atlas, 0, 0, Math.min(data.length, atlas.length));
 }
-for (const t of tiles)
+for (const t of packed)
   for (let yy = -PAD; yy < t.h + PAD; yy++)
     for (let xx = -PAD; xx < t.w + PAD; xx++) {
       const sx = Math.min(t.w - 1, Math.max(0, xx)),
@@ -173,7 +190,7 @@ for (const t of tiles)
 await sharp(atlas, { raw: { width: ATLAS_W, height: H, channels: 4 } })
   .removeAlpha()
   .webp({ quality: 88, effort: 6 })
-  .toFile(path.join(OUT, "doors.v27.webp"));
+  .toFile(path.join(OUT, "doors.v28.webp"));
 const models = Object.fromEntries(Object.entries(base.models).map(([k, v]) => [k, [...v]]));
 for (const t of tiles) {
   const j = t.job;
@@ -196,9 +213,9 @@ for (const t of tiles) {
   };
 }
 fs.writeFileSync(
-  path.join(OUT, "doors.v27.json"),
+  path.join(OUT, "doors.v28.json"),
   JSON.stringify({ atlas: [ATLAS_W, H], lining: LINING, models }) + "\n",
 );
 console.log(
-  `doors.v27: ${tiles.length} doors, atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v27.webp")).size / 1024)} kB`,
+  `doors.v28: ${tiles.length} doors (${packed.length} tiles), atlas ${ATLAS_W}×${H}, ${Math.round(fs.statSync(path.join(OUT, "doors.v28.webp")).size / 1024)} kB`,
 );

@@ -12,6 +12,7 @@ import {
 import { modelSpots } from "@/lib/fps/br/loot-spots";
 import { decodeHeightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland, type Island } from "@/lib/fps/br/island";
+import { TOWN_HOUSE_MODELS } from "@/lib/fps/br/layout";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
 import {
   brViewFor,
@@ -138,9 +139,11 @@ describe("doors", () => {
     expect(set.doors.length).toBeGreaterThan(1500);
     // Every doorway is passable at its middle in the static world (nothing in it).
     const towns = ["northstar-town", "millhaven", "crossroads", "riverwood"];
+    // The houses modelled for them (build_towns.mjs, 2026-11-27).
     const houses = island.layout.filter(
-      (l) => towns.includes(l.poi) && ["house", "rural-house", "rural-wood-4"].includes(l.model),
+      (l) => towns.includes(l.poi) && TOWN_HOUSE_MODELS.has(l.model),
     );
+    expect(houses.length).toBeGreaterThan(400);
     const withDoor = houses.filter((h) => doorsNear(set, h.x, h.z, 12).length > 0);
     expect(withDoor.length / houses.length).toBeGreaterThan(0.9);
     // The doorway itself is free in the static world; the closed panel blocks it.

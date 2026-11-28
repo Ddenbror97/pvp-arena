@@ -2493,20 +2493,32 @@ function gridTown(
     }
     const [w, d] = footAt(model, turn);
     // Only on the flat pad (a lot at a block's edge can run onto the pad's blend).
-    for (const [cx, cz] of [
-      [x - w / 2, z - d / 2],
-      [x + w / 2, z - d / 2],
-      [x - w / 2, z + d / 2],
-      [x + w / 2, z + d / 2],
-    ] as const)
-      if (Math.abs(ctx.heightAt(cx, cz) - y) > 1.2) return false;
+    const ground = (
+      [
+        [x - w / 2, z - d / 2],
+        [x + w / 2, z - d / 2],
+        [x - w / 2, z + d / 2],
+        [x + w / 2, z + d / 2],
+        [x, z],
+      ] as const
+    ).map(([cx, cz]) => ctx.heightAt(cx, cz));
+    if (ground.some((g) => Math.abs(g - y) > 1.2)) return false;
+    // Something small (a bin, a car, a lamp, a fence's run) where the blend falls away from the
+    // pad stands on the ground there, not in the air at the pad's height (owner, 2026-11-27:
+    // "make sure no … items standing in the air"); on a slope steeper than that, not at all.
+    let py = y;
+    const low = Math.min(...ground);
+    if (Math.max(w, d) <= 6 && y - low > 0.05) {
+      if (Math.max(...ground) - low > 0.35) return false;
+      py = +low.toFixed(2);
+    }
     const x0 = x - w / 2 - margin,
       x1 = x + w / 2 + margin,
       z0 = z - d / 2 - margin,
       z1 = z + d / 2 + margin;
     if (!free(x0, z0, x1, z1)) return false;
     taken.push([x0, z0, x1, z1]);
-    out.push({ model, x: +x.toFixed(2), y, z: +z.toFixed(2), turn, poi: poi.id });
+    out.push({ model, x: +x.toFixed(2), y: py, z: +z.toFixed(2), turn, poi: poi.id });
     return true;
   };
   for (const [model, dx, dz, turn] of landmarks) put(model, poi.x + dx, poi.z + dz, turn, 4);
@@ -2657,8 +2669,8 @@ function gridTown(
       const z = t.zs[j]! + side * (t.street / 2 - 1.3);
       if (!free(x - 3, z - 1.5, x + 3, z + 1.5)) continue;
       // Only on the town's level ground (a street running off the pad into a river valley has
-      // no kerb at pad height).
-      if ([-3, 3].some((dx) => Math.abs(ctx.heightAt(x + dx, z) - y) > 1)) continue;
+      // no kerb at pad height; 2026-11-27: nor a car's wheels, by 10 cm, where its blend falls).
+      if ([-3, 0, 3].some((dx) => Math.abs(ctx.heightAt(x + dx, z) - y) > 0.1)) continue;
       const model = hash(salt + 53, Math.round(x) + j) < 0.6 ? "car-sedan" : "car-pickup";
       out.push({ model, x: +x.toFixed(2), y, z: +z.toFixed(2), turn: 1, poi: poi.id });
     }
@@ -2679,6 +2691,32 @@ type YardHome = {
   depth: number;
 };
 
+/** The rebuilt towns' houses that stand in a garden of their own (fenced lot, a mailbox). */
+const HOMES_WITH_LOTS = [
+  "ns-victorian",
+  "ns-colonial",
+  "ns-saltbox",
+  "ns-fourplex",
+  "ns-cottage-tower",
+  "ns-triple-decker",
+  "mh-company-house",
+  "mh-foreman-house",
+  "mh-gambrel-house",
+  "mh-worker-row",
+  "cr-hacienda",
+  "cr-adobe-courtyard",
+  "cr-ranch-two",
+  "cr-foursquare",
+  "cr-desert-modern",
+  "cr-barn-lofts",
+  "rw-log-house",
+  "rw-craftsman",
+  "rw-chalet",
+  "rw-cabin-duplex",
+  "rw-stone-cottage",
+  "rw-lookout-house",
+  "rw-split-modern",
+];
 /** Houses that get a fenced lot (not shops, garages or barns). */
 const YARD_HOUSES = new Set([
   "house",
@@ -2687,6 +2725,8 @@ const YARD_HOUSES = new Set([
   "rural-wood-1",
   "rural-mobile-home",
   "cabin",
+  // The rebuilt towns' detached houses (2026-11-27).
+  ...HOMES_WITH_LOTS,
 ]);
 
 /** Yard fence section length (m), build_yard_fence.mjs. */
@@ -2819,10 +2859,17 @@ function yards(
         const [x, z] = alongA ? at(p, fixed) : at(fixed, p);
         // A section along world x is turn 0, along world z turn 1.
         const alongWorldX = (h.along === "x") === alongA;
+        // On the ground where a lot's corner runs onto the pad's blend, not in the air over it.
+        const half = len / count / 2;
+        const low = Math.min(
+          ...[-half, 0, half].map((o) =>
+            alongWorldX ? ctx.heightAt(x + o, z) : ctx.heightAt(x, z + o),
+          ),
+        );
         out.push({
           model,
           x: +x.toFixed(2),
-          y,
+          y: y - low > 0.05 ? +low.toFixed(2) : y,
           z: +z.toFixed(2),
           turn: alongWorldX ? 0 : 1,
           poi: poi.id,
@@ -3171,7 +3218,14 @@ function oldDam(poi: Poi, out: Placement[], ctx: Context) {
  * street; turn 0 faces +z (south), 1 faces +x (east), 2 faces −z, 3 faces −x.
  */
 /** Homes that get a mailbox at the kerb. */
-const MAILBOX = new Set(["house", "rural-house", "bungalow", "rural-wood-1", "rural-mobile-home"]);
+const MAILBOX = new Set([
+  "house",
+  "rural-house",
+  "bungalow",
+  "rural-wood-1",
+  "rural-mobile-home",
+  ...HOMES_WITH_LOTS,
+]);
 
 /** A school (Erangel's school): the building on the block's north half, a basketball court
  * with bleachers to the south, school buses at the kerb (2026-11-08 audit). */
@@ -3200,9 +3254,13 @@ const gasStation: Feature["build"] = (b, put) => {
  * (cruisers, jersey-barrier lines, sandbags, wire). */
 const townSquare: Feature["build"] = (b, put) => {
   put("fire-station", b.cx, b.z0 + 13, 0, 1);
-  for (let x = b.x0 + 14; x + 12 < b.x1; x += 27) put("brick-shop", x, b.z1 - 5, 2, 1);
+  // (The rebuilt town, 2026-11-27: its main-street blocks and corner store round the square in
+  // place of the downloaded one-storey shops.)
+  let k = 0;
+  for (let x = b.x0 + 12; x + 9 < b.x1; x += 22)
+    put(k++ % 2 ? "ns-corner-store" : "ns-main-street", x, b.z1 - 8, 2, 1);
   put("police-station", b.x0 + 6.5, b.cz + 6, 1, 1);
-  put("rural-store-5", b.x1 - 7, b.cz + 6, 3, 1);
+  put("ns-corner-store", b.x1 - 8, b.cz + 6, 3, 1);
   for (const [dx, dz, turn] of [
     [-14, 0, 1],
     [14, 8, 1],
@@ -3222,20 +3280,25 @@ const townSquare: Feature["build"] = (b, put) => {
  * between the rows: our enterable 4-storey block (art/blender/br/build_apartment.mjs: stairwell,
  * corridor, three flats a floor), every third one the Bauhaus shell (solid) for variety.
  */
-const apartments: Feature["build"] = (b, put) => {
-  let k = 0;
-  for (let x = b.x0 + 12; x + 10 < b.x1; x += 27) {
-    const model = () => (k % 3 === 2 ? "bauhaus-block" : "apartment");
-    put(model(), x, b.z0 + 8.5, 2, 1.5);
-    k++;
-    if (b.z1 - b.z0 > 70) {
-      put(model(), x, b.z1 - 8.5, 0, 1.5);
+const apartments: Feature["build"] = (b, put) =>
+  apartmentsOf(["apartment", "apartment", "bauhaus-block"])(b, put);
+/** The apartments feature with a town's own blocks (the rebuilt towns, 2026-11-27). */
+const apartmentsOf =
+  (blocks: string[]): Feature["build"] =>
+  (b, put) => {
+    let k = 0;
+    for (let x = b.x0 + 12; x + 10 < b.x1; x += 27) {
+      const model = () => blocks[k % blocks.length]!;
+      put(model(), x, b.z0 + 8.5, 2, 1.5);
       k++;
+      if (b.z1 - b.z0 > 70) {
+        put(model(), x, b.z1 - 8.5, 0, 1.5);
+        k++;
+      }
+      if (hash(721, k) < 0.6) put("car-sedan", x + 3, b.cz, 1, 0.6);
+      if (hash(722, k) < 0.4) put("car-pickup", x - 5, b.cz + 6, 1, 0.6);
     }
-    if (hash(721, k) < 0.6) put("car-sedan", x + 3, b.cz, 1, 0.6);
-    if (hash(722, k) < 0.4) put("car-pickup", x - 5, b.cz + 6, 1, 0.6);
-  }
-};
+  };
 /** A town's police station (our enterable two-storey station) facing the street, cruisers
  * parked in front, a jersey-barrier line and a car park behind. */
 const policeBlock: Feature["build"] = (b, put) => {
@@ -3383,45 +3446,150 @@ const trailerPark: Feature["build"] = (b, put) => {
     }
 };
 
+/**
+ * The four first towns rebuilt (owner, 2026-11-27: "re-build 4 major citys … i dont want to have
+ * the sketch houses because they are boring no secound floors … build 12 diffrent
+ * apartment/houses for each nighberhood with multible floors and roof topps"): each grid is
+ * built of its own twelve houses (art/blender/br/towns, modelled in Blender), two to four
+ * storeys, a stair to every floor and a roof top on every one, in place of the downloaded
+ * one-storey houses, shops and bungalows. The towns' landmarks (the square, the school, the
+ * gas station, the works, the truck stop, the farm market, the trailer park) stay.
+ */
+const TOWN_HOUSES = {
+  northstar: {
+    core: [
+      "ns-brick-walkup",
+      "ns-corner-store",
+      "ns-main-street",
+      "ns-mansard-flats",
+      "ns-rowhouses",
+      "ns-garden-apartments",
+      "ns-triple-decker",
+      "ns-main-street",
+    ],
+    homes: [
+      "ns-victorian",
+      "ns-colonial",
+      "ns-saltbox",
+      "ns-fourplex",
+      "ns-cottage-tower",
+      "ns-triple-decker",
+      "ns-rowhouses",
+      "ns-colonial",
+      "garage",
+    ],
+    edge: ["barn", "shed", "ns-colonial", "ns-saltbox"],
+    blocks: ["ns-brick-walkup", "ns-garden-apartments", "ns-mansard-flats"],
+  },
+  millhaven: {
+    core: [
+      "mh-corner-tavern",
+      "mh-tenement",
+      "mh-dutch-duplex",
+      "mh-garage-flats",
+      "mh-mill-lofts",
+      "mh-container-flats",
+      "mh-sawtooth-works",
+      "mh-tenement",
+    ],
+    homes: [
+      "mh-worker-row",
+      "mh-company-house",
+      "mh-foreman-house",
+      "mh-gambrel-house",
+      "mh-dutch-duplex",
+      "mh-container-flats",
+      "mh-worker-row",
+      "mh-company-house",
+      "mh-corner-tavern",
+      "mh-garage-flats",
+      "mh-sawtooth-works",
+      "mh-tenement",
+      "garage",
+    ],
+    edge: ["shed", "rural-quonset", "mh-company-house", "mh-gambrel-house"],
+    blocks: ["mh-block-flats", "mh-mill-lofts", "mh-block-flats", "mh-tenement"],
+  },
+  crossroads: {
+    core: [
+      "cr-trading-post",
+      "cr-feed-store",
+      "cr-motor-court",
+      "cr-mission-house",
+      "cr-pueblo-terraces",
+      "cr-stucco-duplex",
+      "cr-trading-post",
+    ],
+    homes: [
+      "cr-hacienda",
+      "cr-adobe-courtyard",
+      "cr-ranch-two",
+      "cr-foursquare",
+      "cr-desert-modern",
+      "cr-stucco-duplex",
+      "cr-barn-lofts",
+      "cr-pueblo-terraces",
+      "cr-mission-house",
+      "cr-motor-court",
+      "cr-feed-store",
+      "cr-trading-post",
+      "garage",
+    ],
+    edge: ["barn", "shed", "rural-quonset", "cr-barn-lofts", "cr-ranch-two"],
+  },
+  riverwood: {
+    core: [
+      "rw-mercantile",
+      "rw-river-flats",
+      "rw-boathouse",
+      "rw-mill-row",
+      "rw-timber-lodge",
+      "rw-split-modern",
+      "rw-mercantile",
+    ],
+    homes: [
+      "rw-log-house",
+      "rw-craftsman",
+      "rw-chalet",
+      "rw-cabin-duplex",
+      "rw-stone-cottage",
+      "rw-lookout-house",
+      "rw-split-modern",
+      "rw-chalet",
+      "rw-timber-lodge",
+      "rw-boathouse",
+      "rw-river-flats",
+      "rw-mill-row",
+      "garage",
+    ],
+    edge: ["barn", "shed", "rw-log-house", "rw-stone-cottage"],
+  },
+} as const;
+/** Every rebuilt town's house (yards, mailboxes, the tests). */
+export const TOWN_HOUSE_MODELS = new Set<string>(
+  Object.values(TOWN_HOUSES).flatMap((t) =>
+    [...t.core, ...t.homes, ...t.edge, ...("blocks" in t ? t.blocks : [])].filter((m) =>
+      /^(ns|mh|cr|rw)-/.test(m),
+    ),
+  ),
+);
+
 /** Northstar Town (B1–C2): the map's largest street grid; the town square (fire station and a
- * police checkpoint) in the middle, shops and apartments around it, houses, farmhouses on the
- * fringes. Apartment blocks cannot be entered, so they are a minority (one in the core palette). */
+ * police checkpoint) in the middle, main-street blocks and walk-ups round it, its painted
+ * houses beyond, farm buildings on the fringes (TOWN_HOUSES.northstar). */
 function northstar(poi: Poi, out: Placement[], ctx: Context) {
+  const T = TOWN_HOUSES.northstar;
   gridTown(
     poi,
     out,
     ctx,
-    {
-      core: [
-        "brick-shop",
-        "townhouse",
-        "rural-store-1",
-        "rural-store-5",
-        "rural-diner",
-        "rural-store-3",
-        "rural-wood-1",
-        "house",
-        "townhouse",
-        "townhouse",
-      ],
-      homes: [
-        "house",
-        "rural-house",
-        "house",
-        "rural-wood-1",
-        "rural-store-3",
-        "garage",
-        "bungalow",
-        "bungalow",
-      ],
-      edge: ["rural-house", "barn", "shed", "rural-wood-4", "rural-mobile-home"],
-    },
+    { core: [...T.core], homes: [...T.homes], edge: [...T.edge] },
     601,
     [],
     [
       { near: [0, 0], build: townSquare },
-      { near: [-250, 150], build: apartments },
-      { near: [250, -150], build: apartments },
+      { near: [-250, 150], build: apartmentsOf([...T.blocks]) },
+      { near: [250, -150], build: apartmentsOf([...T.blocks].reverse()) },
       { near: [-120, -60], build: park },
       { near: [200, 200], build: schoolBlock },
       { near: [-350, -250], build: gasStation },
@@ -3429,35 +3597,19 @@ function northstar(poi: Poi, out: Placement[], ctx: Context) {
   );
 }
 
-/** Millhaven (B3–D4): the industrial town: the water tower over the main street (as drawn), shops
- * and houses in the west and middle, warehouses and a factory in the eastern blocks. */
+/** Millhaven (B3–D4): the industrial town: the water tower over the main street (as drawn), its
+ * mill town's brick lofts, tenements and worker rows in the west and middle, warehouses and a
+ * factory in the eastern blocks (TOWN_HOUSES.millhaven). */
 function millhaven(poi: Poi, out: Placement[], ctx: Context) {
+  const T = TOWN_HOUSES.millhaven;
   gridTown(
     poi,
     out,
     ctx,
     {
-      core: [
-        "brick-shop",
-        "rural-store-5",
-        "rural-store-1",
-        "townhouse",
-        "rural-wood-1",
-        "house",
-        "townhouse",
-        "townhouse",
-      ],
-      homes: [
-        "house",
-        "rural-house",
-        "rural-store-3",
-        "house",
-        "garage",
-        "rural-wood-4",
-        "bungalow",
-        "bungalow",
-      ],
-      edge: ["rural-house", "shed", "rural-quonset", "rural-mobile-home"],
+      core: [...T.core],
+      homes: [...T.homes],
+      edge: [...T.edge],
       industryFrom: 6,
       // (Location audit 2026-11-09: two warehouse models were all of Millhaven's industry.)
       industry: [
@@ -3480,7 +3632,7 @@ function millhaven(poi: Poi, out: Placement[], ctx: Context) {
     [
       { near: [560, -250], build: containerYard },
       { near: [-450, 150], build: grainElevator },
-      { near: [-150, -150], build: apartments },
+      { near: [-150, -150], build: apartmentsOf([...T.blocks]) },
       { near: [150, 100], build: policeBlock },
       { near: [-60, 200], build: park },
       { near: [250, -150], build: schoolBlock },
@@ -3490,27 +3642,16 @@ function millhaven(poi: Poi, out: Placement[], ctx: Context) {
   );
 }
 
-/** Crossroads (E3–F5): the junction town: shops and the diner in the middle, houses and farm
- * buildings toward the fields around it. */
+/** Crossroads (E3–F5): the junction town of the plains: its trading post, feed store and motor
+ * court round the truck stop, adobe, hacienda and ranch houses toward the fields around it
+ * (TOWN_HOUSES.crossroads). */
 function crossroads(poi: Poi, out: Placement[], ctx: Context) {
+  const T = TOWN_HOUSES.crossroads;
   gridTown(
     poi,
     out,
     ctx,
-    {
-      core: [
-        "rural-store-1",
-        "rural-store-5",
-        "brick-shop",
-        "rural-diner",
-        "rural-store-3",
-        "house",
-        "townhouse",
-        "townhouse",
-      ],
-      homes: ["house", "rural-house", "garage", "rural-wood-1", "house", "bungalow", "bungalow"],
-      edge: ["barn", "rural-house", "shed", "rural-quonset"],
-    },
+    { core: [...T.core], homes: [...T.homes], edge: [...T.edge] },
     603,
     [],
     [
@@ -4034,35 +4175,16 @@ function hospitalRing(poi: Poi, out: Placement[]) {
   inside([160, 50, 0], HELIDECK_TOP)("uh1-medevac", 1, -1, 1);
 }
 
-/** Riverwood (H5–I6): the riverside town: houses and gardens on its grid, a few shops along the
- * main road. */
+/** Riverwood (H5–I6): the riverside lumber town: timber lodges, log houses and chalets in their
+ * gardens on its grid, the mercantile and the boathouse along the main road
+ * (TOWN_HOUSES.riverwood). */
 function riverwood(poi: Poi, out: Placement[], ctx: Context) {
+  const T = TOWN_HOUSES.riverwood;
   gridTown(
     poi,
     out,
     ctx,
-    {
-      core: [
-        "rural-store-5",
-        "brick-shop",
-        "house",
-        "rural-store-1",
-        "rural-wood-1",
-        "townhouse",
-        "townhouse",
-      ],
-      homes: [
-        "house",
-        "rural-house",
-        "house",
-        "rural-mobile-home",
-        "garage",
-        "rural-wood-4",
-        "bungalow",
-        "bungalow",
-      ],
-      edge: ["rural-house", "barn", "shed", "rural-mobile-home"],
-    },
+    { core: [...T.core], homes: [...T.homes], edge: [...T.edge] },
     607,
     [],
     [

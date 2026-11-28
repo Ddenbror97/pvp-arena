@@ -11363,6 +11363,390 @@
       ],
       "collision": "solid",
       "use": "Southern Military Base (owner's 2026-11-23 downloads): munitions racks with four missiles each on the flight line (converted from FBX, art/br/assets/convert_fbx.mjs)"
+    },
+    {
+      "id": "cr-adobe-courtyard",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: an adobe house round a corner of its yard, a two-storey block and a one-storey wing, a timber portal in the corner, the wing's roof a terrace, beams through the walls (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-barn-lofts",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: a red board-and-batten barn turned into lofts, two storeys under a big gambrel roof with its hay hood, white trim, a flat-roofed annex whose roof is a railed deck (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-desert-modern",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: a desert modern house, two storeys of sand stucco and cedar battens, a wide window wall, the flat roof's deck under a pergola with a glass-free rail, planters (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-feed-store",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: an Old West feed store, its square false front high over a tin gable, a boardwalk porch under a tin roof along the street, rooms upstairs and a flat-roofed back store whose roof is a deck (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-foursquare",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: a white prairie foursquare, two storeys under a pyramid tin roof with a dormer on every side, a wrap-round porch whose railed roof is a deck off the upstairs (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-hacienda",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: an ochre Monterey hacienda, two storeys under a clay-tile hip roof, a timber balcony on posts the length of the upstairs, and a flat-roofed wing whose roof is a tiled terrace (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-mission-house",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: a white stucco Mission house, two storeys under a clay-tile gable behind a stepped Mission parapet on the street, an arcaded porch whose roof is a terrace with a tiled rail (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-motor-court",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: the old motor court's two-storey block, rooms off a covered gallery reached by its own outside stair, teal posts, a roof deck up the inside stair (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-pueblo-terraces",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: a Pueblo Revival house in adobe stucco stepping up in three blocks, one, two and three storeys, each roof a terrace off the floor above, the beams' ends through the walls, ladders (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-ranch-two",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: a long two-storey ranch house, a stone base under board-and-batten, a low hipped tin roof, a porch the whole front under a shed roof, a railed deck on the carport's roof (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-stucco-duplex",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: a pair of terracotta-capped stucco houses, two storeys each, arched-looking deep doorways, their own stairs to two roof terraces, a carport pergola (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "cr-trading-post",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Crossroads: a two-storey adobe-brick trading post with a double gallery across its front, the upper gallery's roof a railed terrace, a stair house on the flat roof (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-block-flats",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a four-storey block of workers' flats in brick and concrete bands, two stairs, balconies on every floor to the street, a roof deck with two stair houses and the plant (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-company-house",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a mustard clapboard company house, two storeys under a steep side gable, a side porch with a shed roof, and a flat-roofed back kitchen whose roof is a deck off the upstairs (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-container-flats",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: flats stacked from shipping containers' corrugated steel, a rust-red three-storey block and a teal two-storey one, railed roof decks on both, yellow rails (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-corner-tavern",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a three-storey brick corner tavern, its saloon's glass front and painted sign on two streets, two floors of rooms over it, a roof deck with a pergola (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-dutch-duplex",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a pair of three-storey brick houses behind a stepped Dutch gable front, a door each, their own stairs up to two roof decks behind it (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-foreman-house",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: the mill foreman's two-storey brick house under a hipped roof with a dormer, a deep front porch on brick piers whose railed roof is the upstairs' deck (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-gambrel-house",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a pale-brick Dutch colonial, two storeys under a barn-like gambrel roof, and a flat-roofed sun room at the side whose roof is a railed terrace off the upstairs (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-garage-flats",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a mechanic's garage, its two roller doors on the street, two floors of flats over it in brick and corrugated steel, a railed roof deck (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-mill-lofts",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a four-storey red-brick mill converted to lofts, tall steel-framed windows, the old loading door, brick bands at every floor, a roof deck under the water tank (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-sawtooth-works",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a two-storey brick workshop under a sawtooth roof of north lights, its roller door on the street, and a three-storey block of flats beside it with a roof deck (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-tenement",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a narrow four-storey brick tenement, a flat on each floor, its fire escape's balconies down the side with doors on to them, a heavy cornice, the tank on the roof (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "mh-worker-row",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Millhaven: a row of three mill workers' houses in faded clapboard, two storeys under their own gables, one long porch across the front whose roof is a deck off every upstairs (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-brick-walkup",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a four-storey red-brick walk-up, two flats a floor, stacked balconies at the back, a heavy cornice, a roof deck with a water tank and a pergola (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-colonial",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a symmetrical clapboard colonial, two storeys under a shingle gable with three dormers and a brick chimney at each end, black shutters; the kitchen wing's roof a deck off the upstairs landing (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-corner-store",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a three-storey brick corner store, the shop's glass front and awning on the street, two floors of flats over it, a roof terrace with planters (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-cottage-tower",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a two-storey clapboard cottage with a three-storey brick lookout tower at its back corner, the tower's top a railed lookout with a hipped stair house (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-fourplex",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a sage-green fourplex, two flats a floor either side of its hall, under a hipped shingle roof; a sun porch at the back whose roof is the upstairs flats' deck (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-garden-apartments",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a three-storey brick and clapboard apartment house, a two-storey wing whose roof is the top flat's terrace, balconies to the garden, a roof deck with a pergola (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-main-street",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a four-storey main street block in dark brick, two shopfronts under awnings, three floors of flats with a two-tone cornice, a roof deck with a pergola and a water tank (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-mansard-flats",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a cream-brick Second Empire block, three storeys and a slate mansard with dormers round a roof deck, a bay window up the front (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-rowhouses",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a pair of brick row houses, three storeys each with a stoop and a bay window, their own stairs to two roof decks behind one parapet (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-saltbox",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a saltbox in grey clapboard, two storeys in front and the long roof sweeping down over the back; a flat-roofed garage wing whose roof is a deck off the upstairs (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-triple-decker",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a New England triple-decker in painted clapboard, a flat on each floor, porches stacked three high across the front, a roof deck behind the parapet (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "ns-victorian",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Northstar Town: a painted Victorian, two storeys under a steep gable, its three-storey corner tower under a slate roof, a porch across the front with a sun deck on its roof (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-boathouse",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: a boathouse on the river street, its big boat door below, two floors of flats above in weathered battens, a tin gable to the street, decks off both floors (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-cabin-duplex",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: two log cabins under one porch, two storeys each under their own steep gables to the street, the porch's railed roof a deck off both upstairs (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-chalet",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: a three-storey alpine chalet, its wide gable to the street, balconies with flower boxes along every upper floor, a stone ground floor, a flat-roofed side wing whose roof is a deck (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-craftsman",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: a sage-green craftsman house, two storeys under a low gable with deep eaves on brackets, a dormer, tapered porch columns on stone piers, a railed deck on the porch roof (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-log-house",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: a two-storey log house, a steep gable with a dormer, a fieldstone chimney up the end wall, a porch under a shed roof, and a railed deck over the back porch (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-lookout-house",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: an old fire lookout turned house, a four-storey timber tower with its glazed lookout room on top, a railed deck round the roof, a stone-based cabin at its foot (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-mercantile",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: the riverside mercantile, its gable to the street with the store's sign, display windows under a deep porch whose railed roof is the upstairs flat's balcony, a back storeroom with a roof deck (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-mill-row",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: three lumber-mill workers' houses in a row, stained board-and-batten in three colours, two storeys and a roof deck each, one porch under a tin roof across the front (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-river-flats",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: a three-storey timber block of flats over the river street, stacked balconies on every floor, a green roof deck with planters and a pergola (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-split-modern",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: a modern timber house of two blocks, three and two storeys, cedar battens and big glass, the tall block under a single steep slope, the low block's roof a railed deck off its top floor (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-stone-cottage",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: a fieldstone cottage, two storeys under a steep slate gable with two dormers, a stone chimney, a timber deck on posts at the side whose roof is a railed terrace (modelled in Blender, 2026-11-27)"
+    },
+    {
+      "id": "rw-timber-lodge",
+      "procedural": "art/blender/br/build_towns.mjs",
+      "class": "building",
+      "ring": "dwelling",
+      "collision": "boxes",
+      "use": "Riverwood: a three-storey timber lodge, stone below and dark board-and-batten above, a steep shingle gable with a dormer, a deck on posts round the first floor, and a side wing's railed roof deck (modelled in Blender, 2026-11-27)"
     }
   ],
   "skipped": [
