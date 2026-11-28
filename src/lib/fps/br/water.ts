@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { biasLogDepth, LOG_BIAS } from "./depth-bias";
 import { STILL_WATER } from "./drop";
 import { damCuts, type HalfPlane } from "./water-cuts";
+
+// (Moved to water-cuts.ts, which the server's water lookups share: drop.ts.)
+export { damCuts };
 import { WET_DEPTH_STEPS } from "./shore-sink";
 import { WAVES_SWELL_AT_S, WAVES_SWELL_S, waterClock } from "./water-clock";
 import { SKY_GLSL, skyUniforms, sunLook, type SunLook } from "./sun";
