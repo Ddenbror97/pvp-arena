@@ -3,6 +3,7 @@ import { stepRappel, type RappelState } from "./rappel";
 import { lifts, stepRide, type LiftState } from "./lifts";
 import { EYE_HEIGHT, PLAYER_RADIUS, STEP_HEIGHT } from "../map";
 import { stepBody, type BrBody, type BrMoveInput } from "./movement";
+import { damCuts, keptBy, type HalfPlane } from "./water-cuts";
 import type { StaticWorld } from "./static-world";
 import { WORLD_HALF, type WorldMeta } from "./world";
 import { stepZip, type ZipState } from "./zipline";
@@ -251,12 +252,33 @@ function swimAgainst(world: StaticWorld, body: DropBody, dx: number, dz: number)
   return false;
 }
 
+/**
+ * Each lake cut to its own side of the dams it crosses (water-cuts.ts), as it is drawn. Without
+ * them the Old Dam's reservoir (61.5 m) held over the lower lake's shore below the dam (about
+ * 31 m): some 4 ha where a walker was lifted 30 m to swim in the air and a parachute landed on
+ * nothing (collision audit 2026-11-27, scripts/br/map-audit/swim.ts).
+ */
+const CUTS = new WeakMap<WorldMeta, Map<string, HalfPlane[]>>();
+function cutsOf(meta: WorldMeta) {
+  let c = CUTS.get(meta);
+  if (!c) CUTS.set(meta, (c = damCuts(meta)));
+  return c;
+}
+
 /** Water surface height at x/z, or null where there is no water above the ground. */
 export function waterSurface(meta: WorldMeta, ground: number, x: number, z: number): number | null {
   if (ground < 0) return 0; // the sea
   for (const w of meta.waterBodies) {
     const [x0, z0, x1, z1] = w.bounds;
-    if (x >= x0 && x <= x1 && z >= z0 && z <= z1 && ground < w.level) return w.level;
+    if (
+      x >= x0 &&
+      x <= x1 &&
+      z >= z0 &&
+      z <= z1 &&
+      ground < w.level &&
+      keptBy(cutsOf(meta).get(w.id), x, z)
+    )
+      return w.level;
   }
   return null;
 }
@@ -273,7 +295,15 @@ export function waterBodyAt(meta: WorldMeta, ground: number, x: number, z: numbe
   if (ground < 0) return "sea";
   for (const w of meta.waterBodies) {
     const [x0, z0, x1, z1] = w.bounds;
-    if (x >= x0 && x <= x1 && z >= z0 && z <= z1 && ground < w.level) return w.id;
+    if (
+      x >= x0 &&
+      x <= x1 &&
+      z >= z0 &&
+      z <= z1 &&
+      ground < w.level &&
+      keptBy(cutsOf(meta).get(w.id), x, z)
+    )
+      return w.id;
   }
   return null;
 }

@@ -1,5 +1,5 @@
 import type { Heightfield } from "./heightfield";
-import { damCuts } from "./water";
+import { damCuts } from "./water-cuts";
 import { LAND_COVER, WORLD_HALF, WORLD_SIZE, type WorldMeta } from "./world";
 
 /**

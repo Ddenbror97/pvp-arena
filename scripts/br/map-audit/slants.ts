@@ -10,6 +10,7 @@ import { readFileSync } from "node:fs";
 import {
   findSlants,
   slantPrisms,
+  straightPartners,
   SLANT,
   S_NORMALS,
   S_PLANES,
@@ -25,7 +26,7 @@ for (const [model, boxes] of Object.entries(col.models)) {
   const { walls, used } = findSlants(boxes);
   if (!walls.length) continue;
   all += walls.length;
-  const p = slantPrisms(walls);
+  const p = slantPrisms(walls, straightPartners(boxes, used, walls));
   let mitred = 0,
     reach = 0,
     outside = 0,
