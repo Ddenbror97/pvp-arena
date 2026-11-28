@@ -18,7 +18,7 @@ import { characterSide } from "./sides";
 import { COMBAT_VERSION, KNIFE, recoveryProfile } from "./combat";
 import { createBloodEffects } from "./blood-effects";
 import { HANDLING, decay, recoverRecoil, shotRecoil, frameDelta } from "./handling";
-import { createImpactEffects } from "./impacts";
+import { anchorHit, createImpactEffects } from "./impacts";
 import { decalDepthOffset } from "./maps/depth-layers";
 import { createWeaponKit, AK_MUZZLE } from "./weapon";
 import {
@@ -311,7 +311,8 @@ export function mountArena(
     if (object instanceof THREE.Mesh) object.matrixAutoUpdate = false;
   });
   const impacts = createImpactEffects(scene);
-  const blood = createBloodEffects(scene, map);
+  const blood = createBloodEffects(scene, map, impacts);
+  const woundAt = { x: 0, y: 0, z: 0 };
   // Capture the arena once for rough metallic reflections, excluding all players. Re-captured
   // once the authored map replaces the blockout (before Ready), never per frame.
   let reflections: THREE.WebGLRenderTarget | undefined;
@@ -1604,7 +1605,6 @@ export function mountArena(
       crosshair?.classList.toggle("is-reloading", lastReloading);
     }
     impacts.update(dt, now);
-    blood.update(dt, now);
     grenades.frame({
       dt,
       now,
@@ -1790,7 +1790,18 @@ export function mountArena(
           if (e.type === "impact" && e.impact && e.weapon !== "knife")
             impacts.emit(e.impact, performance.now());
           // Burns tick four times a second: no blood for fire.
-          if (e.hit && e.nade !== "fire") blood.emit(e.hit, performance.now());
+          // The mist is for a body in view: never the one the camera is in (it would be in
+          // the lens; your own hits are the hurt feedback's). Drawn on the body as it is
+          // on screen (it is shown a little behind the server).
+          if (e.hit && e.nade !== "fire") {
+            const other = e.hit.victim !== seat,
+              body = actorFor(e.hit.victim).root;
+            blood.emit(e.hit, performance.now(), {
+              mist: other,
+              at:
+                other && body.visible ? anchorHit(e.hit.point, body.position, woundAt) : undefined,
+            });
+          }
           if (e.type === "nade-throw" || e.type === "nade-detonate")
             grenades.event(e, e.seat === seat, Date.now() + lastServerOffset, camera.position);
           if (e.type === "nade-throw" && e.projectile && e.seat && e.seat !== seat)

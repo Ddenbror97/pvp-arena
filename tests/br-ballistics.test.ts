@@ -165,7 +165,7 @@ describe("BR gravity sweeps", () => {
 describe("BR authoritative projectile combat", () => {
   it("emits shot/audio immediately and hits only when physical flight reaches the victim", () => {
     const s = setup();
-    expect(s.shoot()).toMatchObject([{ type: "shot", gun: "ak47", hearM: 140, flash: true }]);
+    expect(s.shoot()).toMatchObject([{ type: "shot", gun: "ak47", hearM: 180, flash: true }]);
     expect(s.b.kit.hp).toBe(100);
     expect(s.pool.size).toBe(1);
     expect(s.advance(1150)).toEqual([]);

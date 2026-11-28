@@ -1,6 +1,7 @@
 import { dropBotInput, planDropBots, type DropBot } from "./drop-bots";
 import { BR_OCCLUDED } from "./remote-visibility";
 import {
+  DROP,
   newDropBody,
   planeRoute,
   routeMs,
@@ -39,7 +40,7 @@ import {
 } from "./combat";
 import { GRENADES } from "../grenades/rules";
 import { AIRDROP, airdropContents, planAirdrops, type Airdrop } from "./airdrops";
-import { botThink, newBotMind, type BotMind } from "./bots";
+import { botDriveHeading, botThink, newBotMind, type BotMind } from "./bots";
 import {
   GAS_EXPOSURE,
   LEGACY_ZONE_PHASES,
@@ -816,7 +817,36 @@ export function stepBrMatch(
   for (const s of state.seats) {
     if (s.dead) continue;
     if (s.vehicle !== undefined) {
-      if (s.bot) leaveVehicle(state, s, world);
+      if (s.bot) {
+        const v = state.vehicles[s.vehicle];
+        if (!v || v.driver !== s.seat) {
+          delete s.vehicle;
+          s.body.crouched = false;
+          continue;
+        }
+        const mind = state.minds[s.seat]!;
+        const goal = zone.next;
+        const arrived = Math.hypot(v.x - goal.x, v.z - goal.z) <= goal.r * 0.85;
+        const heading = arrived ? null : botDriveHeading(mind, v, goal, island, meta, now);
+        const brake = heading === null;
+        if (Math.abs(v.speed) > 2) delete mind.slowSince;
+        else mind.slowSince ??= now;
+        const stalled = now - (mind.slowSince ?? now) > 4000;
+        if ((arrived || stalled) && Math.abs(v.speed) < 3 && leaveVehicle(state, s, world)) {
+          delete mind.slowSince;
+          mind.skipRideUntil = now + 15000;
+        } else {
+          const difference = v.yaw - (heading ?? v.yaw);
+          const turn = Math.atan2(Math.sin(difference), Math.cos(difference));
+          botInputs.set(s.seat, {
+            seq: 0,
+            jump: brake,
+            yaw: v.yaw,
+            forward: brake || v.speed > (Math.abs(turn) > 0.65 ? 8 : 23) ? 0 : 1,
+            strafe: Math.max(-1, Math.min(1, turn * 2)),
+          });
+        }
+      }
       continue; // driven below
     }
     if (s.cockpit !== undefined) {
@@ -841,6 +871,7 @@ export function stepBrMatch(
         !!s.hands.heal,
         now,
         alive,
+        state.vehicles,
       );
       human = { seq: 0, ...think.input };
       botInputs.set(s.seat, human);
@@ -873,7 +904,7 @@ export function stepBrMatch(
       if (damage > 0) nadeDamage(state, world, s, s, damage, "fall");
     }
   }
-  stepVehicles(state, island, world, meta, inputs, now, dtMs);
+  stepVehicles(state, island, world, meta, inputs, botInputs, now, dtMs);
   stepFlight(state, island, world, meta, inputs, now, dtMs);
   botDoors(state, world);
   state.history.record(now, state.seats);
@@ -953,6 +984,7 @@ export function stepBrMatch(
   }
   perkEvents(state, now);
   settle(state, now);
+  stampKillDistances(state);
   if ((state.phase as BrPhase) === "ending" || (state.phase as BrPhase) === "completed")
     state.projectiles.clear();
   // Everyone off the plane and down: the match is live.
@@ -1668,6 +1700,7 @@ function stepVehicles(
   world: StaticWorld,
   meta: WorldMeta,
   inputs: ReadonlyMap<number, BrInput>,
+  botInputs: ReadonlyMap<number, BrInput>,
   now: number,
   dtMs: number,
 ) {
@@ -1679,7 +1712,8 @@ function stepVehicles(
     if (v.driver < 0 && v.speed === 0 && !v.slip && !v.air && !v.vy) continue;
     // A tick without the driver's input (network jitter) keeps the last one for a moment,
     // as the client predicted, instead of braking.
-    let input = driver && v.driver >= 0 ? (inputs.get(driver.seat) ?? null) : null;
+    let input =
+      driver && v.driver >= 0 ? ((driver.bot ? botInputs : inputs).get(driver.seat) ?? null) : null;
     if (input) heldInputs.set(v.id, { input, at: now });
     else if (driver && v.driver >= 0) {
       const held = heldInputs.get(v.id);
@@ -1767,8 +1801,8 @@ function placeOccupant(a: Aircraft, s: BrSeat) {
 
 /**
  * Get out (E): on the ground below walking speed beside the door, in the water into it, in the
- * air at least EXIT.bailAgl over the ground with the parachute (a freefall that opens on its
- * own, drop.ts); anything else is unsafe and refused. Returns the refusal (null: out).
+ * air at least EXIT.bailAgl over the ground with the parachute (open at once, as on leaving the
+ * drop plane); anything else is unsafe and refused. Returns the refusal (null: out).
  */
 function leaveAircraft(
   state: BrMatchState,
@@ -1808,14 +1842,19 @@ function leaveAircraft(
     return "No room to get out";
   }
   if (!down && heightAboveGround(world, a) >= EXIT.bailAgl) {
-    // Bail out: off the wing's edge with the aircraft's own speed, into a freefall that
-    // opens the parachute (drop.ts autoDeployAgl).
+    // Bail out: off the wing's edge with the aircraft's own speed, under the canopy at once,
+    // as on leaving the drop plane (owner, 2026-11-27: "the parachute sometimes fails to
+    // deploy immediately, causing the character to appear to run in mid-air": above
+    // DROP.autoDeployAgl this was a freefall, which has neither a canopy nor a pose of its
+    // own, down to 300 m over the ground). The opening canopy brakes the fall and the
+    // aircraft's speed (drop.ts vertEase, ease).
     const p = bailSpot(a, seat);
+    const sink = Math.max(DROP.parachute.exitDown, Math.min(DROP.parachute.diveDown, -a.vy));
     clearCockpit(state, s);
-    Object.assign(b, { x: p.x, y: p.y, z: p.z, vx: a.vx, vz: a.vz, velocityY: Math.min(0, a.vy) });
-    b.phase = "freefall";
+    Object.assign(b, { x: p.x, y: p.y, z: p.z, vx: a.vx, vz: a.vz, velocityY: -sink });
+    b.phase = "parachute";
     b.grounded = false;
-    state.events.push({ seat: s.seat, phase: "freefall" });
+    state.events.push({ seat: s.seat, phase: "parachute" });
     return null;
   }
   return down ? "Slow down to get out" : "Exit unsafe";
@@ -2690,6 +2729,23 @@ export class BrSeatSync {
 }
 
 /**
+ * The kill confirmation's distance (owner, 2026-11-27: "the distance of the kill in meters ...
+ * from authoritative game events"): on every elimination by another player this tick (a shot,
+ * the Karambit, a grenade, a vehicle), the straight line from the killer to the victim in whole
+ * metres, from the server's own positions as the step ends. The gas, a fall and a player's own
+ * grenade get none.
+ */
+export function stampKillDistances(state: BrMatchState) {
+  for (const e of state.combat) {
+    if (e.type !== "elim" || e.by === e.seat || e.m !== undefined) continue;
+    const by = state.seats[e.by]?.body,
+      victim = state.seats[e.seat]?.body;
+    if (!by || !victim) continue;
+    e.m = Math.round(Math.hypot(by.x - victim.x, by.y - victim.y, by.z - victim.z));
+  }
+}
+
+/**
  * The combat events a player should not wait up to a snapshot interval (67 ms) for: their own
  * hits and the hits on them, and their own eliminations (netcode audit 2026-11-11). By seat;
  * the room sends each list at once and the next view leaves those events out (BrSeatSync.early).
@@ -2722,8 +2778,10 @@ const VEHICLE_KINDS = ["sedan", "suv", "pickup", "bike"] as const;
  * Vehicle rows: [id, kind (0 sedan, 1 suv, 2 pickup, 3 bike), x, y, z, yaw, pitch, roll,
  * speed, health, max health, driver seat or −1, destroyed 0/1, condition (0 good, 1 used, 2 damaged),
  * steering wheel (−1…1), sideways slide (m/s), flat tyres (bits, vehicles.ts TYRES), vertical
- * speed (m/s), in the air 0/1, flooded 0/1]: the wheel, slide and vertical speed let the
- * driver's prediction resume a slide or a jump exactly where the server has it.
+ * speed (m/s), in the air 0/1, flooded 0/1, the suspension's travel (m, vehicles.ts
+ * VEHICLES.suspension)]: the wheel, slide, vertical speed and travel let the driver's prediction
+ * resume a slide, a jump or a bounce exactly where the server has it (the height to the mm), and
+ * the springs drawn on everyone's screen.
  */
 function vehicleRow(v: Vehicle) {
   const r = (n: number, k = 100) => Math.round(n * k) / k;
@@ -2731,7 +2789,7 @@ function vehicleRow(v: Vehicle) {
     v.id,
     VEHICLE_KINDS.indexOf(v.kind),
     r(v.x),
-    r(v.y),
+    r(v.y, 1000),
     r(v.z),
     r(v.yaw, 1000),
     r(v.pitch, 1000),
@@ -2748,6 +2806,7 @@ function vehicleRow(v: Vehicle) {
     r(v.vy ?? 0, 1000),
     v.air ? 1 : 0,
     v.drowned ? 1 : 0,
+    r(v.sus ?? 0, 1000),
   ];
 }
 

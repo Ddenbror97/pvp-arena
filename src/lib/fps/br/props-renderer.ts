@@ -3,7 +3,12 @@ import { dropDuplicateFaces } from "./duplicate-faces";
 import { buildBatches } from "./props-batch";
 import { sharpenMaterials, worldAnisotropy, worldTextureScale } from "./texture-quality";
 import { createBuildingDetail, DETAIL_CLASSES } from "./building-detail";
-import { applyInteriorStyle, INTERIOR_STYLE } from "./interior-style";
+import {
+  applyFloorFinish,
+  applyInteriorStyle,
+  floorFinishOf,
+  INTERIOR_STYLE,
+} from "./interior-style";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { Placement } from "./layout";
 import {
@@ -619,6 +624,14 @@ export function createProps(
         (mesh.material as THREE.MeshStandardMaterial).isMeshStandardMaterial
       )
         applyInteriorStyle(mesh.material as THREE.MeshStandardMaterial, style);
+      // Floors with a finish (tiles, planks, marble…: floor_finish.mjs), any building.
+      if (
+        level === 0 &&
+        !Array.isArray(mesh.material) &&
+        (mesh.material as THREE.MeshStandardMaterial).isMeshStandardMaterial &&
+        floorFinishOf(mesh.material)
+      )
+        applyFloorFinish(mesh.material as THREE.MeshStandardMaterial);
       // Mid-distance LODs mapped onto the shared facade atlas (build_facades.mjs).
       const facade = mesh.material as THREE.MeshStandardMaterial;
       if (!Array.isArray(mesh.material) && facade.name === "facade") {

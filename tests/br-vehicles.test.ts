@@ -173,7 +173,10 @@ describe("vehicles", () => {
     for (let i = 0; i < 60; i++) step(state, { forward: 1, strafe: 1, jump: i > 40 });
     const view = brViewFor(state, world, new BrSight(), 0, t, new BrSeatSync());
     const row = view.vehicles!.rows.find((r) => r[0] === v.id)!;
-    expect(row).toHaveLength(20);
+    expect(row).toHaveLength(21);
+    // The height to the mm and the suspension's travel: the prediction resumes a bounce.
+    expect(row[3]).toBeCloseTo(v.y, 3);
+    expect(row[20]).toBeCloseTo(v.sus ?? 0, 3);
     expect(row[14]).toBeCloseTo(v.steer ?? 0, 2);
     expect(row[15]).toBeCloseTo(v.slip ?? 0, 2);
     expect(Math.abs(row[15]!)).toBeGreaterThan(0);
@@ -324,6 +327,27 @@ describe("vehicles", () => {
     expect(spec("bike").grade).toBeGreaterThan(spec("suv").grade);
     expect(spec("suv").grade).toBeGreaterThan(spec("sedan").grade);
   });
+
+  it.each(["sedan", "bike"] as const)(
+    "a bot boards a free %s for a long rotation, drives and returns to looting",
+    (kind) => {
+      const { state, v, ux, uz } = scene(kind);
+      const bot = state.seats[0]!;
+      bot.bot = true;
+      state.bots[0]!.landed = true;
+      const goal = state.zone.circles[1]!;
+      Object.assign(goal, { x: v.x + ux * 600, z: v.z + uz * 600, r: 90 });
+      for (let i = 0; i < 40 && bot.vehicle === undefined; i++) step(state, null);
+      expect(bot.vehicle).toBe(v.id);
+      const start = Math.hypot(goal.x - v.x, goal.z - v.z);
+      for (let i = 0; i < 90; i++) step(state, null);
+      expect(Math.hypot(goal.x - v.x, goal.z - v.z)).toBeLessThan(start - 12);
+      Object.assign(goal, { x: v.x, z: v.z, r: 200 });
+      for (let i = 0; i < 180 && bot.vehicle !== undefined; i++) step(state, null);
+      expect(bot.vehicle).toBeUndefined();
+      expect(v.driver).toBe(-1);
+    },
+  );
 
   it("enters within reach only, drives, steers, brakes, and lets the driver out beside it", () => {
     const { state, v } = scene();

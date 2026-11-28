@@ -191,15 +191,18 @@ export function dropBotInput(
   const yaw = Math.atan2(-dx, -dz);
   switch (body.phase) {
     case "plane": {
-      // Jump once the target is within 85 % of the glide reach from here (or it is behind us).
+      // Ride the faster plane until a diving approach will reach the landing area.
+      // For a long sideways glide, leave at closest approach.
       const [px, , pz] = planeAt(route, planeMs);
-      const reach = glideReach(heightAt(tx, tz)) * 0.85;
+      const altitude = Math.max(0, DROP.planeAltitude - heightAt(tx, tz));
+      const diveRun = (altitude * DROP.parachute.diveForward) / DROP.parachute.diveDown;
+      const cross = Math.abs((tx - px) * route.dir[1] - (tz - pz) * route.dir[0]);
       const ahead = (tx - px) * route.dir[0] + (tz - pz) * route.dir[1];
       return {
         forward: 0,
         strafe: 0,
         yaw,
-        jumpOut: Math.hypot(tx - px, tz - pz) <= reach || ahead < 0,
+        jumpOut: ahead <= Math.sqrt(Math.max(0, diveRun * diveRun - cross * cross)),
       };
     }
     case "freefall":
@@ -222,6 +225,7 @@ export function dropBotInput(
       };
     }
     case "swim":
+      bot.landed = true;
       return { forward: 1, strafe: 0, yaw };
     case "lift": // in a lift the ride carries the body (bots use the stairs)
     case "ladder": // bots never take a ladder (they use the stairs)

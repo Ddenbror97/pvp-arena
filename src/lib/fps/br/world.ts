@@ -20,7 +20,7 @@ export const MAP_COLUMNS = "ABCDEFGHIJ";
  * revision has left behind in public/.
  */
 export const WORLD_ASSETS = {
-  revision: "towns-v3",
+  revision: "towns-v4",
   // height.v2 (2026-11-16, art/br/grade_roads.py): height.v1 with the roads graded where the
   // later relief left them climbing a rock face (84 stretches, none steeper than 23 %).
   // height.v3, landcover.v2, world.v2 (2026-11-17, art/br/forgotten_ruins.py): Forgotten Ruins,
@@ -249,6 +249,14 @@ export const WORLD_ASSETS = {
   // own was a sliver in LOD0 and gone in LOD1, the monitor hung over the floor on nothing). The
   // layout's part (layout.ts): the wards' wall cupboard off the window, the tents down onto
   // their stakes. Collision unchanged but for the tents' placement.
+  // gaps-v1 (2026-11-27, from hosp-v1; owner's report "buildings that is incompleted built.
+  // prison, some single buildings", art/br/fitout/gaps.py + patch_parts.mjs): the townhouse's
+  // west window the stair crosses walled up; the strip mall's roof stair walled outside and at
+  // the back; the shed's inner doorway's collision fitted to its wall (0.58 m → 0.88 m); the
+  // long wooden house's floor carried out to its walls; the apartments' stairwell door's slit
+  // past the corridor wall closed; the Blackwater keep's slot under the roof's courtyard
+  // parapet closed, its rounded ends' merlons every 2 m and their openings' ends drawn; the
+  // quay's walk carried over the yard's dip into the moat.
   // towns-v1/v2/v3 (2026-11-27, from hosp-v1; owner: "re-build 4 major citys … i dont want to
   // have the sketch houses … build 12 diffrent apartment/houses for each nighberhood with
   // multible floors and roof topps"; "build in blender in the cloud"): Northstar, Millhaven,
@@ -261,8 +269,10 @@ export const WORLD_ASSETS = {
   // out again with them on it (build_facades.mjs --far, far-facades-v3: 244 buildings on
   // 4096 × 1872). Collision payload 24.7 MiB (23.4 before; budget 26: their walls collide as
   // bands, not per window).
-  models: "/fps/br/models/models.towns-v3.json",
-  collision: "/fps/br/models/collision.towns-v3.json",
+  // towns-v4 (2026-11-27): gaps-v1 and towns-v3 together (no building changed by both; the
+  // manifests merged model by model).
+  models: "/fps/br/models/models.towns-v4.json",
+  collision: "/fps/br/models/collision.towns-v4.json",
 } as const;
 
 /** The buildings' fitted doors (scripts/br/doors/bake.mjs): render only, no physics. */

@@ -217,6 +217,11 @@ export type ShotEvent =
       /** Display names, filled in by the match (kill feed). */
       name?: string;
       byName?: string;
+      /**
+       * Killer to victim (m, whole metres) when the tick's step ended: the server's positions,
+       * stamped by the match (stampKillDistances) on an elimination by another player only.
+       */
+      m?: number;
     };
 
 export type ShotInput = {

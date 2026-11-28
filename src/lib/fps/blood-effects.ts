@@ -1,12 +1,23 @@
 import * as THREE from "three";
 import { decalDepthOffset } from "./maps/depth-layers";
 import { DEFAULT_MAP, type GameMap } from "./maps/registry";
+import type { FleshHit } from "./impacts";
 import type { MatchState } from "./protocol";
 type Hit = NonNullable<MatchState["events"][number]["hit"]>;
-const MARKS = 48,
-  DROPS = 96;
-/** A bounded cosmetic pool. Server hit records choose the surface; no client damage calculation. */
-export function createBloodEffects(scene: THREE.Scene, map: GameMap = DEFAULT_MAP) {
+const MARKS = 48;
+/** The shared particle pool's part (impacts.ts `flesh`): the mist, the burst and the drops. */
+export type FleshParticles = { flesh(hit: FleshHit, now: number): void };
+/**
+ * A hit on a body, 1v1 and 5v5: the stain on a wall behind (a bounded pool of its own) and the
+ * red mist at the wound, which is drawn from the bullet impacts' particle pool (owner,
+ * 2026-11-27; until then eight 2.5 cm points from a pool here, gone in 0.23 s). Server hit
+ * records choose the place and the surface; no client damage calculation.
+ */
+export function createBloodEffects(
+  scene: THREE.Scene,
+  map: GameMap = DEFAULT_MAP,
+  particles?: FleshParticles,
+) {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = 128;
   const pen = canvas.getContext("2d")!;
@@ -46,39 +57,22 @@ export function createBloodEffects(scene: THREE.Scene, map: GameMap = DEFAULT_MA
   marks.count = 0;
   marks.frustumCulled = false;
   scene.add(marks);
-  const positions = new Float32Array(DROPS * 3).fill(100000),
-    velocity = new Float32Array(DROPS * 3),
-    born = new Float64Array(DROPS),
-    geometry = new THREE.BufferGeometry();
-  geometry.setAttribute(
-    "position",
-    new THREE.BufferAttribute(positions, 3).setUsage(THREE.DynamicDrawUsage),
-  );
-  const particles = new THREE.Points(
-    geometry,
-    new THREE.PointsMaterial({
-      color: 0xffffff,
-      map: texture,
-      size: 0.025,
-      transparent: true,
-      opacity: 0.8,
-      depthWrite: false,
-    }),
-  );
-  particles.name = "confirmed-blood-drops";
-  particles.frustumCulled = false;
-  scene.add(particles);
   const dummy = new THREE.Object3D(),
     axis = new THREE.Vector3(0, 0, 1),
     normal = new THREE.Vector3();
-  let mark = 0,
-    drop = 0,
-    activeUntil = 0;
-  particles.visible = false;
+  let mark = 0;
+  const flesh: FleshHit = { point: { x: 0, y: 0, z: 0 }, direction: { x: 0, y: 0, z: 0 } };
   return {
-    emit(hit: Hit, now: number) {
-      activeUntil = now + 230;
-      particles.visible = true;
+    /**
+     * `mist: false` for a hit on the body the camera is in (your own, or the player you watch
+     * through): the cloud would be in the lens. `at`: where the wound is drawn, when the body
+     * on screen is not where the server's record has it (`anchorHit`).
+     */
+    emit(
+      hit: Hit,
+      now: number,
+      options?: { mist?: boolean | undefined; at?: Hit["point"] | undefined },
+    ) {
       if (hit.splatter) {
         const surface = hit.splatter;
         normal.set(surface.normal.x, surface.normal.y, surface.normal.z);
@@ -120,47 +114,21 @@ export function createBloodEffects(scene: THREE.Scene, map: GameMap = DEFAULT_MA
         marks.count = Math.min(MARKS, mark);
         marks.instanceMatrix.needsUpdate = true;
       }
-      for (let n = 0; n < 8; n++) {
-        const i = drop++ % DROPS,
-          j = i * 3;
-        born[i] = now;
-        positions[j] = hit.point.x;
-        positions[j + 1] = hit.point.y;
-        positions[j + 2] = hit.point.z;
-        velocity[j] = hit.direction.x * (0.8 + random()) + (random() - 0.5) * 0.8;
-        velocity[j + 1] = hit.direction.y * 0.6 + random() * 0.6;
-        velocity[j + 2] = hit.direction.z * (0.8 + random()) + (random() - 0.5) * 0.8;
+      if (particles && options?.mist !== false) {
+        flesh.point = options?.at ?? hit.point;
+        flesh.direction = hit.direction;
+        flesh.zone = hit.zone;
+        particles.flesh(flesh, now);
       }
-    },
-    update(dt: number, now: number) {
-      if (!particles.visible) return;
-      if (now >= activeUntil) {
-        particles.visible = false;
-        return;
-      }
-      const seconds = Math.min(50, dt) / 1000;
-      for (let i = 0; i < DROPS; i++) {
-        const j = i * 3;
-        if (born[i] === 0 || now - born[i]! > 230) {
-          positions[j] = 100000;
-          continue;
-        }
-        velocity[j + 1] = velocity[j + 1]! - 5 * seconds;
-        for (let c = 0; c < 3; c++)
-          positions[j + c] = positions[j + c]! + velocity[j + c]! * seconds;
-      }
-      geometry.getAttribute("position").needsUpdate = true;
     },
     reset() {
       marks.count = 0;
       mark = 0;
-      born.fill(0);
-      activeUntil = 0;
-      particles.visible = false;
-      positions.fill(100000);
-      geometry.getAttribute("position").needsUpdate = true;
     },
     dispose() {
+      scene.remove(marks);
+      marks.geometry.dispose();
+      material.dispose();
       texture.dispose();
     },
   };

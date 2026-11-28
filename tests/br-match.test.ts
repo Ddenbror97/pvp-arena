@@ -1,6 +1,7 @@
 import { WORLD_ASSETS } from "@/lib/fps/br/world";
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
+import { botThink } from "@/lib/fps/br/bots";
 import { routeMs } from "@/lib/fps/br/drop";
 import { decodeHeightfield, type Heightfield } from "@/lib/fps/br/heightfield";
 import { buildIsland } from "@/lib/fps/br/island";
@@ -67,6 +68,24 @@ function run(
 }
 
 describe("Project Island match (Phase 2 core)", () => {
+  it("an unarmed bot collects a weapon on its route and turns toward the next circle", () => {
+    const state = createBrMatch(meta, 7, heightAt);
+    const seat = state.seats[0]!;
+    Object.assign(seat.body, { phase: "ground", x: 500, y: 10, z: 0 });
+    const gun = state.loot.add({ item: "ak47", qty: 1, mag: 30 }, 500, 10, 0);
+    const zone = { now: { x: 0, z: 0, r: 1000 }, next: { x: 0, z: 0, r: 100 } };
+    const mind = state.minds[0]!;
+    const decide = (now: number) => botThink(mind, seat, [], state.loot, world, zone, false, now);
+    const walking = decide(1000);
+    expect(walking.acts).toContainEqual({ act: "pickup", id: gun.id });
+    expect(walking.input.forward).toBe(1);
+    expect(Math.sin(walking.input.yaw)).toBeGreaterThan(0.9);
+    // If it made no progress, its next movement must try a different heading.
+    const direct = walking.input.yaw;
+    const detour = decide(2100);
+    expect(Math.cos(detour.input.yaw - direct)).toBeLessThan(0.1);
+  });
+
   it("shares only the selected spectator's public profile and equipped gun after elimination", () => {
     const state = createBrMatch(meta, 7, heightAt);
     seatHuman(state, "viewer", "Viewer");
