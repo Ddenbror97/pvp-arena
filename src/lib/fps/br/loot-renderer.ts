@@ -13,6 +13,7 @@ import {
 } from "./ground-loot-models";
 import { ITEMS, RARITY, type ItemId, type WeaponId } from "./items";
 import type { WorldItem } from "./loot";
+import { LOOT_GRAB_HEIGHT, lootInSight } from "./loot-reach";
 import { itemFromCode, type LootRow } from "./loot-world";
 import type { StaticWorld } from "./static-world";
 
@@ -565,7 +566,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
       for (const i of items.values()) {
         if (hidden.has(i.id)) continue;
         const dx = i.x - eye.x,
-          dy = i.y + 0.15 - eye.y,
+          dy = i.y + LOOT_GRAB_HEIGHT - eye.y,
           dz = i.z - eye.z;
         const d = Math.hypot(dx, dy, dz);
         if (d > reach) continue;
@@ -575,8 +576,7 @@ export function createLootRenderer(scene: THREE.Scene, loader: GLTFLoader, base:
         if (angle > 0.45 && !feet) continue;
         const sc = angle + d * 0.05;
         if (sc >= score) continue;
-        const hit = world.raycast(eye.x, eye.y, eye.z, dx, dy, dz, d);
-        if (hit && hit.distance < d - 0.3) continue;
+        if (!lootInSight(world, eye.x, eye.y, eye.z, i, d)) continue;
         best = i;
         score = sc;
       }
