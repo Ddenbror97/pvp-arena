@@ -39,7 +39,11 @@ function write(name, samples) {
   b.writeUInt32LE(samples.length * 2, 40);
   for (let i = 0; i < samples.length; i++)
     b.writeInt16LE(Math.round(samples[i] * scale * 32767), 44 + i * 2);
-  fs.writeFileSync("public/fps/audio/" + name, b);
+  // The synthesised reloads are kept as sources only (the game plays the recorded ones).
+  fs.writeFileSync(
+    (name.startsWith("ak-reload-") ? "art/fps/audio-src/" : "public/fps/audio/") + name,
+    b,
+  );
   console.log(
     JSON.stringify({ name, seconds: samples.length / rate, bytes: b.length, peak: 0.88 }),
   );

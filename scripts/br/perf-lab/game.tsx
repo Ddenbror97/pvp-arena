@@ -212,6 +212,11 @@ const PLACES: Record<string, [number, number, boolean?]> = {
   "east-works": [3958, 1644],
   "military-base": [1119, 1602],
   northstar: [-3229, -3568],
+  // The other three rebuilt towns and Blackwater's yard (post-development audit, 2026-11-28).
+  millhaven: [-2415, -1856],
+  crossroads: [17, -1280],
+  riverwood: [3152, 203],
+  blackwater: [-385, 290],
   "fishers-cove": [-3703, 3076],
   "iron-peaks": [-491, -4288],
   bayview: [-4152, -1652],

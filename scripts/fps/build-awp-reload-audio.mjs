@@ -6,8 +6,11 @@ import fs from "node:fs";
 
 const rate = 48000;
 const directory = new URL("../../public/fps/audio/", import.meta.url);
+/** Inputs no game mode plays (kept out of the deploy). */
+const sources = new URL("../../art/fps/audio-src/", import.meta.url);
 function read(name, seconds = 1.8) {
-  const wav = fs.readFileSync(new URL(name, directory));
+  const stored = new URL(name, sources);
+  const wav = fs.readFileSync(fs.existsSync(stored) ? stored : new URL(name, directory));
   if (wav.toString("ascii", 0, 4) !== "RIFF" || wav.toString("ascii", 8, 12) !== "WAVE")
     throw Error(`Invalid WAV: ${name}`);
   let data;

@@ -36,6 +36,16 @@
  * (attributes interpolated across the original triangle); collision is unchanged.
  *
  *   node art/blender/br/extend_footing.mjs <tag> condo-lobby --cut=1.4,4.2,-10.4,-7.6,-0.05,0.4
+ *
+ * `--from=<level>:<file>` rebuilds that one LOD from the given source file in place of the
+ * manifest's current one (the footing only). The mid LODs on the facade atlas carry texture
+ * coordinates their own untextured "facade" material does not use, and the first run pruned
+ * them as unused: footing-v1's prison-block LOD1 went out with positions alone, so the cell
+ * houses drew in one texel's colour from 300 m to 1.1 km (post-development audit, 2026-11-28).
+ * Attributes are kept now; footing-v2 is that LOD rebuilt from the file footing-v1 was made of.
+ *
+ *   node art/blender/br/extend_footing.mjs footing-v2 prison-block \
+ *     --from=1:/fps/br/models/prison-block.zfix-v14.lod1.glb
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -60,6 +70,10 @@ const BAND = process.argv
   ?.slice(7)
   .split(",")
   .map(Number);
+const FROM = process.argv
+  .find((a) => a.startsWith("--from="))
+  ?.slice(7)
+  .split(":");
 const [tag, list, lo = "0.15", hi = "0.26", to = "-0.12"] = process.argv
   .slice(2)
   .filter((a) => !a.startsWith("--"));
@@ -326,7 +340,12 @@ async function patch(id, src, out) {
   }
   if (!added && CUT) return null;
   if (!added) throw new Error(`${id} ${src}: nothing to change`);
-  await doc.transform(weld(), prune(), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
+  // keepAttributes: a facade LOD's texture coordinates are for the atlas the renderer lends it.
+  await doc.transform(
+    weld(),
+    prune({ keepAttributes: true }),
+    meshopt({ encoder: MeshoptEncoder, level: "medium" }),
+  );
   await io.write(path.join("public", out), doc);
   console.log(
     `${id}: ${added} ${CUT ? "faces cut" : BAND ? "band faces copied" : LIFT ? "ground faces lifted" : "footing triangles"} → ${out}`,
@@ -342,12 +361,13 @@ const done = new Map();
 for (const id of list.split(",").filter(Boolean)) {
   const model = manifests[0][1].models[id];
   if (!model) throw new Error(`${id}: not in ${manifests[0][0]}`);
-  for (const level of BAND ? [0] : [0, 1]) {
+  for (const level of FROM ? [+FROM[0]] : BAND ? [0] : [0, 1]) {
     if (CUT && !model.lods[level]) continue;
-    const src = model.lods[level].file;
+    const src = FROM ? FROM[1] : model.lods[level].file;
     const out = `/fps/br/models/${id}.${tag}.lod${level}.glb`;
     const added = await patch(id, src, out);
-    if (added !== null) done.set(src, { out, added });
+    // Rebuilt from its source: the manifest's entry already counts the footing's triangles.
+    if (added !== null) done.set(model.lods[level].file, { out, added: FROM ? 0 : added });
   }
 }
 for (const [file, manifest] of manifests) {

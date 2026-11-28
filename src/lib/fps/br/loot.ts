@@ -814,4 +814,3 @@ export function lootSummary(items: readonly WorldItem[]) {
 
 export const lootClassOf = (model: string) => MODEL_CLASS[model]?.cls ?? null;
 /** A model's loot class, spot mode and spot cap (audits and tests), or null. */
-export const lootInfoOf = (model: string) => MODEL_CLASS[model] ?? null;

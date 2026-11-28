@@ -46,7 +46,7 @@ render(
   "awp-bolt-v2.wav",
 );
 // Keep the magazine handling, replace the synthetic empty-reload bolt segment.
-const reload = readFileSync(directory + "awp-reload-empty-v4.wav");
+const reload = readFileSync("art/fps/audio-src/awp-reload-empty-v4.wav");
 const bolt = readFileSync(directory + "awp-bolt-v2.wav");
 if (reload.toString("ascii", 36, 40) !== "data" || bolt.toString("ascii", 36, 40) !== "data")
   throw new Error("Expected canonical PCM WAV headers");

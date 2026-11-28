@@ -47,6 +47,7 @@ const byCat: Tally = {},
   byClass: Tally = {},
   byPoi: Tally = {},
   byFloor: Tally = {},
+  poiFloor: Record<string, number[]> = {},
   special: Tally = {};
 let total = 0,
   floating = 0,
@@ -111,7 +112,10 @@ for (let seed = 1; seed <= SEEDS; seed++) {
       // Over the ground (a tower's storeys are placements of their own).
       const up = it.y - world.hf.heightAt(it.x, it.z);
       const sky = world.raycast(it.x, it.y + 0.3, it.z, 0, 1, 0, 30);
-      inc(byFloor, !sky ? "rooftop / open" : up < 2 ? "ground floor" : "upper floors");
+      const floor = !sky ? "rooftop / open" : up < 2 ? "ground floor" : "upper floors";
+      inc(byFloor, floor);
+      const f = (poiFloor[p.poi ?? "(none)"] ??= [0, 0, 0]);
+      f[floor === "ground floor" ? 0 : floor === "upper floors" ? 1 : 2]!++;
     } else inc(byPoi, "(perches, outside buildings)");
   }
 }
@@ -148,9 +152,11 @@ console.log(
     .join(", "),
 );
 console.log(`  checks: floating ${floating}, in a wall ${inWall}, in water ${wet}`);
-console.log("  by location:");
+console.log("  by location (all; then ground floor / upper floors / rooftop or open):");
 for (const [k, v] of Object.entries(byPoi).sort((a, b) => b[1] - a[1]))
-  console.log(`    ${k.padEnd(28)} ${per(v)}`);
+  console.log(
+    `    ${k.padEnd(28)} ${per(v).padStart(5)}   ${(poiFloor[k] ?? [0, 0, 0]).map((n) => per(n).padStart(5)).join(" / ")}`,
+  );
 
 // Buildings with nothing.
 const empty: Tally = {};

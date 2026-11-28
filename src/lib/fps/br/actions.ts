@@ -17,6 +17,7 @@ import {
 } from "./inventory";
 import { INVENTORY, ITEMS } from "./items";
 import { isPerkId, PERK_EFFECT, perkOn, perkOperation, type PerkOp } from "./perks";
+import { LOOT_GRAB_HEIGHT, lootInSight } from "./loot-reach";
 import type { LootWorld } from "./loot-world";
 import type { StaticWorld } from "./static-world";
 
@@ -246,11 +247,9 @@ export function applyBrAct(
       const ex = f.body.x,
         ey = f.body.y + eyeHeight(f.body),
         ez = f.body.z;
-      const ty = item.y + 0.15;
-      const dist = Math.hypot(item.x - ex, ty - ey, item.z - ez);
+      const dist = Math.hypot(item.x - ex, item.y + LOOT_GRAB_HEIGHT - ey, item.z - ez);
       if (dist > INVENTORY.reachM) return res(false, "Too far");
-      const hit = world.raycast(ex, ey, ez, item.x - ex, ty - ey, item.z - ez, dist, true);
-      if (hit && hit.distance < dist - 0.3) return res(false, "Out of reach");
+      if (!lootInSight(world, ex, ey, ez, item, dist)) return res(false, "Out of reach");
       const before = item.qty;
       const out = a.gun === undefined ? pickUp(f.kit, item) : pickUpOnto(f.kit, item, a.gun);
       if (!out.ok) return res(false, out.reason, { item: item.item });

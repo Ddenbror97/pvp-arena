@@ -9,6 +9,9 @@ import { pickUp } from "@/lib/fps/br/inventory";
 import { ITEMS } from "@/lib/fps/br/items";
 import { buildIsland } from "@/lib/fps/br/island";
 import { decodeLandCover } from "@/lib/fps/br/landcover";
+import type { Placement } from "@/lib/fps/br/layout";
+import { lootInSight } from "@/lib/fps/br/loot-reach";
+import { modelSpots, turnPoint } from "@/lib/fps/br/loot-spots";
 import { itemFromCode } from "@/lib/fps/br/loot-world";
 import {
   BrSeatSync,
@@ -36,11 +39,13 @@ const meta = JSON.parse(readFileSync("public/fps/br/world.v5.json", "utf8")) as 
 const collision = JSON.parse(
   readFileSync(`public${WORLD_ASSETS.collision}`, "utf8"),
 ) as CollisionData;
-let hf: Heightfield, world: StaticWorld;
+let hf: Heightfield, world: StaticWorld, layout: Placement[];
 beforeAll(async () => {
   hf = await decodeHeightfield(buffer("public/fps/br/height.v6.hf"));
   const cover = await decodeLandCover(buffer("public/fps/br/landcover.v5.lc"));
-  world = buildIsland(hf, cover, meta, collision).solid;
+  const island = buildIsland(hf, cover, meta, collision);
+  world = island.solid;
+  layout = island.layout;
 }, 60_000);
 
 /** Two players standing on the main runway, 20 m apart; seat 0 is the human. */
@@ -375,6 +380,59 @@ describe("battle royale combat", () => {
     expect(state.loot.items.has(near.id)).toBe(false);
     r = tick(state, { yaw }, [{ act: "pickup", id: near.id }]);
     expect(r[0]).toMatchObject({ ok: false, reason: "Gone" });
+  });
+
+  it("does not give loot through the floor it lies on (a 10 cm deck is thinner than the sight allowance)", () => {
+    // The fire station's upper deck is a 10 cm slab: before 2026-11-28 a player on the ground
+    // floor was offered what lay on it and the room gave it. Every upstairs loot spot of every
+    // such station on the island, from the storey under it.
+    const { state, yaw } = duel();
+    const me = state.seats[0]!;
+    let under = 0;
+    for (const p of layout.filter((q) => q.model === "fire-station")) {
+      for (const s of modelSpots(collision, p.model, "indoor", 2.5, 99)) {
+        if (s.y < 2) continue;
+        const [dx, dz] = turnPoint(s.x, s.z, p.turn);
+        const x = p.x + dx,
+          z = p.z + dz;
+        const top = world.supportAt(x, z, 0.15, p.y + s.y + 0.4);
+        const below = world.supportAt(x, z, 0.35, top - 0.4);
+        if (top - below < 2 || top - below > 4 || world.blocked(x, below + 0.05, z, 1.8, 0.35))
+          continue;
+        const item = state.loot.add({ item: "medkit", qty: 1 }, x, top, z);
+        // From under it: in reach by distance, refused by sight.
+        expect(top + 0.15 - (below + 1.6)).toBeLessThan(2.6);
+        expect(lootInSight(world, x, below + 1.6, z, item)).toBe(false);
+        Object.assign(me.body, { x, y: below, z, phase: "ground", grounded: true });
+        const r = tick(state, { yaw }, [{ act: "pickup", id: item.id }]);
+        expect(r[0]).toMatchObject({ type: "act", ok: false, reason: "Out of reach" });
+        // From its own floor, a step away: taken.
+        for (const [ox, oz] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ]) {
+          const f = world.supportAt(x + ox!, z + oz!, 0.35, top + 0.4);
+          if (Math.abs(f - top) > 0.2 || world.blocked(x + ox!, f + 0.05, z + oz!, 1.8, 0.35))
+            continue;
+          expect(lootInSight(world, x + ox!, f + 1.6, z + oz!, item)).toBe(true);
+          break;
+        }
+        state.loot.remove(item.id);
+        under++;
+      }
+    }
+    expect(under).toBeGreaterThan(5);
+    // An item on the ground a step away, seen from a crouch: nothing over the eye, taken as ever.
+    const me2 = duel().state.seats[0]!;
+    expect(
+      lootInSight(world, me2.body.x, me2.body.y + 0.95, me2.body.z, {
+        x: me2.body.x + 1,
+        y: me2.body.y,
+        z: me2.body.z,
+      }),
+    ).toBe(true);
   });
 
   it("heals over the item's use time, walking, and firing cancels without using it up", () => {

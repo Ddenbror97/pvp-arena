@@ -81,8 +81,9 @@ describe("Project Island models", () => {
       (s, m) => s + m.lods.reduce((t, l) => t + l.kB, 0),
       0,
     );
-    // MB for all models and all LODs (the mainland towns added ~30 models in batch 3; models
-    // stream by distance ring, so this is the whole-match total, not the first-frame download;
+    // MB for all models and all LODs (the mainland towns added ~30 models in batch 3; every
+    // LOD of every placed model is fetched behind the loading screen, island-scene.ts
+    // `preload`, so this is a first match's model download before compression;
     // the Superstore grounds added 35 more, ~2.5 MB, the island polish 25, ~2 MB, and the
     // open country's rocks, ruins and story spots 19, ~2.3 MB, and the landmarks (railways,
     // port, power station, hospital, schools, salvage, graveyards, military) 39, ~3.9 MB,

@@ -128,6 +128,10 @@ export type BotMind = {
   detourUntil: number;
   detourYaw: number;
   skipRideUntil?: number;
+  /** Times in a row it found itself standing on its way (reset by 3 m of going). */
+  stuckN?: number;
+  /** The side its detours take until they have failed three times: -1 or 1. */
+  detourSide?: number;
   slowSince?: number;
   driveCheckAt?: number;
   driveHeading?: number | null;
@@ -684,20 +688,22 @@ export function botThink(
   // Walk to the goal; when stuck against something, take a detour for a moment.
   if (gx !== null && gz !== null) {
     const yaw = Math.atan2(-(gx - b.x), -(gz - b.z));
-    if (now - mind.lastAt > 900) {
+    // (Every 2 s, a detour that grows: 2026-11-28. #379 looked every 0.9 s and took 2 s to the
+    // side it took last, if a probe a metre out was clear, else none: bots on their way to the
+    // circle stood against a building four times as often (26 → 115 times a match in bot-only
+    // matches, scripts/br/bot-sim; 145 on the rebuilt towns' island) and more of them died in
+    // the gas. Now: one way along what is in the way for three tries, each longer (1.5 s to
+    // 6 s), then the other way; every sixth, back the way it came. 22 times a match, gas
+    // deaths 73 → 59 of 99, six seeds.)
+    if (now - mind.lastAt > 2000) {
       const moved = Math.hypot(b.x - mind.lastX, b.z - mind.lastZ);
+      if (moved > 3) mind.stuckN = 0;
       if (mind.lastAt && moved < 0.6 && now > mind.detourUntil) {
-        const side = mind.detourYaw < 0 ? -1 : mind.detourYaw > 0 ? 1 : rand(mind) < 0.5 ? -1 : 1;
-        for (const offset of [(side * Math.PI) / 2, (-side * Math.PI) / 2, Math.PI]) {
-          const heading = yaw + offset;
-          if (
-            world.blocked(b.x - Math.sin(heading), b.y + 0.25, b.z - Math.cos(heading), 1.4, 0.35)
-          )
-            continue;
-          mind.detourYaw = offset;
-          mind.detourUntil = now + 2000;
-          break;
-        }
+        const n = (mind.stuckN = (mind.stuckN ?? 0) + 1);
+        if (n % 3 === 1)
+          mind.detourSide = n === 1 ? (rand(mind) < 0.5 ? -1 : 1) : -(mind.detourSide ?? 1);
+        mind.detourYaw = n % 6 === 0 ? Math.PI : ((mind.detourSide ?? 1) * Math.PI) / 2;
+        mind.detourUntil = now + 1500 * Math.min(4, n);
         if (longRotation) mind.skipRideUntil = now + 10000;
         // Stuck on the way: leave that item alone from now on.
         if (mind.goalItem !== null) skipItem(mind, mind.goalItem);

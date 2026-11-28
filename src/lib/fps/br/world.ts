@@ -244,6 +244,9 @@ export const WORLD_ASSETS = {
   // (groundlift-v1: they fought it, "a door that flickers"); the keep's and the watchtower's
   // stair collision as ramps of 5 cm steps (stair_ramps.mjs + patch_collision.mjs: their 19 cm
   // treads jolted the body a riser a tick, "lagg in tight space and corners").
+  // (footing-v2, 2026-11-28, render only, in towns-v4's manifest: the cell houses' mid LOD again
+  // with the facade atlas's texture coordinates, which footing-v1's run had pruned: they drew
+  // in one colour from 300 m to 1.1 km.)
   // hosp-v1 (2026-11-26, from bwfix-v1; owner's Central Hospital report: "items that stands
   // in the air"): the vital signs monitor's stand gets a solid pole (add_pole.mjs pole-v1: its
   // own was a sliver in LOD0 and gone in LOD1, the monitor hung over the floor on nothing). The

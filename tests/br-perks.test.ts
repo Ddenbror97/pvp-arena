@@ -561,6 +561,9 @@ describe("tactical tablet", () => {
       // A second elimination inside the cooldown arms nothing.
       expect(me.stand!.readyAt - at).toBeGreaterThan(L.cooldownMs - 1000);
       const third = state.seats[2]!;
+      // A seat that stands where it is put: a bot walks off to its loot at once (#379), out
+      // of the line of fire before the first shot.
+      third.bot = false;
       Object.assign(third.body, { ...state.seats[1]!.body });
       state.seats[1]!.body.x += 500;
       third.kit.hp = 1;

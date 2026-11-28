@@ -159,6 +159,7 @@ import { createAircraftRenderer } from "./aircraft-renderer";
 import { withAircraft } from "./aircraft-world";
 import { aero } from "./aircraft";
 import type { AircraftSound } from "./aircraft-audio";
+import { LOOT_GRAB_HEIGHT, lootInSight } from "./loot-reach";
 import type { LootRow } from "./loot-world";
 import { itemFromCode } from "./loot-world";
 import { fitCharacterGun, loadAttachmentParts, type AttachmentParts } from "./attachment-fit";
@@ -2895,13 +2896,9 @@ export function createBrArena(
       ez = body.z;
     const out: BrNearby[] = [];
     for (const i of loot.items.values()) {
-      const dx = i.x - ex,
-        dy = i.y + 0.15 - ey,
-        dz = i.z - ez;
-      const d = Math.hypot(dx, dy, dz);
+      const d = Math.hypot(i.x - ex, i.y + LOOT_GRAB_HEIGHT - ey, i.z - ez);
       if (d > INVENTORY.reachM) continue;
-      const hit = solid().raycast(ex, ey, ez, dx, dy, dz, d, true);
-      if (hit && hit.distance < d - 0.3) continue;
+      if (!lootInSight(solid(), ex, ey, ez, i, d)) continue;
       const def = ITEMS[i.item];
       out.push({
         id: i.id,
