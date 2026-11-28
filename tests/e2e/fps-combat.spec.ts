@@ -203,18 +203,24 @@ test("AK reload audio joins the server timeline once and stops on death", async 
   expect(result.stopped).toBe(0);
   expect(result.reloads).toBe(2);
 });
-test("blood marks and droplets have bounded pools and reset each round", async ({ page }) => {
+test("blood marks and the mist have bounded pools, are drawn and gone, and reset each round", async ({
+  page,
+}) => {
   await page.route("**/__combat_blood__", (r) =>
     r.fulfill({ contentType: "text/html", body: "<!doctype html><body></body>" }),
   );
   await page.goto("/__combat_blood__");
   const data = await page.evaluate(async () => {
     const bloodPath = "/src/lib/fps/blood-effects.ts",
+      impactsPath = "/src/lib/fps/impacts.ts",
       threePath = "/tests/e2e/helpers/three-runtime.ts";
     const { createBloodEffects } = await import(bloodPath),
+      { createImpactEffects } = await import(impactsPath),
       THREE = await import(threePath),
       scene = new THREE.Scene(),
-      fx = createBloodEffects(scene);
+      // As the games do: the mist is drawn from the bullet impacts' particle pool.
+      impacts = createImpactEffects(scene),
+      fx = createBloodEffects(scene, undefined, impacts);
     const hit = {
       victim: "B",
       zone: "head",
@@ -229,20 +235,75 @@ test("blood marks and droplets have bounded pools and reset each round", async (
         solidId: "wall-back",
       },
     };
+    const objects = scene.children.length;
     for (let n = 0; n < 2000; n++) fx.emit(hit, 100);
-    fx.update(16, 116);
+    impacts.update(16, 116);
     const marks = scene.getObjectByName("confirmed-blood-splatter"),
-      particles = scene.getObjectByName("confirmed-blood-drops"),
+      particles = scene.getObjectByName("impact-particles"),
       before = {
         marks: marks.count,
         instances: marks.instanceMatrix.count,
         particles: particles.geometry.getAttribute("position").count,
+        // Two thousand hits made no new object in the scene, and no second particle system.
+        grown: scene.children.length - objects,
+        own: !!scene.getObjectByName("confirmed-blood-drops"),
       };
     fx.reset();
+    impacts.reset();
     const after = marks.count;
+    // Drawn: a red cloud at the wound a tenth of a second after the hit, nothing a second on.
+    const canvas = document.createElement("canvas");
+    canvas.width = 320;
+    canvas.height = 240;
+    const renderer = new THREE.WebGLRenderer({ canvas });
+    scene.background = new THREE.Color(0x808080);
+    const camera = new THREE.PerspectiveCamera(70, 320 / 240, 0.1, 100);
+    camera.position.set(9, 1.6, -10.2);
+    camera.lookAt(9, 1.6, -14.2);
+    const gl = renderer.getContext(),
+      pixels = new Uint8Array(320 * 240 * 4);
+    const red = () => {
+      renderer.render(scene, camera);
+      gl.readPixels(0, 0, 320, 240, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      let n = 0;
+      for (let i = 0; i < pixels.length; i += 4)
+        if (pixels[i]! > 110 && pixels[i]! > pixels[i + 1]! * 1.6) n++;
+      return n;
+    };
+    const clean = red();
+    fx.emit({ ...hit, splatter: undefined }, 5000);
+    for (let t = 5016; t <= 5100; t += 16) impacts.update(16, t);
+    const live = red();
+    for (let t = 5116; t <= 5400; t += 16) impacts.update(16, t);
+    const thinning = red();
+    for (let t = 5416; t <= 6000; t += 16) impacts.update(16, t);
+    const gone = red();
+    // A hit on the body the camera is in draws no cloud (it would be in the lens).
+    fx.emit({ ...hit, splatter: undefined }, 7000, { mist: false });
+    impacts.update(16, 7050);
+    const own = red();
+    const hidden = !particles.visible;
     fx.dispose();
-    return { before, after };
+    impacts.dispose();
+    const left = scene.children.length;
+    renderer.dispose();
+    return { before, after, clean, live, thinning, gone, own, hidden, left };
   });
-  expect(data.before).toEqual({ marks: 48, instances: 48, particles: 96 });
+  expect(data.before).toEqual({
+    marks: 48,
+    instances: 48,
+    particles: 512,
+    grown: 0,
+    own: false,
+  });
   expect(data.after).toBe(0);
+  expect(data.clean).toBe(0);
+  // (At 4 m the cloud covers about a hundredth of a 320 × 240 view; it varies hit to hit.)
+  expect(data.live).toBeGreaterThan(300);
+  expect(data.thinning).toBeLessThan(data.live);
+  expect(data.thinning).toBeGreaterThan(0);
+  expect(data.gone).toBe(0);
+  expect(data.own).toBe(0);
+  expect(data.hidden).toBe(true);
+  expect(data.left).toBe(0);
 });

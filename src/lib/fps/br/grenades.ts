@@ -1,5 +1,6 @@
 import { eyeHeight } from "../map";
 import { GRENADES, type ThrowKind } from "../grenades/rules";
+import { S_NORMALS, S_PLANES, S_Y0, S_Y1 } from "./slants";
 import type { StaticWorld } from "./static-world";
 
 /**
@@ -75,6 +76,56 @@ export const brNadeStart = (
 
 /** Entry time of the segment into box b grown by R, or −1. Sets the face for the bounce. */
 let face = 0;
+
+/**
+ * As sweepBox for a slanted wall (slants.ts: the prism grown by R): the step's fraction where the
+ * ball meets it, or -1. `face` is 3 and `slantFace` the plane (0–3 a side, 4 under, 5 top).
+ */
+let slantFace = 0;
+function sweepSlant(
+  px: number,
+  py: number,
+  pz: number,
+  dx: number,
+  dy: number,
+  dz: number,
+  s: Float64Array,
+  o: number,
+) {
+  let enter = -Infinity,
+    exit = Infinity,
+    by = -1;
+  if (Math.abs(dy) < 1e-12) {
+    if (py <= s[o + S_Y0]! - R || py >= s[o + S_Y1]! + R) return -1;
+  } else {
+    const a = (s[o + S_Y0]! - R - py) / dy,
+      c = (s[o + S_Y1]! + R - py) / dy;
+    enter = Math.min(a, c);
+    by = dy > 0 ? 4 : 5;
+    exit = Math.max(a, c);
+  }
+  for (let k = 0; k < 4; k++) {
+    const nx = s[o + S_NORMALS + k * 2]!,
+      nz = s[o + S_NORMALS + k * 2 + 1]!;
+    const den = nx * dx + nz * dz,
+      num = s[o + S_PLANES + k]! + R - (nx * px + nz * pz);
+    if (Math.abs(den) < 1e-12) {
+      if (num <= 0) return -1;
+      continue;
+    }
+    const t = num / den;
+    if (den < 0) {
+      if (t > enter) {
+        enter = t;
+        by = k;
+      }
+    } else if (t < exit) exit = t;
+  }
+  if (enter > exit || exit <= 0 || enter > 1 || enter < 0 || by < 0) return -1;
+  face = 3;
+  slantFace = by;
+  return enter;
+}
 function sweepBox(
   px: number,
   py: number,
@@ -143,28 +194,46 @@ export function brNadeAdvance(
       dz = s.vz * STEP;
     // Boxes: the earliest face this step crosses.
     let best = 2,
-      axis = -1;
+      axis = -1,
+      side = 0;
     const b = world.boxes;
-    world.forEachBox(
-      Math.min(s.x, s.x + dx) - R,
-      Math.min(s.z, s.z + dz) - R,
-      Math.max(s.x, s.x + dx) + R,
-      Math.max(s.z, s.z + dz) + R,
-      (bi) => {
-        const t = sweepBox(s.x, s.y, s.z, dx, dy, dz, b, bi * 6);
-        if (t >= 0 && t < best) {
-          best = t;
-          axis = face;
-        }
-      },
-    );
+    const x0b = Math.min(s.x, s.x + dx) - R,
+      z0b = Math.min(s.z, s.z + dz) - R,
+      x1b = Math.max(s.x, s.x + dx) + R,
+      z1b = Math.max(s.z, s.z + dz) + R;
+    world.forEachBox(x0b, z0b, x1b, z1b, (bi) => {
+      // (A slanted wall's staircase: the wall itself is swept below.)
+      if (world.isSlantBox(bi)) return;
+      const t = sweepBox(s.x, s.y, s.z, dx, dy, dz, b, bi * 6);
+      if (t >= 0 && t < best) {
+        best = t;
+        axis = face;
+      }
+    });
+    let wall = 0;
+    world.forEachSlant(x0b, z0b, x1b, z1b, (o) => {
+      const t = sweepSlant(s.x, s.y, s.z, dx, dy, dz, world.slants, o);
+      if (t >= 0 && t < best) {
+        best = t;
+        axis = slantFace >= 4 ? 1 : 3;
+        side = slantFace;
+        wall = o;
+      }
+    });
     if (axis >= 0) {
       const t = Math.max(0, best - 1e-4);
       s.x += dx * t;
       s.y += dy * t;
       s.z += dz * t;
       const into = axis === 0 ? s.vx : axis === 1 ? s.vy : s.vz;
-      if (axis === 0) s.vx = -s.vx;
+      if (axis === 3) {
+        // Off a slanted wall's face: mirrored in its normal.
+        const nx = world.slants[wall + S_NORMALS + side * 2]!,
+          nz = world.slants[wall + S_NORMALS + side * 2 + 1]!;
+        const vn = s.vx * nx + s.vz * nz;
+        s.vx -= 2 * vn * nx;
+        s.vz -= 2 * vn * nz;
+      } else if (axis === 0) s.vx = -s.vx;
       else if (axis === 1) s.vy = -s.vy;
       else s.vz = -s.vz;
       s.vx *= P.restitution;

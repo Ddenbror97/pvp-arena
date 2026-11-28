@@ -192,6 +192,74 @@
   position: absolute;
   inset: 0;
 }
+/* ---- incoming damage (damage-feedback.ts): the direction crescents, the red edge flash and
+   the low-health blood, in the render host over the canvas and under the HUD. Opacity and
+   transform only (the compositor's work); `display: none` while there is nothing to show. */
+.fps-dmg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.fps-dmg-low {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  will-change: opacity, transform;
+}
+.fps-dmg-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 64% 64% at 50% 50%,
+    rgba(214, 22, 28, 0) 62%,
+    rgba(214, 22, 28, 0.34) 82%,
+    rgba(190, 10, 18, 0.72) 100%
+  );
+  will-change: opacity;
+}
+.fps-dmg-arc {
+  --r: min(23vh, 26vw);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  will-change: transform, opacity;
+}
+.fps-dmg-arc svg {
+  position: absolute;
+  left: calc(var(--r) * -0.52);
+  top: calc(var(--r) * -1.06);
+  width: calc(var(--r) * 1.04);
+  height: calc(var(--r) * 0.22);
+  overflow: visible;
+}
+.fps-dmg-arc .glow {
+  fill: rgba(255, 36, 28, 0.26);
+  stroke: rgba(255, 36, 28, 0.26);
+  stroke-width: 6;
+  stroke-linejoin: round;
+}
+.fps-dmg-arc .core {
+  fill: #f0221c;
+}
+.fps-dmg-arc .edge {
+  fill: #ff9a8c;
+}
+.fps-dmg-arc.armoured .glow {
+  fill: rgba(96, 176, 255, 0.28);
+  stroke: rgba(96, 176, 255, 0.28);
+}
+.fps-dmg-arc.armoured .core {
+  fill: #6fbcff;
+}
+.fps-dmg-arc.armoured .edge {
+  fill: #e4f4ff;
+}
 .duel-capture-hint {
   position: absolute;
   top: 24%;

@@ -37,6 +37,7 @@
  * at most CANARY.maxTrials at a time per room.
  */
 import { BR_RULES, type BrMatchState } from "./match";
+import { prismInside, S_THICK, S_Y0, S_Y1, SLANT } from "./slants";
 import type { StaticWorld } from "./static-world";
 import { BR_SUN_SHADOW } from "./sun-shadow";
 import { BR_OCCLUDED } from "./remote-visibility";
@@ -424,6 +425,18 @@ export class BrCanaries {
     const hit = world.raycast(ox, oy, oz, dx, dy, dz, len);
     if (!hit || hit.distance >= len - CANARY.marginM) return false;
     if (hit.kind === "trunk") return false;
+    if (hit.kind === "box" && hit.box! >= world.boxCount) {
+      // A slanted wall (slants.ts): thick and tall enough, and entered well inside its face.
+      const o = (hit.box! - world.boxCount) * SLANT,
+        s = world.slants;
+      if (s[o + S_THICK]! < CANARY.coverThickM || s[o + S_Y1]! - s[o + S_Y0]! < CANARY.coverTallM)
+        return false;
+      const t = hit.distance;
+      return (
+        prismInside(s, o, ox + (dx / len) * t, oy + (dy / len) * t, oz + (dz / len) * t) >=
+        CANARY.fatM
+      );
+    }
     if (hit.kind === "box") {
       const o = hit.box! * 6,
         b = world.boxes;

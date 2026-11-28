@@ -2,15 +2,36 @@ import { AIRCRAFT_SAMPLES, createAircraftAudio, type AircraftSound } from "./air
 import { grenadeSamples, GRENADE_CUES, type GrenadeCue } from "../grenades/grenade-audio";
 /**
  * Battle royale sounds: the 1v1/5v5 gun recordings and the owner's battle royale shots
- * (public/fps/audio/ATTRIBUTION.md), positioned in 3D (Web Audio panner, distance rolloff to
- * the shot's hearing range), the owner's door and pickup recordings, plus small synthesised
+ * (public/fps/audio/ATTRIBUTION.md), positioned in 3D (spatial-audio.ts: the camera is the
+ * listener, each kind of sound carries by its own curve, the air and walls take the highs),
+ * the owner's door and pickup recordings, plus small synthesised
  * cues (hit marker, armour break, heal done). One AudioContext, created on the first user gesture.
  */
 import { STEP_RECORDINGS } from "../footsteps";
 import { fetchSample, footstepVariants, masterChain } from "../audio-core";
 import type { FootstepSurface } from "../footstep-surfaces";
 import { WAVES_LOOP_S, waterClock } from "./water-clock";
-import { createVehicleAudio, VEHICLE_SAMPLES, type VehicleSound } from "./vehicle-audio";
+import {
+  createRemoteEngines,
+  createVehicleAudio,
+  VEHICLE_SAMPLES,
+  type EngineSource,
+  type VehicleSound,
+} from "./vehicle-audio";
+import {
+  airCutoff,
+  BLAST_FALLOFF,
+  distanceGain,
+  GENERIC_FALLOFF,
+  INAUDIBLE,
+  OCCLUDE_M,
+  occlusion,
+  SHOT_CLASS,
+  SHOT_FALLOFF,
+  STEP_PACE,
+  type Falloff,
+  type Pace,
+} from "./spatial-audio";
 import { SPAS12_CUES, SPAS12_CUE_LEAD_MS } from "../shotgun-client";
 
 export { SPAS12_CUE_LEAD_MS };
@@ -245,8 +266,18 @@ export function createBrAudio(base: string) {
       );
     return ctx;
   }
-  const listener = { x: 0, y: 0, z: 0, yaw: 0 };
+  /** The camera: where sounds are heard from, and which way it looks (forward, up). */
+  const listener = { x: 0, y: 0, z: 0, yaw: 0, fx: 0, fy: 0, fz: -1, ux: 0, uy: 1, uz: 0 };
+  /** Whether the world stands between two points (one ray; set by the arena). */
+  let occluder:
+    ((ax: number, ay: number, az: number, bx: number, by: number, bz: number) => boolean) | null =
+    null;
+  /** Voices placed with HRTF now (dearer than equal-power panning: a few at a time). */
+  let hrtfVoices = 0;
+  const HRTF_MAX = 10,
+    HRTF_M = 60;
   let vehicleAudio: ReturnType<typeof createVehicleAudio> | undefined;
+  let remoteEngines: ReturnType<typeof createRemoteEngines> | undefined;
   let aircraftAudio: ReturnType<typeof createAircraftAudio> | undefined;
   let reloadVoice: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
   let parachuteOpen = false;
@@ -264,6 +295,26 @@ export function createBrAudio(base: string) {
   let shoreQuietAt = 0;
   let captainPlayed = false;
   let captainSound: { src: AudioBufferSourceNode; gain: GainNode } | undefined;
+  /** The Web Audio listener on the camera (every frame). */
+  function placeListener(c: AudioContext) {
+    const L = c.listener,
+      o = listener;
+    if (L.positionX) {
+      L.positionX.value = o.x;
+      L.positionY.value = o.y;
+      L.positionZ.value = o.z;
+      L.forwardX.value = o.fx;
+      L.forwardY.value = o.fy;
+      L.forwardZ.value = o.fz;
+      L.upX.value = o.ux;
+      L.upY.value = o.uy;
+      L.upZ.value = o.uz;
+    } else {
+      // (Older engines without the listener's AudioParams.)
+      L.setPosition(o.x, o.y, o.z);
+      L.setOrientation(o.fx, o.fy, o.fz, o.ux, o.uy, o.uz);
+    }
+  }
   function play(
     key: string,
     at: [number, number, number] | null,
@@ -273,10 +324,33 @@ export function createBrAudio(base: string) {
     /** Play only this part of the file (s): a one-shot out of a set of them. */
     part?: { offset: number; duration: number },
     delay = 0,
+    /** How it carries (spatial-audio.ts); placed sounds only. */
+    falloff: Falloff = GENERIC_FALLOFF,
+    /** Muffled when the world stands between it and the listener (one ray, at the start). */
+    occlude = false,
   ) {
     const c = context();
     const buf = buffers.get(key);
     if (!c || !master || !buf) return;
+    let level = 1,
+      cutoff = 20000,
+      d = 0;
+    if (at) {
+      d = Math.hypot(at[0] - listener.x, at[1] - listener.y, at[2] - listener.z);
+      level = distanceGain(d, Math.max(10, range), falloff);
+      // Nobody would hear it: no nodes at all.
+      if (level < INAUDIBLE) return;
+      cutoff = airCutoff(d, falloff);
+      if (occlude && occluder && d > 1.5 && d < OCCLUDE_M) {
+        const o = occlusion(
+          // (To the body above the feet: a ray to a footstep must not graze its own ground.)
+          occluder(listener.x, listener.y, listener.z, at[0], at[1] + 0.7, at[2]),
+          Math.abs(at[1] - listener.y) > 2.6,
+        );
+        level *= o.gain;
+        cutoff = Math.min(cutoff, o.cutoff);
+      }
+    }
     const src = c.createBufferSource();
     src.buffer = buf;
     src.loop = loop;
@@ -286,28 +360,43 @@ export function createBrAudio(base: string) {
       src.loopEnd = region.pad + region.length;
     }
     const g = c.createGain();
-    g.gain.value = loop ? 0 : gain;
-    if (loop) g.gain.setTargetAtTime(gain, c.currentTime, 0.15);
+    g.gain.value = loop ? 0 : gain * level;
+    if (loop) g.gain.setTargetAtTime(gain * level, c.currentTime, 0.15);
     src.connect(g);
+    let filter: BiquadFilterNode | undefined, p: PannerNode | undefined;
+    let hrtf = false;
     if (at) {
-      const p = c.createPanner();
-      p.panningModel = "equalpower";
+      let out: AudioNode = g;
+      if (cutoff < 17000) {
+        filter = c.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = cutoff;
+        filter.Q.value = 0.5;
+        g.connect(filter);
+        out = filter;
+      }
+      p = c.createPanner();
+      // Near: HRTF (front from behind, above from below), a few at a time; far: equal power.
+      hrtf = d < HRTF_M && hrtfVoices < HRTF_MAX;
+      if (hrtf) hrtfVoices++;
+      p.panningModel = hrtf ? "HRTF" : "equalpower";
+      // The level is the falloff's (above); the panner only places the sound in the world.
       p.distanceModel = "linear";
-      p.refDistance = 4;
-      p.maxDistance = Math.max(10, range);
-      p.rolloffFactor = 1;
-      // Listener-relative: rotate the source into the listener's frame (yaw only).
-      const dx = at[0] - listener.x,
-        dy = at[1] - listener.y,
-        dz = at[2] - listener.z;
-      const cos = Math.cos(listener.yaw),
-        sin = Math.sin(listener.yaw);
-      p.positionX.value = dx * cos - dz * sin;
-      p.positionY.value = dy;
-      p.positionZ.value = dx * sin + dz * cos;
-      g.connect(p);
+      p.rolloffFactor = 0;
+      p.positionX.value = at[0];
+      p.positionY.value = at[1];
+      p.positionZ.value = at[2];
+      out.connect(p);
       p.connect(master);
     } else g.connect(master);
+    // Let every node go when the sound ends (nothing piles up over a match).
+    src.onended = () => {
+      if (hrtf) hrtfVoices--;
+      src.disconnect();
+      g.disconnect();
+      filter?.disconnect();
+      p?.disconnect();
+    };
     if (part) src.start(c.currentTime + delay, part.offset, part.duration);
     else src.start(c.currentTime + delay, region ? region.pad : 0);
     return { src, gain: g };
@@ -340,8 +429,54 @@ export function createBrAudio(base: string) {
       const c = context();
       if (c && c.state === "suspended") void c.resume();
     },
-    setListener(x: number, y: number, z: number, yaw: number) {
-      Object.assign(listener, { x, y, z, yaw });
+    /**
+     * The camera, every frame: its place, yaw, and the way it looks (a unit vector; from the yaw
+     * alone, level, when not given). Every placed sound is heard from here.
+     */
+    setListener(
+      x: number,
+      y: number,
+      z: number,
+      yaw: number,
+      fx = -Math.sin(yaw),
+      fy = 0,
+      fz = -Math.cos(yaw),
+    ) {
+      const o = listener;
+      o.x = x;
+      o.y = y;
+      o.z = z;
+      o.yaw = yaw;
+      const n = Math.hypot(fx, fy, fz) || 1;
+      o.fx = fx / n;
+      o.fy = fy / n;
+      o.fz = fz / n;
+      // Up: the world's up, square to the view (looking straight down, the heading's back).
+      let ux = -o.fx * o.fy,
+        uy = 1 - o.fy * o.fy,
+        uz = -o.fz * o.fy;
+      const m = Math.hypot(ux, uy, uz);
+      if (m < 1e-3) {
+        ux = Math.sin(yaw) * Math.sign(o.fy);
+        uy = 0;
+        uz = Math.cos(yaw) * Math.sign(o.fy);
+      } else {
+        ux /= m;
+        uy /= m;
+        uz /= m;
+      }
+      o.ux = ux;
+      o.uy = uy;
+      o.uz = uz;
+      if (ctx) placeListener(ctx);
+    },
+    /** The world's occlusion test for placed sounds (null: none). */
+    setOccluder(
+      test:
+        | ((ax: number, ay: number, az: number, bx: number, by: number, bz: number) => boolean)
+        | null,
+    ) {
+      occluder = test;
     },
     shot(gun: ShotGun, silenced: boolean, at: [number, number, number] | null, hearM: number) {
       // The Deagle takes no muzzle device.
@@ -350,11 +485,25 @@ export function createBrAudio(base: string) {
       const base = gun === "m4a1s" ? "m4" : gun === "hunting" && quiet ? "awp" : gun;
       const k = (base + (quiet ? "-s" : "")) as ShotKey;
       const gain = at ? 0.9 : gun === "deagle" || gun === "spas12" ? 0.85 : 0.75;
-      // A silenced shot is quieter and carries less than half as far (as match.ts sends it).
-      play(k, at, quiet ? hearM * 0.4 : hearM, (quiet ? gain * 0.8 : gain) * 0.85);
+      // Others': by the gun's class, to the range the server sent it within (`hearM`, already
+      // shortened for a silencer by combat.ts: it was shortened here a second time, and a
+      // silenced shot fell silent at a fifth of the range it was sent to).
+      const falloff = quiet ? SHOT_FALLOFF.silenced : SHOT_FALLOFF[SHOT_CLASS[gun] ?? "rifle"];
+      play(k, at, hearM, (quiet ? gain * 0.8 : gain) * 0.85, false, undefined, 0, falloff, true);
       // The AWP: the report, then the bolt cycle on the same timeline (as in 1v1/5v5: own at
       // 0.75 of the shot, others' heard up close).
-      if (gun === "awp" || gun === "hunting") play("bolt", at, 30, at ? 0.4 * 0.9 : 0.75 * 0.75);
+      if (gun === "awp" || gun === "hunting")
+        play(
+          "bolt",
+          at,
+          30,
+          at ? 0.4 * 0.9 : 0.75 * 0.75,
+          false,
+          undefined,
+          0,
+          GENERIC_FALLOFF,
+          true,
+        );
       if (!at)
         play(
           "casing",
@@ -408,9 +557,19 @@ export function createBrAudio(base: string) {
       }
       reloadVoice = undefined;
     },
-    step(surface: FootstepSurface, at: [number, number, number] | null) {
+    /**
+     * A footstep (own: centred; others': at them) by its pace (spatial-audio.ts STEP_PACE):
+     * how loud and how far it carries. `reach` scales the range (a perk's quiet steps).
+     */
+    step(
+      surface: FootstepSurface,
+      at: [number, number, number] | null,
+      pace: Pace = "run",
+      reach = 1,
+    ) {
       const key = "step" + (stepVariant++ % 4) + (surface === "concrete" ? "" : "-" + surface);
-      play(key, at, 36, at ? 0.5 : 0.26);
+      const P = STEP_PACE[pace];
+      play(key, at, P.range * reach, at ? P.gain : P.own, false, undefined, 0, P, true);
     },
     /**
      * A hand or boot on a ladder's rung (own: centred; others': at them), a different contact
@@ -626,6 +785,16 @@ export function createBrAudio(base: string) {
       vehicleAudio.update(vehicle, throttle);
     },
     /**
+     * Other vehicles' engines (vehicle-audio.ts createRemoteEngines), every frame: the vehicles
+     * shown but the one you drive, `count` of `sources`, and the frame's length (ms).
+     */
+    engines(sources: readonly EngineSource[], count: number, dtMs: number) {
+      const c = ctx;
+      if (!c || !master) return;
+      remoteEngines ??= createRemoteEngines(c, master, (key) => buffers.get(key));
+      remoteEngines.update(sources, count, listener, dtMs);
+    },
+    /**
      * The aircraft's engine (aircraft-audio.ts): every frame, the aircraft as drawn (null: none),
      * whether this player is aboard, and the server's clock (the starter's).
      */
@@ -639,7 +808,16 @@ export function createBrAudio(base: string) {
       context();
       const cue = GRENADE_CUES[kind];
       const range = kind === "he" ? 120 : kind === "smoke" || kind === "fire" ? 60 : 35;
-      play(cue.sample, at, range, cue.gain);
+      play(
+        cue.sample,
+        at,
+        range,
+        cue.gain,
+        false,
+        undefined,
+        0,
+        kind === "he" ? BLAST_FALLOFF : GENERIC_FALLOFF,
+      );
     },
     /** Own first-person Karambit cue (the animator's), centred. */
     knifeCue(name: string) {
@@ -649,14 +827,14 @@ export function createBrAudio(base: string) {
     /** Someone else's swing, in 3D within its hearing range. */
     knifeSwing(attack: "slash" | "stab", at: [number, number, number], hearM: number) {
       const cue = KNIFE_CUES[attack]!;
-      play(cue[0], at, hearM, cue[1] * 1.4);
+      play(cue[0], at, hearM, cue[1] * 1.4, false, undefined, 0, GENERIC_FALLOFF, true);
     },
     /** The blade connecting (own hits, centred). */
     knifeHit() {
       play("knifeHit", null, 0, 0.32);
     },
     boom(at: [number, number, number]) {
-      play("boom", at, 220, 0.8);
+      play("boom", at, 220, 0.8, false, undefined, 0, BLAST_FALLOFF);
     },
     /** Picking an item up (own, centred). */
     pickup() {
@@ -668,7 +846,7 @@ export function createBrAudio(base: string) {
     },
     /** A door opening or closing, in 3D at the door. */
     door(at: [number, number, number]) {
-      play("door", at, 35, 0.7);
+      play("door", at, 35, 0.7, false, undefined, 0, GENERIC_FALLOFF, true);
     },
     /** A window pane breaking, in 3D at the pane (heard across the block). */
     glass(at: [number, number, number]) {
@@ -696,6 +874,7 @@ export function createBrAudio(base: string) {
       if (disposed) return;
       disposed = true;
       vehicleAudio?.dispose();
+      remoteEngines?.dispose();
       aircraftAudio?.dispose();
       parachuteSound?.src.stop();
       windSound?.src.stop();

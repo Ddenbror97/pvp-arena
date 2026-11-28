@@ -10,6 +10,7 @@ import {
   moveEquipped,
   EQUIP_SLOTS,
   pickUp,
+  pickUpOnto,
   unequip,
   type EquipSlot,
   type Loose,
@@ -26,7 +27,8 @@ import type { StaticWorld } from "./static-world";
  * the client never decides what it owns.
  */
 export type BrAct =
-  | { act: "pickup"; id: number }
+  /** `gun`: dropped on that weapon card, an attachment goes straight onto that gun. */
+  | { act: "pickup"; id: number; gun?: 0 | 1 | 2 }
   | { act: "equip"; index: number; target: number }
   | { act: "unequip"; slot: EquipSlot }
   | { act: "dropBag"; index: number; qty?: number }
@@ -57,7 +59,7 @@ export type BrAct =
   | ({ act: "perk" } & PerkOp);
 
 const KEYS: Record<BrAct["act"], readonly string[]> = {
-  pickup: ["id"],
+  pickup: ["id", "gun"],
   equip: ["index", "target"],
   unequip: ["slot"],
   dropBag: ["index", "qty"],
@@ -100,7 +102,8 @@ export function validateBrAct(raw: unknown): BrAct | null {
       | "op"
       | "perk"
       | "floor"
-      | "to",
+      | "to"
+      | "gun",
       unknown
     >
   >;
@@ -111,7 +114,11 @@ export function validateBrAct(raw: unknown): BrAct | null {
     if (k !== "v" && k !== "type" && k !== "act" && !allowed.includes(k)) return null;
   switch (r.act) {
     case "pickup":
-      return int(r.id, 0, 2 ** 31) ? { act: "pickup", id: r.id as number } : null;
+      if (!int(r.id, 0, 2 ** 31)) return null;
+      if (r.gun === undefined) return { act: "pickup", id: r.id as number };
+      return int(r.gun, 0, 2)
+        ? { act: "pickup", id: r.id as number, gun: r.gun as 0 | 1 | 2 }
+        : null;
     case "equip":
       return int(r.index, 0, 63) && (r.target === undefined || int(r.target, 0, 2))
         ? { act: "equip", index: r.index as number, target: (r.target as number | undefined) ?? 0 }
@@ -245,7 +252,7 @@ export function applyBrAct(
       const hit = world.raycast(ex, ey, ez, item.x - ex, ty - ey, item.z - ez, dist, true);
       if (hit && hit.distance < dist - 0.3) return res(false, "Out of reach");
       const before = item.qty;
-      const out = pickUp(f.kit, item);
+      const out = a.gun === undefined ? pickUp(f.kit, item) : pickUpOnto(f.kit, item, a.gun);
       if (!out.ok) return res(false, out.reason, { item: item.item });
       if (out.left) loot.setQty(item.id, out.left);
       else loot.remove(item.id);

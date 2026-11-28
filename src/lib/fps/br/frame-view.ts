@@ -14,11 +14,14 @@ import type { WorldMeta } from "./world";
  * sprint, 2 m in a dive. Mouse look was per event, so the world juddered under a smooth turn.
  *
  * This is the 1v1 renderer's approach (presentation.ts FrameMotion) on the island's physics:
- *  - `preview`: the predicted body plus the part of the next step that has already elapsed,
- *    with the keys held now. Used as is in the air and aboard the plane.
- *  - on foot, the view also integrates its own position every frame by the frame's time and
- *    eases toward the preview, so a key pressed between two steps moves the camera on that
- *    frame without a pop, and the small disagreement is repaid within about a tenth of a second.
+ *  - on foot (walking, jumping, falling), the body's next whole step is taken with the keys
+ *    held now and the view is the part of the way to it that has passed: between two steps the
+ *    camera is on the line between them, and meets walls, jambs and steps exactly where the
+ *    body does;
+ *  - under the canopy, in the water and aboard, the part of the next step itself (`preview`);
+ *  - the view follows that point: on it while the keys are held, and over a jump of it (a key
+ *    pressed or released between two steps, a correction) at the body's speed plus a bounded
+ *    repayment, so no frame pops.
  *
  * Camera only. What is sent, predicted and reconciled is unchanged, and so is everything the
  * server and other players see.
@@ -33,8 +36,7 @@ export type FrameView = {
 
 /** View further than this (m) from the preview: a teleport, not an error to ease out. */
 const SNAP = 3;
-/** Easing toward the preview: time constant (ms) and its speed limit (m per ms). */
-const EASE_MS = 65;
+/** What the view repays of a difference to the point it follows, over the body's speed (m per ms). */
 const EASE_LIMIT = 0.002;
 /**
  * Errors up to this (m) are the timing of a key against the fixed steps and are repaid at the
@@ -43,14 +45,6 @@ const EASE_LIMIT = 0.002;
  */
 const EASE_SMALL = 0.3;
 const EASE_FAST = 0.02;
-
-/** The view's footing: probe radius, and how far (m) above or below the preview it may stand. */
-const VIEW_RADIUS = 0.35;
-/** Movement under this (m) between frames counts as none: the body is held by walls. */
-const HELD_M = 1e-4;
-/** A part-step shorter than this (m) is checked against a whole one (HELD_M; a sliver). */
-const HELD_PROBE_M = 0.005;
-const VIEW_REACH = 1.2;
 
 const onFoot = (b: DropBody) => b.phase === "ground" || b.phase === "swim";
 
@@ -73,8 +67,7 @@ const STEP_SLOPE = 0.6;
 
 export class BrFrameView {
   private readonly preview = newDropBody();
-  private readonly scratch = newDropBody();
-  /** A whole step from the body, to tell a body held by walls from one about to move. */
+  /** The body after its next whole step (the keys held now). */
   private readonly probe = newDropBody();
   private readonly out: FrameView = { x: 0, y: 0, z: 0, body: this.preview };
   /** The preview's own copy of the body's rope state (a rappel). */
@@ -88,9 +81,10 @@ export class BrFrameView {
   private lastX = 0;
   private lastZ = 0;
   private wasGrounded = false;
-  /** The stepped body's place at the last frame (has a fixed step moved it since?). */
-  private bodyX = NaN;
-  private bodyZ = NaN;
+  /** The point followed, as it was last frame, and the walking body's speed (m per ms). */
+  private tx = 0;
+  private tz = 0;
+  private speed = 0;
 
   /** Forget the eased position (respawn, teleport, leaving a vehicle). */
   reset() {
@@ -138,7 +132,7 @@ export class BrFrameView {
     frameMs: number,
     correction: { x: number; y: number; z: number },
   ): FrameView {
-    const { preview, scratch, out } = this;
+    const { preview, out } = this;
     Object.assign(preview, body);
     // The ride's clock is the body's own object: the preview steps a copy of it.
     if (body.zip) preview.zip = { ...body.zip };
@@ -165,7 +159,41 @@ export class BrFrameView {
       if (!body.rappel.stood) delete rope.stood;
       preview.rappel = rope;
     } else delete preview.rappel;
-    if (input)
+    // On foot (walking, and off the ground in a jump or a fall): the body's next whole step, and
+    // the part of the way to it that has passed. The step is the one the fixed steps will take
+    // with these keys, so what is drawn between two of them is on the line between them: the
+    // walls, the door jambs and the corner assist are met once, by the whole step, exactly as
+    // the body meets them (collision audit 2026-11-27, see `sample`'s note below). In the air
+    // too: a part of a step pressed 6 mm into the wall a jump or a drop ran along and was put
+    // back by the next whole one, every tick (the Old Fortress's wall-walks and stairs, owner:
+    // "a lot laggy running with the walls and corners"); between two steps the line is within
+    // 3 mm of the fall's curve.
+    let walked = false;
+    if (
+      input &&
+      body.phase === "ground" &&
+      !body.zip &&
+      !body.ladder &&
+      !body.lift &&
+      !body.rappel
+    ) {
+      const next = Object.assign(this.probe, body);
+      delete next.zip;
+      delete next.ladder;
+      delete next.lift;
+      delete next.rappel;
+      stepDrop(world, meta, route, next, input, planeMs, TICK_MS);
+      if (next.phase === "ground") {
+        const part = Math.max(0, Math.min(1, pendingMs / TICK_MS));
+        preview.x = body.x + (next.x - body.x) * part;
+        preview.y = body.y + (next.y - body.y) * part;
+        preview.z = body.z + (next.z - body.z) * part;
+        this.speed = Math.hypot(next.x - body.x, next.z - body.z) / TICK_MS;
+        walked = true;
+      }
+    }
+    // Otherwise (under the canopy, in the water, aboard, on a rope): the part of the next step itself.
+    if (input && !walked)
       stepDrop(
         world,
         meta,
@@ -175,27 +203,6 @@ export class BrFrameView {
         planeMs,
         Math.max(0, Math.min(TICK_MS, pendingMs)),
       );
-    // Held in a corner or against a door jamb, a whole step leaves the body where it is, but a
-    // part of one (the 1–14 ms of it drawn between steps) went up to 2 mm into the corner: the
-    // view crept in and snapped back 30 times a second, which at a wall 35 cm from the eye is a
-    // shake of a few pixels (owner, 2026-11-16: "lag … standing between the door walls", "at
-    // some corners"). The part-step is drawn only when the whole one would move the body too.
-    if (
-      input &&
-      onFoot(body) &&
-      !body.zip &&
-      !body.ladder &&
-      !body.lift &&
-      !body.rappel &&
-      Math.hypot(preview.x - body.x, preview.z - body.z) < HELD_PROBE_M
-    ) {
-      const probe = Object.assign(this.probe, body);
-      stepDrop(world, meta, route, probe, input, planeMs, TICK_MS);
-      if (Math.hypot(probe.x - body.x, probe.z - body.z) < HELD_M) {
-        preview.x = body.x;
-        preview.z = body.z;
-      }
-    }
     const tx = preview.x + correction.x,
       tz = preview.z + correction.z;
     out.y = preview.y + correction.y;
@@ -208,63 +215,40 @@ export class BrFrameView {
       out.z = tz;
       return out;
     }
-    // Held against walls (a corner, a door jamb), the body does not move: neither the fixed
-    // steps nor this frame's part of the next one. The view's own step below would still slide
-    // a millimetre along one wall each frame and be pulled back by the easing the next: about
-    // 1 mm of shake, reversing some 45 times a second at 144 Hz, which at a wall 35 cm from the
-    // eye moves its texture by pixels (owner, 2026-11-16: "lag happens when character stands
-    // beside the door … between the door walls", "standing at some corners also"). Then the
-    // view only settles on the body. (A body walking freely moves at a step or within one, so
-    // this never holds while it does.)
-    const held =
-      Math.hypot(preview.x - body.x, preview.z - body.z) < HELD_M &&
-      Math.hypot(body.x - this.bodyX, body.z - this.bodyZ) < HELD_M;
-    this.bodyX = body.x;
-    this.bodyZ = body.z;
-    if (!this.walking || Math.hypot(tx - this.x, tz - this.z) > SNAP) {
+    // The view follows that point. While the keys are held it is on it: the point moves by the
+    // frame's share of the step every frame. When it jumps (a key goes down part-way through a
+    // step: the part already passed appears at once; a key comes up; a correction) the view
+    // covers the difference at the body's own speed plus EASE_LIMIT, more for a large one, so
+    // no frame pops.
+    //
+    // Until this audit the view was a body of its own: stepped every frame by the frame's time
+    // with the game's collision, then eased toward the preview, itself a part-step. Near walls
+    // the three disagreed. A part-step judged the corner assist by a shorter move than a whole
+    // step and slipped 9 cm sideways at a jamb the body stayed at, back with every tick: 2 cm of
+    // shake at 30 Hz. The view's own body took the other side of a post from the real one and
+    // stood 1 m off it until it snapped back. Held in a corner it crept into it and was pulled
+    // out (the two `held` probes that followed papered over that). Measured along the walls of
+    // all 125 building models (scripts/br/map-audit/view-smooth.ts, 1.9 million frames): 5,823
+    // frames moving backward, 2,875 shakes and 1,510 lurches, with the body's own steps clean
+    // (wall-slide.ts: none). It also cost up to three steps of collision a frame; this is one.
+    const ms = Math.max(0, Math.min(100, frameMs));
+    const error = Math.hypot(tx - this.x, tz - this.z);
+    if (!this.walking || error > SNAP) {
       this.walking = true;
       this.x = tx;
       this.z = tz;
-    } else {
-      // The view's own step for this frame, with the same physics and collision.
-      Object.assign(scratch, preview);
-      scratch.x = this.x;
-      scratch.z = this.z;
-      // Stand the view's own body on the ground under the VIEW, not at the preview's height.
-      // On a staircase the two are a step or more apart: with the preview's height the view's
-      // body started inside the flight (or the easing below was "blocked" by it), stood still
-      // while the real body walked on, then jumped after it: going down, half the frames moved
-      // backwards and the camera trailed by up to 2.5 m (owner, 2026-11-10: "the stairs at
-      // Blackwater Prison lag out").
-      const footY = preview.grounded
-        ? world.supportAt(this.x, this.z, VIEW_RADIUS, preview.y + VIEW_REACH)
-        : preview.y;
-      scratch.y = Math.abs(footY - preview.y) <= VIEW_REACH ? footY : preview.y;
-      let left = held ? 0 : Math.max(0, Math.min(100, frameMs));
-      while (left > 0) {
-        const step = Math.min(TICK_MS, left);
-        stepDrop(world, meta, route, scratch, input, planeMs, step);
-        left -= step;
-      }
-      if (onFoot(scratch)) {
-        this.x = scratch.x;
-        this.z = scratch.z;
-      }
-      // Repay what is left of the difference, continuously and bounded, one axis at a time
-      // (so a wall that blocks one axis does not hold the other back).
-      const ms = Math.max(0, Math.min(100, frameMs));
-      const blend = 1 - Math.exp(-ms / EASE_MS),
-        error = Math.hypot(tx - this.x, tz - this.z),
-        limit = ms * (EASE_LIMIT + Math.max(0, error - EASE_SMALL) * EASE_FAST);
-      const nx = this.x + Math.max(-limit, Math.min(limit, (tx - this.x) * blend)),
-        nz = this.z + Math.max(-limit, Math.min(limit, (tz - this.z) * blend));
-      const height = preview.crouched ? 1.1 : 1.7;
-      // (From above a step's height at the view's own footing, so a flight's next steps do
-      // not count as a wall.)
-      const clearY = scratch.y + 0.4;
-      if (!world.blocked(nx, clearY, this.z, height - 0.4, 0.3)) this.x = nx;
-      if (!world.blocked(this.x, clearY, nz, height - 0.4, 0.3)) this.z = nz;
+    } else if (error > 0) {
+      // What the point itself moved this frame, no faster than the body walks (in the air:
+      // as it flies), plus the bounded repayment.
+      const moved = Math.hypot(tx - this.tx, tz - this.tz);
+      const own = walked ? Math.min(moved, this.speed * ms) : moved;
+      const limit = own + ms * (EASE_LIMIT + Math.max(0, error - EASE_SMALL) * EASE_FAST);
+      const k = error <= limit ? 1 : limit / error;
+      this.x += (tx - this.x) * k;
+      this.z += (tz - this.z) * k;
     }
+    this.tx = tx;
+    this.tz = tz;
     out.x = this.x;
     out.z = this.z;
     out.y = this.smoothStep(out.x, out.y, out.z, preview.grounded, frameMs);
