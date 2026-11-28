@@ -206,6 +206,58 @@ put("military", "indoor", 18, ["mb-armory"]);
 put("military", "indoor", 16, ["mb-command-bunker", "mb-barracks-3s"]);
 put("military", "indoor", 12, ["mb-ops-tower"]);
 put("military", "indoor", 3, ["mb-pillbox"]);
+// The rebuilt first towns' houses (2026-11-27, art/blender/br/towns: two to four storeys, a
+// stair to every floor and a roof top on each): a little on every floor; the shops and the
+// taverns city loot. Their towns' poiDensity below keeps the match's loot to its budget.
+put("city", "indoor", 12, ["ns-main-street"]);
+put("city", "indoor", 11, ["cr-motor-court", "mh-sawtooth-works"]);
+put("city", "indoor", 10, ["mh-corner-tavern", "ns-corner-store"]);
+put("city", "indoor", 9, ["cr-trading-post", "mh-garage-flats", "rw-boathouse", "rw-mercantile"]);
+put("city", "indoor", 8, ["cr-feed-store"]);
+put("residential", "indoor", 14, ["mh-block-flats"]);
+put("residential", "indoor", 12, ["mh-mill-lofts"]);
+put("residential", "indoor", 11, ["ns-garden-apartments", "rw-river-flats"]);
+put("residential", "indoor", 10, ["ns-brick-walkup", "ns-mansard-flats"]);
+put("residential", "indoor", 9, [
+  "mh-container-flats",
+  "mh-tenement",
+  "ns-triple-decker",
+  "rw-chalet",
+  "rw-timber-lodge",
+]);
+put("residential", "indoor", 8, [
+  "cr-adobe-courtyard",
+  "cr-barn-lofts",
+  "cr-hacienda",
+  "cr-pueblo-terraces",
+  "mh-dutch-duplex",
+  "ns-fourplex",
+  "ns-rowhouses",
+  "ns-victorian",
+  "rw-split-modern",
+]);
+put("residential", "indoor", 7, [
+  "cr-desert-modern",
+  "cr-foursquare",
+  "cr-mission-house",
+  "cr-ranch-two",
+  "cr-stucco-duplex",
+  "mh-foreman-house",
+  "mh-gambrel-house",
+  "ns-colonial",
+  "ns-cottage-tower",
+  "ns-saltbox",
+  "rw-craftsman",
+  "rw-log-house",
+  "rw-lookout-house",
+  "rw-stone-cottage",
+]);
+put("residential", "indoor", 6, [
+  "mh-company-house",
+  "mh-worker-row",
+  "rw-cabin-duplex",
+  "rw-mill-row",
+]);
 // The Quay and the harbours (2026-11-15).
 put("city", "indoor", 8, ["customs-house", "harbour-office"]);
 put("warehouse", "indoor", 10, ["fish-market"]);

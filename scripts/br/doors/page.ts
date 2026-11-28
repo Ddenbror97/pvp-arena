@@ -99,10 +99,22 @@ function drawn(style: string, w: number, h: number) {
   c.height = H;
   const g = c.getContext("2d")!;
   const m = (v: number) => v * PPM;
+  // Seeded by the style and size: same-sized doors of a style come out alike and share one atlas
+  // tile (bake.mjs; the rebuilt towns' 196 doors, 2026-11-27).
+  let seed = [...`${style}:${W}x${H}`].reduce(
+    (a, ch) => Math.imul(a ^ ch.charCodeAt(0), 16777619),
+    2166136261,
+  );
+  const random = () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
   const noise = (alpha: number) => {
     for (let i = 0; i < W * H * 0.04; i++) {
-      g.fillStyle = `rgba(0,0,0,${Math.random() * alpha})`;
-      g.fillRect(Math.random() * W, Math.random() * H, 1 + Math.random() * 2, 1);
+      g.fillStyle = `rgba(0,0,0,${random() * alpha})`;
+      g.fillRect(random() * W, random() * H, 1 + random() * 2, 1);
     }
   };
   const knob = (x: number, y: number, col: string) => {
@@ -168,7 +180,7 @@ function drawn(style: string, w: number, h: number) {
   } else {
     // Weathered vertical boards with two ledges.
     for (let x = 0; x < W; x += m(0.14)) {
-      const t = 90 + Math.random() * 30;
+      const t = 90 + random() * 30;
       g.fillStyle = `rgb(${t},${t * 0.72},${t * 0.48})`;
       g.fillRect(x, 0, m(0.14), H);
       g.fillStyle = "rgba(30,20,10,0.6)";

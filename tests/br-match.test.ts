@@ -350,10 +350,12 @@ describe("Project Island match (Phase 2 core)", () => {
       Object.assign(b, { x, z, y: hf.heightAt(x, z) + up, phase });
     };
     for (const s of state.seats) at(s.seat, 4000, 4000); // everyone parked far away
-    at(0, 0, -1500); // me, open country north of Crossroads
-    at(1, 150, -1500); // 150 m: always sent
-    at(2, 0, 500); // 2 km: never on the ground
-    at(3, 0, 600, "parachute", 200); // 2.1 km but in the air: sent
+    // Me on open ground at Crossroads' north edge (2026-11-27: its rebuilt houses, two to four
+    // storeys, now stand between the spots this used, at z -1500).
+    at(0, 0, -1700);
+    at(1, 150, -1700); // 150 m, in view: sent
+    at(2, 0, 500); // 2.2 km: never on the ground
+    at(3, 0, 600, "parachute", 200); // 2.3 km but in the air: sent
     const view = brViewFor(state, world, sight, 0, 0);
     const seats = view.players.map((r) => r[0]);
     expect(seats).toContain(1);

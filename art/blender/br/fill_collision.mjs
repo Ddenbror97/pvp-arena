@@ -8,7 +8,7 @@
  *
  *   node art/blender/br/fill_collision.mjs --public=<dir> --models=<manifest> \
  *     --collision=<collision> --ids=a,b,… [--voxel=0.25] [--cover=0.5] [--cap=<m>] [--radius=<m>]
- *     [--out=<file>] [--merge=<fill.json>]
+ *     [--out=<file>] [--merge=<fill.json>] [--panes=<window-panes.json>]
  *
  * Writes (or adds to) a fill file: { [id]: { [fp]: boxes } }, `fp` the fingerprint of the
  * model's own boxes the fill was made against and `boxes` encodeBoxes' text (collision-fill.ts
@@ -18,9 +18,11 @@
  * Left out: glass and anything see-through (blend or alpha-tested materials, and materials
  * named glass, window, pane, water, leaves, foliage, grass, curtain, net, rope, cable, wire,
  * fence, decal), the ground (voxels whose top is under 5 cm), the doorways (a metre round each
- * authored entrance, up to 2.3 m over its sill) and whatever has a box beside it at its own
- * height within `--cover` (0.2 m): a level shot stops there or within 20 cm behind the
- * surface anyway, and thickening a wall that has its box would narrow its doors and stairs.
+ * authored entrance, up to 2.3 m over its sill), the windows' breakable panes' openings
+ * (window-panes.json: a broken pane is an opening, its muntins and frame no cover; 2026-11-27)
+ * and whatever has a box beside it at its own height within `--cover` (0.2 m): a level shot
+ * stops there or within 20 cm behind the surface anyway, and thickening a wall that has its box
+ * would narrow its doors and stairs.
  */
 import fs from "node:fs";
 import { NodeIO } from "@gltf-transform/core";
@@ -41,6 +43,10 @@ const CAP = +arg("cap", "Infinity");
 /** Nothing further than this from the model's vertical axis (m; a trunk under a low crown). */
 const RADIUS = +arg("radius", "Infinity");
 const OUT = arg("out", "src/lib/fps/br/collision-fill.json");
+/** Model-space panes, [x0, x1, z0, z1, y0, y1] (glass_panes.mjs). */
+const PANES = JSON.parse(
+  fs.readFileSync(arg("panes", "src/lib/fps/br/window-panes.json"), "utf8"),
+).models;
 const fill = fs.existsSync(arg("merge", OUT))
   ? JSON.parse(fs.readFileSync(arg("merge", OUT), "utf8"))
   : {};
@@ -84,7 +90,7 @@ async function solidTriangles(file) {
   return out;
 }
 
-function fillBoxes(tris, boxes, entrances) {
+function fillBoxes(tris, boxes, entrances, panes) {
   const min = [Infinity, Infinity, Infinity],
     max = [-Infinity, -Infinity, -Infinity];
   for (const t of tris)
@@ -114,19 +120,37 @@ function fillBoxes(tris, boxes, entrances) {
         grid[id(x, y, z)] = 1;
       }
   }
-  // Clear what is covered, under the ground, or in a doorway.
+  // Clear what is covered, under the ground, or in a doorway. Up and down, a voxel holding a box's
+  // own top or bottom face (a floor, a ceiling under its slab) is covered wherever the grid falls:
+  // its centre is up to half a voxel off that face (the rebuilt towns' ceilings, 2026-11-27, were
+  // filled storey by storey).
+  const VTOL = Math.max(0.05, VOXEL / 2 + 0.01);
   const inside = (cx, cy, cz) =>
     boxes.some(
       (b) =>
         cx > b[0] - COVER &&
         cx < b[3] + COVER &&
-        cy > b[1] - 0.05 &&
-        cy < b[4] + 0.05 &&
+        cy > b[1] - VTOL &&
+        cy < b[4] + VTOL &&
         cz > b[2] - COVER &&
         cz < b[5] + COVER,
     );
   const doorway = (cx, cy, cz) =>
     entrances.some((e) => Math.hypot(cx - e.x, cz - e.z) < 1 && cy > e.y0 - 0.3 && cy < e.y0 + 2.3);
+  // A pane's opening: its rectangle, through the wall's depth either side of the glass.
+  const pane = (cx, cy, cz) =>
+    panes.some((p) => {
+      const thinX = p[1] - p[0] < p[3] - p[2];
+      const [gx, gz] = thinX ? [0.2, 0] : [0, 0.2];
+      return (
+        cx > p[0] - gx &&
+        cx < p[1] + gx &&
+        cz > p[2] - gz &&
+        cz < p[3] + gz &&
+        cy > p[4] &&
+        cy < p[5]
+      );
+    });
   let kept = 0;
   for (let y = 0; y < ny; y++)
     for (let z = 0; z < nz; z++)
@@ -141,7 +165,8 @@ function fillBoxes(tris, boxes, entrances) {
           min[1] + y * VOXEL > CAP ||
           Math.hypot(cx, cz) > RADIUS ||
           inside(cx, cy, cz) ||
-          doorway(cx, cy, cz)
+          doorway(cx, cy, cz) ||
+          pane(cx, cy, cz)
         )
           grid[i] = 0;
         else kept++;
@@ -191,7 +216,12 @@ for (const mid of ids) {
   }
   const own = collision.models[mid] ?? [];
   const tris = await solidTriangles(`${PUB}${e.lods[0].file}`);
-  const { boxes, voxels } = fillBoxes(tris, own, collision.entrances?.[mid] ?? []);
+  const { boxes, voxels } = fillBoxes(
+    tris,
+    own,
+    collision.entrances?.[mid] ?? [],
+    PANES[mid] ?? [],
+  );
   const fp = boxesFingerprint(own);
   const list = { ...fill[mid] };
   delete list[fp];

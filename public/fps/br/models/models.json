@@ -52227,6 +52227,2646 @@
      ]
     }
    ]
+  },
+  "cr-adobe-courtyard": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Adobe with portal",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: an adobe house round a corner of its yard, a two-storey block and a one-storey wing, a timber portal in the corner, the wing's roof a terrace, beams through the walls (modelled in Blender, 2026-11-27)",
+   "size": [
+    17.54,
+    8.95,
+    11.54
+   ],
+   "sourceTris": 3948,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-adobe-courtyard.towns-v1.lod0.glb",
+     "tris": 3948,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 94,
+     "size": [
+      17.54,
+      8.95,
+      11.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-adobe-courtyard.towns-v1.lod1.glb",
+     "tris": 814,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 27,
+     "size": [
+      17.54,
+      8.95,
+      11.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-adobe-courtyard.towns-v1.lod2.glb",
+     "tris": 42,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      17.54,
+      8.95,
+      11.54
+     ]
+    }
+   ]
+  },
+  "cr-barn-lofts": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Barn lofts",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: a red board-and-batten barn turned into lofts, two storeys under a big gambrel roof with its hay hood, white trim, a flat-roofed annex whose roof is a railed deck (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.84,
+    11.26,
+    11.42
+   ],
+   "sourceTris": 3600,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-barn-lofts.towns-v1.lod0.glb",
+     "tris": 3600,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 99,
+     "size": [
+      14.84,
+      11.26,
+      11.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-barn-lofts.towns-v1.lod1.glb",
+     "tris": 458,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 25,
+     "size": [
+      14.84,
+      11.26,
+      11.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-barn-lofts.towns-v1.lod2.glb",
+     "tris": 32,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.84,
+      11.26,
+      11.42
+     ]
+    }
+   ]
+  },
+  "cr-desert-modern": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Desert modern house",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: a desert modern house, two storeys of sand stucco and cedar battens, a wide window wall, the flat roof's deck under a pergola with a glass-free rail, planters (modelled in Blender, 2026-11-27)",
+   "size": [
+    12.4,
+    8.95,
+    10.9
+   ],
+   "sourceTris": 3384,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-desert-modern.towns-v1.lod0.glb",
+     "tris": 3384,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 92,
+     "size": [
+      12.4,
+      8.95,
+      10.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-desert-modern.towns-v1.lod1.glb",
+     "tris": 844,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 29,
+     "size": [
+      12.4,
+      8.95,
+      10.9
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-desert-modern.towns-v1.lod2.glb",
+     "tris": 20,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      12.4,
+      8.95,
+      10.9
+     ]
+    }
+   ]
+  },
+  "cr-feed-store": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "False-front feed store",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: an Old West feed store, its square false front high over a tin gable, a boardwalk porch under a tin roof along the street, rooms upstairs and a flat-roofed back store whose roof is a deck (modelled in Blender, 2026-11-27)",
+   "size": [
+    10.68,
+    9.3,
+    18.94
+   ],
+   "sourceTris": 3688,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-feed-store.towns-v1.lod0.glb",
+     "tris": 3688,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 100,
+     "size": [
+      10.68,
+      9.3,
+      18.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-feed-store.towns-v1.lod1.glb",
+     "tris": 618,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 27,
+     "size": [
+      10.68,
+      9.3,
+      18.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-feed-store.towns-v1.lod2.glb",
+     "tris": 54,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10.68,
+      9.3,
+      18.94
+     ]
+    }
+   ]
+  },
+  "cr-foursquare": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Prairie foursquare",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: a white prairie foursquare, two storeys under a pyramid tin roof with a dormer on every side, a wrap-round porch whose railed roof is a deck off the upstairs (modelled in Blender, 2026-11-27)",
+   "size": [
+    13.08,
+    10.14,
+    13.08
+   ],
+   "sourceTris": 4022,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-foursquare.towns-v1.lod0.glb",
+     "tris": 4022,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 81,
+     "size": [
+      13.08,
+      10.14,
+      13.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-foursquare.towns-v1.lod1.glb",
+     "tris": 1058,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 25,
+     "size": [
+      13.08,
+      10.14,
+      13.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-foursquare.towns-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      13.08,
+      10.14,
+      13.08
+     ]
+    }
+   ]
+  },
+  "cr-hacienda": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Monterey hacienda",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: an ochre Monterey hacienda, two storeys under a clay-tile hip roof, a timber balcony on posts the length of the upstairs, and a flat-roofed wing whose roof is a tiled terrace (modelled in Blender, 2026-11-27)",
+   "size": [
+    18.14,
+    9.94,
+    12.04
+   ],
+   "sourceTris": 4870,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-hacienda.towns-v1.lod0.glb",
+     "tris": 4870,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 114,
+     "size": [
+      18.14,
+      9.94,
+      12.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-hacienda.towns-v1.lod1.glb",
+     "tris": 630,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 28,
+     "size": [
+      18.14,
+      9.94,
+      12.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-hacienda.towns-v1.lod2.glb",
+     "tris": 54,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      18.14,
+      9.94,
+      12.04
+     ]
+    }
+   ]
+  },
+  "cr-mission-house": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Mission house",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: a white stucco Mission house, two storeys under a clay-tile gable behind a stepped Mission parapet on the street, an arcaded porch whose roof is a terrace with a tiled rail (modelled in Blender, 2026-11-27)",
+   "size": [
+    11.88,
+    10.74,
+    13.08
+   ],
+   "sourceTris": 3032,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-mission-house.towns-v1.lod0.glb",
+     "tris": 3032,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 67,
+     "size": [
+      11.88,
+      10.74,
+      13.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-mission-house.towns-v1.lod1.glb",
+     "tris": 588,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 20,
+     "size": [
+      11.88,
+      10.74,
+      13.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-mission-house.towns-v1.lod2.glb",
+     "tris": 50,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      11.88,
+      10.74,
+      13.08
+     ]
+    }
+   ]
+  },
+  "cr-motor-court": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Motor court flats",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: the old motor court's two-storey block, rooms off a covered gallery reached by its own outside stair, teal posts, a roof deck up the inside stair (modelled in Blender, 2026-11-27)",
+   "size": [
+    17.6,
+    8.95,
+    10.6
+   ],
+   "sourceTris": 4806,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-motor-court.towns-v1.lod0.glb",
+     "tris": 4806,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 113,
+     "size": [
+      17.6,
+      8.95,
+      10.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-motor-court.towns-v1.lod1.glb",
+     "tris": 690,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 28,
+     "size": [
+      17.6,
+      8.95,
+      10.6
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-motor-court.towns-v1.lod2.glb",
+     "tris": 38,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      17.6,
+      8.95,
+      10.6
+     ]
+    }
+   ]
+  },
+  "cr-pueblo-terraces": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Pueblo terraces",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: a Pueblo Revival house in adobe stucco stepping up in three blocks, one, two and three storeys, each roof a terrace off the floor above, the beams' ends through the walls, ladders (modelled in Blender, 2026-11-27)",
+   "size": [
+    19.14,
+    11.95,
+    9.54
+   ],
+   "sourceTris": 4782,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-pueblo-terraces.towns-v1.lod0.glb",
+     "tris": 4782,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 105,
+     "size": [
+      19.14,
+      11.95,
+      9.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-pueblo-terraces.towns-v1.lod1.glb",
+     "tris": 824,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 28,
+     "size": [
+      19.14,
+      11.95,
+      9.54
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-pueblo-terraces.towns-v1.lod2.glb",
+     "tris": 40,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      19.14,
+      11.95,
+      9.54
+     ]
+    }
+   ]
+  },
+  "cr-ranch-two": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Two-storey ranch",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: a long two-storey ranch house, a stone base under board-and-batten, a low hipped tin roof, a porch the whole front under a shed roof, a railed deck on the carport's roof (modelled in Blender, 2026-11-27)",
+   "size": [
+    18.38,
+    9.54,
+    12.34
+   ],
+   "sourceTris": 3596,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-ranch-two.towns-v1.lod0.glb",
+     "tris": 3596,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 100,
+     "size": [
+      18.38,
+      9.54,
+      12.34
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-ranch-two.towns-v1.lod1.glb",
+     "tris": 752,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 29,
+     "size": [
+      18.38,
+      9.54,
+      12.34
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-ranch-two.towns-v1.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      18.38,
+      9.54,
+      12.34
+     ]
+    }
+   ]
+  },
+  "cr-stucco-duplex": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Stucco duplex",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: a pair of terracotta-capped stucco houses, two storeys each, arched-looking deep doorways, their own stairs to two roof terraces, a carport pergola (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.98,
+    8.95,
+    10.94
+   ],
+   "sourceTris": 4820,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-stucco-duplex.towns-v1.lod0.glb",
+     "tris": 4820,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 106,
+     "size": [
+      14.98,
+      8.95,
+      10.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-stucco-duplex.towns-v1.lod1.glb",
+     "tris": 748,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 27,
+     "size": [
+      14.98,
+      8.95,
+      10.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-stucco-duplex.towns-v1.lod2.glb",
+     "tris": 40,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.98,
+      8.95,
+      10.94
+     ]
+    }
+   ]
+  },
+  "cr-trading-post": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Trading post",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Crossroads: a two-storey adobe-brick trading post with a double gallery across its front, the upper gallery's roof a railed terrace, a stair house on the flat roof (modelled in Blender, 2026-11-27)",
+   "size": [
+    13.9,
+    8.95,
+    12.52
+   ],
+   "sourceTris": 4388,
+   "lods": [
+    {
+     "file": "/fps/br/models/cr-trading-post.towns-v1.lod0.glb",
+     "tris": 4388,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 104,
+     "size": [
+      13.9,
+      8.95,
+      12.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-trading-post.towns-v1.lod1.glb",
+     "tris": 974,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 29,
+     "size": [
+      13.9,
+      8.95,
+      12.52
+     ]
+    },
+    {
+     "file": "/fps/br/models/cr-trading-post.towns-v1.lod2.glb",
+     "tris": 32,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      13.9,
+      8.95,
+      12.52
+     ]
+    }
+   ]
+  },
+  "mh-block-flats": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Block of flats",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a four-storey block of workers' flats in brick and concrete bands, two stairs, balconies on every floor to the street, a roof deck with two stair houses and the plant (modelled in Blender, 2026-11-27)",
+   "size": [
+    18.18,
+    17.65,
+    12.2
+   ],
+   "sourceTris": 11592,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-block-flats.towns-v1.lod0.glb",
+     "tris": 11592,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 212,
+     "size": [
+      18.18,
+      17.65,
+      12.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-block-flats.towns-v1.lod1.glb",
+     "tris": 1124,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 38,
+     "size": [
+      18.18,
+      17.65,
+      12.2
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-block-flats.towns-v1.lod2.glb",
+     "tris": 42,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      18.18,
+      17.65,
+      12.2
+     ]
+    }
+   ]
+  },
+  "mh-company-house": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Company house",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a mustard clapboard company house, two storeys under a steep side gable, a side porch with a shed roof, and a flat-roofed back kitchen whose roof is a deck off the upstairs (modelled in Blender, 2026-11-27)",
+   "size": [
+    12.76,
+    9.91,
+    12.58
+   ],
+   "sourceTris": 3400,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-company-house.towns-v1.lod0.glb",
+     "tris": 3400,
+     "draws": 8,
+     "textureMB": 1,
+     "kB": 110,
+     "size": [
+      12.76,
+      9.91,
+      12.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-company-house.towns-v1.lod1.glb",
+     "tris": 576,
+     "draws": 5,
+     "textureMB": 0.25,
+     "kB": 32,
+     "size": [
+      12.76,
+      9.91,
+      12.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-company-house.towns-v1.lod2.glb",
+     "tris": 54,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12.76,
+      9.91,
+      12.58
+     ]
+    }
+   ]
+  },
+  "mh-container-flats": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Container flats",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: flats stacked from shipping containers' corrugated steel, a rust-red three-storey block and a teal two-storey one, railed roof decks on both, yellow rails (modelled in Blender, 2026-11-27)",
+   "size": [
+    13.98,
+    11.95,
+    12.38
+   ],
+   "sourceTris": 5072,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-container-flats.towns-v1.lod0.glb",
+     "tris": 5072,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 108,
+     "size": [
+      13.98,
+      11.95,
+      12.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-container-flats.towns-v1.lod1.glb",
+     "tris": 1152,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 30,
+     "size": [
+      13.98,
+      11.95,
+      12.38
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-container-flats.towns-v1.lod2.glb",
+     "tris": 30,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      13.98,
+      11.95,
+      12.38
+     ]
+    }
+   ]
+  },
+  "mh-corner-tavern": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Corner tavern",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a three-storey brick corner tavern, its saloon's glass front and painted sign on two streets, two floors of rooms over it, a roof deck with a pergola (modelled in Blender, 2026-11-27)",
+   "size": [
+    13.64,
+    11.95,
+    14.64
+   ],
+   "sourceTris": 6194,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-corner-tavern.towns-v1.lod0.glb",
+     "tris": 6194,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 134,
+     "size": [
+      13.64,
+      11.95,
+      14.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-corner-tavern.towns-v1.lod1.glb",
+     "tris": 618,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 27,
+     "size": [
+      13.64,
+      11.95,
+      14.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-corner-tavern.towns-v1.lod2.glb",
+     "tris": 32,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      13.64,
+      11.95,
+      14.64
+     ]
+    }
+   ]
+  },
+  "mh-dutch-duplex": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Stepped-gable duplex",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a pair of three-storey brick houses behind a stepped Dutch gable front, a door each, their own stairs up to two roof decks behind it (modelled in Blender, 2026-11-27)",
+   "size": [
+    15.44,
+    11.95,
+    11.8
+   ],
+   "sourceTris": 7952,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-dutch-duplex.towns-v1.lod0.glb",
+     "tris": 7952,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 156,
+     "size": [
+      15.44,
+      11.95,
+      11.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-dutch-duplex.towns-v1.lod1.glb",
+     "tris": 716,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 30,
+     "size": [
+      15.44,
+      11.95,
+      11.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-dutch-duplex.towns-v1.lod2.glb",
+     "tris": 64,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      15.44,
+      11.95,
+      11.8
+     ]
+    }
+   ]
+  },
+  "mh-foreman-house": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Foreman's house",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: the mill foreman's two-storey brick house under a hipped roof with a dormer, a deep front porch on brick piers whose railed roof is the upstairs' deck (modelled in Blender, 2026-11-27)",
+   "size": [
+    12.18,
+    10.14,
+    12.82
+   ],
+   "sourceTris": 3626,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-foreman-house.towns-v1.lod0.glb",
+     "tris": 3626,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 90,
+     "size": [
+      12.18,
+      10.14,
+      12.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-foreman-house.towns-v1.lod1.glb",
+     "tris": 556,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 23,
+     "size": [
+      12.18,
+      10.14,
+      12.82
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-foreman-house.towns-v1.lod2.glb",
+     "tris": 38,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12.18,
+      10.14,
+      12.82
+     ]
+    }
+   ]
+  },
+  "mh-gambrel-house": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Gambrel house",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a pale-brick Dutch colonial, two storeys under a barn-like gambrel roof, and a flat-roofed sun room at the side whose roof is a railed terrace off the upstairs (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.3,
+    10.75,
+    9.7
+   ],
+   "sourceTris": 3960,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-gambrel-house.towns-v1.lod0.glb",
+     "tris": 3960,
+     "draws": 8,
+     "textureMB": 1,
+     "kB": 122,
+     "size": [
+      14.3,
+      10.75,
+      9.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-gambrel-house.towns-v1.lod1.glb",
+     "tris": 464,
+     "draws": 5,
+     "textureMB": 0.25,
+     "kB": 31,
+     "size": [
+      14.3,
+      10.75,
+      9.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-gambrel-house.towns-v1.lod2.glb",
+     "tris": 44,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.3,
+      10.75,
+      9.7
+     ]
+    }
+   ]
+  },
+  "mh-garage-flats": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Garage with flats",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a mechanic's garage, its two roller doors on the street, two floors of flats over it in brick and corrugated steel, a railed roof deck (modelled in Blender, 2026-11-27)",
+   "size": [
+    12.18,
+    11.95,
+    10.22
+   ],
+   "sourceTris": 4882,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-garage-flats.towns-v1.lod0.glb",
+     "tris": 4882,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 126,
+     "size": [
+      12.18,
+      11.95,
+      10.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-garage-flats.towns-v1.lod1.glb",
+     "tris": 890,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 34,
+     "size": [
+      12.18,
+      11.95,
+      10.22
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-garage-flats.towns-v1.lod2.glb",
+     "tris": 20,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      12.18,
+      11.95,
+      10.22
+     ]
+    }
+   ]
+  },
+  "mh-mill-lofts": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Mill lofts",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a four-storey red-brick mill converted to lofts, tall steel-framed windows, the old loading door, brick bands at every floor, a roof deck under the water tank (modelled in Blender, 2026-11-27)",
+   "size": [
+    18.4,
+    18.05,
+    12.4
+   ],
+   "sourceTris": 9002,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-mill-lofts.towns-v1.lod0.glb",
+     "tris": 9002,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 180,
+     "size": [
+      18.4,
+      18.05,
+      12.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-mill-lofts.towns-v1.lod1.glb",
+     "tris": 738,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 33,
+     "size": [
+      18.4,
+      18.05,
+      12.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-mill-lofts.towns-v1.lod2.glb",
+     "tris": 32,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      18.4,
+      18.05,
+      12.4
+     ]
+    }
+   ]
+  },
+  "mh-sawtooth-works": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Sawtooth workshop and flats",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a two-storey brick workshop under a sawtooth roof of north lights, its roller door on the street, and a three-storey block of flats beside it with a roof deck (modelled in Blender, 2026-11-27)",
+   "size": [
+    18.3,
+    11.95,
+    12.4
+   ],
+   "sourceTris": 5606,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-sawtooth-works.towns-v1.lod0.glb",
+     "tris": 5606,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 137,
+     "size": [
+      18.3,
+      11.95,
+      12.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-sawtooth-works.towns-v1.lod1.glb",
+     "tris": 620,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 32,
+     "size": [
+      18.3,
+      11.95,
+      12.4
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-sawtooth-works.towns-v1.lod2.glb",
+     "tris": 38,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      18.3,
+      11.95,
+      12.4
+     ]
+    }
+   ]
+  },
+  "mh-tenement": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Tenement",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a narrow four-storey brick tenement, a flat on each floor, its fire escape's balconies down the side with doors on to them, a heavy cornice, the tank on the roof (modelled in Blender, 2026-11-27)",
+   "size": [
+    10.06,
+    17.45,
+    15.06
+   ],
+   "sourceTris": 9000,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-tenement.towns-v1.lod0.glb",
+     "tris": 9000,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 180,
+     "size": [
+      10.06,
+      17.45,
+      15.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-tenement.towns-v1.lod1.glb",
+     "tris": 938,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 36,
+     "size": [
+      10.06,
+      17.45,
+      15.06
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-tenement.towns-v1.lod2.glb",
+     "tris": 32,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      10.06,
+      17.45,
+      15.06
+     ]
+    }
+   ]
+  },
+  "mh-worker-row": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Worker row",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Millhaven: a row of three mill workers' houses in faded clapboard, two storeys under their own gables, one long porch across the front whose roof is a deck off every upstairs (modelled in Blender, 2026-11-27)",
+   "size": [
+    19.38,
+    9.44,
+    12.04
+   ],
+   "sourceTris": 5104,
+   "lods": [
+    {
+     "file": "/fps/br/models/mh-worker-row.towns-v1.lod0.glb",
+     "tris": 5104,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 102,
+     "size": [
+      19.38,
+      9.44,
+      12.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-worker-row.towns-v1.lod1.glb",
+     "tris": 880,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 24,
+     "size": [
+      19.38,
+      9.44,
+      12.04
+     ]
+    },
+    {
+     "file": "/fps/br/models/mh-worker-row.towns-v1.lod2.glb",
+     "tris": 90,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 4,
+     "size": [
+      19.38,
+      9.44,
+      12.04
+     ]
+    }
+   ]
+  },
+  "ns-brick-walkup": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Brick walk-up",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a four-storey red-brick walk-up, two flats a floor, stacked balconies at the back, a heavy cornice, a roof deck with a water tank and a pergola (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.64,
+    17.65,
+    12.42
+   ],
+   "sourceTris": 8592,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-brick-walkup.towns-v1.lod0.glb",
+     "tris": 8592,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 175,
+     "size": [
+      14.64,
+      17.65,
+      12.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-brick-walkup.towns-v1.lod1.glb",
+     "tris": 944,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 35,
+     "size": [
+      14.64,
+      17.65,
+      12.42
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-brick-walkup.towns-v1.lod2.glb",
+     "tris": 32,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.64,
+      17.65,
+      12.42
+     ]
+    }
+   ]
+  },
+  "ns-colonial": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Colonial",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a symmetrical clapboard colonial, two storeys under a shingle gable with three dormers and a brick chimney at each end, black shutters; the kitchen wing's roof a deck off the upstairs landing (modelled in Blender, 2026-11-27)",
+   "size": [
+    17.6,
+    10.54,
+    10.1
+   ],
+   "sourceTris": 4802,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-colonial.towns-v1.lod0.glb",
+     "tris": 4802,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 121,
+     "size": [
+      17.6,
+      10.54,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-colonial.towns-v1.lod1.glb",
+     "tris": 626,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 28,
+     "size": [
+      17.6,
+      10.54,
+      10.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-colonial.towns-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      17.6,
+      10.54,
+      10.1
+     ]
+    }
+   ]
+  },
+  "ns-corner-store": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Corner store with flats",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a three-storey brick corner store, the shop's glass front and awning on the street, two floors of flats over it, a roof terrace with planters (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.74,
+    11.95,
+    13.94
+   ],
+   "sourceTris": 4974,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-corner-store.towns-v1.lod0.glb",
+     "tris": 4974,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 118,
+     "size": [
+      14.74,
+      11.95,
+      13.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-corner-store.towns-v1.lod1.glb",
+     "tris": 572,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 26,
+     "size": [
+      14.74,
+      11.95,
+      13.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-corner-store.towns-v1.lod2.glb",
+     "tris": 20,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      14.74,
+      11.95,
+      13.94
+     ]
+    }
+   ]
+  },
+  "ns-cottage-tower": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Cottage with lookout tower",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a two-storey clapboard cottage with a three-storey brick lookout tower at its back corner, the tower's top a railed lookout with a hipped stair house (modelled in Blender, 2026-11-27)",
+   "size": [
+    15.04,
+    13.29,
+    10
+   ],
+   "sourceTris": 6844,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-cottage-tower.towns-v1.lod0.glb",
+     "tris": 6844,
+     "draws": 8,
+     "textureMB": 1,
+     "kB": 165,
+     "size": [
+      15.04,
+      13.29,
+      10
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-cottage-tower.towns-v1.lod1.glb",
+     "tris": 848,
+     "draws": 5,
+     "textureMB": 0.25,
+     "kB": 38,
+     "size": [
+      15.04,
+      13.29,
+      10
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-cottage-tower.towns-v1.lod2.glb",
+     "tris": 50,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      15.04,
+      13.29,
+      10
+     ]
+    }
+   ]
+  },
+  "ns-fourplex": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Hip-roofed fourplex",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a sage-green fourplex, two flats a floor either side of its hall, under a hipped shingle roof; a sun porch at the back whose roof is the upstairs flats' deck (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.08,
+    10.34,
+    13.86
+   ],
+   "sourceTris": 4166,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-fourplex.towns-v1.lod0.glb",
+     "tris": 4166,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 110,
+     "size": [
+      14.08,
+      10.34,
+      13.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-fourplex.towns-v1.lod1.glb",
+     "tris": 660,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 28,
+     "size": [
+      14.08,
+      10.34,
+      13.86
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-fourplex.towns-v1.lod2.glb",
+     "tris": 38,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.08,
+      10.34,
+      13.86
+     ]
+    }
+   ]
+  },
+  "ns-garden-apartments": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Garden apartments",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a three-storey brick and clapboard apartment house, a two-storey wing whose roof is the top flat's terrace, balconies to the garden, a roof deck with a pergola (modelled in Blender, 2026-11-27)",
+   "size": [
+    21.18,
+    11.95,
+    12.1
+   ],
+   "sourceTris": 7382,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-garden-apartments.towns-v1.lod0.glb",
+     "tris": 7382,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 156,
+     "size": [
+      21.18,
+      11.95,
+      12.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-garden-apartments.towns-v1.lod1.glb",
+     "tris": 780,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 33,
+     "size": [
+      21.18,
+      11.95,
+      12.1
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-garden-apartments.towns-v1.lod2.glb",
+     "tris": 30,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      21.18,
+      11.95,
+      12.1
+     ]
+    }
+   ]
+  },
+  "ns-main-street": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Main street block",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a four-storey main street block in dark brick, two shopfronts under awnings, three floors of flats with a two-tone cornice, a roof deck with a pergola and a water tank (modelled in Blender, 2026-11-27)",
+   "size": [
+    16.8,
+    17.65,
+    14.02
+   ],
+   "sourceTris": 9260,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-main-street.towns-v1.lod0.glb",
+     "tris": 9260,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 186,
+     "size": [
+      16.8,
+      17.65,
+      14.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-main-street.towns-v1.lod1.glb",
+     "tris": 816,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 34,
+     "size": [
+      16.8,
+      17.65,
+      14.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-main-street.towns-v1.lod2.glb",
+     "tris": 32,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      16.8,
+      17.65,
+      14.02
+     ]
+    }
+   ]
+  },
+  "ns-mansard-flats": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Mansard flats",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a cream-brick Second Empire block, three storeys and a slate mansard with dormers round a roof deck, a bay window up the front (modelled in Blender, 2026-11-27)",
+   "size": [
+    13.24,
+    11.95,
+    12.02
+   ],
+   "sourceTris": 5858,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-mansard-flats.towns-v1.lod0.glb",
+     "tris": 5858,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 134,
+     "size": [
+      13.24,
+      11.95,
+      12.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-mansard-flats.towns-v1.lod1.glb",
+     "tris": 758,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 32,
+     "size": [
+      13.24,
+      11.95,
+      12.02
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-mansard-flats.towns-v1.lod2.glb",
+     "tris": 40,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      13.24,
+      11.95,
+      12.02
+     ]
+    }
+   ]
+  },
+  "ns-rowhouses": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Brick row houses",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a pair of brick row houses, three storeys each with a stoop and a bay window, their own stairs to two roof decks behind one parapet (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.64,
+    11.95,
+    13.12
+   ],
+   "sourceTris": 7216,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-rowhouses.towns-v1.lod0.glb",
+     "tris": 7216,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 149,
+     "size": [
+      14.64,
+      11.95,
+      13.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-rowhouses.towns-v1.lod1.glb",
+     "tris": 896,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 33,
+     "size": [
+      14.64,
+      11.95,
+      13.12
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-rowhouses.towns-v1.lod2.glb",
+     "tris": 64,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.64,
+      11.95,
+      13.12
+     ]
+    }
+   ]
+  },
+  "ns-saltbox": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Saltbox",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a saltbox in grey clapboard, two storeys in front and the long roof sweeping down over the back; a flat-roofed garage wing whose roof is a deck off the upstairs (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.6,
+    9.74,
+    13.3
+   ],
+   "sourceTris": 4216,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-saltbox.towns-v1.lod0.glb",
+     "tris": 4216,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 113,
+     "size": [
+      14.6,
+      9.74,
+      13.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-saltbox.towns-v1.lod1.glb",
+     "tris": 516,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 27,
+     "size": [
+      14.6,
+      9.74,
+      13.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-saltbox.towns-v1.lod2.glb",
+     "tris": 50,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.6,
+      9.74,
+      13.3
+     ]
+    }
+   ]
+  },
+  "ns-triple-decker": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Triple-decker",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a New England triple-decker in painted clapboard, a flat on each floor, porches stacked three high across the front, a roof deck behind the parapet (modelled in Blender, 2026-11-27)",
+   "size": [
+    9.5,
+    11.95,
+    14.48
+   ],
+   "sourceTris": 7484,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-triple-decker.towns-v1.lod0.glb",
+     "tris": 7484,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 139,
+     "size": [
+      9.5,
+      11.95,
+      14.48
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-triple-decker.towns-v1.lod1.glb",
+     "tris": 1330,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 32,
+     "size": [
+      9.5,
+      11.95,
+      14.48
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-triple-decker.towns-v1.lod2.glb",
+     "tris": 32,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      9.5,
+      11.95,
+      14.48
+     ]
+    }
+   ]
+  },
+  "ns-victorian": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Victorian with tower",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Northstar Town: a painted Victorian, two storeys under a steep gable, its three-storey corner tower under a slate roof, a porch across the front with a sun deck on its roof (modelled in Blender, 2026-11-27)",
+   "size": [
+    16.48,
+    12.81,
+    12.94
+   ],
+   "sourceTris": 7324,
+   "lods": [
+    {
+     "file": "/fps/br/models/ns-victorian.towns-v1.lod0.glb",
+     "tris": 7324,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 140,
+     "size": [
+      16.48,
+      12.81,
+      12.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-victorian.towns-v1.lod1.glb",
+     "tris": 808,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 28,
+     "size": [
+      16.48,
+      12.81,
+      12.94
+     ]
+    },
+    {
+     "file": "/fps/br/models/ns-victorian.towns-v1.lod2.glb",
+     "tris": 52,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      16.48,
+      12.81,
+      12.94
+     ]
+    }
+   ]
+  },
+  "rw-boathouse": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Boathouse flats",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: a boathouse on the river street, its big boat door below, two floors of flats above in weathered battens, a tin gable to the street, decks off both floors (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.64,
+    13.44,
+    14.76
+   ],
+   "sourceTris": 5540,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-boathouse.towns-v1.lod0.glb",
+     "tris": 5540,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 125,
+     "size": [
+      14.64,
+      13.44,
+      14.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-boathouse.towns-v1.lod1.glb",
+     "tris": 620,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 27,
+     "size": [
+      14.64,
+      13.44,
+      14.76
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-boathouse.towns-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.64,
+      13.44,
+      14.76
+     ]
+    }
+   ]
+  },
+  "rw-cabin-duplex": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Twin log cabins",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: two log cabins under one porch, two storeys each under their own steep gables to the street, the porch's railed roof a deck off both upstairs (modelled in Blender, 2026-11-27)",
+   "size": [
+    15.58,
+    10.54,
+    11.64
+   ],
+   "sourceTris": 4290,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-cabin-duplex.towns-v1.lod0.glb",
+     "tris": 4290,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 93,
+     "size": [
+      15.58,
+      10.54,
+      11.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-cabin-duplex.towns-v1.lod1.glb",
+     "tris": 726,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 24,
+     "size": [
+      15.58,
+      10.54,
+      11.64
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-cabin-duplex.towns-v1.lod2.glb",
+     "tris": 64,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      15.58,
+      10.54,
+      11.64
+     ]
+    }
+   ]
+  },
+  "rw-chalet": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Chalet",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: a three-storey alpine chalet, its wide gable to the street, balconies with flower boxes along every upper floor, a stone ground floor, a flat-roofed side wing whose roof is a deck (modelled in Blender, 2026-11-27)",
+   "size": [
+    16.04,
+    12.6,
+    13.16
+   ],
+   "sourceTris": 8220,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-chalet.towns-v1.lod0.glb",
+     "tris": 8220,
+     "draws": 8,
+     "textureMB": 1,
+     "kB": 182,
+     "size": [
+      16.04,
+      12.6,
+      13.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-chalet.towns-v1.lod1.glb",
+     "tris": 696,
+     "draws": 5,
+     "textureMB": 0.25,
+     "kB": 36,
+     "size": [
+      16.04,
+      12.6,
+      13.16
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-chalet.towns-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      16.04,
+      12.6,
+      13.16
+     ]
+    }
+   ]
+  },
+  "rw-craftsman": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Craftsman house",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: a sage-green craftsman house, two storeys under a low gable with deep eaves on brackets, a dormer, tapered porch columns on stone piers, a railed deck on the porch roof (modelled in Blender, 2026-11-27)",
+   "size": [
+    12.9,
+    10.14,
+    13.58
+   ],
+   "sourceTris": 3650,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-craftsman.towns-v1.lod0.glb",
+     "tris": 3650,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 81,
+     "size": [
+      12.9,
+      10.14,
+      13.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-craftsman.towns-v1.lod1.glb",
+     "tris": 578,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 20,
+     "size": [
+      12.9,
+      10.14,
+      13.58
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-craftsman.towns-v1.lod2.glb",
+     "tris": 38,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12.9,
+      10.14,
+      13.58
+     ]
+    }
+   ]
+  },
+  "rw-log-house": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Log house",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: a two-storey log house, a steep gable with a dormer, a fieldstone chimney up the end wall, a porch under a shed roof, and a railed deck over the back porch (modelled in Blender, 2026-11-27)",
+   "size": [
+    12.78,
+    11.74,
+    14.08
+   ],
+   "sourceTris": 3382,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-log-house.towns-v1.lod0.glb",
+     "tris": 3382,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 82,
+     "size": [
+      12.78,
+      11.74,
+      14.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-log-house.towns-v1.lod1.glb",
+     "tris": 636,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 23,
+     "size": [
+      12.78,
+      11.74,
+      14.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-log-house.towns-v1.lod2.glb",
+     "tris": 56,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12.78,
+      11.74,
+      14.08
+     ]
+    }
+   ]
+  },
+  "rw-lookout-house": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Fire lookout house",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: an old fire lookout turned house, a four-storey timber tower with its glazed lookout room on top, a railed deck round the roof, a stone-based cabin at its foot (modelled in Blender, 2026-11-27)",
+   "size": [
+    12.74,
+    16.45,
+    8.18
+   ],
+   "sourceTris": 5734,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-lookout-house.towns-v1.lod0.glb",
+     "tris": 5734,
+     "draws": 8,
+     "textureMB": 1,
+     "kB": 148,
+     "size": [
+      12.74,
+      16.45,
+      8.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-lookout-house.towns-v1.lod1.glb",
+     "tris": 944,
+     "draws": 5,
+     "textureMB": 0.25,
+     "kB": 39,
+     "size": [
+      12.74,
+      16.45,
+      8.18
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-lookout-house.towns-v1.lod2.glb",
+     "tris": 46,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12.74,
+      16.45,
+      8.18
+     ]
+    }
+   ]
+  },
+  "rw-mercantile": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Mercantile",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: the riverside mercantile, its gable to the street with the store's sign, display windows under a deep porch whose railed roof is the upstairs flat's balcony, a back storeroom with a roof deck (modelled in Blender, 2026-11-27)",
+   "size": [
+    12.88,
+    10.51,
+    18.92
+   ],
+   "sourceTris": 4050,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-mercantile.towns-v1.lod0.glb",
+     "tris": 4050,
+     "draws": 8,
+     "textureMB": 1,
+     "kB": 113,
+     "size": [
+      12.88,
+      10.51,
+      18.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-mercantile.towns-v1.lod1.glb",
+     "tris": 854,
+     "draws": 5,
+     "textureMB": 0.25,
+     "kB": 34,
+     "size": [
+      12.88,
+      10.51,
+      18.92
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-mercantile.towns-v1.lod2.glb",
+     "tris": 36,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      12.88,
+      10.51,
+      18.92
+     ]
+    }
+   ]
+  },
+  "rw-mill-row": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Mill row",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: three lumber-mill workers' houses in a row, stained board-and-batten in three colours, two storeys and a roof deck each, one porch under a tin roof across the front (modelled in Blender, 2026-11-27)",
+   "size": [
+    19.6,
+    8.95,
+    11.7
+   ],
+   "sourceTris": 5354,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-mill-row.towns-v1.lod0.glb",
+     "tris": 5354,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 128,
+     "size": [
+      19.6,
+      8.95,
+      11.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-mill-row.towns-v1.lod1.glb",
+     "tris": 880,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 35,
+     "size": [
+      19.6,
+      8.95,
+      11.7
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-mill-row.towns-v1.lod2.glb",
+     "tris": 78,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      19.6,
+      8.95,
+      11.7
+     ]
+    }
+   ]
+  },
+  "rw-river-flats": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "River flats",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: a three-storey timber block of flats over the river street, stacked balconies on every floor, a green roof deck with planters and a pergola (modelled in Blender, 2026-11-27)",
+   "size": [
+    15.18,
+    11.95,
+    12.3
+   ],
+   "sourceTris": 7594,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-river-flats.towns-v1.lod0.glb",
+     "tris": 7594,
+     "draws": 6,
+     "textureMB": 0.5,
+     "kB": 138,
+     "size": [
+      15.18,
+      11.95,
+      12.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-river-flats.towns-v1.lod1.glb",
+     "tris": 1304,
+     "draws": 3,
+     "textureMB": 0.13,
+     "kB": 30,
+     "size": [
+      15.18,
+      11.95,
+      12.3
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-river-flats.towns-v1.lod2.glb",
+     "tris": 20,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      15.18,
+      11.95,
+      12.3
+     ]
+    }
+   ]
+  },
+  "rw-split-modern": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Split timber house",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: a modern timber house of two blocks, three and two storeys, cedar battens and big glass, the tall block under a single steep slope, the low block's roof a railed deck off its top floor (modelled in Blender, 2026-11-27)",
+   "size": [
+    15.1,
+    11.02,
+    11.8
+   ],
+   "sourceTris": 4218,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-split-modern.towns-v1.lod0.glb",
+     "tris": 4218,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 107,
+     "size": [
+      15.1,
+      11.02,
+      11.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-split-modern.towns-v1.lod1.glb",
+     "tris": 582,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 26,
+     "size": [
+      15.1,
+      11.02,
+      11.8
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-split-modern.towns-v1.lod2.glb",
+     "tris": 24,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 2,
+     "size": [
+      15.1,
+      11.02,
+      11.8
+     ]
+    }
+   ]
+  },
+  "rw-stone-cottage": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Stone cottage",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: a fieldstone cottage, two storeys under a steep slate gable with two dormers, a stone chimney, a timber deck on posts at the side whose roof is a railed terrace (modelled in Blender, 2026-11-27)",
+   "size": [
+    14.02,
+    11.9,
+    9.78
+   ],
+   "sourceTris": 3860,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-stone-cottage.towns-v1.lod0.glb",
+     "tris": 3860,
+     "draws": 7,
+     "textureMB": 0.75,
+     "kB": 102,
+     "size": [
+      14.02,
+      11.9,
+      9.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-stone-cottage.towns-v1.lod1.glb",
+     "tris": 552,
+     "draws": 4,
+     "textureMB": 0.19,
+     "kB": 27,
+     "size": [
+      14.02,
+      11.9,
+      9.78
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-stone-cottage.towns-v1.lod2.glb",
+     "tris": 38,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      14.02,
+      11.9,
+      9.78
+     ]
+    }
+   ]
+  },
+  "rw-timber-lodge": {
+   "author": "PvPSpinArena",
+   "licence": "Original work (procedural)",
+   "textures": "Original work (procedural, art/blender/br/make_town_textures.py: brick, siding, battens, shingles, stucco) and Poly Haven (CC0): the owner's downloads, art/br/blackwater/tex",
+   "class": "building",
+   "ring": "dwelling",
+   "scale": 1,
+   "title": "Timber lodge",
+   "source": "art/blender/br/build_towns.mjs",
+   "use": "Riverwood: a three-storey timber lodge, stone below and dark board-and-batten above, a steep shingle gable with a dormer, a deck on posts round the first floor, and a side wing's railed roof deck (modelled in Blender, 2026-11-27)",
+   "size": [
+    17.74,
+    14.94,
+    13.08
+   ],
+   "sourceTris": 6832,
+   "lods": [
+    {
+     "file": "/fps/br/models/rw-timber-lodge.towns-v1.lod0.glb",
+     "tris": 6832,
+     "draws": 8,
+     "textureMB": 1,
+     "kB": 166,
+     "size": [
+      17.74,
+      14.94,
+      13.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-timber-lodge.towns-v1.lod1.glb",
+     "tris": 1156,
+     "draws": 5,
+     "textureMB": 0.25,
+     "kB": 42,
+     "size": [
+      17.74,
+      14.94,
+      13.08
+     ]
+    },
+    {
+     "file": "/fps/br/models/rw-timber-lodge.towns-v1.lod2.glb",
+     "tris": 48,
+     "draws": 1,
+     "textureMB": 0,
+     "kB": 3,
+     "size": [
+      17.74,
+      14.94,
+      13.08
+     ]
+    }
+   ]
   }
  }
 }

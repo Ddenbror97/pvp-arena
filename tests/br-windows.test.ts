@@ -144,6 +144,11 @@ describe("the buildings' windows are breakable glass", () => {
       "rural-wood-1",
       "rural-wood-4",
       "rural-diner",
+      // The rebuilt towns' houses (build_towns.mjs, 2026-11-27).
+      "ns-brick-walkup",
+      "mh-tenement",
+      "cr-hacienda",
+      "rw-mercantile",
     ])
       expect(ids).toContain(id);
     for (const id of ids) {
@@ -180,7 +185,8 @@ describe("the buildings' windows are breakable glass", () => {
     "cove-house-red",
     "ew-control-house",
     "rural-store-1",
-    "rural-store-3",
+    // (The rebuilt towns' corner shop in place of rural-store-3, which no town places now.)
+    "ns-corner-store",
     "brick-shop",
     "garage",
     "house",

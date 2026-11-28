@@ -23,6 +23,11 @@
  *   node art/blender/br/build_facades.mjs <manifest-in> <revision> [atlasWidth] --far
  *   node scripts/br/facades/bake.mjs <revision>
  *
+ * --density=<px/m> (the rebuilt towns, 2026-11-27): the texel density of the views of the models
+ * new to the far atlas (whose far LOD is not on one yet), at most the usual; the atlas stays
+ * under its 40 MB. (A far LOD already on an atlas is laid out again from its own geometry: the
+ * same triangles and colours, new texture coordinates.)
+ *
  * A building's far LOD was a few flat-coloured boxes, and its middle LOD is real geometry:
  * window bars, balcony slabs and frames a few centimetres to a metre across. From the plane or
  * under the canopy that geometry is smaller than a pixel hundreds of metres before the far LOD
@@ -47,7 +52,10 @@ import { modelFile } from "./model-files.mjs";
 const REPO = process.cwd();
 const MODELS = path.join(REPO, "public/fps/br/models");
 const FAR = process.argv.includes("--far");
-const [manifestIn, revision, atlasWidthArg] = process.argv.slice(2).filter((a) => a !== "--far");
+const DENSITY = Number(process.argv.find((a) => a.startsWith("--density="))?.slice(10) ?? Infinity);
+const [manifestIn, revision, atlasWidthArg] = process.argv
+  .slice(2)
+  .filter((a) => !a.startsWith("--"));
 if (!manifestIn || !revision) {
   console.error("usage: build_facades.mjs <manifest-in> <revision> [atlasWidth] [--far]");
   process.exit(1);
@@ -237,7 +245,9 @@ for (const [id, m] of chosen) {
   // The silhouette may poke a little outside the near model: bounds of both.
   const b = bounds([...lod0.prims, ...lod1.prims]);
   loaded.set(id, { lod1, b });
-  const d = FAR ? farDensity(m) : density(m.ring ?? m.class);
+  const d = FAR
+    ? Math.min(m.lods.at(-1).farFacade ? Infinity : DENSITY, farDensity(m))
+    : density(m.ring ?? m.class);
   const size = [0, 1, 2].map((a) => Math.max(0.05, b.max[a] - b.min[a]));
   const longest = Math.max(...size);
   const k = Math.min(1, (MAX_SIDE - 2 * GUTTER) / (longest * d));

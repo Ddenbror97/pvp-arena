@@ -302,6 +302,11 @@ for (const [id, entry] of Object.entries(manifest.models)) {
     .listMeshes()
     .flatMap((m) => m.listPrimitives())
     .reduce((s, p) => s + p.getIndices().getCount() / 3, 0);
+  // (The glass's own material gone, one draw fewer.)
+  lod.draws = written
+    .getRoot()
+    .listMeshes()
+    .reduce((s, m) => s + m.listPrimitives().length, 0);
   lod.kB = Math.round(fs.statSync(path.join("public", out)).size / 1024);
   files++;
 }

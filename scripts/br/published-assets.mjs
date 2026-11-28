@@ -73,7 +73,7 @@ function read(dir) {
       )
         read(p);
     } else if (p.startsWith(path.join(REPO, "art") + path.sep) && /\.json$/.test(e.name))
-      // The art pipeline's own records (far-facades-v2.json: the near LOD each far view was
+      // The art pipeline's own records (far-facades-v3.json: the near LOD each far view was
       // rendered from) name sources the tools read through model-files.mjs: base, not published.
       strings(JSON.parse(fs.readFileSync(p, "utf8")), artData);
     else if (/\.(ts|tsx|mjs|cjs|js|json|jsonc|py|css|html)$/.test(e.name))
