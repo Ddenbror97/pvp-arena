@@ -412,7 +412,10 @@ describe("FROSTLINE winter aim arena layout", () => {
     metrics["navNodes"] = { frostline: nodes.size, reachableFromSpawnB: reachable.size };
   });
 
-  it.each([123, 17])(
+  // Seed 5 since 2026-11-28: seed 123's series drew two rounds against the idle player before
+  // the 2026-11-25 weapon damage (#362) and three after it, which is the draw limit (the
+  // series is cancelled, as it should be against a player who never moves).
+  it.each([5, 17])(
     "the practice bot finishes a first-to-seven series on FROSTLINE (seed %i)",
     (seed) => {
       let n = seed;

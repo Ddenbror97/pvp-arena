@@ -43,12 +43,6 @@
   gap: 28px;
   padding: 28px;
 }
-.strike-kicker {
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  font-weight: 700;
-  color: #d2b7e9;
-}
 .strike-intro {
   align-self: start;
   padding-top: 22px;
@@ -680,9 +674,6 @@
   }
   .strike-intro {
     align-self: stretch;
-  }
-  .strike-kicker {
-    font-size: 8px;
   }
   .strike-intro h1 {
     font-size: 30px;

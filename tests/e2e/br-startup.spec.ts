@@ -5,6 +5,38 @@ import { build } from "esbuild";
 import { test, expect } from "@playwright/test";
 
 let server: http.Server, origin: string;
+/** The names a file imports from a sibling module (`import { A, type B } from "./X"`). */
+const imported = (file: string, from: string) =>
+  [
+    ...fs
+      .readFileSync(file, "utf8")
+      .matchAll(new RegExp(`import\\s*\\{([^}]*)\\}\\s*from\\s*"${from}"`, "g")),
+  ].flatMap((m) =>
+    m[1]!
+      .split(",")
+      .map(
+        (s) =>
+          s
+            .trim()
+            .replace(/^type\s+/, "")
+            .split(/\s+as\s+/)[0]!,
+      )
+      .filter(Boolean),
+  );
+/**
+ * The overlay modules' stand-ins: everything BrMatch takes from the HUD, the settings and the
+ * tactical map (and the HUD from the settings), read from the sources, so a new HUD export no
+ * longer breaks this fixture's build (it did twice: 2026-11-24, and #381's BrCounters,
+ * BrPhaseBanner and StrikeCrosshair, found 2026-11-28). The three below are real or given.
+ */
+const stubs = [
+  ...new Set([
+    ...["./BrHud", "./BrSettings", "./TacticalMap"].flatMap((m) =>
+      imported("src/components/fps/BrMatch.tsx", m),
+    ),
+    ...imported("src/components/fps/BrHud.tsx", "./GameSettings"),
+  ]),
+].filter((n) => !["BrInventory", "useBrFeed", "GameSettings"].includes(n));
 test.use({ trace: "off", video: "off" });
 test.beforeAll(async () => {
   const modules: Record<string, string> = {
@@ -44,7 +76,7 @@ test.beforeAll(async () => {
             resolveDir: process.cwd(),
           }));
           b.onLoad({ filter: /.*/, namespace: "overlay" }, () => ({
-            contents: `import React from 'react';export {BrInventory} from '${path.resolve("src/components/fps/BrHud.tsx").replaceAll("\\", "/")}';export const GameSettings=p=>p.open?React.createElement('div',{role:'dialog','aria-label':'Game settings',style:{position:'absolute',inset:0,zIndex:20,padding:'200px'}},p.leaveAction):null;export const useBrFeed=()=>({onFeed(){},out:null});${["BrSettingsGeneral", "BrKeyBindings", "TacticalMap", "BrCanopyGauges", "BrFlight", "BrAirdropAlert", "BrCentre", "BrEnd", "BrFeedView", "BrGasFx", "BrLobbyCard", "BrStatus", "BrTablet", "BrTopStatus", "BrZone"].map((n) => `export const ${n}=()=>null;`).join("")}`,
+            contents: `import React from 'react';export {BrInventory} from '${path.resolve("src/components/fps/BrHud.tsx").replaceAll("\\", "/")}';export const GameSettings=p=>p.open?React.createElement('div',{role:'dialog','aria-label':'Game settings',style:{position:'absolute',inset:0,zIndex:20,padding:'200px'}},p.leaveAction):null;export const useBrFeed=()=>({onFeed(){},out:null});${stubs.map((n) => `export const ${n}=()=>null;`).join("")}`,
             loader: "js",
             resolveDir: process.cwd(),
           }));
