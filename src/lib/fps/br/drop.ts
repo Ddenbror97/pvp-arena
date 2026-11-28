@@ -1,6 +1,7 @@
 import { stepLadder, type LadderState } from "./ladders";
 import { stepRappel, type RappelState } from "./rappel";
 import { lifts, stepRide, type LiftState } from "./lifts";
+import { EYE_HEIGHT, PLAYER_RADIUS, STEP_HEIGHT } from "../map";
 import { stepBody, type BrBody, type BrMoveInput } from "./movement";
 import type { StaticWorld } from "./static-world";
 import { WORLD_HALF, type WorldMeta } from "./world";
@@ -184,6 +185,71 @@ export function planeAt(route: Route, ms: number): [number, number, number] {
 
 /** Time the plane takes to fly the whole route (ms); everyone still aboard is ejected then. */
 export const routeMs = (route: Route) => route.durationMs ?? DROP.planeDurationMs;
+
+/**
+ * A swimmer's head and shoulders (m under and over the surface, and the hull's half width): what
+ * a swim meets (owner, 2026-11-27: Blackwater's moat). Swimming took no notice of the world: a
+ * swimmer went through the quay and the keep's foundations, under the keep's floor, and where
+ * the water's rectangle ended inside a wall was put on the bed inside it and pushed out, five
+ * times a second (scripts/br/map-audit/swim.ts). Legs and anything deeper are not tested: a
+ * swimmer floats over a sunk step or a rock.
+ */
+export const SWIM_DEEP = 0.6;
+export const SWIM_HEAD = 0.3;
+/** How high over the surface a swimmer gets out onto a step or a ledge (as a step up on foot). */
+const SWIM_CLIMB = STEP_HEIGHT;
+
+/**
+ * Move a swimmer by (dx, dz) against what stands in the water: along a wall per axis (as far as
+ * each axis goes), and out onto a step or a ledge met at the surface (true: it now stands, the
+ * phase `ground`). From inside something (dropped into it) the move is free, to get out.
+ */
+function swimAgainst(world: StaticWorld, body: DropBody, dx: number, dz: number): boolean {
+  const r = PLAYER_RADIUS,
+    y = body.y - SWIM_DEEP,
+    h = SWIM_DEEP + SWIM_HEAD;
+  const edge = (v: number) => Math.max(-WORLD_HALF + 2, Math.min(WORLD_HALF - 2, v));
+  const free = (x: number, z: number) => !world.blocked(x, y, z, h, r);
+  if (!free(body.x, body.z)) {
+    body.x = edge(body.x + dx);
+    body.z = edge(body.z + dz);
+    return false;
+  }
+  for (const axis of [0, 1]) {
+    const d = axis ? dz : dx;
+    if (d === 0) continue;
+    const at = (f: number) =>
+      axis ? ([body.x, edge(body.z + d * f)] as const) : ([edge(body.x + d * f), body.z] as const);
+    const [tx, tz] = at(1);
+    if (free(tx, tz)) {
+      body.x = tx;
+      body.z = tz;
+      continue;
+    }
+    // Something at the surface: a step or a ledge low enough to get out onto?
+    const top = world.supportAt(tx, tz, r, body.y + SWIM_CLIMB);
+    if (top > y && !world.blocked(tx, top + 1e-4, tz, EYE_HEIGHT + 0.2, r)) {
+      body.x = tx;
+      body.z = tz;
+      body.y = top;
+      body.phase = "ground";
+      body.grounded = true;
+      body.velocityY = 0;
+      body.airCrouchOffset = 0;
+      return true;
+    }
+    // A wall: up to it.
+    let lo = 0,
+      hi = 1;
+    for (let k = 0; k < 5; k++) {
+      const mid = (lo + hi) / 2;
+      if (free(...at(mid))) lo = mid;
+      else hi = mid;
+    }
+    [body.x, body.z] = at(lo);
+  }
+  return false;
+}
 
 /** Water surface height at x/z, or null where there is no water above the ground. */
 export function waterSurface(meta: WorldMeta, ground: number, x: number, z: number): number | null {
@@ -377,16 +443,13 @@ export function stepDrop(
       return null;
     }
     case "swim": {
-      // Paddle at the surface; out once the bottom is within wading depth.
+      // Paddle at the surface; out once the bottom is within wading depth, or onto a step or a
+      // ledge met at the surface.
       const [hx, hz] = heading();
-      body.x = Math.max(
-        -WORLD_HALF + 2,
-        Math.min(WORLD_HALF - 2, body.x + hx * DROP.swimSpeed * move * dt),
-      );
-      body.z = Math.max(
-        -WORLD_HALF + 2,
-        Math.min(WORLD_HALF - 2, body.z + hz * DROP.swimSpeed * move * dt),
-      );
+      if (
+        swimAgainst(world, body, hx * DROP.swimSpeed * move * dt, hz * DROP.swimSpeed * move * dt)
+      )
+        return "ground";
       const bottom = world.hf.heightAt(body.x, body.z);
       const surface = waterSurface(meta, bottom, body.x, body.z);
       if (surface === null || surface - bottom <= DROP.wadeDepth) {
@@ -438,11 +501,17 @@ export function stepDrop(
       return "ground";
     }
     case "ground": {
-      // Walking into deep water starts swimming.
+      // Walking into deep water starts swimming (not stood on a step or a deck in wading depth:
+      // the moat's steps go down into water deep enough to swim).
       stepBody(world, body, input && { ...input, forward: fwd, strafe: str, yaw }, dtMs);
       const bottom = world.hf.heightAt(body.x, body.z);
       const surface = waterSurface(meta, bottom, body.x, body.z);
-      if (surface !== null && surface - bottom > DROP.wadeDepth + 0.2 && body.y <= surface) {
+      if (
+        surface !== null &&
+        surface - bottom > DROP.wadeDepth + 0.2 &&
+        body.y <= surface &&
+        !(body.grounded && body.y > bottom + 0.05 && surface - body.y <= DROP.wadeDepth)
+      ) {
         body.y = surface;
         body.phase = "swim";
         body.grounded = false;

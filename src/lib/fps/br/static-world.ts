@@ -1,6 +1,22 @@
 import { CollisionCoordinates } from "./collision-coordinates";
 import type { Heightfield } from "./heightfield";
 import type { Placement } from "./layout";
+import {
+  findSlants,
+  placePrism,
+  prismFace,
+  prismNearestFace,
+  prismNormal,
+  prismOverlaps,
+  prismRay,
+  prismUnder,
+  S_BOUNDS,
+  S_NORMALS,
+  S_PLANES,
+  S_Y1,
+  SLANT,
+  slantPrisms,
+} from "./slants";
 import { forEachTrunkNear, type VegetationWorld } from "./vegetation";
 import { WORLD_HALF } from "./world";
 
@@ -11,6 +27,11 @@ import { WORLD_HALF } from "./world";
  * trunks (vertical cylinders, from the shared vegetation placement).
  *
  * Boxes are indexed in a 4 m grid, so hull queries don't scan a whole detailed building.
+ *
+ * Slanted walls (slants.ts) are prisms rebuilt from the staircases of boxes they were given: the
+ * queries bodies, sight and shots use (blocked, supportAt, topBetween, raycast and the blocker
+ * functions below) read the prisms and pass over those boxes; whatever reads the boxes alone
+ * (forEachBox) still sees the staircase, or asks `isSlantBox` and `forEachSlant`.
  */
 export type CollisionData = {
   worldRevision?: string;
@@ -131,12 +152,97 @@ export class StaticWorld {
    * the views each kept a 6.8 MB copy, two per match (2026-11-23). Queries never interleave
    * (each runs to its end), so one counter and one array serve them all.
    */
-  private readonly scratch: { seen: Uint16Array; stamp: number };
+  private readonly scratch: { seen: Uint16Array; stamp: number; slants: Uint16Array };
+  /**
+   * The slanted walls (slants.ts: SLANT floats each, in the world), how many, and which boxes
+   * are their staircases (1: read the prism instead). A ray's or a sight's hit on one is a
+   * "box" numbered from `boxCount` on (RayHit.box = boxCount + the wall's number).
+   */
+  readonly slants: Float64Array;
+  readonly slantCount: number;
+  private readonly slantBox: Uint8Array;
+  /** The cells with a slanted wall in them (a bit each, as `occupied`), and the walls of each. */
+  private readonly slantBits = new Uint32Array(Math.ceil((COLS * COLS) / 32));
+  private readonly slantCells = new Map<number, Int32Array>();
+  /**
+   * The cells bodies are in, decoded: each one's solid boxes as plain floats (6 a box), lowest
+   * underside first (collision audit 2026-11-27: "movement becomes laggy … close to building
+   * geometry"). A hull's query read every box of its 4 m cell through `boxes.get` (a page and a
+   * palette look-up per coordinate) and a callback per box: all four storeys of a block for a
+   * body on its ground floor, the stair's 5 cm ramp slices among them, and a body pressed to a
+   * wall asks forty times a tick (stepBody's bisection and corner assist), the camera again
+   * every frame (frame-view.ts) and prediction again per pending input. Read from here the
+   * same boxes cost a tenth, and the ones that start over the hull's head are never reached.
+   *
+   * `slot`/`boxes` are the last cell asked for at each of HOT places (no look-up at all for a
+   * body that stays where it is); behind them two generations hold every cell decoded lately,
+   * so a hundred bodies on a server never decode each other's cells out (two cells that share
+   * a place cost a map look-up, not a decode). A generation that reaches HOT_BYTES retires the
+   * one before it: a cell still in use was moved to the new one when it was next asked for.
+   * The floats are the stored ones bit for bit (collision-coordinates.ts keeps float32), and
+   * the boxes never change after construction, so nothing here is ever stale. Shared by the
+   * world and its per-match views (doors.ts, panes.ts).
+   */
+  private readonly hot: {
+    slot: Int32Array;
+    boxes: Array<Float32Array | undefined>;
+    young: Map<number, Float32Array>;
+    old: Map<number, Float32Array>;
+    bytes: number;
+  };
+  private static readonly HOT = 1024;
+  /** Decoded boxes a generation holds (bytes): some thousand cells of town. */
+  private static readonly HOT_BYTES = 4 << 20;
+  private static readonly NONE = new Float32Array(0);
+
+  /** The decoded solid boxes of the cell at column c, row r (empty: none). */
+  private cellBoxes(c: number, r: number): Float32Array {
+    const s = this.slotOf(r * COLS + c);
+    if (s === undefined) return StaticWorld.NONE;
+    const hot = this.hot,
+      k = s & (StaticWorld.HOT - 1);
+    if (hot.slot[k] === s) return hot.boxes[k]!;
+    let out = hot.young.get(s);
+    if (!out) {
+      out = hot.old.get(s) ?? this.decodeCell(s);
+      if (hot.bytes + out.byteLength > StaticWorld.HOT_BYTES && hot.young.size) {
+        hot.old = hot.young;
+        hot.young = new Map();
+        hot.bytes = 0;
+      }
+      hot.young.set(s, out);
+      hot.bytes += out.byteLength;
+    }
+    hot.slot[k] = s;
+    hot.boxes[k] = out;
+    return out;
+  }
+
+  /** The solid boxes of the cell in slot s as floats, lowest underside first. */
+  private decodeCell(s: number): Float32Array {
+    const from = this.cellStart[s]!,
+      n = this.cellStart[s + 1]! - from;
+    // By underside (ties in the cell's own order: the result is the same on every machine).
+    // (Not a slanted wall's staircase: its prism is tested instead.)
+    const order = Array.from(this.cellItems.subarray(from, from + n)).filter(
+      (i) => !this.slantBox[i],
+    );
+    const b = this.boxes;
+    order.sort((i, j) => b.get(i * 6 + 1) - b.get(j * 6 + 1) || i - j);
+    const out = new Float32Array(order.length * 6);
+    for (let q = 0; q < order.length; q++) {
+      const o = order[q]! * 6;
+      for (let v = 0; v < 6; v++) out[q * 6 + v] = b.get(o + v);
+    }
+    return out;
+  }
+
   /** A stamp for a new query (the stamps cleared and restarted when they run out). */
   private nextStamp() {
     const s = this.scratch;
     if (s.stamp === 0xffff) {
       s.seen.fill(0);
+      s.slants.fill(0);
       s.stamp = 0;
     }
     return ++s.stamp;
@@ -166,6 +272,32 @@ export class StaticWorld {
     const solidCount = (this.solidCount = count);
     for (const p of placements) count += (shotModels[p.model]?.length ?? 0) / 6;
     const boxes = (this.boxes = new CollisionCoordinates(count * 6));
+    // Slanted walls: found once per model (its staircases, rebuilt), placed with it.
+    const found = new Map<string, { used: Uint8Array; prisms: Float64Array }>();
+    let walls = 0;
+    for (const p of placements) {
+      let f = found.get(p.model);
+      if (!f) {
+        const { walls: w, used } = findSlants(collision.models[p.model]!);
+        f = { used, prisms: slantPrisms(w) };
+        found.set(p.model, f);
+      }
+      walls += f.prisms.length / SLANT;
+    }
+    const slants = (this.slants = new Float64Array(walls * SLANT));
+    this.slantCount = walls;
+    const slantBox = (this.slantBox = new Uint8Array(walls ? solidCount : 0));
+    {
+      let base = 0,
+        w = 0;
+      for (const p of placements) {
+        const f = found.get(p.model)!;
+        if (walls) for (let k = 0; k < f.used.length; k++) if (f.used[k]) slantBox[base + k] = 1;
+        for (let o = 0; o < f.prisms.length; o += SLANT, w++)
+          placePrism(f.prisms, o, p.turn, p.x, p.y, p.z, slants, w * SLANT);
+        base += collision.models[p.model]!.length;
+      }
+    }
     const place = (p: Placement, list: number[][]) => {
       for (const b of list) {
         const [x0, y0, z0, x1, y1, z1] = turnBox(b, p.turn);
@@ -188,7 +320,33 @@ export class StaticWorld {
     for (const p of placements) placeFlat(p, bodyModels[p.model]);
     for (const b of extraBoxes) for (let k = 0; k < 6; k++) boxes.append(b[k]!);
     for (const p of placements) placeFlat(p, shotModels[p.model]);
-    this.scratch = { seen: new Uint16Array(count), stamp: 0 };
+    this.scratch = { seen: new Uint16Array(count), stamp: 0, slants: new Uint16Array(walls) };
+    {
+      const lists = new Map<number, number[]>();
+      for (let w = 0; w < walls; w++) {
+        const o = w * SLANT;
+        const c0 = this.cellIndex(slants[o + S_BOUNDS]!),
+          c1 = this.cellIndex(slants[o + S_BOUNDS + 2]!),
+          r0 = this.cellIndex(slants[o + S_BOUNDS + 1]!),
+          r1 = this.cellIndex(slants[o + S_BOUNDS + 3]!);
+        for (let r = r0; r <= r1; r++)
+          for (let c = c0; c <= c1; c++) {
+            const key = r * COLS + c;
+            this.slantBits[key >>> 5]! |= 1 << (key & 31);
+            let l = lists.get(key);
+            if (!l) lists.set(key, (l = []));
+            l.push(w);
+          }
+      }
+      for (const [key, l] of lists) this.slantCells.set(key, Int32Array.from(l));
+    }
+    this.hot = {
+      slot: new Int32Array(StaticWorld.HOT).fill(-1),
+      boxes: [],
+      young: new Map(),
+      old: new Map(),
+      bytes: 0,
+    };
     const eachCell = (visit: (key: number, box: number) => void) => {
       for (let i = 0; i < count; i++) {
         const o = i * 6;
@@ -240,6 +398,66 @@ export class StaticWorld {
     return Math.min(COLS - 1, Math.max(0, Math.floor((v + WORLD_HALF) / CELL)));
   }
 
+  /** The slanted walls in the cell at column c, row r (undefined: none). */
+  private cellSlants(c: number, r: number): Int32Array | undefined {
+    const key = r * COLS + c;
+    return this.slantBits[key >>> 5]! & (1 << (key & 31)) ? this.slantCells.get(key) : undefined;
+  }
+
+  /** Whether box i is part of a slanted wall's staircase (its prism stands for it: slants.ts). */
+  isSlantBox(i: number): boolean {
+    return this.slantBox[i] === 1;
+  }
+
+  /** Calls `visit(offset into slants)` once for every slanted wall whose cells overlap x/z. */
+  forEachSlant(minX: number, minZ: number, maxX: number, maxZ: number, visit: (o: number) => void) {
+    if (!this.slantCount) return;
+    const c0 = this.cellIndex(minX),
+      c1 = this.cellIndex(maxX),
+      r0 = this.cellIndex(minZ),
+      r1 = this.cellIndex(maxZ);
+    const stamp = this.nextStamp(),
+      seen = this.scratch.slants;
+    for (let r = r0; r <= r1; r++)
+      for (let c = c0; c <= c1; c++) {
+        const l = this.cellSlants(c, r);
+        if (l)
+          for (const w of l) {
+            if (seen[w] === stamp) continue;
+            seen[w] = stamp;
+            visit(w * SLANT);
+          }
+      }
+  }
+
+  /**
+   * The slanted faces a hull at x/z (feet at y) is held by (movement.ts slides along them): for
+   * each slanted wall it overlaps whose face it meets flat (not by a corner), that face's
+   * outward normal and plane, three floats in `out` (up to four). Returns how many.
+   */
+  slantFaces(
+    x: number,
+    y: number,
+    z: number,
+    height: number,
+    radius: number,
+    out: Float64Array,
+  ): number {
+    if (!this.slantCount) return 0;
+    let n = 0;
+    const face = { edge: -1, gap: 0 },
+      s = this.slants;
+    this.forEachSlant(x - radius, z - radius, x + radius, z + radius, (o) => {
+      if (n >= 4 || !prismOverlaps(s, o, x, y, z, height, radius)) return;
+      if (!prismFace(s, o, x, z, radius, face)) return;
+      out[n * 3] = s[o + S_NORMALS + face.edge * 2]!;
+      out[n * 3 + 1] = s[o + S_NORMALS + face.edge * 2 + 1]!;
+      out[n * 3 + 2] = s[o + S_PLANES + face.edge]!;
+      n++;
+    });
+    return n;
+  }
+
   get boxCount() {
     return this.boxes.length / 6;
   }
@@ -283,7 +501,7 @@ export class StaticWorld {
     let hit = false;
     const b = this.boxes;
     this.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
-      if (hit) return;
+      if (hit || this.slantBox[i]) return;
       const o = i * 6;
       const t = b.get(o + 4);
       if (
@@ -296,6 +514,11 @@ export class StaticWorld {
       )
         hit = true;
     });
+    if (!hit)
+      this.forEachSlant(x - radius, z - radius, x + radius, z + radius, (o) => {
+        const t = this.slants[o + S_Y1]!;
+        if (!hit && t >= y0 && t <= y1 && prismUnder(this.slants, o, x, z, radius)) hit = true;
+      });
     return hit;
   }
 
@@ -305,20 +528,45 @@ export class StaticWorld {
    */
   blocked(x: number, y: number, z: number, height: number, radius: number): boolean {
     let hit = false;
-    const b = this.boxes;
-    this.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
-      if (hit) return;
-      const o = i * 6;
-      if (
-        x + radius > b.get(o) + 1e-7 &&
-        x - radius < b.get(o + 3) - 1e-7 &&
-        z + radius > b.get(o + 2) + 1e-7 &&
-        z - radius < b.get(o + 5) - 1e-7 &&
-        y + height > b.get(o + 1) + 1e-7 &&
-        y < b.get(o + 4) - 1e-7
-      )
-        hit = true;
-    });
+    const x0 = x - radius,
+      x1 = x + radius,
+      z0 = z - radius,
+      z1 = z + radius,
+      head = y + height;
+    const c0 = this.cellIndex(x0),
+      c1 = this.cellIndex(x1),
+      r0 = this.cellIndex(z0),
+      r1 = this.cellIndex(z1);
+    // (A box in two of the hull's cells is tested twice: the answer is the same.)
+    cells: for (let r = r0; r <= r1; r++)
+      for (let c = c0; c <= c1; c++) {
+        const b = this.cellBoxes(c, r);
+        for (let o = 0, n = b.length; o < n; o += 6) {
+          // Lowest underside first: this one and every later one starts over the head.
+          if (!(head > b[o + 1]! + 1e-7)) break;
+          if (
+            y < b[o + 4]! - 1e-7 &&
+            x1 > b[o]! + 1e-7 &&
+            x0 < b[o + 3]! - 1e-7 &&
+            z1 > b[o + 2]! + 1e-7 &&
+            z0 < b[o + 5]! - 1e-7
+          ) {
+            hit = true;
+            break cells;
+          }
+        }
+      }
+    if (!hit && this.slantCount)
+      walls: for (let r = r0; r <= r1; r++)
+        for (let c = c0; c <= c1; c++) {
+          const l = this.cellSlants(c, r);
+          if (l)
+            for (const w of l)
+              if (prismOverlaps(this.slants, w * SLANT, x, y, z, height, radius)) {
+                hit = true;
+                break walls;
+              }
+        }
     if (hit || !this.vegetation) return hit;
     forEachTrunkNear(this.vegetation, x, z, radius + 1, (tx, tz, r, h, ground) => {
       if (hit) return;
@@ -334,20 +582,44 @@ export class StaticWorld {
    */
   supportAt(x: number, z: number, radius: number, maxY: number): number {
     let top = this.hf.heightAt(x, z);
-    const b = this.boxes;
-    this.forEachBox(x - radius, z - radius, x + radius, z + radius, (i) => {
-      const o = i * 6;
-      const t = b.get(o + 4);
-      if (
-        t > top &&
-        t <= maxY + 1e-6 &&
-        x + radius > b.get(o) &&
-        x - radius < b.get(o + 3) &&
-        z + radius > b.get(o + 2) &&
-        z - radius < b.get(o + 5)
-      )
-        top = t;
-    });
+    const x0 = x - radius,
+      x1 = x + radius,
+      z0 = z - radius,
+      z1 = z + radius,
+      limit = maxY + 1e-6;
+    const c0 = this.cellIndex(x0),
+      c1 = this.cellIndex(x1),
+      r0 = this.cellIndex(z0),
+      r1 = this.cellIndex(z1);
+    for (let r = r0; r <= r1; r++)
+      for (let c = c0; c <= c1; c++) {
+        const b = this.cellBoxes(c, r);
+        for (let o = 0, n = b.length; o < n; o += 6) {
+          // Lowest underside first: a box that starts over the limit has its top over it too.
+          if (b[o + 1]! > limit) break;
+          const t = b[o + 4]!;
+          if (
+            t > top &&
+            t <= limit &&
+            x1 > b[o]! &&
+            x0 < b[o + 3]! &&
+            z1 > b[o + 2]! &&
+            z0 < b[o + 5]!
+          )
+            top = t;
+        }
+      }
+    if (this.slantCount)
+      for (let r = r0; r <= r1; r++)
+        for (let c = c0; c <= c1; c++) {
+          const l = this.cellSlants(c, r);
+          if (l)
+            for (const w of l) {
+              const o = w * SLANT,
+                t = this.slants[o + S_Y1]!;
+              if (t > top && t <= limit && prismUnder(this.slants, o, x, z, radius)) top = t;
+            }
+        }
     for (const d of this.decks) {
       if (x + radius < d.x0 || x - radius > d.x1 || z + radius < d.z0 || z - radius > d.z1)
         continue;
@@ -392,7 +664,8 @@ export class StaticWorld {
     let boxHit = false,
       boxIndex = -1;
     const stamp = this.nextStamp(),
-      seen = this.scratch.seen;
+      seen = this.scratch.seen,
+      slantSeen = this.scratch.slants;
     for (let s = 0; s < steps; s++) {
       const t0 = s * CELL,
         t1 = Math.min(limit, (s + 1) * CELL);
@@ -408,15 +681,15 @@ export class StaticWorld {
       for (let r = r0; r <= r1; r++)
         for (let c = c0; c <= c1; c++) {
           const cs = this.slotOf(r * COLS + c);
-          if (cs === undefined) continue;
           // The cell's solid boxes, then its shot-only boxes (k past the first list's end).
-          const e0 = this.cellStart[cs + 1]!,
-            k1 = this.shotStart[cs]!,
-            e = solidOnly ? e0 : e0 + this.shotStart[cs + 1]! - k1;
-          for (let k = this.cellStart[cs]!; k < e; k++) {
+          const e0 = cs === undefined ? 0 : this.cellStart[cs + 1]!,
+            k1 = cs === undefined ? 0 : this.shotStart[cs]!,
+            e = cs === undefined ? 0 : solidOnly ? e0 : e0 + this.shotStart[cs + 1]! - k1;
+          for (let k = cs === undefined ? 0 : this.cellStart[cs]!; k < e; k++) {
             const i = k < e0 ? this.cellItems[k]! : this.shotItems[k1 + k - e0]!;
             if (seen[i] === stamp) continue;
             seen[i] = stamp;
+            if (k < e0 && this.slantBox[i]) continue;
             const o = i * 6;
             // A shot-only box the ray starts in doesn't stop it: a body (or a grenade) that
             // stands in one, which it can, still sees, shoots and blasts out of it.
@@ -450,6 +723,19 @@ export class StaticWorld {
               boxIndex = i;
             }
           }
+          // The cell's slanted walls (numbered after the boxes).
+          const l = this.slantCount ? this.cellSlants(c, r) : undefined;
+          if (l)
+            for (const w of l) {
+              if (slantSeen[w] === stamp) continue;
+              slantSeen[w] = stamp;
+              const t = prismRay(this.slants, w * SLANT, ox, oy, oz, dx, dy, dz);
+              if (t < nearest) {
+                nearest = t;
+                boxHit = true;
+                boxIndex = this.boxCount + w;
+              }
+            }
         }
     }
     if (boxHit) best = { distance: nearest, kind: "box", box: boxIndex };
@@ -489,6 +775,10 @@ export function hitNormal(
   y: number,
   z: number,
 ): [number, number, number] {
+  if (hit.kind === "box" && hit.box !== undefined && hit.box >= world.boxCount) {
+    const o = (hit.box - world.boxCount) * SLANT;
+    return prismNormal(world.slants, o, prismNearestFace(world.slants, o, x, y, z));
+  }
   if (hit.kind === "box" && hit.box !== undefined && hit.box >= 0) {
     const b = world.boxes,
       o = hit.box * 6;
@@ -531,6 +821,8 @@ export function blockerDistance(
   dy: number,
   dz: number,
 ): number {
+  if (box >= world.boxCount)
+    return prismRay(world.slants, (box - world.boxCount) * SLANT, ox, oy, oz, dx, dy, dz);
   if (box >= 0) {
     const b = world.boxes,
       o = box * 6;
