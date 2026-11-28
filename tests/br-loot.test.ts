@@ -155,6 +155,44 @@ describe("loot placement", () => {
       expect(i.y).toBeGreaterThanOrEqual(world.hf.heightAt(i.x, i.z) - 0.05);
       expect(world.blocked(i.x, i.y + 0.05, i.z, 0.4, 0.15)).toBe(false);
       expect(world.supportAt(i.x, i.z, 0.15, i.y + 0.01)).toBeCloseTo(i.y, 1);
+      // Its own middle on the floor too, not hanging over an edge (2026-11-28).
+      expect(
+        i.y - world.supportAt(i.x, i.z, 0.05, i.y + 0.05),
+        `${i.item} ${i.x} ${i.z}`,
+      ).toBeLessThanOrEqual(0.08);
+    }
+  });
+
+  it("spreads a tall building's spots over its storeys and finds its walkable roof top", () => {
+    // A four-storey flat block of the rebuilt towns: spots on every storey, more than the
+    // single-storey cap, and a roof top under open sky reached by its stairs.
+    const model = "mh-block-flats";
+    const base = modelSpots(collision, model, "indoor", LOOT.spacing, 14);
+    const tall = modelSpots(collision, model, "indoor", LOOT.spacing, 14, LOOT.upperPerStorey);
+    expect(tall.length).toBeGreaterThan(base.length);
+    const storeys = new Set(tall.map((s) => Math.floor((s.y + 0.5) / 2.6)));
+    expect(storeys.size).toBeGreaterThanOrEqual(3);
+    const roofs = modelSpots(collision, model, "roof", LOOT.spacing, 2);
+    expect(roofs.length).toBeGreaterThan(0);
+    for (const r of roofs) expect(r.y).toBeGreaterThan(2);
+    // Over the island, a real share of the loot on roof tops (open sky over it, 2 m up).
+    const roof = a.filter(
+      (i) =>
+        i.y - world.hf.heightAt(i.x, i.z) > 2 && !world.raycast(i.x, i.y + 0.3, i.z, 0, 1, 0, 30),
+    );
+    expect(roof.length).toBeGreaterThan(400);
+  });
+
+  it("gives the old roadside buildings loot (motels, diner, showroom, gas, car wash)", () => {
+    const ids = ["roadside-motel", "burger-joint", "car-showroom", "roadside-gas", "car-wash"];
+    for (const id of ids) {
+      expect(lootClassOf(id), id).not.toBeNull();
+      const p = layout.find((q) => q.model === id)!;
+      // That building alone (Iron Peaks' perch caches, rolled with any layout, stay out).
+      const own = rollLoot(1234, [p], collision, world, meta).filter(
+        (i) => Math.hypot(i.x - p.x, i.z - p.z) < 40 && Math.abs(i.y - p.y) < 12,
+      );
+      expect(own.length, id).toBeGreaterThanOrEqual(LOOT.minimumPerBuilding);
     }
   });
 

@@ -22,6 +22,7 @@ import {
 } from "@/lib/fps/br/zone";
 import { MOVE_SPEED } from "@/lib/fps/simulation";
 import { TICK_MS } from "@/lib/fps/simulation";
+import { splitCheckpoint } from "../workers/fps/br-checkpoint";
 
 const buffer = (path: string) => {
   const f = readFileSync(path);
@@ -62,8 +63,9 @@ describe("zone", () => {
     // Full pacing is measured from take-off; warm-up adds a separate minute.
     const minutes = (p: readonly { wait: number; shrink: number }[]) =>
       p.reduce((s, q) => s + q.wait + q.shrink, 0) / 60;
-    expect(minutes(ZONE_PRESETS.full)).toBe(27.5);
-    expect(minutes(ZONE_PRESETS.full) + 1).toBe(28.5);
+    // (27.5 until 2026-11-28: the owner's "6-10 minutes" longer, 7.5.)
+    expect(minutes(ZONE_PRESETS.full)).toBe(35);
+    expect(minutes(ZONE_PRESETS.full) + 1).toBe(36);
     expect(minutes(ZONE_PRESETS.small)).toBeLessThan(minutes(ZONE_PRESETS.medium));
     expect(zonePresetFor(100)).toBe("full");
     expect(zonePresetFor(40)).toBe("medium");
@@ -71,9 +73,12 @@ describe("zone", () => {
   });
 
   it("uses the full wait/shrink schedule without changing radii or damage", () => {
+    // (2026-11-28: the first circle 30 % wider and later, a phase to 0.6 added, the rest as the
+    // old table from its 0.29 circle on.)
     expect(ZONE_PHASES.map((p) => [p.wait, p.shrink])).toEqual([
-      [360, 180],
-      [120, 150],
+      [480, 210],
+      [150, 150],
+      [130, 140],
       [105, 120],
       [85, 95],
       [70, 75],
@@ -82,9 +87,10 @@ describe("zone", () => {
       [25, 60],
     ]);
     expect(ZONE_PHASES.map((p) => [p.radius, p.dps])).toEqual([
-      [0.65, 1],
-      [0.45, 2],
-      [0.29, 3],
+      [0.845, 1],
+      [0.6, 1.5],
+      [0.42, 2],
+      [0.28, 3],
       [0.18, 5],
       [0.1, 7],
       [0.05, 10],
@@ -92,11 +98,11 @@ describe("zone", () => {
       [0, 18],
     ]);
     const z = plan(7);
-    expect(z.times[0]).toEqual([360_000, 540_000]);
-    expect(z.times.at(-1)![1]).toBe(1_650_000);
-    expect(zoneAt(z, 359_999).shrinking).toBe(false);
-    expect(zoneAt(z, 360_000).shrinking).toBe(true);
-    expect(zoneAt(z, 1_650_000).now.r).toBe(0);
+    expect(z.times[0]).toEqual([480_000, 690_000]);
+    expect(z.times.at(-1)![1]).toBe(2_100_000);
+    expect(zoneAt(z, 479_999).shrinking).toBe(false);
+    expect(zoneAt(z, 480_000).shrinking).toBe(true);
+    expect(zoneAt(z, 2_100_000).now.r).toBe(0);
   });
 
   it("gives every rotation enough time at a sprint (never an impossible shift)", () => {
@@ -197,8 +203,9 @@ describe("zone", () => {
     expect(gasDps(10, 0)).toBe(10);
     expect(gasDps(10, GAS_EXPOSURE.rampMs / 2)).toBeCloseTo(12.5, 6);
     expect(gasDps(10, 10 * GAS_EXPOSURE.rampMs)).toBeCloseTo(15, 6);
-    // The best heal (a medkit: 100 HP over 7 s ≈ 14.3 HP/s) loses from phase 6 on.
-    for (const p of ZONE_PHASES.slice(5))
+    // The best heal (a medkit: 100 HP over 7 s ≈ 14.3 HP/s) loses from phase 7 on (the 0.05
+    // circle, phase 6 until 2026-11-28 added one before it).
+    for (const p of ZONE_PHASES.slice(6))
       expect(gasDps(p.dps, GAS_EXPOSURE.rampMs)).toBeGreaterThan(100 / 7);
   });
 });
@@ -221,7 +228,8 @@ describe("a full match", () => {
     const landed: string[] = [];
     const inputs = new Map<number, BrInput>();
     const t0 = performance.now();
-    for (let i = 0; i < 30_000 && state.phase !== "completed"; i++) {
+    // (At half time the zone lasts 17.5 min, 31,500 ticks, since 2026-11-28.)
+    for (let i = 0; i < 40_000 && state.phase !== "completed"; i++) {
       now += TICK_MS;
       stepBrMatch(state, world, meta, inputs, now, TICK_MS);
       for (const e of state.combat) {
@@ -297,9 +305,16 @@ describe("checkpoints", () => {
     expect(a.phase).toBe("active");
     // Through JSON, as Durable Object storage keeps it.
     const json = JSON.stringify(checkpointBrMatch(a));
-    // SQLite-backed Durable Object storage takes values up to 2 MB. Measured 1.505 MB at
-    // garrison-v2 (20,130 loot items; the loot rows are ~88% of it), 1.491 MB before.
-    expect(json.length).toBeLessThan(1_600_000);
+    // SQLite-backed Durable Object storage takes values up to 2 MB a value: the room stores the
+    // loot rows in chunks beside the rest (workers/fps/br-checkpoint.ts), so each stored value
+    // stays far under it however much loot the island holds (1.70 MB in all at 22,900 items,
+    // 2026-11-28; 1.505 MB at garrison-v2's 20,130).
+    const { data, chunks } = splitCheckpoint(
+      checkpointBrMatch(a) as Parameters<typeof splitCheckpoint>[0],
+    );
+    expect(JSON.stringify(data).length).toBeLessThan(1_000_000);
+    for (const c of chunks) expect(JSON.stringify(c).length).toBeLessThan(1_000_000);
+    expect(json.length).toBeLessThan(2_200_000);
     const saved = JSON.parse(json);
     const b = restoreBrMatch(meta, (x, z) => hf.heightAt(x, z), saved, { zoneTimeScale: 0.3 });
     expect(b.bots).toEqual(a.bots);

@@ -453,6 +453,19 @@ function circles(v: Pick<Vehicle, "x" | "z" | "yaw" | "kind">) {
   return out;
 }
 
+/**
+ * A roof over the parked vehicle (2026-11-28, owner: "make sure no drivable cars spawn inside
+ * buildings"; the loot audit found ≈ 5 a match in a fire station's bays, under shop awnings and
+ * flats' balconies): straight up from its middle and its four corners, anything solid within
+ * 8 m over two or more of them. One is a street lamp's arm or a sign: not a roof.
+ */
+function underRoof(world: StaticWorld, v: Vehicle) {
+  let over = 0;
+  for (const [x, z] of [[v.x, v.z] as const, ...footprint(v)])
+    if (world.raycast(x, v.y + 0.5, z, 0, 1, 0, 8, true) && ++over >= 2) return true;
+  return false;
+}
+
 /** Highest ground (terrain or a box top within a step) under the wheels. */
 function groundUnder(world: StaticWorld, v: Pick<Vehicle, "x" | "z" | "yaw" | "kind" | "y">) {
   const f = footprint(v);
@@ -661,6 +674,7 @@ export function spawnVehicles(
     // bike in a gap between two buildings stood with a wall's eave in it).
     if (world.blocked(v.x, v.y + 0.35, v.z, spec(kind).height - 0.4, spec(kind).width / 2 + 0.3))
       return false;
+    if (underRoof(world, v)) return false;
     out.push(v);
     return true;
   };

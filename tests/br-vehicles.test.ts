@@ -197,6 +197,18 @@ describe("vehicles", () => {
       expect(v.y).toBeGreaterThanOrEqual(hf.heightAt(v.x, v.z) - 0.6);
       expect(world.blocked(v.x, v.y + 0.5, v.z, 0.6, 0.3)).toBe(false);
       expect(new Set(a.map((w) => w.condition)).size).toBeGreaterThan(1);
+      // Not parked under a roof (2026-11-28: a fire station's bays, an awning, a balcony):
+      // its middle and the four corners of a box round it, at most one under anything solid
+      // within 8 m (a street lamp's arm).
+      const r = Math.max(0.5, Math.min(1.2, v.kind === "bike" ? 0.5 : 1.2));
+      const over = [
+        [0, 0],
+        [r, r],
+        [r, -r],
+        [-r, r],
+        [-r, -r],
+      ].filter(([dx, dz]) => world.raycast(v.x + dx!, v.y + 0.5, v.z + dz!, 0, 1, 0, 8, true));
+      expect(over.length, `${v.kind} at ${v.x}, ${v.z}`).toBeLessThanOrEqual(1);
     }
   });
 
