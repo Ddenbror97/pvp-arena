@@ -530,6 +530,10 @@ export type BrArenaControls = {
     /** Which way the camera faces (unit vector). */
     facing: [number, number, number];
     shown: [number, number, number];
+    /** Your own figure and canopy as drawn, and your view's heading (parachute-lab.mjs). */
+    figure: THREE.Object3D;
+    canopy: THREE.Object3D | null;
+    yaw: number;
     pending: number;
     loot: number;
     geometries: number;
@@ -1035,6 +1039,32 @@ export function createBrArena(
   const pending: Array<{ seq: number; input: DropInput; clock: number }> = [];
   /** Visual offset after a correction, decayed toward zero (no camera pops). */
   const correction = new THREE.Vector3();
+  /** In the air a correction up to this far is eased, not snapped (reconcile). */
+  const AIR_EASED_M = 90;
+  /**
+   * How much later than you send it the room applies an input, on its own clock as this client
+   * reads it (a round trip and the wait for a tick): the least of the last snapshots' "your
+   * input `seq` was in by now" against when that input was made. NaN before the first.
+   */
+  const inputLag = { samples: [] as number[], ms: NaN };
+  /**
+   * Out of the drop plane: how far along its track the room lets you go beyond where you
+   * pressed (the plane flies 225 m/s for that input lag: 20 to 45 m). The prediction leaves
+   * the plane there too, so the first snapshot after the jump has nothing to move, and you are
+   * drawn from the door to it over a quarter of a second, as the plane's speed carrying you on
+   * while the canopy opens. Kept while the jump's input may still be replayed.
+   */
+  const exitCarry = { x: 0, z: 0, set: false };
+  /** One step of your own prediction on foot or in the air (live, and replayed in reconcile). */
+  const stepOwn = (input: DropInput, planeMs: number) => {
+    const aboard = body.phase === "plane";
+    const change = stepDrop(solid(), island!.meta, route!, body, input, planeMs, TICK_MS);
+    if (aboard && change === "parachute" && exitCarry.set) {
+      body.x += exitCarry.x;
+      body.z += exitCarry.z;
+    }
+    return aboard && change === "parachute";
+  };
   /** Where you and your vehicle are drawn this frame, between the 30 Hz steps (frame-view.ts). */
   const frameView = new BrFrameView();
   const vehicleView = new BrVehicleView();
@@ -1411,6 +1441,8 @@ export function createBrArena(
   const canopyLook = new CanopyLook();
   const chuteHarness = new THREE.Vector3();
   let previousCanopyHeading: number | null = null;
+  /** The canopy's heading as drawn last frame (null: not flying). */
+  let drawnHeading: number | null = null;
   const flightHeading = () =>
     Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
   const syncCanopyLook = () => canopyLook.sync(body.phase === "parachute", flightHeading(), pitch);
@@ -1467,6 +1499,27 @@ export function createBrArena(
   const myChase = newChaseRig(),
     watchChase = newChaseRig();
   const chaseLook = new BrChaseLook();
+  /**
+   * Your own view from one frame to the next (parachute audit 2026-11-27): which it is (the
+   * drop plane's, the aircraft's, behind the canopy, hanging under it, your eyes), where the
+   * camera was, and a change of view being eased (`blend` 1 → 0 over `ms`). Out of the plane
+   * the camera was cut from 70 m behind it to 10 m behind you, bailing out of the aircraft from
+   * its chase view to yours, and on touching down from behind you into your head, each in one
+   * frame.
+   */
+  const ownView = {
+    kind: "" as "" | "plane" | "flight" | "air" | "hang" | "foot",
+    set: false,
+    pos: new THREE.Vector3(),
+    /** How far the camera moved last frame (a change of view carries on from it). */
+    step: new THREE.Vector3(),
+    quat: new THREE.Quaternion(),
+    fromOffset: new THREE.Vector3(),
+    fromQuat: new THREE.Quaternion(),
+    blend: 0,
+    ms: 1,
+  };
+  const OWN_VIEW_MS = { exit: 600, land: 300, eye: 260 } as const;
   let chuteFirstPerson = false,
     bank = 0,
     chutePitch = 0,
@@ -1837,20 +1890,24 @@ export function createBrArena(
   const looker = new MouseResampler();
   const onMouse = (e: MouseEvent) => {
     if (!locked() || inventoryOpen) return;
-    syncCanopyLook();
-    if (canopyLook.active) {
-      looker.reset();
-      canopyLook.mouse(e.movementX, e.movementY, sensitivity);
-      return;
-    }
+    // Under the canopy too (parachute audit 2026-11-27): its view was turned by each report
+    // as it came, so a 125 Hz mouse against a 60 or 144 Hz screen turned it by none, one or
+    // two reports a frame ("stiff, jittery … when looking around while gliding").
     looker.push(e.movementX, e.movementY, e.timeStamp);
-    chaseLook.moved();
+    syncCanopyLook();
+    if (!canopyLook.active) chaseLook.moved();
   };
   /** Turn the view by this frame's share of the mouse's movement. */
   const applyLook = (now: number) => {
     const { dx, dy } = looker.take(now);
     if (!dx && !dy) return;
-    if (!locked() || inventoryOpen || canopyLook.active) return looker.reset();
+    if (!locked() || inventoryOpen) return looker.reset();
+    syncCanopyLook();
+    if (canopyLook.active) {
+      // The canopy's course (or, right button held, the free look round it).
+      canopyLook.mouse(dx, dy, sensitivity);
+      return;
+    }
     if (flight.seat !== null) {
       // In the aircraft: the stick (the pilot) or the free look (Alt, or the passenger's).
       if (flight.seat === 1) flight.look.held = true;
@@ -2129,7 +2186,8 @@ export function createBrArena(
     const f = Number(keys.has(binds.forward)) - Number(keys.has(binds.back)),
       s = Number(keys.has(binds.right)) - Number(keys.has(binds.left));
     syncCanopyLook();
-    canopyLook.keyboard(flightHeading(), s !== 0);
+    // (The heading as last drawn: letting go of A/D holds the course the view shows.)
+    canopyLook.keyboard(drawnHeading ?? flightHeading(), s !== 0);
     const edge = (code: string) => {
       const had = edges.has(code);
       edges.delete(code);
@@ -2774,7 +2832,17 @@ export function createBrArena(
     else delete body.rappel;
     if (y.lift) body.lift = { ...y.lift };
     else delete body.lift;
+    for (const p of pending) {
+      if (p.seq > y.seq) break;
+      if (p.seq !== y.seq) continue;
+      // (This input was in by this snapshot: at most a snapshot's interval before it.)
+      inputLag.samples.push(view.tick * TICK_MS - p.clock);
+      if (inputLag.samples.length > 32) inputLag.samples.shift();
+      inputLag.ms = Math.max(0, Math.min(400, Math.min(...inputLag.samples)));
+    }
     while (pending.length && pending[0]!.seq <= y.seq) pending.shift();
+    // (Out of the plane for the room too: nothing left to replay the jump for.)
+    if (y.phase !== "plane") exitCarry.set = false;
     if (flight.seat !== null && island) {
       // Flying: the pilot replays the unacknowledged inputs on the server's aircraft.
       flight.reconcile(solid(), island.meta, pending as never);
@@ -2797,15 +2865,7 @@ export function createBrArena(
         // Inputs sent before a door request met that door as it was.
         for (const g of doorGuesses)
           if (g.id >= 0) doorOpen[g.id] = p.seq <= g.seq ? g.was : g.was ? 0 : 1;
-        stepDrop(
-          solid(),
-          island.meta,
-          route!,
-          body,
-          healingInput(p.input),
-          p.clock - view.phaseAt,
-          TICK_MS,
-        );
+        stepOwn(healingInput(p.input), p.clock - view.phaseAt);
       }
     for (const g of doorGuesses) if (g.id >= 0) doorOpen[g.id] = g.was ? 0 : 1;
     const jump = before.distanceTo(new THREE.Vector3(body.x, body.y, body.z));
@@ -2816,8 +2876,15 @@ export function createBrArena(
     // is: the ride is a function of its clock, so the view and the cab stay together (owner,
     // 2026-11-14: "when arriving at the top floor, the floor in the elevator shifts": the eased
     // offset moved the eye against the cab's floor, most of all as the ride ended).
+    // In the air a larger one is eased too (parachute audit 2026-11-27). Out of the drop plane
+    // the room lets you go a round trip and a tick later than you pressed, and the plane flies
+    // 225 m/s: the first snapshot after the jump put you, your canopy and the camera 20 to
+    // 45 m further along its track in one frame. Eased, it is the plane's speed carrying you
+    // on for a moment as the canopy opens.
+    const flying = body.phase === "parachute" || body.phase === "freefall";
     if (wasRiding || body.phase === "lift") correction.set(0, 0, 0);
-    else if (jump < 3) correction.add(before.sub(new THREE.Vector3(body.x, body.y, body.z)));
+    else if (jump < 3 || (flying && jump < AIR_EASED_M))
+      correction.add(before.sub(new THREE.Vector3(body.x, body.y, body.z)));
     else correction.set(0, 0, 0);
   }
   /** Items within pickup reach of the eye and in sight: a crate's contents first, then the nearest. */
@@ -3041,16 +3108,23 @@ export function createBrArena(
         (latest.phase !== "waiting" && latest.phase !== "starting") ||
         body.phase === "ground" ||
         body.phase === "swim"
-      )
-        stepDrop(
-          solid(),
-          island.meta,
-          route,
-          body,
-          healingInput(input),
-          clock - latest.phaseAt,
-          TICK_MS,
-        );
+      ) {
+        const planeMs = clock - latest.phaseAt;
+        if (body.phase === "plane" && Number.isFinite(inputLag.ms)) {
+          // (Not at the route's end: everyone left aboard is let go at that one place.)
+          const lagMs = Math.min(inputLag.ms, Math.max(0, routeMs(route) - planeMs));
+          const [ax, , az] = planeAt(route, planeMs),
+            [bx, , bz] = planeAt(route, planeMs + lagMs);
+          exitCarry.x = bx - ax;
+          exitCarry.z = bz - az;
+          exitCarry.set = true;
+          if (stepOwn(healingInput(input), planeMs)) {
+            // Drawn from the door: the view glides the carry (reconcile's eased correction).
+            correction.x -= exitCarry.x;
+            correction.z -= exitCarry.z;
+          } else exitCarry.set = false;
+        } else stepOwn(healingInput(input), planeMs);
+      }
     }
     audio.setParachuteOpen(body.phase === "parachute" && !kit?.dead);
     // Swimming: the water loop, louder with the stroke (horizontal speed this frame).
@@ -3152,7 +3226,8 @@ export function createBrArena(
     if ((fireHeld || predictTap || aimHeld || predictStab) && !inventoryOpen && locked())
       predictKnife(server, fireHeld || predictTap ? "slash" : "stab");
     predictTap = predictStab = false;
-    correction.multiplyScalar(Math.exp(-dtMs / 90));
+    // (A large one, only ever kept in the air, over a quarter of a second, not a tenth.)
+    correction.multiplyScalar(Math.exp(-dtMs / (correction.lengthSq() > 9 ? 240 : 90)));
     if (context.lost) return;
 
     // The plane, from the shared route and the server clock.
@@ -3373,7 +3448,11 @@ export function createBrArena(
         let turnNow = 0;
         if (Math.hypot(dx, dz) > 0.05 && sec > 0) {
           const target = Math.atan2(-dx, -dz);
-          const d = Math.atan2(Math.sin(target - tr.h), Math.cos(target - tr.h)) * 0.15;
+          // (By the time passed, not by the frame: 0.15 of the way a frame turned a canopy
+          // 2.4 times as fast at 144 fps as at 60.)
+          const d =
+            Math.atan2(Math.sin(target - tr.h), Math.cos(target - tr.h)) *
+            (1 - Math.exp(-dtMs / 103));
           tr.h += d;
           turnNow = d / sec;
         }
@@ -3694,7 +3773,19 @@ export function createBrArena(
       py = viewPose.y,
       pz = viewPose.z;
     syncCanopyLook();
+    const underCanopy = body.phase === "parachute";
+    // The way the canopy flies, as drawn this frame: from the body stepped on to now (the
+    // part of a step the view is ahead by), not the one of the last whole step. That one
+    // turns 30 times a second, so the wing, the pilot under it and, steering with A/D, the
+    // camera behind them turned in steps of 2.7° on a screen drawing 60 to 144 frames
+    // (parachute audit 2026-11-27).
+    const flown = viewPose.body.phase === "parachute" ? viewPose.body : body;
+    const flying = underCanopy && Math.hypot(flown.vx, flown.vz) > 0.5;
+    const flownHeading = flying ? Math.atan2(-flown.vx, -flown.vz) : 0;
+    drawnHeading = flying ? flownHeading : null;
     if (canopyLook.active) {
+      if (flying && keys.has(binds.left) !== keys.has(binds.right))
+        canopyLook.keyboard(flownHeading, true);
       const view = canopyLook.view(dtMs);
       yaw = view.yaw;
       pitch = view.pitch;
@@ -3702,10 +3793,8 @@ export function createBrArena(
     const fx = -Math.sin(yaw) * Math.cos(pitch),
       fy = Math.sin(pitch),
       fz = -Math.cos(yaw) * Math.cos(pitch);
-    const underCanopy = body.phase === "parachute";
     // The canopy (and the body under it) faces where it flies, not where you look.
-    const chuteHeading =
-      underCanopy && Math.hypot(body.vx, body.vz) > 0.5 ? Math.atan2(-body.vx, -body.vz) : yaw;
+    const chuteHeading = flying ? flownHeading : yaw;
     if (underCanopy && myDeployAt < 0) myDeployAt = now;
     if (!underCanopy && myDeployAt >= 0) {
       // Touched down: the canopy collapses where you landed.
@@ -4179,6 +4268,59 @@ export function createBrArena(
       );
       const recoil = aimRecoil.sample(server, dtMs);
       camera.rotation.set(clampPitch(pitch + recoil.pitch), yaw + recoil.yaw, 0, "YXZ");
+    }
+    {
+      // A change of your own view in the drop is eased, never cut: out of the plane (the
+      // camera swings in from behind the plane to behind you while the canopy opens), the
+      // touchdown (from behind you into your eyes) and the C key under the canopy.
+      const kind = kit?.dead
+        ? ""
+        : flight.seat !== null
+          ? "flight"
+          : car
+            ? ""
+            : body.phase === "plane" && plane.visible
+              ? "plane"
+              : canopyFp
+                ? "hang"
+                : airborne
+                  ? "air"
+                  : "foot";
+      if (kind !== ownView.kind) {
+        const was = ownView.kind;
+        const ms =
+          !ownView.set || !kind || !was
+            ? 0
+            : (was === "plane" || was === "flight") && (kind === "air" || kind === "hang")
+              ? OWN_VIEW_MS.exit
+              : (was === "air" || was === "hang") && kind === "foot"
+                ? OWN_VIEW_MS.land
+                : (was === "air" && kind === "hang") || (was === "hang" && kind === "air")
+                  ? OWN_VIEW_MS.eye
+                  : 0;
+        ownView.kind = kind;
+        ownView.blend = ms ? 1 : 0;
+        ownView.ms = ms || 1;
+        if (ms) {
+          // From where the camera would have been this frame (on at last frame's pace),
+          // against your body as it is now: nothing steps, whatever the old view hung on
+          // (the plane, the aircraft as predicted, your body).
+          ownView.fromOffset.copy(ownView.pos).add(ownView.step).sub(shown);
+          ownView.fromQuat.copy(ownView.quat);
+        }
+      }
+      if (ownView.blend > 0) {
+        ownView.blend = Math.max(0, ownView.blend - dtMs / ownView.ms);
+        const k = ownView.blend * ownView.blend * (3 - 2 * ownView.blend);
+        forward.copy(ownView.fromOffset).add(shown);
+        camera.position.lerp(forward, k);
+        camera.quaternion.slerp(ownView.fromQuat, k);
+      }
+      if (ownView.set && kind) ownView.step.copy(camera.position).sub(ownView.pos);
+      else ownView.step.set(0, 0, 0);
+      ownView.set = !!kind;
+      ownView.pos.copy(camera.position);
+      ownView.quat.copy(camera.quaternion);
     }
     if (zipBlend > 0 && !seatedMe()) {
       // The zip-line's elevated follow view (owner's spec §5): above and behind the rider, looking
@@ -5460,6 +5602,10 @@ export function createBrArena(
         camera: [camera.position.x, camera.position.y, camera.position.z],
         facing: camera.getWorldDirection(new THREE.Vector3()).toArray() as [number, number, number],
         shown: [shown.x, shown.y, shown.z],
+        /** Your own figure and canopy as drawn (parachute-lab.mjs), and the view's heading. */
+        figure: me.root,
+        canopy: myCanopy?.root ?? null,
+        yaw,
         pending: pending.length,
         loot: loot?.items.size ?? 0,
         calls: drawn.calls,
