@@ -5,8 +5,10 @@ import { activeGun, ammoFor, capacity, countOf, type Loadout } from "./inventory
 import { fitsGun, ITEMS, magSize, type WeaponDef } from "./items";
 import type { WorldItem } from "./loot";
 import type { LootWorld } from "./loot-world";
-import type { DropBody } from "./drop";
+import { waterSurface, type DropBody } from "./drop";
+import type { WorldMeta } from "./world";
 import type { StaticWorld } from "./static-world";
+import { vehicleGap, VEHICLES, WADE, type Vehicle } from "./vehicles";
 import type { Circle } from "./zone";
 
 /**
@@ -125,6 +127,11 @@ export type BotMind = {
   lastAt: number;
   detourUntil: number;
   detourYaw: number;
+  skipRideUntil?: number;
+  slowSince?: number;
+  driveCheckAt?: number;
+  driveHeading?: number | null;
+  scanAt?: number;
   input: BotInput;
   seed: number;
   /** 0 easy … 1 strong (fixed for the match). */
@@ -318,6 +325,7 @@ export function botThink(
   healing: boolean,
   now: number,
   alive = 100,
+  vehicles: readonly Vehicle[] = [],
 ): { input: BotInput; acts: BrAct[] } {
   const acts: BrAct[] = [];
   const b = me.body;
@@ -369,11 +377,18 @@ export function botThink(
     if (next !== undefined) input.slot = next === 2 ? 3 : next;
   }
 
+  const goal = zone.next;
+  const dNext = Math.hypot(b.x - goal.x, b.z - goal.z);
+  const outNext = dNext > goal.r * lerp(BOT.rotateAt, k);
+  const outNow =
+    Math.hypot(b.x - zone.now.x, b.z - zone.now.z) > zone.now.r - Math.min(30, zone.now.r * 0.1);
+  // Once the final target contracts to a point, bots still fight inside the remaining ring.
+  const rotate = goal.r > 0 ? outNow || dNext > goal.r : zone.now.r > 0 && outNow;
   // 1. Who to fight: whoever shot it, the current target, else the nearest; first in sight.
   const range = Math.max(lerp(BOT.engageM, k), awpSlot >= 0 ? lerp(BOT.awpEngageM, k) : 0);
   const hurt = now - mind.hurtAt < BOT.hurtMemoryMs ? mind.hurtBy : -1;
   const near: Array<{ o: BotView; d: number; pri: number }> = [];
-  if (gun || awpSlot >= 0 || rifleSlot >= 0)
+  if (!rotate && (gun || awpSlot >= 0 || rifleSlot >= 0))
     for (const o of others) {
       if (o.dead || o.seat === me.seat || o.body.phase === "plane") continue;
       const d = Math.hypot(o.body.x - b.x, o.body.z - b.z);
@@ -463,11 +478,12 @@ export function botThink(
     }
   }
   mind.target = -1;
+  input.fire = false;
   input.aim = false;
   input.crouch = false;
   input.pitch = 0;
   // 2. Backing off: away from the last enemy seen, then heal out of sight.
-  if (retreating) {
+  if (retreating && !rotate) {
     const ax = b.x - mind.seenX,
       az = b.z - mind.seenZ;
     input.yaw = Math.atan2(-ax, -az) + (rand(mind) - 0.5) * 0.6;
@@ -485,7 +501,7 @@ export function botThink(
   fitFromBag(kit, acts);
   // 5. An enemy just went behind cover: a grenade there (stronger bots), and push or hold.
   const seenRecently = now - mind.seenAt < BOT.seenMemoryMs && mind.seenSeat >= 0;
-  if (seenRecently && !others[mind.seenSeat]?.dead) {
+  if (!rotate && seenRecently && !others[mind.seenSeat]?.dead) {
     const d = Math.hypot(mind.seenX - b.x, mind.seenZ - b.z);
     const kinds = nadeKinds(d);
     if (k >= BOT.nadeSkill && kinds) {
@@ -518,7 +534,6 @@ export function botThink(
     }
   }
   // 7. Where to go: its spot in the circle, loot, gunfire worth a look, or a search for a gun.
-  const goal = zone.next;
   const key = goal.x * 7 + goal.z * 13 + goal.r;
   if (mind.spotFor !== key) {
     // A spot of its own inside the next circle (older checkpoints: drawn on first use).
@@ -528,21 +543,18 @@ export function botThink(
     mind.spotZ = goal.z + Math.sin(a) * goal.r * f;
     mind.spotFor = key;
   }
-  const dNext = Math.hypot(b.x - goal.x, b.z - goal.z);
-  const outNext = dNext > goal.r * lerp(BOT.rotateAt, k);
-  const outNow = Math.hypot(b.x - zone.now.x, b.z - zone.now.z) > zone.now.r - 30;
   const armed = kit.guns.some((g) => !!g && (g.mag > 0 || ammoFor(kit, g) > 0));
-  const far = dNext - goal.r > BOT.farM;
+  const longRotation = dNext - goal.r > BOT.farM;
   let gx: number | null = null,
     gz: number | null = null;
   // The last players standing go looking for each other (a small circle carries footsteps).
   let prey: BotView | null = null;
-  if (alive <= BOT.huntAlive && armed && !outNow) {
+  if (alive <= BOT.huntAlive && armed && !outNext && !outNow) {
     let best: number = BOT.huntM;
     for (const o of others) {
       if (o.dead || o.seat === me.seat || o.body.phase === "plane") continue;
       const d = Math.hypot(o.body.x - b.x, o.body.z - b.z);
-      if (d < best) {
+      if (d < best && Math.hypot(o.body.x - goal.x, o.body.z - goal.z) <= goal.r) {
         best = d;
         prey = o;
       }
@@ -552,16 +564,39 @@ export function botThink(
     gx = prey.body.x;
     gz = prey.body.z;
     mind.goalItem = null;
-  } else if (outNow || (armed && ((outNext && !mind.goalItem) || far))) {
-    // (Unarmed, only the gas itself stops the search for a gun.)
+  } else if (rotate || (armed && outNext && mind.goalItem === null)) {
+    // Keep advancing, even unarmed. Pick up useful gear within reach along the way.
+    loot.near(b.x, b.z, BOT.pickupM, (i) => {
+      if (acts.length < 3 && Math.abs(i.y - b.y) < 1.6 && want(kit, i.item))
+        acts.push({ act: "pickup", id: i.id });
+    });
     gx = mind.spotX;
     gz = mind.spotZ;
+    if (longRotation && b.phase === "ground" && now >= (mind.skipRideUntil ?? 0)) {
+      let closest = 55;
+      for (const v of vehicles) {
+        if (v.driver >= 0 || v.destroyed || v.drowned || Math.abs(v.y - b.y) > 2) continue;
+        const distance = Math.hypot(v.x - b.x, v.z - b.z);
+        if (distance >= closest) continue;
+        closest = distance;
+        gx = v.x;
+        gz = v.z;
+        if (vehicleGap(v, b.x, b.z) <= VEHICLES.enterReach) {
+          acts.unshift({ act: "enter", id: v.id });
+          break;
+        }
+      }
+    }
     mind.goalItem = null;
   } else {
     mind.skip ??= [];
     let item: WorldItem | undefined =
       mind.goalItem !== null ? loot.items.get(mind.goalItem) : undefined;
-    if (!item || !want(kit, item.item)) {
+    if (
+      !item ||
+      !want(kit, item.item) ||
+      (goal.r > 0 && Math.hypot(item.x - goal.x, item.z - goal.z) > goal.r)
+    ) {
       const pick: { item?: WorldItem; score: number } = { score: 0 };
       // Unarmed: the whole circle (within reason) is worth searching for a gun; in the late
       // game, the nearest gun anywhere it can still reach.
@@ -572,6 +607,7 @@ export function botThink(
           : Math.min(600, Math.max(BOT.searchRadius, zone.now.r));
       loot.near(b.x, b.z, reach, (i: WorldItem) => {
         if (Math.abs(i.y - b.y) > 6 || mind.skip.includes(i.id)) return;
+        if (goal.r > 0 && Math.hypot(i.x - goal.x, i.z - goal.z) > goal.r) return;
         const w = want(kit, i.item);
         if (!w) return;
         const sc = w / (1 + Math.hypot(i.x - b.x, i.z - b.z));
@@ -602,10 +638,10 @@ export function botThink(
         const a = rand(mind) * Math.PI * 2;
         let x = b.x + Math.cos(a) * BOT.sweepM,
           z = b.z + Math.sin(a) * BOT.sweepM;
-        const dc = Math.hypot(x - zone.now.x, z - zone.now.z);
-        if (dc > zone.now.r * 0.8) {
-          x = zone.now.x + ((x - zone.now.x) / dc) * zone.now.r * 0.6;
-          z = zone.now.z + ((z - zone.now.z) / dc) * zone.now.r * 0.6;
+        const dc = Math.hypot(x - goal.x, z - goal.z);
+        if (dc > goal.r * 0.8) {
+          x = goal.x + ((x - goal.x) / dc) * goal.r * 0.6;
+          z = goal.z + ((z - goal.z) / dc) * goal.r * 0.6;
         }
         mind.sweepX = x;
         mind.sweepZ = z;
@@ -628,15 +664,41 @@ export function botThink(
     } else if (now - mind.heardAt < BOT.hearMemoryMs) {
       // Holding position: look toward the gunfire.
       input.yaw = Math.atan2(-(mind.heardX - b.x), -(mind.heardZ - b.z));
+    } else if (now >= (mind.scanAt ?? 0)) {
+      // When holding a looted building, watch an opening instead of staring at the last pickup.
+      const start = rand(mind) * Math.PI * 2;
+      let longest = -1;
+      for (let i = 0; i < 4; i++) {
+        const yaw = start + (i * Math.PI) / 2;
+        const sight = world.raycast(eye.x, eye.y, eye.z, -Math.sin(yaw), 0, -Math.cos(yaw), 18);
+        const reach = sight?.distance ?? 18;
+        if (reach > longest) {
+          input.yaw = yaw;
+          longest = reach;
+        }
+        if (!sight) break;
+      }
+      mind.scanAt = now + 3000 + rand(mind) * 2000;
     }
   }
   // Walk to the goal; when stuck against something, take a detour for a moment.
   if (gx !== null && gz !== null) {
-    if (now - mind.lastAt > 2000) {
+    const yaw = Math.atan2(-(gx - b.x), -(gz - b.z));
+    if (now - mind.lastAt > 900) {
       const moved = Math.hypot(b.x - mind.lastX, b.z - mind.lastZ);
       if (mind.lastAt && moved < 0.6 && now > mind.detourUntil) {
-        mind.detourUntil = now + 1500;
-        mind.detourYaw = (rand(mind) < 0.5 ? -1 : 1) * (Math.PI / 2);
+        const side = mind.detourYaw < 0 ? -1 : mind.detourYaw > 0 ? 1 : rand(mind) < 0.5 ? -1 : 1;
+        for (const offset of [(side * Math.PI) / 2, (-side * Math.PI) / 2, Math.PI]) {
+          const heading = yaw + offset;
+          if (
+            world.blocked(b.x - Math.sin(heading), b.y + 0.25, b.z - Math.cos(heading), 1.4, 0.35)
+          )
+            continue;
+          mind.detourYaw = offset;
+          mind.detourUntil = now + 2000;
+          break;
+        }
+        if (longRotation) mind.skipRideUntil = now + 10000;
         // Stuck on the way: leave that item alone from now on.
         if (mind.goalItem !== null) skipItem(mind, mind.goalItem);
         mind.goalItem = null;
@@ -645,7 +707,6 @@ export function botThink(
       mind.lastZ = b.z;
       mind.lastAt = now;
     }
-    const yaw = Math.atan2(-(gx - b.x), -(gz - b.z));
     input.yaw = yaw + (now < mind.detourUntil ? mind.detourYaw : 0);
     const far = Math.hypot(gx - b.x, gz - b.z);
     input.forward = 1;
@@ -659,6 +720,41 @@ export function botThink(
     input.sprint = false;
   }
   return { input, acts };
+}
+
+/** Probe the route a short way ahead, respecting bridge decks above water. */
+export function botDriveHeading(
+  mind: BotMind,
+  v: Vehicle,
+  goal: Circle,
+  island: StaticWorld,
+  meta: WorldMeta,
+  now: number,
+) {
+  if (now < (mind.driveCheckAt ?? 0)) return mind.driveHeading ?? null;
+  mind.driveCheckAt = now + BOT.decideMs;
+  const direct = Math.atan2(v.x - goal.x, v.z - goal.z);
+  const look = Math.max(6, Math.abs(v.speed) * 1.4);
+  for (const offset of [0, 0.7, -0.7, 1.4, -1.4]) {
+    const heading = direct + offset;
+    let clear = true;
+    for (const distance of [look * 0.4, look]) {
+      const x = v.x - Math.sin(heading) * distance;
+      const z = v.z - Math.cos(heading) * distance;
+      const ground = island.supportAt(x, z, 0.4, v.y + 1.5);
+      const water = waterSurface(meta, island.hf.heightAt(x, z), x, z);
+      if (
+        ground < v.y - distance * 0.65 ||
+        (water !== null && water - ground >= WADE[v.kind]) ||
+        island.blocked(x, ground + 0.35, z, 1.2, 0.7)
+      ) {
+        clear = false;
+        break;
+      }
+    }
+    if (clear) return (mind.driveHeading = heading);
+  }
+  return (mind.driveHeading = null);
 }
 
 function skipItem(mind: BotMind, id: number) {

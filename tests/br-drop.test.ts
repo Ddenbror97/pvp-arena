@@ -64,6 +64,23 @@ function until(
 }
 
 describe("Project Island drop: plane, freefall, parachute, landing", () => {
+  it("rides past maximum glide range and jumps before passing the chosen landing spot", () => {
+    const route: Route = {
+      a: [-5000, 0],
+      b: [5000, 0],
+      dir: [1, 0],
+      length: 10000,
+      durationMs: 50000,
+    };
+    const bot = { target: [0, 100] as [number, number], landed: false };
+    const jumpAt = (ms: number) => dropBotInput(bot, newDropBody(), route, ms, () => 0).jumpOut;
+    expect(jumpAt(10000)).toBe(false);
+    expect(jumpAt(22500)).toBe(true);
+    bot.target[1] = 2000;
+    expect(jumpAt(22500)).toBe(false);
+    expect(jumpAt(25000)).toBe(true);
+  });
+
   it("flies a seeded straight route that starts and ends off the map and crosses near the centre", () => {
     for (let seed = 1; seed <= 50; seed++) {
       const r = planeRoute(seed);

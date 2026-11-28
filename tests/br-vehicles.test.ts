@@ -328,6 +328,27 @@ describe("vehicles", () => {
     expect(spec("suv").grade).toBeGreaterThan(spec("sedan").grade);
   });
 
+  it.each(["sedan", "bike"] as const)(
+    "a bot boards a free %s for a long rotation, drives and returns to looting",
+    (kind) => {
+      const { state, v, ux, uz } = scene(kind);
+      const bot = state.seats[0]!;
+      bot.bot = true;
+      state.bots[0]!.landed = true;
+      const goal = state.zone.circles[1]!;
+      Object.assign(goal, { x: v.x + ux * 600, z: v.z + uz * 600, r: 90 });
+      for (let i = 0; i < 40 && bot.vehicle === undefined; i++) step(state, null);
+      expect(bot.vehicle).toBe(v.id);
+      const start = Math.hypot(goal.x - v.x, goal.z - v.z);
+      for (let i = 0; i < 90; i++) step(state, null);
+      expect(Math.hypot(goal.x - v.x, goal.z - v.z)).toBeLessThan(start - 12);
+      Object.assign(goal, { x: v.x, z: v.z, r: 200 });
+      for (let i = 0; i < 180 && bot.vehicle !== undefined; i++) step(state, null);
+      expect(bot.vehicle).toBeUndefined();
+      expect(v.driver).toBe(-1);
+    },
+  );
+
   it("enters within reach only, drives, steers, brakes, and lets the driver out beside it", () => {
     const { state, v } = scene();
     const me = state.seats[0]!;
