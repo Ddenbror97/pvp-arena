@@ -165,11 +165,10 @@ export function createAircraftAudio(
         const dx = a.x - listener.x,
           dy = a.y - listener.y,
           dz = a.z - listener.z;
-        const cos = Math.cos(listener.yaw),
-          sin = Math.sin(listener.yaw);
-        panner.positionX.setTargetAtTime(dx * cos - dz * sin, t, 0.03);
-        panner.positionY.setTargetAtTime(dy, t, 0.03);
-        panner.positionZ.setTargetAtTime(dx * sin + dz * cos, t, 0.03);
+        // In the world: the Web Audio listener is the camera (br-audio.ts setListener).
+        panner.positionX.setTargetAtTime(a.x, t, 0.03);
+        panner.positionY.setTargetAtTime(a.y, t, 0.03);
+        panner.positionZ.setTargetAtTime(a.z, t, 0.03);
         const { near, far, overM } = OUTSIDE.lowpass;
         lowpass = far + (near - far) * Math.exp(-Math.hypot(dx, dy, dz) / overM);
       }

@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { ModelManifest } from "./props-renderer";
-import { spec, type Vehicle, type VehicleKind } from "./vehicles";
+import type { EngineSource } from "./vehicle-audio";
+import { spec, VEHICLES, type Vehicle, type VehicleKind } from "./vehicles";
 
 /**
  * Vehicles on screen: the drivable models (public/fps/br/models/vehicles.glb: a sedan, a 4x4,
@@ -307,6 +308,12 @@ export function createVehicleRenderer(
     dtMs: number,
     /** Flat tyres (vehicles.ts TYRES bits): that wheel sits on its rim. */
     flat = 0,
+    /**
+     * The suspension's travel (m, vehicles.ts VEHICLES.suspension: + the body above its rest).
+     * The object is drawn at the body's height; the wheels stay on the ground, hanging down off
+     * a crest and in the air, pushed up into the arches on a landing.
+     */
+    sus = 0,
   ) {
     const dt = Math.min(0.1, Math.max(0.001, dtMs / 1000));
     if (s.wrecked) return;
@@ -317,15 +324,17 @@ export function createVehicleRenderer(
     const yawRate = Math.atan2(Math.sin(yaw - s.lastYaw), Math.cos(yaw - s.lastYaw)) / dt;
     s.lastSpeed = speed;
     s.lastYaw = yaw;
-    // Targets: nose up while accelerating, down while braking; lean out of the turn.
-    const soft = sp.bike ? 0 : 1;
-    const pitchTarget = THREE.MathUtils.clamp(accel * 0.006, -0.05, 0.04) * soft;
+    // Targets: nose up while accelerating, down while braking; lean out of the turn. The soft
+    // off-roaders (more travel) pitch and roll further than the low sedan.
+    const S = VEHICLES.suspension[s.kind];
+    const soft = sp.bike ? 0 : S.droop / VEHICLES.suspension.sedan.droop;
+    const pitchTarget = THREE.MathUtils.clamp(accel * 0.007 * soft, -0.065, 0.05);
     const lateral = speed * yawRate + slip * 2;
     // (+z roll lifts the right side.) Turning left (yaw rising, `lateral` > 0) a car's body
     // rolls out to the right; a bike leans into the turn, further.
     const rollTarget = sp.bike
       ? THREE.MathUtils.clamp(lateral * 0.045, -0.5, 0.5)
-      : THREE.MathUtils.clamp(-lateral * 0.006, -0.07, 0.07);
+      : THREE.MathUtils.clamp(-lateral * 0.006 * soft, -0.09, 0.09);
     const k = 70,
       c = 2 * 0.55 * Math.sqrt(k);
     s.spv += (k * (pitchTarget - s.sp) - c * s.spv) * dt;
@@ -343,6 +352,7 @@ export function createVehicleRenderer(
       body.position.y = Math.abs(s.sp) * 0.3 + Math.abs(s.sr) * 0.4;
     }
     const lock = (sp.steer / (1 + Math.abs(speed) / (sp.bike ? 9 : 14))) * steer;
+    const travel = THREE.MathUtils.clamp(sus, -S.compress, S.droop);
     for (const w of s.object.children) {
       if (!w.name.startsWith("wheel-")) continue;
       const front = /-(FL|FR|F)$/.test(w.name);
@@ -360,8 +370,9 @@ export function createVehicleRenderer(
                 : 4;
       const baseY = (w.userData["baseY"] ??= w.position.y) as number;
       const down = flat & bit;
-      // A burst tyre: the wheel drops onto its rim (the corner of the car sags with it).
-      w.position.y = baseY - (down ? r * 0.28 : 0);
+      // A burst tyre: the wheel drops onto its rim (the corner of the car sags with it). The
+      // springs: the wheel keeps to the ground as the body rises and falls over it.
+      w.position.y = baseY - (down ? r * 0.28 : 0) - travel;
     }
   }
   const place = (o: THREE.Object3D, r: number[]) => {
@@ -454,7 +465,16 @@ export function createVehicleRenderer(
         if (mine && id === mine.id) {
           s.object.position.set(mine.x, mine.y, mine.z);
           s.object.rotation.set(mine.pitch, mine.yaw, mine.roll, "YXZ");
-          animate(s, mine.speed, mine.yaw, mine.steer ?? 0, mine.slip ?? 0, dtMs, mine.flat ?? 0);
+          animate(
+            s,
+            mine.speed,
+            mine.yaw,
+            mine.steer ?? 0,
+            mine.slip ?? 0,
+            dtMs,
+            mine.flat ?? 0,
+            mine.sus ?? 0,
+          );
           flash(s, true, now);
           updateBar(id, s);
           continue;
@@ -476,7 +496,16 @@ export function createVehicleRenderer(
           lerp(6),
           lerp(7),
         ]);
-        animate(s, lerp(8), a[5]! + dy * Math.min(1, k), b[14] ?? 0, lerp(15), dtMs, b[16] ?? 0);
+        animate(
+          s,
+          lerp(8),
+          a[5]! + dy * Math.min(1, k),
+          b[14] ?? 0,
+          lerp(15),
+          dtMs,
+          b[16] ?? 0,
+          a[20] === undefined || b[20] === undefined ? 0 : lerp(20),
+        );
         flash(s, (b[11] ?? -1) >= 0, now);
         updateBar(id, s);
       }
@@ -527,6 +556,37 @@ export function createVehicleRenderer(
         handR,
       };
     },
+    /**
+     * The vehicles shown, as their engines are heard (vehicle-audio.ts createRemoteEngines):
+     * where each is drawn this frame (call after update), its speed and whether its engine runs
+     * (a driver, not wrecked or flooded). `skip` is the one you drive (its own sound). Fills
+     * `out` (objects reused frame to frame) and returns how many.
+     */
+    audible(out: EngineSource[], skip: number): number {
+      let n = 0;
+      for (const [id, s] of shown) {
+        if (id === skip) continue;
+        const b = s.b;
+        const e = (out[n] ??= {
+          id: 0,
+          kind: "sedan",
+          x: 0,
+          y: 0,
+          z: 0,
+          speed: 0,
+          running: false,
+        });
+        e.id = id;
+        e.kind = s.kind;
+        e.x = s.object.position.x;
+        e.y = s.object.position.y + 0.6;
+        e.z = s.object.position.z;
+        e.speed = s.lastSpeed;
+        e.running = (b[11] ?? -1) >= 0 && b[12] !== 1 && b[19] !== 1 && !s.wrecked;
+        n++;
+      }
+      return n;
+    },
     /** Rows as vehicles (for prediction collisions with others). */
     asVehicles(): Vehicle[] {
       return [...shown.values()].map(({ b }) => ({
@@ -550,6 +610,7 @@ export function createVehicleRenderer(
         vy: b[17] ?? 0,
         air: b[18] === 1,
         drowned: b[19] === 1,
+        sus: b[20] ?? 0,
       }));
     },
     dispose() {
